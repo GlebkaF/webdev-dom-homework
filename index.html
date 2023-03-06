@@ -7,7 +7,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -48,22 +48,86 @@
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          id="name-input"
         />
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+          id="comment-area"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
 
   <script>
-    // Код писать здесь
+    const butAddComment = document.getElementById("add-form-button");
+    const listOfComments = document.getElementById("comments");
+    const nameInputElement = document.getElementById("name-input");
+    const commentAreaElement = document.getElementById("comment-area");
+    const currentDate = new Date();
+    let day = currentDate.getDate();
+    if (day < 10) {
+      day = "0" + day;
+    }
+    const months = [
+      "01",
+      "02",
+      "03",
+      "04",
+      "05",
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+    ];
+    let month = months[currentDate.getMonth()];
+    let year = currentDate.getFullYear() % 100;
+    if (year < 10) year = "0" + year;
+
+    let hour = currentDate.getHours();
+    if (hour < 10) {
+      hour = "0" + hour;
+    }
+    let minute = currentDate.getMinutes();
+    if (minute < 10) {
+      minute = "0" + minute;
+    }
+    const newDate = day + "." + month + "." + year + " " + hour + ":" + minute;
+
+    butAddComment.addEventListener("click", () => {
+      if (nameInputElement.value === "" || commentAreaElement.value === "") {
+        alert("Требуется заполнить все поля!");
+        return;
+      }
+      const oldComments = listOfComments.innerHTML;
+      listOfComments.innerHTML =
+        oldComments +
+        `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${newDate}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${commentAreaElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+    });
     console.log("It works!");
   </script>
 </html>
