@@ -102,10 +102,8 @@
     }
     const newDate = day + "." + month + "." + year + " " + hour + ":" + minute;
 
-    butAddComment.setAttribute("disabled", true);
     butAddComment.addEventListener("click", () => {
       if (nameInputElement.value === "" || commentAreaElement.value === "") {
-        butAddComment.setAttribute("disabled", true);
         alert("Требуется заполнить все поля!");
         return;
       }
