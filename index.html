@@ -56,7 +56,46 @@
 </body>
 
 <script>
+  const commentsList = document.getElementById('comments');               // Комментарии
+  const inputName = document.getElementById('input-name');                // Поле ввода имя
+  const inputComment = document.getElementById('input-comment');          // Поле ввода комментарий
+  const buttonAddComment = document.getElementById('button-add-comment'); // Кнопка добавления комментария
 
+  buttonAddComment.addEventListener('click', () => {
+    const currentCommentsList = commentsList.innerHTML;
+    const currentDate = new Date;
+    const dateFormat = {
+      year: '2-digit',
+      month: 'numeric',
+      day: 'numeric',
+    }
+    const timeFormat = {
+      hour: '2-digit',
+      minute: '2-digit',
+    }
+
+    commentsList.innerHTML = currentCommentsList + `<li class="comment">
+      <div class="comment-header">
+        <div>${inputName.value}</div>
+        <div>
+          ${currentDate.toLocaleDateString('ru-RU', dateFormat) +
+      ' ' + currentDate.toLocaleTimeString('ru-RU', timeFormat)}
+        </div >
+      </div >
+      <div class="comment-body">
+        <div class="comment-text">
+          ${inputComment.value}
+        </div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">0</span>
+          <button class="like-button"></button>
+        </div>
+      </div>
+    </li >`;
+  })
+  console.log("It works!");
 </script>
 
 </html>
