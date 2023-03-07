@@ -1,9 +1,11 @@
 "use strict";
 const mainList = document.querySelector(".comments");
+const childMainList = document.querySelectorAll(".comment");
 const mainForm = document.querySelector(".add-form");
 const addCommentsBtn = document.querySelector(".add-form-button");
 const inputName = document.querySelector(".add-form-name");
 const textareaText = document.querySelector(".add-form-text");
+const deleteMainBtn = document.querySelector(".main-delete")
 const newDate = new Date()
   .toLocaleDateString("ru", {
     day: "numeric",
@@ -58,7 +60,6 @@ mainForm.addEventListener("keyup", (e) => {
     deleteValue();
   }
 });
-
 const addPosts = () => {
   const newList = mainList.innerHTML;
   mainList.innerHTML =
@@ -79,5 +80,6 @@ const addPosts = () => {
       <button class="like-button"></button>
     </div>
   </div>
+  <button class="deleteBtn">Удалить</button>
 </li>`;
 };
