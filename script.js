@@ -67,10 +67,7 @@ addComment.addEventListener("click",  () => {
 
 });
 
-const addPosts = () =>{
-  
 
-}
 
 // Функция удаления последнего комментария
   const  delComment = () => {
