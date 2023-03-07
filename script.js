@@ -4,6 +4,7 @@ const removeComment = document.getElementById("remove-comment");
 const listElement = document.getElementById("comments");
 const nameInputElement = document.getElementById("name-input");
 const commentInputElement = document.getElementById("comment-input");
+const mainForm = document.querySelector(".add-form");
 
 const options = {
   year: '2-digit',
@@ -18,7 +19,10 @@ const options = {
 
 let now = new Date().toLocaleString("ru-RU",options);
 
-
+const delValue = () => {
+  nameInputElement.value = "";
+  commentInputElement.value = "";
+};
 
 addComment.addEventListener("click",  () => {
 
@@ -36,7 +40,6 @@ addComment.addEventListener("click",  () => {
     
     nameInputElement.classList.remove("error");
     commentInputElement.classList.remove("error");
-
     const oldListHtml = listElement.innerHTML;
     listElement.innerHTML =
       oldListHtml +
@@ -59,8 +62,8 @@ addComment.addEventListener("click",  () => {
     </li>`;
 
   }
-
   
+  delValue();
 
 });
 
@@ -89,9 +92,11 @@ document.querySelectorAll("#name-input,#comment-input").forEach((el)=>{
 
 
 // Ввод по нажатию клавиши Enter
-addForm.addEventListener('keydown', (e) => {
-  if (e.code === 13) {
-    addComment.click();}
+mainForm.addEventListener('keyup', (e) => {
+  if (e.code === "Enter") {
+    addComment.click();
+    delValue();
+  }
 });
 
 
