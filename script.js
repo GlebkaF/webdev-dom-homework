@@ -1,5 +1,6 @@
 "use strict";
 const mainList = document.querySelector(".comments");
+const mainForm = document.querySelector(".add-form");
 const addCommentsBtn = document.querySelector(".add-form-button");
 const inputName = document.querySelector(".add-form-name");
 const textareaText = document.querySelector(".add-form-text");
@@ -17,14 +18,48 @@ addCommentsBtn.addEventListener("click", () => {
   if (inputName.value == "" && textareaText.value == "") {
     textareaText.classList.add("error");
     inputName.classList.add("error");
-    // addCommentsBtn.classList.add("grey");
-    // addCommentsBtn.disabled = true;
     updateBtn();
     return;
   } else {
     inputName.classList.remove("error");
     textareaText.classList.remove("error");
   }
+  addPosts();
+  deleteValue();
+});
+const deleteValue = () => {
+  inputName.value = "";
+  textareaText.value = "";
+};
+const updateBtn = () => {
+  if (inputName.value == "" && textareaText.value == "") {
+    addCommentsBtn.disabled = true;
+    textareaText.readOnly = true;
+    inputName.readOnly = true;
+    addCommentsBtn.classList.add("grey");
+  } else {
+    addCommentsBtn.disabled = false;
+    textareaText.readOnly = false;
+    addCommentsBtn.disabled = false;
+    addCommentsBtn.classList.remove("grey");
+    inputName.classList.remove("error");
+    textareaText.classList.remove("error");
+  }
+};
+inputName.addEventListener("input", () => {
+  updateBtn();
+});
+textareaText.addEventListener("input", () => {
+  updateBtn();
+});
+mainForm.addEventListener("keyup", (e) => {
+  if (e.code === "Enter") {
+    addPosts();
+    deleteValue();
+  }
+});
+
+const addPosts = () => {
   const newList = mainList.innerHTML;
   mainList.innerHTML =
     newList +
@@ -45,36 +80,4 @@ addCommentsBtn.addEventListener("click", () => {
     </div>
   </div>
 </li>`;
-  inputName.value = "";
-  textareaText.value = "";
-});
-// inputName.addEventListener("input", () => {
-//   if (inputName.value == "" && textareaText.value == "") {
-//     inputName.readOnly = true;
-//     textareaText.readOnly = true;
-//     addCommentsBtn.disabled = true;
-//     addCommentsBtn.classList.add("grey");
-//     return;
-//   }
-// });
-
-const updateBtn = () => {
-  if (inputName.value == "" && textareaText.value == "") {
-    addCommentsBtn.disabled = true;
-    addCommentsBtn.classList.add("grey");
-  } else {
-    addCommentsBtn.disabled = false;
-    addCommentsBtn.classList.remove("grey");
-    inputName.classList.remove("error");
-    textareaText.classList.remove("error");
-  }
 };
-
-inputName.addEventListener("input", () => {
-  inputName.readOnly = false;
-  updateBtn();
-});
-textareaText.addEventListener("input", () => {
-  textareaText.readOnly = false;
-  updateBtn();
-});
