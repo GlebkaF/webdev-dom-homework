@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
 
+
+<!-- Не повезло будущему поколению - все нормальные логины уже заняты. -->
+
+
 <head>
   <title>Проект "Комменты"</title>
   <link rel="stylesheet" href="styles.css" />
@@ -56,7 +60,7 @@
 </body>
 
 <script>
-  const addForm = document.getElementById('add-form');                    // 
+  const addForm = document.getElementById('add-form');                    // Форма
   const commentsList = document.getElementById('comments');               // Комментарии
   const inputName = document.getElementById('input-name');                // Поле ввода имя
   const inputComment = document.getElementById('input-comment');          // Поле ввода комментарий
@@ -93,6 +97,7 @@
       inputName.classList.add('error__name');
       inputName.placeholder = 'Поле не может быть пустым!';
       inputName.value = '';
+      inputComment.value = '';
       setTimeout(clearInputName, 1500);
 
     } else if (inputComment.value === '' || inputComment.value === '\n') {
@@ -132,6 +137,8 @@
   addForm.addEventListener('keyup', () => {
     if (event.code == 'Enter') buttonAddComment.click();
   });
+
+  // Интересует вопрос как можно удалить последний комментарий...
 
   console.log("It works!");
 </script>
