@@ -6,7 +6,7 @@
   </head>
 
   <body>
-    <div class="container">
+    <div id="list" class="container">
       <ul class="comments">
         <li class="comment">
           <div class="comment-header">
@@ -44,26 +44,39 @@
         </li>
       </ul>
       <div class="add-form">
-        <input
+        <input id="inputName"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
-        <textarea
+        <textarea id="inputComment"
           type="textarea"
-          class="add-form-text"
+          class="add-formutCo-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="buttonComent" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
 
   <script>
-    // Код писать здесь
+    const buttonElement = document.getElementById('buttonComent');
+    const listElement = document.getElementById('list');
+    const nameElement = document.getElementById('inputName');
+    const commentElement = document.getElementById('inputComment');
+
+    buttonElement.addEventListener("click", () => {
+      nameElement.classList.remove("error");
+      if (nameElement.value === "" || commentElement.value === ""){
+        nameElement.classList.add("error");
+        commentElement.classList.add("error");
+return;
+      }
+});
+
     console.log("It works!");
   </script>
 </html>
