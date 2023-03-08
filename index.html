@@ -1,69 +1,102 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Проект "Комменты"</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap"
+      rel="stylesheet"
+    />
+  </head>
   <body>
-    <div class="container">
-      <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+    <section class="sectionOne">
+      <div class="blockOne">
+        <div class="blockOneP">
+          <p class="blockOneName">Глеб Фокин</p>
+          <p class="blockOneDate">12.02.22 12:18</p>
+        </div>
+        <h1 class="blockOneTitle">Это будет первый комментарий на этой странице</h1>
+        <div class="blockOneBottom">
+          <p class="blockOneNr">3</p>
+          <p class="blockOneLike"></p>
+          <img src="./img/inima.png" alt="" />
         </div>
       </div>
-    </div>
-  </body>
+      <div class="blockOne">
+        <div class="blockOneP">
+          <p class="blockOneName">Варвара Н</p>
+          <p class="blockOneDate">12.02.2022 19:22</p>
+        </div>
+        <h1 class="blockOneTitle">
+          Мне нравится как оформлена эта страница! ❤
+        </h1>
+        <div class="blockOneBottom">
+          <p class="blockOneNr">75</p>
+          <p class="blockOneLike"></p>
+          <img src="./img/inima.png" alt="" />
+        </div>
+      </div>
+    </section>
+    <section class="sectionTwo">
+      <div class="blockInputs">
+        <div class="blockInputsInput">
+          <input
+            class="blockInputsOne"
+            placeholder="Введите ваше имя"
+            type="text"
+          />
+          <input
+            class="blockInputsTwo"
+            placeholder="Введите ваш коментарий"
+            type="text"
+          />
+        </div>
+        <button class="blockInputsButton">Написать</button>
+      </div>
+    </section>
+    <script type="text/javascript">
+      const nameInput = document.querySelector(".blockInputsOne");
+      const tweetInput = document.querySelector(".blockInputsTwo");
+      const tweetButton = document.querySelector(".blockInputsButton");
+      const tweetSection = document.querySelector(".sectionOne");
 
-  <script>
-    // Код писать здесь
-    console.log("It works!");
-  </script>
+      tweetButton.addEventListener("click", () => {
+        const name = nameInput.value.trim();
+        const tweet = tweetInput.value.trim();
+
+        if (!name || !tweet) {
+          alert("Имя или текст незаполнены!");
+          return;
+        }
+
+        const date = new Date().toLocaleString();
+        const newTweet = `
+          <div class="blockOne">
+            <div class="blockOneP">
+              <p class="blockOneName">${name}</p>
+              <p class="blockOneDate">${date}</p>
+            </div>
+            <h1 class="blockOneTitle">${tweet}</h1>
+            <div class="blockOneBottom">
+              <p class="blockOneNr">0</p>
+              <p class="blockOneLike">likes</p>
+              <img src="./img/inima.png" alt="" />
+            </div>
+          </div>
+        `;
+
+        tweetSection.insertAdjacentHTML("afterbegin", newTweet);
+
+        nameInput.value = "";
+        tweetInput.value = "";
+      });
+    </script>
+  </body>
 </html>
+//
