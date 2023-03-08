@@ -7,7 +7,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id = "list">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -25,7 +25,7 @@
             </div>
           </div>
         </li>
-        <li class="comment">
+        <li class="comment" id = "comment-list">
           <div class="comment-header">
             <div>Варвара Н.</div>
             <div>13.02.22 19:22</div>
@@ -38,28 +38,29 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
+              <button class="like-button -active-like" id="like-button"></button>
             </div>
           </div>
         </li>
       </ul>
       <div class="add-form">
-        <input
+        <input id = "name-input"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
-        <textarea
+        <textarea id = "comments-input"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id = "add-button">Написать</button>
         </div>
       </div>
     </div>
+    <script src="script.js"></script>
   </body>
 
   <script>
