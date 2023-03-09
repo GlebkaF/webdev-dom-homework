@@ -39,6 +39,7 @@ buttonElement.addEventListener("click", () => {
     hour: 'numeric',
     minute: '2-digit',
   };
+
   let now = new Date().toLocaleString('ru-RU',options);
 
   const oldListHTML = listElement.innerHTML;
@@ -68,4 +69,3 @@ buttonElement.addEventListener("click", () => {
 buttonDelElement.addEventListener("click", () => {
     listElement.innerHTML = listElement.innerHTML.substring(0, listElement.innerHTML.lastIndexOf('<li class="comment">'))
 })
-
