@@ -7,8 +7,8 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
-        <li class="comment">
+      <ul class="comments" id ="comments">
+        <li class="comment" >
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -21,7 +21,7 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">3</span>
-              <button class="like-button"></button>
+              <button class="like-button" ></button>
             </div>
           </div>
         </li>
@@ -48,15 +48,18 @@
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          id ='name-input'
         />
         <textarea
           type="textarea"
           class="add-form-text"
-          placeholder="Введите ваш коментарий"
+          placeholder="Введите ваш комментарий"
           rows="4"
+          id="comment-input"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button  class="add-form-button" id="add-button" >Написать</button>
+          <button  class="add-form-button"     id="remove-comment" >Удалить</button>
         </div>
       </div>
     </div>
