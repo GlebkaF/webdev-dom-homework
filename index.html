@@ -12,8 +12,8 @@
       background-color: blanchedalmond;
     }
   </style>
-  <div id="list" class="container">
-    <ul class="comments">
+  <div class="container">
+    <ul id="list" class="comments">
       <li class="comment">
         <div class="comment-header">
           <div>Глеб Фокин</div>
@@ -50,9 +50,8 @@
       </li>
     </ul>
     <div class="add-form">
-      <input id="inputName" type="text" class="add-form-name" placeholder="Введите ваше имя" />
-      <textarea id="inputComment" type="textarea" class="add-formutCo-text" placeholder="Введите ваш коментарий"
-        rows="4"></textarea>
+      <input id="inputName" type="text" class="add-form-name" placeholder="Введите ваше имя">
+      <textarea id="inputComment" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
       <div class="add-form-row">
         <button id="buttonComent" class="add-form-button">Написать</button>
       </div>
@@ -79,7 +78,7 @@ if (minute < 10) {
 	minute = "0" + minute; 
 }
 
-myTime = day + "." + month + "." + year + " " + hour + ":" + minute;
+myTime = day + "." + month + "." + year + " " + hour + ":" + minute 
 
   const buttonElement = document.getElementById('buttonComent');
   const listElement = document.getElementById('list');
