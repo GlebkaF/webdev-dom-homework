@@ -19,7 +19,7 @@ const options = {
 
 let now = new Date().toLocaleString("ru-RU",options).replace(",", "");
 
-console.log(now);
+
 
 const delValue = () => {
   nameInputElement.value = "";
