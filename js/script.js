@@ -1,14 +1,5 @@
 'use strict';
 
-/* Это 3.14ЗДЕЦ какой-то, не думал, что будет так сложно!
-
-   Про то, что пользоваться innerHTML нежелательно я помню,
-   но пока не знаю как это сделать, чтобы код не превращался в портянку
-   на пяток страниц. Дополнительные задания не делал, ибо мне и 
-   основного хватило для закипания мозга. */
-
-
-
 // Массив с данными о комментариях
 const commentsListArray = [
     {
@@ -49,7 +40,7 @@ function renderComments() {
         <div class="comment-footer">
         <div class="likes">
             <span class="likes-counter">${comment.likeCount}</span>
-            <button data-index="${index}"  class="${(comment.liked) ? 'like-button -active-like' : 'like-button'}"></button>
+            <button data-index="${index}"  class="${comment.liked ? 'like-button -active-like' : 'like-button'}"></button>
         </div>
         </div>
     </li >`
@@ -62,10 +53,11 @@ renderComments();
 // Событие на лайк
 function addEventLike() {
     const likeButtons = commentsList.querySelectorAll('button.like-button');
-    for(let i = 0; i < likeButtons.length; i++){
+    for(let button of likeButtons){
 
-        likeButtons[i].addEventListener('click', () => {
-            const index = likeButtons[i].dataset.index;
+        button.addEventListener('click', () => {
+            const index = button.dataset.index;
+
             if (commentsListArray[index].liked === false) {
                 commentsListArray[index].liked = true;
                 commentsListArray[index].likeCount +=1;
@@ -73,6 +65,7 @@ function addEventLike() {
                 commentsListArray[index].liked = false;
                 commentsListArray[index].likeCount -=1;
             }
+
             renderComments();
         })
     }
@@ -85,8 +78,10 @@ const inputComment = document.querySelector('textarea.add-form-text');
 const buttonAddComment = document.querySelector('button.add-form-button');
 
 // Событие на кнопку добавить
-buttonAddComment.addEventListener('click', () => {
+buttonAddComment.addEventListener('click', addComment);
 
+// Функция добавляет комментарий
+function addComment() {
     const currentDate = new Date;
     const dateFormat = {
         year: '2-digit',
@@ -136,11 +131,11 @@ buttonAddComment.addEventListener('click', () => {
         inputComment.value = '';
         renderComments(); // Заново отрисовываются все комментарии
     }
-})
+}
 
-// Клик на Enter
+// Отправка комментария при нажатии Enter
 addForm.addEventListener('keyup', (e) => {
-if (e.code == 'Enter') buttonAddComment.click();
+if (e.code == 'Enter') addComment();
 });
 
-console.log("It works! К моему большому удивлению!");
+// console.log("It works! К моему большому удивлению!");
