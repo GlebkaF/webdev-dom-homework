@@ -14,40 +14,7 @@
   </style>
   <div class="container">
     <ul id="list" class="comments">
-      <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>
+      //render from JS //
     </ul>
     <div class="add-form">
       <input id="inputName" type="text" class="add-form-name" placeholder="Введите ваше имя">
@@ -60,6 +27,55 @@
 </body>
 
 <script>
+ const buttonElement = document.getElementById('buttonComent');
+  const listElement = document.getElementById('list');
+  const nameElement = document.getElementById('inputName');
+  const commentElement = document.getElementById('inputComment');
+  
+  const answers = [
+    {
+      name: "Глеб Фокин",
+      comment:"Это будет первый комментарий на этой странице",
+      dayTime:"12.02.22 12:18",
+      likes:3,
+    },
+        {
+      name: "Варвара Н.",
+      comment:"Мне нравится как оформлена эта страница! ❤",
+      dayTime:"13.02.22 19:22",
+      likes:75, 
+    },
+  ];
+  const likes = document.querySelectorAll(".like-button");
+for (const like of likes){
+  like.addEventListener ("click", () => {
+console.log (1);
+  })
+}
+
+ const renderAnswers = () => {
+const answersHtml = answers.map((answer) => {
+  return `<li class="comment">
+        <div class="comment-header">
+          <div>${answer.name}</div>
+          <div>${answer.dayTime}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">${answer.comment}</div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter"></span>
+            <button class="like-button -active-like>${answer.likes}</button>
+          </div>
+        </div>
+      </li>`;
+})
+.join("");
+listElement.innerHTML = answersHtml;
+  };
+
+renderAnswers();
 
    let myTime;
 let myDate = new Date(); 
@@ -68,7 +84,6 @@ let month = myDate.getMonth();
 let year = myDate.getFullYear();
 let hour = myDate.getHours(); 
 let minute = myDate.getMinutes(); 
-
 if (day < 10) { 
 	day = "0" + day;
 }
@@ -81,10 +96,7 @@ if (minute < 10) {
 
 myTime = day + "." + month + "." + year + " " + hour + ":" + minute 
 
-  const buttonElement = document.getElementById('buttonComent');
-  const listElement = document.getElementById('list');
-  const nameElement = document.getElementById('inputName');
-  const commentElement = document.getElementById('inputComment');
+ 
 
   buttonElement.addEventListener("click", () => {
     nameElement.classList.remove("error");
