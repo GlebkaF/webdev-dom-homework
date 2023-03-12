@@ -10,17 +10,17 @@ const textareaElement = document.querySelector('.add-form-text');
 
 
 const myDate = new Date();
-let options = { 
-    year: "2-digit", 
-    month: "2-digit", 
-    day: "2-digit", 
-    timezone: "UTC",
-    hour: "numeric", 
-    minute: "2-digit" 
-}; 
+const options = {
+  year: "2-digit",
+  month: "2-digit",
+  day: "2-digit",
+  timezone: "UTC",
+  hour: "numeric",
+  minute: "2-digit"
+};
 
-options.hour = "2-digit"; 
-let shortStyleRu = myDate.toLocaleDateString("ru-Ru", options).split(', ').join(' '); 
+options.hour = "2-digit";
+const date = myDate.toLocaleDateString("ru-Ru", options).split(', ').join(' ');
 
 // buttonElement.disabled = true;
 // inputNameElement.oninput = () => {
@@ -42,18 +42,20 @@ const comments = [
     date: '12.02.22 12:18',
     comment: 'Это будет первый комментарий на этой странице',
     likesCounter: 3,
+    isLike: false,
   },
   {
     name: 'Варвара Н.',
     date: '13.02.22 19:22',
     comment: 'Мне нравится как оформлена эта страница! ❤',
     likesCounter: 75,
+    isLike: true,
   },
 ];
 
 const renderComments = () => {
-const commentHtml = comments.map((comment, index) => {
-return `<li class="comment">
+  const commentHtml = comments.map((comment, index) => {
+    return `<li class="comment">
 <div class="comment-header">
   <div>${comment.name}</div>
   <div>${comment.date}</div>
@@ -66,81 +68,71 @@ return `<li class="comment">
 <div class="comment-footer">
   <div class="likes">
     <span class="likes-counter">${comment.likesCounter}</span>
-    <button class="like-button -active-like" data-index='${index}'></button>
+    <button class="${comments[index].isLike ? "like-button -active-like" : "like-button"}" data-index='${index}'></button>
   </div>
 </div>
 </li>`
-}).join('');
+  }).join('');
 
-listElement.innerHTML = commentHtml;
+  listElement.innerHTML = commentHtml;
 
-initChangeLikeButtonListeners();
+  initChangeLikeButtonListeners();
 }
 
 
 const initChangeLikeButtonListeners = () => {
   const likeButtonElements = document.querySelectorAll('.like-button');
-//console.log(likeButtonElements)
+  //console.log(likeButtonElements)
 
   for (const likeButtonElement of likeButtonElements) {
     likeButtonElement.addEventListener('click', () => {
       const index = likeButtonElement.dataset.index;
 
-   // console.log(likeButtonElement);
+      // console.log(likeButtonElement);
 
-      if(likeButtonElement.classList.contains('-active-like')) {
+      if (comments[index].isLike === false) {
         comments[index].likesCounter += 1;
-        likeButtonElement.classList.remove('-active-like');
-        
+        comments[index].isLike = true;
+
+
       } else {
         comments[index].likesCounter -= 1;
-        likeButtonElement.classList.add('-active-like');
+        comments[index].isLike = false;
       }
 
       renderComments();
-    })    
+    })
   }
 };
 
 renderComments();
 
 buttonElement.addEventListener('click', () => {
-    inputNameElement.classList.remove('error');
-    textareaElement.classList.remove('error')
-  if(inputNameElement.value === '' || textareaElement.value === '') {
+  inputNameElement.classList.remove('error');
+  textareaElement.classList.remove('error')
+  if (inputNameElement.value === '' || textareaElement.value === '') {
     inputNameElement.classList.add('error');
     textareaElement.classList.add('error');
     return;
-  }
-  
-    const oldListHtml = listElement.innerHTML;
-    listElement.innerHTML = oldListHtml + 
-    `<ul class="comments" id="comments">
-    <li class="comment">
-    <div class="comment-header">
-      <div>${inputNameElement.value}</div>
-      <div>${shortStyleRu}</div>
-    </div>
-    <div class="comment-body">
-      <div class="comment-text">
-      ${textareaElement.value}
-      </div>
-    </div>
-    <div class="comment-footer">
-      <div class="likes">
-        <span class="likes-counter">0</span>
-        <button class="like-button"></button>
-      </div>
-    </div>
-    </li>`;
+  };
 
-    inputNameElement.value = '';
-    textareaElement.value = '';
+  comments.push({
+    name: inputNameElement.value,
+    date: date,
+    comment: textareaElement.value,
+    likesCounter: 0,
+    isLike: false,
+  })
 
-  
+  renderComments();
 
-    // inputNameElement.disabled = true;
-    // textareaElement.disabled = true;
+  inputNameElement.value = '';
+  textareaElement.value = '';
+
+
+
+  // inputNameElement.disabled = true;
+  // textareaElement.disabled = true;
 
 });
 
