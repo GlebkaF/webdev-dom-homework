@@ -1,52 +1,14 @@
 <!DOCTYPE html>
 <html>
-
-
-<!-- Не повезло будущему поколению - все нормальные логины уже заняты. -->
-
-
 <head>
   <title>Проект "Комменты"</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
 
 <body>
   <div class="container">
     <ul class="comments" id="comments">
-      <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>
+     <!-- Отрисовывается из массива JS -->
     </ul>
     <div class="add-form" id="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="input-name" />
@@ -58,89 +20,6 @@
     </div>
   </div>
 </body>
-
-<script>
-  const addForm = document.getElementById('add-form');                    // Форма
-  const commentsList = document.getElementById('comments');               // Комментарии
-  const inputName = document.getElementById('input-name');                // Поле ввода имя
-  const inputComment = document.getElementById('input-comment');          // Поле ввода комментарий
-  const buttonAddComment = document.getElementById('button-add-comment'); // Кнопка добавления комментария
-
-  // Тренировался с событием input
-  // inputName.addEventListener('input', () => { buttonAddComment.disabled = false });
-
-  buttonAddComment.addEventListener('click', () => {
-    const currentCommentsList = commentsList.innerHTML;
-    const currentDate = new Date;
-    const dateFormat = {
-      year: '2-digit',
-      month: 'numeric',
-      day: 'numeric',
-    }
-    const timeFormat = {
-      hour: '2-digit',
-      minute: '2-digit',
-    }
-
-    // Таймаут красного фона на полях
-    function clearInputName() {
-      inputName.classList.remove('error__name')
-      inputName.placeholder = 'Введите ваше имя';
-    }
-    function clearInputComment() {
-      inputComment.classList.remove('error__name')
-      inputComment.placeholder = 'Введите ваш комментарий';
-    }
-
-
-    if (inputName.value === '') {
-      inputName.classList.add('error__name');
-      inputName.placeholder = 'Поле не может быть пустым!';
-      inputName.value = '';
-      inputComment.value = '';
-      setTimeout(clearInputName, 1500);
-
-    } else if (inputComment.value === '' || inputComment.value === '\n') {
-      inputComment.classList.add('error__name');
-      inputComment.placeholder = 'Поле не может быть пустым!';
-      inputComment.value = '';
-      setTimeout(clearInputComment, 1500);
-
-    } else {
-      commentsList.innerHTML = currentCommentsList + `<li class="comment">
-      <div class="comment-header">
-        <div>${inputName.value}</div>
-        <div>
-          ${currentDate.toLocaleDateString('ru-RU', dateFormat) +
-        ' ' + currentDate.toLocaleTimeString('ru-RU', timeFormat)}
-        </div >
-      </div >
-      <div class="comment-body">
-        <div class="comment-text">
-          ${inputComment.value}
-        </div>
-      </div>
-      <div class="comment-footer">
-        <div class="likes">
-          <span class="likes-counter">0</span>
-          <button class="like-button"></button>
-        </div>
-      </div>
-    </li >`;
-      inputName.value = '';
-      inputComment.value = '';
-    }
-
-  })
-
-  // Клик на Enter
-  addForm.addEventListener('keyup', () => {
-    if (event.code == 'Enter') buttonAddComment.click();
-  });
-
-  // Интересует вопрос как можно удалить последний комментарий...
-
-  console.log("It works!");
+<script src="js/script.js">
 </script>
-
 </html>
