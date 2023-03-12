@@ -8,6 +8,8 @@ const commentsListArray = [
         text: 'Это будет первый комментарий на этой странице',
         likeCount: 3,
         liked: false,
+        isEdit: false,
+        editButtonText: ['Редактировать', 'Сохранить'],
     },
     {
         name: 'Варвара Н.',
@@ -15,6 +17,8 @@ const commentsListArray = [
         text: 'Мне нравится как оформлена эта страница! ❤',
         likeCount: 75,
         liked: true,
+        isEdit: false,
+        editButtonText: ['Редактировать', 'Сохранить'],
     },
 ];
 
@@ -34,10 +38,11 @@ function renderComments() {
         </div >
         <div class="comment-body">
         <div class="comment-text">
-            ${comment.text}
+            ${comment.isEdit ? `<textarea type="textarea" class="add-form-text" rows="4" cols="49">${comment.text}</textarea>` : comment.text}
         </div>
         </div>
         <div class="comment-footer">
+        <button class="edit-button">${comment.isEdit ? comment.editButtonText[1] : comment.editButtonText[0]} </button>
         <div class="likes">
             <span class="likes-counter">${comment.likeCount}</span>
             <button data-index="${index}"  class="${comment.liked ? 'like-button -active-like' : 'like-button'}"></button>
@@ -47,6 +52,7 @@ function renderComments() {
     }, '');
 
     addEventLike(); //кнопки лайк
+    addEventEdit(); //редактирование
 }
 renderComments();
 
@@ -71,10 +77,34 @@ function addEventLike() {
     }
 }
 
+// Событие на кнопку Редактировать
+function addEventEdit() {
+    const editButtons = commentsList.querySelectorAll('.edit-button');
+    for(let button of editButtons) {
+        button.addEventListener('click', (e) => {
+            // Индекс беру из кнопки лайка-комментария
+            // хотя лучше было бы прописать его в родительском li
+            const index = button.parentNode.querySelector('.like-button').dataset.index;
+            if (commentsListArray[index].isEdit === false){
+            commentsListArray[index].isEdit = true;
+            } else {
+                // Нахожу ближайшую textarea
+                let currentTextarea = e.currentTarget.closest('.comment').querySelector('textarea');
+                if (currentTextarea.value !== '') {
+                commentsListArray[index].isEdit = false;
+                commentsListArray[index].text = currentTextarea.value;
+                }
+            }
+            ;
+            renderComments();
+        })
+    }
+}
+
 // Форма и её инпуты
 const addForm = document.querySelector('div.add-form');
 const inputName = document.querySelector('input.add-form-name');
-const inputComment = document.querySelector('textarea.add-form-text');
+const inputComment = document.querySelector('div.add-form > textarea.add-form-text');
 const buttonAddComment = document.querySelector('button.add-form-button');
 
 // Событие на кнопку добавить
@@ -126,6 +156,8 @@ function addComment() {
             text: inputComment.value,
             likeCount: 0,
             liked: false,
+            isEdit: false,
+            editButtonText: ['Редактировать', 'Сохранить'],
         })
         inputName.value = '';
         inputComment.value = '';
