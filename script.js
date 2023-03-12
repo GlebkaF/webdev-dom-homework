@@ -4,7 +4,6 @@ const commentsElement = document.getElementById("comments-input");
 const listElement = document.getElementById("list");
 const commentListElement = document.getElementById("comment-list");
 
-
 const comments = [
   {
     name: 'Глеб Фокин',
