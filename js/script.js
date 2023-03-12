@@ -51,54 +51,58 @@ function renderComments() {
     </li >`
     }, '');
 
-    addEventLike(); //кнопки лайк
-    addEventEdit(); //редактирование
+    addListenerOnComments();
 }
+
 renderComments();
 
-// Событие на лайк
-function addEventLike() {
-    const likeButtons = commentsList.querySelectorAll('button.like-button');
-    for(let button of likeButtons){
-
-        button.addEventListener('click', () => {
-            const index = button.dataset.index;
-
-            if (commentsListArray[index].liked === false) {
-                commentsListArray[index].liked = true;
-                commentsListArray[index].likeCount +=1;
-            } else {
-                commentsListArray[index].liked = false;
-                commentsListArray[index].likeCount -=1;
-            }
-
-            renderComments();
+// Попробуем делегировать события и повешать один обработчик
+// На комментарий
+function addListenerOnComments() {
+    const comments = commentsList.querySelectorAll('li.comment');
+    let i = 0;
+    for(const comment of comments){        
+        comment.dataset.index = i;
+        const index = i;
+        i++;
+        comment.addEventListener('click', (e) =>{
+            const likeButton = e.currentTarget.querySelector('button.like-button');
+            const editButton = e.currentTarget.querySelector('.edit-button');('button.like-button');
+            if (e.target === likeButton) like(index);
+            if (e.target === editButton) edit(index);
+            
         })
     }
 }
-
-// Событие на кнопку Редактировать
-function addEventEdit() {
-    const editButtons = commentsList.querySelectorAll('.edit-button');
-    for(let button of editButtons) {
-        button.addEventListener('click', (e) => {
-            // Индекс беру из кнопки лайка-комментария
-            // хотя лучше было бы прописать его в родительском li
-            const index = button.parentNode.querySelector('.like-button').dataset.index;
-            if (commentsListArray[index].isEdit === false){
-            commentsListArray[index].isEdit = true;
-            } else {
-                // Нахожу ближайшую textarea
-                let currentTextarea = e.currentTarget.closest('.comment').querySelector('textarea');
-                if (currentTextarea.value !== '') {
-                commentsListArray[index].isEdit = false;
-                commentsListArray[index].text = currentTextarea.value;
-                }
-            }
-            ;
-            renderComments();
-        })
+// Функция лайк
+function like(index) {
+    if (commentsListArray[index].liked === false) {
+        commentsListArray[index].liked = true;
+        commentsListArray[index].likeCount +=1;
+    } else {
+        commentsListArray[index].liked = false;
+        commentsListArray[index].likeCount -=1;
     }
+
+    renderComments();
+}
+
+// Функциия редактировать
+function edit(index) {
+
+    if (commentsListArray[index].isEdit === false){
+    commentsListArray[index].isEdit = true;
+    } else {
+        // Нахожу textarea
+        let currentTextarea = commentsList.querySelectorAll('.comment')[index].querySelector('textarea');
+
+        if (currentTextarea.value !== '') {
+        commentsListArray[index].isEdit = false;
+        commentsListArray[index].text = currentTextarea.value;
+        }
+    }
+
+    renderComments();
 }
 
 // Форма и её инпуты
@@ -170,4 +174,4 @@ addForm.addEventListener('keyup', (e) => {
 if (e.code == 'Enter') addComment();
 });
 
-// console.log("It works! К моему большому удивлению!");
+console.log("It works! К моему большому удивлению!");
