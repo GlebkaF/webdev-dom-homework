@@ -8,6 +8,7 @@ const textareaElement = document.querySelector('.add-form-text');
 // console.log(document.querySelector('.add-form-text'));
 // console.log(listElement.innerHTML);
 
+
 const myDate = new Date();
 let options = { 
     year: "2-digit", 
@@ -33,6 +34,75 @@ let shortStyleRu = myDate.toLocaleDateString("ru-Ru", options).split(', ').join(
 // textareaElement.oninput = () => {
 //     textareaElement.value === '' ? buttonElement.disabled = true : buttonElement.disabled = false;
 // };
+
+
+const comments = [
+  {
+    name: 'Глеб Фокин',
+    date: '12.02.22 12:18',
+    comment: 'Это будет первый комментарий на этой странице',
+    likesCounter: 3,
+  },
+  {
+    name: 'Варвара Н.',
+    date: '13.02.22 19:22',
+    comment: 'Мне нравится как оформлена эта страница! ❤',
+    likesCounter: 75,
+  },
+];
+
+const renderComments = () => {
+const commentHtml = comments.map((comment, index) => {
+return `<li class="comment">
+<div class="comment-header">
+  <div>${comment.name}</div>
+  <div>${comment.date}</div>
+</div>
+<div class="comment-body">
+  <div class="comment-text">
+    ${comment.comment}
+  </div>
+</div>
+<div class="comment-footer">
+  <div class="likes">
+    <span class="likes-counter">${comment.likesCounter}</span>
+    <button class="like-button -active-like" data-index='${index}'></button>
+  </div>
+</div>
+</li>`
+}).join('');
+
+listElement.innerHTML = commentHtml;
+
+initChangeLikeButtonListeners();
+}
+
+
+const initChangeLikeButtonListeners = () => {
+  const likeButtonElements = document.querySelectorAll('.like-button');
+//console.log(likeButtonElements)
+
+  for (const likeButtonElement of likeButtonElements) {
+    likeButtonElement.addEventListener('click', () => {
+      const index = likeButtonElement.dataset.index;
+
+   // console.log(likeButtonElement);
+
+      if(likeButtonElement.classList.contains('-active-like')) {
+        comments[index].likesCounter += 1;
+        likeButtonElement.classList.remove('-active-like');
+        
+      } else {
+        comments[index].likesCounter -= 1;
+        likeButtonElement.classList.add('-active-like');
+      }
+
+      renderComments();
+    })    
+  }
+};
+
+renderComments();
 
 buttonElement.addEventListener('click', () => {
     inputNameElement.classList.remove('error');
@@ -66,6 +136,8 @@ buttonElement.addEventListener('click', () => {
 
     inputNameElement.value = '';
     textareaElement.value = '';
+
+  
 
     // inputNameElement.disabled = true;
     // textareaElement.disabled = true;
