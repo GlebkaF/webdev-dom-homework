@@ -68,12 +68,21 @@ function addListenerOnComments() {
         i++;
         comment.addEventListener('click', (e) =>{
             const likeButton = e.currentTarget.querySelector('button.like-button');
-            const editButton = e.currentTarget.querySelector('.edit-button');('button.like-button');
+            const editButton = e.currentTarget.querySelector('.edit-button');
+            const deleteButton = e.currentTarget.querySelector('.delete-button');
+
             if (e.target === likeButton) like(index);
             if (e.target === editButton) edit(index);
+            if (e.target === deleteButton) deleteComment(index);
+
             
         })
     }
+}
+// Функция удалить комментарий
+function deleteComment(index) {
+    commentsListArray.splice(index, 1);
+    renderComments();
 }
 // Функция лайк
 function like(index) {
