@@ -71,13 +71,17 @@ function addListenerOnComments() {
             const editButton = e.currentTarget.querySelector('.edit-button');
             const deleteButton = e.currentTarget.querySelector('.delete-button');
 
-            if (e.target === likeButton) like(index);
-            if (e.target === editButton) edit(index);
-            if (e.target === deleteButton) deleteComment(index);
+            if (e.target === likeButton) {like(index); return;}
+            if (e.target === editButton) {edit(index); return;}
+            if (e.target === deleteButton) {deleteComment(index); return}
 
-            
+            replyComment(index);
         })
     }
+}
+// Функция ответить на комментарий
+function replyComment(index) {
+    renderComments();
 }
 // Функция удалить комментарий
 function deleteComment(index) {
