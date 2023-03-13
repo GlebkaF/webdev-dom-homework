@@ -66,6 +66,8 @@ const delValue = () => {
 };
 
 
+
+
 // Добавление лайка
 
 const addLike =() => {
@@ -89,9 +91,10 @@ const addLike =() => {
   }
 }
 
+const commentsList = document.querySelector('ul.comments'); 
 
+// Редактирование  
 
-// Редактирование  (функцию так и не смог дописать,не хватает знаний,редактирование включается,а сохранить не могу)
 const editText = ( ) => {
   const editButtons = listElement.querySelectorAll('.edit_comment');
   for(let editButton of  editButtons){
@@ -103,10 +106,14 @@ const editText = ( ) => {
           if (comments[index].isEdit === false) {
             comments[index].isEdit = true;
 
-          } else if (comments[index].isEdit === true){
+          } else {
+          let currentTextarea = commentsList.querySelectorAll('.comment') [index].querySelector('textarea');
+          
+
+          if (currentTextarea.value !== '') {
             comments[index].isEdit = false;
-
-
+            comments[index].comment = currentTextarea.value;
+            }
           }
 
           renderComments();
