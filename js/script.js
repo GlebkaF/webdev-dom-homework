@@ -42,6 +42,7 @@ function renderComments() {
         </div>
         </div>
         <div class="comment-footer">
+        <button class="delete-button">Удалить</button>
         <button class="edit-button">${comment.isEdit ? comment.editButtonText[1] : comment.editButtonText[0]} </button>
         <div class="likes">
             <span class="likes-counter">${comment.likeCount}</span>
