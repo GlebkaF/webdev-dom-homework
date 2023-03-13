@@ -76,18 +76,51 @@
           date: "12.02.22 12:18",
           textOfComment: "Это будет первый комментарий на этой странице",
           likes: 5,
+          liked: false,
         },
         {
           name: "Варвара Н.",
           date: "13.02.22 19:22",
           textOfComment: "Мне нравится как оформлена эта страница! ❤",
           likes: 72,
+          liked: true,
         },
       ];
 
+      const clickLikeButton = () => {
+        let likeButton = document.querySelectorAll(".like-button");
+
+        for (let i = 0; i < likeButton.length; i++) {
+          likeButton[i].onclick = function () {
+            if (allComments[i].liked === false) {
+              allComments[i].liked = true;
+              allComments[i].likes += 1;
+            } else if (allComments[i].liked === true) {
+              allComments[i].liked = false;
+              allComments[i].likes -= 1;
+            }
+            renderComments();
+          };
+        }
+      };
+
+      const initDeleteButtonsListeners = () => {
+        const deleteButtonsElements =
+          document.querySelectorAll(".delete-button");
+
+        for (const deleteButtonElement of deleteButtonsElements) {
+          deleteButtonElement.addEventListener("click", () => {
+            const index = deleteButtonElement.dataset.index;
+            console.log(index);
+            allComments.splice(index, 1);
+            renderComments();
+          });
+        }
+      };
+
       const renderComments = () => {
         const commentsHtml = allComments
-          .map((comment) => {
+          .map((comment, index) => {
             return `<li class="comment">
           <div class="comment-header">
             <div>${comment.name}</div>
@@ -99,9 +132,14 @@
             </div>
           </div>
           <div class="comment-footer">
+            <div class="but-del">
+              <button data-index="${index}" class='delete-button'>Удалить</button>
+            </div>
             <div class="likes">
               <span class="likes-counter">${comment.likes}</span>
-              <button class="like-button"></button>
+              <button class="${
+                comment.liked ? "like-button -active-like" : "like-button"
+              }"></button>
             </div>
           </div>
         </li>`;
@@ -109,6 +147,8 @@
           .join("");
 
         listOfComments.innerHTML = commentsHtml;
+        clickLikeButton();
+        initDeleteButtonsListeners();
       };
 
       renderComments();
@@ -160,30 +200,35 @@
           date: newDate,
           textOfComment: commentAreaElement.value,
           likes: 0,
+          liked: false,
         });
 
         renderComments();
 
-        let likeButton = document.querySelectorAll(".like-button");
-        let likesCounter = document.querySelectorAll(".likes-counter");
-        for (let i = 0; i < likeButton.length; i++) {
-          for (let i = 0; i < likesCounter.length; i++) {
-            likeButton[i].onclick = function () {
-              if (likeButton[i].classList.contains("-active-like")) {
-                likesCounter[i].textContent--;
-              } else {
-                likesCounter[i].textContent++;
-              }
-              likeButton[i].classList.toggle("-active-like");
-            };
-          }
-        }
+        // Очищаем поля
+        nameInputElement.value = "";
+        commentAreaElement.value = "";
+
+        // let likeButton = document.querySelectorAll(".like-button");
+        // let likesCounter = document.querySelectorAll(".likes-counter");
+        // for (let i = 0; i < likeButton.length; i++) {
+        //   for (let i = 0; i < likesCounter.length; i++) {
+        //     likeButton[i].onclick = function () {
+        //       if (likeButton[i].classList.contains("-active-like")) {
+        //         likesCounter[i].textContent--;
+        //       } else {
+        //         likesCounter[i].textContent++;
+        //       }
+        //       likeButton[i].classList.toggle("-active-like");
+        //     };
+        //   }
+        // }
       });
     </script>
 
     <!-- добавление лайков -->
 
-    <script>
+    <!-- <script>
       let likeButton = document.querySelectorAll(".like-button");
       let likesCounter = document.querySelectorAll(".likes-counter");
       for (let i = 0; i < likeButton.length; i++) {
@@ -198,6 +243,6 @@
           };
         }
       }
-    </script>
+    </script> -->
   </body>
 </html>
