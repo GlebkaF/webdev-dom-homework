@@ -1,12 +1,11 @@
 const buttonElement = document.querySelector('button.add-form-button');
-// console.log(document.querySelector('button.add-form-button'))
+
 const listElement = document.querySelector('.comments');
-// console.log(document.querySelector('.comments'));
+
 const inputNameElement = document.querySelector('.add-form-name');
-// console.log(document.querySelector('.add-form-name'));
+
 const textareaElement = document.querySelector('.add-form-text');
-// console.log(document.querySelector('.add-form-text'));
-// console.log(listElement.innerHTML);
+
 
 
 const myDate = new Date();
@@ -22,18 +21,19 @@ const options = {
 options.hour = "2-digit";
 const date = myDate.toLocaleDateString("ru-Ru", options).split(', ').join(' ');
 
-// buttonElement.disabled = true;
-// inputNameElement.oninput = () => {
-// if(inputNameElement.value === ''){
-//     buttonElement.disabled = true;
-// } else {
-//     buttonElement.disabled = false;
-// }
-// };
+//выключение кнопки
 
-// textareaElement.oninput = () => {
-//     textareaElement.value === '' ? buttonElement.disabled = true : buttonElement.disabled = false;
+// buttonElement.disabled = true;
+// const initDisabledButtonElement = () => {
+//   document.querySelectorAll(".add-form-text,.add-form-name").forEach((input)=> {
+// input.addEventListener("input", () => {
+//     if(!inputNameElement.value || !textareaElement.value) {
+//          buttonElement.disabled = true;
+//     } else buttonElement.disabled = false;
+//    });
+//   });
 // };
+// initDisabledButtonElement();
 
 
 const comments = [
@@ -68,7 +68,7 @@ const renderComments = () => {
 <div class="comment-footer">
   <div class="likes">
     <span class="likes-counter">${comment.likesCounter}</span>
-    <button class="${comments[index].isLike ? "like-button -active-like" : "like-button"}" data-index='${index}'></button>
+    <button class="${comment.isLike ? "like-button -active-like" : "like-button"}" data-index='${index}'></button>
   </div>
 </div>
 </li>`
@@ -110,7 +110,7 @@ renderComments();
 buttonElement.addEventListener('click', () => {
   inputNameElement.classList.remove('error');
   textareaElement.classList.remove('error')
-  if (inputNameElement.value === '' || textareaElement.value === '') {
+  if (!inputNameElement.value|| !textareaElement.value) {
     inputNameElement.classList.add('error');
     textareaElement.classList.add('error');
     return;
