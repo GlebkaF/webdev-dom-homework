@@ -33,7 +33,7 @@ const comments = [
     likesCount: 75,
     isLiked: false,
     isEdit: false,
-    editButtonText: ['Редактировать', 'Сохранить'],
+   
   },
   {
     name: "Варвара Н.",
@@ -42,7 +42,7 @@ const comments = [
     likesCount: 12,
     isLiked: true,
     isEdit: false,
-    editButtonText: ['Редактировать', 'Сохранить'],
+   
    
   },
 
@@ -107,19 +107,20 @@ const editText = (event ) => {
           const index = editButton.dataset.index;
 
             if (comments[index].isEdit === false) {
-            comments[index].isEdit = true;
+                comments[index].isEdit = true;    
           } else {
 
           let currentTextarea = document.querySelectorAll('.comment') [index].querySelector('textarea');
+
             comments[index].isEdit = false;
             comments[index].comment = safeInputText(currentTextarea.value);
-            
           }
-         
           renderComments();
       })
-  }
+  } 
 }
+
+
 
 // Добавление комментария
 
@@ -154,7 +155,7 @@ const renderComments = () => {
       <div>${user.date}</div>
     </div>
     <div class="comment-body" >
-    ${user.isEdit ? `<textarea class ="aria-text" >${user.comment}</textarea>` :`<div class ="comment-text"> ${user.comment} </div>`}
+    ${user.isEdit ? `<textarea class ="aria-text"  onclick="event.stopPropagation()">${user.comment}</textarea>` :`<div class ="comment-text"> ${user.comment} </div>`}
     </div>
     <div class="comment-footer">
       <div class="likes">
@@ -171,8 +172,9 @@ const renderComments = () => {
   
   delValue() // Отчиска формы
   addLike()  // лайки
-  editText()
-  reComment()
+  editText() //Изменеие текста
+  reComment() // Комментирование поста
+
 
  
 }
