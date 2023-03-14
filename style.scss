@@ -4,10 +4,11 @@
 }
 
 :root {
+  --background__quote: #ffffff;
   --button-color: #bcec30;
   --background__gradient-color: radial-gradient(75.42% 75.42% at 50% 42.37%,
-  rgba(53, 53, 53, 0) 22.92%,
-  #7334ea 100%);
+      rgba(53, 53, 53, 0) 22.92%,
+      #7334ea 100%);
   --filter__shadow-color: drop-shadow(0px 20px 67px rgba(0, 0, 0, 0.08));
 }
 
@@ -44,6 +45,18 @@
     display: flex;
     justify-content: space-between;
     font-size: 16px;
+  }
+
+  &__quote {
+    display: flex;
+    flex-direction: column;
+    font-size: 16px;
+    font-family: Helvetica;
+    gap: 12px;
+    color: #202020;
+    background-color: var(--background__quote);
+    padding: 10px 20px;
+    margin-top: 12px;
   }
 
   &__body {
@@ -105,6 +118,24 @@
     padding: 11px 22px;
   }
 
+  &__quote {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 12px;
+  }
+
+  &__quoteContent {
+    display: flex;
+    flex-direction: column;
+    font-size: 16px;
+    font-family: Helvetica;
+    gap: 12px;
+    color: #202020;
+    background-color: var(--background__quote);
+    padding: 10px 20px;
+  }
+
   &__comment {
     font-size: 16px;
     font-family: Helvetica;
@@ -127,6 +158,20 @@
       border: none;
       border-radius: 18px;
       cursor: pointer;
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+
+    &-quote {
+      font-size: 12px;
+      padding: 5px 10px;
+      background: var(--button-color);
+      border: none;
+      border-radius: 18px;
+      cursor: pointer;
+
       &:hover {
         opacity: 0.9;
       }
@@ -178,4 +223,8 @@
 
 .-background-error {
   background-color: pink;
+}
+
+.-display-none {
+  display: none;
 }

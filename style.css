@@ -4,10 +4,11 @@
 }
 
 :root {
+  --background__quote: #ffffff;
   --button-color: #bcec30;
   --background__gradient-color: radial-gradient(75.42% 75.42% at 50% 42.37%,
-  rgba(53, 53, 53, 0) 22.92%,
-  #7334ea 100%);
+      rgba(53, 53, 53, 0) 22.92%,
+      #7334ea 100%);
   --filter__shadow-color: drop-shadow(0px 20px 67px rgba(0, 0, 0, 0.08));
 }
 
@@ -43,6 +44,17 @@
   display: flex;
   justify-content: space-between;
   font-size: 16px;
+}
+.comments__quote {
+  display: flex;
+  flex-direction: column;
+  font-size: 16px;
+  font-family: Helvetica;
+  gap: 12px;
+  color: #202020;
+  background-color: var(--background__quote);
+  padding: 10px 20px;
+  margin-top: 12px;
 }
 .comments__body {
   margin-top: 32px;
@@ -96,6 +108,22 @@
   width: 300px;
   padding: 11px 22px;
 }
+.form__quote {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 12px;
+}
+.form__quoteContent {
+  display: flex;
+  flex-direction: column;
+  font-size: 16px;
+  font-family: Helvetica;
+  gap: 12px;
+  color: #202020;
+  background-color: var(--background__quote);
+  padding: 10px 20px;
+}
 .form__comment {
   font-size: 16px;
   font-family: Helvetica;
@@ -119,6 +147,17 @@
   cursor: pointer;
 }
 .form__button-write:hover {
+  opacity: 0.9;
+}
+.form__button-quote {
+  font-size: 12px;
+  padding: 5px 10px;
+  background: var(--button-color);
+  border: none;
+  border-radius: 18px;
+  cursor: pointer;
+}
+.form__button-quote:hover {
   opacity: 0.9;
 }
 
@@ -164,4 +203,8 @@
 
 .-background-error {
   background-color: pink;
+}
+
+.-display-none {
+  display: none;
 }/*# sourceMappingURL=style.css.map */
