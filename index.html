@@ -9,40 +9,8 @@
 <body>
   <div class="container">
     <ul id="list" class="comments">
-      <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes" data-counter="3">
-            <span class="likes-counter">3</span>
-            <button data-index="3" id="like-button" class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li id="list" class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button data-index="75" id="like-button" class="like-button"></button>
-          </div>
-        </div>
-      </li>
+<!--Список рендерится из JS-->
+    
     </ul>
     <div class="add-form">
       <input type="text" id="name-input" class="add-form-name" placeholder="Введите ваше имя" />
@@ -68,115 +36,129 @@
   const studentElements = document.querySelectorAll(".comment");
   const likeButton = document.querySelectorAll(".like-button");
 
+  const options = {
+    year: '2-digit',
+    month: '2-digit',
+    day: '2-digit',
+    timezone: 'UTC',
+    hour: '2-digit',
+    minute: '2-digit',
+
+  };
 
 
- 
+  let nowDate = new Date().toLocaleString("ru-RU", options).replace(",", "");
+
+
   const comments = [
     {
-      name:"Глеб Фокин",
+      name: "Глеб Фокин",
       date: "12.02.22 12:18",
-      text: "Это будет первый комментарий на этой странице", 
-      likersCount: 3,
-      liked: false,
+      comment: "Это будет первый комментарий на этой странице",
+      likesCount: 3,
+      isLiked: false,
       
+
     },
     {
-      name:"Варвара Н.",
-      date: "13.02.22. 19:22",
-      text: "Мне нравится как оформлена эта страница!", 
-      likersCount: 75,
-      liked: true,
+      name: "Варвара Н.",
+      date: "13.02.22 19:22",
+      comment: "Мне нравится как оформлена эта страница!",
+      likesCount: 75,
+      isLiked: true,
       
     }
   ];
 
-  // Добавление лайка
+// Добавление лайка
 
-const addLike =() => {
-  const likeButtons = listElement.querySelectorAll('.like-button');
-  for(let likeButton of likeButtons){
+const addLike = () => {
+    const likeButtons = document.querySelectorAll('.like-button');
+    for (let likeButton of likeButtons) {
 
-    likeButton.addEventListener('click', () => {
-          const index = likeButton.dataset.index;
+      likeButton.addEventListener('click', () => {
+        const index = likeButton.dataset.index;
 
-          if (comments[index].isLiked === false) {
-            comments[index].isLiked = true;
-            comments[index].likesCount +=1;
+        if (comments[index].isLiked === false) {
+          comments[index].isLiked = true;
+          comments[index].likesCount += 1;
 
-          } else if (comments[index].isLiked === true){
-            comments[index].isLiked = false;
-            comments[index].likesCount -=1;
-          }
+        } else if (comments[index].isLiked === true) {
+          comments[index].isLiked = false;
+          comments[index].likesCount -= 1;
+        }
 
-          renderComments();
+        renderComments();
       })
+    };
   }
-}
 
- 
+  const renderComments = () => {
+    const commentsHtml = comments.map((user, index) => {
+      return `<li id="list" class="comment">
+          <div class="comment-header">
+            <div>${user.name}</div>
+            <div>${user.date}</div>
+          </div>
+          <div class="comment-body"> 
+             <div class="comment-text">
+                ${user.comment}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${user.likesCount}</span>
+              <button data-index = "${index}"  class="${user.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
+            </div> 
+          </div>
+        </li>`;
+    }).join("");
+
+    listElement.innerHTML = commentsHtml;
+
+    addLike();
+  };
+  renderComments();
+
   
 
+
+
+
   buttonElement.addEventListener("click", () => {
+
     nameInputElement.classList.remove("error");
     commentInputElement.classList.remove("error");
 
     if (!nameInputElement.value || !commentInputElement.value) {
       nameInputElement.classList.add("error"); commentInputElement.classList.add("error");
       return;
-    }
 
-    let myDate = new Date();
-    let fullDate = "0" + (myDate.getDate()) + "." + "0" + (myDate.getMonth() + 1) + "." + myDate.getFullYear().toString().slice(-2) + " " + myDate.getHours() + ":" + myDate.getMinutes();
+    } 
+      comments.push({
+        name: nameInputElement.value,
+        date: nowDate,
+        comment: commentInputElement.value,
+        likesCount: 0,
+        isLiked: false,
+        
+      });
 
-    const oldListHtml = listElement.innerHTML;
-    listElement.innerHTML =
-      oldListHtml +
-      `<li class="comment">
-          <div class="comment-header">
-            <div>${nameInputElement.value}</div>
-            <div>${fullDate}</div>
-          </div>
-          <div class="comment-body">  <div class="comment-text">
-                ${commentInputElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes" >
-              <span class="likes-counter">0</span>
-              <button data-counter= "0" id="like-button" class="like-button"></button>
-            </div>
-          </div>
-        </li>`
-    initEventListeners();
+
+
+
+      const oldListHtml = listElement.innerHTML;
+
+
     
+    renderComments();
+   
+
   });
 
-  const renderComments =() => {
-    const userHtml = comments.map((user, index) => {
-      return `<li id="list" class="comment">
-          <div class="comment-header">
-            <div>${user.name}</div>
-            <div>${user.date}</div>
-          </div>
-          <div class="comment-body">  <div class="comment-text">
-                ${user.text}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">${user.likers}</span>
-              <button data-counter = '${index}' id="like-button" class=" ${user.liked ? "like-button -active-like" : "like-button"}"></button>
-            </div>
-          </div>
-        </li>`;
-    })
-    .join("");
-    
-    listElement.innerHTML = userHtml;
-    
-    
-  }
+
   renderComments();
+  addLike();
   // Код писать здесь
   console.log("It works!");
 </script>
