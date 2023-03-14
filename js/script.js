@@ -1,5 +1,22 @@
 'use strict';
 
+// - Работать, тунеядцы, солнце еще высоко.
+// - Это не солнце, это луна.
+// - А не колышет...
+
+// Не использовал в этом уроке метод .stopPropagation(),
+// здесь я делегировал события комментариев в один обработчик
+// и поэтому stopPropagation стал весьма неуместным. Но как им 
+// пользоваться я разобрался. 
+
+// Форма и её инпуты
+const addForm = document.querySelector('div.add-form');
+const inputName = document.querySelector('input.add-form-name');
+const inputComment = document.querySelector('div.add-form > textarea.add-form-text');
+const buttonAddComment = document.querySelector('button.add-form-button');
+// UL 
+const commentsList = document.querySelector('ul.comments');
+
 // Массив с данными о комментариях
 const commentsListArray = [
     {
@@ -22,9 +39,6 @@ const commentsListArray = [
     },
 ];
 
-// UL of comments
-const commentsList = document.querySelector('ul.comments'); 
-
 // Функция рисует HTML-разметку всех комментариев
 function renderComments() {
     commentsList.innerHTML = commentsListArray.reduce((result, comment, index) => {
@@ -38,7 +52,7 @@ function renderComments() {
         </div >
         <div class="comment-body">
         <div class="comment-text">
-            ${comment.isEdit ? `<textarea type="textarea" class="add-form-text" rows="4" cols="49">${comment.text}</textarea>` : comment.text}
+            ${comment.isEdit ? `<textarea type="textarea" class="add-form-text" rows="4" cols="49">${comment.text}</textarea>` : makeQuote(comment.text)}
         </div>
         </div>
         <div class="comment-footer">
@@ -62,40 +76,61 @@ renderComments();
 function addListenerOnComments() {
     const comments = commentsList.querySelectorAll('li.comment');
     let i = 0;
-    for(const comment of comments){        
+    for (const comment of comments) {
         comment.dataset.index = i;
         const index = i;
         i++;
-        comment.addEventListener('click', (e) =>{
+        comment.addEventListener('click', (e) => {
             const likeButton = e.currentTarget.querySelector('button.like-button');
             const editButton = e.currentTarget.querySelector('.edit-button');
             const deleteButton = e.currentTarget.querySelector('.delete-button');
+            const editTextarea = e.currentTarget.querySelector('textarea');
 
-            if (e.target === likeButton) {like(index); return;}
-            if (e.target === editButton) {edit(index); return;}
-            if (e.target === deleteButton) {deleteComment(index); return}
+            if (e.target === editTextarea) { return }
+            if (e.target === likeButton) { like(index); return; }
+            if (e.target === editButton) { edit(index); return; }
+            if (e.target === deleteButton) { deleteComment(index); return }
 
             replyComment(index);
         })
     }
 }
+
+// Функция делает цитаты
+function makeQuote(str) {
+    return str.replaceAll('QUOTE_BEGIN', '<blockquote class="blockquote">')
+        .replaceAll('QUOTE_END', '</blockquote>');
+}
+
+// Функция обезопасить пользовательский ввод
+function safeInput(str) {
+    return str.replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+}
+
 // Функция ответить на комментарий
 function replyComment(index) {
+    inputComment.value = 'QUOTE_BEGIN >' + commentsListArray[index].text +
+        '\n' + commentsListArray[index].name + '< QUOTE_END';
     renderComments();
 }
+
 // Функция удалить комментарий
 function deleteComment(index) {
     commentsListArray.splice(index, 1);
     renderComments();
 }
+
 // Функция лайк
 function like(index) {
     if (commentsListArray[index].liked === false) {
         commentsListArray[index].liked = true;
-        commentsListArray[index].likeCount +=1;
+        commentsListArray[index].likeCount += 1;
     } else {
         commentsListArray[index].liked = false;
-        commentsListArray[index].likeCount -=1;
+        commentsListArray[index].likeCount -= 1;
     }
 
     renderComments();
@@ -104,28 +139,27 @@ function like(index) {
 // Функциия редактировать
 function edit(index) {
 
-    if (commentsListArray[index].isEdit === false){
-    commentsListArray[index].isEdit = true;
+    if (commentsListArray[index].isEdit === false) {
+        commentsListArray[index].isEdit = true;
     } else {
         // Нахожу textarea
         let currentTextarea = commentsList.querySelectorAll('.comment')[index].querySelector('textarea');
 
         if (currentTextarea.value !== '') {
-        commentsListArray[index].isEdit = false;
-        commentsListArray[index].text = currentTextarea.value;
+            commentsListArray[index].isEdit = false;
+            commentsListArray[index].text = safeInput(currentTextarea.value);
         }
     }
 
     renderComments();
 }
 
-// Форма и её инпуты
-const addForm = document.querySelector('div.add-form');
-const inputName = document.querySelector('input.add-form-name');
-const inputComment = document.querySelector('div.add-form > textarea.add-form-text');
-const buttonAddComment = document.querySelector('button.add-form-button');
+// Добавить комментарий при нажатии Enter
+addForm.addEventListener('keyup', (e) => {
+    if (e.code == 'Enter') addComment();
+});
 
-// Событие на кнопку добавить
+// Событие на кнопку добавить комментарий
 buttonAddComment.addEventListener('click', addComment);
 
 // Функция добавляет комментарий
@@ -141,7 +175,7 @@ function addComment() {
         minute: '2-digit',
     }
     const currentDateString = currentDate.toLocaleDateString('ru-RU', dateFormat) +
-    ' ' + currentDate.toLocaleTimeString('ru-RU', timeFormat);
+        ' ' + currentDate.toLocaleTimeString('ru-RU', timeFormat);
 
     // Таймаут красного фона на полях
     function clearInputName() {
@@ -169,9 +203,9 @@ function addComment() {
 
     } else {
         commentsListArray.push({
-            name: inputName.value,
+            name: safeInput(inputName.value),
             date: currentDateString,
-            text: inputComment.value,
+            text: safeInput(inputComment.value),
             likeCount: 0,
             liked: false,
             isEdit: false,
@@ -182,10 +216,5 @@ function addComment() {
         renderComments(); // Заново отрисовываются все комментарии
     }
 }
-
-// Отправка комментария при нажатии Enter
-addForm.addEventListener('keyup', (e) => {
-if (e.code == 'Enter') addComment();
-});
 
 console.log("It works! К моему большому удивлению!");
