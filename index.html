@@ -57,10 +57,11 @@
 
   const commentsAnswer = () => {
     const commentsAnswer = document.querySelectorAll(".comment");
+    
     for (const commentAnswer of commentsAnswer) {
-      const index = commentAnswer.dataset.index;
       commentAnswer.addEventListener("click", () => {
-        commentText.value += commentAnswer.name;
+        const index = commentAnswer.dataset.index;
+        commentElement.value = commentsContainer[index].name + commentsContainer[index].commentText;
       });
   }
 }
