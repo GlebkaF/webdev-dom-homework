@@ -52,12 +52,10 @@ const initTouchComment = () => {
   for (const comment of touchComments) {
     comment.addEventListener("click", () => {
       const index = comment.dataset.index;
-      commentsElement.textContent = `>${comment.textContent}${comments[index].name},`
+      commentsElement.value = `>${comments[index].text}\n${comments[index].name},`
       renderComments();
     });
-
   }
-
 }
 
 
@@ -109,7 +107,9 @@ buttonElement.addEventListener("click", () => {
     liked: false
   });
   renderComments();
+  
   nameElement.value = '';
   commentsElement.value = '';
+  
 });
 
