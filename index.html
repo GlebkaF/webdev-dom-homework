@@ -55,11 +55,22 @@
   const commentElement = document.getElementById('inputComment');
   const likesContainerElement = document.getElementById('.likes-counter');
 
+  const commentsAnswer = () => {
+    const commentsAnswer = document.querySelectorAll(".comment");
+    for (const commentAnswer of commentsAnswer) {
+      const index = commentAnswer.dataset.index;
+      commentAnswer.addEventListener("click", () => {
+        commentText.value += commentAnswer.name;
+      });
+  }
+}
+
   const likesPlus = () => {
     const heartsElement = document.querySelectorAll(".like-button");
 
     for (const heartElement of heartsElement) {
-      heartElement.addEventListener("click", () => {
+      heartElement.addEventListener("click", (event) => {
+        event.stopPropagation();
       const index = heartElement.dataset.index;
           if (commentsContainer[index].isLiked === false) {
             commentsContainer[index].isLiked = true;
@@ -96,7 +107,7 @@
 
   const renderscommentsContainer = () => {
     const commentsContainerHtml = commentsContainer.map((commentUser, index) => {
-      return `<li class="comment">
+      return `<li data-index="${index}" class="comment">
           <div class="comment-header">
             <div>${commentUser.name}</div>
             <div>
@@ -111,13 +122,14 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${commentUser.commentLikes}</span>
-              <button data-index="${index}" class="${commentUser.isLiked} ? 'like-button -active-like' : 'like-button'"></button>
+              <button data-index="${index}" class="like-button"></button>
             </div>
           </div>
         </li>`;
     }).join('');
     listElement.innerHTML = commentsContainerHtml;
     likesPlus();
+   commentsAnswer();
   }
 
   renderscommentsContainer();
@@ -131,9 +143,17 @@
     }
 
     commentsContainer.push({
-      name: nameElement.value,
+      name: nameElement.value
+      .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       commentDate: myTime,
-      commentText: commentElement.value,
+      commentText: commentElement.value
+      .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       commentLikes: 0,
       isLiked: false,
     });
