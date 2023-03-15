@@ -42,20 +42,35 @@ const ButtonTouch = () => {
         comments[index].liked = false;
         comments[index].likeCount -= 1;
       }
+      console.log(likeButton);
       renderComments();
     })
   };
 }
+const initTouchComment = () => {
+  const touchComments = listElement.querySelectorAll(".comment-text");
+  for (const comment of touchComments) {
+    comment.addEventListener("click", () => {
+      const index = comment.dataset.index;
+      commentsElement.textContent = `>${comment.textContent}${comments[index].name},`
+      renderComments();
+    });
+
+  }
+
+}
+
+
 
 const renderComments = () => {
   const commentsHtml = comments.map((comment, index) => {
     return `<li class="comment" id = "comment-list" data-index="${index}">
     <div class="comment-header">
-      <div>${comment.name}</div>
+      <div data-index="${index}">${comment.name}</div>
       <div>${comment.date} </div>
     </div>
     <div class="comment-body">
-      <div class="comment-text">
+      <div class="comment-text"data-index = "${index}">
         ${comment.text} 
       </div>
     </div>
@@ -70,6 +85,7 @@ const renderComments = () => {
     .join('');
   listElement.innerHTML = commentsHtml;
   ButtonTouch();
+  initTouchComment();
 };
 renderComments();
 
@@ -86,9 +102,9 @@ buttonElement.addEventListener("click", () => {
     return;
   }
   comments.push({
-    name: nameElement.value,
+    name: nameElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
     date: `${myDate}`,
-    text: commentsElement.value,
+    text: commentsElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
     likeCount: 0,
     liked: false
   });
@@ -96,9 +112,4 @@ buttonElement.addEventListener("click", () => {
   nameElement.value = '';
   commentsElement.value = '';
 });
-
-
-
-
-
 
