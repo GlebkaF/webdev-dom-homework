@@ -61,7 +61,14 @@
     for (const heartElement of heartsElement) {
       heartElement.addEventListener("click", () => {
       const index = heartElement.dataset.index;
-      commentsContainer[index].commentLikes = commentsContainer[index].commentLikes + 1;
+          if (commentsContainer[index].isLiked === false) {
+            commentsContainer[index].isLiked = true;
+            commentsContainer[index].commentLikes += 1;
+          } else 
+            if (commentsContainer[index].isLiked === true) {
+            commentsContainer[index].isLiked = false;
+            commentsContainer[index].commentLikes -= 1;
+          }
       renderscommentsContainer();
       });
     }
@@ -76,12 +83,14 @@
       commentDate: "12.02.22 12:18",
       commentText: "Это будет первый комментарий на этой странице",
       commentLikes: 3,
+      isLiked: false,
     },
     {
       name: "Варвара Н.",
       commentDate: "13.02.22 19:22",
       commentText: "Мне нравится как оформлена эта страница! ❤",
       commentLikes: 75,
+      isLiked: false,
     }
   ];
 
@@ -102,7 +111,7 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${commentUser.commentLikes}</span>
-              <button data-index="${index}" class="like-button"></button>
+              <button data-index="${index}" class="${commentUser.isLiked} ? 'like-button -active-like' : 'like-button'"></button>
             </div>
           </div>
         </li>`;
@@ -126,8 +135,11 @@
       commentDate: myTime,
       commentText: commentElement.value,
       commentLikes: 0,
+      isLiked: false,
     });
-    renderscommentsContainer();
+      nameElement.value = '';
+      commentElement.value = '';
+      renderscommentsContainer();
   });
 
 </script>
