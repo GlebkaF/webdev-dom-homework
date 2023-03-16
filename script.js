@@ -77,7 +77,6 @@ function newComment() {
 
 function renderComment() {
     listElement.innerHTML = listObject.map((listObject, i) => {
-        let result = [];
         if (!listObject.quoteName) {
             result = `
             <li class="comments__list">
@@ -89,7 +88,7 @@ function renderComment() {
                     <p>${listObject.quoteName}</p>
                     <p>${listObject.quoteComment}</p>
                 </div>
-                <section data-comments__body="${i}" class="comments__body">
+                <section data-comments="${i}" class="comments__body">
                     <p>${listObject.comment}</p>
                 </section>
                 <div class="comments__footer">
@@ -111,7 +110,7 @@ function renderComment() {
                     <p>${listObject.quoteName}:</p>
                     <p>${listObject.quoteComment}</p>
                 </div>
-                <section data-comments__body="${i}" class="comments__body">
+                <section data-comments="${i}" class="comments__body">
                     <p>${listObject.comment}</p>
                 </section>
                 <div class="comments__footer">
@@ -168,7 +167,7 @@ function renderComment() {
 
     for (const commentQuoteElement of commentQuoteElements) {
         commentQuoteElement.addEventListener("click", () => {
-            const i = commentQuoteElement.dataset.comments__body;
+            const i = commentQuoteElement.dataset.comments;
             if (!listObject[i].textRedact) return;
             quoteNameElement.innerHTML = listObject[i].name;
             quoteBodyElement.innerHTML = listObject[i].comment;
