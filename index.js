@@ -37,52 +37,8 @@ const initDisabledButtonElement = () => {
     });
   });
 };
+
 initDisabledButtonElement();
-
-
-// const comments = [
-//   {
-//     name: 'Глеб Фокин',
-//     date: '12.02.22 12:18',
-//     comment: 'Это будет первый комментарий на этой странице',
-//     likesCounter: 3,
-//     isLike: false,
-//   },
-//   {
-//     name: 'Варвара Н.',
-//     date: '13.02.22 19:22',
-//     comment: 'Мне нравится как оформлена эта страница! ❤',
-//     likesCounter: 75,
-//     isLike: true,
-//   },
-// ];
-
-// const renderComments = () => {
-//   const commentHtml = comments.map((comment, index) => {
-//     return `<li class="comment">
-// <div class="comment-header">
-//   <div>${comment.name}</div>
-//   <div>${comment.date}</div>
-// </div>
-// <div class="comment-body">
-//   <div class="comment-text" data-index='${index}' data-name='${comment.name}' data-comment='${comment.comment}'>
-//     ${comment.comment}
-//   </div>
-// </div>
-// <div class="comment-footer">
-//   <div class="likes">
-//     <span class="likes-counter">${comment.likesCounter}</span>
-//     <button class="${comment.isLike ? "like-button -active-like" : "like-button"}" data-index='${index}'></button>
-//   </div>
-// </div>
-// </li>`
-//   }).join('');
-
-//   listElement.innerHTML = commentHtml;
-
-//   initChangeLikeButtonListeners();
-//   answerToComment();
-// }
 
 const comments = [
   {
@@ -107,24 +63,27 @@ const comments = [
 
 const renderComments = () => {
   const commentHtml = comments.map((comment, index) => {
-    return `<li class="comment">
-<div class="comment-header">
-  <div>${comment.name}</div>
-  <div>${comment.date}</div>
-</div>
-<div class="comment-body">
-
-${comments[index].isEdit ? `<textarea class= "edit-area-text">${comment.comment}</textarea>` : `<div class="comment-text" data-index='${index}' data-name='${comment.name}' data-comment='${comment.comment}'>${comment.comment}</div>`}
-  
-</div>
-<div class="comment-footer">
-  <div class="likes">
-    <span class="likes-counter">${comment.likesCounter}</span>
-    <button class="${comments[index].isLike ? "like-button -active-like" : "like-button"}" data-index='${index}'></button>
-    ${comments[index].isEdit ? `<button class="save-button button-comment" data-index='${index}'>Сохранить</button>` : `<button class="edit-button button-comment" data-index='${index}'>Редактировать</button>`}
-    <button class = "delete-button button-comment" data-index='${index}'>Удалить комментарий</button>
+    return `<li class="comment" data-name='${comment.name}' data-comment='${comment.comment}'>
+  <div class="comment-header">
+    <div>${comment.name}</div>
+    <div>${comment.date}</div>
   </div>
-</div>
+  <div class="comment-body">
+
+    ${comments[index].isEdit ? `<textarea class= "edit-area-text">${comment.comment}</textarea>` : `<div class="comment-text" data-index='${index}' data-name='${comment.name}' data-comment='${comment.comment}'>${comment.comment.replaceAll('Q_B', '<div class="quote">').replaceAll('Q_E', '</div>')}</div>`}
+  
+  </div>
+  <div class="comment-footer">
+   <div class="likes">
+    <span class="likes-counter">${comment.likesCounter}</span>
+
+    <button class="${comments[index].isLike ? "like-button -active-like" : "like-button"}" data-index='${index}'></button>
+
+    ${comments[index].isEdit ? `<button class="save-button button-comment" data-index='${index}'>Сохранить</button>` : `<button class="edit-button button-comment" data-index='${index}'>Редактировать</button>`}
+    
+    <button class = "delete-button button-comment" data-index='${index}'>Удалить комментарий</button>
+   </div>
+  </div>
 </li>`
   }).join('');
 
@@ -133,7 +92,8 @@ ${comments[index].isEdit ? `<textarea class= "edit-area-text">${comment.comment}
   initChangeLikeButtonListeners();
   initEditButtonListeners();
   deleteComment();
-  answerToComment();
+  //answerToComment(); ДЗ 2.11
+  answerQuoteToComment(); // ДЗ со звездочкой 2.11
 }
 
 //редактировать комментарии
@@ -177,16 +137,15 @@ const initEditButtonListeners = () => {
   }
 };
 
+//Смена класса кнопки лайка
 
 const initChangeLikeButtonListeners = () => {
   const likeButtonElements = document.querySelectorAll('.like-button');
-  //console.log(likeButtonElements)
 
   for (const likeButtonElement of likeButtonElements) {
-    likeButtonElement.addEventListener('click', () => {
+    likeButtonElement.addEventListener('click', (event) => {
+      event.stopPropagation();
       const index = likeButtonElement.dataset.index;
-
-      // console.log(likeButtonElement);
 
       if (comments[index].isLike === false) {
         comments[index].likesCounter += 1;
@@ -222,6 +181,20 @@ const answerToComment = () => {
 
 answerToComment();
 
+//Ответ на комментарий с цитатой (задание со звездочкой 2.11)
+
+const answerQuoteToComment = () => {
+  const commentListItems = document.querySelectorAll('.comment');
+  for (const commentListItem of commentListItems) {
+    commentListItem.addEventListener('click', () => {
+      const userName = commentListItem.dataset.name;
+      const userComment = commentListItem.dataset.comment;
+      textareaElement.value = `Q_B${userName}: \n${userComment}Q_E`;
+    })
+  }
+}
+answerQuoteToComment();
+
 //удаление комментария по отдельности
 
 const deleteComment = () => {
@@ -241,7 +214,7 @@ deleteComment();
 
 const deleteLastComment = () => {
   const deleteLastButtonElement = document.querySelector('.add-form-button--remove');
-  console.log(deleteLastButtonElement)
+
   deleteLastButtonElement.addEventListener('click', () => {
     comments.pop();
     renderComments();
