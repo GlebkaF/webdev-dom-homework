@@ -128,7 +128,9 @@
           </div>
         </li>`;
     }).join('');
-    listElement.innerHTML = commentsContainerHtml;
+   /* commentsContainerHtml.replaceAll("BEGIN_QUOTE", "<div class='quote'>")
+      .replaceAll("QUOTE_END", "</div>"); */
+      listElement.innerHTML = commentsContainerHtml;
     likesPlus();
    commentsAnswer();
   }
@@ -154,8 +156,7 @@
       .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        ,
+        .replaceAll('"', "&quot;"),
       commentLikes: 0,
       isLiked: false,
     });
