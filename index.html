@@ -61,7 +61,7 @@
     for (const commentAnswer of commentsAnswer) {
       commentAnswer.addEventListener("click", () => {
         const index = commentAnswer.dataset.index;
-        commentElement.value = commentsContainer[index].name + commentsContainer[index].commentText;
+        commentElement.value = "QUOTE_BEGIN" + ">" + commentsContainer[index].commentText + "QUOTE_END" + "QUOTE_BEGIN" + commentsContainer[index].name + ",";
       });
   }
 }
@@ -108,7 +108,6 @@
 
   const renderscommentsContainer = () => {
     const commentsContainerHtml = commentsContainer.map((commentUser, index) => {
-      const a = ${commentUser.isLiked}
       return `<li data-index="${index}" class="comment">
           <div class="comment-header">
             <div>${commentUser.name}</div>
@@ -117,14 +116,14 @@
               </div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
+            <div style="white-space: pre-line" class="comment-text">
               ${commentUser.commentText}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${commentUser.commentLikes}</span>
-              <button data-index="${index}" class="${commentUser.isLiked} ? 'like-button -active-like' : 'like-button'"></button>
+              <button data-index="${index}" class="like-button -active-like"></button>
             </div>
           </div>
         </li>`;
@@ -155,7 +154,8 @@
       .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
+        .replaceAll('"', "&quot;")
+        ,
       commentLikes: 0,
       isLiked: false,
     });
