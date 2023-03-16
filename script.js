@@ -11,6 +11,7 @@ const comments = [
     comment: "Это будет первый комментарий на этой странице",
     likeCount: 3,
     likeIn: "",
+    button: "редактировать",
   },
   {
     name: "Варвара Н.",
@@ -18,6 +19,7 @@ const comments = [
     comment: "Мне нравится как оформлена эта страница! ❤",
     likeCount: 75,
     likeIn: "-active-like",
+    button: "редактировать",
   },
 ];
 
@@ -33,6 +35,7 @@ const renderComments = () => {
         <div class="comment-text">
           ${comment.comment}
         </div>
+        <button data-index ='${index}' class='remove add-form-button'>${comment.button}</button>
       </div>
       <div class="comment-footer">
         <div class="likes">
@@ -47,9 +50,50 @@ const renderComments = () => {
   listElement.innerHTML = commentHtml;
   likeButton();
   checkParams();
+  editComment();
+  saveComment ()
 };
 
 renderComments();
+
+function editComment() {
+  const editElement = document.querySelectorAll(".remove");
+  
+  for (const i of editElement) {
+    const commentOld = comments[i.dataset.index].comment;
+    i.addEventListener("click", () => {
+      comments[i.dataset.index].comment = `<textarea
+      id="text-input-in"
+      type="textarea"
+      class="add-form-text"
+
+      rows="4"
+    ></textarea>`;
+      
+      comments[i.dataset.index].button = "сохранить";
+
+      renderComments();
+      const textInputElement = document.getElementById("text-input-in");
+      textInputElement.value = commentOld;
+    });
+  }
+}
+
+
+function saveComment () {
+  const editElement = document.querySelectorAll('.remove');
+  const textInputElementIn = document.getElementById("text-input-in");
+
+  for (const i of editElement) {
+    i.addEventListener('click', () => {
+
+    comments[i.dataset.index].comment = textInputElementIn.value;
+    comments[i.dataset.index].button = 'редактировать';
+    renderComments();
+    })
+  }
+}
+
 
 function likeButton() {
   const likeElements = document.querySelectorAll(".like-button");
@@ -112,12 +156,14 @@ buttonElement.addEventListener("click", () => {
     comment: textInputElement.value,
     likeCount: 0,
     likeIn: "",
+    button: "редактировать",
   });
 
   nameInputElement.value = "";
   textInputElement.value = "";
 
   renderComments();
+  editComment();
 });
 
 buttonDelElement.addEventListener("click", () => {
