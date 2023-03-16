@@ -1,7 +1,10 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Проект "Комменты"</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -9,8 +12,8 @@
 <body>
   <div class="container">
     <ul id="list" class="comments">
-<!--Список рендерится из JS-->
-    
+      <!--Список рендерится из JS-->
+
     </ul>
     <div class="add-form">
       <input type="text" id="name-input" class="add-form-name" placeholder="Введите ваше имя" />
@@ -33,8 +36,36 @@
   const nameInputElement = document.getElementById('name-input');
   const commentInputElement = document.getElementById('comment-input');
   //const likesElements = document.querySelectorAll('.likes');
-  const studentElements = document.querySelectorAll(".comment");
+  const commentsElement = document.querySelectorAll(".comment");
   const likeButton = document.querySelectorAll(".like-button");
+  //const commentText = document.querySelectorAll(".comment-text");
+  //const commenstsTextElement = document.getElementById('comment-text');
+
+
+  //Ответ на коментарий
+  // const initTouchComment = () => { 
+  //  const touchComments = listElement.querySelectorAll(".comment-text"); 
+  // for (const comment of touchComments) { 
+  //comment.addEventListener("click", () => {
+  // const index = comment.dataset.index;
+  //commentsElement.value = `>${comments[index].text} \n ${comments[index].name},`
+  // renderComments(); 
+  //});
+  // }
+  // }
+
+  const initTouchComment = () => {
+    const touchComments = listElement.querySelectorAll(".comment-text");
+    for (const comment of touchComments) {
+      comment.addEventListener("click", () => {
+        const index = comment.dataset.index;
+        commentInputElement.value = `>${comments[index].text} \n ${comments[index].name},`
+        renderComments();
+      });
+    }
+  }
+
+
 
   const options = {
     year: '2-digit',
@@ -54,25 +85,30 @@
     {
       name: "Глеб Фокин",
       date: "12.02.22 12:18",
-      comment: "Это будет первый комментарий на этой странице",
+      text: "Это будет первый комментарий на этой странице",
       likesCount: 3,
       isLiked: false,
-      
+
 
     },
     {
       name: "Варвара Н.",
       date: "13.02.22 19:22",
-      comment: "Мне нравится как оформлена эта страница!",
+      text: "Мне нравится как оформлена эта страница!",
       likesCount: 75,
       isLiked: true,
-      
+
     }
   ];
 
-// Добавление лайка
 
-const addLike = () => {
+
+
+
+
+  // Добавление лайка
+
+  const addLike = () => {
     const likeButtons = document.querySelectorAll('.like-button');
     for (let likeButton of likeButtons) {
 
@@ -93,6 +129,7 @@ const addLike = () => {
     };
   }
 
+
   const renderComments = () => {
     const commentsHtml = comments.map((user, index) => {
       return `<li id="list" class="comment">
@@ -101,8 +138,8 @@ const addLike = () => {
             <div>${user.date}</div>
           </div>
           <div class="comment-body"> 
-             <div class="comment-text">
-                ${user.comment}
+             <div  class="comment-text" data-index = "${index}">
+                ${user.text}
             </div>
           </div>
           <div class="comment-footer">
@@ -117,10 +154,11 @@ const addLike = () => {
     listElement.innerHTML = commentsHtml;
 
     addLike();
+    initTouchComment();
   };
   renderComments();
 
-  
+
 
   buttonElement.addEventListener("click", () => {
 
@@ -131,30 +169,31 @@ const addLike = () => {
       nameInputElement.classList.add("error"); commentInputElement.classList.add("error");
       return;
 
-    } 
-      comments.push({
-        name: nameInputElement.value,
-        date: nowDate,
-        comment: commentInputElement.value,
-        likesCount: 0,
-        isLiked: false,
-        
-      });
+    }
+    comments.push({
+      name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+      date: nowDate,
+      text: commentInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+      likesCount: 0,
+      isLiked: false,
+
+    });
 
 
 
 
-      const oldListHtml = listElement.innerHTML;
+    const oldListHtml = listElement.innerHTML;
 
 
-    
+
     renderComments();
-   
+
 
   });
 
   renderComments();
   addLike();
+  initTouchComment();
   // Код писать здесь
   console.log("It works!");
 </script>
