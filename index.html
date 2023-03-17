@@ -61,7 +61,7 @@
     for (const commentAnswer of commentsAnswer) {
       commentAnswer.addEventListener("click", () => {
         const index = commentAnswer.dataset.index;
-        commentElement.value = "QUOTE_BEGIN" + ">" + commentsContainer[index].commentText + "QUOTE_END" + "QUOTE_BEGIN" + commentsContainer[index].name + ",";
+        commentElement.value = ">" + commentsContainer[index].commentText + " " + commentsContainer[index].name + ",";
       });
   }
 }
