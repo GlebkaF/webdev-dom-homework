@@ -3,26 +3,35 @@
 
 <head>
   <title>Проект "Комменты"</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-  <div class="container">
-    <ul id="commentUl" class="comments">
+  <main class="main">
+    <ul id="list" class="comments">
+      <!-- // Рендеринг в JS \\ !-->
     </ul>
-    <div class="add-form">
-      <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
-      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш комментарий" rows="4"></textarea>
-      <div class="add-form-row">
-        <button class="add-form-button">Написать</button>
+    <div class="form">
+      <input type="text" id="input__name" class="form__name" placeholder="Введите ваше имя" />
+      <div id="form__quote" class="form__quote -display-none">
+        <div class="form__quoteContent">
+          <p id="quote__name"></p>
+          <p id="quote__body"></p>
+        </div>
+        <div class="form__button">
+          <button id="button__quote" class="form__button-quote">Удалить цитату</button>
+        </div>
+      </div>
+      <textarea type="textarea" id="textarea__comment" class="form__comment" placeholder="Введите ваш комментарий"
+        rows="4"></textarea>
+      <div class="form__button">
+        <button id="button__write" class="form__button-write">Написать</button>
       </div>
     </div>
-    <div class="add-form">
-      <div class="divButton">
-        <button class="deleteButton">Удалить последний комментарий</button>
-      </div>
+    <div class="delete">
+      <button id="button__delete" class="delete__button">Удалить последний комментарий</button>
     </div>
-  </div>
+  </main>
 </body>
 <script src="script.js"></script>
 
