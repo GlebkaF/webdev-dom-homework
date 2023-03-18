@@ -1,3 +1,46 @@
+.student-name {
+  margin: 0;
+}
+
+/* ui-kit */
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.button {
+  background-color: rgba(120, 120, 120, 1);
+  color: whitesmoke;
+  border: none;
+  border-radius: 4px;
+  border: 1px solid rgba(80, 80, 80, 1);
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: rgba(120, 120, 120, 0.8);
+}
+
+.input {
+  border: 1px solid rgba(120, 120, 120, 1);
+  border-radius: 2px;
+  padding: 4px;
+  background-color: whitesmoke;
+  height: 26px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.color-input {
+  padding: 0;
+  border: none;
+  cursor: pointer;
+}
+
+.input-error {
+  background-color: rgb(241, 177, 177);
+} */
+
 body {
     margin: 0;
   }
@@ -62,11 +105,14 @@ body {
 
   .comment-text {
     font-size: 32px;
+    white-space: pre-line;
+    cursor: pointer;
   }
 
   .likes {
     display: flex;
     align-items: center;
+    gap: 5px;
   }
 
   .like-button {
@@ -120,6 +166,7 @@ body {
   .add-form-row {
     display: flex;
     justify-content: flex-end;
+    gap: 5px;
   }
 
   .add-form-button {
@@ -132,10 +179,38 @@ body {
     cursor: pointer;
   }
 
+  .button-comment {
+    background-color: #bcec30;
+    padding: 5px 5px 5px 5px;
+    font-size: 15px;
+    border-radius: 18px;
+    border: none;
+    cursor: pointer;
+  }
+
   .add-form-button:hover {
     opacity: 0.9;
   }
 
   .error {
     background-color: rgb(233, 163, 163);
+  }
+
+  .edit-area-text {
+    width: 495px;
+    min-height: 50px;
+  }
+  
+  .add-form-button--remove,
+  .delete-button {
+    background-color: rgb(233, 163, 163);
+  }
+
+  .quote {
+    color: #202020;
+    background-color: #ffffff;
+    margin-bottom: 20px;
+    white-space: pre-line;
+    font-size: 16px;
+    padding: 5px 5px 5px 5px;
   }
