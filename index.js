@@ -70,7 +70,7 @@ const renderComments = () => {
   </div>
   <div class="comment-body">
 
-    ${comments[index].isEdit ? `<textarea class= "edit-area-text">${comment.comment}</textarea>` : `<div class="comment-text" data-index='${index}' data-name='${comment.name}' data-comment='${comment.comment}'>${comment.comment.replaceAll('Q_B', '<div class="quote">').replaceAll('Q_E', '</div>')}</div>`}
+    ${comments[index].isEdit ? `<textarea class= "edit-area-text" onclick = "event.stopPropagation()">${comment.comment}</textarea>` : `<div class="comment-text" data-index='${index}' data-name='${comment.name}' data-comment='${comment.comment}'>${comment.comment.replaceAll('*_', '<div class="quote">').replaceAll('__*', '</div>')}</div>`}
   
   </div>
   <div class="comment-footer">
@@ -101,8 +101,8 @@ const renderComments = () => {
 const initEditButtonListeners = () => {
   const editButtons = document.querySelectorAll(".edit-button");
   for (const editButton of editButtons) {
-    editButton.addEventListener('click', () => {
-
+    editButton.addEventListener('click', (e) => {
+      e.stopPropagation();
       const index = editButton.dataset.index;
 
       if (comments[index].isEdit === false) {
@@ -120,7 +120,8 @@ const initEditButtonListeners = () => {
   };
   const saveButtons = document.querySelectorAll(".save-button");
   for (const saveButton of saveButtons) {
-    saveButton.addEventListener('click', () => {
+    saveButton.addEventListener('click', (e) => {
+      e.stopPropagation();
       const index = saveButton.dataset.index;
       if (comments[index].isEdit === false) {
         comments[index].isEdit = true;
@@ -169,7 +170,7 @@ const answerToComment = () => {
   const commentTexts = document.querySelectorAll('.comment-text');
   for (const commentText of commentTexts) {
     commentText.addEventListener('click', (event) => {
-      event.stopPropagation(commentTexts);
+      event.stopPropagation();
       const userName = commentText.dataset.name;
       const userComment = commentText.dataset.comment;
       // const index = el.dataset.index;
@@ -189,7 +190,7 @@ const answerQuoteToComment = () => {
     commentListItem.addEventListener('click', () => {
       const userName = commentListItem.dataset.name;
       const userComment = commentListItem.dataset.comment;
-      textareaElement.value = `Q_B${userName}: \n${userComment}Q_E`;
+      textareaElement.value = `*_${userName}: \n${userComment}__*`;
     })
   }
 }
@@ -200,7 +201,8 @@ answerQuoteToComment();
 const deleteComment = () => {
   const deleteButtonElements = document.querySelectorAll('.delete-button');
   for (const deleteButtonElement of deleteButtonElements) {
-    deleteButtonElement.addEventListener('click', () => {
+    deleteButtonElement.addEventListener('click', (e) => {
+      e.stopPropagation();
       const index = deleteButtonElement.dataset.index;
       comments.splice(index, 1);
       renderComments();
