@@ -3,45 +3,17 @@
   <head>
     <title>Проект "Комменты"</title>
     <link rel="stylesheet" href="styles.css" />
+    <script
+      type="text/javascript"
+      src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=ATfT4hGk5ApycNm-HS7aiRpApd794ezMeWyDMP3m3HBPE4FAZULweJo2dfsOF3Oj3Alr1y9icEyDd9Shcb3anpVpszO2Z89xjrUPQ4KW-wHNfucaZnXdW2khe3OQR7uynG1Fhdraq3efUY7vnAz8UBeTCVyK3384BpRLMReQFaH0BtbC0oubTNASQ752gKih-xtmBkfZGUkiqKwpPuy8qyYRefnLdoZuTM96sFas6RYd55yQB0ucQGOx2rPX3gtvBMtrNmafOyd2BTUAhoRAVuB4-7qW1fyU9dDVYGFqt6BWPsU3bWbl2gm5PicVNGL8epXZFWPTxlxkx2I2D7X06LQbXxEa4yoqgb77SgOK9PkiJq2Ss-Kc_-5qLGtkKRn0NDvsoDzYUgmIeMmd9R-QgJUehrlyyJSgg7BOLo30IGlSBinfk0WgeeZk9cIGqZOBzJQNeE5Ar1dsk5mMl511e3twB5H0Gw1nkR9l-CMdXkw"
+      charset="UTF-8"
+    ></script>
   </head>
 
   <body>
     <div class="container">
       <ul class="comments" id="comments">
-        <!-- <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">5</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li> -->
+        <!-- в рендере -->
       </ul>
       <div class="add-form">
         <input
@@ -49,6 +21,7 @@
           class="add-form-name"
           placeholder="Введите ваше имя"
           id="name-input"
+          onchange="blockButton();"
         />
         <textarea
           type="textarea"
@@ -56,9 +29,16 @@
           placeholder="Введите ваш коментарий"
           rows="4"
           id="comment-area"
+          onchange="blockButton();"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button" id="add-form-button">Написать</button>
+          <button
+            class="add-form-button"
+            id="add-form-button"
+            disabled="disabled"
+          >
+            Написать
+          </button>
         </div>
       </div>
     </div>
@@ -69,6 +49,7 @@
       const listOfComments = document.querySelector(".comments");
       const nameInputElement = document.querySelector("#name-input");
       const commentAreaElement = document.querySelector("#comment-area");
+      const addForm = document.querySelector(".add-form");
 
       const allComments = [
         {
@@ -87,11 +68,21 @@
         },
       ];
 
+      function blockButton() {
+        if (nameInputElement.value === "" || commentAreaElement.value === "") {
+          butAddComment.disabled = true;
+          // return;
+        } else {
+          butAddComment.disabled = false;
+        }
+      }
+
       const clickLikeButton = () => {
         let likeButton = document.querySelectorAll(".like-button");
 
         for (let i = 0; i < likeButton.length; i++) {
-          likeButton[i].onclick = function () {
+          likeButton[i].onclick = function (event) {
+            event.stopPropagation();
             if (allComments[i].liked === false) {
               allComments[i].liked = true;
               allComments[i].likes += 1;
@@ -109,7 +100,8 @@
           document.querySelectorAll(".delete-button");
 
         for (const deleteButtonElement of deleteButtonsElements) {
-          deleteButtonElement.addEventListener("click", () => {
+          deleteButtonElement.addEventListener("click", (event) => {
+            event.stopPropagation();
             const index = deleteButtonElement.dataset.index;
             console.log(index);
             allComments.splice(index, 1);
@@ -121,7 +113,9 @@
       const renderComments = () => {
         const commentsHtml = allComments
           .map((comment, index) => {
-            return `<li class="comment">
+            return `<li data-text='${comment.textOfComment} \n ${
+              comment.name
+            }' class="comment">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.date}</div>
@@ -152,6 +146,18 @@
       };
 
       renderComments();
+
+      const responseToComment = () => {
+        const comments = document.querySelectorAll(".comment");
+        const commentArea = document.getElementById("comment-area");
+        for (const comment of comments) {
+          comment.addEventListener("click", () => {
+            const response = comment.dataset.text;
+            commentArea.value = response;
+          });
+        }
+      };
+      responseToComment();
 
       const currentDate = new Date();
       let day = currentDate.getDate();
@@ -187,18 +193,15 @@
       const newDate =
         day + "." + month + "." + year + " " + hour + ":" + minute;
 
-      // butAddComment.setAttribute("disabled", true);
       butAddComment.addEventListener("click", () => {
-        if (nameInputElement.value === "" || commentAreaElement.value === "") {
-          // butAddComment.setAttribute("disabled", true);
-          alert("Требуется заполнить все поля!");
-          return;
-        }
-
         allComments.push({
-          name: nameInputElement.value,
+          name: nameInputElement.value
+            .replaceAll("<", "&lt")
+            .replaceAll(">", "&gt"),
           date: newDate,
-          textOfComment: commentAreaElement.value,
+          textOfComment: commentAreaElement.value
+            .replaceAll("<", "&lt")
+            .replaceAll(">", "&gt"),
           likes: 0,
           liked: false,
         });
@@ -208,41 +211,36 @@
         // Очищаем поля
         nameInputElement.value = "";
         commentAreaElement.value = "";
+        butAddComment.disabled = true;
+      });
 
-        // let likeButton = document.querySelectorAll(".like-button");
-        // let likesCounter = document.querySelectorAll(".likes-counter");
-        // for (let i = 0; i < likeButton.length; i++) {
-        //   for (let i = 0; i < likesCounter.length; i++) {
-        //     likeButton[i].onclick = function () {
-        //       if (likeButton[i].classList.contains("-active-like")) {
-        //         likesCounter[i].textContent--;
-        //       } else {
-        //         likesCounter[i].textContent++;
-        //       }
-        //       likeButton[i].classList.toggle("-active-like");
-        //     };
-        //   }
-        // }
+      addForm.addEventListener("keyup", (action) => {
+        if (action.code === "Enter") {
+          // butAddComment.click();
+          // nameInputElement.value = "";
+          // commentAreaElement.value = "";
+
+          allComments.push({
+            name: nameInputElement.value
+              .replaceAll("<", "&lt")
+              .replaceAll(">", "&gt"),
+            date: newDate,
+            textOfComment: commentAreaElement.value
+              .replaceAll("<", "&lt")
+              .replaceAll(">", "&gt"),
+            likes: 0,
+            liked: false,
+          });
+
+          renderComments();
+          responseToComment();
+
+          // Очищаем поля
+          nameInputElement.value = "";
+          commentAreaElement.value = "";
+          butAddComment.disabled = true;
+        }
       });
     </script>
-
-    <!-- добавление лайков -->
-
-    <!-- <script>
-      let likeButton = document.querySelectorAll(".like-button");
-      let likesCounter = document.querySelectorAll(".likes-counter");
-      for (let i = 0; i < likeButton.length; i++) {
-        for (let i = 0; i < likesCounter.length; i++) {
-          likeButton[i].onclick = function () {
-            if (likeButton[i].classList.contains("-active-like")) {
-              likesCounter[i].textContent--;
-            } else {
-              likesCounter[i].textContent++;
-            }
-            likeButton[i].classList.toggle("-active-like");
-          };
-        }
-      }
-    </script> -->
   </body>
 </html>
