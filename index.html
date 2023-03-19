@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Проект "Комменты"</title>
     <link rel="stylesheet" href="styles.css" />
     <script
@@ -21,7 +24,7 @@
           class="add-form-name"
           placeholder="Введите ваше имя"
           id="name-input"
-          onchange="blockButton();"
+          oninput="isValidForm()"
         />
         <textarea
           type="textarea"
@@ -29,7 +32,7 @@
           placeholder="Введите ваш коментарий"
           rows="4"
           id="comment-area"
-          onchange="blockButton();"
+          oninput="isValidForm()"
         ></textarea>
         <div class="add-form-row">
           <button
@@ -68,18 +71,27 @@
         },
       ];
 
-      function blockButton() {
+      // function blockButton() {
+      //   if (nameInputElement.value === "" || commentAreaElement.value === "") {
+      //     butAddComment.disabled = true;
+      //     // return;
+      //   } else {
+      //     butAddComment.disabled = false;
+      //   }
+      // }
+
+      const isValidForm = () => {
         if (nameInputElement.value === "" || commentAreaElement.value === "") {
           butAddComment.disabled = true;
-          // return;
+          return false;
         } else {
           butAddComment.disabled = false;
+          return true;
         }
-      }
+      };
 
       const clickLikeButton = () => {
         let likeButton = document.querySelectorAll(".like-button");
-
         for (let i = 0; i < likeButton.length; i++) {
           likeButton[i].onclick = function (event) {
             event.stopPropagation();
@@ -91,6 +103,7 @@
               allComments[i].likes -= 1;
             }
             renderComments();
+            responseToComment();
           };
         }
       };
@@ -106,6 +119,7 @@
             console.log(index);
             allComments.splice(index, 1);
             renderComments();
+            responseToComment();
           });
         }
       };
@@ -159,54 +173,57 @@
       };
       responseToComment();
 
-      const currentDate = new Date();
-      let day = currentDate.getDate();
-      if (day < 10) {
-        day = "0" + day;
-      }
-      const months = [
-        "01",
-        "02",
-        "03",
-        "04",
-        "05",
-        "06",
-        "07",
-        "08",
-        "09",
-        "10",
-        "11",
-        "12",
-      ];
-      let month = months[currentDate.getMonth()];
-      let year = currentDate.getFullYear() % 100;
-      if (year < 10) year = "0" + year;
+      const getCurrentDate = () => {
+        const currentDate = new Date();
+        let day = currentDate.getDate();
+        if (day < 10) {
+          day = "0" + day;
+        }
+        const months = [
+          "01",
+          "02",
+          "03",
+          "04",
+          "05",
+          "06",
+          "07",
+          "08",
+          "09",
+          "10",
+          "11",
+          "12",
+        ];
+        let month = months[currentDate.getMonth()];
+        let year = currentDate.getFullYear() % 100;
+        if (year < 10) year = "0" + year;
 
-      let hour = currentDate.getHours();
-      if (hour < 10) {
-        hour = "0" + hour;
-      }
-      let minute = currentDate.getMinutes();
-      if (minute < 10) {
-        minute = "0" + minute;
-      }
-      const newDate =
-        day + "." + month + "." + year + " " + hour + ":" + minute;
+        let hour = currentDate.getHours();
+        if (hour < 10) {
+          hour = "0" + hour;
+        }
+        let minute = currentDate.getMinutes();
+        if (minute < 10) {
+          minute = "0" + minute;
+        }
+        const newDate =
+          day + "." + month + "." + year + " " + hour + ":" + minute;
+        return newDate;
+      };
 
       butAddComment.addEventListener("click", () => {
         allComments.push({
           name: nameInputElement.value
             .replaceAll("<", "&lt")
             .replaceAll(">", "&gt"),
-          date: newDate,
+          date: getCurrentDate(),
           textOfComment: commentAreaElement.value
             .replaceAll("<", "&lt")
             .replaceAll(">", "&gt"),
           likes: 0,
           liked: false,
         });
-
         renderComments();
+        responseToComment();
 
         // Очищаем поля
         nameInputElement.value = "";
@@ -215,12 +232,12 @@
       });
 
       addForm.addEventListener("keyup", (action) => {
-        if (action.code === "Enter") {
+        if (action.code === "Enter" && isValidForm()) {
           allComments.push({
             name: nameInputElement.value
               .replaceAll("<", "&lt")
               .replaceAll(">", "&gt"),
-            date: newDate,
+            date: getCurrentDate(),
             textOfComment: commentAreaElement.value
               .replaceAll("<", "&lt")
               .replaceAll(">", "&gt"),
