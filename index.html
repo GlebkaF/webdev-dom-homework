@@ -56,8 +56,48 @@
 </body>
 
 <script>
+  const addFormButton = document.getElementById("add-form-button");
+  const addFormName = document.getElementById("add-form-name");
+  const addFormText = document.getElementById("add-form-text");
+  const commentsElement = document.getElementById("comments");
 
+  addFormButton.addEventListener("click", () => {
+    if (addFormName.value === "" || addFormText.value === "") {
+      return;
+    }
 
+    const options = {
+      year: '2-digit',
+      month: 'numeric',
+      day: 'numeric',
+      timezone: 'UTC',
+      hour: 'numeric',
+      minute: '2-digit'
+    };
+    let now = new Date().toLocaleString('ru-RU', options);
+
+    const oldListHtml = commentsElement.innerHTML;
+    commentsElement.innerHTML = oldListHtml +
+      `<li class="comment">
+      <div class="comment-header">
+        <div>${addFormName.value}</div>
+        <div>${now}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">
+          ${addFormText.value}
+        </div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">0</span>
+          <button class="like-button"></button>
+        </div>
+      </div>
+    </li>`;
+    addFormName.value = "";
+    addFormText.value = "";
+  });
 </script>
 
 </html>
