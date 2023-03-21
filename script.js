@@ -76,54 +76,28 @@ function newComment() {
 }
 
 function renderComment() {
-    listElement.innerHTML = listObject.map((listObject, i) => {
-        if (!listObject.quoteName) {
-            result = `
-            <li class="comments__list">
-                <section class="comments__header">
-                    <p>${listObject.name}</p>
-                    <p>${listObject.date}</p>
-                </section>
-                <div id="comments__quote" class="comments__quote -display-none">
-                    <p>${listObject.quoteName}</p>
-                    <p>${listObject.quoteComment}</p>
-                </div>
-                <section data-comments="${i}" class="comments__body">
-                    <p>${listObject.comment}</p>
-                </section>
-                <div class="comments__footer">
-                    <button data-button__redact="${i}" class="comments__button-redact">Редактировать</button>
-                    <div>
-                        <span>${listObject.like}</span>
-                        <button data-button__hard="${i}" class="comments__button-hard ${listObject.hard}"></button>
-                    </div>
-                </div>
-            </li>`
-        } else {
-            result = `
-            <li class="comments__list">
-                <section class="comments__header">
-                    <p>${listObject.name}</p>
-                    <p>${listObject.date}</p>
-                </section>
-                <div id="comments__quote" class="comments__quote">
-                    <p>${listObject.quoteName}:</p>
-                    <p>${listObject.quoteComment}</p>
-                </div>
-                <section data-comments="${i}" class="comments__body">
-                    <p>${listObject.comment}</p>
-                </section>
-                <div class="comments__footer">
-                    <button data-button__redact="${i}" class="comments__button-redact">Редактировать</button>
-                    <div>
-                        <span>${listObject.like}</span>
-                        <button data-button__hard="${i}" class="comments__button-hard ${listObject.hard}"></button>
-                    </div>
-                </div>
-            </li>`
-        }
-        return result;
-    }).join("");
+    listElement.innerHTML = listObject.map((listObject, i) => `
+    <li class="comments__list">
+        <section class="comments__header">
+            <p>${listObject.name}</p>
+            <p>${listObject.date}</p>
+        </section>
+        <div id="comments__quote" class="comments__quote ${!listObject.quoteName ? '-display-none' : ''}">
+            <p>${listObject.quoteName}</p>
+            <p>${listObject.quoteComment}</p>
+        </div>
+        <section data-comments="${i}" class="comments__body">
+            <p>${listObject.comment}</p>
+        </section>
+        <div class="comments__footer">
+            <button data-button__redact="${i}" class="comments__button-redact">Редактировать</button>
+            <div>
+                <span>${listObject.like}</span>
+                <button data-button__hard="${i}" class="comments__button-hard ${listObject.hard}"></button>
+            </div>
+        </div>
+    </li>`
+    ).join("");
 
     const buttonHardElements = document.querySelectorAll(".comments__button-hard");
 
