@@ -1,69 +1,202 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
-      <ul class="comments">
-        <li class="comment">
+<head>
+  <title>Проект "Комменты"</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <ul class="comments" id="list">
+      <li class="comment">
+        <div class="comment-header">
+          <div>Глеб Фокин</div>
+          <div id="date">12.02.22 12:18</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Это будет первый комментарий на этой странице
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">3</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>
+      <li class="comment">
+        <div class="comment-header">
+          <div>Варвара Н.</div>
+          <div>13.02.22 19:22</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Мне нравится как оформлена эта страница! ❤
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">75</span>
+            <button class="like-button -active-like"></button>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <div class="add-form">
+      <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input" />
+      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
+        id="text-input"></textarea>
+      <div class="add-form-row">
+        <button class="add-form-button turn-off" id="add-button">Написать</button>
+      </div>
+
+    </div>
+    <div class="add-form-row">
+      <button class="delete-button" id="del-button">Удалить последний комментарий</button>
+    </div>
+  </div>
+</body>
+
+<script>
+  const buttonElement = document.getElementById("add-button");
+  const listElement = document.getElementById("list");
+  const nameInputElement = document.getElementById("name-input");
+  const textInputElement = document.getElementById("text-input");
+  const currentDate = new Date().toLocaleString();
+  const deleteButton = document.getElementById("del-button");
+
+
+  buttonElement.addEventListener('click', () => {
+    nameInputElement.classList.remove("error");
+    if (nameInputElement.value === "") {
+      nameInputElement.classList.add("error");
+      return;
+    } else if (textInputElement.value === "") {
+      textInputElement.classList.add("error");
+      return;
+    }
+
+    const oldListHtml = listElement.innerHTML;
+    listElement.innerHTML = oldListHtml +
+      `<li class="comment">
           <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
+            <div>${nameInputElement.value}</div>
+            <div>${currentDate}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              Это будет первый комментарий на этой странице
+              ${textInputElement.value}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">3</span>
+              <span class="likes-counter"></span>
               <button class="like-button"></button>
             </div>
           </div>
-        </li>
-        <li class="comment">
+        </li>`
+  });
+
+
+  nameInputElement.addEventListener("input", () => {
+    buttonElement.classList.remove("turn-off");
+    if (document.getElementById("name-input").value === "") {
+      document.getElementById("add-button").disabled = true;
+      buttonElement.classList.add("turn-off")
+      return;
+    }
+  })
+
+  textInputElement.addEventListener("input", () => {
+    buttonElement.classList.remove("turn-off");
+    if (document.getElementById("name-input").value === "") {
+      document.getElementById("add-button").disabled = true;
+      buttonElement.classList.add("turn-off")
+      return;
+    }
+  })
+
+  nameInputElement.addEventListener("keyup", ({
+    key
+  }) => {
+    if (key === "Enter") {
+      nameInputElement.classList.remove("error");
+      if (nameInputElement.value === "") {
+        nameInputElement.classList.add("error");
+        return;
+      } else if (textInputElement.value === "") {
+        textInputElement.classList.add("error");
+        return;
+      }
+      const oldListHtml = listElement.innerHTML;
+      listElement.innerHTML = oldListHtml +
+        `<li class="comment">
           <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
+            <div>${nameInputElement.value}</div>
+            <div>${currentDate}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
+              ${textInputElement.value}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
+              <span class="likes-counter"></span>
+              <button class="like-button"></button>
             </div>
           </div>
-        </li>
-      </ul>
-      <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
-        </div>
-      </div>
-    </div>
-  </body>
+        </li>`
+    }
+  })
 
-  <script>
-    // Код писать здесь
-    console.log("It works!");
-  </script>
+  textInputElement.addEventListener("keyup", ({
+    key
+  }) => {
+    if (key === "Enter") {
+      textInputElement.classList.remove("error");
+      if (textInputElement.value === "") {
+        textInputElement.classList.add("error");
+        return;
+      } else if (nameInputElement.value === "") {
+        nameInputElement.classList.add("error");
+        return;
+      }
+      const oldListHtml = listElement.innerHTML;
+      listElement.innerHTML = oldListHtml +
+        `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${currentDate}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter"></span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+    }
+  })
+
+// и вот тут я совсем запутался как действие на эту кнопку записать >_<
+
+  deleteButton.addEventListener('click', () => {
+    const bodyList = document.body.innerHTML; 
+    bodyList.lastIndexOf('<li class="comment">').remove(`${textInputElement.value}`) 
+    // alert(bodyList);
+    })
+
+
+
+
+</script>
+
 </html>
