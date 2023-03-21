@@ -7,7 +7,8 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+
+      <ul id="coments" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -43,27 +44,68 @@
           </div>
         </li>
       </ul>
+
       <div class="add-form">
         <input
+        id="NameInput"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          value=""
         />
         <textarea
           type="textarea"
           class="add-form-text"
-          placeholder="Введите ваш коментарий"
+          placeholder="Напишите ваш коментарий"
           rows="4"
+          id="userComent"
+          value=""
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
 
   <script>
-    // Код писать здесь
-    console.log("It works!");
+    const buttonElement = document.getElementById("button");
+    const NameInputElement = document.getElementById("NameInput");
+    const comentsElement = document.getElementById("coments");
+    const userComentElement = document.getElementById("userComent");
+    
+    
+
+    buttonElement.addEventListener('click', () => {
+      NameInputElement.classList.remove('error');
+      userComentElement.classList.remove('error');
+      if (NameInputElement.value === "" || userComentElement.value === "") {
+      NameInputElement.classList.add('error');
+      userComentElement.classList.add('error');
+        return;
+      }
+      let today = new Date();
+      let day = today.toLocaleString();
+      const allcomentsElement = comentsElement.innerHTML;
+      comentsElement.innerHTML = allcomentsElement + `<li class="comment">
+          <div class="comment-header">
+            <div>${NameInputElement.value} </div>
+            <div> ${day} </div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${userComentElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter"></span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+        NameInputElement.value = "";
+        userComentElement.value = "";
+    });
   </script>
 </html>
