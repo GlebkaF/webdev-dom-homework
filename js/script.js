@@ -1,14 +1,16 @@
 'use strict';
 
-// - Работать, тунеядцы, солнце еще высоко.
-// - Это не солнце, это луна.
-// - А не колышет...
-
-
-// Не использовал в этом уроке метод .stopPropagation(),
-// здесь я делегировал события комментариев в один обработчик
-// и поэтому stopPropagation стал весьма неуместным. Но как им 
-// пользоваться я разобрался. 
+// Достаем комментарии с сервера
+function getComments(){
+fetch('https://webdev-hw-api.vercel.app/api/v1/alex-volo/comments', {
+    method: "GET"
+}).then((response) => 
+response.json().then((responseData) => {
+    comments = responseData.comments;
+    renderComments()
+}));
+}
+getComments();
 
 // Форма и её инпуты
 const addForm = document.querySelector('div.add-form');
@@ -19,49 +21,47 @@ const buttonAddComment = document.querySelector('button.add-form-button');
 const commentsList = document.querySelector('ul.comments');
 
 // Массив с данными о комментариях
-const commentsListArray = [
-    {
-        name: 'Глеб Фокин',
-        date: '12.02.22 12:18',
-        text: 'Это будет первый комментарий на этой странице',
-        likeCount: 3,
-        liked: false,
-        isEdit: false,
-        editButtonText: ['Редактировать', 'Сохранить'],
-    },
-    {
-        name: 'Варвара Н.',
-        date: '13.02.22 19:22',
-        text: 'Мне нравится как оформлена эта страница! ❤',
-        likeCount: 75,
-        liked: true,
-        isEdit: false,
-        editButtonText: ['Редактировать', 'Сохранить'],
-    },
-];
+const commentsListArray = [];
+let comments = [];
+
+// Функция преобразует дату из строки
+// Работает, но мне не нравится как написана 
+function getDate(date) {
+    const options = {
+        year: '2-digit',
+        month: 'numeric',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+    }
+    const newDate = new Date(date);
+    return newDate.toLocaleString('ru-RU', options).replace(',', '');
+}
 
 // Функция рисует HTML-разметку всех комментариев
 function renderComments() {
-    commentsList.innerHTML = commentsListArray.reduce((result, comment, index) => {
+    commentsList.innerHTML = comments.reduce((result, comment) => {
         return result + `
-    <li class="comment">
+    <li class="comment" data-id="${comment.id}">
         <div class="comment-header">
-        <div>${comment.name}</div>
+        <div>${comment.author.name}</div>
         <div>
-            ${comment.date}
+            ${getDate(comment.date)}
         </div >
         </div >
         <div class="comment-body">
         <div class="comment-text">
-            ${comment.isEdit ? `<textarea type="textarea" class="add-form-text" rows="4" cols="49">${comment.text}</textarea>` : makeQuote(comment.text)}
+            
+            ${comment.text}
+            
         </div>
         </div>
         <div class="comment-footer">
         <button class="delete-button">Удалить</button>
-        <button class="edit-button">${comment.isEdit ? comment.editButtonText[1] : comment.editButtonText[0]} </button>
+        <button class="edit-button">Редактировать </button>
         <div class="likes">
-            <span class="likes-counter">${comment.likeCount}</span>
-            <button data-index="${index}"  class="${comment.liked ? 'like-button -active-like' : 'like-button'}"></button>
+            <span class="likes-counter">${comment.likes}</span>
+            <button data-index="${comment.id}"  class="${comment.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
         </div>
         </div>
     </li >`
@@ -70,18 +70,15 @@ function renderComments() {
     addListenerOnComments();
 }
 
-renderComments();
 
 // Попробуем делегировать события и повешать один обработчик
 // На комментарий
 function addListenerOnComments() {
-    const comments = commentsList.querySelectorAll('li.comment');
-    let i = 0;
-    for (const comment of comments) {
-        comment.dataset.index = i;
-        const index = i;
-        i++;
+    const currentComments = document.querySelectorAll('li.comment');
+
+    for (const comment of currentComments) {
         comment.addEventListener('click', (e) => {
+            const index = comment.dataset.id;
             const likeButton = e.currentTarget.querySelector('button.like-button');
             const editButton = e.currentTarget.querySelector('.edit-button');
             const deleteButton = e.currentTarget.querySelector('.delete-button');
@@ -113,25 +110,25 @@ function safeInput(str) {
 
 // Функция ответить на комментарий
 function replyComment(index) {
-    inputComment.value = 'QUOTE_BEGIN >' + commentsListArray[index].text +
-        '\n' + commentsListArray[index].name + '< QUOTE_END';
+    inputComment.value = 'QUOTE_BEGIN >' + comments[index].text +
+        '\n' + comments[index].name + '< QUOTE_END';
     renderComments();
 }
 
 // Функция удалить комментарий
 function deleteComment(index) {
-    commentsListArray.splice(index, 1);
+    comments.splice(index, 1);
     renderComments();
 }
 
 // Функция лайк
 function like(index) {
-    if (commentsListArray[index].liked === false) {
-        commentsListArray[index].liked = true;
-        commentsListArray[index].likeCount += 1;
+    if (comments[index].isLiked === false) {
+        comments[index].isLiked = true;
+        comments[index].likes += 1;
     } else {
-        commentsListArray[index].liked = false;
-        commentsListArray[index].likeCount -= 1;
+        comments[index].isLiked = false;
+        comments[index].likes -= 1;
     }
 
     renderComments();
@@ -166,17 +163,7 @@ buttonAddComment.addEventListener('click', addComment);
 // Функция добавляет комментарий
 function addComment() {
     const currentDate = new Date;
-    const dateFormat = {
-        year: '2-digit',
-        month: 'numeric',
-        day: 'numeric',
-    }
-    const timeFormat = {
-        hour: '2-digit',
-        minute: '2-digit',
-    }
-    const currentDateString = currentDate.toLocaleDateString('ru-RU', dateFormat) +
-        ' ' + currentDate.toLocaleTimeString('ru-RU', timeFormat);
+    const currentDateString = getDate(currentDate)
 
     // Таймаут красного фона на полях
     function clearInputName() {
@@ -203,18 +190,23 @@ function addComment() {
         setTimeout(clearInputComment, 1500);
 
     } else {
-        commentsListArray.push({
-            name: safeInput(inputName.value),
-            date: currentDateString,
-            text: safeInput(inputComment.value),
-            likeCount: 0,
-            liked: false,
-            isEdit: false,
-            editButtonText: ['Редактировать', 'Сохранить'],
+        fetch('https://webdev-hw-api.vercel.app/api/v1/alex-volo/comments', {
+            method: "POST",
+            body: JSON.stringify({
+                date: currentDate,
+                likes: 0,
+                isLiked: false,
+                text: safeInput(inputComment.value),
+                name: safeInput(inputName.value),
         })
+        }).then((response) => {
+            getComments();
+        response.json().then((responseData) => {
+            console.log(responseData);
+        })
+    });
         inputName.value = '';
         inputComment.value = '';
-        renderComments(); // Заново отрисовываются все комментарии
     }
 }
 
