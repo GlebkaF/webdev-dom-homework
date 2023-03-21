@@ -70,17 +70,18 @@
     buttonElement.addEventListener("click", () => {
       const date = new Date();
       let year = date.getFullYear() % 100;
-      const months = ['1', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11','12'];
-      let month = months[date.getMonth()];
+      let month = date.getMonth() +1;
       let day = date.getDay();
       let hour = date.getHours();
       let minute = date.getMinutes();
       if (day < 10) {
-        day = '0' + day;
-      } else if (hour <= 10) {
-        hour = '0' + hour;
-      } else if (minute <= 10) {
-        minute = '0' + minute;
+        day = "0" + day;
+      } if (hour < 10) {
+        hour = "0" + hour;
+      } if (minute < 10) {
+        minute = "0" + minute;
+      } if (month < 10) {
+        month = "0" + month;
       };
       const currentDate = day + '.' + month + '.' + year + '  ' + hour + ':' + minute;
       
@@ -89,7 +90,7 @@
       if (nameInputElement.value === '') {
         nameInputElement.classList.add("error");
         return;
-      } else if (commentTextAreaElement.value === '') {
+      } if (commentTextAreaElement.value === '') {
         commentTextAreaElement.classList.add("error");
         return;
       }
