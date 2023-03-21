@@ -7,7 +7,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id = "list">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -47,23 +47,109 @@
         <input
           type="text"
           class="add-form-name"
+          id = "input-name"
           placeholder="Введите ваше имя"
         />
         <textarea
           type="textarea"
           class="add-form-text"
+          id = "input-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id = "button-send">Написать</button>
         </div>
+      </div>
+      <div class="add-form-row">
+        <button class="add-form-button" id = "button-delete">Удалить последний комментарий</button>
       </div>
     </div>
   </body>
 
   <script>
-    // Код писать здесь
-    console.log("It works!");
+    const buttonElement = document.getElementById('button-send');
+    const listElement = document.getElementById('list');
+    const nameInputElement = document.getElementById('input-name');
+    const textInputElement = document.getElementById('input-text');
+    const buttonDeleteElement = document.getElementById('button-delete');
+    
+    
+    const date = () => {
+      let currentDate = new Date();
+      let hours = currentDate.getHours();
+      let minutes = currentDate.getMinutes();
+      let day = currentDate.getDate();
+      let month = currentDate.getMonth() + 1;
+      let year = (currentDate.getFullYear() + '').slice(2);
+    
+    if (minutes < 10) 
+        minutes = '0' + minutes;
+
+    if (month < 10) 
+        month = '0' + month;
+  
+      return day + '.' + month + '.' + year + ' ' + hours + ':' + minutes
+    };
+
+    const buttonDisabled = () => {
+      buttonElement.setAttribute('disabled', true);
+      buttonElement.style.backgroundColor = 'grey';
+    };
+
+    buttonDisabled();
+
+function validateForm(){
+  if (nameInputElement.value.trim() === '' || textInputElement.value.trim() === '') {
+    buttonElement.setAttribute('disabled', true);
+  }
+  else {
+    buttonElement.removeAttribute('disabled');
+    buttonElement.style.backgroundColor = '';
+  }
+}
+
+  nameInputElement.addEventListener("input", validateForm);
+  textInputElement.addEventListener("input", validateForm);
+  
+function addComment(){
+  const oldListHtml = listElement.innerHTML;
+  listElement.innerHTML = oldListHtml +  
+      `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${date()}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+   
+  nameInputElement.value = '';
+  textInputElement.value = '';
+  buttonDisabled();
+}
+
+buttonElement.addEventListener("click", addComment);
+
+document.addEventListener("keyup", (e)=> {
+ if (e.code == 'Enter') {
+  addComment();
+ }
+});
+
+buttonDeleteElement.addEventListener("click", ()=>{
+  const lastComment = listElement.innerHTML.lastIndexOf('<li class="comment">');
+  listElement.innerHTML = listElement.innerHTML.slice(0, lastComment);
+  console.log(listElement.innerHTML)
+})
   </script>
 </html>
