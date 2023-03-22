@@ -23,8 +23,6 @@ function getDate(date) {
 }
 
 
-// Заглушка при загрузке комментариев с сервера
-
 let comments = [{
     date: getDate(new Date),
     isLiked: false,
