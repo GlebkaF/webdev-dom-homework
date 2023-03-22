@@ -25,10 +25,10 @@ function getDate(date) {
 
 let comments = [{
     date: getDate(new Date),
-    isLiked: false,
-    likes: 1000,
-    text: "Комментарии загружаются........",
+    likes: '0',
+    text: "",
     author: { name: '' },
+    isLiked: false,
    
 }
 ];
