@@ -7,7 +7,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="comments" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -46,24 +46,94 @@
       <div class="add-form">
         <input
           type="text"
+          id="name-input"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
           type="textarea"
+          id="comment-input"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="add-button" class="add-form-button">Написать</button>
         </div>
       </div>
+      
     </div>
   </body>
-
+<style>
+  .error{
+    background-color: rgb(212, 116, 116);
+  }
+</style>
   <script>
-    // Код писать здесь
+    const buttonElement = document.getElementById("add-button");
+    const commentsElement = document.getElementById("comments" ); 
+    const nameInputElement = document.getElementById("name-input" );
+    const commentInputElement = document.getElementById("comment-input" );
+     
+
+    let myDate = new Date(); 
+    const months = ["01", "02", "03", "04", "05", "06",
+    "07", "08", "09", "10", "11", "12"];
+    let year = String(myDate.getFullYear()).slice(2);
+    let day = myDate.getDate();
+    if (day < 10) {
+      day = '0' + day;
+    }
+    let hour = myDate.getHours();
+    if (hour < 10) {
+      hour = '0' + hour;
+    }
+    let minute = myDate.getMinutes();
+    if (minute < 10) {
+      minute = '0' + minute;
+    }
+    let newDate = day  + "." + months[myDate.getMonth()] + "." 
+    + year + " " + hour + ":" +  minute;
+
+
+    buttonElement.addEventListener("click", () => {
+      nameInputElement.classList.remove('error');
+
+      if (nameInputElement.value === '' ) {
+        nameInputElement.classList.add('error');
+        return;
+      }
+
+      commentInputElement.classList.remove('error');
+
+      if (commentInputElement.value === '' ) {
+        commentInputElement.classList.add('error');
+        return;
+      }
+
+     const oldCommentsHtml = commentsElement.innerHTML;
+     commentsElement.innerHTML = oldCommentsHtml + ` <li class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${newDate}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+             ${commentInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            
+            </div>
+          </div>
+        </li>`
+        nameInputElement.value = "" ;
+        commentInputElement.value = "" ; 
+});
+
     console.log("It works!");
   </script>
 </html>
