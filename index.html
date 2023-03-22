@@ -59,11 +59,99 @@
           <button class="add-form-button">Написать</button>
         </div>
       </div>
+
+      <div class="delete-comment">
+        <button class="delete-comment-button">Удалить комментарий</button>
+      </div>
     </div>
   </body>
 
   <script>
-    // Код писать здесь
-    console.log("It works!");
+    function formatDate(time) {
+      if (time < 10) {
+        time = "0" + time;
+      }
+      return time;
+    }
+
+    function addComment() {
+      userName.classList.remove("error");
+
+      if (userName.value == "") {
+        userName.classList.add("error");
+        return;
+      }
+
+      userСomment.classList.remove("error");
+
+      if (userСomment.value == "") {
+        userСomment.classList.add("error");
+        return;
+      }
+
+      const dateNow = new Date();
+      const oldList = listComments.innerHTML;
+
+      listComments.innerHTML =
+        oldList +
+        `<li class="comment">
+          <div class="comment-header">
+            <div>${userName.value}</div>
+            <div>${dateNow.getDate()}.${formatDate(
+          dateNow.getMonth()
+        )}.${String(dateNow.getFullYear()).slice(2)} ${formatDate(
+          dateNow.getHours()
+        )}:${formatDate(dateNow.getMinutes())}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${userСomment.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+
+      userСomment.value = "";
+      userName.value = "";
+      buttonAddComment.disabled = true;
+    }
+
+    const buttonAddComment = document.querySelector(".add-form-button");
+    const userName = document.querySelector(".add-form-name");
+    const userСomment = document.querySelector(".add-form-text");
+    const listComments = document.querySelector(".comments");
+
+    buttonAddComment.disabled = true;
+
+    userName.addEventListener("input", () => {
+      buttonAddComment.disabled = false;
+    });
+
+    buttonAddComment.addEventListener("click", () => {
+      addComment();
+    });
+
+    userСomment.addEventListener("keyup", (event) => {
+      if (event.code == "Enter") {
+        addComment();
+      }
+    });
+
+    const deleteButton = document.querySelector(".delete-comment-button");
+
+    deleteButton.addEventListener("click", () => {
+      const lastCommentIndex = listComments.innerHTML.lastIndexOf(
+        '<li class="comment">'
+      );
+      listComments.innerHTML = listComments.innerHTML.slice(
+        0,
+        lastCommentIndex
+      );
+    });
   </script>
 </html>
