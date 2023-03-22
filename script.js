@@ -9,49 +9,50 @@ const mainForm = document.querySelector(".add-form");
 const studentElements = document.querySelectorAll(".comment");
 const likeButton = document.querySelectorAll(".like-button");
 
-
-const options = {
-  year: '2-digit',
-  month: '2-digit',
-  day: '2-digit',
-  timezone: 'UTC',
-  hour: '2-digit',
-  minute: '2-digit',
-
-};
-
-
-let nowDate = new Date().toLocaleString("ru-RU", options).replace(",", "");
-
+// функция для даты
+function getDate(date) {
+  const options = {
+      year: '2-digit',
+      month: 'numeric',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+  }
+  const newDate = new Date(date);
+  return newDate.toLocaleString('ru-RU', options).replace(',', '');
+}
 
 
-const comments = [
-  {
-    name: "Глеб Фокин",
-    date: "12.02.22 12:18",
-    comment: "Это будет первый комментарий на этой странице",
-    likesCount: 75,
+// Заглушка при загрузке комментариев с сервера
+
+let comments = [{
+    date: getDate(new Date),
     isLiked: false,
-    isEdit: false,
+    likes: 1000,
+    text: "Комментарии загружаются........",
+    author: { name: '' },
    
-  },
-  {
-    name: "Варвара Н.",
-    date: "13.02.22 19:22",
-    comment: " Мне нравится как оформлена эта страница! ❤",
-    likesCount: 12,
-    isLiked: true,
-    isEdit: false,
-   
-   
-  },
-
+}
 ];
+renderComments();
+
+const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/Kerimov-Evgeny/comments", {
+  method: "GET"
+});
+
+fetchPromise.then((response) => {
+  const jsonPromise = response.json();
+  jsonPromise.then((responseData) => {
+    comments = responseData.comments;
+   renderComments()
+  });
+});
+
 
 
 
 // Функция удаления последнего комментария
-const delComment = () => {
+function getComments() {
   const elem = document.getElementById("comments").lastChild;
   elem.parentNode.removeChild(elem);
 
@@ -59,7 +60,7 @@ const delComment = () => {
 
 // Отчистка данных с поля
 
-const delValue = () => {
+function delValue() {
   nameInputElement.value = "";
   commentInputElement.value = "";
 };
@@ -69,7 +70,7 @@ const delValue = () => {
 
 // Добавление лайка
 
-const addLike =() => {
+function addLike () {
   const likeButtons = listElement.querySelectorAll('.like-button');
   for(let likeButton of likeButtons){
 
@@ -92,39 +93,39 @@ const addLike =() => {
   }
 }
 
-const commentsList = document.querySelector('ul.comments'); 
+
 
 
 
 // Редактирование  
-const editText = (event ) => {
+// function editText (event ) {
   
-  const editButtons = listElement.querySelectorAll('.edit_comment');
-  for(let editButton of  editButtons){
+//   const editButtons = listElement.querySelectorAll('.edit_comment');
+//   for(let editButton of  editButtons){
 
-    editButton.addEventListener('click', (event) => {
-      event.stopPropagation()
-          const index = editButton.dataset.index;
+//     editButton.addEventListener('click', (event) => {
+//       event.stopPropagation()
+//           const index = editButton.dataset.index;
 
-            if (comments[index].isEdit === false) {
-                comments[index].isEdit = true;    
-          } else {
+//             if (comments[index].isEdit === false) {
+//                 comments[index].isEdit = true;    
+//           } else {
 
-          let currentTextarea = document.querySelectorAll('.comment') [index].querySelector('textarea');
+//           let currentTextarea = document.querySelectorAll('.comment') [index].querySelector('textarea');
 
-            comments[index].isEdit = false;
-            comments[index].comment = safeInputText(currentTextarea.value);
-          }
-          renderComments();
-      })
-  } 
-}
+//             comments[index].isEdit = false;
+//             comments[index].comment = safeInputText(currentTextarea.value);
+//           }
+//           renderComments();
+//       })
+//   } 
+// }
 
 
 
-// Добавление комментария
+// Добавление комментария  к инпуту
 
-const reComment = () => {
+function reComment () {
   
  const allComments = document.querySelectorAll('.comment')
  for(let comment of allComments){
@@ -132,7 +133,7 @@ const reComment = () => {
     event.stopPropagation()
     const nameUser = comment.dataset.name;
     const userComments = comment.dataset.comment;
-    commentInputElement.value =` >${userComments} \n${nameUser} <`
+    commentInputElement.value =` >${userComments} \n${nameUser} <\n`
     
   })
  
@@ -141,38 +142,39 @@ const reComment = () => {
 
 // Функция обезопасить ввод данных
 function safeInputText(str) {
-  return str.replaceAll("<", "&lt;").replaceAll(">", "&gt;")
-
+    return str.replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
 }
+
+
 
 // Рендер разметки
 
-const renderComments = () => {
+function renderComments() {
+  
   const userHtml = comments.map((user, index) => {
-    return `<li class="comment"  data-name="${user.name}" data-comment="${user.comment}">
+    return `<li class="comment"  data-name="${user.author.name}" data-comment="${user.text}">
     <div class="comment-header">
-      <div>${user.name}</div>
-      <div>${user.date}</div>
+      <div>${user.author.name}</div>
+      <div>${getDate(user.date)}</div>
     </div>
     <div class="comment-body" >
-    ${user.isEdit ? `<textarea class ="aria-text"  onclick="event.stopPropagation()">${user.comment}</textarea>` :`<div class ="comment-text"> ${user.comment} </div>`}
+   <div class ="comment-text"> ${user.text} </div>
     </div>
     <div class="comment-footer">
       <div class="likes">
-        <span class="likes-counter">${user.likesCount}</span>
+        <span class="likes-counter">${user.likes}</span>
         <button data-index="${index}"  class="${user.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
         <button data-index="${index}" class= "edit_comment">Редактировать</button>
-       
       </div>
     </div>
   </li>`
   }).join('')
 
   listElement.innerHTML = userHtml;
-  
-  delValue() // Отчиска формы
   addLike()  // лайки
-  editText() //Изменеие текста
   reComment() // Комментирование поста
 
 
@@ -182,6 +184,7 @@ const renderComments = () => {
 
 
 renderComments();
+
 
 
 // Добавление комментария
@@ -194,24 +197,47 @@ addComment.addEventListener("click", () => {
     commentInputElement.placeholder = 'Введите комментарий';
     buttonBlock()
     return;
+  } else{
+    renderComments();
+    fetch('https://webdev-hw-api.vercel.app/api/v1/Kerimov-Evgeny/comments', {
+            method: "POST",
 
-  } else {
-    comments.push({
-      name:safeInputText(nameInputElement.value),
-      date: nowDate,
-      comment: safeInputText(commentInputElement.value),
-      likesCount: 0,
-      isLiked: false,
-      isEdit: false,
-    })
+            body: JSON.stringify({
+                date: new Date,
+                likes: 0,
+                isLiked: false,
+                text: safeInputText(commentInputElement.value),
+                name: safeInputText(nameInputElement.value),
+            })
 
+        }).then((response) => {
+          const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/Kerimov-Evgeny/comments", {
+            method: "GET"
+          });
+          
+          fetchPromise.then((response) => {
+            const jsonPromise = response.json();
+            jsonPromise.then((responseData) => {
+              comments = responseData.comments;
+             renderComments()
+            });
+          });
+
+            response.json().then((responseData) => {
+                renderComments();
+            })
+        });
+  
+      }
+ 
     nameInputElement.classList.remove("error");
     commentInputElement.classList.remove("error");
     const oldListHtml = listElement.innerHTML;
 
 
-  }
+  
   renderComments();
+  delValue() 
 
 });
 
@@ -233,6 +259,8 @@ const buttonBlock = () => {
     });
   });
 }
+
+
 
 
 // Ввод по нажатию клавиши Enter
