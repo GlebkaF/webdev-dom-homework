@@ -55,7 +55,7 @@ fetchPromise.then((response) => {
 
 // Функция удаления последнего комментария
 function delComment() {
-  console.log(comments)
+ 
   comments.pop()
     renderComments();
 
