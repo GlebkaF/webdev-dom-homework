@@ -29,10 +29,14 @@ let comments = [{
     text: "",
     author: { name: '' },
     isLiked: false,
+    isEdit: false,
    
 }
 ];
 renderComments();
+
+
+
 
 const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/Kerimov-Evgeny/comments", {
   method: "GET"
@@ -50,17 +54,18 @@ fetchPromise.then((response) => {
 
 
 // Функция удаления последнего комментария
-function getComments() {
+function delComment() {
   const elem = document.getElementById("comments").lastChild;
   elem.parentNode.removeChild(elem);
+
 
 }
 
 // Отчистка данных с поля
 
-function delValue() {
-  nameInputElement.value = "";
-  commentInputElement.value = "";
+function delValue(index) {
+  comments.splice(index, 1);
+    renderComments();
 };
 
 
@@ -78,11 +83,11 @@ function addLike () {
 
           if (comments[index].isLiked === false) {
             comments[index].isLiked = true;
-            comments[index].likesCount +=1;
+            comments[index].likes +=1;
 
           } else if (comments[index].isLiked === true){
             comments[index].isLiked = false;
-            comments[index].likesCount -=1;
+            comments[index].likes -=1;
           }
 
           renderComments();
@@ -95,7 +100,7 @@ function addLike () {
 
 
 
-// Редактирование  
+// // Редактирование  
 // function editText (event ) {
   
 //   const editButtons = listElement.querySelectorAll('.edit_comment');
@@ -165,7 +170,7 @@ function renderComments() {
       <div class="likes">
         <span class="likes-counter">${user.likes}</span>
         <button data-index="${index}"  class="${user.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
-        <button data-index="${index}" class= "edit_comment">Редактировать</button>
+    
       </div>
     </div>
   </li>`
