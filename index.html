@@ -84,7 +84,7 @@ function myDate() {
   let myDay = String(date.getDate()).lenght < 2 ? '0' + date.getDate() : date.getDate();
   let myMonth = monthArray[+date.getMonth()];
   let myYear = String(date.getFullYear()).slice(2);
-  let str = myDay + '.' + myMonth + '.' + myYear + '' + myHours + ':' + myMin;
+  let str = myDay + '.' + myMonth + '.' + myYear + ' ' + myHours + ':' + myMin;
   return str
 }
 
