@@ -55,17 +55,17 @@ fetchPromise.then((response) => {
 
 // Функция удаления последнего комментария
 function delComment() {
-  const elem = document.getElementById("comments").lastChild;
-  elem.parentNode.removeChild(elem);
-
+  console.log(comments)
+  comments.pop()
+    renderComments();
 
 }
 
 // Отчистка данных с поля
 
-function delValue(index) {
-  comments.splice(index, 1);
-    renderComments();
+function delValue() {
+  nameInputElement.value = "";
+  commentInputElement.value = "";
 };
 
 
