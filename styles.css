@@ -134,6 +134,15 @@ body {
     border-radius: 18px;
     cursor: pointer;
   }
+  .add-form-button-loader {
+    margin-top: 24px;
+    font-size: 20px;
+    padding: 10px 20px;
+    background-color: #e2f5a9;
+    border: none;
+    border-radius: 18px;
+    cursor: pointer;
+  }
 
   .add-form-button:hover {
     opacity: 0.9;
@@ -163,4 +172,24 @@ body {
 .aria-text{
   width: 500px;
   font-size: 32px;
+}
+
+
+@keyframes rotating {
+  from {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(30deg);;
+  }
+  75% {
+    transform: rotate(-30deg);;
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+.-loading-like {
+  animation: rotating 2s linear infinite;
 }

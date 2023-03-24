@@ -30,26 +30,27 @@ let comments = [{
     author: { name: '' },
     isLiked: false,
     isEdit: false,
-   
 }
 ];
-renderComments();
 
 
 
-
-const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/Kerimov-Evgeny/comments", {
+// функция Данные с сервера
+const fetchAndRenderTasks = () =>{
+ return fetch("https://webdev-hw-api.vercel.app/api/v1/Kerimov-Evgeny/comments", {
   method: "GET"
-});
-
-fetchPromise.then((response) => {
-  const jsonPromise = response.json();
-  jsonPromise.then((responseData) => {
+})
+  .then((response) => {
+   return response.json()
+  .then((responseData) => {
     comments = responseData.comments;
-   renderComments()
+   renderComments();
   });
 });
+}
 
+fetchAndRenderTasks()
+renderComments();
 
 
 
@@ -68,8 +69,25 @@ function delValue() {
   commentInputElement.value = "";
 };
 
+// Функция для имитации запросов в API
+// Не смотрите особо на внутренности, мы разберемся с этим позже
+function delay(interval = 300) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, interval);
+  });
+}
 
-
+// // Пример использования:
+// delay(2000).then(() => {
+//   comment.likes = comment.isLiked
+//     ? comment.likes - 1
+//     : comment.likes + 1;
+//   comment.isLiked = !comment.isLiked;
+//   comment.isLikeLoading = false;
+//   renderComments();
+// });
 
 // Добавление лайка
 
@@ -80,17 +98,18 @@ function addLike () {
     likeButton.addEventListener('click', ( event) => {
       event.stopPropagation()
           const index = likeButton.dataset.index;
-
-          if (comments[index].isLiked === false) {
-            comments[index].isLiked = true;
-            comments[index].likes +=1;
-
-          } else if (comments[index].isLiked === true){
-            comments[index].isLiked = false;
-            comments[index].likes -=1;
-          }
-
-          renderComments();
+          likeButton.classList.add('-loading-like')
+          delay(2000).then(()=> {
+           
+            if (comments[index].isLiked === false) {
+              comments[index].isLiked = true;
+              comments[index].likes +=1;
+            } else {
+              comments[index].isLiked = false;
+              comments[index].likes -=1;
+            }
+            renderComments();
+          })
 
       })
   }
@@ -193,46 +212,53 @@ renderComments();
 // Добавление комментария
 addComment.addEventListener("click", () => {
 
+
+
+
+
   if (nameInputElement.value === "" || commentInputElement.value === "") {
     nameInputElement.classList.add("error");
     commentInputElement.classList.add("error");
     nameInputElement.placeholder = 'Введите имя';
     commentInputElement.placeholder = 'Введите комментарий';
-    buttonBlock()
-    return;
-  } else{
-    renderComments();
-    fetch('https://webdev-hw-api.vercel.app/api/v1/Kerimov-Evgeny/comments', {
-            method: "POST",
 
-            body: JSON.stringify({
-                date: new Date,
-                likes: 0,
-                isLiked: false,
-                text: safeInputText(commentInputElement.value),
-                name: safeInputText(nameInputElement.value),
-            })
-
-        }).then((response) => {
-          const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/Kerimov-Evgeny/comments", {
-            method: "GET"
-          });
-          
-          fetchPromise.then((response) => {
-            const jsonPromise = response.json();
-            jsonPromise.then((responseData) => {
-              comments = responseData.comments;
-             renderComments()
-            });
-          });
-
-            response.json().then((responseData) => {
-                renderComments();
-            })
-        });
+    // buttonBlock()
+    return;  
+  } 
+  // Выключение кнопки
+    addComment.disabled = true;
+    addComment.textContent = 'Добавляется'
   
-      }
- 
+    addComment.classList.add('add-form-button-loader')
+
+
+    fetch('https://webdev-hw-api.vercel.app/api/v1/Kerimov-Evgeny/comments', {
+    method: "POST",
+
+    body: JSON.stringify({
+        date: new Date,
+        likes: 0,
+        isLiked: false,
+        text: safeInputText(commentInputElement.value),
+        name: safeInputText(nameInputElement.value),
+      }),
+
+      })
+      .then((response) => {
+        return response.json();
+      })
+      .then (() =>{
+       return fetchAndRenderTasks()
+      })
+      .then(()=>{
+        addComment.disabled = false;
+        addComment.textContent = 'написать'
+        addComment.classList.remove('add-form-button-loader')
+      })
+
+
+
+
     nameInputElement.classList.remove("error");
     commentInputElement.classList.remove("error");
     const oldListHtml = listElement.innerHTML;
@@ -240,7 +266,7 @@ addComment.addEventListener("click", () => {
 
   
   renderComments();
-  delValue() 
+  delValue(); 
 
 });
 
