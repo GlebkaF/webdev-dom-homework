@@ -315,7 +315,8 @@ buttonElement.addEventListener('click', () => {
     });
 
 
-    response.json().then(() => {
+    response.json().then((responseData) => {
+      comments = responseData.comments;
       renderComments();
     })
   });
