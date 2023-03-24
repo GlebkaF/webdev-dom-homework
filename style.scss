@@ -106,7 +106,7 @@
   filter: var(--filter__shadow-color);
   border-radius: 20px;
   padding: 20px;
-  margin-top: 48px;
+  margin-top: 24px;
   display: flex;
   flex-direction: column;
 
@@ -186,7 +186,7 @@
   filter: var(--filter__shadow-color);
   border-radius: 20px;
   padding: 20px;
-  margin-top: 48px;
+  margin-top: 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -199,7 +199,7 @@
   filter: var(--filter__shadow-color);
   border-radius: 20px;
   padding: 20px;
-  margin-top: 48px;
+  margin-top: 24px;
   display: flex;
   flex-direction: column;
 
@@ -223,6 +223,7 @@
   filter: var(--filter__shadow-color);
   border-radius: 20px;
   margin-top: 12px;
+  margin-bottom: 12px;
   padding: 22px;
   resize: none;
   font-size: 32px;
@@ -240,4 +241,28 @@
 
 .-display-none {
   display: none;
+}
+
+.-loading-like {
+  animation: rotating 2s linear infinite;
+}
+
+@keyframes rotating {
+  from {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(30deg);
+    ;
+  }
+
+  75% {
+    transform: rotate(-30deg);
+    ;
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
 }
