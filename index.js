@@ -60,9 +60,9 @@ fetchPromise.then((response) => {
     console.log(responseData);
     const appComments = responseData.comments.map((comment) => {
       return {
-        name: comment.author.name,
+        name: comment.author.name.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
         date: myDate(new Date(comment.date)),
-        text: comment.text,
+        text: comment.text.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
         likes: comment.likes,
         isLike: false,
         // isEdit: false,
@@ -279,55 +279,43 @@ buttonElement.addEventListener('click', () => {
   fetch('https://webdev-hw-api.vercel.app/api/v1/:natalvod/comments', {
     method: "POST",
     body: JSON.stringify({
-      name: inputNameElement.value,
+      name: secureInput(inputNameElement.value),
       date: myDate(new Date),
-      text: textareaElement.value,
+      text: secureInput(textareaElement.value),
       likes: 0,
       isLike: false,
     }),
   }
   ).then((response) => {
-    response.json().then((responseData) => {
-      console.log(responseData);
-      const appComments = responseData.comments.map((comment) => {
-        return {
-          name: comment.author.name,
-          date: myDate(new Date(comment.date)),
-          text: comment.text,
-          likes: comment.likes,
-          isLike: false,
-          // isEdit: false,
-        };
-      });
-      comments = appComments;
-      renderComments();
-    })
-  });
-
-  const fetchPromiseAfter = fetch(
+    const fetchPromiseAfter = fetch(
     'https://webdev-hw-api.vercel.app/api/v1/:natalvod/comments',
     {
       method: "GET"
     }
   );
-  
   fetchPromiseAfter.then((response) => {
-    console.log(response);
-  
-    const jsonPromise = response.json();
-    jsonPromise.then((responseData) => {
-      console.log(responseData);
-      const appComments = responseData.comments.map((comment) => {
-        return {
-          name: comment.author.name.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-          date: myDate(new Date(comment.date)),
-          text: comment.text.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-          likes: comment.likes,
-          isLike: false,
-          // isEdit: false,
-        };
-      });
-      comments = appComments;
+   
+    
+      const jsonPromise = response.json();
+      jsonPromise.then((responseData) => {
+        console.log(responseData);
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+            date: myDate(new Date(comment.date)),
+            text: comment.text.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+            likes: comment.likes,
+            isLike: false,
+            // isEdit: false,
+          };
+        });
+        comments = appComments;
+        renderComments();
+      })
+    });
+
+
+    response.json().then(() => {
       renderComments();
     })
   });
