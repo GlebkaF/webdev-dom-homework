@@ -78,7 +78,7 @@ const commentInputElement = document.getElementById("comment-input");
 
 function myDate() {
   let date = new Date();
-  let monthArray = ['1','2','3','4','5','6','7','8','9','10','11','12'];
+  let monthArray = ['01','02','03','04','05','06','07','08','09','10','11','12'];
   let myMin = String(date.getMinutes()).lenght < 2 ? '0' + date.getMinutes() : date.getMinutes();
   let myHours = String(date.getHours()).lenght < 2 ? '0' + date.getHours() : date.getHours();
   let myDay = String(date.getDate()).lenght < 2 ? '0' + date.getDate() : date.getDate();
@@ -118,6 +118,9 @@ commentInputElement.classList.remove("error");
             </div>
           </div>
         </li>`
+
+  nameInputElement.value = "";
+  commentInputElement.value = ""; 
 });
   </script>
 </html>
