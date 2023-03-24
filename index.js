@@ -319,9 +319,9 @@ buttonElement.addEventListener('click', () => {
       console.log(responseData);
       const appComments = responseData.comments.map((comment) => {
         return {
-          name: comment.author.name,
+          name: comment.author.name.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
           date: myDate(new Date(comment.date)),
-          text: comment.text,
+          text: comment.text.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
           likes: comment.likes,
           isLike: false,
           // isEdit: false,
