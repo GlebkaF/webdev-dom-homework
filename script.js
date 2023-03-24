@@ -70,7 +70,7 @@ function delValue() {
 };
 
 // Функция для имитации запросов в API
-// Не смотрите особо на внутренности, мы разберемся с этим позже
+
 function delay(interval = 300) {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -79,17 +79,7 @@ function delay(interval = 300) {
   });
 }
 
-// // Пример использования:
-// delay(2000).then(() => {
-//   comment.likes = comment.isLiked
-//     ? comment.likes - 1
-//     : comment.likes + 1;
-//   comment.isLiked = !comment.isLiked;
-//   comment.isLikeLoading = false;
-//   renderComments();
-// });
 
-// Добавление лайка
 
 function addLike () {
   const likeButtons = listElement.querySelectorAll('.like-button');
