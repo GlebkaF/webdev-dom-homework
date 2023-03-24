@@ -164,8 +164,8 @@ font-size: 16px;
   z-index: 2;
   position: absolute;
   top: 50%;
-  left: 50%;
-  margin: -25px 0 0 -25px;
+  left: 60%;
+  margin: -25px 0 0 0;
   width: 50px;
   height: 50px;
 }  
@@ -196,4 +196,38 @@ font-size: 16px;
     stroke-dasharray: 90, 150;
     stroke-dashoffset: -124;
   }
+}
+
+@keyframes rotating {
+  from {
+    transform: scale(1.0);
+  }
+  12.5% {
+    transform: scale(1.07);
+  }
+  25% {
+    transform:scale(0.87);
+  }
+  37.5% {
+    transform:scale(1.07);
+  }
+  50% {
+    transform:scale(0.87);
+  }
+  62.5% {
+    transform:scale(1.07);
+  }
+  75% {
+    transform:scale(0.87);
+  }
+  87.5% {
+    transform:scale(1.07);
+  }
+  to {
+    transform:scale(1.0);
+  }
+}
+
+.loading-like {
+  animation: rotating 1s ease-in-out infinite;
 }

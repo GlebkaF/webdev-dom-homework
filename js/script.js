@@ -1,30 +1,22 @@
 'use strict';
 
+// Не старайся быть не таким как все, все хотят быть не такими как все.
 
-// За неимением кнута его долго били пряником...
 
-
-// Заглушка при загрузке комментариев с сервера
+// Флаг на первое открытие для рендера заглушки на загрузку комментариев
+let isFirstOpen = true;
 const commentsList = document.querySelector('ul.comments');
-let comments = [{
-    date: getDate(new Date),
-    isLiked: false,
-    likes: 1000,
-    text: "Комментарии загружаются........",
-    author: { name: '' }
-}
-];
+let comments = [];
 renderComments();
 
 // Достаю комментарии с сервера
 function getComments() {
-    fetch('https://webdev-hw-api.vercel.app/api/v1/alex-volo/comments', {
-        method: "GET"
-    }).then((response) =>
-        response.json().then((responseData) => {
+    return fetch('https://webdev-hw-api.vercel.app/api/v1/alex-volo/comments')
+        .then(response => response.json())
+        .then(responseData => {
             comments = responseData.comments;
-            renderComments()
-        }));
+            renderComments();
+        });
 }
 getComments();
 
@@ -51,9 +43,19 @@ function getDate(date) {
 
 // Функция рисует HTML-разметку всех комментариев
 function renderComments() {
+    if (isFirstOpen) {
+        isFirstOpen = false;
+        commentsList.innerHTML = `
+        <li class="comment" style="display: flex;">
+        Комментарии загружаются... 
 
-    commentsList.innerHTML = comments.reduce((result, comment, index) => {
-        return result + `
+        <svg class="spinner" viewBox="0 0 50 50">
+        <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+        </svg>
+        </li>`;
+    } else {
+        commentsList.innerHTML = comments.reduce((result, comment, index) => {
+            return result + `
     <li class="comment" data-id="${comment.id}" data-index="${index}">
         <div class="comment-header">
         <div>${comment.author.name}
@@ -68,40 +70,58 @@ function renderComments() {
         </div>
         <div class="comment-footer">
         <button class="delete-button">Удалить</button>
-        <button class="edit-button">Редактировать </button>
+  
         <div class="likes">
             <span class="likes-counter">${comment.likes}</span>
             <button class="${comment.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
         </div>
         </div>
     </li >`
-    }, '');
+        }, '');
 
-    addListenerOnComments();
+        addListenerOnComments();
+    }
 }
 
 // Рендер формы добавления комментария
-let isLoading = false; //Загружается ли комментарий на сервер
+let loadingStatus = 0; // 0 - ничего не загружается (по умолчанию); 1 - комментарий загружается на сервер;
+// 2 - комментарий загружается от сервера на клиент  
 
 function renderForm() {
-    if (!isLoading) {
-        addForm.innerHTML = `    
-    <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="input-name" />
-    <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
-      id="input-comment"></textarea>
-    <div class="add-form-row">
-      <button class="add-form-button" id="button-add-comment">Написать</button>
-    </div>`;
-        // Добавляю событие на клик по добавить комментарий
-        const buttonAddComment = document.querySelector('button.add-form-button');
-        buttonAddComment.addEventListener('click', addComment);
-    } else {
-        addForm.innerHTML = `    
-        Комментарий добавляется...
-        <svg class="spinner" viewBox="0 0 50 50">
-        <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
-      </svg>
-        `
+    switch (loadingStatus) {
+        case 0:
+            addForm.innerHTML = `    
+            <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="input-name" />
+            <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
+            id="input-comment"></textarea>
+            <div class="add-form-row">
+                <button class="add-form-button" id="button-add-comment">Написать</button>
+            </div>`;
+            // Добавляю событие на клик по добавить комментарий
+            const buttonAddComment = document.querySelector('button.add-form-button');
+            buttonAddComment.addEventListener('click', addComment);
+            break;
+
+        case 1:
+            addForm.innerHTML = ` 
+            <div style="display: flex;">
+            Комментарий добавляется на сервер...
+            <svg class="spinner" viewBox="0 0 50 50">
+                <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+            </svg>
+            </div>
+            `
+            break;
+
+        case 2:
+            addForm.innerHTML = ` 
+            <div style="display: flex;">Комментарий загружается...</div>
+            <svg class="spinner" viewBox="0 0 50 50">
+                <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+            </svg>
+            </div>
+            `
+            break;
     }
 
 
@@ -116,16 +136,16 @@ function addListenerOnComments() {
         comment.addEventListener('click', (e) => {
             const index = comment.dataset.index;
             const likeButton = e.currentTarget.querySelector('button.like-button');
-            const editButton = e.currentTarget.querySelector('.edit-button');
+            //const editButton = e.currentTarget.querySelector('.edit-button');
             const deleteButton = e.currentTarget.querySelector('.delete-button');
-            const editTextarea = e.currentTarget.querySelector('textarea');
+            //const editTextarea = e.currentTarget.querySelector('textarea');
 
-            if (e.target === editTextarea) { return }
+            // if (e.target === editTextarea) { return }
             if (e.target === likeButton) { like(index); return; }
-            if (e.target === editButton) { edit(index); return; }
+            // if (e.target === editButton) { edit(index); return; }
             if (e.target === deleteButton) { deleteComment(index); return }
 
-            replyComment(index);
+            // replyComment(index);
         })
     }
 }
@@ -145,11 +165,12 @@ function safeInput(str) {
 }
 
 // Функция ответить на комментарий
-function replyComment(index) {
+// Пока побудет закоменченной, ибо нех..
+/*function replyComment(index) {
     inputComment.value = 'QUOTE_BEGIN >' + comments[index].text +
         '\n' + comments[index].name + '< QUOTE_END';
     renderComments();
-}
+}*/
 
 // Функция удалить комментарий
 function deleteComment(index) {
@@ -159,15 +180,29 @@ function deleteComment(index) {
 
 // Функция лайк
 function like(index) {
-    if (comments[index].isLiked === false) {
-        comments[index].isLiked = true;
-        comments[index].likes += 1;
-    } else {
-        comments[index].isLiked = false;
-        comments[index].likes -= 1;
+    // Пока объявлю внутри лайка, возможно больше нигде не пригодится
+    function delay(interval = 300) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve();
+            }, interval);
+        });
     }
+    const currentLikeButton = document.querySelectorAll('.like-button')[index];
+    currentLikeButton.classList.add('loading-like')
+    delay(2000)
+        .then(() => {
+            if (comments[index].isLiked) {
+                comments[index].isLiked = false;
+                comments[index].likes -= 1;
+            } else {
+                comments[index].isLiked = true;
+                comments[index].likes += 1;
+            }
+            renderComments();
+        })
 
-    renderComments();
+
 }
 
 // Функциия редактировать
@@ -227,7 +262,7 @@ function addComment() {
 
     } else {
         // Заглушка на время отправки коммента на сервер
-        isLoading = true;
+        loadingStatus = 1;
         renderForm();
 
         fetch('https://webdev-hw-api.vercel.app/api/v1/alex-volo/comments', {
@@ -241,15 +276,18 @@ function addComment() {
                 name: safeInput(inputName.value),
             })
 
-        }).then((response) => {
-            getComments();
+        }).then(response => {
+            response.json().then(message => console.log(message));
+            loadingStatus = 2;
+            renderForm();
+            return getComments();
 
-            response.json().then((responseData) => {
-                console.log(responseData);
-                isLoading = false;
-                renderForm();
-            })
+        }).then((responseData) => {
+            console.log(responseData);
+            loadingStatus = 0;
+            renderForm();
         });
+
         inputName.value = '';
         inputComment.value = '';
     }
