@@ -1,106 +1,145 @@
 'use strict';
 
-// - Работать, тунеядцы, солнце еще высоко.
-// - Это не солнце, это луна.
-// - А не колышет...
+// Не старайся быть не таким как все, все хотят быть не такими как все.
 
 
-// Не использовал в этом уроке метод .stopPropagation(),
-// здесь я делегировал события комментариев в один обработчик
-// и поэтому stopPropagation стал весьма неуместным. Но как им 
-// пользоваться я разобрался. 
+// Рисую лоадер на период загрузки комментариев
+let comments = [];
+renderComments(1);
 
-// Форма и её инпуты
-const addForm = document.querySelector('div.add-form');
-const inputName = document.querySelector('input.add-form-name');
-const inputComment = document.querySelector('div.add-form > textarea.add-form-text');
-const buttonAddComment = document.querySelector('button.add-form-button');
-// UL 
-const commentsList = document.querySelector('ul.comments');
+// Достаю комментарии с сервера
+function getComments() {
+    return fetch('https://webdev-hw-api.vercel.app/api/v1/alex-volo/comments')
+        .then(response => response.json())
+        .then(responseData => {
+            comments = responseData.comments;
+            renderComments();
+        });
+}
+getComments();
 
-// Массив с данными о комментариях
-const commentsListArray = [
-    {
-        name: 'Глеб Фокин',
-        date: '12.02.22 12:18',
-        text: 'Это будет первый комментарий на этой странице',
-        likeCount: 3,
-        liked: false,
-        isEdit: false,
-        editButtonText: ['Редактировать', 'Сохранить'],
-    },
-    {
-        name: 'Варвара Н.',
-        date: '13.02.22 19:22',
-        text: 'Мне нравится как оформлена эта страница! ❤',
-        likeCount: 75,
-        liked: true,
-        isEdit: false,
-        editButtonText: ['Редактировать', 'Сохранить'],
-    },
-];
+// Функция преобразует дату из строки используется в рендер функции
+function getDate(date) {
+    const options = {
+        year: '2-digit',
+        month: 'numeric',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+    }
+    const newDate = new Date(date);
+    return newDate.toLocaleString('ru-RU', options).replace(',', '');
+}
 
 // Функция рисует HTML-разметку всех комментариев
-function renderComments() {
-    commentsList.innerHTML = commentsListArray.reduce((result, comment, index) => {
-        return result + `
-    <li class="comment">
+function renderComments(isFirstOpen = 0) {
+    const commentsList = document.querySelector('ul.comments');
+    if (isFirstOpen) {
+        isFirstOpen = false;
+        commentsList.innerHTML = `
+        <li class="comment" style="display: flex;">
+        Комментарии загружаются... 
+
+        <svg class="spinner" viewBox="0 0 50 50">
+        <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+        </svg>
+        </li>`;
+
+    } else {
+        commentsList.innerHTML = comments.reduce((result, comment, index) => {
+            return result + `
+    <li class="comment" data-id="${comment.id}" data-index="${index}">
         <div class="comment-header">
-        <div>${comment.name}</div>
-        <div>
-            ${comment.date}
+        <div>${comment.author.name}
+        </div>
+        <div>${getDate(comment.date)}
         </div >
         </div >
         <div class="comment-body">
-        <div class="comment-text">
-            ${comment.isEdit ? `<textarea type="textarea" class="add-form-text" rows="4" cols="49">${comment.text}</textarea>` : makeQuote(comment.text)}
+        <div class="comment-text">   
+            ${makeQuote(comment.text)}            
         </div>
         </div>
         <div class="comment-footer">
         <button class="delete-button">Удалить</button>
-        <button class="edit-button">${comment.isEdit ? comment.editButtonText[1] : comment.editButtonText[0]} </button>
+  
         <div class="likes">
-            <span class="likes-counter">${comment.likeCount}</span>
-            <button data-index="${index}"  class="${comment.liked ? 'like-button -active-like' : 'like-button'}"></button>
+            <span class="likes-counter">${comment.likes}</span>
+            <button class="${comment.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
         </div>
         </div>
     </li >`
-    }, '');
+        }, '');
 
-    addListenerOnComments();
+        addListenerOnComments();
+    }
 }
 
-renderComments();
+// Рендер формы добавления комментария
+// 0 - ничего не загружается(по умолчанию); 1 - комментарий загружается на сервер;
+// 2 - комментарий загружается от сервера на клиент  
+function renderForm(loadingStatus) {
+    const addForm = document.querySelector('div.add-form');
 
-// Попробуем делегировать события и повешать один обработчик
-// На комментарий
+    switch (loadingStatus) {
+        case 1:
+            addForm.innerHTML = ` 
+            <div style="display: flex;">
+            Комментарий добавляется на сервер...
+            <svg class="spinner" viewBox="0 0 50 50">
+                <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+            </svg>
+            </div>
+            `
+            break;
+
+        case 2:
+            addForm.innerHTML = ` 
+            <div style="display: flex;">Комментарий загружается...</div>
+            <svg class="spinner" viewBox="0 0 50 50">
+                <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+            </svg>
+            </div>
+            `
+            break;
+
+        default: addForm.innerHTML = `    
+            <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="input-name" />
+            <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
+            id="input-comment"></textarea>
+            <div class="add-form-row">
+                <button class="add-form-button" id="button-add-comment">Написать</button>
+            </div>`;
+            // Добавляю событие на клик по кнопке добавить
+            const buttonAddComment = document.querySelector('button.add-form-button');
+            document.addEventListener('keyup', (e) => {
+                if (e.code == 'Enter') addComment();
+            });
+            buttonAddComment.addEventListener('click', addComment);
+    }
+}
+renderForm();
+
+// Делегирую события для комментариев на один обработчик
 function addListenerOnComments() {
-    const comments = commentsList.querySelectorAll('li.comment');
-    let i = 0;
-    for (const comment of comments) {
-        comment.dataset.index = i;
-        const index = i;
-        i++;
-        comment.addEventListener('click', (e) => {
-            const likeButton = e.currentTarget.querySelector('button.like-button');
-            const editButton = e.currentTarget.querySelector('.edit-button');
-            const deleteButton = e.currentTarget.querySelector('.delete-button');
-            const editTextarea = e.currentTarget.querySelector('textarea');
+    const currentComments = document.querySelectorAll('li.comment');
 
-            if (e.target === editTextarea) { return }
+    for (const comment of currentComments) {
+        comment.addEventListener('click', (e) => {
+            const index = comment.dataset.index;
+            const likeButton = e.currentTarget.querySelector('button.like-button');
+            //const editButton = e.currentTarget.querySelector('.edit-button');
+            const deleteButton = e.currentTarget.querySelector('.delete-button');
+            //const editTextarea = e.currentTarget.querySelector('textarea');
+
+            // if (e.target === editTextarea) { return }
             if (e.target === likeButton) { like(index); return; }
-            if (e.target === editButton) { edit(index); return; }
+            // if (e.target === editButton) { edit(index); return; }
             if (e.target === deleteButton) { deleteComment(index); return }
 
             replyComment(index);
         })
     }
-}
-
-// Функция делает цитаты
-function makeQuote(str) {
-    return str.replaceAll('QUOTE_BEGIN', '<blockquote class="blockquote">')
-        .replaceAll('QUOTE_END', '</blockquote>');
 }
 
 // Функция обезопасить пользовательский ввод
@@ -113,109 +152,121 @@ function safeInput(str) {
 
 // Функция ответить на комментарий
 function replyComment(index) {
-    inputComment.value = 'QUOTE_BEGIN >' + commentsListArray[index].text +
-        '\n' + commentsListArray[index].name + '< QUOTE_END';
+    const inputComment = document.querySelector('.add-form-text');
+    inputComment.value = '⟪' + comments[index].text +
+        '\n' + comments[index].author.name + '⟫';
     renderComments();
+}
+
+// Функция делает цитаты
+function makeQuote(str) {
+    return str.replaceAll('⟪', '<blockquote class="blockquote">')
+        .replaceAll('⟫', '</blockquote>');
 }
 
 // Функция удалить комментарий
 function deleteComment(index) {
-    commentsListArray.splice(index, 1);
+    comments.splice(index, 1);
     renderComments();
 }
 
 // Функция лайк
 function like(index) {
-    if (commentsListArray[index].liked === false) {
-        commentsListArray[index].liked = true;
-        commentsListArray[index].likeCount += 1;
-    } else {
-        commentsListArray[index].liked = false;
-        commentsListArray[index].likeCount -= 1;
+    // Пока объявлю внутри лайка, возможно больше нигде не пригодится
+    function delay(interval = 300) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve();
+            }, interval);
+        });
     }
+    const currentLikeButton = document.querySelectorAll('.like-button')[index];
+    currentLikeButton.classList.add('loading-like')
+    delay(2000)
+        .then(() => {
+            if (comments[index].isLiked) {
+                comments[index].isLiked = false;
+                comments[index].likes -= 1;
+            } else {
+                comments[index].isLiked = true;
+                comments[index].likes += 1;
+            }
+            renderComments();
+        })
 
-    renderComments();
+
 }
 
 // Функциия редактировать
 function edit(index) {
 
-    if (commentsListArray[index].isEdit === false) {
-        commentsListArray[index].isEdit = true;
+    if (comments[index].isEdit === false) {
+        comments[index].isEdit = true;
     } else {
         // Нахожу textarea
-        let currentTextarea = commentsList.querySelectorAll('.comment')[index].querySelector('textarea');
+        let currentTextarea = document.querySelectorAll('.comment')[index].querySelector('textarea');
 
         if (currentTextarea.value !== '') {
-            commentsListArray[index].isEdit = false;
-            commentsListArray[index].text = safeInput(currentTextarea.value);
+            comments[index].isEdit = false;
+            comments[index].text = safeInput(currentTextarea.value);
         }
     }
 
     renderComments();
 }
 
-// Добавить комментарий при нажатии Enter
-addForm.addEventListener('keyup', (e) => {
-    if (e.code == 'Enter') addComment();
-});
-
-// Событие на кнопку добавить комментарий
-buttonAddComment.addEventListener('click', addComment);
-
 // Функция добавляет комментарий
 function addComment() {
+    const inputName = document.querySelector('input.add-form-name');
+    const inputComment = document.querySelector('.add-form-text');
     const currentDate = new Date;
-    const dateFormat = {
-        year: '2-digit',
-        month: 'numeric',
-        day: 'numeric',
-    }
-    const timeFormat = {
-        hour: '2-digit',
-        minute: '2-digit',
-    }
-    const currentDateString = currentDate.toLocaleDateString('ru-RU', dateFormat) +
-        ' ' + currentDate.toLocaleTimeString('ru-RU', timeFormat);
 
     // Таймаут красного фона на полях
-    function clearInputName() {
+    function clearInputs() {
         inputName.classList.remove('error__name')
         inputName.placeholder = 'Введите ваше имя';
-    }
-    function clearInputComment() {
         inputComment.classList.remove('error__name')
         inputComment.placeholder = 'Введите ваш комментарий';
     }
 
-
     if (inputName.value === '') {
         inputName.classList.add('error__name');
         inputName.placeholder = 'Поле не может быть пустым!';
-        inputName.value = '';
         inputComment.value = '';
-        setTimeout(clearInputName, 1500);
+        setTimeout(clearInputs, 1500);
 
     } else if (inputComment.value === '' || inputComment.value === '\n') {
         inputComment.classList.add('error__name');
         inputComment.placeholder = 'Поле не может быть пустым!';
         inputComment.value = '';
-        setTimeout(clearInputComment, 1500);
+        setTimeout(clearInputs, 1500);
 
     } else {
-        commentsListArray.push({
-            name: safeInput(inputName.value),
-            date: currentDateString,
-            text: safeInput(inputComment.value),
-            likeCount: 0,
-            liked: false,
-            isEdit: false,
-            editButtonText: ['Редактировать', 'Сохранить'],
-        })
+        // Заглушка на время отправки коммента на сервер
+        renderForm(1);
+
+        fetch('https://webdev-hw-api.vercel.app/api/v1/alex-volo/comments', {
+            method: "POST",
+
+            body: JSON.stringify({
+                date: currentDate,
+                likes: 0,
+                isLiked: false,
+                text: safeInput(inputComment.value),
+                name: safeInput(inputName.value),
+            })
+
+        }).then(response => {
+            response.json().then(message => console.log(message));
+            renderForm(2);
+            return getComments();
+
+        }).then((responseData) => {
+            console.log(responseData);
+            renderForm();
+        });
+
         inputName.value = '';
         inputComment.value = '';
-        renderComments(); // Заново отрисовываются все комментарии
     }
 }
-
-console.log("It works! К моему большому удивлению!");
