@@ -212,13 +212,12 @@ addComment.addEventListener("click", () => {
     nameInputElement.placeholder = 'Введите имя';
     commentInputElement.placeholder = 'Введите комментарий';
 
-    // buttonBlock()
+    buttonBlock()
     return;  
   } 
   // Выключение кнопки
     addComment.disabled = true;
     addComment.textContent = 'Добавляется'
-  
     addComment.classList.add('add-form-button-loader')
 
 
