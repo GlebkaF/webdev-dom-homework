@@ -41,39 +41,42 @@ const initDisabledButtonElement = () => {
 
 initDisabledButtonElement();
 
+
+//обезопасить ввод данных пользователя
+
+const secureInput = (safeText) => {
+  return safeText
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+  //.replaceAll("&", "&amp;")
+  //.replaceAll('"', "&quot;");
+}
+
 //GET API
 
 let comments = [];
 
-const fetchPromise = fetch(
-  'https://webdev-hw-api.vercel.app/api/v1/:natalvod/comments',
-  {
+//функция GET
+
+const getFetchPromise = () => {
+  return fetch('https://webdev-hw-api.vercel.app/api/v1/:natalvod/comments',{
     method: "GET"
-  }
-);
-
-fetchPromise.then((response) => {
-  console.log(response);
-
-  const jsonPromise = response.json();
-  jsonPromise.then((responseData) => {
-    console.log(responseData);
+  }).then((response) => {
+  return response.json();
+  }).then((responseData) => {
     const appComments = responseData.comments.map((comment) => {
       return {
-        name: comment.author.name.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+        name: secureInput(comment.author.name),
         date: myDate(new Date(comment.date)),
-        text: comment.text.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+        text: secureInput(comment.text),
         likes: comment.likes,
         isLike: false,
-        // isEdit: false,
       };
     });
     comments = appComments;
     renderComments();
-  })
-});
-
-
+  });
+}
 
 
 //рендер функция
@@ -241,19 +244,28 @@ const deleteLastComment = () => {
 };
 
 deleteLastComment();
-
+getFetchPromise();
 renderComments();
 
+//Функция POST
 
-//обезопасить ввод данных пользователя
-
-const secureInput = (safeText) => {
-  return safeText
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-  //.replaceAll("&", "&amp;")
-  //.replaceAll('"', "&quot;");
+const postFetchPromise = () => {
+  return fetch('https://webdev-hw-api.vercel.app/api/v1/:natalvod/comments', {
+    method: "POST",
+    body: JSON.stringify({
+      name: secureInput(inputNameElement.value),
+      date: myDate(new Date),
+      text: secureInput(textareaElement.value),
+      likes: 0,
+      isLike: false,
+    }),
+  }).then((response) => {
+    return response.json()
+  }).then(() => {
+    return getFetchPromise();
+  })
 }
+
 
 //добавление нового комментария
 
@@ -266,71 +278,16 @@ buttonElement.addEventListener('click', () => {
     return;
   };
 
-  // comments.push({
-  //   name: secureInput(inputNameElement.value),//функция безопасного ввода
-  //   date: date,
-  //   comment: secureInput(textareaElement.value),//функция безопасного ввода
-  //   likesCounter: 0,
-  //   isLike: false,
-  // });
-
-  //POST API
-
-  fetch('https://webdev-hw-api.vercel.app/api/v1/:natalvod/comments', {
-    method: "POST",
-    body: JSON.stringify({
-      name: secureInput(inputNameElement.value),
-      date: myDate(new Date),
-      text: secureInput(textareaElement.value),
-      likes: 0,
-      isLike: false,
-    }),
-  }
-  ).then((response) => {
-    const fetchPromiseAfter = fetch(
-    'https://webdev-hw-api.vercel.app/api/v1/:natalvod/comments',
-    {
-      method: "GET"
-    }
-  );
-  fetchPromiseAfter.then((response) => {
-   
-    
-      const jsonPromise = response.json();
-      jsonPromise.then((responseData) => {
-        console.log(responseData);
-        const appComments = responseData.comments.map((comment) => {
-          return {
-            name: comment.author.name.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-            date: myDate(new Date(comment.date)),
-            text: comment.text.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-            likes: comment.likes,
-            isLike: false,
-            // isEdit: false,
-          };
-        });
-        comments = appComments;
-        renderComments();
-      })
-    });
-
-
-    response.json().then((responseData) => {
-      comments = responseData.comments;
-      renderComments();
-    })
+  buttonElement.disabled = true;
+  buttonElement.textContent = "Добавляется..."
+  postFetchPromise().then(() => {
+    buttonElement.textContent = "Написать"
   });
 
   renderComments();
 
   inputNameElement.value = '';
   textareaElement.value = '';
-
-
-
-  // inputNameElement.disabled = true;
-  // textareaElement.disabled = true;
-
 });
 
 //ввод по кнопке enter
