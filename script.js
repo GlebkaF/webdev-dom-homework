@@ -7,6 +7,7 @@ const buttonQuoteElement = document.getElementById("button__quote");
 const buttonWriteElement = document.getElementById("button__write");
 const buttonDeleteElement = document.getElementById("button__delete");
 const textareaCommentElement = document.getElementById("textarea__comment");
+
 const listObject = [
     {
         name: "Глеб Фокин",
