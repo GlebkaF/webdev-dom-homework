@@ -8,6 +8,11 @@ const commentInputElement = document.getElementById("comment-input");
 const mainForm = document.querySelector(".add-form");
 const studentElements = document.querySelectorAll(".comment");
 const likeButton = document.querySelectorAll(".like-button");
+const textarea = document.querySelectorAll('.add-form-text')
+
+
+
+
 
 // функция для даты
 function getDate(date) {
@@ -23,17 +28,20 @@ function getDate(date) {
 }
 
 
-let comments = [{
-    date: getDate(new Date),
+
+
+
+ let comments = [{
+    date: new Date,
     likes: '0',
-    text: "",
+    text: "Данные загружаются",
     author: { name: '' },
     isLiked: false,
     isEdit: false,
 }
 ];
 
-
+renderComments();
 
 // функция Данные с сервера
 const fetchAndRenderTasks = () =>{
@@ -42,28 +50,25 @@ const fetchAndRenderTasks = () =>{
 })
   .then((response) => {
    return response.json()
+  })
   .then((responseData) => {
     comments = responseData.comments;
    renderComments();
   });
-});
+
 }
 
 fetchAndRenderTasks()
-renderComments();
 
 
 
 // Функция удаления последнего комментария
 function delComment() {
- 
   comments.pop()
     renderComments();
-
 }
 
 // Отчистка данных с поля
-
 function delValue() {
   nameInputElement.value = "";
   commentInputElement.value = "";
@@ -193,19 +198,12 @@ function renderComments() {
  
 }
 
-
-
 renderComments();
 
 
 
 // Добавление комментария
 addComment.addEventListener("click", () => {
-
-
-
-
-
   if (nameInputElement.value === "" || commentInputElement.value === "") {
     nameInputElement.classList.add("error");
     commentInputElement.classList.add("error");
@@ -282,14 +280,14 @@ const buttonBlock = () => {
 
 
 // Ввод по нажатию клавиши Enter
-mainForm.addEventListener('keyup', (e) => {
-  if (e.code === "Enter") {
+mainForm.addEventListener('keyup', (event) => {
+
+  if (event.code === "Enter"  ) {
     addComment.click();
+   
     delValue();
   }
 });
-
-
 
 
 
