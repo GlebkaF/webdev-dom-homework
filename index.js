@@ -7,19 +7,20 @@ const inputNameElement = document.querySelector('.add-form-name');
 const textareaElement = document.querySelector('.add-form-text');
 
 
-
-const myDate = new Date();
-const options = {
-  year: "2-digit",
-  month: "2-digit",
-  day: "2-digit",
-  timezone: "UTC",
-  hour: "numeric",
-  minute: "2-digit"
-};
-
-options.hour = "2-digit";
-const date = myDate.toLocaleDateString("ru-Ru", options).split(', ').join(' ');
+const myDate = () => {
+  const getDate = new Date();
+  const options = {
+    year: "2-digit",
+    month: "2-digit",
+    day: "2-digit",
+    timezone: "UTC",
+    hour: "numeric",
+    minute: "2-digit"
+  };
+  
+  options.hour = "2-digit";
+  return getDate.toLocaleDateString("ru-Ru", options).split(', ').join(' ');
+}
 
 //выключение кнопки
 
@@ -40,46 +41,62 @@ const initDisabledButtonElement = () => {
 
 initDisabledButtonElement();
 
-const comments = [
+//GET API
+
+let comments = [];
+
+const fetchPromise = fetch(
+  'https://webdev-hw-api.vercel.app/api/v1/:natalvod/comments',
   {
-    name: 'Глеб Фокин',
-    date: '12.02.22 12:18',
-    comment: 'Это будет первый комментарий на этой странице',
-    likesCounter: 3,
-    isLike: false,
-    isEdit: false,
-  },
-  {
-    name: 'Варвара Н.',
-    date: '13.02.22 19:22',
-    comment: 'Мне нравится как оформлена эта страница! ❤',
-    likesCounter: 75,
-    isLike: true,
-    isEdit: false,
-  },
-];
+    method: "GET"
+  }
+);
+
+fetchPromise.then((response) => {
+  console.log(response);
+
+  const jsonPromise = response.json();
+  jsonPromise.then((responseData) => {
+    console.log(responseData);
+    const appComments = responseData.comments.map((comment) => {
+      return {
+        name: comment.author.name.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+        date: myDate(new Date(comment.date)),
+        text: comment.text.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+        likes: comment.likes,
+        isLike: false,
+        // isEdit: false,
+      };
+    });
+    comments = appComments;
+    renderComments();
+  })
+});
+
+
+
 
 //рендер функция
 
 const renderComments = () => {
   const commentHtml = comments.map((comment, index) => {
-    return `<li class="comment" data-name='${comment.name}' data-comment='${comment.comment}'>
+    return `<li class="comment" data-name='${comment.name}' data-comment='${comment.text}'>
   <div class="comment-header">
     <div>${comment.name}</div>
-    <div>${comment.date}</div>
+    <div>${myDate(new Date(comment.date))}</div>
   </div>
   <div class="comment-body">
 
-    ${comments[index].isEdit ? `<textarea class= "edit-area-text" onclick = "event.stopPropagation()">${comment.comment}</textarea>` : `<div class="comment-text" data-index='${index}' data-name='${comment.name}' data-comment='${comment.comment}'>${comment.comment.replaceAll('*_', '<div class="quote">').replaceAll('__*', '</div>')}</div>`}
+    ${comment.isEdit ? `<textarea class= "edit-area-text" onclick = "event.stopPropagation()">${comment.comment}</textarea>` : `<div class="comment-text" data-index='${index}' data-name='${comment.name}' data-comment='${comment.text}'>${comment.text.replaceAll('*_', '<div class="quote">').replaceAll('__*', '</div>')}</div>`}
   
   </div>
   <div class="comment-footer">
    <div class="likes">
-    <span class="likes-counter">${comment.likesCounter}</span>
+    <span class="likes-counter">${comment.likes}</span>
 
-    <button class="${comments[index].isLike ? "like-button -active-like" : "like-button"}" data-index='${index}'></button>
+    <button class="${comment.isLike ? "like-button -active-like" : "like-button"}" data-index='${index}'></button>
 
-    ${comments[index].isEdit ? `<button class="save-button button-comment" data-index='${index}'>Сохранить</button>` : `<button class="edit-button button-comment" data-index='${index}'>Редактировать</button>`}
+    ${comment.isEdit ? `<button class="save-button button-comment" data-index='${index}'>Сохранить</button>` : `<button class="edit-button button-comment" data-index='${index}'>Редактировать</button>`}
     
     <button class = "delete-button button-comment" data-index='${index}'>Удалить комментарий</button>
    </div>
@@ -149,12 +166,12 @@ const initChangeLikeButtonListeners = () => {
       const index = likeButtonElement.dataset.index;
 
       if (comments[index].isLike === false) {
-        comments[index].likesCounter += 1;
+        comments[index].likes += 1;
         comments[index].isLike = true;
 
 
       } else {
-        comments[index].likesCounter -= 1;
+        comments[index].likes -= 1;
         comments[index].isLike = false;
       }
 
@@ -249,13 +266,60 @@ buttonElement.addEventListener('click', () => {
     return;
   };
 
-  comments.push({
-    name: secureInput(inputNameElement.value),//функция безопасного ввода
-    date: date,
-    comment: secureInput(textareaElement.value),//функция безопасного ввода
-    likesCounter: 0,
-    isLike: false,
-  })
+  // comments.push({
+  //   name: secureInput(inputNameElement.value),//функция безопасного ввода
+  //   date: date,
+  //   comment: secureInput(textareaElement.value),//функция безопасного ввода
+  //   likesCounter: 0,
+  //   isLike: false,
+  // });
+
+  //POST API
+
+  fetch('https://webdev-hw-api.vercel.app/api/v1/:natalvod/comments', {
+    method: "POST",
+    body: JSON.stringify({
+      name: secureInput(inputNameElement.value),
+      date: myDate(new Date),
+      text: secureInput(textareaElement.value),
+      likes: 0,
+      isLike: false,
+    }),
+  }
+  ).then((response) => {
+    const fetchPromiseAfter = fetch(
+    'https://webdev-hw-api.vercel.app/api/v1/:natalvod/comments',
+    {
+      method: "GET"
+    }
+  );
+  fetchPromiseAfter.then((response) => {
+   
+    
+      const jsonPromise = response.json();
+      jsonPromise.then((responseData) => {
+        console.log(responseData);
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+            date: myDate(new Date(comment.date)),
+            text: comment.text.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+            likes: comment.likes,
+            isLike: false,
+            // isEdit: false,
+          };
+        });
+        comments = appComments;
+        renderComments();
+      })
+    });
+
+
+    response.json().then((responseData) => {
+      comments = responseData.comments;
+      renderComments();
+    })
+  });
 
   renderComments();
 
