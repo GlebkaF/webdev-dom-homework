@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -35,37 +36,23 @@
   const listElement = document.getElementById('list');
   const nameInputElement = document.getElementById('name-input');
   const commentInputElement = document.getElementById('comment-input');
-  
+
   const commentsElement = document.querySelectorAll(".comment");
   const likeButton = document.querySelectorAll(".like-button");
+  //const deleteButton = document.querySelectorAll(".delete-button");
+  
 
   let comments = [];
-  const jsonComments = JSON.stringify(comments);
-  console.log(jsonComments);
 
 
-  const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/raisa/comments", {
-  method: "GET",
-});
-
-
-fetchPromise.then((response)=> {
-console.log(response);
-  const jsonPromise = response.json();
-
-  jsonPromise.then((responseData)=>{
-    
-    const options = {
-    year: '2-digit',
-    month: '2-digit',
-    day: '2-digit',
-    timezone: 'UTC',
-    hour: '2-digit',
-    minute: '2-digit',
-  };
-
-    const appComments = responseData.comments.map((comment)=> {
-    return{
+  const fetchAndRenderComments = () => {
+    fetch("https://webdev-hw-api.vercel.app/api/v1/raisa/comments", {
+    method: "GET",
+  }).then((response) => {
+    return response.json();
+  }).then((responseData) => {
+      const appComments = responseData.comments.map((comment) => {
+    return {
       name: comment.author.name.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
       date: new Date(comment.date).toLocaleString("ru-RU", options).replace(",", ""),
       text: comment.text.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
@@ -73,12 +60,11 @@ console.log(response);
       isLiked: false,
     };
   });
-  comments = appComments;
-  renderComments();
-});
-  });
+      comments = appComments;
+      renderComments();
+    });
+  }
   
-
   //Ответ на коментарий
 
 
@@ -92,9 +78,7 @@ console.log(response);
       });
     }
   }
-
-
-
+  //Дата
   const options = {
     year: '2-digit',
     month: '2-digit',
@@ -105,15 +89,21 @@ console.log(response);
 
   };
 
-
   let nowDate = new Date().toLocaleString("ru-RU", options).replace(",", "");
 
-
-
-//получать из хранилища данных
+  //получать из хранилища данных
+  // Функция удалить комментарий
+  const addDeleteComments = () => {
+    const deleteButtons = document.querySelectorAll(".delete-button");
+    for (let deleteButton of deleteButtons) {
+      deleteButtons.addEventListener('clik', ()=>{
+        comment.pop();
+        renderComments();
+      });
+    };
+  };
   
-
-
+ 
   // Добавление лайка
 
   const addLike = () => {
@@ -151,6 +141,7 @@ console.log(response);
             </div>
           </div>
           <div class="comment-footer">
+            <button class="delete-button">Удалить</button>
             <div class="likes">
               <span class="likes-counter">${user.likesCount}</span>
               <button data-index = "${index}"  class="${user.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
@@ -164,8 +155,9 @@ console.log(response);
     addLike();
     initTouchComment();
   };
+  fetchAndRenderComments();
+  addDeleteComments();
   renderComments();
-
 
 
   buttonElement.addEventListener("click", () => {
@@ -176,36 +168,40 @@ console.log(response);
     if (!nameInputElement.value || !commentInputElement.value) {
       nameInputElement.classList.add("error"); commentInputElement.classList.add("error");
       return;
+    };
 
-    }
+ 
     //добавлять задачу в хранилище данных
-    
-    const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/raisa/comments", { 
-  method: "POST", 
-  body: JSON.stringify({ 
-    name: nameInputElement.value, 
-    text: commentInputElement.value, 
-    date: new Date(), 
-  }), 
-} 
-); 
-fetchPromise.then((response)=> { 
-console.log(response); 
-  const jsonPromise = response.json();
+    const stsrtAt = Date.now();
+    console.log('начинаем делать запрос');
+    buttonElement.disabled = true;
+    buttonElement.textContent = 'Элемент добавляется...';
+    fetch("https://webdev-hw-api.vercel.app/api/v1/raisa/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        name: nameInputElement.value,
+        text: commentInputElement.value,
+        date: new Date(),
+      }),
+    }).then((response) => {
+      console.log("время:" + (Date.now() - stsrtAt));
+      return response.json();
+    }).then(()=>{
+      fetchAndRenderComments();
+    }).then((data) => {
+      buttonElement.disabled = false;
+      buttonElement.textContent = 'Добавить';
+    });
 
-});
 
     const oldListHtml = listElement.innerHTML;
 
-
-
     renderComments();
-
-
   });
 
   renderComments();
   addLike();
+  addDeleteComments();
   initTouchComment();
   // Код писать здесь
   console.log("It works!");
