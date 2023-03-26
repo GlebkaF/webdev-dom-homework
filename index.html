@@ -1,69 +1,124 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <title>Проект "Комменты"</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
+    <link rel="stylesheet" href="style.css" />
+</head>
 
-  <body>
+<body>
     <div class="container">
-      <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
+        <ul class="comments" id="list">
+            <li class="comment">
+                <div class="comment-header">
+                    <div>Глеб Фокин</div>
+                    <div>12.02.22 12:18</div>
+                </div>
+                <div class="comment-body">
+                    <div class="comment-text">
+                        Это будет первый комментарий на этой странице
+                    </div>
+                </div>
+                <div class="comment-footer">
+                    <div class="likes">
+                        <span class="likes-counter">3</span>
+                        <button class="like-button"></button>
+                    </div>
+                </div>
+            </li>
+            <li class="comment">
+                <div class="comment-header">
+                    <div>Варвара Н.</div>
+                    <div>13.02.22 19:22</div>
+                </div>
+                <div class="comment-body">
+                    <div class="comment-text">
+                        Мне нравится как оформлена эта страница! ❤
+                    </div>
+                </div>
+                <div class="comment-footer">
+                    <div class="likes">
+                        <span class="likes-counter">75</span>
+                        <button class="like-button -active-like"></button>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <div class="add-form">
+            <input type="text" class="add-form-name" id="name-input" placeholder="Введите ваше имя" />
+            <textarea type="textarea" class="add-form-text" id="color-input" placeholder="Введите ваш коментарий"
+                rows="4"></textarea>
+            <div class="add-form-row">
+                <button class="add-form-button" id="add-button">Написать</button>
             </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
         </div>
-      </div>
     </div>
-  </body>
+</body>
+<style>
+    .error {
+        background-color: lightpink;
+    }
+</style>
+<script>
+    //1.Поиск элементов
+    const buttonElement = document.getElementById('add-button')
+    const listElement = document.getElementById('list')
+    const nameInputElement = document.getElementById('name-input')
+    const commitInputElement = document.getElementById('color-input')
 
-  <script>
-    // Код писать здесь
+    //2. Отбработка валидности
+    nameInputElement.style.backgroundColor = ""
+    commitInputElement.style.backgroundColor = "";
+    //3 
+    buttonElement.addEventListener('click', () => {
+        nameInputElement.classList.remove('error')
+        if (nameInputElement.value === '') {
+            nameInputElement.classList.add('error')
+            return
+        }
+        if (commitInputElement.value === '') {
+            commitInputElement.classList.add('error')
+            return
+        }
+
+
+        function DateElement() {
+            let date = new Date()
+            let monthArray = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+            let Minute = String(date.getMinutes()).length < 2 ? '0' + date.getMinutes() : date.getMinutes();
+            let Hours = String(date.getHours()).length < 2 ? '0' + date.getHours() : date.getHours();
+            let Day = String(date.getDate()).length < 2 ? '0' + date.getDate() : date.getDate();
+            let Month = monthArray[+date.getMonth()]
+            let Year = String(date.getFullYear()).slice(2);
+            let str = Day + '.' + Month + '.' + Year + ' ' + Hours + ':' + Minute;
+            return str
+        }
+
+        const oldListHTML = listElement.innerHTML
+        listElement.innerHTML =
+            oldListHTML +
+            `<li class = "comment">
+            <div class = "comment-header">
+                <div> ${nameInputElement.value} </div>
+                <div> ${DateElement()} </div>
+            </div>
+            <div class = "comment-body">
+                <div class = "comment-text">
+                    ${commitInputElement.value}
+                </div>
+            </div>
+            <div class ="comment-footer"
+                <div class = "likes"
+                    <span class = "likes-counter"> 0</span>
+                    <button class = "like-button"></button>
+                </div>
+            </div>
+            </li>`
+
+        nameInputElement.value = ""
+        commitInputElement.value = ""
+    })
     console.log("It works!");
-  </script>
+</script>
+
 </html>
