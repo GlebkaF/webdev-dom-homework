@@ -8,40 +8,7 @@
   <body>
     <div class="container">
       <ul id="comments" class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+        
       </ul>
       <div class="add-form">
         <input
@@ -68,13 +35,87 @@
   .error{
     background-color: rgb(212, 116, 116);
   }
+  .-active-like {
+    background-image: url("data:image/svg+xml,%3Csvg width='22' height='20' viewBox='0 0 22 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15.95 0C14.036 0 12.199 0.882834 11 2.26703C9.801 0.882834 7.964 0 6.05 0C2.662 0 0 2.6267 0 5.99455C0 10.1035 3.74 13.4714 9.405 18.5613L11 20L12.595 18.5613C18.26 13.4714 22 10.1035 22 5.99455C22 2.6267 19.338 0 15.95 0Z' fill='%23BCEC30'/%3E%3C/svg%3E");
+  }
+  .dislike{
+    background-image: url("data:image/svg+xml,%3Csvg width='22' height='20' viewBox='0 0 22 20' fill='none' xmlns='http://www.w3.org/2000/svg' %3E%3Cpath d='M11.11 16.9482L11 17.0572L10.879 16.9482C5.654 12.2507 2.2 9.14441 2.2 5.99455C2.2 3.81471 3.85 2.17984 6.05 2.17984C7.744 2.17984 9.394 3.26975 9.977 4.75204H12.023C12.606 3.26975 14.256 2.17984 15.95 2.17984C18.15 2.17984 19.8 3.81471 19.8 5.99455C19.8 9.14441 16.346 12.2507 11.11 16.9482ZM15.95 0C14.036 0 12.199 0.882834 11 2.26703C9.801 0.882834 7.964 0 6.05 0C2.662 0 0 2.6267 0 5.99455C0 10.1035 3.74 13.4714 9.405 18.5613L11 20L12.595 18.5613C18.26 13.4714 22 10.1035 22 5.99455C22 2.6267 19.338 0 15.95 0Z' fill='%23BCEC30' /%3E%3C/svg%3E");
+    }
 </style>
   <script>
     const buttonElement = document.getElementById("add-button");
     const commentsElement = document.getElementById("comments" ); 
     const nameInputElement = document.getElementById("name-input" );
     const commentInputElement = document.getElementById("comment-input" );
-     
+   
+    
+   const initEventListeners = () => {
+    const likeValueElements = document.querySelectorAll("likeValue");
+    const likeElements = document.querySelectorAll('.like-button'); 
+    const deleteButtonElements = document.querySelectorAll('.delete-button');
+    for (const likeElement of likeElements) {
+      likeElement.addEventListener('click', () => {
+        likeElement.classList.toggle('-active-like');
+        likeElement.classList.contains('dislike');
+        
+      })
+    }
+    for (const deleteButtonElement of deleteButtonElements) {
+      deleteButtonElement.addEventListener('click', () => {
+        const index = deleteButtonElement.dataset.index;
+        comments.splice(index, 1);
+        renderComments();
+        
+      })
+    }
+    document.addEventListener('click', ({ target: t }) => { 
+  if (t.classList.contains('like-button')) { 
+    const index = [...document.querySelectorAll('.like-button')].indexOf(t); 
+    const count = document.querySelectorAll('.likes-counter')[index]; 
+    count.classList.toggle('active'); 
+    count.innerText -= [1, -1][+count.classList.contains('active')]; 
+    
+  } 
+});
+   }
+   
+   const comments = [{
+    name: 'Глеб Фокин',
+    date:'12.02.22 12:18',
+    text: 'Это будет первый комментарий на этой странице',
+    likesCounter: 3,
+   },
+   {name: 'Варвара Н.',
+    date:'13.02.22 19:22',
+    text:'Мне нравится как оформлена эта страница! ❤',
+    likesCounter:75, 
+  },
+  ];
+   const renderComments = () =>{
+   const commentsHtml = comments.map((comment, index) => {
+  return ` <li class="comment">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+             ${comment.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.likesCounter}</span>
+              <button class="like-button"></button>
+            <button data-index='${index}' class="delete-button">Удалить</button>
+            </div>
+          </div>
+        </li>`;
+}).join(''); 
+commentsElement.innerHTML = commentsHtml;
+}
+renderComments();
+   initEventListeners();
 
     let myDate = new Date(); 
     const months = ["01", "02", "03", "04", "05", "06",
@@ -110,30 +151,22 @@
         commentInputElement.classList.add('error');
         return;
       }
+      comments.push({
+    name: nameInputElement.value,
+    date: newDate,
+    text: commentInputElement.value,
+    likesCounter: 0,
+      });
 
-     const oldCommentsHtml = commentsElement.innerHTML;
-     commentsElement.innerHTML = oldCommentsHtml + ` <li class="comment">
-          <div class="comment-header">
-            <div>${nameInputElement.value}</div>
-            <div>${newDate}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-             ${commentInputElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            
-            </div>
-          </div>
-        </li>`
+     renderComments();
+
+        initEventListeners();
         nameInputElement.value = "" ;
         commentInputElement.value = "" ; 
+      
+    
 });
 
-    console.log("It works!");
+   
   </script>
 </html>
