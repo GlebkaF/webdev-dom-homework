@@ -6,11 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Проект "Комменты"</title>
     <link rel="stylesheet" href="styles.css" />
-    <script
-      type="text/javascript"
-      src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=ATfT4hGk5ApycNm-HS7aiRpApd794ezMeWyDMP3m3HBPE4FAZULweJo2dfsOF3Oj3Alr1y9icEyDd9Shcb3anpVpszO2Z89xjrUPQ4KW-wHNfucaZnXdW2khe3OQR7uynG1Fhdraq3efUY7vnAz8UBeTCVyK3384BpRLMReQFaH0BtbC0oubTNASQ752gKih-xtmBkfZGUkiqKwpPuy8qyYRefnLdoZuTM96sFas6RYd55yQB0ucQGOx2rPX3gtvBMtrNmafOyd2BTUAhoRAVuB4-7qW1fyU9dDVYGFqt6BWPsU3bWbl2gm5PicVNGL8epXZFWPTxlxkx2I2D7X06LQbXxEa4yoqgb77SgOK9PkiJq2Ss-Kc_-5qLGtkKRn0NDvsoDzYUgmIeMmd9R-QgJUehrlyyJSgg7BOLo30IGlSBinfk0WgeeZk9cIGqZOBzJQNeE5Ar1dsk5mMl511e3twB5H0Gw1nkR9l-CMdXkw"
-      charset="UTF-8"
-    ></script>
   </head>
 
   <body>
@@ -18,7 +13,7 @@
       <ul class="comments" id="comments">
         <!-- в рендере -->
       </ul>
-      <div class="add-form">
+      <div class="add-form" id="isLoading2">
         <input
           type="text"
           class="add-form-name"
@@ -44,6 +39,26 @@
           </button>
         </div>
       </div>
+      <div id="isLoading">
+        <div class="add-form">Коментарий добавляется...</div>
+        <div
+          class="tenor-gif-embed"
+          data-postid="25291442"
+          data-share-method="host"
+          data-aspect-ratio="1"
+          data-width="30%"
+        >
+          <a
+            href="https://tenor.com/view/loading-thinking-shiba-inu-gif-25291442"
+            >Loading Thinking GIF</a
+          >from <a href="https://tenor.com/search/loading-gifs">Loading GIFs</a>
+        </div>
+        <script
+          type="text/javascript"
+          async
+          src="https://tenor.com/embed.js"
+        ></script>
+      </div>
     </div>
 
     <!-- добавление нового коммента -->
@@ -53,22 +68,44 @@
       const nameInputElement = document.querySelector("#name-input");
       const commentAreaElement = document.querySelector("#comment-area");
       const addForm = document.querySelector(".add-form");
+      document.querySelector("#isLoading").style.display = "none";
+      // document.querySelector("#isLoading2").style.display = "none";
 
-      const allComments = [
+      const fetchPromise = fetch(
+        "https://webdev-hw-api.vercel.app/api/v1/dima-burak/comments",
         {
-          name: "Глеб Фокин",
-          date: "12.02.22 12:18",
-          textOfComment: "Это будет первый комментарий на этой странице",
-          likes: 5,
-          liked: false,
-        },
-        {
-          name: "Варвара Н.",
-          date: "13.02.22 19:22",
-          textOfComment: "Мне нравится как оформлена эта страница! ❤",
-          likes: 72,
-          liked: true,
-        },
+          method: "GET",
+        }
+      );
+
+      // console.log(fetchPromise);
+
+      fetchPromise.then((response) => {
+        // console.log(response);
+        const jsonPromise = response.json();
+
+        jsonPromise.then((responseData) => {
+          console.log(responseData);
+          allComments = [...responseData.comments];
+          renderComments();
+        });
+      });
+
+      let allComments = [
+        // {
+        //   name: "Глеб Фокин",
+        //   date: "12.02.22 12:18",
+        //   textOfComment: "Это будет первый комментарий на этой странице",
+        //   likes: 5,
+        //   liked: false,
+        // },
+        // {
+        //   name: "Варвара Н.",
+        //   date: "13.02.22 19:22",
+        //   textOfComment: "Мне нравится как оформлена эта страница! ❤",
+        //   likes: 72,
+        //   liked: true,
+        // },
       ];
 
       // function blockButton() {
@@ -127,16 +164,16 @@
       const renderComments = () => {
         const commentsHtml = allComments
           .map((comment, index) => {
-            return `<li data-text='${comment.textOfComment} \n ${
+            return `<li data-text='${comment.text} \n ${
               comment.name
             }' class="comment">
           <div class="comment-header">
-            <div>${comment.name}</div>
-            <div>${comment.date}</div>
+            <div>${comment.author.name}</div>
+            <div>${new Date(comment.date).toLocaleString()}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${comment.textOfComment}
+              ${comment.text}
             </div>
           </div>
           <div class="comment-footer">
@@ -146,7 +183,7 @@
             <div class="likes">
               <span class="likes-counter">${comment.likes}</span>
               <button class="${
-                comment.liked ? "like-button -active-like" : "like-button"
+                comment.isLiked ? "like-button -active-like" : "like-button"
               }"></button>
             </div>
           </div>
@@ -162,9 +199,9 @@
       renderComments();
 
       const responseToComment = () => {
-        const comments = document.querySelectorAll(".comment");
+        const comMents = document.querySelectorAll(".comment");
         const commentArea = document.getElementById("comment-area");
-        for (const comment of comments) {
+        for (const comment of comMents) {
           comment.addEventListener("click", () => {
             const response = comment.dataset.text;
             commentArea.value = response;
@@ -211,19 +248,63 @@
       };
 
       butAddComment.addEventListener("click", () => {
-        allComments.push({
-          name: nameInputElement.value
-            .replaceAll("<", "&lt")
-            .replaceAll(">", "&gt"),
-          date: getCurrentDate(),
-          textOfComment: commentAreaElement.value
-            .replaceAll("<", "&lt")
-            .replaceAll(">", "&gt"),
-          likes: 0,
-          liked: false,
+        // allComments.push({
+        //   name: nameInputElement.value
+        //     .replaceAll("<", "&lt")
+        //     .replaceAll(">", "&gt"),
+        //   date: getCurrentDate(),
+        //   textOfComment: commentAreaElement.value
+        //     .replaceAll("<", "&lt")
+        //     .replaceAll(">", "&gt"),
+        //   likes: 0,
+        //   liked: false,
+        // });
+        // renderComments();
+        // responseToComment();
+        document.querySelector("#isLoading").style.display = "block";
+        document.querySelector("#isLoading2").style.display = "none";
+        fetch("https://webdev-hw-api.vercel.app/api/v1/dima-burak/comments", {
+          method: "POST",
+          body: JSON.stringify({
+            text: commentAreaElement.value
+              .replaceAll("<", "&lt")
+              .replaceAll(">", "&gt"),
+            name: nameInputElement.value
+              .replaceAll("<", "&lt")
+              .replaceAll(">", "&gt"),
+          }),
+        }).then((response) => {
+          const fetchPromise = fetch(
+            "https://webdev-hw-api.vercel.app/api/v1/dima-burak/comments",
+            {
+              method: "GET",
+            }
+          );
+
+          fetchPromise.then((response) => {
+            const jsonPromise = response.json();
+            jsonPromise.then((responseData) => {
+              allComments = [...responseData.comments];
+              document.querySelector("#isLoading").style.display = "none";
+              document.querySelector("#isLoading2").style.display = "flex";
+              renderComments();
+            });
+          });
+
+          // response.json().then((responseData) => {
+          //   const appComments = responseData.comments.map((comment) => {
+          //     return {
+          //       name: comment.author.name,
+          //       date: new Date(comment.date),
+          //       textOfComment: comment.text,
+          //       likes: comment.likes,
+          //       liked: false,
+          //     };
+          //   });
+          // });
+          // allComments = appComments;
+          // renderComments();
         });
-        renderComments();
-        responseToComment();
 
         // Очищаем поля
         nameInputElement.value = "";
@@ -233,20 +314,47 @@
 
       addForm.addEventListener("keyup", (action) => {
         if (action.code === "Enter" && isValidForm()) {
-          allComments.push({
-            name: nameInputElement.value
-              .replaceAll("<", "&lt")
-              .replaceAll(">", "&gt"),
-            date: getCurrentDate(),
-            textOfComment: commentAreaElement.value
-              .replaceAll("<", "&lt")
-              .replaceAll(">", "&gt"),
-            likes: 0,
-            liked: false,
-          });
+          // allComments.push({
+          //   name: nameInputElement.value
+          //     .replaceAll("<", "&lt")
+          //     .replaceAll(">", "&gt"),
+          //   date: getCurrentDate(),
+          //   textOfComment: commentAreaElement.value
+          //     .replaceAll("<", "&lt")
+          //     .replaceAll(">", "&gt"),
+          //   likes: 0,
+          //   liked: false,
+          // });
 
-          renderComments();
-          responseToComment();
+          // renderComments();
+          // responseToComment();
+
+          fetch("https://webdev-hw-api.vercel.app/api/v1/dima-burak/comments", {
+            method: "POST",
+            body: JSON.stringify({
+              text: commentAreaElement.value
+                .replaceAll("<", "&lt")
+                .replaceAll(">", "&gt"),
+              name: nameInputElement.value
+                .replaceAll("<", "&lt")
+                .replaceAll(">", "&gt"),
+            }),
+          }).then((response) => {
+            const fetchPromise = fetch(
+              "https://webdev-hw-api.vercel.app/api/v1/dima-burak/comments",
+              {
+                method: "GET",
+              }
+            );
+
+            fetchPromise.then((response) => {
+              const jsonPromise = response.json();
+              jsonPromise.then((responseData) => {
+                allComments = [...responseData.comments];
+                renderComments();
+              });
+            });
+          });
 
           // Очищаем поля
           nameInputElement.value = "";
