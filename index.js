@@ -6,6 +6,8 @@ const inputNameElement = document.querySelector('.add-form-name');
 
 const textareaElement = document.querySelector('.add-form-text');
 
+const loaderCommentsElement = document.getElementById('loaderComments');
+
 
 const myDate = () => {
   const getDate = new Date();
@@ -59,6 +61,7 @@ let comments = [];
 //функция GET
 
 const getFetchPromise = () => {
+  loaderCommentsElement.classList.remove('-display-none');
   return fetch('https://webdev-hw-api.vercel.app/api/v1/:natalvod/comments',{
     method: "GET"
   }).then((response) => {
@@ -74,6 +77,7 @@ const getFetchPromise = () => {
       };
     });
     comments = appComments;
+    loaderCommentsElement.classList.add('-display-none');
     renderComments();
   });
 }
