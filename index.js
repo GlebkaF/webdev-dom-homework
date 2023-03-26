@@ -81,7 +81,7 @@ const getFetchPromise = () => {
     renderComments();
   });
 }
-
+getFetchPromise();
 
 //рендер функция
 
