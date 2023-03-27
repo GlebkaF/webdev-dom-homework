@@ -9,11 +9,11 @@ const mainForm = document.querySelector(".add-form");
 const studentElements = document.querySelectorAll(".comment");
 const likeButton = document.querySelectorAll(".like-button");
 const textarea = document.querySelectorAll('.add-form-text')
+const waitLoadComments = document.getElementById("loaderComments");
 
 
 
-
-
+waitLoadComments.style.display = "flex";
 // функция для даты
 function getDate(date) {
   const options = {
@@ -28,20 +28,9 @@ function getDate(date) {
 }
 
 
+ let comments = [];
 
 
-
- let comments = [{
-    date: new Date,
-    likes: '0',
-    text: "Данные загружаются",
-    author: { name: '' },
-    isLiked: false,
-    isEdit: false,
-}
-];
-
-renderComments();
 
 // функция Данные с сервера
 const fetchAndRenderTasks = () =>{
@@ -53,8 +42,14 @@ const fetchAndRenderTasks = () =>{
   })
   .then((responseData) => {
     comments = responseData.comments;
-   renderComments();
-  });
+  
+  })
+  .then(()=>{
+   
+    renderComments();
+    waitLoadComments.style.display = "none";
+  })
+ 
 
 }
 
