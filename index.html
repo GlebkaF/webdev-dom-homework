@@ -69,7 +69,6 @@
       const commentAreaElement = document.querySelector("#comment-area");
       const addForm = document.querySelector(".add-form");
       document.querySelector("#isLoading").style.display = "none";
-      // document.querySelector("#isLoading2").style.display = "none";
 
       const fetchPromise = fetch(
         "https://webdev-hw-api.vercel.app/api/v1/dima-burak/comments",
@@ -78,10 +77,7 @@
         }
       );
 
-      // console.log(fetchPromise);
-
       fetchPromise.then((response) => {
-        // console.log(response);
         const jsonPromise = response.json();
 
         jsonPromise.then((responseData) => {
@@ -107,15 +103,6 @@
         //   liked: true,
         // },
       ];
-
-      // function blockButton() {
-      //   if (nameInputElement.value === "" || commentAreaElement.value === "") {
-      //     butAddComment.disabled = true;
-      //     // return;
-      //   } else {
-      //     butAddComment.disabled = false;
-      //   }
-      // }
 
       const isValidForm = () => {
         if (nameInputElement.value === "" || commentAreaElement.value === "") {
@@ -247,20 +234,8 @@
         return newDate;
       };
 
+      // избавление от callback hell, превращение в then paradise
       butAddComment.addEventListener("click", () => {
-        // allComments.push({
-        //   name: nameInputElement.value
-        //     .replaceAll("<", "&lt")
-        //     .replaceAll(">", "&gt"),
-        //   date: getCurrentDate(),
-        //   textOfComment: commentAreaElement.value
-        //     .replaceAll("<", "&lt")
-        //     .replaceAll(">", "&gt"),
-        //   likes: 0,
-        //   liked: false,
-        // });
-        // renderComments();
-        // responseToComment();
         document.querySelector("#isLoading").style.display = "block";
         document.querySelector("#isLoading2").style.display = "none";
         fetch("https://webdev-hw-api.vercel.app/api/v1/dima-burak/comments", {
@@ -273,38 +248,54 @@
               .replaceAll("<", "&lt")
               .replaceAll(">", "&gt"),
           }),
-        }).then((response) => {
-          const fetchPromise = fetch(
-            "https://webdev-hw-api.vercel.app/api/v1/dima-burak/comments",
-            {
-              method: "GET",
-            }
-          );
-
-          fetchPromise.then((response) => {
-            const jsonPromise = response.json();
-            jsonPromise.then((responseData) => {
-              allComments = [...responseData.comments];
-              document.querySelector("#isLoading").style.display = "none";
-              document.querySelector("#isLoading2").style.display = "flex";
-              renderComments();
-            });
+        })
+          .then((response) => {
+            return fetch(
+              "https://webdev-hw-api.vercel.app/api/v1/dima-burak/comments",
+              {
+                method: "GET",
+              }
+            );
+          })
+          .then((response) => {
+            return response.json();
+          })
+          .then((responseData) => {
+            allComments = [...responseData.comments];
+            document.querySelector("#isLoading").style.display = "none";
+            document.querySelector("#isLoading2").style.display = "flex";
+            renderComments();
           });
 
-          // response.json().then((responseData) => {
-          //   const appComments = responseData.comments.map((comment) => {
-          //     return {
-          //       name: comment.author.name,
-          //       date: new Date(comment.date),
-          //       textOfComment: comment.text,
-          //       likes: comment.likes,
-          //       liked: false,
-          //     };
-          //   });
-          // });
-          // allComments = appComments;
-          // renderComments();
-        });
+        // callback hell
+        // fetch("https://webdev-hw-api.vercel.app/api/v1/dima-burak/comments", {
+        //   method: "POST",
+        //   body: JSON.stringify({
+        //     text: commentAreaElement.value
+        //       .replaceAll("<", "&lt")
+        //       .replaceAll(">", "&gt"),
+        //     name: nameInputElement.value
+        //       .replaceAll("<", "&lt")
+        //       .replaceAll(">", "&gt"),
+        //   }),
+        // }).then((response) => {
+        //   const fetchPromise = fetch(
+        //     "https://webdev-hw-api.vercel.app/api/v1/dima-burak/comments",
+        //     {
+        //       method: "GET",
+        //     }
+        //   );
+
+        //   fetchPromise.then((response) => {
+        //     const jsonPromise = response.json();
+        //     jsonPromise.then((responseData) => {
+        //       allComments = [...responseData.comments];
+        //       document.querySelector("#isLoading").style.display = "none";
+        //       document.querySelector("#isLoading2").style.display = "flex";
+        //       renderComments();
+        //     });
+        //   });
+        // });
 
         // Очищаем поля
         nameInputElement.value = "";
@@ -314,21 +305,8 @@
 
       addForm.addEventListener("keyup", (action) => {
         if (action.code === "Enter" && isValidForm()) {
-          // allComments.push({
-          //   name: nameInputElement.value
-          //     .replaceAll("<", "&lt")
-          //     .replaceAll(">", "&gt"),
-          //   date: getCurrentDate(),
-          //   textOfComment: commentAreaElement.value
-          //     .replaceAll("<", "&lt")
-          //     .replaceAll(">", "&gt"),
-          //   likes: 0,
-          //   liked: false,
-          // });
-
-          // renderComments();
-          // responseToComment();
-
+          document.querySelector("#isLoading").style.display = "block";
+          document.querySelector("#isLoading2").style.display = "none";
           fetch("https://webdev-hw-api.vercel.app/api/v1/dima-burak/comments", {
             method: "POST",
             body: JSON.stringify({
@@ -339,22 +317,24 @@
                 .replaceAll("<", "&lt")
                 .replaceAll(">", "&gt"),
             }),
-          }).then((response) => {
-            const fetchPromise = fetch(
-              "https://webdev-hw-api.vercel.app/api/v1/dima-burak/comments",
-              {
-                method: "GET",
-              }
-            );
-
-            fetchPromise.then((response) => {
-              const jsonPromise = response.json();
-              jsonPromise.then((responseData) => {
-                allComments = [...responseData.comments];
-                renderComments();
-              });
+          })
+            .then((response) => {
+              return fetch(
+                "https://webdev-hw-api.vercel.app/api/v1/dima-burak/comments",
+                {
+                  method: "GET",
+                }
+              );
+            })
+            .then((response) => {
+              return response.json();
+            })
+            .then((responseData) => {
+              allComments = [...responseData.comments];
+              document.querySelector("#isLoading").style.display = "none";
+              document.querySelector("#isLoading2").style.display = "flex";
+              renderComments();
             });
-          });
 
           // Очищаем поля
           nameInputElement.value = "";
