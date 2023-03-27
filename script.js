@@ -11,9 +11,11 @@ const likeButton = document.querySelectorAll(".like-button");
 const textarea = document.querySelectorAll('.add-form-text')
 const waitLoadComments = document.getElementById("loaderComments");
 const pushComments = document.getElementById("PushCommentsText");
-pushComments.style.display = "none"
 
+
+pushComments.style.display = "none"
 waitLoadComments.style.display = "flex";
+
 // функция для даты
 function getDate(date) {
   const options = {
@@ -234,19 +236,12 @@ addComment.addEventListener("click", () => {
         mainForm.style.display = "flex";
         pushComments.style.display = "none"
       })
-
-
-
-
+      
     nameInputElement.classList.remove("error");
     commentInputElement.classList.remove("error");
     const oldListHtml = listElement.innerHTML;
-
-
-  
   renderComments();
   delValue(); 
-
 });
 
 
