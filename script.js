@@ -10,8 +10,8 @@ const studentElements = document.querySelectorAll(".comment");
 const likeButton = document.querySelectorAll(".like-button");
 const textarea = document.querySelectorAll('.add-form-text')
 const waitLoadComments = document.getElementById("loaderComments");
-
-
+const pushComments = document.getElementById("PushCommentsText");
+pushComments.style.display = "none"
 
 waitLoadComments.style.display = "flex";
 // функция для даты
@@ -45,7 +45,6 @@ const fetchAndRenderTasks = () =>{
   
   })
   .then(()=>{
-   
     renderComments();
     waitLoadComments.style.display = "none";
   })
@@ -204,14 +203,13 @@ addComment.addEventListener("click", () => {
     commentInputElement.classList.add("error");
     nameInputElement.placeholder = 'Введите имя';
     commentInputElement.placeholder = 'Введите комментарий';
-
+   
     buttonBlock()
     return;  
   } 
-  // Выключение кнопки
-    addComment.disabled = true;
-    addComment.textContent = 'Добавляется'
-    addComment.classList.add('add-form-button-loader')
+  // Выключение  формы
+  mainForm.style.display = "none";
+  pushComments.style.display = "flex"
 
 
     fetch('https://webdev-hw-api.vercel.app/api/v1/Kerimov-Evgeny/comments', {
@@ -233,9 +231,8 @@ addComment.addEventListener("click", () => {
        return fetchAndRenderTasks()
       })
       .then(()=>{
-        addComment.disabled = false;
-        addComment.textContent = 'написать'
-        addComment.classList.remove('add-form-button-loader')
+        mainForm.style.display = "flex";
+        pushComments.style.display = "none"
       })
 
 
