@@ -200,19 +200,22 @@ renderComments();
 
 // Добавление комментария
 addComment.addEventListener("click", () => {
+
   if (nameInputElement.value === "" || commentInputElement.value === "") {
     nameInputElement.classList.add("error");
     commentInputElement.classList.add("error");
     nameInputElement.placeholder = 'Введите имя';
     commentInputElement.placeholder = 'Введите комментарий';
+    
    
     buttonBlock()
     return;  
   } 
   // Выключение  формы
-  mainForm.style.display = "none";
-  pushComments.style.display = "flex"
 
+  pushComments.style.display = "flex";
+  mainForm.style.display = "none";
+  console.log(mainForm)
 
     fetch('https://webdev-hw-api.vercel.app/api/v1/Kerimov-Evgeny/comments', {
     method: "POST",
@@ -236,7 +239,7 @@ addComment.addEventListener("click", () => {
         mainForm.style.display = "flex";
         pushComments.style.display = "none"
       })
-      
+
     nameInputElement.classList.remove("error");
     commentInputElement.classList.remove("error");
     const oldListHtml = listElement.innerHTML;
