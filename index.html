@@ -7,7 +7,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="ul-comment" class="comments">
         <li class="comment" id="li_comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -66,20 +66,28 @@
 
   <script>
     // Код писать здесь
-    const buttonElement = document.getElementsById('button');
-    const listElement = document.getElementsById('li_comment');
-    const nameInputElement = document.getElementsById('name-input');
-    const textCommentElement = document.getElementsById('text-comment');
+    const buttonElement = document.getElementById('button');
+    const listElement = document.getElementById('li_comment');
+    const nameInputElement = document.getElementById('name-input');
+    const textCommentElement = document.getElementById('text-comment');
+    // const commentData = new Date().toLocaleString;
+    let date = new Date().toLocaleString();
     buttonElement.addEventListener('click', () => {
-      const oldTextHtml = listElement.innerHTML;
-      listElement.innerHTML = oldTextHTML + `<li class="comment">
-          <div class="comment-header">
+      if (nameInputElement.value === '' || textCommentElement.value === '') {
+        nameInputElement.classList.add('error');
+        // nameInputElement.style.backgroundColor = 'red';
+        return;
+      };
+      // const oldTextHtml = listElement.innerHTML;
+      const list = document.getElementById("ul-comment");
+      const oldTextHtml = list.innerHTML += `<li class="comment">
+        <div class="comment-header">
             <div>${nameInputElement.value}</div>
-            <div>13.02.22 19:22</div>
+            <div>${date}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${textCommentElement}
+              ${textCommentElement.value}
             </div>
           </div>
           <div class="comment-footer">
@@ -88,8 +96,26 @@
               <button class="like-button -active-like"></button>
             </div>
           </div>
-        </li>`
-    });
+        </li>`;
+        });
+      // listElement.innerHTML = `<li class="comment">
+      //     <div class="comment-header">
+      //       <div>${nameInputElement.value}</div>
+      //       <div>${date}</div>
+      //     </div>
+      //     <div class="comment-body">
+      //       <div class="comment-text">
+      //         ${textCommentElement.value}
+      //       </div>
+      //     </div>
+      //     <div class="comment-footer">
+      //       <div class="likes">
+      //         <span class="likes-counter">75</span>
+      //         <button class="like-button -active-like"></button>
+      //       </div>
+      //     </div>
+      //   </li>`
+     
     console.log("It works!");
   </script>
 </html>
