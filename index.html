@@ -3,7 +3,7 @@
 
 <head>
     <title>Проект "Комменты"</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
@@ -98,22 +98,19 @@
         listElement.innerHTML =
             oldListHTML +
             `<li class = "comment">
-            <div class = "comment-header">
-                <div> ${nameInputElement.value} </div>
-                <div> ${DateElement()} </div>
-            </div>
-            <div class = "comment-body">
+                <div class = "comment-header">
+                    <div> ${nameInputElement.value} </div>
+                    <div> ${DateElement()} </div>
+                </div><div class = "comment-body">
                 <div class = "comment-text">
                     ${commitInputElement.value}
                 </div>
-            </div>
-            <div class ="comment-footer"
+            </div><div class ="comment-footer"
                 <div class = "likes"
                     <span class = "likes-counter"> 0</span>
                     <button class = "like-button"></button>
                 </div>
-            </div>
-            </li>`
+            </div></li>`
 
         nameInputElement.value = ""
         commitInputElement.value = ""
