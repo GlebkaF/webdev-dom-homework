@@ -85,11 +85,11 @@ const buttonBlock = () => {
 
 // ввод по кнопке enter
 
-mainForm.addEventListener("keyup", (e) => {
-  if (e.code === "Enter") {
+mainForm.addEventListener('keydown', (e) => {
+  if (!e.shiftKey && e.key === 'Enter') {
     buttonElement.click();
-    nameInputElement.value = "";
-    textInputElement.value = "";
+    nameInputElement.value = '';
+    textInputElement.value = '';
   }
 });
 
@@ -106,6 +106,8 @@ const editComment = () => {
     });
   }
 };
+
+
 
 //DOM 2
 
