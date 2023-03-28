@@ -247,24 +247,53 @@
             name: nameInputElement.value
               .replaceAll("<", "&lt")
               .replaceAll(">", "&gt"),
+            forceError: true,
           }),
         })
           .then((response) => {
-            return fetch(
-              "https://webdev-hw-api.vercel.app/api/v1/dima-burak/comments",
-              {
-                method: "GET",
-              }
-            );
+            if (response.status === 201) {
+              return fetch(
+                "https://webdev-hw-api.vercel.app/api/v1/dima-burak/comments",
+                {
+                  method: "GET",
+                }
+              );
+            } else if (response.status === 400) {
+              // alert("Имя и комментарий должны быть не короче 3 символов");
+              throw new Error("Ошибка ввода");
+            } else if (response.status === 500) {
+              // alert("Сервер сломался, попробуй позже");
+              throw new Error("Сервер упал");
+            } else {
+              // alert("Нет интернет...");
+            }
           })
           .then((response) => {
             return response.json();
           })
           .then((responseData) => {
             allComments = [...responseData.comments];
+            butAddComment.disabled = true;
             document.querySelector("#isLoading").style.display = "none";
             document.querySelector("#isLoading2").style.display = "flex";
+            nameInputElement.value = "";
+            commentAreaElement.value = "";
             renderComments();
+          })
+          .catch((error) => {
+            butAddComment.disabled = false;
+            document.querySelector("#isLoading").style.display = "none";
+            document.querySelector("#isLoading2").style.display = "flex";
+            if (error.message === "Сервер упал") {
+              alert("Сервер сломался, попробуй позже");
+              return;
+            }
+            if (error.message === "Ошибка ввода") {
+              alert("Имя и комментарий должны быть не короче 3 символов");
+              return;
+            }
+            alert("Отсутствует соединение с интернетом, попробуйте позже...");
+            console.warn(error);
           });
 
         // callback hell
@@ -298,9 +327,9 @@
         // });
 
         // Очищаем поля
-        nameInputElement.value = "";
-        commentAreaElement.value = "";
-        butAddComment.disabled = true;
+        // nameInputElement.value = "";
+        // commentAreaElement.value = "";
+        // butAddComment.disabled = true;
       });
 
       addForm.addEventListener("keyup", (action) => {
@@ -316,30 +345,55 @@
               name: nameInputElement.value
                 .replaceAll("<", "&lt")
                 .replaceAll(">", "&gt"),
+              forceError: true,
             }),
           })
             .then((response) => {
-              return fetch(
-                "https://webdev-hw-api.vercel.app/api/v1/dima-burak/comments",
-                {
-                  method: "GET",
-                }
-              );
+              if (response.status === 201) {
+                return fetch(
+                  "https://webdev-hw-api.vercel.app/api/v1/dima-burak/comments",
+                  {
+                    method: "GET",
+                  }
+                );
+              } else if (response.status === 400) {
+                throw new Error("Ошибка ввода");
+              } else if (response.status === 500) {
+                throw new Error("Сервер упал");
+              }
             })
             .then((response) => {
               return response.json();
             })
             .then((responseData) => {
               allComments = [...responseData.comments];
+              butAddComment.disabled = true;
               document.querySelector("#isLoading").style.display = "none";
               document.querySelector("#isLoading2").style.display = "flex";
+              nameInputElement.value = "";
+              commentAreaElement.value = "";
               renderComments();
+            })
+            .catch((error) => {
+              butAddComment.disabled = false;
+              document.querySelector("#isLoading").style.display = "none";
+              document.querySelector("#isLoading2").style.display = "flex";
+              if (error.message === "Сервер упал") {
+                alert("Сервер сломался, попробуй позже");
+                return;
+              }
+              if (error.message === "Ошибка ввода") {
+                alert("Имя и комментарий должны быть не короче 3 символов");
+                return;
+              }
+              alert("Отсутствует соединение с интернетом, попробуйте позже...");
+              console.warn(error);
             });
 
           // Очищаем поля
-          nameInputElement.value = "";
-          commentAreaElement.value = "";
-          butAddComment.disabled = true;
+          // nameInputElement.value = "";
+          // commentAreaElement.value = "";
+          // butAddComment.disabled = true;
         }
       });
     </script>
