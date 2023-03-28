@@ -1,111 +1,109 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
+<head>
 
-      <ul id="coments" class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
+  <title>Проект "Комменты"</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
 
-      <div class="add-form">
-        <input
-        id="NameInput"
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-          value=""
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Напишите ваш коментарий"
-          rows="4"
-          id="userComent"
-          value=""
-        ></textarea>
-        <div class="add-form-row">
-          <button id="button" class="add-form-button">Написать</button>
-        </div>
+<body>
+  <div class="container">
+    <ul id="coments" class="comments">
+      <!-- список рендерится из JS -->
+    </ul>
+
+    <div class="add-form">
+      <input id="NameInput" type="text" class="add-form-name" placeholder="Введите ваше имя" value="" />
+      <textarea type="textarea" class="add-form-text" placeholder="Напишите ваш коментарий" rows="4" id="userComent"
+        value=""></textarea>
+      <div class="add-form-row">
+        <button id="button" class="add-form-button">Написать</button>
       </div>
     </div>
-  </body>
+  </div>
+</body>
 
-  <script>
-    const buttonElement = document.getElementById("button");
-    const NameInputElement = document.getElementById("NameInput");
-    const comentsElement = document.getElementById("coments");
-    const userComentElement = document.getElementById("userComent");
-    
-    
+<script>
+  const buttonElement = document.getElementById("button");
+  const NameInputElement = document.getElementById("NameInput");
+  const comentsElement = document.getElementById("coments");
+  const userComentElement = document.getElementById("userComent");
+  const likeCounterElement = document.querySelectorAll('likes-counter');
+  const comentElement = document.querySelectorAll('.comment');
 
-    buttonElement.addEventListener('click', () => {
-      NameInputElement.classList.remove('error');
-      userComentElement.classList.remove('error');
-      if (NameInputElement.value === "" || userComentElement.value === "") {
-      NameInputElement.classList.add('error');
-      userComentElement.classList.add('error');
-        return;
-      }
-      let today = new Date();
-      let day = today.toLocaleString();
-      const allcomentsElement = comentsElement.innerHTML;
-      comentsElement.innerHTML = allcomentsElement + `<li class="comment">
+  const coment = [
+    {
+      name: 'Глеб Фокин',
+      date: '12.02.22 12:18',
+      text: 'Это будет первый комментарий на этой странице',
+      laiks: '3',
+    },
+    {
+      name: 'Варвара Н.',
+      date: '13.02.22 19:22',
+      text: 'Мне нравится как оформлена эта страница! ❤',
+      laiks: '75',
+    }
+  ];
+
+  const renderComent = () => {
+    const comentHTML = coment.map((coment) => {
+      return `<li class="comment">
           <div class="comment-header">
-            <div>${NameInputElement.value} </div>
-            <div> ${day} </div>
+            <div>${coment.name} </div>
+            <div> ${coment.date} </div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${userComentElement.value}
+              ${coment.text}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter"></span>
+              <span class="likes-counter">${coment.laiks}</span>
               <button class="like-button"></button>
             </div>
           </div>
         </li>`
-        NameInputElement.value = "";
-        userComentElement.value = "";
+    }).join('')
+    comentsElement.innerHTML = comentHTML;
+    console.log(comentHTML);
+  }
+  renderComent();
+
+  likesFun = () => {
+    const buttonLike = document.querySelectorAll('.like-button');
+    for (const buttonLikes of buttonLike) {
+      buttonLikes.addEventListener('click', () => {
+        buttonLikes.classList.toggle('-active-like');
+      });
+    };
+  }
+
+  likesFun();
+  buttonElement.addEventListener('click', () => {
+    NameInputElement.classList.remove('error');
+    userComentElement.classList.remove('error');
+    if (NameInputElement.value === "" || userComentElement.value === "") {
+      NameInputElement.classList.add('error');
+      userComentElement.classList.add('error');
+      return;
+    }
+    let today = new Date();
+    let day = today.toLocaleString();
+
+    coment.push({
+      name: NameInputElement.value,
+      date: day,
+      text: userComentElement.value,
+      laiks: coment.laiks,
     });
-  </script>
+    renderComent();
+    likesFun();
+    NameInputElement.value = "";
+    userComentElement.value = "";
+  });
+
+</script>
 </html>
