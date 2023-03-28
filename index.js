@@ -17,10 +17,10 @@ const changeLikesListener = () => {
 
       if (comments[index].liked === false) {
         comments[index].liked = true;
-        comments[index].likes += 1;
+        comments[index].counter += 1;
       } else if (comments[index].liked === true) {
         comments[index].liked = false;
-        comments[index].likes -= 1;
+        comments[index].counter -= 1;
       }
       renderComments();
     });
@@ -56,7 +56,7 @@ buttonElement.addEventListener("click", () => {
     text: textInputElement.value
       .replaceAll("<", "&lt;")
       .replaceAll(">", "&gt;"),
-    likes: 0,
+      counter: 0,
     liked: false,
   });
 
@@ -85,11 +85,11 @@ const buttonBlock = () => {
 
 // ввод по кнопке enter
 
-mainForm.addEventListener("keyup", (e) => {
-  if (e.code === "Enter") {
+mainForm.addEventListener('keydown', (e) => {
+  if (!e.shiftKey && e.key === 'Enter') {
     buttonElement.click();
-    nameInputElement.value = "";
-    textInputElement.value = "";
+    nameInputElement.value = '';
+    textInputElement.value = '';
   }
 });
 
@@ -107,21 +107,23 @@ const editComment = () => {
   }
 };
 
+
+
 //DOM 2
 
 const comments = [
   {
     name: "Глеб Фокин",
     date: "12.02.22 12:18",
-    text: "Это будет первый комментарий на этой странице",
-    likes: 3,
+    text: "Это будет первый комментарий на этой странице ",
+    counter: 3,
     liked: false,
   },
   {
     name: "Варвара Н.",
     date: "13.02.22 19:22",
     text: "Мне нравится как оформлена эта страница! ❤",
-    likes: 75,
+    counter: 75,
     liked: true,
   },
 ];
@@ -145,7 +147,7 @@ const renderComments = () => {
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">${student.likes}</span>
+              <span class="likes-counter">${student.counter}</span>
               <button data-index = '${index}' class="${
         student.liked ? "like-button -active-like" : "like-button"
       }"></button>
