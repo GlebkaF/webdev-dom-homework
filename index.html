@@ -76,10 +76,16 @@
     const buttonLike = document.querySelectorAll('.like-button');
     for (const buttonLikes of buttonLike) {
       buttonLikes.addEventListener('click', () => {
-        buttonLikes.classList.toggle('-active-like');
+        const counter = buttonLikes.parentElement.querySelector(".likes-counter");
+        buttonLikes.classList.toggle("-active-like");
+        if (buttonLikes.classList.contains("-active-like")) {
+          counter.textContent++;
+        } else {
+          counter.textContent--;
+        }
       });
-    };
-  }
+    }
+  };
 
   likesFun();
   buttonElement.addEventListener('click', () => {
@@ -90,6 +96,7 @@
       userComentElement.classList.add('error');
       return;
     }
+
     let today = new Date();
     let day = today.toLocaleString();
 
@@ -97,7 +104,7 @@
       name: NameInputElement.value,
       date: day,
       text: userComentElement.value,
-      laiks: coment.laiks,
+      laiks: 0,
     });
     renderComent();
     likesFun();
