@@ -68,7 +68,12 @@ const getFetchPromise = () => {
   return fetch('https://webdev-hw-api.vercel.app/api/v1/:natalvod/comments',{
     method: "GET"
   }).then((response) => {
-  return response.json();
+    if (response.status === 200){
+      return response.json();
+   } else {
+     throw new Error("Сервер сломался, попробуй позже")
+    }
+  //return response.json();
   }).then((responseData) => {
     const appComments = responseData.comments.map((comment) => {
       return {
@@ -78,10 +83,13 @@ const getFetchPromise = () => {
         likes: comment.likes,
         isLike: false,
       };
-    });
+    })
     comments = appComments;
     loaderCommentsElement.classList.add('-display-none');
     renderComments();
+  }).catch((error) => {
+    alert('Сервер не работает, повторите попытку позже');
+    console.warn(error);
   });
 }
 getFetchPromise();
@@ -279,51 +287,6 @@ const postFetchPromise = () => {
       alert ('Имя и комментарий должны быть не короче 3 символов')
       throw new Error("Сервер сломался, попробуй позже")
     }  
-    //  else if(!navigator.onLine) {
-    //   alert('Кажется, у вас сломался интернет, попробуйте позже')
-    //   throw new Error("Сервер сломался, попробуй позже")
-    // }
-    
-    //else throw new Error("Ошибка интернета");
-
-
-    // if(response.status === 500) {
-    //   alert('Сервер не работает, повторите попытку позже')
-    //   throw new Error("Сервер сломался, попробуй позже")
-    // } else if (response.status === 400) {
-    //   alert ('Имя и комментарий должны быть не короче 3 символов')
-    //   throw new Error("Сервер сломался, попробуй позже")
-    // }  
-    // // else if(!navigator.onLine) {
-    // //   alert('Кажется, у вас сломался интернет, попробуйте позже')
-    // //   throw new Error("Сервер сломался, попробуй позже")
-    // // }
-    // else if (response.status === 201){
-    //   return response.json();
-    // } else {
-    //   throw new Error("Ошибка интернета")
-    // }
-     
-    
-    // if (!response) {
-    //   if(response.status === 500) {
-    //     alert('Сервер не работает, повторите попытку позже')
-    //   } else if (response.status === 400) {
-    //     ('Имя и комментарий должны быть не короче 3 символов')
-    //   }
-    //   throw new Error("Сервер сломался, попробуй позже")
-    // } 
-   
-    // if(response.status === 201) {
-    //   return response.json();
-    // } 
-    // // else if(textareaElement.value.length <= 3 || inputNameElement.value.length <= 3) {
-    // //   alert('Имя и комментарий должны быть не короче 3 символов')
-    // //   //throw new Error()
-    // // } 
-    // else {
-    //   throw new Error("Сервер сломался, попробуй позже")
-    // }  
   }).then(() => {
     return getFetchPromise();
   })
@@ -341,26 +304,13 @@ buttonElement.addEventListener('click', () => {
     return;
   };
 
-  // if(textareaElement.value.length <= 3 || inputNameElement.value.length <= 3) {
-  //     alert('Имя и комментарий должны быть не короче 3 символов');
-  //   return
-  //   };
-
-  
-
   buttonElement.disabled = true;
   buttonElement.textContent = "Добавляется..."
   addFormElement.classList.add('-display-block')
   console.log(addFormElement);
   postFetchPromise().then((response) => {
-    //разблокировать форму
-  //addFormElement.classList.remove('-display-block')
   buttonElement.disabled = false;
     buttonElement.textContent = "Написать"
-    // if (response.status === 201) {
-    //   inputNameElement.value = '';
-    // textareaElement.value = '';
-    // }
     inputNameElement.value = '';
     textareaElement.value = '';
     return response
@@ -368,28 +318,10 @@ buttonElement.addEventListener('click', () => {
     addFormElement.classList.remove('-display-block')
     buttonElement.disabled = false;
     buttonElement.textContent = 'Написать';
-    // if (error.massage === "Ошибка интернета") {
-    //   alert('Кажется, у вас сломался интернет, попробуйте позже');
-    // }
-    //alert('Кажется, у вас сломался интернет, попробуйте позже');
-
-
-    //if(error.massage === "Сервер сломался, попробуй позже")
-    // if(textareaElement.value.length <= 3 || inputNameElement.value.length <= 3) {
-    //   alert('Имя и комментарий должны быть не короче 3 символов')
-    // } 
-    // else if(!response.ok){
-    //   alert('Кажется, у вас сломался интернет, попробуйте позже');
-    // }  
-    // if(textareaElement.value.length <= 3 || inputNameElement.value.length <= 3) {
-    //    alert('Имя и комментарий должны быть не короче 3 символов')
-    //    console.warn(error);
-    //  } else {
-    //   alert('Кажется, у вас сломался интернет, попробуйте позже');
-    //   console.warn(error);
-    //  } 
+    if(!navigator.onLine) {
+      alert('Кажется, у вас сломался интернет, попробуйте позже')
+    }
 });
-//addFormElement.classList.remove('-display-block')
   renderComments();
   buttonElement.disabled = true;
   addFormElement.classList.remove('-display-block')
