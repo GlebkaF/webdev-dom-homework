@@ -285,7 +285,7 @@ const postFetchPromise = () => {
       throw new Error("Сервер сломался, попробуй позже")
      } else if (response.status === 400) {
       alert ('Имя и комментарий должны быть не короче 3 символов')
-      throw new Error("Сервер сломался, попробуй позже")
+      throw new Error("Имя и комментарий короче 3 символов")
     }  
   }).then(() => {
     return getFetchPromise();
@@ -320,7 +320,9 @@ buttonElement.addEventListener('click', () => {
     buttonElement.textContent = 'Написать';
     if(!navigator.onLine) {
       alert('Кажется, у вас сломался интернет, попробуйте позже')
+      // throw new Error("Сломался интернет")
     }
+    console.warn(error);
 });
   renderComments();
   buttonElement.disabled = true;
