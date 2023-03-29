@@ -10,10 +10,10 @@ const comments = {
         function () {
             return fetch('https://webdev-hw-api.vercel.app/api/v1/alex-volo/comments')
                 .then(response => {
-                    console.log(response);
                     switch (response.status) {
                         case 200:
                             return response.json();
+
                         case 500:
                             throw new Error('Server is broken');
                     }
@@ -143,6 +143,7 @@ const comments = {
 
             if (this.comments[index].isEdit === false) {
                 this.comments[index].isEdit = true;
+
             } else {
                 let currentTextarea = document.querySelectorAll('.comment')[index].querySelector('textarea');
 
@@ -151,86 +152,64 @@ const comments = {
                     this.comments[index].text = safeInput(currentTextarea.value);
                 }
             }
-
             this.render();
         }
 }
 
 // Объект формы добавления комментариев со свойствами и методами
 const addForm = {
-    render:
-        function (loadingStatus = 0) {
-            const addForm = document.querySelector('div.add-form');
+    formElement: document.querySelector('.add-form'),
+    stub: document.querySelector('.stub'),
+    inputName: document.querySelector('input.add-form-name'),
+    inputComment: document.querySelector('.add-form-text'),
+    // Функция переключает отображение заглушки и формы
+    toggleStub: function (displayStub) {
+        if (displayStub) {
+            this.stub.style.display = "flex";
+            this.formElement.style.display = "none";
 
-            switch (loadingStatus) {
-                case 1:
-                    addForm.innerHTML = ` 
-                <div style="display: flex;">
-                Комментарий добавляется на сервер...
-                <svg class="spinner" viewBox="0 0 50 50">
-                    <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
-                </svg>
-                </div>
-                `
-                    break;
+        } else {
+            this.stub.style.display = "none";
+            this.formElement.style.display = "flex";
+        }
+    },
 
-                case 2:
-                    addForm.innerHTML = ` 
-                <div style="display: flex;">Комментарий загружается...</div>
-                <svg class="spinner" viewBox="0 0 50 50">
-                    <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
-                </svg>
-                </div>
-                `
-                    break;
+    addListeners:
+        function () {
+            const buttonAddComment = document.querySelector('.add-form-button');
+            buttonAddComment.addEventListener('click', this.addComment);
 
-                default: addForm.innerHTML = `    
-                <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="input-name" />
-                <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
-                id="input-comment"></textarea>
-                <div class="add-form-row">
-                    <button class="add-form-button" id="button-add-comment">Написать</button>
-                </div>`;
-                    // Добавляю событие на клик по кнопке добавить
-                    // И на нажатие Enter
-                    const buttonAddComment = document.querySelector('button.add-form-button');
-                    document.addEventListener('keyup', (e) => {
-                        if (e.code == 'Enter') this.addComment();
-                    });
-                    buttonAddComment.addEventListener('click', this.addComment);
-            }
+            document.addEventListener('keyup', (e) => {
+                if (e.code == 'Enter') this.addComment();
+            });
         },
+
     addComment:
         function () {
-            const inputName = document.querySelector('input.add-form-name');
-            const inputComment = document.querySelector('.add-form-text');
             const currentDate = new Date;
             // Таймаут красного фона на полях
             function clearInputs() {
-                inputName.classList.remove('error__name')
-                inputName.placeholder = 'Введите ваше имя';
-                inputComment.classList.remove('error__name')
-                inputComment.placeholder = 'Введите ваш комментарий';
+                addForm.inputName.classList.remove('error__name')
+                addForm.inputName.placeholder = 'Введите ваше имя';
+                addForm.inputComment.classList.remove('error__name')
+                addForm.inputComment.placeholder = 'Введите ваш комментарий';
             }
 
-            if (inputName.value === '') {
-                inputName.classList.add('error__name');
-                inputName.placeholder = 'Поле не может быть пустым!';
-                inputComment.value = '';
+            if (addForm.inputName.value === '') {
+                addForm.inputName.classList.add('error__name');
+                addForm.inputName.placeholder = 'Поле не может быть пустым!';
+                addForm.inputComment.value = '';
                 setTimeout(clearInputs, 1500);
 
-            } else if (inputComment.value === '' || inputComment.value === '\n') {
-                inputComment.classList.add('error__name');
-                inputComment.placeholder = 'Поле не может быть пустым!';
-                inputComment.value = '';
+            } else if (addForm.inputComment.value === '' || addForm.inputComment.value === '\n') {
+                addForm.inputComment.classList.add('error__name');
+                addForm.inputComment.placeholder = 'Поле не может быть пустым!';
+                addForm.inputComment.value = '';
                 setTimeout(clearInputs, 1500);
 
             } else {
-                // Для возврата значений в форму после ошибки
-                const currentComment = inputComment.value;
-                const currentName = inputName.value;
                 // Заглушка на время отправки коммента на сервер
-                addForm.render(1);
+                addForm.toggleStub(1);
 
                 function postComment() {
                     fetch('https://webdev-hw-api.vercel.app/api/v1/alex-volo/comments', {
@@ -240,8 +219,8 @@ const addForm = {
                             date: currentDate,
                             likes: 0,
                             isLiked: false,
-                            text: safeInput(inputComment.value),
-                            name: safeInput(inputName.value),
+                            text: safeInput(addForm.inputComment.value),
+                            name: safeInput(addForm.inputName.value),
                             // Чтобы сервер падал в 50% случаев
                             forceError: true,
                         })
@@ -251,62 +230,46 @@ const addForm = {
 
                             case 201:
                                 response.json().then(message => console.log(message));
-                                addForm.render(2);
                                 return comments.get();
 
                             case 400:
                                 throw new Error('Short value');
 
                             case 500:
-                                // Две строки ниже - это доп задание их можно закомментировать
                                 console.warn('Server is broken');
                                 postComment();
-
                                 throw new Error('Server is broken');
                         }
 
                     }).then((responseData) => {
                         console.log(responseData);
-                        addForm.render();
+                        addForm.toggleStub(0);
+                        addForm.inputName.value = '';
+                        addForm.inputComment.value = '';
 
                     }).catch(error => {
-                        const restore = () => {
-                            addForm.render();
-                            document.querySelector('input.add-form-name').value = currentName;
-                            document.querySelector('.add-form-text').value = currentComment;
-                        }
-
                         console.warn(error);
                         switch (error.message) {
 
                             case 'Short value':
                                 alert('Что-то пошло не так:\n' +
                                     'Имя или текст не должны быть короче 3 символов\n');
-
-                                restore();
+                                addForm.toggleStub(0);
                                 break;
 
                             case 'Server is broken':
-                                // alert('Сервер сломался, попробуй позже');
-
-
-                                restore();
+                                addForm.toggleStub(0);
                                 break;
 
                             case 'Failed to fetch':
                                 alert('Кажется, у вас сломался интернет, попробуйте позже');
-
-                                restore();
+                                addForm.toggleStub(0);
                                 break;
                         }
                     });
-
-                    inputName.value = '';
-                    inputComment.value = '';
                 }
                 postComment();
             }
-
         },
 }
 // Функции либо общие, либо не относящиеся ни к какому объекту.
@@ -326,7 +289,8 @@ function delay(interval = 300) {
 }
 
 comments.render(1);//Заглушка на комментариях
+addForm.addListeners(); //Добавляю обработчики событий на форму
 comments.get();// Получаем с сервера и отрисовываем
-addForm.render();//Рисуем форму
+
 
 

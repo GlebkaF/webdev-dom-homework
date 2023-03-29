@@ -11,9 +11,20 @@
     <ul class="comments" id="comments">
       <!-- Отрисовывается из массива JS -->
     </ul>
+
     <div class="add-form" id="add-form">
-      <!-- Теперь и форма рисуется из массива JS
-           Скоро совсем ни HTML, ни CSS не останется -->
+      <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="input-name" />
+      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
+        id="input-comment"></textarea>
+      <div class="add-form-row">
+        <button class="add-form-button" id="button-add-comment">Написать</button>
+      </div>
+    </div>
+
+    <div class="add-form stub">Комментарий загружается...
+      <svg class="spinner" viewBox="0 0 50 50">
+        <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+      </svg>
     </div>
   </div>
 </body>
