@@ -25,12 +25,20 @@
 </body>
 
 <script>
+function searchHtml (htmlString = "") {
+    return htmlString.replaceAll("<", "&lt;").replaceAll(">","&gt;"); 
+  }
+
+
   const buttonElement = document.getElementById("button");
   const NameInputElement = document.getElementById("NameInput");
   const comentsElement = document.getElementById("coments");
-  const userComentElement = document.getElementById("userComent");
   const likeCounterElement = document.querySelectorAll('likes-counter');
   const comentElement = document.querySelectorAll('.comment');
+  const userComentElement = document.getElementById("userComent");
+  
+
+  
 
   const coment = [
     {
@@ -51,12 +59,12 @@
     const comentHTML = coment.map((coment) => {
       return `<li class="comment">
           <div class="comment-header">
-            <div>${coment.name} </div>
+            <div>${searchHtml(coment.name)} </div>
             <div> ${coment.date} </div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${coment.text}
+              ${searchHtml(coment.text)}
             </div>
           </div>
           <div class="comment-footer">
@@ -69,6 +77,14 @@
     }).join('')
     comentsElement.innerHTML = comentHTML;
     console.log(comentHTML);
+
+    const comentTextElement = document.querySelectorAll(".comment-text");
+  for(const comentText of comentTextElement) {
+    comentText.addEventListener('click', () => {
+      userComentElement.value = comentText.innerHTML;
+
+    });
+  }
   }
   renderComent();
 
@@ -86,6 +102,8 @@
       });
     }
   };
+
+  // <img src = "." onerror="alert('ха-ха, ваши данные украдены!');">
 
   likesFun();
   buttonElement.addEventListener('click', () => {
@@ -106,12 +124,13 @@
       text: userComentElement.value,
       laiks: 0,
     });
+
     renderComent();
     likesFun();
     NameInputElement.value = "";
     userComentElement.value = "";
   });
 
-</script>
 
+</script>
 </html>
