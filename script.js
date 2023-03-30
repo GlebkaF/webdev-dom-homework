@@ -53,10 +53,8 @@ const fetchAndRenderTasks = () =>{
 
   .catch((error) => {
     if (error.message === "Сервер сломался, попробуй позже") {
-        if (commentInputElement.value === "") {
-          alert('Сервер упал')
-            return;
-        }
+      alert('Сервер упал')
+      return;     
     }
 
 })
