@@ -80,18 +80,6 @@ buttonElement.addEventListener("click", () => {
 
   const date = new Date().toLocaleString("ru-RU", options);
 
-  comments.push({
-    name: nameInputElement.value
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;"),
-    date: date,
-    text: textInputElement.value
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;"),
-      counter: 0,
-    liked: false,
-  });
-
   fetch("https://webdev-hw-api.vercel.app/api/v1/ekaterina-budylina/comments", {
     method: "POST",
     body: JSON.stringify({
@@ -107,26 +95,32 @@ buttonElement.addEventListener("click", () => {
     }),
   }).then((response) => {
     response.json().then((responseData) => {
-      const appComments = responseData.comments.map((comment) => {
-        return {
-          name: comment.author.name,
-          date: new Date(comment.date).toLocaleString("ru-RU", options),
-          text: comment.text,
-          counter: comment.likes,
-          liked: false,
-        };
+      fetch("https://webdev-hw-api.vercel.app/api/v1/ekaterina-budylina/comments", {
+        method: "GET",
+      }).then((response) => {
+        // Запускаем преобразовываем "сырые" данные от API в json формат
+        response.json().then((responseData) => {
+          comments = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: new Date(comment.date).toLocaleString("ru-RU", options),
+              text: comment.text,
+              counter: comment.likes,
+              liked: false,
+            };
+          });
+          renderComments();
+        });
       });
-      // получили данные и рендерим их в приложении
-      comments = appComments;
-      renderComments();
     });
   });
 
-  renderComments();
-
   nameInputElement.value = "";
   textInputElement.value = "";
+
 });
+
+
 
 // блокировка кнопки
 const validateInput = () => {
@@ -172,26 +166,6 @@ const editComment = () => {
 
 
 //DOM 2
-
-// const comments = [
-//   // {
-//   //   name: "Глеб Фокин",
-//   //   date: "12.02.22 12:18",
-//   //   text: "Это будет первый комментарий на этой странице ",
-//   //   counter: 3,
-//   //   liked: false,
-//   // },
-//   // {
-//   //   name: "Варвара Н.",
-//   //   date: "13.02.22 19:22",
-//   //   text: "Мне нравится как оформлена эта страница! ❤",
-//   //   counter: 75,
-//   //   liked: true,
-//   // },
-// ];
-
-
-
 
 //рендер-функция
 
