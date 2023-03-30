@@ -4,6 +4,45 @@ const listElement = document.getElementById("list");
 const nameInputElement = document.getElementById("name-input");
 const textInputElement = document.getElementById("text-input");
 const mainForm = document.querySelector(".add-form");
+let comments = [];
+
+const options = {
+  year: "2-digit",
+  month: "numeric",
+  day: "numeric",
+  timezone: "UTC",
+  hour: "numeric",
+  minute: "2-digit",
+};
+
+// Получаем данные из хранилища
+
+// fetch - запускает запрос в api
+const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/ekaterina-budylina/comments", {
+  method: "GET"
+});
+
+// подписываемся на успешное завершение запроса с помощью then
+fetchPromise.then((response) => {
+  // Запускаем преобразовываем "сырые" данные от API в json формат
+  const jsonPromise = response.json();
+
+  // Подписываемся на результат преобразования
+  jsonPromise.then((responseData) => {
+    const appComments = responseData.comments.map((comment) => {
+      return {
+        name: comment.author.name,
+        date: new Date(comment.date).toLocaleString("ru-RU", options),
+        text: comment.text,
+        counter: comment.likes,
+        liked: false,
+      };
+    });
+    // получили данные и рендерим их в приложении
+    comments = appComments;
+    renderComments();
+  });
+});
 
 // Оживляем кнопку лайков
 
@@ -38,33 +77,50 @@ buttonElement.addEventListener("click", () => {
     textInputElement.classList.add("error");
     return;
   }
-  const options = {
-    year: "2-digit",
-    month: "numeric",
-    day: "numeric",
-    timezone: "UTC",
-    hour: "numeric",
-    minute: "2-digit",
-  };
+
   const date = new Date().toLocaleString("ru-RU", options);
 
-  comments.push({
-    name: nameInputElement.value
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;"),
-    date: date,
-    text: textInputElement.value
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;"),
+  fetch("https://webdev-hw-api.vercel.app/api/v1/ekaterina-budylina/comments", {
+    method: "POST",
+    body: JSON.stringify({
+      name: nameInputElement.value
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;"),
+      date: date,
+      text: textInputElement.value
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;"),
       counter: 0,
-    liked: false,
+      liked: false,
+    }),
+  }).then((response) => {
+    response.json().then((responseData) => {
+      fetch("https://webdev-hw-api.vercel.app/api/v1/ekaterina-budylina/comments", {
+        method: "GET",
+      }).then((response) => {
+        // Запускаем преобразовываем "сырые" данные от API в json формат
+        response.json().then((responseData) => {
+          comments = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: new Date(comment.date).toLocaleString("ru-RU", options),
+              text: comment.text,
+              counter: comment.likes,
+              liked: false,
+            };
+          });
+          renderComments();
+        });
+      });
+    });
   });
-
-  renderComments();
 
   nameInputElement.value = "";
   textInputElement.value = "";
+
 });
+
+
 
 // блокировка кнопки
 const validateInput = () => {
@@ -111,31 +167,13 @@ const editComment = () => {
 
 //DOM 2
 
-const comments = [
-  {
-    name: "Глеб Фокин",
-    date: "12.02.22 12:18",
-    text: "Это будет первый комментарий на этой странице ",
-    counter: 3,
-    liked: false,
-  },
-  {
-    name: "Варвара Н.",
-    date: "13.02.22 19:22",
-    text: "Мне нравится как оформлена эта страница! ❤",
-    counter: 75,
-    liked: true,
-  },
-];
-
 //рендер-функция
 
 const renderComments = () => {
   const commentsHtml = comments
     .map((student, index) => {
-      return `<li data-text = '&gt ${student.text} \n ${
-        student.name
-      }' class="comment">
+      return `<li data-text = '&gt ${student.text} \n ${student.name
+        }' class="comment">
           <div class="comment-header">
             <div>${student.name}</div>
             <div>${student.date}</div>
@@ -148,9 +186,8 @@ const renderComments = () => {
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${student.counter}</span>
-              <button data-index = '${index}' class="${
-        student.liked ? "like-button -active-like" : "like-button"
-      }"></button>
+              <button data-index = '${index}' class="${student.liked ? "like-button -active-like" : "like-button"
+        }"></button>
             </div>
           </div>
         </li>`;
