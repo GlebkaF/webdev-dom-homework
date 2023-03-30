@@ -40,16 +40,26 @@ const fetchAndRenderTasks = () =>{
   method: "GET"
 })
   .then((response) => {
-   return response.json()
+     if (response.status === 500) {
+      throw new Error("Сервер сломался, попробуй позже")};
+     return response.json()
   })
+
   .then((responseData) => {
     comments = responseData.comments;
-  
-  })
-  .then(()=>{
-    renderComments();
     waitLoadComments.style.display = "none";
+    renderComments();
   })
+
+  .catch((error) => {
+    if (error.message === "Сервер сломался, попробуй позже") {
+        if (commentInputElement.value === "") {
+          alert('Сервер упал')
+            return;
+        }
+    }
+
+})
  
 
 }
@@ -81,7 +91,7 @@ function delay(interval = 300) {
 }
 
 
-
+// Добавление лайка
 function addLike () {
   const likeButtons = listElement.querySelectorAll('.like-button');
   for(let likeButton of likeButtons){
@@ -92,7 +102,7 @@ function addLike () {
           likeButton.classList.add('-loading-like')
           delay(2000).then(()=> {
            
-            if (comments[index].isLiked === false) {
+            if (!comments[index].isLiked) {
               comments[index].isLiked = true;
               comments[index].likes +=1;
             } else {
@@ -190,15 +200,14 @@ function renderComments() {
   addLike()  // лайки
   reComment() // Комментирование поста
 
-
- 
 }
 
-renderComments();
+
 
 
 
 // Добавление комментария
+
 addComment.addEventListener("click", () => {
 
   if (nameInputElement.value === "" || commentInputElement.value === "") {
@@ -206,45 +215,75 @@ addComment.addEventListener("click", () => {
     commentInputElement.classList.add("error");
     nameInputElement.placeholder = 'Введите имя';
     commentInputElement.placeholder = 'Введите комментарий';
-    
+
    
     buttonBlock()
     return;  
   } 
-  // Выключение  формы
 
-  pushComments.style.display = "flex";
-  mainForm.style.display = "none";
-  console.log(mainForm)
-
-    fetch('https://webdev-hw-api.vercel.app/api/v1/Kerimov-Evgeny/comments', {
-    method: "POST",
-
-    body: JSON.stringify({
-        date: new Date,
-        likes: 0,
-        isLiked: false,
-        text: safeInputText(commentInputElement.value),
-        name: safeInputText(nameInputElement.value),
-      }),
-
-      })
-      .then((response) => {
-        return response.json();
-      })
-      .then (() =>{
-       return fetchAndRenderTasks()
-      })
-      .then(()=>{
-        mainForm.style.display = "flex";
-        pushComments.style.display = "none"
-      })
-
+    function pushComment(){
+      fetch('https://webdev-hw-api.vercel.app/api/v1/Kerimov-Evgeny/comments', {
+        method: "POST",
+    
+        body: JSON.stringify({
+            date: new Date,
+            likes: 0,
+            isLiked: false,
+            text: safeInputText(commentInputElement.value),
+            name: safeInputText(nameInputElement.value),
+            forceError: true
+          })
+    
+          })
+          .then((response) => {
+            if (response.status === 400){
+              throw new Error("Слишком короткая строчка");
+            } 
+            if (response.status === 500) {
+              pushComment();
+              throw new Error("Сервер сломался, попробуй позже")
+            }
+              mainForm.style.display = "none";
+              pushComments.style.display = "flex"
+              return fetchAndRenderTasks()
+    
+          })
+      
+          .then(()=>{     
+            mainForm.style.display = "flex";
+            pushComments.style.display = "none"
+            delValue(); 
+          })
+    
+          .catch((error) => {
+            if (error.message === "Сервер сломался, попробуй позже") {
+              console.warn("Сервер не работает, попробуйте позже")
+              mainForm.style.display = "flex";
+              pushComments.style.display = "none"
+                return;
+            }
+            if (error.message === "Слишком короткая строчка") {
+                alert("Имя и комментарий должны быть не короче 3 символов")
+                mainForm.style.display = "flex";
+                pushComments.style.display = "none"
+                return;
+            }
+            mainForm.style.display = "flex";
+            pushComments.style.display = "none"
+            alert("Кажется, у вас сломался интернет, попробуйте позже");
+            return;
+           
+        })
+       
+    
+    }
+    
+    pushComment()
     nameInputElement.classList.remove("error");
     commentInputElement.classList.remove("error");
     const oldListHtml = listElement.innerHTML;
-  renderComments();
-  delValue(); 
+    renderComments();
+ 
 });
 
 
