@@ -1,28 +1,21 @@
-// import { fetchAndRenderTasks  } from "./render.js";
-import { getDate, safeInputText, delay} from "./secondaryFunc.js"
-import { delComment, delValue,pushCommentwithEnter,buttonBlock } from "./workWithForm.js";
 
+import { safeInputText,} from "./secondaryFunc.js"
+import { delComment, delValue,pushCommentwithEnter,addcommentuser,reComment,addLike,renderComments} from "./workWithForm.js";
 
-const addForm = document.querySelector('input');
 export const addComment = document.getElementById("add-button");
 const removeComment = document.getElementById("remove-comment");
-const listElement = document.getElementById("comments");
+export const listElement = document.getElementById("comments");
 export const nameInputElement = document.getElementById("name-input");
 export const commentInputElement = document.getElementById("comment-input");
 export const mainForm = document.querySelector(".add-form");
-const studentElements = document.querySelectorAll(".comment");
-const likeButton = document.querySelectorAll(".like-button");
-const textarea = document.querySelectorAll('.add-form-text')
-const waitLoadComments = document.getElementById("loaderComments");
+export const likeButton = document.querySelectorAll(".like-button");
+export const waitLoadComments = document.getElementById("loaderComments");
 const pushComments = document.getElementById("PushCommentsText");
-
-
 pushComments.style.display = "none"
 waitLoadComments.style.display = "flex";
 
- export let comments = [];
 
-
+ export let comments  = []
 
 // функция Данные с сервера
 const fetchAndRenderTasks = () =>{
@@ -52,143 +45,9 @@ const fetchAndRenderTasks = () =>{
 
 }
 
-fetchAndRenderTasks();
-
-
-// Добавление лайка
-function addLike () {
-  const likeButtons = listElement.querySelectorAll('.like-button');
-  for(let likeButton of likeButtons){
-
-    likeButton.addEventListener('click', ( event) => {
-      event.stopPropagation()
-          const index = likeButton.dataset.index;
-          likeButton.classList.add('-loading-like')
-          delay(2000).then(()=> {
-           
-            if (!comments[index].isLiked) {
-              comments[index].isLiked = true;
-              comments[index].likes +=1;
-            } else {
-              comments[index].isLiked = false;
-              comments[index].likes -=1;
-            }
-            renderComments();
-          })
-
-      })
-  }
-}
-
-
-
-
-
-// // Редактирование  
-// function editText (event ) {
-  
-//   const editButtons = listElement.querySelectorAll('.edit_comment');
-//   for(let editButton of  editButtons){
-
-//     editButton.addEventListener('click', (event) => {
-//       event.stopPropagation()
-//           const index = editButton.dataset.index;
-
-//             if (comments[index].isEdit === false) {
-//                 comments[index].isEdit = true;    
-//           } else {
-
-//           let currentTextarea = document.querySelectorAll('.comment') [index].querySelector('textarea');
-
-//             comments[index].isEdit = false;
-//             comments[index].comment = safeInputText(currentTextarea.value);
-//           }
-//           renderComments();
-//       })
-//   } 
-// }
-
-
-
-// Добавление комментария  к инпуту
-
-function reComment () {
-  
- const allComments = document.querySelectorAll('.comment')
- for(let comment of allComments){
-  comment.addEventListener('click', (event)=>{
-    event.stopPropagation()
-    const nameUser = comment.dataset.name;
-    const userComments = comment.dataset.comment;
-    commentInputElement.value =` >${userComments} \n${nameUser} <\n`
-    
-  })
- 
- }
-}
-
-// Функция обезопасить ввод данных
-
-
-
-
-// Рендер разметки
-
-export function renderComments() {
-  
-  const userHtml = comments.map((user, index) => {
-    return `<li class="comment"  data-name="${user.author.name}" data-comment="${user.text}">
-    <div class="comment-header">
-      <div>${user.author.name}</div>
-      <div>${getDate(user.date)}</div>
-    </div>
-    <div class="comment-body" >
-   <div class ="comment-text"> ${user.text} </div>
-    </div>
-    <div class="comment-footer">
-      <div class="likes">
-        <span class="likes-counter">${user.likes}</span>
-        <button data-index="${index}"  class="${user.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
-    
-      </div>
-    </div>
-  </li>`
-  }).join('')
-
-  listElement.innerHTML = userHtml;
-  addLike()  // лайки
-  reComment() // Комментирование поста
-
-}
-
-// функция Добавление комментария
-function addcommentuser(){
-  addComment.addEventListener("click", () => {
-
-    if (nameInputElement.value === "" || commentInputElement.value === "") {
-      
-      nameInputElement.classList.add("error");
-      commentInputElement.classList.add("error");
-      nameInputElement.placeholder = 'Введите имя';
-      commentInputElement.placeholder = 'Введите комментарий';
-      buttonBlock()
-      return;  
-    } 
-  
-      pushComment()
-      nameInputElement.classList.remove("error");
-      commentInputElement.classList.remove("error");
-      const oldListHtml = listElement.innerHTML;
-      renderComments();
-   
-  });
-}
-
-addcommentuser();
-
 
 // отправка комментария на сервер
-function pushComment(){
+export function pushComment(){
   fetch('https://webdev-hw-api.vercel.app/api/v1/Kerimov-Evgeny/comments', {
     method: "POST",
 
@@ -245,17 +104,28 @@ function pushComment(){
 
 }
 
+fetchAndRenderTasks();
+
+// Добавление лайкаs
+addLike ()
+// Добавление комментария  к инпуту
+reComment()
+// // Рендер разметки
+renderComments()
+// функция Добавление комментария
+addcommentuser();
 
 // Удаление последнего комментария
-
 removeComment.addEventListener("click", () => {
   delComment()
 })
-
-
-
-// // Ввод по нажатию клавиши Enter
+ // Ввод по нажатию клавиши Enter
 pushCommentwithEnter();
+
+
+
+
+
 
 
 
