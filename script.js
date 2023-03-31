@@ -1,11 +1,15 @@
+// import { fetchAndRenderTasks  } from "./render.js";
+import { getDate, safeInputText, delay} from "./secondaryFunc.js"
+import { delComment, delValue,pushCommentwithEnter,buttonBlock } from "./workWithForm.js";
+
 
 const addForm = document.querySelector('input');
-const addComment = document.getElementById("add-button");
+export const addComment = document.getElementById("add-button");
 const removeComment = document.getElementById("remove-comment");
 const listElement = document.getElementById("comments");
-const nameInputElement = document.getElementById("name-input");
-const commentInputElement = document.getElementById("comment-input");
-const mainForm = document.querySelector(".add-form");
+export const nameInputElement = document.getElementById("name-input");
+export const commentInputElement = document.getElementById("comment-input");
+export const mainForm = document.querySelector(".add-form");
 const studentElements = document.querySelectorAll(".comment");
 const likeButton = document.querySelectorAll(".like-button");
 const textarea = document.querySelectorAll('.add-form-text')
@@ -16,21 +20,7 @@ const pushComments = document.getElementById("PushCommentsText");
 pushComments.style.display = "none"
 waitLoadComments.style.display = "flex";
 
-// функция для даты
-function getDate(date) {
-  const options = {
-      year: '2-digit',
-      month: 'numeric',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-  }
-  const newDate = new Date(date);
-  return newDate.toLocaleString('ru-RU', options).replace(',', '');
-}
-
-
- let comments = [];
+ export let comments = [];
 
 
 
@@ -54,7 +44,7 @@ const fetchAndRenderTasks = () =>{
   .catch((error) => {
     if (error.message === "Сервер сломался, попробуй позже") {
       alert('Сервер упал')
-      return;     
+      return;
     }
 
 })
@@ -62,31 +52,7 @@ const fetchAndRenderTasks = () =>{
 
 }
 
-fetchAndRenderTasks()
-
-
-
-// Функция удаления последнего комментария
-function delComment() {
-  comments.pop()
-    renderComments();
-}
-
-// Отчистка данных с поля
-function delValue() {
-  nameInputElement.value = "";
-  commentInputElement.value = "";
-};
-
-// Функция для имитации запросов в API
-
-function delay(interval = 300) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, interval);
-  });
-}
+fetchAndRenderTasks();
 
 
 // Добавление лайка
@@ -162,18 +128,13 @@ function reComment () {
 }
 
 // Функция обезопасить ввод данных
-function safeInputText(str) {
-    return str.replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;");
-}
+
 
 
 
 // Рендер разметки
 
-function renderComments() {
+export function renderComments() {
   
   const userHtml = comments.map((user, index) => {
     return `<li class="comment"  data-name="${user.author.name}" data-comment="${user.text}">
@@ -200,121 +161,102 @@ function renderComments() {
 
 }
 
+// функция Добавление комментария
+function addcommentuser(){
+  addComment.addEventListener("click", () => {
 
-
-
-
-// Добавление комментария
-
-addComment.addEventListener("click", () => {
-
-  if (nameInputElement.value === "" || commentInputElement.value === "") {
-    nameInputElement.classList.add("error");
-    commentInputElement.classList.add("error");
-    nameInputElement.placeholder = 'Введите имя';
-    commentInputElement.placeholder = 'Введите комментарий';
-
-   
-    buttonBlock()
-    return;  
-  } 
-
-    function pushComment(){
-      fetch('https://webdev-hw-api.vercel.app/api/v1/Kerimov-Evgeny/comments', {
-        method: "POST",
-    
-        body: JSON.stringify({
-            date: new Date,
-            likes: 0,
-            isLiked: false,
-            text: safeInputText(commentInputElement.value),
-            name: safeInputText(nameInputElement.value),
-            forceError: true
-          })
-    
-          })
-          .then((response) => {
-            if (response.status === 400){
-              throw new Error("Слишком короткая строчка");
-            } 
-            if (response.status === 500) {
-              pushComment();
-              throw new Error("Сервер сломался, попробуй позже")
-            }
-              mainForm.style.display = "none";
-              pushComments.style.display = "flex"
-              return fetchAndRenderTasks()
-    
-          })
+    if (nameInputElement.value === "" || commentInputElement.value === "") {
       
-          .then(()=>{     
-            mainForm.style.display = "flex";
-            pushComments.style.display = "none"
-            delValue(); 
-          })
-    
-          .catch((error) => {
-            if (error.message === "Сервер сломался, попробуй позже") {
-              console.warn("Сервер не работает, попробуйте позже")
-              mainForm.style.display = "flex";
-              pushComments.style.display = "none"
-                return;
-            }
-            if (error.message === "Слишком короткая строчка") {
-                alert("Имя и комментарий должны быть не короче 3 символов")
-                mainForm.style.display = "flex";
-                pushComments.style.display = "none"
-                return;
-            }
-            mainForm.style.display = "flex";
-            pushComments.style.display = "none"
-            alert("Кажется, у вас сломался интернет, попробуйте позже");
+      nameInputElement.classList.add("error");
+      commentInputElement.classList.add("error");
+      nameInputElement.placeholder = 'Введите имя';
+      commentInputElement.placeholder = 'Введите комментарий';
+      buttonBlock()
+      return;  
+    } 
+  
+      pushComment()
+      nameInputElement.classList.remove("error");
+      commentInputElement.classList.remove("error");
+      const oldListHtml = listElement.innerHTML;
+      renderComments();
+   
+  });
+}
+
+addcommentuser();
+
+
+// отправка комментария на сервер
+function pushComment(){
+  fetch('https://webdev-hw-api.vercel.app/api/v1/Kerimov-Evgeny/comments', {
+    method: "POST",
+
+    body: JSON.stringify({
+        date: new Date,
+        likes: 0,
+        isLiked: false,
+        text: safeInputText(commentInputElement.value),
+        name: safeInputText(nameInputElement.value),
+        forceError: true
+      })
+
+      })
+      .then((response) => {
+        if (response.status === 400){
+          throw new Error("Слишком короткая строчка");
+        } 
+        if (response.status === 500) {
+          pushComment();
+          throw new Error("Сервер сломался, попробуй позже")
+        }
+          mainForm.style.display = "none";
+          pushComments.style.display = "flex"
+          return fetchAndRenderTasks()
+
+      })
+  
+      .then(()=>{     
+        mainForm.style.display = "flex";
+        pushComments.style.display = "none"
+        delValue(); 
+      })
+
+      .catch((error) => {
+        if (error.message === "Сервер сломался, попробуй позже") {
+          console.warn("Сервер не работает, попробуйте позже")
+          mainForm.style.display = "flex";
+          pushComments.style.display = "none"
             return;
-           
-        })
+        }
+        if (error.message === "Слишком короткая строчка") {
+            alert("Имя и комментарий должны быть не короче 3 символов")
+            mainForm.style.display = "flex";
+            pushComments.style.display = "none"
+            return;
+        }
+        mainForm.style.display = "flex";
+        pushComments.style.display = "none"
+        alert("Кажется, у вас сломался интернет, попробуйте позже");
+        return;
        
-    
-    }
-    
-    pushComment()
-    nameInputElement.classList.remove("error");
-    commentInputElement.classList.remove("error");
-    const oldListHtml = listElement.innerHTML;
-    renderComments();
- 
-});
+    })
+   
+
+}
 
 
-
+// Удаление последнего комментария
 
 removeComment.addEventListener("click", () => {
   delComment()
 })
 
-// Блокировка кнопки ввода()
-const buttonBlock = () => {
-  document.querySelectorAll("#name-input,#comment-input").forEach((el) => {
-    el.addEventListener("input", () => {
-      if (document.getElementById("name-input").value === '' || document.getElementById("comment-input").value === '')
-        document.getElementById("add-button").disabled = true;
-      else
-        document.getElementById("add-button").disabled = false;
-    });
-  });
-}
 
 
+// // Ввод по нажатию клавиши Enter
+pushCommentwithEnter();
 
-
-// Ввод по нажатию клавиши Enter
-mainForm.addEventListener('keyup', (event) => {
-
-  if (event.code === "Enter"  ) {
-    addComment.click();
-   
-    delValue();
-  }
-});
 
 
 
