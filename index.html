@@ -7,7 +7,7 @@
 
   <body>
     <div class="container">
-      <ul id="list" class="comments">
+      <ul class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -37,138 +37,33 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span id="number-likes" class="likes-counter">75</span>
-              <button id="likes" class="like-button -active-like"></button>
+              <span class="likes-counter">75</span>
+              <button class="like-button -active-like"></button>
             </div>
           </div>
         </li>
       </ul>
       <div class="add-form">
         <input
-          id="name-input"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
-          id="text-input"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
-          v-on:keydown.ctrl.enter="submitForm"
         ></textarea>
         <div class="add-form-row">
-          <button id="button-add" class="add-form-button">Написать</button>
-          <button id="button-delete" class="add-form-button">
-            Удалить последний комментарий
-          </button>
+          <button class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
 
   <script>
-    const listElement = document.getElementById("list");
-    const buttonAddElement = document.getElementById("button-add");
-    const buttonDeleteElement = document.getElementById("button-delete");
-    const nameElement = document.getElementById("name-input");
-    const descrElement = document.getElementById("text-input");
-    const blockElement = document.getElementsByClassName("comment");
-    const numberLikesElement = document.getElementsByClassName("number-likes");
-    const likesElement = document.getElementsByClassName("likes");
-    let date = new Date();
-
-    nameElement.addEventListener("input", () => {
-      if (nameElement.value === "" || descrElement.value === "") {
-        buttonAddElement.disabled = true;
-      } else {
-        buttonAddElement.disabled = false;
-      }
-    });
-
-    descrElement.addEventListener("input", () => {
-      if (nameElement.value === "" || descrElement.value === "") {
-        buttonAddElement.disabled = true;
-      } else {
-        buttonAddElement.disabled = false;
-      }
-    });
-
-    document.addEventListener("keyup", () => {
-      if (event.code === "Enter") {
-        nameElement.classList.remove("error");
-        descrElement.classList.remove("error");
-        nameElement.placeholder;
-        descrElement.placeholder;
-        if (nameElement.value === "" || descrElement.value === "") {
-          nameElement.classList.add("error");
-          descrElement.classList.add("error");
-          nameElement.placeholder = "Впишите данные";
-          descrElement.placeholder = "Впишите данные";
-        } else {
-          buttonAddElement.disabled = false;
-          const oldListElement = listElement.innerHTML;
-          listElement.innerHTML =
-            oldListElement +
-            `<li class="comment">
-          <div class="comment-header">
-            <div>${nameElement.value}</div>
-            <div>${date.getDate()}.${date.getMonth()}.${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${descrElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
-          nameElement.value = "";
-          descrElement.value = "";
-        }
-      }
-    });
-
-    buttonAddElement.addEventListener("click", () => {
-      nameElement.classList.remove("error");
-      descrElement.classList.remove("error");
-      nameElement.placeholder;
-      descrElement.placeholder;
-      if (nameElement.value === "" || descrElement.value === "") {
-        nameElement.classList.add("error");
-        descrElement.classList.add("error");
-        nameElement.placeholder = "Впишите данные";
-        descrElement.placeholder = "Впишите данные";
-      } else {
-        buttonAddElement.disabled = false;
-        const oldListElement = listElement.innerHTML;
-        listElement.innerHTML =
-          oldListElement +
-          `<li class="comment">
-          <div class="comment-header">
-            <div>${nameElement.value}</div>
-            <div>${date.getDate()}.${date.getMonth()}.${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${descrElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
-        nameElement.value = "";
-        descrElement.value = "";
-      }
-    });
+    // Код писать здесь
+    console.log("It works!");
   </script>
 </html>
