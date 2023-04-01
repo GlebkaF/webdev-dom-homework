@@ -52,7 +52,7 @@ const fetchAndRenderComments = () => {
     });
 };
 
-
+loaderPostElement.style.display = "none";
 
 
 // Оживляем кнопку лайков
@@ -76,6 +76,7 @@ const changeLikesListener = () => {
     });
   }
 };
+
 
 //Добавление комментария
 
@@ -106,8 +107,8 @@ buttonElement.addEventListener("click", () => {
     }),
   })
     .then((response) => {
-      loaderPostElement.textContent = 'Комментарий добавляется...';
       mainForm.style.display = "none";
+      loaderPostElement.style.display = "flex";
       return response.json();
     })
     .then(() => {
