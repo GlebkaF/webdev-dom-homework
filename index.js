@@ -8,6 +8,9 @@ const textareaElement = document.querySelector('.add-form-text');
 
 const loaderCommentsElement = document.getElementById('loaderComments');
 
+const addFormElement = document.querySelector('.add-form')
+
+
 
 const myDate = () => {
   const getDate = new Date();
@@ -65,7 +68,12 @@ const getFetchPromise = () => {
   return fetch('https://webdev-hw-api.vercel.app/api/v1/:natalvod/comments',{
     method: "GET"
   }).then((response) => {
-  return response.json();
+    if (response.status === 200){
+      return response.json();
+   } else {
+     throw new Error("Сервер сломался, попробуй позже")
+    }
+  //return response.json();
   }).then((responseData) => {
     const appComments = responseData.comments.map((comment) => {
       return {
@@ -75,10 +83,13 @@ const getFetchPromise = () => {
         likes: comment.likes,
         isLike: false,
       };
-    });
+    })
     comments = appComments;
     loaderCommentsElement.classList.add('-display-none');
     renderComments();
+  }).catch((error) => {
+    alert('Сервер не работает, повторите попытку позже');
+    console.warn(error);
   });
 }
 getFetchPromise();
@@ -254,6 +265,7 @@ renderComments();
 //Функция POST
 
 const postFetchPromise = () => {
+  
   return fetch('https://webdev-hw-api.vercel.app/api/v1/:natalvod/comments', {
     method: "POST",
     body: JSON.stringify({
@@ -262,9 +274,19 @@ const postFetchPromise = () => {
       text: secureInput(textareaElement.value),
       likes: 0,
       isLike: false,
+      forceError: true,
     }),
   }).then((response) => {
-    return response.json()
+
+    if (response.status === 201){
+       return response.json();
+    } else if (response.status === 500) {
+      alert('Сервер не работает, повторите попытку позже')
+      throw new Error("Сервер сломался, попробуй позже")
+     } else if (response.status === 400) {
+      alert ('Имя и комментарий должны быть не короче 3 символов')
+      throw new Error("Имя и комментарий короче 3 символов")
+    }  
   }).then(() => {
     return getFetchPromise();
   })
@@ -284,14 +306,27 @@ buttonElement.addEventListener('click', () => {
 
   buttonElement.disabled = true;
   buttonElement.textContent = "Добавляется..."
-  postFetchPromise().then(() => {
+  addFormElement.classList.add('-display-block')
+  console.log(addFormElement);
+  postFetchPromise().then((response) => {
+  buttonElement.disabled = false;
     buttonElement.textContent = "Написать"
-  });
-
+    inputNameElement.value = '';
+    textareaElement.value = '';
+    return response
+  }).catch((error) => {
+    addFormElement.classList.remove('-display-block')
+    buttonElement.disabled = false;
+    buttonElement.textContent = 'Написать';
+    if(!navigator.onLine) {
+      alert('Кажется, у вас сломался интернет, попробуйте позже')
+      // throw new Error("Сломался интернет")
+    }
+    console.warn(error);
+});
   renderComments();
-
-  inputNameElement.value = '';
-  textareaElement.value = '';
+  buttonElement.disabled = true;
+  addFormElement.classList.remove('-display-block')
 });
 
 //ввод по кнопке enter
