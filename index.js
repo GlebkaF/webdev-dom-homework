@@ -4,6 +4,10 @@ const listElement = document.getElementById("list");
 const nameInputElement = document.getElementById("name-input");
 const textInputElement = document.getElementById("text-input");
 const mainForm = document.querySelector(".add-form");
+
+const loaderStartElement = document.getElementById("loader-start");
+const loaderPostElement = document.getElementById("loader-post");
+
 let comments = [];
 
 const options = {
@@ -17,32 +21,37 @@ const options = {
 
 // Получаем данные из хранилища
 
-// fetch - запускает запрос в api
-const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/ekaterina-budylina/comments", {
-  method: "GET"
-});
 
-// подписываемся на успешное завершение запроса с помощью then
-fetchPromise.then((response) => {
-  // Запускаем преобразовываем "сырые" данные от API в json формат
-  const jsonPromise = response.json();
-
-  // Подписываемся на результат преобразования
-  jsonPromise.then((responseData) => {
-    const appComments = responseData.comments.map((comment) => {
-      return {
-        name: comment.author.name,
-        date: new Date(comment.date).toLocaleString("ru-RU", options),
-        text: comment.text,
-        counter: comment.likes,
-        liked: false,
-      };
+const fetchAndRenderComments = () => {
+  // fetch - запускает запрос в api
+  return fetch("https://webdev-hw-api.vercel.app/api/v1/ekaterina-budylina/comments", {
+    method: "GET",
+  })
+    .then((response) => {
+      // Запускаем преобразовываем "сырые" данные от API в json формат
+      loaderStartElement.textContent = 'Пожалуйста, подождите, загружаю комментарии...';
+      return response.json();
+    })
+    .then((responseData) => {
+      comments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: new Date(comment.date).toLocaleString("ru-RU", options),
+          text: comment.text,
+          counter: comment.likes,
+          liked: false,
+        };
+      });
+      // получили данные и рендерим их в приложении
+      renderComments();
+    })
+    .then(() => {
+      loaderStartElement.style.display = "none";
     });
-    // получили данные и рендерим их в приложении
-    comments = appComments;
-    renderComments();
-  });
-});
+};
+
+
+
 
 // Оживляем кнопку лайков
 
@@ -93,31 +102,22 @@ buttonElement.addEventListener("click", () => {
       counter: 0,
       liked: false,
     }),
-  }).then((response) => {
-    response.json().then((responseData) => {
-      fetch("https://webdev-hw-api.vercel.app/api/v1/ekaterina-budylina/comments", {
-        method: "GET",
-      }).then((response) => {
-        // Запускаем преобразовываем "сырые" данные от API в json формат
-        response.json().then((responseData) => {
-          comments = responseData.comments.map((comment) => {
-            return {
-              name: comment.author.name,
-              date: new Date(comment.date).toLocaleString("ru-RU", options),
-              text: comment.text,
-              counter: comment.likes,
-              liked: false,
-            };
-          });
-          renderComments();
-        });
-      });
+  })
+    .then((response) => {
+      loaderPostElement.textContent = 'Комментарий добавляется...';
+      mainForm.style.display = "none";
+      return response.json();
+    })
+    .then(() => {
+      return fetchAndRenderComments();
+    })
+    .then(() => {
+      loaderPostElement.style.display = "none";
+      mainForm.style.display = "flex";
     });
-  });
-
+  renderComments();
   nameInputElement.value = "";
   textInputElement.value = "";
-
 });
 
 
@@ -172,7 +172,8 @@ const editComment = () => {
 const renderComments = () => {
   const commentsHtml = comments
     .map((student, index) => {
-      return `<li data-text = '&gt ${student.text} \n ${student.name
+      return `
+        <li data-text = '&gt ${student.text} \n ${student.name
         }' class="comment">
           <div class="comment-header">
             <div>${student.name}</div>
@@ -198,6 +199,6 @@ const renderComments = () => {
   changeLikesListener();
   editComment();
 };
-
+fetchAndRenderComments();
 renderComments();
 buttonBlock();
