@@ -22,6 +22,8 @@ const options = {
 // Получаем данные из хранилища
 
 
+
+
 const fetchAndRenderComments = () => {
   // fetch - запускает запрос в api
   return fetch("https://webdev-hw-api.vercel.app/api/v1/ekaterina-budylina/comments", {
