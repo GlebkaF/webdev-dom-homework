@@ -1,18 +1,15 @@
-const buttonElement = document.querySelector('button.add-form-button');
+import {renderComments} from "./renderComments.js";
 
-const listElement = document.querySelector('.comments');
-
-const inputNameElement = document.querySelector('.add-form-name');
-
-const textareaElement = document.querySelector('.add-form-text');
-
-const loaderCommentsElement = document.getElementById('loaderComments');
-
-const addFormElement = document.querySelector('.add-form')
+export const buttonElement = document.querySelector('button.add-form-button');
+export const listElement = document.querySelector('.comments');
+export const inputNameElement = document.querySelector('.add-form-name');
+export const textareaElement = document.querySelector('.add-form-text');
+export const loaderCommentsElement = document.getElementById('loaderComments');
+export const addFormElement = document.querySelector('.add-form')
 
 
 
-const myDate = () => {
+export const myDate = () => {
   const getDate = new Date();
   const options = {
     year: "2-digit",
@@ -59,11 +56,11 @@ const secureInput = (safeText) => {
 
 //GET API
 
-let comments = [];
+export let comments = [];
 
 //функция GET
 
-const getFetchPromise = () => {
+export const getFetchPromise = () => {
   loaderCommentsElement.classList.remove('-display-none');
   return fetch('https://webdev-hw-api.vercel.app/api/v1/:natalvod/comments',{
     method: "GET"
@@ -86,7 +83,7 @@ const getFetchPromise = () => {
     })
     comments = appComments;
     loaderCommentsElement.classList.add('-display-none');
-    renderComments();
+    renderComments(listElement);
   }).catch((error) => {
     alert('Сервер не работает, повторите попытку позже');
     console.warn(error);
@@ -96,151 +93,156 @@ getFetchPromise();
 
 //рендер функция
 
-const renderComments = () => {
-  const commentHtml = comments.map((comment, index) => {
-    return `<li class="comment" data-name='${comment.name}' data-comment='${comment.text}'>
-  <div class="comment-header">
-    <div>${comment.name}</div>
-    <div>${myDate(new Date(comment.date))}</div>
-  </div>
-  <div class="comment-body">
+// const renderComments = () => {
+//   const commentHtml = comments.map((comment, index) => {
+//     return `<li class="comment" data-name='${comment.name}' data-comment='${comment.text}'>
+//   <div class="comment-header">
+//     <div>${comment.name}</div>
+//     <div>${myDate(new Date(comment.date))}</div>
+//   </div>
+//   <div class="comment-body">
 
-    ${comment.isEdit ? `<textarea class= "edit-area-text" onclick = "event.stopPropagation()">${comment.comment}</textarea>` : `<div class="comment-text" data-index='${index}' data-name='${comment.name}' data-comment='${comment.text}'>${comment.text.replaceAll('*_', '<div class="quote">').replaceAll('__*', '</div>')}</div>`}
+//     ${comment.isEdit ? `<textarea class= "edit-area-text" onclick = "event.stopPropagation()">${comment.text}</textarea>` : `<div class="comment-text" data-index='${index}' data-name='${comment.name}' data-comment='${comment.text}'>${comment.text.replaceAll('*_', '<div class="quote">').replaceAll('__*', '</div>')}</div>`}
   
-  </div>
-  <div class="comment-footer">
-   <div class="likes">
-    <span class="likes-counter">${comment.likes}</span>
+//   </div>
+//   <div class="comment-footer">
+//    <div class="likes">
+//     <span class="likes-counter">${comment.likes}</span>
 
-    <button class="${comment.isLike ? "like-button -active-like" : "like-button"}" data-index='${index}'></button>
+//     <button class="${comment.isLike ? "like-button -active-like" : "like-button"}" data-index='${index}'></button>
 
-    ${comment.isEdit ? `<button class="save-button button-comment" data-index='${index}'>Сохранить</button>` : `<button class="edit-button button-comment" data-index='${index}'>Редактировать</button>`}
+//     ${comment.isEdit ? `<button class="save-button button-comment" data-index='${index}'>Сохранить</button>` : `<button class="edit-button button-comment" data-index='${index}'>Редактировать</button>`}
     
-    <button class = "delete-button button-comment" data-index='${index}'>Удалить комментарий</button>
-   </div>
-  </div>
-</li>`
-  }).join('');
+//     <button class = "delete-button button-comment" data-index='${index}'>Удалить комментарий</button>
+//    </div>
+//   </div>
+// </li>`
+//   }).join('');
 
-  listElement.innerHTML = commentHtml;
+//   listElement.innerHTML = commentHtml;
 
-  initChangeLikeButtonListeners();
-  initEditButtonListeners();
-  deleteComment();
-  //answerToComment(); ДЗ 2.11
-  answerQuoteToComment(); // ДЗ со звездочкой 2.11
-}
+//   initChangeLikeButtonListeners();
+//   initEditButtonListeners();
+//   deleteComment();
+//   //answerToComment(); ДЗ 2.11
+//   answerQuoteToComment(); // ДЗ со звездочкой 2.11
+// }
 
 //редактировать комментарии
 
-const initEditButtonListeners = () => {
-  const editButtons = document.querySelectorAll(".edit-button");
-  for (const editButton of editButtons) {
-    editButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const index = editButton.dataset.index;
+renderComments(listElement)
 
-      if (comments[index].isEdit === false) {
-        comments[index].isEdit = true;
+// const initEditButtonListeners = () => {
+//   const editButtons = document.querySelectorAll(".edit-button");
+//   for (const editButton of editButtons) {
+//     editButton.addEventListener('click', (e) => {
+//       e.stopPropagation();
+//       const index = editButton.dataset.index;
 
-      } else {
-        comments[index].isEdit = false;
-        const textareaEditElements = document.querySelectorAll(".edit-area-text");
-        for (const textareaEditElement of textareaEditElements) {
-          comments[index].comment = textareaEditElement.value;
-        }
-      }
-      renderComments();
-    })
-  };
-  const saveButtons = document.querySelectorAll(".save-button");
-  for (const saveButton of saveButtons) {
-    saveButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const index = saveButton.dataset.index;
-      if (comments[index].isEdit === false) {
-        comments[index].isEdit = true;
-      } else {
-        comments[index].isEdit = false;
-        const textareaEditElements = document.querySelectorAll(".edit-area-text");
-        for (const textareaEditElement of textareaEditElements) {
-          comments[index].comment = textareaEditElement.value;
-        }
-      }
-      renderComments()
+//       if (comments[index].isEdit === false) {
+//         comments[index].isEdit = true;
 
-    });
-  }
-};
+//       } else {
+//         comments[index].isEdit = false;
+//         const textareaEditElements = document.querySelectorAll(".edit-area-text");
+//         for (const textareaEditElement of textareaEditElements) {
+//           comments[index].text = textareaEditElement.value;
+//         }
+//       }
+//       renderComments(listElement);
+//     })
+//   };
+//   const saveButtons = document.querySelectorAll(".save-button");
+//   for (const saveButton of saveButtons) {
+//     saveButton.addEventListener('click', (e) => {
+//       e.stopPropagation();
+//       const index = saveButton.dataset.index;
+//       if (comments[index].isEdit === false) {
+//         comments[index].isEdit = true;
+//       } else {
+//         comments[index].isEdit = false;
+//         const textareaEditElements = document.querySelectorAll(".edit-area-text");
+//         for (const textareaEditElement of textareaEditElements) {
+//           comments[index].text = textareaEditElement.value;
+//         }
+//       }
+//       renderComments(listElement)
+
+//     });
+//   }
+// };
 
 //Смена класса кнопки лайка
 
-const initChangeLikeButtonListeners = () => {
-  const likeButtonElements = document.querySelectorAll('.like-button');
+// export const initChangeLikeButtonListeners = () => {
+//   const likeButtonElements = document.querySelectorAll('.like-button');
 
-  for (const likeButtonElement of likeButtonElements) {
-    likeButtonElement.addEventListener('click', (event) => {
-      event.stopPropagation();
-      const index = likeButtonElement.dataset.index;
+//   for (const likeButtonElement of likeButtonElements) {
+//     likeButtonElement.addEventListener('click', (event) => {
+//       event.stopPropagation();
+//       const index = likeButtonElement.dataset.index;
 
-      if (comments[index].isLike === false) {
-        comments[index].likes += 1;
-        comments[index].isLike = true;
+//       if (comments[index].isLike === false) {
+//         comments[index].likes += 1;
+//         comments[index].isLike = true;
 
 
-      } else {
-        comments[index].likes -= 1;
-        comments[index].isLike = false;
-      }
+//       } else {
+//         comments[index].likes -= 1;
+//         comments[index].isLike = false;
+//       }
 
-      renderComments();
-    })
-  }
-};
+//       renderComments(listElement);
+//     })
+//   }
+// };
 
+
+// initEditButtonListeners()
+// initChangeLikeButtonListeners()
 
 //Ответ на комментарий (ДЗ 2.11)
 
-const answerToComment = () => {
-  const commentTexts = document.querySelectorAll('.comment-text');
-  for (const commentText of commentTexts) {
-    commentText.addEventListener('click', (event) => {
-      event.stopPropagation();
-      const userName = commentText.dataset.name;
-      const userComment = commentText.dataset.comment;
-      // const index = el.dataset.index;
-      textareaElement.value = `>${userComment} \n${userName}`;
-      renderComments();
-    })
-  }
-}
+// const answerToComment = () => {
+//   const commentTexts = document.querySelectorAll('.comment-text');
+//   for (const commentText of commentTexts) {
+//     commentText.addEventListener('click', (event) => {
+//       event.stopPropagation();
+//       const userName = commentText.dataset.name;
+//       const userComment = commentText.dataset.comment;
+//       // const index = el.dataset.index;
+//       textareaElement.value = `>${userComment} \n${userName}`;
+//       renderComments(listElement);
+//     })
+//   }
+// }
 
-answerToComment();
+//answerToComment();
 
 //Ответ на комментарий с цитатой (задание со звездочкой 2.11)
 
-const answerQuoteToComment = () => {
-  const commentListItems = document.querySelectorAll('.comment');
-  for (const commentListItem of commentListItems) {
-    commentListItem.addEventListener('click', () => {
-      const userName = commentListItem.dataset.name;
-      const userComment = commentListItem.dataset.comment;
-      textareaElement.value = `*_${userName}: \n${userComment}__*`;
-    })
-  }
-}
-answerQuoteToComment();
+// const answerQuoteToComment = () => {
+//   const commentListItems = document.querySelectorAll('.comment');
+//   for (const commentListItem of commentListItems) {
+//     commentListItem.addEventListener('click', () => {
+//       const userName = commentListItem.dataset.name;
+//       const userComment = commentListItem.dataset.comment;
+//       textareaElement.value = `*_${userName}: \n${userComment}__*`;
+//     })
+//   }
+// }
+//answerQuoteToComment();
 
 //удаление комментария по отдельности
 
-const deleteComment = () => {
+export const deleteComment = () => {
   const deleteButtonElements = document.querySelectorAll('.delete-button');
   for (const deleteButtonElement of deleteButtonElements) {
     deleteButtonElement.addEventListener('click', (e) => {
       e.stopPropagation();
       const index = deleteButtonElement.dataset.index;
       comments.splice(index, 1);
-      renderComments();
+      renderComments(listElement);
     });
   }
 };
@@ -254,13 +256,13 @@ const deleteLastComment = () => {
 
   deleteLastButtonElement.addEventListener('click', () => {
     comments.pop();
-    renderComments();
+    renderComments(listElement);
   });
 };
 
 deleteLastComment();
 getFetchPromise();
-renderComments();
+renderComments(listElement);
 
 //Функция POST
 
@@ -274,7 +276,7 @@ const postFetchPromise = () => {
       text: secureInput(textareaElement.value),
       likes: 0,
       isLike: false,
-      forceError: true,
+      forceError: false,
     }),
   }).then((response) => {
 
@@ -324,7 +326,7 @@ buttonElement.addEventListener('click', () => {
     }
     console.warn(error);
 });
-  renderComments();
+  renderComments(listElement);
   buttonElement.disabled = true;
   addFormElement.classList.remove('-display-block')
 });
