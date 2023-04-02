@@ -29,6 +29,7 @@ const fetchAndRenderComments = () => {
   // fetch - запускает запрос в api
   return fetch("https://webdev-hw-api.vercel.app/api/v1/ekaterina-budylina/comments", {
     method: "GET",
+    forceError: true,
   })
     .then((response) => {
       // Запускаем преобразовываем "сырые" данные от API в json формат
@@ -49,6 +50,11 @@ const fetchAndRenderComments = () => {
     })
     .then(() => {
       loaderStartElement.style.display = "none";
+    })
+    .catch((error) => {
+      alert("Кажется, что-то пошло не так, попробуйте позже");
+      // TODO: Отправлять в систему сбора ошибок
+      console.warn(error);
     });
 };
 
@@ -104,12 +110,24 @@ buttonElement.addEventListener("click", () => {
         .replaceAll(">", "&gt;"),
       counter: 0,
       liked: false,
+      forceError: true,
     }),
   })
     .then((response) => {
-      mainForm.style.display = "none";
-      loaderPostElement.style.display = "flex";
-      return response.json();
+      console.log(response);
+      if (response.status === 201) {
+        mainForm.style.display = "none";
+        loaderPostElement.style.display = "flex";
+        nameInputElement.value = "";
+        textInputElement.value = "";
+        return response.json();
+      } else if (response.status === 500)  {
+        alert("Сервер сломался, попробуй позже");
+        // return Promise.reject("Сервер упал");
+      } else if (response.status === 400)  {
+        alert("Имя и комментарий должны быть не короче 3 символов");
+        // return Promise.reject("Сервер упал");
+      } 
     })
     .then(() => {
       return fetchAndRenderComments();
@@ -117,10 +135,16 @@ buttonElement.addEventListener("click", () => {
     .then(() => {
       loaderPostElement.style.display = "none";
       mainForm.style.display = "flex";
+
+    })
+    .catch((error) => {
+      buttonElement.disabled = false;
+      alert("Кажется, у вас сломался интернет, попробуйте позже");
+      // TODO: Отправлять в систему сбора ошибок
+      console.warn(error);
     });
+
   renderComments();
-  nameInputElement.value = "";
-  textInputElement.value = "";
 });
 
 
