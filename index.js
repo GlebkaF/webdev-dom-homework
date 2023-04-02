@@ -1,6 +1,6 @@
-import {renderComments, validateButton, initDisabledButtonElement, deleteLastComment, deleteComment, pushEnter} from "./formComments.js";
-// import { getFetchPromise } from "./fetchPromise.js";
+import {renderComments, validateButton, initDisabledButtonElement, deleteLastComment, deleteComment, pushEnter, pushNewComment} from "./formComments.js";
 import { myDate, secureInput} from "./optionalFunction.js";
+
 export const buttonElement = document.querySelector('button.add-form-button');
 export const listElement = document.querySelector('.comments');
 export const inputNameElement = document.querySelector('.add-form-name');
@@ -55,7 +55,7 @@ export const addFormElement = document.querySelector('.add-form')
 //   //.replaceAll('"', "&quot;");
 // }
 
-//GET API
+//массив comments
 
 export let comments = [];
 
@@ -264,11 +264,12 @@ deleteComment();
 deleteLastComment();
 getFetchPromise();
 pushEnter();
+pushNewComment();
 renderComments(listElement);
 
 //Функция POST
 
-const postFetchPromise = () => {
+export const postFetchPromise = () => {
   
   return fetch('https://webdev-hw-api.vercel.app/api/v1/:natalvod/comments', {
     method: "POST",
@@ -299,39 +300,39 @@ const postFetchPromise = () => {
 
 //добавление нового комментария
 
-buttonElement.addEventListener('click', () => {
-  inputNameElement.classList.remove('error');
-  textareaElement.classList.remove('error')
-  if (!inputNameElement.value || !textareaElement.value) {
-    inputNameElement.classList.add('error');
-    textareaElement.classList.add('error');
-    return;
-  };
+// buttonElement.addEventListener('click', () => {
+//   inputNameElement.classList.remove('error');
+//   textareaElement.classList.remove('error')
+//   if (!inputNameElement.value || !textareaElement.value) {
+//     inputNameElement.classList.add('error');
+//     textareaElement.classList.add('error');
+//     return;
+//   };
 
-  buttonElement.disabled = true;
-  buttonElement.textContent = "Добавляется..."
-  addFormElement.classList.add('-display-block')
-  console.log(addFormElement);
-  postFetchPromise().then((response) => {
-  buttonElement.disabled = false;
-    buttonElement.textContent = "Написать"
-    inputNameElement.value = '';
-    textareaElement.value = '';
-    return response
-  }).catch((error) => {
-    addFormElement.classList.remove('-display-block')
-    buttonElement.disabled = false;
-    buttonElement.textContent = 'Написать';
-    if(!navigator.onLine) {
-      alert('Кажется, у вас сломался интернет, попробуйте позже')
-      // throw new Error("Сломался интернет")
-    }
-    console.warn(error);
-});
-  renderComments(listElement);
-  buttonElement.disabled = true;
-  addFormElement.classList.remove('-display-block')
-});
+//   buttonElement.disabled = true;
+//   buttonElement.textContent = "Добавляется..."
+//   addFormElement.classList.add('-display-block')
+//   console.log(addFormElement);
+//   postFetchPromise().then((response) => {
+//   buttonElement.disabled = false;
+//     buttonElement.textContent = "Написать"
+//     inputNameElement.value = '';
+//     textareaElement.value = '';
+//     return response
+//   }).catch((error) => {
+//     addFormElement.classList.remove('-display-block')
+//     buttonElement.disabled = false;
+//     buttonElement.textContent = 'Написать';
+//     if(!navigator.onLine) {
+//       alert('Кажется, у вас сломался интернет, попробуйте позже')
+//       // throw new Error("Сломался интернет")
+//     }
+//     console.warn(error);
+// });
+//   renderComments(listElement);
+//   buttonElement.disabled = true;
+//   addFormElement.classList.remove('-display-block')
+// });
 
 validateButton()
 initDisabledButtonElement()

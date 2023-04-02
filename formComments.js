@@ -1,4 +1,4 @@
-import { comments, listElement, inputNameElement, buttonElement, textareaElement, addFormElement } from "./index.js";
+import { comments, listElement, inputNameElement, buttonElement, textareaElement, addFormElement, postFetchPromise } from "./index.js";
 import { myDate } from "./optionalFunction.js";
 
   //выключение кнопки
@@ -20,15 +20,6 @@ import { myDate } from "./optionalFunction.js";
   
  //ввод по кнопке enter
 
-// export const formEnter = document.querySelector('.add-form');
-// formEnter.addEventListener('keyup', (ent) => {
-//   if (ent.code === "Enter") {
-//     buttonElement.click();
-//     inputNameElement.value = '';
-//     textareaElement.value = '';
-//   }
-// });
-
 export const pushEnter = () => {
 addFormElement.addEventListener('keyup', (ent) => {
       if (ent.code === "Enter") {
@@ -38,6 +29,8 @@ addFormElement.addEventListener('keyup', (ent) => {
       }
     });
  }
+
+// Смена класса кнопки лайка
 
 export const initChangeLikeButtonListeners = () => {
     const likeButtonElements = document.querySelectorAll('.like-button');
@@ -61,6 +54,8 @@ export const initChangeLikeButtonListeners = () => {
       })
     }
   };
+
+//редактирование комментария
 
   export const initEditButtonListeners = () => {
     const editButtons = document.querySelectorAll(".edit-button");
@@ -102,6 +97,8 @@ export const initChangeLikeButtonListeners = () => {
     }
   };
 
+// удаление комментария по отдельности
+
   export const deleteComment = () => {
     const deleteButtonElements = document.querySelectorAll('.delete-button');
     for (const deleteButtonElement of deleteButtonElements) {
@@ -114,6 +111,8 @@ export const initChangeLikeButtonListeners = () => {
     }
   };
 
+//Удаление последнего комментария
+
   export const deleteLastComment = () => {
     const deleteLastButtonElement = document.querySelector('.add-form-button--remove');
   
@@ -123,19 +122,7 @@ export const initChangeLikeButtonListeners = () => {
     });
   };
 
-  // deleteLastComment();
-
-//  const deleteComment = () => {
-//     const deleteButtonElements = document.querySelectorAll('.delete-button');
-//     for (const deleteButtonElement of deleteButtonElements) {
-//       deleteButtonElement.addEventListener('click', (e) => {
-//         e.stopPropagation();
-//         const index = deleteButtonElement.dataset.index;
-//         comments.splice(index, 1);
-//         renderComments(listElement);
-//       });
-//     }
-//   };
+//Ответ на комментарий с цитатой (задание со звездочкой 2.11)
 
   const answerQuoteToComment = () => {
     const commentListItems = document.querySelectorAll('.comment');
@@ -147,6 +134,46 @@ export const initChangeLikeButtonListeners = () => {
       })
     }
   }
+
+//добавление нового комментария
+
+ export const pushNewComment = () => {
+  buttonElement.addEventListener('click', () => {
+    inputNameElement.classList.remove('error');
+    textareaElement.classList.remove('error')
+    if (!inputNameElement.value || !textareaElement.value) {
+      inputNameElement.classList.add('error');
+      textareaElement.classList.add('error');
+      return;
+    };
+  
+    buttonElement.disabled = true;
+    buttonElement.textContent = "Добавляется..."
+    addFormElement.classList.add('-display-block')
+    console.log(addFormElement);
+    postFetchPromise().then((response) => {
+    buttonElement.disabled = false;
+      buttonElement.textContent = "Написать"
+      inputNameElement.value = '';
+      textareaElement.value = '';
+      return response
+    }).catch((error) => {
+      addFormElement.classList.remove('-display-block')
+      buttonElement.disabled = false;
+      buttonElement.textContent = 'Написать';
+      if(!navigator.onLine) {
+        alert('Кажется, у вас сломался интернет, попробуйте позже')
+        // throw new Error("Сломался интернет")
+      }
+      console.warn(error);
+  });
+    renderComments(listElement);
+    buttonElement.disabled = true;
+    addFormElement.classList.remove('-display-block')
+  });
+ }
+  
+//рендер функция
 
 export const renderComments = (element) => {
     const commentHtml = comments.map((comment, index) => {
@@ -183,5 +210,3 @@ export const renderComments = (element) => {
     //answerToComment(); ДЗ 2.11
     answerQuoteToComment(); // ДЗ со звездочкой 2.11
   }
-
-//   export default renderComments;
