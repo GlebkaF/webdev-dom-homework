@@ -22,6 +22,7 @@ const options = {
 // Получаем данные из хранилища
 
 
+loaderStartElement.textContent = 'Пожалуйста, подождите, загружаю комментарии...';
 
 
 const fetchAndRenderComments = () => {
@@ -31,7 +32,6 @@ const fetchAndRenderComments = () => {
   })
     .then((response) => {
       // Запускаем преобразовываем "сырые" данные от API в json формат
-      loaderStartElement.textContent = 'Пожалуйста, подождите, загружаю комментарии...';
       return response.json();
     })
     .then((responseData) => {
