@@ -1,5 +1,6 @@
-import {renderComments} from "./renderComments.js";
-
+import {renderComments, validateButton, initDisabledButtonElement, deleteLastComment, deleteComment, pushEnter} from "./formComments.js";
+// import { getFetchPromise } from "./fetchPromise.js";
+import { myDate, secureInput} from "./optionalFunction.js";
 export const buttonElement = document.querySelector('button.add-form-button');
 export const listElement = document.querySelector('.comments');
 export const inputNameElement = document.querySelector('.add-form-name');
@@ -9,50 +10,50 @@ export const addFormElement = document.querySelector('.add-form')
 
 
 
-export const myDate = () => {
-  const getDate = new Date();
-  const options = {
-    year: "2-digit",
-    month: "2-digit",
-    day: "2-digit",
-    timezone: "UTC",
-    hour: "numeric",
-    minute: "2-digit"
-  };
+// export const myDate = () => {
+//   const getDate = new Date();
+//   const options = {
+//     year: "2-digit",
+//     month: "2-digit",
+//     day: "2-digit",
+//     timezone: "UTC",
+//     hour: "numeric",
+//     minute: "2-digit"
+//   };
   
-  options.hour = "2-digit";
-  return getDate.toLocaleDateString("ru-Ru", options).split(', ').join(' ');
-}
+//   options.hour = "2-digit";
+//   return getDate.toLocaleDateString("ru-Ru", options).split(', ').join(' ');
+// }
 
-//выключение кнопки
+// //выключение кнопки
 
-const validateButton = () => {
-  if (!inputNameElement.value || !textareaElement.value) {
-    buttonElement.disabled = true;
-  } else buttonElement.disabled = false;
-}
+// const validateButton = () => {
+//   if (!inputNameElement.value || !textareaElement.value) {
+//     buttonElement.disabled = true;
+//   } else buttonElement.disabled = false;
+// }
 
-const initDisabledButtonElement = () => {
-  validateButton();
-  document.querySelectorAll(".add-form-text,.add-form-name").forEach((input) => {
-    input.addEventListener("input", () => {
-      validateButton();
-    });
-  });
-};
+// const initDisabledButtonElement = () => {
+//   validateButton();
+//   document.querySelectorAll(".add-form-text,.add-form-name").forEach((input) => {
+//     input.addEventListener("input", () => {
+//       validateButton();
+//     });
+//   });
+// };
 
-initDisabledButtonElement();
+// initDisabledButtonElement();
 
 
-//обезопасить ввод данных пользователя
+// //обезопасить ввод данных пользователя
 
-const secureInput = (safeText) => {
-  return safeText
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-  //.replaceAll("&", "&amp;")
-  //.replaceAll('"', "&quot;");
-}
+// export const secureInput = (safeText) => {
+//   return safeText
+//     .replaceAll("<", "&lt;")
+//     .replaceAll(">", "&gt;")
+//   //.replaceAll("&", "&amp;")
+//   //.replaceAll('"', "&quot;");
+// }
 
 //GET API
 
@@ -127,7 +128,7 @@ getFetchPromise();
 //   //answerToComment(); ДЗ 2.11
 //   answerQuoteToComment(); // ДЗ со звездочкой 2.11
 // }
-
+// getFetchPromise()
 //редактировать комментарии
 
 renderComments(listElement)
@@ -235,33 +236,34 @@ renderComments(listElement)
 
 //удаление комментария по отдельности
 
-export const deleteComment = () => {
-  const deleteButtonElements = document.querySelectorAll('.delete-button');
-  for (const deleteButtonElement of deleteButtonElements) {
-    deleteButtonElement.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const index = deleteButtonElement.dataset.index;
-      comments.splice(index, 1);
-      renderComments(listElement);
-    });
-  }
-};
+// export const deleteComment = () => {
+//   const deleteButtonElements = document.querySelectorAll('.delete-button');
+//   for (const deleteButtonElement of deleteButtonElements) {
+//     deleteButtonElement.addEventListener('click', (e) => {
+//       e.stopPropagation();
+//       const index = deleteButtonElement.dataset.index;
+//       comments.splice(index, 1);
+//       renderComments(listElement);
+//     });
+//   }
+// };
 
 deleteComment();
 
 //удаление последнего комментария
 
-const deleteLastComment = () => {
-  const deleteLastButtonElement = document.querySelector('.add-form-button--remove');
+// const deleteLastComment = () => {
+//   const deleteLastButtonElement = document.querySelector('.add-form-button--remove');
 
-  deleteLastButtonElement.addEventListener('click', () => {
-    comments.pop();
-    renderComments(listElement);
-  });
-};
+//   deleteLastButtonElement.addEventListener('click', () => {
+//     comments.pop();
+//     renderComments(listElement);
+//   });
+// };
 
 deleteLastComment();
 getFetchPromise();
+pushEnter();
 renderComments(listElement);
 
 //Функция POST
@@ -331,16 +333,29 @@ buttonElement.addEventListener('click', () => {
   addFormElement.classList.remove('-display-block')
 });
 
-//ввод по кнопке enter
+validateButton()
+initDisabledButtonElement()
+// pushEnter()
+// //ввод по кнопке enter
 
-const formEnter = document.querySelector('.add-form');
-formEnter.addEventListener('keyup', (ent) => {
-  if (ent.code === "Enter") {
-    buttonElement.click();
-    inputNameElement.value = '';
-    textareaElement.value = '';
-  }
-});
+// const formEnter = document.querySelector('.add-form');
+//const pushEnter = () => {
+  //const formEnter = document.querySelector('.add-form');
+ // formEnter.addEventListener('keyup', (ent) => {
+    //   if (ent.code === "Enter") {
+    //     buttonElement.click();
+    //     inputNameElement.value = '';
+    //     textareaElement.value = '';
+    //   }
+    // });
+ //}
+  // formEnter.addEventListener('keyup', (ent) => {
+//   if (ent.code === "Enter") {
+//     buttonElement.click();
+//     inputNameElement.value = '';
+//     textareaElement.value = '';
+//   }
+// });
 
 
 

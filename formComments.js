@@ -1,4 +1,43 @@
-import { comments, myDate, listElement } from "./index.js";
+import { comments, listElement, inputNameElement, buttonElement, textareaElement, addFormElement } from "./index.js";
+import { myDate } from "./optionalFunction.js";
+
+  //выключение кнопки
+  
+  export const validateButton = () => {
+    if (!inputNameElement.value || !textareaElement.value) {
+      buttonElement.disabled = true;
+    } else buttonElement.disabled = false;
+  }
+  
+  export const initDisabledButtonElement = () => {
+    validateButton();
+    document.querySelectorAll(".add-form-text,.add-form-name").forEach((input) => {
+      input.addEventListener("input", () => {
+        validateButton();
+      });
+    });
+  };
+  
+ //ввод по кнопке enter
+
+// export const formEnter = document.querySelector('.add-form');
+// formEnter.addEventListener('keyup', (ent) => {
+//   if (ent.code === "Enter") {
+//     buttonElement.click();
+//     inputNameElement.value = '';
+//     textareaElement.value = '';
+//   }
+// });
+
+export const pushEnter = () => {
+addFormElement.addEventListener('keyup', (ent) => {
+      if (ent.code === "Enter") {
+        buttonElement.click();
+        inputNameElement.value = '';
+        textareaElement.value = '';
+      }
+    });
+ }
 
 export const initChangeLikeButtonListeners = () => {
     const likeButtonElements = document.querySelectorAll('.like-button');
@@ -23,7 +62,7 @@ export const initChangeLikeButtonListeners = () => {
     }
   };
 
-  const initEditButtonListeners = () => {
+  export const initEditButtonListeners = () => {
     const editButtons = document.querySelectorAll(".edit-button");
     for (const editButton of editButtons) {
       editButton.addEventListener('click', (e) => {
@@ -74,6 +113,29 @@ export const initChangeLikeButtonListeners = () => {
       });
     }
   };
+
+  export const deleteLastComment = () => {
+    const deleteLastButtonElement = document.querySelector('.add-form-button--remove');
+  
+    deleteLastButtonElement.addEventListener('click', () => {
+      comments.pop();
+      renderComments(listElement);
+    });
+  };
+
+  // deleteLastComment();
+
+//  const deleteComment = () => {
+//     const deleteButtonElements = document.querySelectorAll('.delete-button');
+//     for (const deleteButtonElement of deleteButtonElements) {
+//       deleteButtonElement.addEventListener('click', (e) => {
+//         e.stopPropagation();
+//         const index = deleteButtonElement.dataset.index;
+//         comments.splice(index, 1);
+//         renderComments(listElement);
+//       });
+//     }
+//   };
 
   const answerQuoteToComment = () => {
     const commentListItems = document.querySelectorAll('.comment');
