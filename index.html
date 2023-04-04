@@ -75,9 +75,9 @@
       return day + '.' + month + '.' + year + ' ' + hour + ':' + minutes;
     };
     //обработка пустых полей
-    const nameElem = document.getElementsByClassName('add-form-name')[0];
-    const textElem = document.getElementsByClassName('add-form-text')[0];
-    const btnDis = document.getElementsByClassName('add-form-button_disabled')[0];
+    const nameElem = document.querySelector('.add-form-name');
+    const textElem = document.querySelector('.add-form-text');
+    const btnDis = document.querySelector('.add-form-button_disabled');
     let nameChange = false;
     let textChange = false;
     nameElem.addEventListener('change', () => {
@@ -111,11 +111,11 @@
     });
     //добавление коммента
     const addComment = () => {
-      const name = document.getElementsByClassName('add-form-name')[0].value;
-      const text = document.getElementsByClassName('add-form-text')[0].value;
+      const name = document.querySelector('.add-form-name').value;
+      const text = document.querySelector('.add-form-text').value;
       const date = dateFormat();
       if(name !== '' && text !== '') {
-        const ul = document.getElementsByClassName('comments')[0];
+        const ul = document.querySelector('.comments');
         let li = document.createElement("li");
         li.innerHTML = `<li><div class="comment-header">
             <div>${name}</div>
@@ -135,13 +135,13 @@
         li.className = "comment";
         ul.appendChild(li);
         //очистка полей
-        document.getElementsByClassName('add-form-name')[0].value = '';
-        document.getElementsByClassName('add-form-text')[0].value = '';
+        document.querySelector('.add-form-name').value = '';
+        document.querySelector('.add-form-text').value = '';
       }
     };
     //событие нажатия кнопки
-    const btnElem = document.getElementsByClassName('add-form-button');
-    btnElem[0].addEventListener('click', addComment());
+    const btnElem = document.querySelector('.add-form-button');
+    btnElem.addEventListener('click', addComment);
     //добавление коммента по нажатию энтер
     document.addEventListener('keyup', event => {
       if( event.code === 'Enter' ) addComment();
