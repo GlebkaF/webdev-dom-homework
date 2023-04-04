@@ -9,12 +9,12 @@
 
 <body>
   <div class="container">
-    <ul id="coments" class="comments">
+    <ul id="list" class="comments">
       <!-- список рендерится из JS -->
     </ul>
 
     <div class="add-form">
-      <input id="NameInput" type="text" class="add-form-name" placeholder="Введите ваше имя" value="" />
+      <input id="nameInput" type="text" class="add-form-name" placeholder="Введите ваше имя" value="" />
       <textarea type="textarea" class="add-form-text" placeholder="Напишите ваш коментарий" rows="4" id="userComent"
         value=""></textarea>
       <div class="add-form-row">
@@ -25,35 +25,47 @@
 </body>
 
 <script>
-function searchHtml (htmlString = "") {
-    return htmlString.replaceAll("<", "&lt;").replaceAll(">","&gt;"); 
+  function searchHtml(htmlString = "") {
+    return htmlString.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
   }
 
 
   const buttonElement = document.getElementById("button");
-  const NameInputElement = document.getElementById("NameInput");
-  const comentsElement = document.getElementById("coments");
+  const nameInputElement = document.getElementById("nameInput");
+  const listElement = document.getElementById("list");
   const likeCounterElement = document.querySelectorAll('likes-counter');
   const comentElement = document.querySelectorAll('.comment');
   const userComentElement = document.getElementById("userComent");
-  
+  const allCommentsElements = document.querySelectorAll("comments");
 
-  
 
-  const coment = [
+  //делаем запрос в API
+  const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/:cimvol-key/comments",
     {
-      name: 'Глеб Фокин',
-      date: '12.02.22 12:18',
-      text: 'Это будет первый комментарий на этой странице',
-      laiks: '3',
-    },
-    {
-      name: 'Варвара Н.',
-      date: '13.02.22 19:22',
-      text: 'Мне нравится как оформлена эта страница! ❤',
-      laiks: '75',
-    }
-  ];
+      method: "GET",
+    });
+  // fetch вернула нам fetchPromise, просто JS объект
+  // используя обработчик then(), успешного выполнения запроса получаем наши данные
+  fetchPromise.then((response) => {
+    // преобразовываем поступивший ответ к нашему формату при помощи Json
+    const jsonPromise = response.json();
+    // поскольку метод json() также является асинхронным нам необходимо подписаться на результат
+    jsonPromise.then((responseData) => {
+      const ourComments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: comment.date,
+          text: comment.text,
+          likes: comment.likes,
+          isLiked: false,
+        };
+      });
+      coment = ourComments;
+      renderComent();
+    });
+  });
+
+  let coment = [];
 
   const renderComent = () => {
     const comentHTML = coment.map((coment) => {
@@ -75,16 +87,16 @@ function searchHtml (htmlString = "") {
           </div>
         </li>`
     }).join('')
-    comentsElement.innerHTML = comentHTML;
+    listElement.innerHTML = comentHTML;
     console.log(comentHTML);
 
     const comentTextElement = document.querySelectorAll(".comment-text");
-  for(const comentText of comentTextElement) {
-    comentText.addEventListener('click', () => {
-      userComentElement.value = comentText.innerHTML;
+    for (const comentText of comentTextElement) {
+      comentText.addEventListener('click', () => {
+        userComentElement.value = comentText.innerHTML;
 
-    });
-  }
+      });
+    }
   }
   renderComent();
 
@@ -107,30 +119,49 @@ function searchHtml (htmlString = "") {
 
   likesFun();
   buttonElement.addEventListener('click', () => {
-    NameInputElement.classList.remove('error');
+    nameInputElement.classList.remove('error');
     userComentElement.classList.remove('error');
-    if (NameInputElement.value === "" || userComentElement.value === "") {
-      NameInputElement.classList.add('error');
+    if (nameInputElement.value === "" || userComentElement.value === "") {
+      nameInputElement.classList.add('error');
       userComentElement.classList.add('error');
       return;
     }
 
-    let today = new Date();
-    let day = today.toLocaleString();
+    let today = new Date().toLocaleString();
 
     coment.push({
-      name: NameInputElement.value,
-      date: day,
+      name: nameInputElement.value,
+      date: today,
       text: userComentElement.value,
       laiks: 0,
     });
 
+    //делаем запрос в API
+    const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/:cimvol-key/comments",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          name: nameInputElement.value,
+          text: userComentElement.value,
+        }),
+      });
+    // fetch вернула нам fetchPromise, просто JS объект
+    // используя обработчик then(), успешного выполнения запроса получаем наши данные
+    fetchPromise.then((response) => {
+      // преобразовываем поступивший ответ к нашему формату при помощи Json
+      const jsonPromise = response.json();
+      // поскольку метод json() также является асинхронным нам необходимо подписаться на результат
+      jsonPromise.then((responseData) => {
+        coment = responseData.comments;
+        renderComent();
+      });
+    });
+
     renderComent();
     likesFun();
-    NameInputElement.value = "";
+    nameInputElement.value = "";
     userComentElement.value = "";
   });
-
 
 </script>
 </html>
