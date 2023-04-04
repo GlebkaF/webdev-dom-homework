@@ -1,31 +1,31 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
+	<head>
+		<title>Проект "Комменты"</title>
+		<link rel="stylesheet" href="styles.css" />
+	</head>
 
-  <body>
-    <div class="container">
-      <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
+	<body>
+		<div class="container">
+			<ul class="comments">
+				<li class="comment">
+				<div class="comment-header">
+					<div>Глеб Фокин</div>
+					<div>12.02.22 12:18</div>
+				</div>
+				<div class="comment-body">
+				<div class="comment-text">
+					Это будет первый комментарий на этой странице
+				</div>
+				</div>
+				<div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">3</span>
               <button class="like-button"></button>
             </div>
-          </div>
-        </li>
-        <li class="comment">
+				</div>
+				</li>
+				<li class="comment">
           <div class="comment-header">
             <div>Варвара Н.</div>
             <div>13.02.22 19:22</div>
@@ -41,8 +41,8 @@
               <button class="like-button -active-like"></button>
             </div>
           </div>
-        </li>
-      </ul>
+				</li>
+			</ul>
       <div class="add-form">
         <input
           type="text"
@@ -56,14 +56,98 @@
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+			<button class="remove-form-button">Удалить последний комментарий</button>
+			<button class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
 
-  <script>
-    // Код писать здесь
-    console.log("It works!");
-  </script>
+	<script>
+	const nameElement = document.getElementsByClassName('add-form-name')[0];
+	const commentElement = document.getElementsByClassName('add-form-text')[0];
+	const addButtonElement = document.getElementsByClassName('add-form-button')[0];
+	const listElement = document.getElementsByClassName('comments')[0];
+	const formElement = document.getElementsByClassName('add-form')[0];
+	const removeButtonElement = document.getElementsByClassName('remove-form-button')[0];
+	const comElement = document.getElementsByClassName('comment');
+	const date = new Date();
+
+//Добавляем обработчик события на клик по кнопке
+	addButtonElement.addEventListener("click", () => {
+		nameElement.classList.remove('error'); //здесь стили (error) удаляются, если всё хорошо
+		if (nameElement.value === "") { // если поле ввода пустое
+			nameElement.classList.add('error'); // то добавляем новые стили (error) для поля ввода
+			return
+		}
+		commentElement.classList.remove('error');
+		if (commentElement.value === "") {
+			commentElement.classList.add('error');
+			return
+		}
+	
+	funcButton();
+})
+
+// Функция для добавления нового блока комментариев
+function funcButton() {
+	const oldListHtml = listElement.innerHTML; // добавляем новый блок при клике на нашу кнопку
+listElement.innerHTML = oldListHtml +
+`<li class="comment">
+	<div class="comment-header">
+		<div>
+			${nameElement.value}
+		</div>
+		<div>
+			${date.getDate() < 10 ? '0': ''}${date.getDate()}.${date.getMonth() < 10 ? '0' : ''}${date.getMonth() + 1}.${date.getFullYear()} ${date.getHours() < 10 ? '0' : ''}${date.getHours()}:${date.getMinutes() < 10 ? '0' : ''}${date.getMinutes()}
+		</div>
+	</div>
+	<div class="comment-body">
+		<div class="comment-text">
+			${commentElement.value}
+		</div>
+	</div>
+	<div class="comment-footer">
+		<div class="likes">
+		<span class="likes-counter">0</span>
+		<button class="like-button"></button>
+		</div>
+	</div>
+</li>`
+
+nameElement.value = ''; // очищаем поле формы после ввода
+commentElement.value = '';
+}
+
+//Расширенная валидация.Кнопка некликабельна, если имя или текст в форме незаполненные.
+	nameElement.addEventListener("input", funcBtnName = () => {
+		if (nameElement.value == "") { // проверяем пуста ли строка?
+			addButtonElement.disabled = true; // если да, то делаем кнопку disabled(неполноценной)
+		} else {
+			addButtonElement.disabled = false; // иначе, кнопка кликабельна
+		}
+	});
+	funcBtnName(); // вызываем функцию проверки
+	commentElement.addEventListener("input", funcBtnComment = () => {
+		if (commentElement.value == "") {
+			addButtonElement.disabled = true;
+		} else {
+			addButtonElement.disabled = false;
+		}
+	});
+	funcBtnComment(); // вызываем функцию проверки
+
+// Добавление элемента в список по нажатию Enter
+	formElement.addEventListener ("keyup", (e) => {
+		if (e.code === 'Enter') {
+			funcButton();
+		}
+	})
+
+	// Удаление последнего элемента
+	// removeButtonElement.addEventListener('click', () => {
+	// })
+
+	console.log("It works!");
+	</script>
 </html>

@@ -120,9 +120,10 @@ body {
   .add-form-row {
     display: flex;
     justify-content: flex-end;
+	 column-gap: 24px;
   }
 
-  .add-form-button {
+  .add-form-button, .remove-form-button {
     margin-top: 24px;
     font-size: 24px;
     padding: 10px 20px;
@@ -132,6 +133,11 @@ body {
     cursor: pointer;
   }
 
-  .add-form-button:hover {
+  .add-form-button:hover, .remove-form-button:hover {
     opacity: 0.9;
   }
+
+.error {
+	box-shadow: 0px 0px 5px 3px red;
+	background: #fdb0b0;
+}
