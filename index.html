@@ -61,9 +61,76 @@
       </div>
     </div>
   </body>
+  <style>
+    .error{
+      background-color: red;
+    };
+    .add-form-button:disabled{
+      background-color: gray;
+    };
+
+  </style>
 
   <script>
-    // Код писать здесь
-    console.log("It works!");
+    const buttonElement = document.querySelector(".add-form-button");
+    const commentElement = document.querySelector(".comments");
+    const formName = document.querySelector(".add-form-name");
+    const formText = document.querySelector(".add-form-text");
+    const day = new Date();
+    let date = day.getDate();
+    let month = day.getMonth();
+    let year = day.getFullYear() - 2000;
+    let hours = day.getHours();
+    let minutes = day.getMinutes();
+    if (date < 10){
+     date = "0" + date;
+    };
+    if (month < 10){
+      month = "0" + month;
+    };
+    if (hours < 10){
+      hours = "0" + hours;
+    };
+    if (minutes < 10){
+      minutes = "0" + minutes;
+    };
+  
+
+    buttonElement.addEventListener("click", () => {
+      formName.classList.remove("error");
+      if (formName.value === ""){
+        formName.classList.add("error");
+        return;
+      };
+      formText.classList.remove("error");
+      if (formText.value === ""){
+        formText.classList.add("error");
+        return;
+      };
+      if (formText.value === "" || formName.value === ""){
+        buttonElement.classList.add("add-form-button:disabled");
+        buttonElement.ariaDisabled;
+      };
+      const oldCommentElement = commentElement.innerHTML;
+      commentElement.innerHTML = oldCommentElement +
+      ` <li class="comment">
+          <div class="comment-header">
+            <div>${formName.value}</div>
+            <div>${date}.${month}.${year} ${hours}:${minutes}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${formText.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button -active-like"></button>
+            </div>
+          </div>
+        </li>`
+    });
+
   </script>
 </html>
