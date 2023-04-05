@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
   <head>
+    <meta charset="UTF-8">
     <title>Проект "Комменты"</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -153,7 +154,7 @@
     const btnDis = document.querySelector('.add-form-button_disabled');
     let nameChange = false;
     let textChange = false;
-    nameElem.addEventListener('change', () => {
+    nameElem.addEventListener('input', () => {
       if(nameElem.value !== '') {
         nameChange = true;
       }
@@ -168,7 +169,7 @@
         btnDis.disabled = true;
       }
     });
-    textElem.addEventListener('change', () => {
+    textElem.addEventListener('input', () => {
       if(textElem.value !== '') {
         textChange = true;
       }
