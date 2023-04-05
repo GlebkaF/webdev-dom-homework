@@ -116,6 +116,9 @@ export function addLike () {
 // Рендер разметки
 export function renderComments() {
   
+ const appEl = document.getElementById('app')
+
+
   const userHtml = comments.map((user, index) => {
     return `<li class="comment"  data-name="${user.author.name}" data-comment="${user.text}">
     <div class="comment-header">
@@ -135,7 +138,48 @@ export function renderComments() {
   </li>`
   }).join('')
 
-  listElement.innerHTML = userHtml;
+
+  const appHtml = `    <div class="container">
+  <div id="loaderComments">Комментарии загружаются...</div>
+  <form class="form" action="" method="post">
+    <h1>Форма входа</h1>
+    <input class="input"id='login-input' type="text" autocomplete="username" placeholder="Ваше имя">
+    <br>
+    <input class="input" id='password-input' type="password" autocomplete="current-password" placeholder="Пароль">
+    <br>
+    <button class="btn" id="login-button" type="submit">войти</button>
+    <button class="btn" type="submit">Авторизация</button>
+  </form>
+
+  
+  <ul class="comments" id ="comments">
+    <!-- Список рендерится из JS -->
+    ${userHtml}
+  </ul>
+  <div class="add-form">
+    <input
+      type="text"
+      class="add-form-name"
+      placeholder="Введите ваше имя"
+      id ='name-input'
+    />
+    <textarea
+      type="textarea"
+      class="add-form-text"
+      placeholder="Введите ваш комментарий"
+      rows="4"
+      id="comment-input"
+    ></textarea>
+    <div class="add-form-row">
+      <button  class="add-form-button" id="add-button" >Написать</button>
+      <button  class="add-form-button"     id="remove-comment" >Удалить последний коммент</button>
+    </div>
+  </div>
+  <div id="PushCommentsText" >Комментарий добавляется</div>
+  
+</div>`
+
+  appEl.innerHTML = appHtml;
   addLike()  // лайки
   reComment() // Комментирование поста
 

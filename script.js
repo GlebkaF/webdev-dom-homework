@@ -15,7 +15,7 @@ const waitLoadComments = document.getElementById("loaderComments");
 
 
 
-waitLoadComments.style.display = "flex";
+// waitLoadComments.style.display = "flex";
 
 
 export let token ="Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k"
@@ -29,7 +29,7 @@ const fetchAndRenderTasks = () =>{
 
   .then((responseData) => {
     comments = responseData.comments;
-    waitLoadComments.style.display = "none";
+    // waitLoadComments.style.display = "none";
     renderComments();
   })
 
