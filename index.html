@@ -81,6 +81,7 @@
     const btnDis = document.querySelector('.add-form-button_disabled');
     let nameChange = false;
     let textChange = false;
+    //обновлено событие
     nameElem.addEventListener('input', () => {
       if(nameElem.value !== '') {
         nameChange = true;
@@ -96,6 +97,7 @@
         btnDis.disabled = true;
       }
     });
+    //обновлено событие
     textElem.addEventListener('input', () => {
       if(textElem.value !== '') {
         textChange = true;
