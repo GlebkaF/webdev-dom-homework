@@ -1,6 +1,6 @@
 
 import { safeInputText,} from "./secondaryFunc.js"
-import { delValue,pushCommentwithEnter,addcommentuser,reComment,addLike,renderComments,delLastComment} from "./workWithForm.js";
+import { delValue,pushCommentwithEnter,addcommentuser,reComment,renderComments,} from "./workWithForm.js";
 import { getCommentList, host,} from "./api.js";
 
 
@@ -15,7 +15,7 @@ const waitLoadComments = document.getElementById("loaderComments");
 
 
 
-waitLoadComments.style.display = "flex";
+// waitLoadComments.style.display = "flex";
 
 
 export let token ="Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k"
@@ -25,15 +25,18 @@ export let comments =[]
 
 // функция Данные с сервера.
 const fetchAndRenderTasks = () =>{
+ 
  return getCommentList()
-
   .then((responseData) => {
+   
     comments = responseData.comments;
-    waitLoadComments.style.display = "none";
+    // waitLoadComments.style.display = "none";
+    
     renderComments();
   })
 
   .catch((error) => {
+    
     if (error.message === "Сервер сломался, попробуй позже") {
       alert('Сервер упал')
       return;
@@ -115,19 +118,19 @@ export function pushComment(){
 
 
 // Добавление лайкаs
-addLike ()
-// Добавление комментария  к инпуту
-reComment()
-// // Рендер разметки
+// addLike ()
+// // Добавление комментария  к инпуту
+// reComment()
+// // // Рендер разметки
 renderComments()
-// функция Добавление комментария
-addcommentuser();
+// // функция Добавление комментария
+// addcommentuser();
 
 
-delLastComment()
+// delLastComment()
 
- // Ввод по нажатию клавиши Enter
-pushCommentwithEnter();
+//  // Ввод по нажатию клавиши Enter
+// pushCommentwithEnter();
 
 
 
