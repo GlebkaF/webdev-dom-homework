@@ -58,6 +58,9 @@
         <div class="add-form-row">
           <button class="add-form-button">Написать</button>
         </div>
+        <div class="add-form-row">
+          <button class="delete-form-button">Удалить последний комментарий</button>
+        </div>
       </div>
     </div>
   </body>
@@ -66,7 +69,7 @@
       background-color: red;
     };
     .add-form-button:disabled{
-      background-color: gray;
+      background-color: grey;
     };
   </style>
   <script>
@@ -74,6 +77,7 @@
     const commentElement = document.querySelector(".comments");
     const formName = document.querySelector(".add-form-name");
     const formText = document.querySelector(".add-form-text");
+    const deleteButton = document.querySelector(".delete-form-button");
     const day = new Date();
     let date = day.getDate();
     let month = day.getMonth();
@@ -92,6 +96,18 @@
     if (minutes < 10){
       minutes = "0" + minutes;
     };
+    formName.addEventListener('keyup', function(event) {
+       event.preventDefault();
+       if(event.keyCode === 13) {
+        buttonElement.click();
+       }
+    });
+    formText.addEventListener('keyup', function(event) {
+       event.preventDefault();
+       if(event.keyCode === 13) {
+        buttonElement.click();
+       }
+    });
     buttonElement.addEventListener("click", () => {
       formName.classList.remove("error");
       if (formName.value === ""){
@@ -103,9 +119,10 @@
         formText.classList.add("error");
         return;
       };
-      if (formText.value === "" || formName.value === ""){
-        buttonElement.classList.add("add-form-button:disabled");
-        buttonElement.ariaDisabled;
+      if(formName.value === "" || formText.value === ""){
+        buttonElement.ariaDisabled = false;
+      } else {
+        buttonElement.ariaDisabled = true;
       };
       const oldCommentElement = commentElement.innerHTML;
       commentElement.innerHTML = oldCommentElement +
@@ -125,7 +142,13 @@
               <button class="like-button -active-like"></button>
             </div>
           </div>
-        </li>`
+        </li>`;
+      formName.value = "";
+      formText.value = "";
+    });
+    deleteButton.addEventListener("click",() => {
+      const lastComment = commentElement.innerHTML.lastIndexOf('<li class="comment">');
+        commentElement.innerHTML = commentElement.innerHTML.slice(0, lastComment);
     });
   </script>
 </html>
