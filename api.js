@@ -12,6 +12,7 @@ export function getCommentList() {
         },
       })
         .then((response) => {
+            // console.log(response)
            if (response.status === 500) {
             throw new Error("Сервер сломался, попробуй позже")
         };
