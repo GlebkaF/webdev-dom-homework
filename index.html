@@ -7,14 +7,14 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="list" >
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
+            <div  class="comment-text">
               Это будет первый комментарий на этой странице
             </div>
           </div>
@@ -44,26 +44,122 @@
         </li>
       </ul>
       <div class="add-form">
-        <input
+        <input 
           type="text"
+          
           class="add-form-name"
+          id ="name-input"
           placeholder="Введите ваше имя"
         />
         <textarea
           type="textarea"
+          
           class="add-form-text"
+          id="comm-input"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
-        </div>
+          <button id="add-button" class="add-form-button" disabled class = "disabled" >Написать</button>
+        </div>  
       </div>
+      <div>
+        <button  id ="delete-button" class="add-form-button"> Удалить последний комментарий </button>
+              </div>
     </div>
-  </body>
 
+  </body>
+  <style>
+    .disabled{
+      background-color: gray;
+    }
+    .error{
+      background-color: #e74a35;
+    }
+    </style>
   <script>
-    // Код писать здесь
-    console.log("It works!");
+    const buttonElement = document.getElementById("add-button"); 
+    const listElement = document.getElementById("list");
+    const nameinputElement = document.getElementById("name-input");
+    const comminputElement = document.getElementById("comm-input");
+    
+    buttonElement.addEventListener("click", () => {
+      nameinputElement.classList.remove("error");
+     
+          if(nameinputElement.value === "" ){
+                nameinputElement.classList.add("error");  
+                return;
+            }
+            comminputElement.classList.remove("error");
+          
+          if (comminputElement.value === "" ){
+            comminputElement.classList.add("error");
+            return;
+          };
+     //добавление актуальной даты и времени в новом комментарии:     
+  let now = new Date();
+  let day = now.getDate().toString().padStart(2, '0');
+  let month = (now.getMonth() + 1).toString().padStart(2, '0');
+  let year = now.getFullYear().toString().substr(-2);
+  let hour = now.getHours().toString().padStart(2, '0');
+  let minute = now.getMinutes().toString().padStart(2, '0');
+  let formattedDate = `${day}.${month}.${year} ${hour}:${minute}`;
+  
+      const oldListHTML = listElement.innerHTML;
+        listElement.innerHTML = oldListHTML + `<li class="comment">
+          <div class="comment-header">
+            <div>${nameinputElement.value}</div>
+            <div>${formattedDate} </div>
+          </div>
+          <div class="comment-body">
+            <div  class="comment-text">
+              ${comminputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter"> 0 </span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li> `
+      nameinputElement.value = ""; comminputElement.value = ""
+          });
+  // Текст на кнопке серый, пока не заполнишь Имя пользователя:
+    nameinputElement.addEventListener('input', () => {
+  if (nameinputElement.value.length >= 0) {
+        buttonElement.disabled = false;
+          buttonElement.classList.remove('disabled');
+  } else {
+        buttonElement.disabled = true;
+          buttonElement.classList.add('disabled')
+  }
+
+});
+ // Кнопка Enter активирует кнопку - Написать
+     comminputElement.addEventListener("keyup", function(event) {
+ 
+    if (event.keyCode === 13) {
+        event.preventDefault();
+          document.getElementById("add-button").click();
+  }
+}); //Удаление последнего комментария с помощью кнопки Удалить посл.комм.
+    const deleteButtonElement = document.getElementById('delete-button');
+        function deleteLastComment() {
+// Находим последний элемент списка комментариев
+    const lastCommentIndex = listElement.innerHTML.lastIndexOf('<li class="comment">');
+         if (lastCommentIndex !== -1) {
+  // Удаляем последний элемент
+    const lastCommentElement = listElement.children[listElement.children.length - 1];
+         listElement.removeChild(lastCommentElement);
+}
+}
+// Добавляем обработчик события click на кнопку
+deleteButtonElement.addEventListener('click', deleteLastComment);
+
+
+
+
+
   </script>
 </html>
