@@ -1,15 +1,19 @@
-import { nameInputElement, commentInputElement, mainForm, addComment,pushComment,listElement,comments } from "./script.js";
-
+import { nameInputElement, comments, commentInputElement, mainForm,listElement, } from "./script.js";
+import { pushComment } from "./script.js";
 import { delay, getDate } from "./secondaryFunc.js";
 
 
 
-
-// Функция удаления последнего комментария
-export function delComment() {
+// Удаление последнего комментария
+export function delLastComment() {
+  const removeComment = document.getElementById("remove-comment");
+  removeComment.addEventListener("click", () => {
     comments.pop()
-      renderComments();
-  }
+    renderComments();
+  })
+}
+// Функция удаления последнего комментария
+
 
 
   // Отчистка данных с поля
@@ -43,6 +47,7 @@ export function delValue() {
 
  // функция Добавление комментария
 export function addcommentuser(){
+  const addComment = document.getElementById("add-button");
     addComment.addEventListener("click", () => {
   
       if (nameInputElement.value === "" || commentInputElement.value === "") {

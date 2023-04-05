@@ -1,32 +1,31 @@
 
 import { safeInputText,} from "./secondaryFunc.js"
-import { delComment, delValue,pushCommentwithEnter,addcommentuser,reComment,addLike,renderComments} from "./workWithForm.js";
+import { delValue,pushCommentwithEnter,addcommentuser,reComment,addLike,renderComments,delLastComment} from "./workWithForm.js";
+import { getCommentList, host,} from "./api.js";
 
-export const addComment = document.getElementById("add-button");
-const removeComment = document.getElementById("remove-comment");
+
+
+
 export const listElement = document.getElementById("comments");
 export const nameInputElement = document.getElementById("name-input");
 export const commentInputElement = document.getElementById("comment-input");
 export const mainForm = document.querySelector(".add-form");
-export const likeButton = document.querySelectorAll(".like-button");
-export const waitLoadComments = document.getElementById("loaderComments");
-const pushComments = document.getElementById("PushCommentsText");
-pushComments.style.display = "none"
+const waitLoadComments = document.getElementById("loaderComments");
+
+
+
+
 waitLoadComments.style.display = "flex";
 
 
- export let comments  = []
+export let token ="Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k"
 
-// функция Данные с сервера
+export let comments =[]
+
+
+// функция Данные с сервера.
 const fetchAndRenderTasks = () =>{
- return fetch("https://webdev-hw-api.vercel.app/api/v1/Kerimov-Evgeny/comments", {
-  method: "GET"
-})
-  .then((response) => {
-     if (response.status === 500) {
-      throw new Error("Сервер сломался, попробуй позже")};
-     return response.json()
-  })
+ return getCommentList()
 
   .then((responseData) => {
     comments = responseData.comments;
@@ -41,14 +40,15 @@ const fetchAndRenderTasks = () =>{
     }
 
 })
- 
 
 }
-
+fetchAndRenderTasks();
 
 // отправка комментария на сервер
 export function pushComment(){
-  fetch('https://webdev-hw-api.vercel.app/api/v1/Kerimov-Evgeny/comments', {
+  const pushComments = document.getElementById("PushCommentsText");
+  // pushComments.style.display = "none"
+  fetch(host, {
     method: "POST",
 
     body: JSON.stringify({
@@ -58,7 +58,12 @@ export function pushComment(){
         text: safeInputText(commentInputElement.value),
         name: safeInputText(nameInputElement.value),
         forceError: true
-      })
+      }),
+
+      headers: {
+        Authorization: token,
+    },
+  
 
       })
       .then((response) => {
@@ -71,8 +76,11 @@ export function pushComment(){
         }
           mainForm.style.display = "none";
           pushComments.style.display = "flex"
-          return fetchAndRenderTasks()
+          return response.json();
 
+      })
+      .then(()=>{
+        return fetchAndRenderTasks()
       })
   
       .then(()=>{     
@@ -104,7 +112,7 @@ export function pushComment(){
 
 }
 
-fetchAndRenderTasks();
+
 
 // Добавление лайкаs
 addLike ()
@@ -115,10 +123,9 @@ renderComments()
 // функция Добавление комментария
 addcommentuser();
 
-// Удаление последнего комментария
-removeComment.addEventListener("click", () => {
-  delComment()
-})
+
+delLastComment()
+
  // Ввод по нажатию клавиши Enter
 pushCommentwithEnter();
 
