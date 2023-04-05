@@ -7,7 +7,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="list-comments" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -45,25 +45,91 @@
       </ul>
       <div class="add-form">
         <input
+          id="input-name"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
-        />
+        >
         <textarea
+          id="add-text"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="add-button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
 
   <script>
-    // Код писать здесь
-    console.log("It works!");
+    const buttonElement = document.getElementById("add-button");
+    const textElement = document.getElementById("add-text");
+    const nameElement = document.getElementById("input-name");
+    const listElement = document.getElementById("list-comments");
+    function addLeadingZero(d) {
+      return (d < 10) ? '0' + d : d;
+    }
+    function getUsersTime(userTime = new Date()) {
+      let years = userTime.getFullYear() - 2000;
+      let month = addLeadingZero(userTime.getMonth() + 1);
+      let day = addLeadingZero(userTime.getDate());
+      let hours = addLeadingZero(userTime.getHours());
+      let minutes = addLeadingZero(userTime.getMinutes());
+      return `${day}.${month}.${years} ${hours}:${minutes} `;
+    }
+    buttonElement.disabled = true;
+    nameElement.addEventListener('input' , () => {
+      if (textElement.value !== "") {
+     buttonElement.disabled = false;
+      }
+    })
+    textElement.addEventListener("input", () => {
+      if (!nameElement.value !== "") {
+     buttonElement.disabled = false;
+      }
+    })
+    buttonElement.addEventListener("click", () => {
+      textElement.classList.remove("error");
+      nameElement.classList.remove("error");
+
+      if (textElement.value === "" && nameElement.value === "") {
+        textElement.classList.add("error");
+        nameElement.classList.add("error");
+        return;
+      } else if (textElement.value === "") {
+        textElement.classList.add("error");
+        return;
+      } else if (nameElement.value === "") {
+        nameElement.classList.add("error");
+        return;
+      } else {
+      const oldListElement = listElement.innerHTML;
+      listElement.innerHTML =
+        oldListElement +
+        `<li class="comment">
+          <div class="comment-header">
+            <div>${nameElement.value}</div>
+            <div>${getUsersTime()}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+    }
+    nameElement.value = "";
+    textElement.value = '';
+    buttonElement.disabled = true;
+  });
   </script>
 </html>
