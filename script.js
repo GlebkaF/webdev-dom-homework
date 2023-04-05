@@ -30,7 +30,7 @@ const fetchAndRenderTasks = () =>{
   .then((responseData) => {
    
     comments = responseData.comments;
-    waitLoadComments.style.display = "none";
+    // waitLoadComments.style.display = "none";
     renderComments();
   })
 
