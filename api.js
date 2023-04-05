@@ -16,6 +16,9 @@ export function getCommentList() {
            if (response.status === 500) {
             throw new Error("Сервер сломался, попробуй позже")
         };
+        if (response.status === 401) {
+            throw new Error("Нет авторизации")
+        };
             return response.json()
         });
         

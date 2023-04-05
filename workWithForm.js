@@ -1,6 +1,7 @@
-import { nameInputElement, comments, commentInputElement, mainForm,listElement, } from "./script.js";
-import { pushComment } from "./script.js";
-import { delay, getDate } from "./secondaryFunc.js";
+import { comments,  mainForm,listElement, } from "./script.js";
+// import { pushComment } from "./script.js";
+import { delay, getDate,safeInputText } from "./secondaryFunc.js";
+import { host,token } from "./api.js";
 
 
 
@@ -38,30 +39,7 @@ export function delValue() {
     });
   }
 
- // функция Добавление комментария
-export function addcommentuser() {
-  const addComment = document.getElementById("add-button");
-    addComment.addEventListener("click", () => {
-    
-  
-      if (nameInputElement.value === "" || commentInputElement.value === "") {
-        
-        nameInputElement.classList.add("error");
-        commentInputElement.classList.add("error");
-        nameInputElement.placeholder = 'Введите имя';
-        commentInputElement.placeholder = 'Введите комментарий';
-        buttonBlock()
-        return;  
-      } 
-    
-        pushComment()
-        nameInputElement.classList.remove("error");
-        commentInputElement.classList.remove("error");
-        const oldListHtml = listElement.innerHTML;
-        renderComments();
-     
-    });
-  }
+
 
 
    export function reComment () {
@@ -173,7 +151,10 @@ export function renderComments() {
   appEl.innerHTML = appHtml;
 //Переменные 
 const likeButtons = appEl.querySelectorAll('.like-button');
-
+const nameInputElement = document.getElementById("name-input");
+const commentInputElement = document.getElementById("comment-input");
+const mainForm = document.querySelector(".add-form");
+const pushComments = document.getElementById("PushCommentsText");
   // Добавление лайка
 function addLike () {
   
@@ -199,6 +180,97 @@ function addLike () {
   }
 }   
 
+const addComment = document.getElementById("add-button");
+    addComment.addEventListener("click", () => {
+      console.log('dsadasd')
+    
+  
+      if (nameInputElement.value === "" || commentInputElement.value === "") {
+        
+        nameInputElement.classList.add("error");
+        commentInputElement.classList.add("error");
+        nameInputElement.placeholder = 'Введите имя';
+        commentInputElement.placeholder = 'Введите комментарий';
+        buttonBlock()
+        return;  
+      } 
+    
+      fetch(host, {
+        method: "POST",
+        headers: {
+          authorization: token,
+      },
+        body: JSON.stringify({
+            date: new Date,
+            likes: 0,
+            isLiked: false,
+            text: safeInputText(commentInputElement.value),
+            name: safeInputText(nameInputElement.value),
+            forceError: true
+          }),
+
+          })
+          .then((response) => {
+            if (response.status === 400){
+              throw new Error("Слишком короткая строчка");
+            } 
+            if (response.status === 500) {
+              pushComment();
+              throw new Error("Сервер сломался, попробуй позже")
+            }
+            if (response.status === 401) {
+              throw new Error("Нет авторизации")
+              
+          };
+              mainForm.style.display = "none";
+              pushComments.style.display = "flex"
+              return response.json();
+              
+    
+          })
+          .then(()=>{
+            return fetchAndRenderTasks()
+
+          })
+
+          .then(()=>{     
+            mainForm.style.display = "flex";
+            pushComments.style.display = "none"
+            delValue(); 
+          })
+    
+          .catch((error) => {
+            if (error.message === "Сервер сломался, попробуй позже") {
+              mainForm.style.display = "flex";
+              pushComments.style.display = "none"
+                return;
+            }
+            if (error.message === "Слишком короткая строчка") {
+                alert("Имя и комментарий должны быть не короче 3 символов")
+                mainForm.style.display = "flex";
+                pushComments.style.display = "none"
+                return;
+            }
+            if (error.message === "Нет авторизации") {
+              alert("Нет авторизации")
+              mainForm.style.display = "flex";
+              pushComments.style.display = "none"
+              return;
+          }
+            mainForm.style.display = "flex";
+            pushComments.style.display = "none"
+            alert("Кажется, у вас сломался интернет, попробуйте позже");
+            
+            return;
+           
+        })
+        nameInputElement.classList.remove("error");
+        commentInputElement.classList.remove("error");
+        const oldListHtml = appEl.innerHTML;
+        
+     
+    });
+    
   addLike()  // лайки
   // reComment() // Комментирование поста
 
