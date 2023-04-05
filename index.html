@@ -28,8 +28,6 @@
   function searchHtml(htmlString = "") {
     return htmlString.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
   }
-
-
   const buttonElement = document.getElementById("button");
   const nameInputElement = document.getElementById("nameInput");
   const listElement = document.getElementById("list");
@@ -37,8 +35,6 @@
   const comentElement = document.querySelectorAll('.comment');
   const userComentElement = document.getElementById("userComent");
   const allCommentsElements = document.querySelectorAll("comments");
-
-
   //делаем запрос в API
   const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/:cimvol-key/comments",
     {
@@ -62,6 +58,7 @@
       });
       coment = ourComments;
       renderComent();
+      likesFun();
     });
   });
 
@@ -112,8 +109,7 @@
           counter.textContent--;
         }
       });
-    }
-  };
+    }};
 
   // <img src = "." onerror="alert('ха-ха, ваши данные украдены!');">
 
@@ -152,11 +148,36 @@
       const jsonPromise = response.json();
       // поскольку метод json() также является асинхронным нам необходимо подписаться на результат
       jsonPromise.then((responseData) => {
+
+        const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/:cimvol-key/comments",
+    {
+      method: "GET",
+    });
+  // fetch вернула нам fetchPromise, просто JS объект
+  // используя обработчик then(), успешного выполнения запроса получаем наши данные
+  fetchPromise.then((response) => {
+    // преобразовываем поступивший ответ к нашему формату при помощи Json
+    const jsonPromise = response.json();
+    // поскольку метод json() также является асинхронным нам необходимо подписаться на результат
+    jsonPromise.then((responseData) => {
+      const ourComments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: comment.date,
+          text: comment.text,
+          likes: comment.likes,
+          isLiked: false,
+        };
+      });
+      coment = ourComments;
+      renderComent();
+      likesFun();
+    });
+  });
         coment = responseData.comments;
         renderComent();
       });
     });
-
     renderComent();
     likesFun();
     nameInputElement.value = "";
