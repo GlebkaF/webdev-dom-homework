@@ -1,69 +1,131 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
-      <ul class="comments">
-        <li class="comment">
+<head>
+  <title>Проект "Комменты"</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <ul class="comments" id="list">
+
+      <!-- Первый коммент -->
+
+      <li class="comment">
+        <div class="comment-header">
+          <div>Глеб Фокин</div>
+          <div>12.02.22 12:18</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Это будет первый комментарий на этой странице
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">3</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>
+
+      <!-- Второй коммент -->
+
+      <li class="comment">
+        <div class="comment-header">
+          <div>Варвара Н.</div>
+          <div>13.02.22 19:22</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Мне нравится как оформлена эта страница! ❤
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">75</span>
+            <button class="like-button -active-like"></button>
+          </div>
+        </div>
+      </li>
+
+      <!-- Добавляемый коммент -->
+
+    </ul>
+
+    <!-- Форма ввода нового коммента -->
+
+    <div class="add-form">
+      <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input" />
+      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
+        id="coment-input"></textarea>
+      <div class="add-form-row">
+        <button class="add-form-button" id="add-button">Написать</button>
+      </div>
+
+    </div>
+  </div>
+</body>
+<style>
+  .error {
+    background-color: #FFB6C1;
+    /* цвет errora */
+  }
+</style>
+<script>
+  //время сообщения
+  const days = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
+  const months = ["Января", "Февраля", "Марта", "Апреля", "Мая", "Июня", "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря"];
+  const myDate = new Date();
+  // console.log(rusDate);
+  // console.log(rusTime);
+  
+  const buttonElement = document.getElementById('add-button');
+  const listElement = document.getElementById('list');
+  const nameInputElement = document.getElementById('name-input');
+  const comentInputElement = document.getElementById('coment-input');
+  
+  buttonElement.addEventListener('click', () => {
+
+    const rusDate = myDate.getDate() + " " + months[myDate.getMonth()] + " " + myDate.getFullYear();
+    const rusTime = myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds();
+
+    nameInputElement.classList.remove('error') //снять подсветку поля (error)
+    if (nameInputElement.value === "") {
+      nameInputElement.classList.add('error') // подсветить поле ввода имени
+      return;
+    }
+
+    comentInputElement.classList.remove('error') //снять подсветку поля (error)
+    if (comentInputElement.value === "") {
+      comentInputElement.classList.add('error') // подсветить поле ввода коммента
+      return;
+    }
+
+    const oldListElement = listElement.innerHTML;
+    listElement.innerHTML = oldListElement + //старый список + то что хотим добавить
+      `<li class="comment">
           <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
+            <div>${nameInputElement.value}</div>
+            <div>${rusDate} ${rusTime}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              Это будет первый комментарий на этой странице
+              ${comentInputElement.value}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">3</span>
+              <span class="likes-counter"></span>
               <button class="like-button"></button>
             </div>
           </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
-        </div>
-      </div>
-    </div>
-  </body>
+        </li>`
+    nameInputElement.value = ""; //обнулить поле ввода имени
+    comentInputElement.value = ""; //обнулить поле ввода коммента
+  });
 
-  <script>
-    // Код писать здесь
-    console.log("It works!");
-  </script>
+</script>
+
 </html>
