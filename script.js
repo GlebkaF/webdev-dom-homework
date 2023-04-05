@@ -44,14 +44,14 @@ const getDate = () => {
   return `${day}.${month}.${year} ${hours}:${minutes}`;
 }
 
-buttonAddComment.addEventListener('click', () => {
-  //Проверка на наличие данных
+//Callback комментария
+const commentSend = () => {
   inputName.classList.remove('add-form-error')
   textComment.classList.remove(`add-form-error`)
-  if (inputName.value === '') {
+  if (inputName.value.trim() === '') {
     return inputName.classList.add('add-form-error');
   }
-  if (textComment.value === '') {
+  if (textComment.value.trim() === '') {
     return textComment.classList.add('add-form-error')
   }
 
@@ -72,6 +72,35 @@ buttonAddComment.addEventListener('click', () => {
     </div>
   </div>
 </li>`
+}
+
+buttonAddComment.addEventListener('click', () => {
+  commentSend()
 })
 
-console.log(`It works!`);
+//Отправка по кнопке Enter
+textComment.addEventListener('keydown', (key) => {
+  if (key.code === 'Enter') {
+    commentSend()
+  }
+})
+
+//Валидация данных
+const switchButton = () => {
+  if (inputName.value.trim() !== '' && textComment.value.trim() !== '') {
+    buttonAddComment.disabled = false
+    buttonAddComment.classList.remove('add-form-button-disabled')
+  } else {
+    buttonAddComment.disabled = true;
+    buttonAddComment.classList.add('add-form-button-disabled')
+  }
+}
+
+inputName.addEventListener('input', switchButton);
+textComment.addEventListener('input', switchButton)
+
+//Удаление последнего комментария
+const buttonDelComment = document.getElementById('button__del-comment').addEventListener('click', () => {
+  const lastComment = listComment.innerHTML.lastIndexOf('<li class="comment">');
+  listComment.innerHTML = listComment.innerHTML.slice(0, lastComment)
+})
