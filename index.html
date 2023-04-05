@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
   <head>
+    <meta charset="UTF-8">
     <title>Проект "Комменты"</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -8,40 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+        //формируется из js
       </ul>
       <div class="add-form">
         <input
@@ -56,14 +24,192 @@
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button add-form-button_disabled" disabled>Написать</button>
         </div>
       </div>
     </div>
   </body>
 
   <script>
-    // Код писать здесь
-    console.log("It works!");
+    //начальный массив комментариев
+    const comments = [
+      {
+        name: "Глеб Фокин",
+        date: "12.02.22 12:18",
+        text: "Это будет первый комментарий на этой странице",
+        likes: 3,
+        activeLike: "",
+        edit: "",
+        save: "button-none"
+      },
+      {
+        name: "Варвара Н.",
+        date: "13.02.22 19:22",
+        text: "Мне нравится как оформлена эта страница! ❤",
+        likes: 75,
+        activeLike: "-active-like",
+        edit: "",
+        save: "button-none"
+      }
+    ];
+
+    const commentBlock = document.querySelector('.comments');
+
+    //обработчик события клика на лайк
+    const initLikeButtonListeners = () => {
+      const likeButtonsElements = document.querySelectorAll(".like-button");
+      for (const likeButtonElement of likeButtonsElements) {
+        likeButtonElement.addEventListener("click", () => {
+          const index = likeButtonElement.dataset.index;
+          if(comments[index].activeLike == '-active-like') {
+            comments[index].activeLike = '';
+            comments[index].likes -= 1;
+          }
+          else {
+            comments[index].activeLike = '-active-like';
+            comments[index].likes += 1;
+          }
+
+          renderComments();
+        });
+      }
+    };
+  //событие редактирования комментария
+    const initEditButtonsListener = () => {
+      const editButtonsElements = document.querySelectorAll('.edit-button');
+      for (const editButtonElement of editButtonsElements) {
+        editButtonElement.addEventListener('click', () => {
+          const index = editButtonElement.dataset.index;
+          comments[index].text = `<textarea class="edit-comment-text edit-comment-text__${index}" rows="4" data-index="${index}">${comments[index].text}</textarea>`;
+          comments[index].edit = 'button-none';
+          comments[index].save = '';
+          renderComments();
+        });
+      }
+    };
+//событие сохранения изменений
+    const initSaveButtonsListener = () => {
+      const saveButtonsElements = document.querySelectorAll('.save-button');
+      for (const saveButtonElement of saveButtonsElements) {
+        saveButtonElement.addEventListener('click', () => {
+          const index = saveButtonElement.dataset.index;
+          const editText = document.querySelector(`.edit-comment-text__${index}`).value;
+          comments[index].text = editText;
+          comments[index].edit = '';
+          comments[index].save = 'button-none';
+          comments[index].date = dateFormat();
+          renderComments();
+        });
+      }
+    };
+//рендер-функция
+    const renderComments = () => {
+      const commentsHtml = comments.map(
+              (comment, index) => {
+                return `<li class="comment">
+                  <div class="comment-header">
+                    <div>${comment.name}</div>
+                    <div>${comment.date}</div>
+                  </div>
+                  <div class="comment-body">
+                    <div class="comment-text">
+                      ${comment.text}
+                    </div>
+                    <div class="button-block">
+                        <button data-index="${index}" class="edit-button ${comment.edit}">Редактировать</button>
+                        <button data-index="${index}" class="save-button ${comment.save}">Сохранить</button>
+                    </div>
+                  </div>
+                  <div class="comment-footer">
+                    <div class="likes">
+                      <span class="likes-counter">${comment.likes}</span>
+                      <button data-index="${index}" class="like-button ${comment.activeLike}"></button>
+                    </div>
+                  </div>
+                </li>`;
+              }).join('');
+
+      commentBlock.innerHTML = commentsHtml;
+      initLikeButtonListeners();
+      initEditButtonsListener();
+      initSaveButtonsListener();
+    };
+
+    renderComments();
+
+    //метод формирующий дату
+      const dateFormat = () => {
+      const d = new Date();
+      const day = d.getDate() < 10 ? '0' + d.getDate() : d.getDate();
+      const monthTmp = d.getMonth() + 1;
+      const month = monthTmp < 10 ? '0' + monthTmp : monthTmp;
+      const year = d.getFullYear() - 2000;
+      const hour = d.getHours() < 10 ? '0' + d.getHours() : d.getHours();
+      const minutes = d.getMinutes() < 10 ? '0' + d.getMinutes() : d.getMinutes();
+      return day + '.' + month + '.' + year + ' ' + hour + ':' + minutes;
+    };
+    //обработка пустых полей
+    const nameElem = document.querySelector('.add-form-name');
+    const textElem = document.querySelector('.add-form-text');
+    const btnDis = document.querySelector('.add-form-button_disabled');
+    let nameChange = false;
+    let textChange = false;
+    nameElem.addEventListener('input', () => {
+      if(nameElem.value !== '') {
+        nameChange = true;
+      }
+      else nameChange = false;
+      if(nameChange && textChange) {
+        btnDis.classList.remove("add-form-button_disabled");
+        btnDis.classList.add("add-form-button");
+        btnDis.disabled = false;
+      }
+      else {
+        btnDis.classList.add("add-form-button_disabled");
+        btnDis.disabled = true;
+      }
+    });
+    textElem.addEventListener('input', () => {
+      if(textElem.value !== '') {
+        textChange = true;
+      }
+      else textChange = false;
+      if(nameChange && textChange) {
+        btnDis.classList.remove("add-form-button_disabled");
+        btnDis.disabled = false;
+      }
+      else {
+        btnDis.classList.add("add-form-button_disabled");
+        btnDis.disabled = true;
+      }
+    });
+    //добавление коммента
+    const addComment = () => {
+      const name = document.querySelector('.add-form-name').value;
+      const text = document.querySelector('.add-form-text').value;
+      const date = dateFormat();
+      if(name !== '' && text !== '') {
+        comments.push({
+          name: name,
+          date: date,
+          text: text,
+          likes: 0,
+          activeLike: "",
+          edit: "",
+          save: "button-none"
+        });
+        renderComments();
+        //очистка полей
+        document.querySelector('.add-form-name').value = '';
+        document.querySelector('.add-form-text').value = '';
+      }
+    };
+    //событие нажатия кнопки
+    const btnElem = document.querySelector('.add-form-button');
+    btnElem.addEventListener('click', addComment);
+    //добавление коммента по нажатию энтер
+    document.addEventListener('keyup', event => {
+      if( event.code === 'Enter' ) addComment();
+    });
   </script>
 </html>
