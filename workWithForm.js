@@ -2,10 +2,7 @@ import { comments,  mainForm,listElement, } from "./script.js";
 // import { pushComment } from "./script.js";
 import { delay, getDate,safeInputText } from "./secondaryFunc.js";
 import { host,token } from "./api.js";
-
-
-
-
+import { fetchAndRenderTasks } from "./script.js";
 
 
 
@@ -42,45 +39,7 @@ export function delValue() {
 
 
 
-   export function reComment () {
-  
-    const allComments = document.querySelectorAll('.comment')
-    for(let comment of allComments){
-     comment.addEventListener('click', (event)=>{
-       event.stopPropagation()
-       const nameUser = comment.dataset.name;
-       const userComments = comment.dataset.comment;
-       commentInputElement.value =` >${userComments} \n${nameUser} <\n`
-       
-     })
-    
-    }
-   }
 
-// // Добавление лайка
-// export function addLike () {
-//     const likeButtons = listElement.querySelectorAll('.like-button');
-//     for(let likeButton of likeButtons){
-  
-//       likeButton.addEventListener('click', ( event) => {
-//         event.stopPropagation()
-//             const index = likeButton.dataset.index;
-//             likeButton.classList.add('-loading-like')
-//             delay(2000).then(()=> {
-             
-//               if (!comments[index].isLiked) {
-//                 comments[index].isLiked = true;
-//                 comments[index].likes +=1;
-//               } else {
-//                 comments[index].isLiked = false;
-//                 comments[index].likes -=1;
-//               }
-//               renderComments();
-//             })
-  
-//         })
-//     }
-//   }   
 
 
   // Рендер разметки
@@ -120,11 +79,11 @@ export function renderComments() {
     <button class="btn" type="submit">Авторизация</button>
   </form>
 
-  
+  <p id = 'waitComment' style="display: none">Комментарии загружаются...</p>
   <ul class="comments" id ="comments">
-    <!-- Список рендерится из JS -->
       ${userHtml}
   </ul>
+  <p id = 'addingComment' style="display: none">Комментарий добавляется...</p>
   <div class="add-form">
     <input
       type="text"
@@ -149,12 +108,16 @@ export function renderComments() {
 </div>`
 
   appEl.innerHTML = appHtml;
+
+  
 //Переменные 
 const likeButtons = appEl.querySelectorAll('.like-button');
 const nameInputElement = document.getElementById("name-input");
-const commentInputElement = document.getElementById("comment-input");
+const textInputElement = document.getElementById("comment-input");
+const buttonElement = document.getElementById("add-button");
 const mainForm = document.querySelector(".add-form");
 const pushComments = document.getElementById("PushCommentsText");
+const addCommentText = document.getElementById("addingComment");
   // Добавление лайка
 function addLike () {
   
@@ -180,97 +143,92 @@ function addLike () {
   }
 }   
 
-const addComment = document.getElementById("add-button");
-    addComment.addEventListener("click", () => {
-      console.log('dsadasd')
-    
-  
-      if (nameInputElement.value === "" || commentInputElement.value === "") {
-        
-        nameInputElement.classList.add("error");
-        commentInputElement.classList.add("error");
-        nameInputElement.placeholder = 'Введите имя';
-        commentInputElement.placeholder = 'Введите комментарий';
-        buttonBlock()
-        return;  
-      } 
-    
-      fetch(host, {
-        method: "POST",
-        headers: {
-          authorization: token,
-      },
-        body: JSON.stringify({
-            date: new Date,
-            likes: 0,
-            isLiked: false,
-            text: safeInputText(commentInputElement.value),
-            name: safeInputText(nameInputElement.value),
-            forceError: true
-          }),
+//Добавление комментария, POST запрос с GET
 
-          })
-          .then((response) => {
-            if (response.status === 400){
-              throw new Error("Слишком короткая строчка");
-            } 
-            if (response.status === 500) {
-              pushComment();
-              throw new Error("Сервер сломался, попробуй позже")
-            }
-            if (response.status === 401) {
-              throw new Error("Нет авторизации")
-              
-          };
-              mainForm.style.display = "none";
-              pushComments.style.display = "flex"
-              return response.json();
-              
-    
-          })
-          .then(()=>{
-            return fetchAndRenderTasks()
+buttonElement.addEventListener("click", () => {
+  nameInputElement.classList.remove("error");
+  textInputElement.classList.remove("error");
 
-          })
+  if (nameInputElement.value === "" || textInputElement.value === "") {
+    nameInputElement.classList.add("error");
+    textInputElement.classList.add("error");
+    return;
+  }
+  // addCommentText.style.display = "inline";
+  mainForm.style.display = "none";
+  buttonElement.disabled = true;
+  buttonElement.textContent = "Загружаю...";
+  fetch(host, {
+    method: "POST",
+    body: JSON.stringify({
+      name: nameInputElement.value,
+      text: textInputElement.value,
+      date: new Date(),
+      forceError: true,
+    }),
+    headers: {
+      Authorization: token,
+    },
+  })
+    .then((response) => {
+      if (response.status === 401) {
+        throw new Error("нет авторизации");
+        return response.json();
+      } else if (response.status === 201) {
+        return response.json();
+      } else if (response.status === 400) {
+        return Promise.reject("Короткий текст");
+      } else if (response.status === 500) {
+        return Promise.reject("Сервер упал");
+      }
+    })
 
-          .then(()=>{     
-            mainForm.style.display = "flex";
-            pushComments.style.display = "none"
-            delValue(); 
-          })
-    
-          .catch((error) => {
-            if (error.message === "Сервер сломался, попробуй позже") {
-              mainForm.style.display = "flex";
-              pushComments.style.display = "none"
-                return;
-            }
-            if (error.message === "Слишком короткая строчка") {
-                alert("Имя и комментарий должны быть не короче 3 символов")
-                mainForm.style.display = "flex";
-                pushComments.style.display = "none"
-                return;
-            }
-            if (error.message === "Нет авторизации") {
-              alert("Нет авторизации")
-              mainForm.style.display = "flex";
-              pushComments.style.display = "none"
-              return;
-          }
-            mainForm.style.display = "flex";
-            pushComments.style.display = "none"
-            alert("Кажется, у вас сломался интернет, попробуйте позже");
-            
-            return;
-           
-        })
-        nameInputElement.classList.remove("error");
-        commentInputElement.classList.remove("error");
-        const oldListHtml = appEl.innerHTML;
-        
-     
+    .then(() => {
+      return fetchAndRenderTasks();
+    })
+    .then(() => {
+      addCommentText.style.display = "none";
+      mainForm.style.display = "flex";
+      buttonElement.disabled = false;
+      buttonElement.textContent = "Написать";
+      nameInputElement.value = "";
+      textInputElement.value = "";
+    })
+    .catch((error) => {
+      addCommentText.style.display = "none";
+      mainForm.style.display = "flex";
+      buttonElement.disabled = false;
+      buttonElement.textContent = "Написать";
+      if (error === "Короткий текст") {
+        alert("Имя и комментарий должны быть не короче 3 символов");
+      } else if (error === "Сервер упал") {
+        alert("Сервер сломался, попробуй позже");
+      } else {
+        alert("Кажется, у вас сломался интернет, попробуйте позже");
+      }
+      console.warn(error);
     });
-    
+
+  renderComments();
+});
+
+
+function reComment () {
+  
+  const allComments = document.querySelectorAll('.comment')
+  for(let comment of allComments){
+   comment.addEventListener('click', (event)=>{
+     event.stopPropagation()
+     const nameUser = comment.dataset.name;
+     const userComments = comment.dataset.comment;
+     textInputElement.value =` >${userComments} \n${nameUser} <\n`
+     
+   })
+  
+  }
+ }
+
+  reComment()
   addLike()  // лайки
   // reComment() // Комментирование поста
 

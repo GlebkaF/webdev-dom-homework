@@ -1,6 +1,6 @@
 
 import { safeInputText,} from "./secondaryFunc.js"
-import { delValue,pushCommentwithEnter,reComment,renderComments,} from "./workWithForm.js";
+import { delValue,pushCommentwithEnter,renderComments,} from "./workWithForm.js";
 import { getCommentList, host,} from "./api.js";
 
 
@@ -23,18 +23,18 @@ export let comments =[]
 
 
 // функция Данные с сервера.
-const fetchAndRenderTasks = () =>{
+export const fetchAndRenderTasks = () =>{
  
  return getCommentList()
   .then((responseData) => {
    
     comments = responseData.comments;
     // waitLoadComments.style.display = "none";
-    renderComments();
+  renderComments();
   })
 
   .catch((error) => {
-    
+    console.error(error)
     if (error.message === "Сервер сломался, попробуй позже") {
       alert('Сервер упал')
       return;
