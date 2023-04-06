@@ -1,7 +1,115 @@
 const inputName = document.querySelector('.add-form-name');
 const inputText = document.querySelector('.add-form-text');
 const comments = document.querySelector('.comments');
-const button = document.querySelector('.add-form-button');
+const buttonAdd = document.querySelector('.add-form-button');
+
+
+// масив комментариев, тут хранятся все комментарии
+const arrComments = [
+    {
+        name: 'Глеб Фокин',
+        text: 'Это будет первый комментарий на этой странице',
+        date: '12.02.22 12:18',
+        isLike: false, // истина - закрашивает сердечко
+        likeCounter: 3,
+        isEdit: false
+    },
+
+    {
+        name: 'Варвара Н.',
+        text: 'Мне нравится как оформлена эта страница! ❤',
+        date: '13.02.22 19:22',
+        isLike: true,
+        likeCounter: 75,
+        isEdit: false
+    }
+];
+
+// ивенты на кнопки лайка
+const eventLike = () => {
+    document.querySelectorAll('.like-button').forEach((button => {
+        button.addEventListener('click', () => {
+            objComment = arrComments[button.dataset.index];
+            if (objComment.isLike){
+                objComment.likeCounter -= 1; 
+                objComment.isLike = false;
+
+            } else {
+                objComment.likeCounter += 1; 
+                objComment.isLike = true;
+            }
+            // после добавления лайка в объект, его надо перерендерить для отображения
+            renderAllComments();
+        })
+    }));
+}
+
+
+
+// ивенты на редакитрования
+const eventEdit = () => {
+    document.querySelectorAll('.edit-button').forEach(button => {
+        button.addEventListener('click', () => {
+            objComment = arrComments[button.dataset.index];
+            if (objComment.isEdit) {
+                if (objComment.text.trim() === '') return;  // в случае, если человек сотрет полностью комментарий кнопка сохранить станет неактивна;
+                button.innerHTML = 'Редактировать';
+                objComment.isEdit = false;
+            } else {
+                button.innerHTML = 'Сохранить';
+                objComment.isEdit = true;
+            }
+            renderAllComments();
+        })
+    })
+}
+
+// ивенты на запись нового комментария при редактировании input
+const evenEditInput = () => {
+    document.querySelectorAll('.input-text').forEach(input => {
+        input.addEventListener('keyup', (key) => {
+            objComment = arrComments[input.dataset.index];
+            objComment.text = input.value;
+        })
+    })
+}
+
+// рендер комментария
+const renderComment = (name, text, date, isLike, likeCounter, isEdit, index) => {
+    comments.innerHTML += ` 
+        <li class="comment">
+            <div class="comment-header">
+            <div>${name}</div>
+            <div>${date}</div>
+            </div>
+            <div class="comment-body">
+                ${isEdit ? `<textArea data-index="${index}" class="input-text">${text}</textArea>` : `<div class="comment-text">${text}</div>`}
+                <button data-index="${index}" class="edit-button">${isEdit ? 'Сохранить' : 'Редактировать'}</button>
+            </div>
+            <div class="comment-footer">
+            <div class="likes">
+                <span class="likes-counter">${likeCounter}</span>
+                <button data-index="${index}" class="like-button ${isLike ? '-active-like': ''}"></button>
+            </div>
+            </div>
+        </li>
+    `;
+
+}
+
+// отрисовка всех комментариев, из html комменты удалил
+const renderAllComments = () => {
+// перед рендером удаляем все комменты которые были, чтобы они не дублировались
+    comments.innerHTML = '';
+
+    arrComments.forEach((comment, index) => renderComment(comment.name, comment.text, comment.date, comment.isLike, comment.likeCounter, comment.isEdit, index));
+
+    // заново добавляем евенты на все кнопки, чтобы евент попал на новый коммент с кнопкой
+    eventLike();
+    eventEdit();
+    evenEditInput();
+}
+
 
 
 // форматирование даты
@@ -24,25 +132,15 @@ const sendComment = () => {
         return;
     }
 
-    comments.innerHTML += ` 
-        <li class="comment">
-            <div class="comment-header">
-            <div>${inputName.value}</div>
-            <div>${getDate()}</div>
-            </div>
-            <div class="comment-body">
-            <div class="comment-text">
-                ${inputText.value}
-            </div>
-            </div>
-            <div class="comment-footer">
-            <div class="likes">
-                <span class="likes-counter">0</span>
-                <button class="like-button"></button>
-            </div>
-            </div>
-        </li>
-    `;
+    arrComments.push({        
+        name: inputName.value,
+        text: inputText.value,
+        date: getDate(new Date),
+        like: false,
+        likeCounter: 0
+    })
+
+    renderAllComments();
 
     inputName.value = '';
     inputText.value = '';
@@ -52,7 +150,7 @@ const sendComment = () => {
 }
 
 // Не прописал колбек внутри потому что потом вызову эту функцию в другом событии 
-button.addEventListener('click', sendComment)
+buttonAdd.addEventListener('click', sendComment)
 
 // Прыжок на поле комментариев при нажатии на Enter в поле имя
 inputName.addEventListener('keyup', (key) => {
@@ -75,11 +173,11 @@ inputText.addEventListener('keydown', (key) => {
 */
 const switchButton = () => {
     if (inputName.value.trim() !== '' && inputText.value.trim() !== '') {
-        button.classList.add('active');
-        button.classList.remove('inactive');
+        buttonAdd.classList.add('active');
+        buttonAdd.classList.remove('inactive');
     } else {
-        button.classList.add('inactive');
-        button.classList.remove('active');
+        buttonAdd.classList.add('inactive');
+        buttonAdd.classList.remove('active');
     }
 }
 
@@ -90,4 +188,16 @@ inputName.addEventListener('input', switchButton);
 document.querySelector('.del-last-comment').addEventListener('click', () => {
     const indexLast = comments.innerHTML.lastIndexOf('<li class="comment">')
     comments.innerHTML = comments.innerHTML.slice(0, indexLast);
+
+    // так же удаляем из массива, чтобы не было ошибок при рендере
+    arrComments.pop();
+    
+    // Заново накидываем ивенты, они почему-то сбрасываются
+    eventLike();
+    eventEdit();
+    evenEditInput();
 })
+
+
+// start
+renderAllComments();
