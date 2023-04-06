@@ -69,28 +69,32 @@
     const textElement = document.getElementById("add-text");
     const nameElement = document.getElementById("input-name");
     const listElement = document.getElementById("list-comments");
-    function addLeadingZero(d) {
-      return (d < 10) ? '0' + d : d;
+   
+    const date = new Date();
+    const options = {
+      year: '2-digit',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hourCycle: 'h23'
+    };
+    const forrmattedDate = date.toLocaleString('ru-RU', options).replace(",", "");
+    console.log(forrmattedDate);
+    
+    const checkValidity = (event) => {
+    const nameValue = nameElement.value;
+    const textValue = textElement.value;
+
+    if (nameValue !== '' && textValue !== '') {
+      buttonElement.disabled = false;
+    } else {
+      buttonElement.disabled = true;
     }
-    function getUsersTime(userTime = new Date()) {
-      let years = userTime.getFullYear() - 2000;
-      let month = addLeadingZero(userTime.getMonth() + 1);
-      let day = addLeadingZero(userTime.getDate());
-      let hours = addLeadingZero(userTime.getHours());
-      let minutes = addLeadingZero(userTime.getMinutes());
-      return `${day}.${month}.${years} ${hours}:${minutes} `;
-    }
-    buttonElement.disabled = true;
-    nameElement.addEventListener('input' , () => {
-      if (textElement.value !== "") {
-     buttonElement.disabled = false;
-      }
-    })
-    textElement.addEventListener("input", () => {
-      if (!nameElement.value !== "") {
-     buttonElement.disabled = false;
-      }
-    })
+  }
+
+  nameElement.addEventListener('input', checkValidity);
+  textElement.addEventListener('input', checkValidity);
     buttonElement.addEventListener("click", () => {
       textElement.classList.remove("error");
       nameElement.classList.remove("error");
@@ -112,7 +116,7 @@
         `<li class="comment">
           <div class="comment-header">
             <div>${nameElement.value}</div>
-            <div>${getUsersTime()}</div>
+            <div>${forrmattedDate}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
