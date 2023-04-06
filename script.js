@@ -1,8 +1,10 @@
 import { getCommentsList, publicComment } from "./api.js";
 import {getDate,safeInputText,delay} from "./secondaryFunc.js"
 
+
+ let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
 let comments = [];
-let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+
 // token = null;
 const waitCommentMessage = document.getElementById("waitComment");
 /* waitCommentMessage.style.display = "inline"; */
@@ -11,19 +13,9 @@ const waitCommentMessage = document.getElementById("waitComment");
 
 //get запрос
 const fetchGetAndRender = () => {
-  return getCommentsList()
+  return getCommentsList({token})
     .then((responseData) => {
-      const appComments = responseData.comments.map((comment) => {
-        return {
-          name: safeInputText(comment.author.name),
-          date: new Date,
-          text: safeInputText(comment.text),
-          likes: comment.likes,
-          isLiked: false,
-        };
-      });
-      /* waitCommentMessage.style.display = "none"; */
-      comments = appComments;
+      comments = responseData.comments;
       renderComments();
     })
     .catch((error) => {
@@ -44,32 +36,25 @@ const renderComments = () => {
 
   if (!token) {
     const commentsHtml =
-      comments &&
-      comments
-        .map((comment, index) => {
-          return `<li data-text = ${comment.text} \n ${
-            comment.name
-          }' class="comment">
-          <div class="comment-header">
-            <div>${comment.name}</div>
-            <div>${getDate(comment.date)}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${comment.text}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">${comment.likes}</span>
-              <button data-index = '${index}' class="${
-            comment.isLiked ? "like-button -active-like" : "like-button"
-          }"></button>
-            </div>
-          </div>
-        </li>`;
-        })
-        .join("");
+    comments.map((user, index) => {
+      return `<li class="comment"  data-name="${user.author.name}" data-comment="${user.text}">
+      <div class="comment-header">
+        <div>${user.author.name}</div>
+        <div>${getDate(user.date)}</div>
+      </div>
+      <div class="comment-body" >
+     <div class ="comment-text"> ${user.text} </div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">${user.likes}</span>
+          <button data-index="${index}"  class="${user.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
+      
+        </div>
+      </div>
+    </li>`
+    }).join('')
+
     const appHtml = `
             <div class="container">
               <p id = 'waitComment' style="display: none">Комментарии загружаются...</p>
@@ -116,32 +101,24 @@ const renderComments = () => {
   }
 
   const commentsHtml =
-    comments &&
-    comments
-      .map((comment, index) => {
-        return `<li data-text = '&gt ${comment.text} \n ${
-          comment.name
-        }' class="comment">
-          <div class="comment-header">
-            <div>${comment.name}</div>
-            <div>${getDate(comment.date)}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${comment.text}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">${comment.likes}</span>
-              <button data-index = '${index}' class="${
-          comment.isLiked ? "like-button -active-like" : "like-button"
-        }"></button>
-            </div>
-          </div>
-        </li>`;
-      })
-      .join("");
+  comments.map((user, index) => {
+    return `<li class="comment"  data-name="${user.author.name}" data-comment="${user.text} ">
+    <div class="comment-header">
+      <div>${user.author.name}</div>
+      <div>${getDate(user.date)}</div>
+    </div>
+    <div class="comment-body" >
+   <div class ="comment-text"> ${user.text} </div>
+    </div>
+    <div class="comment-footer">
+      <div class="likes">
+        <span class="likes-counter">${user.likes}</span>
+        <button  data-index="${index}" class="${user.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
+    
+      </div>
+    </div>
+  </li>`
+  }).join('')
 
   const appHtml = `
             <div class="container">
@@ -204,8 +181,8 @@ const renderComments = () => {
     buttonElement.textContent = "Загружаю...";
 
     publicComment({
-      name: nameInputElement.value,
-      text: textInputElement.value,
+      name: safeInputText(nameInputElement.value),
+      text: safeInputText(textInputElement.value),
       date: new Date(),
       forceError: true,
       token,
@@ -290,23 +267,41 @@ const renderComments = () => {
     });  
   }
 
-  //удаление последнего комментария
+  // удаление последнего комментария
 
-  const deleteComment = () => {
-    deleteButtonElement.addEventListener("click", () => {
-      comments.pop();
-      renderComments();
-    });
-  };
+
+  // function deleteComment(index, token) {
+  //   fetch("https://webdev-hw-api.vercel.app/api/v2/Kerimov-Evgeniy/comments" + id, {
+  //       method: "DELETE",
+  //       headers: {
+  //           authorization: token ,
+  //       },
+  //   })
+  //       .then((response) => {        
+  //           if(response.status === 200){
+  //               comments.splice(index, 1);
+  //               renderComments(token);
+  //               return response.json();
+  //           }
+  //       })
+  //       .catch(error => {
+  //           console.warn(error);
+  //           if (error.message = 'Failed to fetch'){
+  //               alert('Нет соединения с интернетом')
+  //           }
+  //       })
+    
+  // };
 
   //Комментарий на комментарий
-   function reComment () {
+ function reComment (index) {
+  
     const allComments = document.querySelectorAll('.comment')
     for(let comment of allComments){
      comment.addEventListener('click', (event)=>{
        event.stopPropagation()
        const nameUser = comment.dataset.name;
-       const userComments = comment.dataset.text;
+       const userComments = comment.dataset.comment;
        textInputElement.value =` >${userComments} \n${nameUser} <\n`
        
      })
@@ -315,7 +310,7 @@ const renderComments = () => {
    }
 
   addLike(); //Лайки
-  deleteComment(); //Удаление комментария
+  // deleteComment(); //Удаление комментария
   pushCommentwithEnter(); //Отправка по Enter
   reComment(); //  Ответ на коммент
   buttonBlock(); // Блокировка кнопки
@@ -324,5 +319,4 @@ const renderComments = () => {
 
 renderComments();
 fetchGetAndRender();
-
 
