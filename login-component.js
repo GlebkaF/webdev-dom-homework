@@ -1,13 +1,9 @@
 import { getDate } from "./secondaryFunc.js";
-import {login} from './api.js';
+import {loginUser, registerUser} from './api.js';
 
-export function renderLoginComponent({
-  appEl,
-  comments,
-  setToken,
-  renderComments,
- 
-}){
+export function renderLoginComponent({appEl,comments,setToken,renderComments}){
+  let isLoginMode = true;
+  const renderForm = () => {
     const commentsHtml =
     comments.map((user, index) => {
       return `<li class="comment"  data-name="${user.author.name}" data-comment="${user.text}">
@@ -37,8 +33,20 @@ export function renderLoginComponent({
               <p id = 'addingComment' style="display: none">Комментарий добавляется...</p>
               
 
-            <div class="add-form">
-              <h2 class="class">Форма входа</h2>
+            <div class="login-form">
+              <h2 class="class">Форма ${isLoginMode ? 'входа' : 'Регистрации'}</h2>
+              ${
+                isLoginMode
+                ? ''
+                : `<input
+                type="text"
+                id="name-input"
+                class="add-form-name"
+                placeholder="Введите имя"
+              /> <br/>
+                `
+              }
+ 
               <input
                 type="text"
                 id="login-input"
@@ -46,16 +54,16 @@ export function renderLoginComponent({
                 placeholder="Введите ваш логин"
               /> <br/>
               <input
-                type="text"
+                type="password"
                 id="password-input"
                 class="add-form-name"
                 placeholder="Введите ваш пароль"
               />
               
-              <div class="add-form-row">
-                <button id="login-button" class="add-form-button">Войти</button>
-                <button data-id = 'id' id="reg-button" class="add-form-button">
-                  Зарегистрироваться
+              <div class="form-row">
+                <button id="login-button" class="add-form-button"> ${isLoginMode ? 'войти' : 'зарегестрироваться'}</button>
+                <button id="toggle-button" class="add-form-button">
+                  Перейти   ${isLoginMode ? 'к регистрации' : 'ко входу'}
                 </button>
               </div>
             </div>
@@ -65,17 +73,73 @@ export function renderLoginComponent({
     appEl.innerHTML = appHtml;
 
     document.getElementById("login-button").addEventListener("click", () => {
-    
-      login({
-        login: "admin",
-        password: "admin",
-      }).then ((user) => { 
+      if (isLoginMode) {
+        const login = document.getElementById('login-input').value
+        const password = document.getElementById('password-input').value
+        
+           if(!login) {
+             alert ('Введите логин')
+             return;
+           }
+     
+           if(!password) {
+             alert ('Введите пароль')
+             return;
+           }
+     
+           loginUser({
+             login: login,
+             password: password,
+           }).then ((user) => { 
+                    
+               setToken(`Bearer ${user.user.token}`)
                
-          setToken(`Bearer ${user.user.token}`)
-          
-          renderComments();
-      });
-      
+               renderComments();
+           }).catch(error =>{
+             alert(error.message)
+           })
+      } else {
+       
+        const name = document.getElementById('name-input').value;
+        const login = document.getElementById('login-input').value;
+        const password = document.getElementById('password-input').value;
+        
+        if(!name) {
+          alert ('Введите имя')
+          return;
+        }
+
+           if(!login) {
+             alert ('Введите логин')
+             return;
+           }
+     
+           if(!password) {
+             alert ('Введите пароль')
+             return;
+           }
+     
+          registerUser({
+             login: login,
+             password: password,
+             name : name,
+           }).then ((user) => { 
+                    
+               setToken(`Bearer ${user.user.token}`)
+               
+               renderComments();
+           }).catch(error =>{
+             alert(error.message)
+           })
+      }
     });
+    document.getElementById("toggle-button").addEventListener("click", () => {
+      isLoginMode = !isLoginMode; 
+      console.log('click')
+      renderForm()
+    })
+
+  }
+renderForm()
 
 }

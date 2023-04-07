@@ -47,83 +47,23 @@ const fetchGetAndRender = () => {
       });
       return;
     }
-    // const commentsHtml =
-    // comments.map((user, index) => {
-    //   return `<li class="comment"  data-name="${user.author.name}" data-comment="${user.text}">
-    //   <div class="comment-header">
-    //     <div>${user.author.name}</div>
-    //     <div>${getDate(user.date)}</div>
-    //   </div>
-    //   <div class="comment-body" >
-    //  <div class ="comment-text"> ${user.text} </div>
-    //   </div>
-    //   <div class="comment-footer">
-    //     <div class="likes">
-    //       <span class="likes-counter">${user.likes}</span>
-    //       <button data-index="${index}"  class="${user.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
-      
-    //     </div>
-    //   </div>
-    // </li>`
-    // }).join('')
-
-    // const appHtml = `
-    //         <div class="container">
-    //           <p id = 'waitComment' style="display: none">Комментарии загружаются...</p>
-    //           <ul id="list" class="comments">
-    //             ${commentsHtml}
-    //           </ul>
-    //           <p id = 'addingComment' style="display: none">Комментарий добавляется...</p>
-              
-
-    //         <div class="add-form">
-    //           <h2 class="class">Форма входа</h2>
-    //           <input
-    //             type="text"
-    //             id="login-input"
-    //             class="add-form-name"
-    //             placeholder="Введите ваш логин"
-    //           /> <br/>
-    //           <input
-    //             type="text"
-    //             id="password-input"
-    //             class="add-form-name"
-    //             placeholder="Введите ваш пароль"
-    //           />
-              
-    //           <div class="add-form-row">
-    //             <button id="login-button" class="add-form-button">Войти</button>
-    //             <button data-id = 'id' id="reg-button" class="add-form-button">
-    //               Зарегистрироваться
-    //             </button>
-    //           </div>
-    //         </div>
-
-    //       </div>`;
-
-    // appEl.innerHTML = appHtml;
-
-    // document.getElementById("login-button").addEventListener("click", () => {
-    //   token =
-    //     "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
-    //     fetchGetAndRender()
-    // });
+  
 
 
   const commentsHtml =
   comments.map((user, index) => {
-    return `<li class="comment"  data-name="${user.author.name}" data-comment="${user.text} ">
+    return `<li class="comment"  data-name="${user.author.name}" data-comment="${user.text}"  >
     <div class="comment-header">
       <div>${user.author.name}</div>
       <div>${getDate(user.date)}</div>
     </div>
-    <div class="comment-body" >
+    <div class="comment-body" data-comments="${index}" >
    <div class ="comment-text"> ${user.text} </div>
     </div>
     <div class="comment-footer">
       <div class="likes">
         <span class="likes-counter">${user.likes}</span>
-        <button  data-index="${index}" class="${user.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
+        <button  data-heart="${index}" class="${user.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
     
       </div>
     </div>
@@ -232,7 +172,7 @@ const fetchGetAndRender = () => {
   
       likeButton.addEventListener('click', ( event) => {
         event.stopPropagation()
-            const index = likeButton.dataset.index;
+            const index = likeButton.dataset.heart;
             likeButton.classList.add('-loading-like')
             delay(2000).then(()=> {
              
@@ -277,42 +217,25 @@ const fetchGetAndRender = () => {
     });  
   }
 
+
+  
   // удаление последнего комментария
+  const buttonDeleteElement = document.getElementById("delete-button");
+  buttonDeleteElement.addEventListener("click", () => {
+    const allComments = document.querySelectorAll('.comment')
+        console.log(allComments)
+    })
 
 
-  // function deleteComment(index, token) {
-  //   fetch("https://webdev-hw-api.vercel.app/api/v2/Kerimov-Evgeniy/comments" + id, {
-  //       method: "DELETE",
-  //       headers: {
-  //           authorization: token ,
-  //       },
-  //   })
-  //       .then((response) => {        
-  //           if(response.status === 200){
-  //               comments.splice(index, 1);
-  //               renderComments(token);
-  //               return response.json();
-  //           }
-  //       })
-  //       .catch(error => {
-  //           console.warn(error);
-  //           if (error.message = 'Failed to fetch'){
-  //               alert('Нет соединения с интернетом')
-  //           }
-  //       })
-    
-  // };
 
   //Комментарий на комментарий
- function reComment (index) {
+ function reComment () {
   
     const allComments = document.querySelectorAll('.comment')
     for(let comment of allComments){
      comment.addEventListener('click', (event)=>{
        event.stopPropagation()
-       const nameUser = comment.dataset.name;
-       const userComments = comment.dataset.comment;
-       textInputElement.value =` >${userComments} \n${nameUser} <\n`
+       textInputElement.value =` >${comment.dataset.comment} \n${comment.dataset.name} <\n`
        
      })
     
@@ -320,7 +243,7 @@ const fetchGetAndRender = () => {
    }
 
   addLike(); //Лайки
-  // deleteComment(); //Удаление комментария
+ 
   pushCommentwithEnter(); //Отправка по Enter
   reComment(); //  Ответ на коммент
   buttonBlock(); // Блокировка кнопки
