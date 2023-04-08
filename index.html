@@ -8,40 +8,6 @@
   <body>
     <div class="container">
       <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
       </ul>
       <div class="add-form">
         <input
@@ -52,7 +18,7 @@
         <textarea
           type="textarea"
           class="add-form-text"
-          placeholder="Введите ваш коментарий"
+          placeholder="Введите ваш комментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
@@ -75,6 +41,37 @@
     const formName = document.querySelector(".add-form-name");
     const formText = document.querySelector(".add-form-text");
     const deleteButton = document.querySelector(".delete-form-button");
+    
+    formName.addEventListener('keyup', function(event) {
+       event.preventDefault();
+       if(event.keyCode === 13) {
+        buttonElement.click();
+       }
+    });
+    formText.addEventListener('keyup', function(event) {
+       event.preventDefault();
+       if(event.keyCode === 13) {
+        buttonElement.click();
+       }
+    });
+
+    const comments = [
+      {
+        name: 'Глеб Фокин',
+        data: '12.02.22 12:18',
+        text: 'Это будет первый комментарий на этой странице',
+        likeComment: false,
+        countLike: 3,
+      },
+      {
+        name: 'Варвара Н.',
+        data: '13.02.22 19:22',
+        text: 'Мне нравится как оформлена эта страница! ❤',
+        likeComment: true,
+        countLike: 75,
+      }
+    ];
+
     const day = new Date();
     let date = day.getDate();
     let month = day.getMonth();
@@ -93,18 +90,49 @@
     if (minutes < 10){
       minutes = "0" + minutes;
     };
-    formName.addEventListener('keyup', function(event) {
-       event.preventDefault();
-       if(event.keyCode === 13) {
-        buttonElement.click();
-       }
-    });
-    formText.addEventListener('keyup', function(event) {
-       event.preventDefault();
-       if(event.keyCode === 13) {
-        buttonElement.click();
-       }
-    });
+
+    const initEventLike = () => {
+    const likeButtons = document.querySelectorAll(".like-button");
+    for(const likeButton of likeButtons){
+      const index = likeButton.dataset.index;
+    likeButton.addEventListener('click', () => {
+      if (comments[index].likeComment) {
+        comments[index].likeComment = false;
+        comments[index].countLike -= 1;
+      } else {
+        comments[index].likeComment = true;
+        comments[index].countLike += 1;
+      }
+      renderLike();
+        });
+      };
+    };
+
+    const renderLike = () => {
+      const likeHtml = comments.map((comment, index) => {
+        return ` <li class="comment">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.data}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.countLike}</span>
+              <button data-index="${index}"class="like-button ${comment.likeComment ? '-active-like' : ''}"></button>
+            </div>
+          </div>
+        </li>`
+      }).join('');
+      commentElement.innerHTML = likeHtml;
+      initEventLike();
+    }
+    renderLike();
+
     buttonElement.addEventListener("click", () => {
       formName.classList.remove("error");
       if (formName.value === ""){
@@ -116,34 +144,22 @@
         formText.classList.add("error");
         return;
       };
-      if(formName.value === "" || formText.value === ""){
-        buttonElement.ariaDisabled = false;
-      } else {
-        buttonElement.ariaDisabled = true;
-      };
-      const oldCommentElement = commentElement.innerHTML;
-      commentElement.innerHTML = oldCommentElement +
-      ` <li class="comment">
-          <div class="comment-header">
-            <div>${formName.value}</div>
-            <div>${date}.${month}.${year} ${hours}:${minutes}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${formText.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>`;
-      formName.value = "";
-      formText.value = "";
-    });
-    deleteButton.addEventListener("click",() => {
+
+      comments.push({
+        name: formName.value,
+        data: `${date}.${month}.${year} ${hours}:${minutes}`,
+        text: formText.value,
+        likeComment: false,
+        countLike: 0,
+        active: "",
+      });
+
+        renderLike();
+
+    formName.value = "";
+    formText.value = "";
+  });
+    deleteButton.addEventListener("click", () => {
       const lastComment = commentElement.innerHTML.lastIndexOf('<li class="comment">');
         commentElement.innerHTML = commentElement.innerHTML.slice(0, lastComment);
     });
