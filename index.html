@@ -8,40 +8,7 @@
   <body>
     <div class="container">
       <ul class="comments" id="list" >
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div  class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+       <!-- рендерится из js  -->
       </ul>
       <div class="add-form">
         <input 
@@ -83,51 +50,10 @@
     const nameinputElement = document.getElementById("name-input");
     const comminputElement = document.getElementById("comm-input");
     
-    buttonElement.addEventListener("click", () => {
-      nameinputElement.classList.remove("error");
-     
-          if(nameinputElement.value === "" ){
-                nameinputElement.classList.add("error");  
-                return;
-            }
-            comminputElement.classList.remove("error");
-          
-          if (comminputElement.value === "" ){
-            comminputElement.classList.add("error");
-            return;
-          };
-     //добавление актуальной даты и времени в новом комментарии:     
-  let now = new Date();
-  let day = now.getDate().toString().padStart(2, '0');
-  let month = (now.getMonth() + 1).toString().padStart(2, '0');
-  let year = now.getFullYear().toString().substr(-2);
-  let hour = now.getHours().toString().padStart(2, '0');
-  let minute = now.getMinutes().toString().padStart(2, '0');
-  let formattedDate = `${day}.${month}.${year} ${hour}:${minute}`;
   
-      const oldListHTML = listElement.innerHTML;
-        listElement.innerHTML = oldListHTML + `<li class="comment">
-          <div class="comment-header">
-            <div>${nameinputElement.value}</div>
-            <div>${formattedDate} </div>
-          </div>
-          <div class="comment-body">
-            <div  class="comment-text">
-              ${comminputElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter"> 0 </span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li> `
-      nameinputElement.value = ""; comminputElement.value = ""
-          });
   // Текст на кнопке серый, пока не заполнишь Имя пользователя:
     nameinputElement.addEventListener('input', () => {
-  if (nameinputElement.value.length >= 0) {
+  if (nameinputElement.value.length > 0) {
         buttonElement.disabled = false;
           buttonElement.classList.remove('disabled');
   } else {
@@ -136,9 +62,10 @@
   }
 
 });
- // Кнопка Enter активирует кнопку - Написать
+
+ //Кнопка Enter активирует кнопку - Написать
      comminputElement.addEventListener("keyup", function(event) {
- 
+
     if (event.keyCode === 13) {
         event.preventDefault();
           document.getElementById("add-button").click();
@@ -155,11 +82,182 @@
 }
 }
 // Добавляем обработчик события click на кнопку
-deleteButtonElement.addEventListener('click', deleteLastComment);
+deleteButtonElement.addEventListener('click', deleteLastComment);  
+ 
+//ДЗ 2.10: 
 
+   const likesButtons= document.querySelectorAll('.like-button');
+   const inputText = document.querySelectorAll('.input-text');
+   const editButtons = document.querySelectorAll('.edit-button');
+   const saveButtons = document.querySelectorAll('.save-button');
+  
 
+// Создаем массив комментариев, теперь комментарии здесь:
+   const comments = [
+    {
+       name: 'Глеб Фокин',
+        text: 'Это будет первый комментарий на этой странице',
+        date: '12.02.22 12:18',
+        clickOn: false,
+        likes: 3,
+        isEdit: false,
+		    
+    },
+    {
+        name: 'Варвара Н.',
+        text: 'Мне нравится как оформлена эта страница! ❤',
+        date: '13.02.22 19:22',
+        clickOn: false,
+        likes: 75,
+		    isEdit: false,
+    }
+    
+];
 
+//Добавление лайков :
+const eventeLikesButtons = () => {
+    const likesButtons = document.querySelectorAll('.like-button')
+	for (const likesButton of likesButtons){
+      const index =  likesButton.dataset.index;
+	  likesButton.addEventListener('click', () => {
+           if (!comments[index].clickOn) {
+                comments[index].clickOn = true;
+                comments[index].active ='-active-like'; 
+                comments[index].likes += 1;
+
+            } else {
+              comments[index].clickOn = false;
+                comments[index].active =''; 
+                comments[index].likes -= 1;
+
+            }
+        
+            renderComment();
+          })
+        }
+      }
+
+      // Добавляем редактирование комментария:
+const eventEditButtons = () => {
+const editButtons = document.querySelectorAll('.edit-button');
+for (const editButton of editButtons){
+  const index = editButton.dataset.index;
+  editButton.addEventListener('click',() => {
+    comments[index].isEdit == false ? comments[index].isEdit = true : comments[index].isEdit = false;
+    renderComment();
+  })
+}
+}
+
+//  Сохранение отредактированного коментария:
+const eventSaveButton = () => {
+  const saveButtons = document.querySelectorAll('.save-button');
+  for (const saveButton of saveButtons){
+    const index = saveButton.dataset.index;
+    const editedComment = document.getElementById(`${index}0`);
+    saveButton.addEventListener('click',() =>{ 
+      comments[index].text = editedComment.value;
+      comments[index].isEdit = false;
+      renderComment();
+    })
+  }
+}
+
+//рендер комментария: 
+const renderComment = () => {
+  const commentsHTML = comments.map((comment, index) => {
+    return comment.isEdit == true ?
+    `<li class="comment">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>
+          </div>
+          <div class="comment-body">
+            <textarea id="${index}0" class="edit-text" type="textarea"> </textarea>
+            </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span id="${index}"class="likes-counter"> ${comment.likes}</span>
+              <button data-index ="${index}" data-name = "${comment.name}" data-text = "${comment.text}"
+              data-likes = "${comment.likes}" data-index ="${index}" class="like-button ${comment.active}" ></button>
+            </div>
+          </div>
+          <button data-index = "${index}" class = "save-button" type ="button" > Сохранить </button>
+        </li>`
+        :
+        `<li class="comment">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span id ="${index}"class="likes-counter"> ${comment.likes}</span>
+              <button data-index ="${index}" data-name = "${comment.name}" data-text = "${comment.text}"
+              data-likes = "${comment.likes}" data-index="${index}" class="like-button ${comment.active}"></button>
+            </div>
+          </div>
+          <button data-index="${index}" class = "edit-button" type ="button"> Редактировать </button>
+        </li>`
+  }) 
+  .join("");
+  listElement.innerHTML = commentsHTML;
+  eventeLikesButtons();
+  eventSaveButton();
+  eventEditButtons (); 
+}
+renderComment ();
+
+function newComment() {
+  nameinputElement.classList.remove('error')
+  comminputElement.classList.remove("error");
+  if(nameinputElement.value === "" ){
+                nameinputElement.classList.add("error");  
+                return;
+  } else if (comminputElement.value === "" ){
+            comminputElement.classList.add("error");
+            return;
+}
+//добавление актуальной даты и времени в новом комментарии:   
+  let now = new Date();
+  let day = now.getDate().toString().padStart(2, '0');
+  let month = (now.getMonth() + 1).toString().padStart(2, '0');
+  let year = now.getFullYear().toString().substr(-2);
+  let hour = now.getHours().toString().padStart(2, '0');
+  let minute = now.getMinutes().toString().padStart(2, '0');
+  let formattedDate = `${day}.${month}.${year} ${hour}:${minute}`;
+
+comments.push(
+{
+        name:nameinputElement.value ,
+        text: comminputElement.value,
+        date: `${formattedDate}`,
+        likes: 0,
+        isEdit: false,
+        clickOn: false,		
+}
+)
+
+renderComment();
+nameinputElement.value = ""; comminputElement.value = "";
+
+}
+
+buttonElement.addEventListener('click',() => {
+  newComment();
+
+});
 
 
   </script>
 </html>
+
+
+
+
+
