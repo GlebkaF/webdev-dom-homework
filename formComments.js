@@ -1,4 +1,4 @@
-import { comments, postFetchPromise } from "./index.js";
+//import { comments, postFetchPromise } from "./index.js";
 import { myDate } from "./optionalFunction.js";
 
 
@@ -33,70 +33,70 @@ import { myDate } from "./optionalFunction.js";
 
 // Смена класса кнопки лайка
 
-export const initChangeLikeButtonListeners = () => {
-    const likeButtonElements = document.querySelectorAll('.like-button');
+// export const initChangeLikeButtonListeners = () => {
+//     const likeButtonElements = document.querySelectorAll('.like-button');
   
-    for (const likeButtonElement of likeButtonElements) {
-      likeButtonElement.addEventListener('click', (event) => {
-        event.stopPropagation();
-        const index = likeButtonElement.dataset.index;
+//     for (const likeButtonElement of likeButtonElements) {
+//       likeButtonElement.addEventListener('click', (event) => {
+//         event.stopPropagation();
+//         const index = likeButtonElement.dataset.index;
   
-        if (comments[index].isLike === false) {
-          comments[index].likes += 1;
-          comments[index].isLike = true;
+//         if (comments[index].isLike === false) {
+//           comments[index].likes += 1;
+//           comments[index].isLike = true;
   
   
-        } else {
-          comments[index].likes -= 1;
-          comments[index].isLike = false;
-        }
+//         } else {
+//           comments[index].likes -= 1;
+//           comments[index].isLike = false;
+//         }
   
-        renderComments(listElement);
-      })
-    }
-  };
+//         renderComments(listElement);
+//       })
+//     }
+//   };
 
 //редактирование комментария
 
-  export const initEditButtonListeners = () => {
-    const editButtons = document.querySelectorAll(".edit-button");
-    for (const editButton of editButtons) {
-      editButton.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const index = editButton.dataset.index;
+  // export const initEditButtonListeners = () => {
+  //   const editButtons = document.querySelectorAll(".edit-button");
+  //   for (const editButton of editButtons) {
+  //     editButton.addEventListener('click', (e) => {
+  //       e.stopPropagation();
+  //       const index = editButton.dataset.index;
   
-        if (comments[index].isEdit === false) {
-          comments[index].isEdit = true;
+  //       if (comments[index].isEdit === false) {
+  //         comments[index].isEdit = true;
   
-        } else {
-          comments[index].isEdit = false;
-          const textareaEditElements = document.querySelectorAll(".edit-area-text");
-          for (const textareaEditElement of textareaEditElements) {
-            comments[index].text = textareaEditElement.value;
-          }
-        }
-        renderComments(listElement);
-      })
-    };
-    const saveButtons = document.querySelectorAll(".save-button");
-    for (const saveButton of saveButtons) {
-      saveButton.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const index = saveButton.dataset.index;
-        if (comments[index].isEdit === false) {
-          comments[index].isEdit = true;
-        } else {
-          comments[index].isEdit = false;
-          const textareaEditElements = document.querySelectorAll(".edit-area-text");
-          for (const textareaEditElement of textareaEditElements) {
-            comments[index].text = textareaEditElement.value;
-          }
-        }
-        renderComments(listElement)
+  //       } else {
+  //         comments[index].isEdit = false;
+  //         const textareaEditElements = document.querySelectorAll(".edit-area-text");
+  //         for (const textareaEditElement of textareaEditElements) {
+  //           comments[index].text = textareaEditElement.value;
+  //         }
+  //       }
+  //       renderComments(listElement);
+  //     })
+  //   };
+  //   const saveButtons = document.querySelectorAll(".save-button");
+  //   for (const saveButton of saveButtons) {
+  //     saveButton.addEventListener('click', (e) => {
+  //       e.stopPropagation();
+  //       const index = saveButton.dataset.index;
+  //       if (comments[index].isEdit === false) {
+  //         comments[index].isEdit = true;
+  //       } else {
+  //         comments[index].isEdit = false;
+  //         const textareaEditElements = document.querySelectorAll(".edit-area-text");
+  //         for (const textareaEditElement of textareaEditElements) {
+  //           comments[index].text = textareaEditElement.value;
+  //         }
+  //       }
+  //       renderComments(listElement)
   
-      });
-    }
-  };
+  //     });
+  //   }
+  // };
 
 // удаление комментария по отдельности
 

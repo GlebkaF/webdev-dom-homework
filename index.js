@@ -17,45 +17,46 @@ export let comments = [];
 
 //функция GET
 
-
-
 let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
 token = null;
 
 export const getFetchPromise = () => {
-  //loaderCommentsElement.classList.remove('-display-none');
-  return getComments({ token }).then((responseData) => {
-    const appComments = responseData.comments.map((comment) => {
-      return {
-        name: secureInput(comment.author.name),
-        date: myDate(new Date(comment.date)),
-        text: secureInput(comment.text),
-        likes: comment.likes,
-        isLike: false,
-      };
-    })
-    comments = appComments;
-    //loaderCommentsElement.classList.add('-display-none');
-    renderComments(listElement);
-  }).catch((error) => {
-    alert('Сервер не работает, повторите попытку позже');
-    console.warn(error);
-  });
+  const loaderCommentsElement = document.getElementById('loaderComments');
+  loaderCommentsElement.classList.remove('-display-none');
+  return getComments({ token })
+    .then((responseData) => {
+      const appComments = responseData.comments.map((comment) => {
+        return {
+          name: secureInput(comment.author.name),
+          date: myDate(new Date(comment.date)),
+          text: secureInput(comment.text),
+          likes: comment.likes,
+          isLike: false,
+          token
+        };
+      })
+      comments = appComments;
+      loaderCommentsElement.classList.add('-display-none');
+      renderComments(listElement);
+    }).catch((error) => {
+      alert('Сервер не работает, повторите попытку позже');
+      console.warn(error);
+    });
 };
 
-export const postFetchPromise = () => {
-  addComment({
-    name: secureInput(inputNameElement.value),
-    date: myDate(new Date),
-    text: secureInput(textareaElement.value),
-    likes: 0,
-    isLike: false,
-    forceError: false,
-    token
-  }).then(() => {
-    return getFetchPromise();
-  })
-}
+// export const postFetchPromise = () => {
+//   const inputNameElement = document.querySelector('.add-form-name');
+//   const textareaElement = document.querySelector('.add-form-text');
+//   addComment({
+//     name: secureInput(inputNameElement.value),
+//     date: myDate(new Date),
+//     text: secureInput(textareaElement.value),
+//     forceError: false,
+//     token,
+//   }).then(() => {
+//     return getFetchPromise();
+//   })
+// }
 
 export const renderComments = () => {
   const commentHtml = comments.map((comment, index) => {
@@ -126,7 +127,7 @@ export const renderComments = () => {
     </ul>
   
     <div class="add-form add-form--register">
-      <h3>Форма авторизации</h3>
+      <h3>Чтобы добавить комментарий, авторизируйтесь</h3>
       <input
         type="text"
         class="add-form-login"
@@ -214,28 +215,104 @@ export const renderComments = () => {
     buttonElement.disabled = true;
     buttonElement.textContent = "Добавляется..."
     addFormElement.classList.add('-display-block')
-    console.log(addFormElement);
-    postFetchPromise().then((response) => {
-      buttonElement.disabled = false;
-      buttonElement.textContent = "Написать"
-      inputNameElement.value = '';
-      textareaElement.value = '';
-      return response
-    }).catch((error) => {
-      addFormElement.classList.remove('-display-block')
-      buttonElement.disabled = false;
-      buttonElement.textContent = 'Написать';
-      if (!navigator.onLine) {
-        alert('Кажется, у вас сломался интернет, попробуйте позже')
-        // throw new Error("Сломался интернет")
-      }
-      console.warn(error);
-    });
+
+
+
+    //postFetchPromise()
+
+    addComment({
+      name: secureInput(inputNameElement.value),
+      date: new Date(),
+      //myDate(new Date),
+      text: secureInput(textareaElement.value),
+      forceError: false,
+      token,
+    }).then(() => {
+      return getFetchPromise();
+    })
+      .then((response) => {
+        buttonElement.disabled = false;
+        buttonElement.textContent = "Написать"
+        inputNameElement.value = '';
+        textareaElement.value = '';
+        return response
+      }).catch((error) => {
+        addFormElement.classList.remove('-display-block')
+        buttonElement.disabled = false;
+        buttonElement.textContent = 'Написать';
+        if (!navigator.onLine) {
+          alert('Кажется, у вас сломался интернет, попробуйте позже')
+          // throw new Error("Сломался интернет")
+        }
+        console.warn(error);
+      });
     renderComments(listElement);
     buttonElement.disabled = true;
     addFormElement.classList.remove('-display-block')
   });
 
+  const initChangeLikeButtonListeners = () => {
+    const likeButtonElements = document.querySelectorAll('.like-button');
+  
+    for (const likeButtonElement of likeButtonElements) {
+      likeButtonElement.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const index = likeButtonElement.dataset.index;
+  
+        if (comments[index].isLike === false) {
+          comments[index].likes += 1;
+          comments[index].isLike = true;
+  
+  
+        } else {
+          comments[index].likes -= 1;
+          comments[index].isLike = false;
+        }
+  
+        renderComments(listElement);
+      })
+    }
+  };
+
+  const initEditButtonListeners = () => {
+    const editButtons = document.querySelectorAll(".edit-button");
+    for (const editButton of editButtons) {
+      editButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const index = editButton.dataset.index;
+  
+        if (comments[index].isEdit === false) {
+          comments[index].isEdit = true;
+  
+        } else {
+          comments[index].isEdit = false;
+          const textareaEditElements = document.querySelectorAll(".edit-area-text");
+          for (const textareaEditElement of textareaEditElements) {
+            comments[index].text = textareaEditElement.value;
+          }
+        }
+        renderComments(listElement);
+      })
+    };
+    const saveButtons = document.querySelectorAll(".save-button");
+    for (const saveButton of saveButtons) {
+      saveButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const index = saveButton.dataset.index;
+        if (comments[index].isEdit === false) {
+          comments[index].isEdit = true;
+        } else {
+          comments[index].isEdit = false;
+          const textareaEditElements = document.querySelectorAll(".edit-area-text");
+          for (const textareaEditElement of textareaEditElements) {
+            comments[index].text = textareaEditElement.value;
+          }
+        }
+        renderComments(listElement)
+  
+      });
+    }
+  };
 
   const validateButton = () => {
     if (!inputNameElement.value || !textareaElement.value) {
@@ -264,8 +341,8 @@ export const renderComments = () => {
 
   pushEnter();
   //pushNewComment();
-  //initChangeLikeButtonListeners();
-  //initEditButtonListeners();
+  initChangeLikeButtonListeners();
+  initEditButtonListeners();
   initDisabledButtonElement();
   //deleteComment();
   //answerToComment(); ДЗ 2.11
