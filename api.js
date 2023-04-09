@@ -59,8 +59,7 @@ export function loginUser({ login, password }) {
             alert('Сервер не работает, повторите попытку позже')
             throw new Error("Сервер сломался, попробуй позже")
         } else if (response.status === 400) {
-            alert('Имя и комментарий должны быть не короче 3 символов')
-            throw new Error("Имя и комментарий короче 3 символов")
+            throw new Error("Неверный логин или пароль")
         }
     });
 }

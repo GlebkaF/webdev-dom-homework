@@ -35,13 +35,27 @@ export function renderLoginComponent({ appEl, commentHtml, setToken, getFetchPro
 
     document.querySelector('.login-form-button').addEventListener('click', () => {
         // setToken("Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k");
+        const login = document.querySelector('.add-form-login').value;
+        const password = document.querySelector('.add-form-password').value;
+
+        if (!login) {
+            alert('Введите логин');
+            return;
+        }
+        if (!password) {
+            alert('Введите пароль');
+            return;
+        }
+
         loginUser({
-            login: 'admin',
-            password: 'admin',
+            login: login,
+            password: password,
         }).then((user) => {
             // console.log(user);
             setToken(`Bearer ${user.user.token}`);
             getFetchPromise();
+        }).catch(error => {
+            alert(error.message)
         });
     });
 }
