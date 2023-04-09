@@ -1,6 +1,10 @@
 import { loginUser } from "../api.js";
 
 export function renderLoginComponent({ appEl, commentHtml, setToken, getFetchPromise }) {
+
+let isLoginMode = true;
+
+const renderForm = () => {
     const appHtml = `
     <section id="loaderComments" class="loader -display-none">
     <h4 id="loaderText" class="text-loader">Комментарии загружаются...</h4>
@@ -12,13 +16,26 @@ export function renderLoginComponent({ appEl, commentHtml, setToken, getFetchPro
     </ul>
   
     <div class="add-form add-form--register">
-      <h3>Чтобы добавить комментарий, авторизируйтесь</h3>
+      <h3>Чтобы добавить комментарий, авторизуйтесь</h3>
+      <h3 class="form-title">Форма ${isLoginMode ? 'входа' : 'регистрации'}</h3>
+      ${
+        isLoginMode
+        ? ""
+        : `<input
+        type="text"
+        class="add-form-name"
+        placeholder="Введите имя"
+        rows="4"
+        value = ""
+        /><br/>`
+      }
+      
       <input
         type="text"
         class="add-form-login"
         placeholder="Введите логин"
         value=""
-      />
+      /><br/>
       <input
         type="password"
         class="add-form-password"
@@ -26,8 +43,10 @@ export function renderLoginComponent({ appEl, commentHtml, setToken, getFetchPro
         rows="4"
         value = ""
       ></input>
+     
       <div class="add-form-row">
-      <button class="login-form-button">Войти</button>
+      <button class="login-form-button">${isLoginMode ? 'Войти' : 'Зарегистрироваться'}</button>
+      <button class="toggle-form-button">Перейти ${isLoginMode ? 'к регистрации' : 'ко входу'}</button>
       </div>
     </div>`;
 
@@ -58,4 +77,11 @@ export function renderLoginComponent({ appEl, commentHtml, setToken, getFetchPro
             alert(error.message)
         });
     });
+
+    document.querySelector('.toggle-form-button').addEventListener('click', () => {
+        isLoginMode = !isLoginMode;
+        renderForm();
+    });
+};
+renderForm();
 }
