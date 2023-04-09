@@ -78,7 +78,7 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">${coment.laiks}</span>
+              <span class="likes-counter">${coment.likes}</span>
               <button class="like-button"></button>
             </div>
           </div>
@@ -109,7 +109,8 @@
           counter.textContent--;
         }
       });
-    }};
+    }
+  };
 
   // <img src = "." onerror="alert('ха-ха, ваши данные украдены!');">
 
@@ -124,14 +125,15 @@
     }
 
     let today = new Date().toLocaleString();
-
+    buttonElement.disabled = true;
+    buttonElement.textContent = "Публикуется";
     coment.push({
       name: nameInputElement.value,
       date: today,
       text: userComentElement.value,
       laiks: 0,
     });
-
+   
     //делаем запрос в API
     const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/:cimvol-key/comments",
       {
@@ -150,30 +152,34 @@
       jsonPromise.then((responseData) => {
 
         const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/:cimvol-key/comments",
-    {
-      method: "GET",
-    });
-  // fetch вернула нам fetchPromise, просто JS объект
-  // используя обработчик then(), успешного выполнения запроса получаем наши данные
-  fetchPromise.then((response) => {
-    // преобразовываем поступивший ответ к нашему формату при помощи Json
-    const jsonPromise = response.json();
-    // поскольку метод json() также является асинхронным нам необходимо подписаться на результат
-    jsonPromise.then((responseData) => {
-      const ourComments = responseData.comments.map((comment) => {
-        return {
-          name: comment.author.name,
-          date: comment.date,
-          text: comment.text,
-          likes: comment.likes,
-          isLiked: false,
-        };
-      });
-      coment = ourComments;
-      renderComent();
-      likesFun();
-    });
-  });
+          {
+            method: "GET",
+          });
+        // fetch вернула нам fetchPromise, просто JS объект
+        // используя обработчик then(), успешного выполнения запроса получаем наши данные
+        fetchPromise.then((response) => {
+          // преобразовываем поступивший ответ к нашему формату при помощи Json
+          const jsonPromise = response.json();
+          // поскольку метод json() также является асинхронным нам необходимо подписаться на результат
+          jsonPromise.then((responseData) => {
+            buttonElement.disabled = false;
+            buttonElement.textContent = "Написать";
+            const ourComments = responseData.comments.map((comment) => {
+              return {
+                name: comment.author.name,
+                date: comment.date,
+                text: comment.text,
+                likes: comment.likes,
+                isLiked: false,
+              };
+            });
+           
+            coment = ourComments;
+            renderComent();
+            likesFun();
+          });
+        });
+      
         coment = responseData.comments;
         renderComent();
       });
