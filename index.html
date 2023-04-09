@@ -8,40 +8,7 @@
   <body>
     <div class="container">
       <ul id="list-comments" class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+        <!--Рендерится из JS-->
       </ul>
       <div class="add-form">
         <input
@@ -49,7 +16,7 @@
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
-        >
+        />
         <textarea
           id="add-text"
           type="textarea"
@@ -69,32 +36,152 @@
     const textElement = document.getElementById("add-text");
     const nameElement = document.getElementById("input-name");
     const listElement = document.getElementById("list-comments");
-   
+    const likeElements = document.querySelectorAll(".like-button");
+    const editElements = document.querySelectorAll(".edit-comment");
+    const saveElements = document.querySelectorAll(".save-comment");
+    
+    const users = [
+      {
+        name: "Глеб Фокин",
+        comDate: "12.02.22 12:18",
+        likes: 3,
+        comText: "Это будет первый комментарий на этой странице",
+        active: "",
+        isEdit: false,
+      },
+      {
+        name: "Варвара Н",
+        comDate: "13.02.22 19:22",
+        likes: 75,
+        comText: "Мне нравится как оформлена эта страница! ❤",
+        active: "",
+        isEdit: false,
+      },
+    ];
+
+    
+    const initEventListeners = () => {
+      const likeElements = document.querySelectorAll(".like-button");
+
+      for (likeElement of likeElements) {
+        const index = likeElement.dataset.index;
+        likeElement.addEventListener("click", () => {
+          if (users[index].active === "") {
+            users[index].likes += 1;
+            users[index].active = "-active-like";
+          } else {
+            users[index].likes -= 1;
+            users[index].active = "";
+          }
+
+          renderUsers();
+        });
+      }
+    };
+    const initEditListeners = () => {
+      const editElements = document.querySelectorAll(".edit-comment");
+
+      for (editElement of editElements) {
+        const index = editElement.dataset.index;
+        editElement.addEventListener("click", () => {
+            users[index].isEdit = true;
+          renderUsers();
+        });
+      }
+    };
+
+    const initSaveListener = () => {
+      const saveElements = document.querySelectorAll(".save-comment");
+      for (saveElement of saveElements) {
+        const index = saveElement.dataset.index;
+        const editTextElement = document.getElementById("edit-text");
+        saveElement.addEventListener("click", () => {
+          
+         users[index].comText = editTextElement.value;
+          users[index].isEdit = false;
+          renderUsers();
+        });
+      }
+    };
+
     const date = new Date();
     const options = {
-      year: '2-digit',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      hourCycle: 'h23'
+      year: "2-digit",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23",
     };
-    const forrmattedDate = date.toLocaleString('ru-RU', options).replace(",", "");
-    console.log(forrmattedDate);
-    
+    const forrmattedDate = date
+      .toLocaleString("ru-RU", options)
+      .replace(",", "");
+
     const checkValidity = (event) => {
-    const nameValue = nameElement.value;
-    const textValue = textElement.value;
+      const nameValue = nameElement.value;
+      const textValue = textElement.value;
+      if (nameValue !== "" && textValue !== "") {
+        buttonElement.disabled = false;
+      } else {
+        buttonElement.disabled = true;
+      }
+    };
+    const renderUsers = () => {
+      const usersHtml = users
+        .map((user, index) => {
+          return user.isEdit == false
+            ? `<li class="comment" data-like='${user.likes}' data-index="${index}" >
+          <div class="comment-header">
+            <div>${user.name}</div>
+            <div>${user.comDate}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${user.comText}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <button class="edit-comment" data-index="${index}">Редактировать</button>
+            <div class="likes">
+              <span class="likes-counter">${user.likes}</span>
+              <button data-index='${index}' class="like-button ${user.active}"></button>
+            </div>
+          </div>
+        </li>`
+            : `<li class="comment" data-like='${user.likes}'  data-index="${index}">
+          <div class="comment-header">
+            <div>${user.name}</div>
+            <div>${user.comDate}</div>
+          </div>
+          <div class="comment-body">
+            <textarea
+          id="edit-text"
+          type="textarea"
+          class="add-form-text edit-text"
+          placeholder="Введите ваш коментарий"
+          rows="4"
+        >${user.comText}</textarea>
+          </div>
+          <div class="comment-footer">
+            <button  class="save-comment" data-index='${index}'>Сохранить</button>
+            <div class="likes">
+              <span class="likes-counter">${user.likes}</span>
+              <button data-index='${index}' class="like-button ${user.active}"></button>
+            </div>
+          </div>
+        </li>`;
+        })
+        .join("");
 
-    if (nameValue !== '' && textValue !== '') {
-      buttonElement.disabled = false;
-    } else {
-      buttonElement.disabled = true;
-    }
-  }
-
-  nameElement.addEventListener('input', checkValidity);
-  textElement.addEventListener('input', checkValidity);
+      listElement.innerHTML = usersHtml;
+      initEventListeners();
+      initEditListeners();
+      initSaveListener();
+      
+    };
+    renderUsers();
+    nameElement.addEventListener("input", checkValidity);
+    textElement.addEventListener("input", checkValidity);
     buttonElement.addEventListener("click", () => {
       textElement.classList.remove("error");
       nameElement.classList.remove("error");
@@ -110,30 +197,19 @@
         nameElement.classList.add("error");
         return;
       } else {
-      const oldListElement = listElement.innerHTML;
-      listElement.innerHTML =
-        oldListElement +
-        `<li class="comment">
-          <div class="comment-header">
-            <div>${nameElement.value}</div>
-            <div>${forrmattedDate}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${textElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
-    }
-    nameElement.value = "";
-    textElement.value = '';
-    buttonElement.disabled = true;
-  });
+        users.push({
+          name: nameElement.value,
+          comDate: forrmattedDate,
+          likes: 0,
+          comText: textElement.value,
+          active: "",
+          isEdit: false,
+        });
+      }
+      renderUsers();
+      nameElement.value = "";
+      textElement.value = "";
+      buttonElement.disabled = true;
+    });
   </script>
 </html>
