@@ -3,6 +3,7 @@ import {
   //deleteLastComment, deleteComment 
 } from "./formComments.js";
 import { myDate, secureInput } from "./optionalFunction.js";
+import { renderLoginComponent } from "./components/login-component.js"
 
 // export const buttonElement = document.querySelector('button.add-form-button');
 export const listElement = document.querySelector('.comments');
@@ -117,43 +118,14 @@ export const renderComments = () => {
 </div>`;
 
   if (!token) {
-    const appHtml = `<section id="loaderComments" class="loader -display-none">
-    <h4 id="loaderText" class="text-loader">Комментарии загружаются...</h4>
-  </section>
-  <div class="container">
-    <ul class="comments">
-    <!-- список рендерится из js !!!!!!!-->
-    ${commentHtml}
-    </ul>
-  
-    <div class="add-form add-form--register">
-      <h3>Чтобы добавить комментарий, авторизируйтесь</h3>
-      <input
-        type="text"
-        class="add-form-login"
-        placeholder="Введите логин"
-        value=""
-      />
-      <input
-        type="password"
-        class="add-form-password"
-        placeholder="Введите пароль"
-        rows="4"
-        value = ""
-      ></input>
-      <div class="add-form-row">
-      <button class="login-form-button">Войти</button>
-      </div>
-    </div>`;
-
-    appEl.innerHTML = appHtml;
-
-    document.querySelector('.login-form-button').addEventListener('click', () => {
-      token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
-      getFetchPromise();
-      //renderComments();
-    })
-
+    renderLoginComponent({
+      appEl, 
+      commentHtml, 
+      setToken: (newToken) => {
+        token = newToken;
+      },
+      getFetchPromise,
+    });
     return;
   }
 
@@ -253,22 +225,22 @@ export const renderComments = () => {
 
   const initChangeLikeButtonListeners = () => {
     const likeButtonElements = document.querySelectorAll('.like-button');
-  
+
     for (const likeButtonElement of likeButtonElements) {
       likeButtonElement.addEventListener('click', (event) => {
         event.stopPropagation();
         const index = likeButtonElement.dataset.index;
-  
+
         if (comments[index].isLike === false) {
           comments[index].likes += 1;
           comments[index].isLike = true;
-  
-  
+
+
         } else {
           comments[index].likes -= 1;
           comments[index].isLike = false;
         }
-  
+
         renderComments(listElement);
       })
     }
@@ -280,10 +252,10 @@ export const renderComments = () => {
       editButton.addEventListener('click', (e) => {
         e.stopPropagation();
         const index = editButton.dataset.index;
-  
+
         if (comments[index].isEdit === false) {
           comments[index].isEdit = true;
-  
+
         } else {
           comments[index].isEdit = false;
           const textareaEditElements = document.querySelectorAll(".edit-area-text");
@@ -309,7 +281,7 @@ export const renderComments = () => {
           }
         }
         renderComments(listElement)
-  
+
       });
     }
   };
