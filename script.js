@@ -28,12 +28,13 @@ const arrComments = [
 // ивенты на кнопки лайка
 const eventLike = () => {
     document.querySelectorAll('.like-button').forEach((button => {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', (event) => {
+            // отменяем всплытие
+            event.stopPropagation();
             objComment = arrComments[button.dataset.index];
             if (objComment.isLike){
                 objComment.likeCounter -= 1; 
                 objComment.isLike = false;
-
             } else {
                 objComment.likeCounter += 1; 
                 objComment.isLike = true;
@@ -49,7 +50,9 @@ const eventLike = () => {
 // ивенты на редакитрования
 const eventEdit = () => {
     document.querySelectorAll('.edit-button').forEach(button => {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', (event) => {
+            // отменяем всплытие
+            event.stopPropagation();
             objComment = arrComments[button.dataset.index];
             if (objComment.isEdit) {
                 if (objComment.text.trim() === '') return;  // в случае, если человек сотрет полностью комментарий кнопка сохранить станет неактивна;
@@ -64,6 +67,28 @@ const eventEdit = () => {
     })
 }
 
+// ивент на реплай коммента
+const eventReply = () => {
+    document.querySelectorAll('.comment').forEach(item => {
+        item.addEventListener('click', () => {
+            objComment = arrComments[item.dataset.index];
+            let str = objComment.text;
+
+            // в случае если у нас будет реплай на реплай, мы оставим только ответ
+            // цикл на случай, если будет несколько реплаев
+            while (str.indexOf("<div class='quote'>") !== -1) { 
+                const substr = str.substring(0, str.indexOf('</div>') + '</div>'.length);
+                str = str.replace(substr, '');
+            }
+
+            inputText.value += `[BEGIN_QUOTE]${str} - ${objComment.name}[END_QUOTE]\n\n`;
+
+            // переносим пользователя в поле ввода текста
+            inputText.focus();
+        })
+    })
+}
+
 // ивенты на запись нового комментария при редактировании input
 const evenEditInput = () => {
     document.querySelectorAll('.input-text').forEach(input => {
@@ -71,13 +96,27 @@ const evenEditInput = () => {
             objComment = arrComments[input.dataset.index];
             objComment.text = input.value;
         })
+
+        // В случае редактирования, при клики мыши срабатывало событие реплая
+        input.addEventListener('click', (event) => {
+            event.stopPropagation();
+        }) 
     })
 }
 
+
 // рендер комментария
 const renderComment = (name, text, date, isLike, likeCounter, isEdit, index) => {
+
+    // let str = text;
+    // while (str.indexOf("<div class='quote'>") !== -1 && isEdit) { 
+    //     const substr = str.substring(0, str.indexOf('</div>') + '</div>'.length);
+    //     str = str.replace(substr, '');
+    // }
+
+
     comments.innerHTML += ` 
-        <li class="comment">
+        <li class="comment" data-index="${index}">
             <div class="comment-header">
             <div>${name}</div>
             <div>${date}</div>
@@ -108,6 +147,7 @@ const renderAllComments = () => {
     eventLike();
     eventEdit();
     evenEditInput();
+    eventReply();
 }
 
 
@@ -133,8 +173,14 @@ const sendComment = () => {
     }
 
     arrComments.push({        
-        name: inputName.value,
-        text: inputText.value,
+        name: inputName.value
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;'),
+        text: inputText.value
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('[BEGIN_QUOTE]', "<div class='quote'>")
+        .replaceAll('[END_QUOTE]', '</div>'),
         date: getDate(new Date),
         like: false,
         likeCounter: 0
@@ -155,6 +201,7 @@ buttonAdd.addEventListener('click', sendComment)
 // Прыжок на поле комментариев при нажатии на Enter в поле имя
 inputName.addEventListener('keyup', (key) => {
     if(key.code === 'Enter') {
+        key.preventDefault();
         inputText.focus();
     };
 })
@@ -162,6 +209,8 @@ inputName.addEventListener('keyup', (key) => {
 // Использовал событие keydown, потому что при написаном тексте можно было зажать Enter и он срабатывал до тех пор пока его не отпустят
 inputText.addEventListener('keydown', (key) => {
     if(key.code === 'Enter') {
+        // чтобы не срабатывал enter
+        key.preventDefault();
         sendComment();
     };
 })
