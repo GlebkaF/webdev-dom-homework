@@ -143,7 +143,7 @@ const editButtons = document.querySelectorAll('.edit-button');
 for (const editButton of editButtons){
   const index = editButton.dataset.index;
   editButton.addEventListener('click',() => {
-    comments[index].isEdit == false ? comments[index].isEdit = true : comments[index].isEdit = false;
+    comments[index].isEdit = !comments[index].isEdit;
     renderComment();
   })
 }
@@ -154,7 +154,7 @@ const eventSaveButton = () => {
   const saveButtons = document.querySelectorAll('.save-button');
   for (const saveButton of saveButtons){
     const index = saveButton.dataset.index;
-    const editedComment = document.getElementById(`${index}0`);
+    const editedComment = document.getElementById(`${index}0`); // если 0 не поставим, то значение будет undefined вместо текста отредакт-го коммента
     saveButton.addEventListener('click',() =>{ 
       comments[index].text = editedComment.value;
       comments[index].isEdit = false;
@@ -166,7 +166,7 @@ const eventSaveButton = () => {
 //рендер комментария: 
 const renderComment = () => {
   const commentsHTML = comments.map((comment, index) => {
-    return comment.isEdit == true ?
+    return comment.isEdit ?
     `<li class="comment">
           <div class="comment-header">
             <div>${comment.name}</div>
