@@ -277,7 +277,6 @@ export const renderComments = () => {
     });
   };
 
-
   const validateButton = () => {
     if (!inputNameElement.value || !textareaElement.value) {
       buttonElement.disabled = true;
