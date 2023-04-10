@@ -28,15 +28,17 @@ export const getFetchPromise = () => {
     .then((responseData) => {
       const appComments = responseData.comments.map((comment) => {
         return {
-          name: secureInput(comment.author.name),
-          date: myDate(new Date(comment.date)),
-          text: secureInput(comment.text),
+          name: comment.author.name,
+          date: myDate(new Date()),
+          text: comment.text,
           likes: comment.likes,
           isLike: false,
-          token
+          token,
         };
       })
       comments = appComments;
+     
+     
       loaderCommentsElement.classList.add('-display-none');
       renderComments(listElement);
     }).catch((error) => {
@@ -194,8 +196,9 @@ export const renderComments = () => {
 
     addComment({
       name: secureInput(inputNameElement.value),
-      date: new Date(),
-      //myDate(new Date),
+      date: 
+      //new Date(),
+      myDate(new Date),
       text: secureInput(textareaElement.value),
       forceError: false,
       token,

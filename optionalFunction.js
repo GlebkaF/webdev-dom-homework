@@ -17,9 +17,14 @@ export const myDate = () => {
 
   //обезопасить ввод данных пользователя
   
-  export const secureInput = (safeText) => {
-    return safeText
-      .replaceAll("<", "&lt;")
+  // export const secureInput = (safeText) => {
+  //   return safeText.replaceAll("<", "&lt;")
+  //     .replaceAll(">", "&gt;")
+  //   //.replaceAll("&", "&amp;")
+  //   //.replaceAll('"', "&quot;");
+  // }
+  export function secureInput(safeText) {
+    return safeText.replaceAll("<", "&lt;")
       .replaceAll(">", "&gt;")
     //.replaceAll("&", "&amp;")
     //.replaceAll('"', "&quot;");
