@@ -1,4 +1,4 @@
-let host = 'https://webdev-hw-api.vercel.app/api/v2/:natalvod/comments';
+let host = 'https://webdev-hw-api.vercel.app/api/v2/:natalvod1/comments';
 
 export function getComments({ token }) {
     return fetch(host, {
@@ -86,4 +86,21 @@ export function loginUser({ login, password }) {
         }
     });
 }
+
+// export function deleteComment({ token, id }) {
+//     return fetch('https://webdev-hw-api.vercel.app/api/v2/:natalvod/comments/' + id, {
+//         method: "DELETE",
+//         headers: {
+//             Authorization: token,
+//         },
+//     })
+//         .then((response) => {
+//             if (response.status === 200) {
+//                 return response.json();
+            
+//             } else {
+//                 throw new Error("Удаление не получилось")
+//             }
+//         })
+// }
 

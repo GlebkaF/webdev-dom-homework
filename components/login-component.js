@@ -137,7 +137,6 @@ const renderForm = () => {
                 alert(error.message)
             });
         }
-
     });
 
     document.querySelector('.toggle-form-button').addEventListener('click', () => {
