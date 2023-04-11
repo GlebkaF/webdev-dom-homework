@@ -58,10 +58,12 @@ body {
   .comment-body {
     margin-top: 32px;
     margin-bottom: 32px;
+    overflow: hidden
   }
 
   .comment-text {
     font-size: 32px;
+    word-break: break-all;
   }
 
   .likes {
@@ -96,6 +98,7 @@ body {
     margin-top: 48px;
     display: flex;
     flex-direction: column;
+   
   }
 
   .add-form-name,
@@ -104,6 +107,10 @@ body {
     font-family: Helvetica;
     border-radius: 8px;
     border: none;
+    display: block;
+    white-space: pre-line
+
+  
   }
 
   .add-form-name {
@@ -115,6 +122,8 @@ body {
     margin-top: 12px;
     padding: 22px;
     resize: none;
+    display: block;
+    white-space: pre-line
   }
 
   .add-form-row {
@@ -148,7 +157,7 @@ body {
 
   .save-button{
     margin-top: 24px;
-    font-size: 24px;
+    font-size: 12px;
     padding: 5px 10px;
     background-color: #bcec30;
     border: none;
