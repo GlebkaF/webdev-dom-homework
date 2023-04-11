@@ -55,11 +55,21 @@
 
     const commentBlock = document.querySelector('.comments');
 
+
+    const convChar = (str) => {
+      str = str.replace(/&/g, "&amp;");
+      str = str.replace(/>/g, "&gt;");
+      str = str.replace(/</g, "&lt;");
+      str = str.replace(/"/g, "&quot;");
+      str = str.replace(/'/g, "&#039;");
+      return str;
+    }
+
     //обработчик события клика на лайк
     const initLikeButtonListeners = () => {
       const likeButtonsElements = document.querySelectorAll(".like-button");
       for (const likeButtonElement of likeButtonsElements) {
-        likeButtonElement.addEventListener("click", () => {
+        likeButtonElement.addEventListener("click", (event) => {
           const index = likeButtonElement.dataset.index;
           if(comments[index].activeLike == '-active-like') {
             comments[index].activeLike = '';
@@ -71,9 +81,22 @@
           }
 
           renderComments();
+          event.stopPropagation();
         });
       }
     };
+//событие клика на блок комментария для ответа
+    const initCommentAnswerListeners = () => {
+      const commentTextElements = document.querySelectorAll(".comment");
+      for (const commentTextElement of commentTextElements) {
+        commentTextElement.addEventListener('click', () => {
+          const index = commentTextElement.dataset.index;
+          const inputArea = document.querySelector('.add-form-text');
+          inputArea.innerHTML = `>${comments[index].text}\n\n${comments[index].name}`;
+          renderComments();
+        });
+      }
+    }
   //событие редактирования комментария
     const initEditButtonsListener = () => {
       const editButtonsElements = document.querySelectorAll('.edit-button');
@@ -94,7 +117,7 @@
         saveButtonElement.addEventListener('click', () => {
           const index = saveButtonElement.dataset.index;
           const editText = document.querySelector(`.edit-comment-text__${index}`).value;
-          comments[index].text = editText;
+          comments[index].text = convChar(editText);
           comments[index].edit = '';
           comments[index].save = 'button-none';
           comments[index].date = dateFormat();
@@ -106,9 +129,9 @@
     const renderComments = () => {
       const commentsHtml = comments.map(
               (comment, index) => {
-                return `<li class="comment">
+                return `<li class="comment" data-index="${index}">
                   <div class="comment-header">
-                    <div>${comment.name}</div>
+                    <div class="comment-author">${comment.name}</div>
                     <div>${comment.date}</div>
                   </div>
                   <div class="comment-body">
@@ -133,6 +156,7 @@
       initLikeButtonListeners();
       initEditButtonsListener();
       initSaveButtonsListener();
+      initCommentAnswerListeners();
     };
 
     renderComments();
@@ -194,7 +218,7 @@
         comments.push({
           name: name,
           date: date,
-          text: text,
+          text: convChar(text),
           likes: 0,
           activeLike: "",
           edit: "",
