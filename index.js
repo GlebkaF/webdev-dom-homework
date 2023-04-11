@@ -25,6 +25,8 @@ const options = {
 loaderStartElement.textContent = 'Пожалуйста, подождите, загружаю комментарии...';
 
 
+
+
 const fetchAndRenderComments = () => {
   // fetch - запускает запрос в api
   return fetch("https://webdev-hw-api.vercel.app/api/v1/ekaterina-budylina/comments", {
