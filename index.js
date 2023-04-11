@@ -1,5 +1,5 @@
 const buttonElement = document.getElementById("add-button");
-const deleteButtonElement = document.getElementById("delete-button");
+// const deleteButtonElement = document.getElementById("delete-button");
 const listElement = document.getElementById("list");
 const nameInputElement = document.getElementById("name-input");
 const textInputElement = document.getElementById("text-input");
@@ -23,6 +23,8 @@ const options = {
 
 
 loaderStartElement.textContent = 'Пожалуйста, подождите, загружаю комментарии...';
+
+
 
 
 const fetchAndRenderComments = () => {
@@ -83,7 +85,6 @@ const changeLikesListener = () => {
   }
 };
 
-
 //Добавление комментария
 
 buttonElement.addEventListener("click", () => {
@@ -121,13 +122,13 @@ buttonElement.addEventListener("click", () => {
         nameInputElement.value = "";
         textInputElement.value = "";
         return response.json();
-      } else if (response.status === 500)  {
+      } else if (response.status === 500) {
         alert("Сервер сломался, попробуй позже");
         // return Promise.reject("Сервер упал");
-      } else if (response.status === 400)  {
+      } else if (response.status === 400) {
         alert("Имя и комментарий должны быть не короче 3 символов");
         // return Promise.reject("Сервер упал");
-      } 
+      }
     })
     .then(() => {
       return fetchAndRenderComments();
@@ -147,9 +148,23 @@ buttonElement.addEventListener("click", () => {
   renderComments();
 });
 
+// кнопка удалить последний комментарий
+// function deleteComments() {
+//   const deleteButtons = document.querySelectorAll(".delete-button");
+//   for (const deleteButton of deleteButtons) {
+//     deleteButton.addEventListener("click", (event) => {
+//       console.log(deleteButton);
+//       event.stopPropagation();
+//       const index = deleteButton.dataset.id;
+//       comments.splice(index, 1);
+//       renderComments
+//     })
+//   }
+// };
 
 
-// блокировка кнопки
+
+// блокировка кнопки написать
 const validateInput = () => {
   if (nameInputElement.value === "" || textInputElement.value === "") {
     buttonElement.disabled = true;
@@ -198,23 +213,23 @@ const editComment = () => {
 
 const renderComments = () => {
   const commentsHtml = comments
-    .map((student, index) => {
+    .map((comment, index) => {
       return `
-        <li data-text = '&gt ${student.text} \n ${student.name
+        <li data-text = '&gt ${comment.text} \n ${comment.name
         }' class="comment">
           <div class="comment-header">
-            <div>${student.name}</div>
-            <div>${student.date}</div>
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${student.text}
+              ${comment.text}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">${student.counter}</span>
-              <button data-index = '${index}' class="${student.liked ? "like-button -active-like" : "like-button"
+              <span class="likes-counter">${comment.counter}</span>
+              <button data-index = '${index}' class="${comment.liked ? "like-button -active-like" : "like-button"
         }"></button>
             </div>
           </div>
@@ -223,6 +238,7 @@ const renderComments = () => {
     .join("");
   listElement.innerHTML = commentsHtml;
 
+  // deleteComments();
   changeLikesListener();
   editComment();
 };
