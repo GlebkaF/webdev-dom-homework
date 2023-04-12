@@ -58,6 +58,17 @@
         isEdit: false,
       },
     ];
+    const initResponseCommentsListeners = () => {
+      const responseComments = document.querySelectorAll(".comment-text");
+
+      for (responseComment of responseComments) {
+        const index = responseComment.dataset.index;
+        responseComment.addEventListener("click", () => {
+          textElement.value = `< ${comments[index].comText} \n
+${comments[index].name}`
+        });
+      }
+    };
 
     const initEventListeners = () => {
       const likeElements = document.querySelectorAll(".like-button");
@@ -94,7 +105,7 @@
         const index = saveElement.dataset.index;
         const editTextElement = document.getElementById("edit-text");
         saveElement.addEventListener("click", () => {
-          comments[index].comText = editTextElement.value;
+          comments[index].comText = editTextElement.value.replaceAll('<', '&gt');
           comments[index].isEdit = false;
           renderComments();
         });
@@ -126,19 +137,26 @@
     const renderComments = () => {
       const commentsHtml = comments
         .map((comment, index) => {
-          return comment.isEdit == false
-            ? `<li class="comment" data-like='${comment.likes}' data-index="${index}" >
+          return  `<li class="comment" data-like='${
+                comment.likes
+              }' data-index="${index}" >
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.comDate}</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
-              ${comment.comText}
+            <div class="comment-text" data-index='${index}'>
+              ${comment.isEdit == false ? comment.comText : `<textarea
+          id="edit-text"
+          type="textarea"
+          class="add-form-text edit-text"
+          placeholder="Введите ваш коментарий"
+          rows="4"
+        >${comment.comText}</textarea>`}
             </div>
           </div>
-          <div class="comment-footer">
-            <button class="edit-comment" data-index="${index}">Редактировать</button>
+          <div class="comment-footer"> ${comment.isEdit == false ?
+            `<button class="edit-comment" data-index="${index}">Редактировать</button>` :  `<button  class="save-comment" data-index='${index}'>Сохранить</button>`}
             <div class="likes">
               <span class="likes-counter">${comment.likes}</span>
               <button data-index='${index}' class="like-button  ${
@@ -147,39 +165,13 @@
             </div>
           </div>
         </li>`
-            : `<li class="comment" data-like='${
-                comment.likes
-              }'  data-index="${index}">
-          <div class="comment-header">
-            <div>${comment.name}</div>
-            <div>${comment.comDate}</div>
-          </div>
-          <div class="comment-body">
-            <textarea
-          id="edit-text"
-          type="textarea"
-          class="add-form-text edit-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        >${comment.comText}</textarea>
-          </div>
-          <div class="comment-footer">
-            <button  class="save-comment" data-index='${index}'>Сохранить</button>
-            <div class="likes">
-              <span class="likes-counter">${comment.likes}</span>
-              <button data-index='${index}' class="like-button ${
-                comment.isLiked ? "-active-like" : ""
-              }></button>
-            </div>
-          </div>
-        </li>`;
-        })
-        .join("");
+        }).join("");
 
       listElement.innerHTML = commentsHtml;
       initEventListeners();
       initEditListeners();
       initSaveListener();
+      initResponseCommentsListeners();
     };
     renderComments();
     nameElement.addEventListener("input", checkValidity);
@@ -200,10 +192,12 @@
         return;
       } else {
         comments.push({
-          name: nameElement.value,
+          name: nameElement.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
           comDate: forrmattedDate,
           likes: 0,
-          comText: textElement.value,
+          comText: textElement.value
+            .replaceAll("<", "&lt")
+            .replaceAll(">", "&gt"),
           isLiked: false,
           isEdit: false,
         });
