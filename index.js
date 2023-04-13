@@ -80,7 +80,7 @@ export const renderComments = () => {
   ${commentHtml}
   </ul>
   <div class="add-form">
-    <input
+    <input 
       type="text"
       class="add-form-name"
       placeholder="Введите ваше имя"
@@ -124,7 +124,7 @@ export const renderComments = () => {
   buttonElement.addEventListener('click', () => {
     inputNameElement.classList.remove('error');
     textareaElement.classList.remove('error')
-    if (!inputNameElement.value || !textareaElement.value) {
+    if (!textareaElement.value) {
       inputNameElement.classList.add('error');
       textareaElement.classList.add('error');
       return;
@@ -280,7 +280,7 @@ export const renderComments = () => {
   };
 
   const validateButton = () => {
-    if (!inputNameElement.value || !textareaElement.value) {
+    if (!textareaElement.value) {
       buttonElement.disabled = true;
     } else buttonElement.disabled = false;
   }
