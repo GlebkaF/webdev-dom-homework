@@ -6,43 +6,9 @@
   </head>
 
   <body>
-    <div class="container">
-      <ul class="comments" id="list">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
+    <div class="container" id="comments-list">
+      <ul class="comments" id="list"></ul>
+      
       <div class="add-form">
         <input
           type="text"
@@ -69,6 +35,53 @@
     const listElement = document.getElementById('list'); 
     const nameElement = document.getElementById('name');
     const commentsElement = document.getElementById('comments');
+    const commentsListElement = document.getElementById('comments-list')
+
+    const commentList = [{
+  name: "Глеб Фокин",
+  date: "12.02.22 12:18",
+  text: "Это будет первый комментарий на этой странице",
+  likes: 3,
+  activeLike: false,
+  activeClass: ""
+},
+{
+  name: "Варвана Н.",
+  date: "13.02.22 19:22",
+  text: "Мне нравится как оформлена эта страница! ❤",
+  likes: 75,
+  activeLike: false,
+  activeClass: "-active-like",
+  isEdit: true
+}];
+
+const renderCommentList = () => {
+const commentHtml = commentList.map((comment) => {
+return `<li>
+        <li class="comment">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.likes}</span>
+              <button class="like-button ${comment.activeClass}" id="add-like-button"></button>
+            </div>
+          </div>
+        </li>
+      </li>`
+  }).join('');
+  listElement.innerHTML = commentHtml;
+}
+
+renderCommentList();
+
     
     buttonElement.addEventListener("click", () => {
       if (nameElement.value === ""){
@@ -95,11 +108,33 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">0</span>
-              <button class="like-button"></button>
+              <button class="like-button" id="add-like-button"></button>
             </div>
           </div>
         </li>
       </li>`
+    });
+
+
+    const addLikeButton = () => {
+      const likeButtonElement = document.getElementById('add-like-button');
+  for (const buttonLike of buttonsLikesComment) {
+    buttonLike.addEventListener("click", () => {
+      index = buttonLike.dataset.buttonLike;
+
+      if (commentList[index].activeLike === false) {
+        commentList[index].activeLike = true
+        commentList[index].likes += 1
+        commentList[index].activeClass = "-active-like"
+      } else {
+        commentList[index].activeLike = false
+        commentList[index].likes -= 1
+        commentList[index].activeClass = ""
+      }
     })
+  }
+}
+
+renderCommentList()
   </script>
 </html>
