@@ -3,6 +3,7 @@ import { getComments, addComment,
   } from "./api.js";
 import { myDate, secureInput } from "./optionalFunction.js";
 import { renderLoginComponent } from "./components/login-component.js"
+import { format } from "date-fns";
 
 export const listElement = document.querySelector('.comments');
 export const loaderCommentsElement = document.getElementById('loaderComments');
