@@ -43,10 +43,11 @@ export const getFetchPromise = () => {
 
 export const renderComments = () => {
   const commentHtml = comments.map((comment, index) => {
+    const createDate = format(new Date(comment.date), 'yyyy-MM-dd hh.mm.ss');
     return `<li class="comment" data-name='${comment.name}' data-comment='${comment.text}'>
   <div class="comment-header">
     <div>${comment.name}</div>
-    <div>${myDate(new Date(comment.date))}</div>
+    <div>${createDate}</div>
   </div>
   <div class="comment-body">
 
