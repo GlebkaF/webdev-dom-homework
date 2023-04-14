@@ -8,7 +8,7 @@
   <body>
     <div class="container">
       <ul id="list" class="comments">
-        <li class="comment">
+        <!-- <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -41,7 +41,7 @@
               <button id="likes" class="like-button -active-like"></button>
             </div>
           </div>
-        </li>
+        </li> -->
       </ul>
       <div class="add-form">
         <input
@@ -75,9 +75,80 @@
     const nameElement = document.getElementById("name-input");
     const descrElement = document.getElementById("text-input");
     const blockElement = document.getElementsByClassName("comment");
-    const numberLikesElement = document.getElementsByClassName("number-likes");
-    const likesElement = document.getElementsByClassName("likes");
-    let date = new Date();
+    const likesElement = document.querySelectorAll(".like-button");
+
+    // let date = new Date();
+
+    const people = [
+      {
+        name: "Глеб Фокин",
+        descr: "Это будет первый комментарий на этой странице",
+        likesAmount: 0,
+        isLike: false,
+        date: new Date()
+      },
+      {
+        name: "Варвара Н.",
+        descr: "Мне нравится как оформлена эта страница! ❤",
+        likesAmount: 0,
+        isLike: false,
+        date: new Date()
+      },
+    ];
+
+    const renderList = () => {
+      const peopleListComment = people
+        .map((people, index) => {
+          return `<li class="comment">
+                     <div class="comment-header">
+                       <div>${people.name}</div>
+                       <div>${people.date.getDate()}.${people.date.getMonth()}.${people.date.getFullYear()} ${people.date.getHours()}:${people.date.getMinutes()}</div>
+                     </div>
+                     <div class="comment-body">
+                       <div class="comment-text">
+                         ${people.descr}
+                       </div>
+                     </div>
+                     <div class="comment-footer">
+                       <div class="likes">
+                         <span class="likes-counter">${people.likesAmount}</span>
+                         <button class="${people.isLike ? 'like-button -active-like' : 'like-button'}" data-index="${index}"></button>
+                       </div>
+                     </div>
+                   </li>`;
+        })
+        .join("");
+
+      listElement.innerHTML = peopleListComment;
+      initButtonsLikes();
+    };
+
+    renderList();
+
+    function initButtonsLikes() {
+      const numberLikesElements = document.querySelectorAll(".like-button");
+
+      for (const numberLikesElement of numberLikesElements) {
+        numberLikesElement.addEventListener("click", () => {
+          // 1. (+) Мы храним список студентов в js массиве
+          // 2. (+) При клике мы удаляем нужный элемент из массива
+          // 3. (+) На основе нового массива в js формируем html разметку списка
+        
+          let index = numberLikesElement.dataset.index;
+
+          if (people[index].isLike === false) {
+            people[index].likesAmount += 1;
+            numberLikesElement.classList.add("-active-like");
+            people[index].isLike = true;
+          } else {
+            numberLikesElement.classList.remove("-active-like");
+            people[index].likesAmount -= 1;
+            people[index].isLike = false;
+          }
+          renderList();
+        });
+      }
+    }
 
     nameElement.addEventListener("input", () => {
       if (nameElement.value === "" || descrElement.value === "") {
@@ -108,26 +179,12 @@
           descrElement.placeholder = "Впишите данные";
         } else {
           buttonAddElement.disabled = false;
-          const oldListElement = listElement.innerHTML;
-          listElement.innerHTML =
-            oldListElement +
-            `<li class="comment">
-          <div class="comment-header">
-            <div>${nameElement.value}</div>
-            <div>${date.getDate()}.${date.getMonth()}.${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${descrElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
+
+          people.push({
+            name: nameElement.value,
+            descr: descrElement.value,
+          });
+
           nameElement.value = "";
           descrElement.value = "";
         }
@@ -146,26 +203,16 @@
         descrElement.placeholder = "Впишите данные";
       } else {
         buttonAddElement.disabled = false;
-        const oldListElement = listElement.innerHTML;
-        listElement.innerHTML =
-          oldListElement +
-          `<li class="comment">
-          <div class="comment-header">
-            <div>${nameElement.value}</div>
-            <div>${date.getDate()}.${date.getMonth()}.${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${descrElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
+
+        people.push({
+          name: nameElement.value,
+          descr: descrElement.value,
+          likesAmount: 0,
+          isLike: false,
+          date: new Date()
+        });
+
+        renderList();
         nameElement.value = "";
         descrElement.value = "";
       }
