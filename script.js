@@ -189,23 +189,14 @@ const sendComment = () => {
         .replaceAll(">", "&gt;")
         .replaceAll("[BEGIN_QUOTE]", "<div class='quote'>")
         .replaceAll("[END_QUOTE]", "</div>"),
-
-      //   author: {
-      //     name: inputName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-      //   },
-      //   text: inputText.value
-      //     .replaceAll("<", "&lt;")
-      //     .replaceAll(">", "&gt;")
-      //     .replaceAll("[BEGIN_QUOTE]", "<div class='quote'>")
-      //     .replaceAll("[END_QUOTE]", "</div>"),
-      //   date: new Date(),
-      //   isLiked: false,
-      //   likes: 0,
-      //   id: arrComments.length
-    }),
-  });
-
-  getComments();
+    })
+  }).then((response) =>
+  response.json().then((data) => {
+    if (data.result === 'ok') {
+        getComments();
+    }
+  })
+);
 
   inputName.value = "";
   inputText.value = "";
