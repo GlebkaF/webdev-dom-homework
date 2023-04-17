@@ -56,7 +56,7 @@
 }];
 
 const renderCommentList = () => {
-const commentHtml = commentList.map((comment) => {
+const commentHtml = commentList.map((comment, index) => {
 return `<li>
         <li class="comment">
           <div class="comment-header">
@@ -71,7 +71,7 @@ return `<li>
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${comment.likes}</span>
-              <button class="like-button ${comment.activeClass}" id="add-like-button"></button>
+              <button class="like-button ${comment.activeClass}" data-button-like="${index}"></button>
             </div>
           </div>
         </li>
@@ -81,6 +81,19 @@ return `<li>
 }
 
 renderCommentList();
+
+
+const getDate = () => {
+  const date = new Date();
+
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear().toString().slice(-2);
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+
+  return `${day}.${month}.${year} ${hours}:${minutes}`;
+}
 
     
     buttonElement.addEventListener("click", () => {
@@ -98,7 +111,7 @@ renderCommentList();
         <li class="comment">
           <div class="comment-header">
             <div>${nameElement.value}</div>
-            <div>${new Date()}</div>
+            <div>${getDate()}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -108,7 +121,7 @@ renderCommentList();
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">0</span>
-              <button class="like-button" id="add-like-button"></button>
+              <button class="like-button add-like-button"></button>
             </div>
           </div>
         </li>
@@ -117,13 +130,13 @@ renderCommentList();
 
 
     const addLikeButton = () => {
-      const likeButtonElement = document.getElementById('add-like-button');
-  for (const buttonLike of buttonsLikesComment) {
+      const likeButtonElement = document.querySelectorAll('.add-like-button');
+  for (const buttonLike of likeButtonElement) {
     buttonLike.addEventListener("click", () => {
       index = buttonLike.dataset.buttonLike;
 
       if (commentList[index].activeLike === false) {
-        commentList[index].activeLike = true
+        commentaddLikeButton();List[index].activeLike = true
         commentList[index].likes += 1
         commentList[index].activeClass = "-active-like"
       } else {
@@ -131,10 +144,12 @@ renderCommentList();
         commentList[index].likes -= 1
         commentList[index].activeClass = ""
       }
+      renderCommentList();
     })
   }
 }
+addLikeButton();
 
-renderCommentList()
-  </script>
+
+</script>
 </html>
