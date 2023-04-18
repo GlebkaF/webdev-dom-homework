@@ -122,13 +122,13 @@ buttonElement.addEventListener("click", () => {
         nameInputElement.value = "";
         textInputElement.value = "";
         return response.json();
-      } else if (response.status === 500)  {
+      } else if (response.status === 500) {
         alert("Сервер сломался, попробуй позже");
         // return Promise.reject("Сервер упал");
-      } else if (response.status === 400)  {
+      } else if (response.status === 400) {
         alert("Имя и комментарий должны быть не короче 3 символов");
         // return Promise.reject("Сервер упал");
-      } 
+      }
     })
     .then(() => {
       return fetchAndRenderComments();
