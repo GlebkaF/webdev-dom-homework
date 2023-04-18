@@ -77,22 +77,20 @@
     const blockElement = document.getElementsByClassName("comment");
     const likesElement = document.querySelectorAll(".like-button");
 
-    // let date = new Date();
-
     const people = [
       {
         name: "Глеб Фокин",
         descr: "Это будет первый комментарий на этой странице",
         likesAmount: 0,
         isLike: false,
-        date: new Date()
+        date: new Date(),
       },
       {
         name: "Варвара Н.",
         descr: "Мне нравится как оформлена эта страница! ❤",
         likesAmount: 0,
         isLike: false,
-        date: new Date()
+        date: new Date(),
       },
     ];
 
@@ -105,14 +103,20 @@
                        <div>${people.date.getDate()}.${people.date.getMonth()}.${people.date.getFullYear()} ${people.date.getHours()}:${people.date.getMinutes()}</div>
                      </div>
                      <div class="comment-body">
-                       <div class="comment-text">
+                       <div class="comment-text" data-text="${people.descr}">
                          ${people.descr}
                        </div>
                      </div>
                      <div class="comment-footer">
                        <div class="likes">
-                         <span class="likes-counter">${people.likesAmount}</span>
-                         <button class="${people.isLike ? 'like-button -active-like' : 'like-button'}" data-index="${index}"></button>
+                         <span class="likes-counter">${
+                           people.likesAmount
+                         }</span>
+                         <button class="${
+                           people.isLike
+                             ? "like-button -active-like"
+                             : "like-button"
+                         }" data-index="${index}"></button>
                        </div>
                      </div>
                    </li>`;
@@ -121,6 +125,7 @@
 
       listElement.innerHTML = peopleListComment;
       initButtonsLikes();
+      changeComment();
     };
 
     renderList();
@@ -133,7 +138,7 @@
           // 1. (+) Мы храним список студентов в js массиве
           // 2. (+) При клике мы удаляем нужный элемент из массива
           // 3. (+) На основе нового массива в js формируем html разметку списка
-        
+
           let index = numberLikesElement.dataset.index;
 
           if (people[index].isLike === false) {
@@ -150,6 +155,17 @@
       }
     }
 
+    function changeComment() {
+      const changeTextComment = document.querySelectorAll(".comment-text");
+
+      for (const changeTextCommen of changeTextComment) {
+        changeTextCommen.addEventListener("click", () => {
+          let text = changeTextCommen.dataset.text;
+          descrElement.innerHTML = changeTextCommen.dataset.text;
+        });
+        renderList();
+      }
+    }
     nameElement.addEventListener("input", () => {
       if (nameElement.value === "" || descrElement.value === "") {
         buttonAddElement.disabled = true;
@@ -209,7 +225,7 @@
           descr: descrElement.value,
           likesAmount: 0,
           isLike: false,
-          date: new Date()
+          date: new Date(),
         });
 
         renderList();
