@@ -1,43 +1,35 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Проект "Комменты"</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
-      <p id="loader-start"></p>
-      <ul id="list" class="comments">
-        <!-- Список рендерится из JS -->
-      </ul>
-      <div>
-        <p id="loader-post">Комментарий добавляется...</p>
-      </div>
-      <div class="add-form">
-        <input
-          type="text"
-          id="name-input"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          id="text-input"
-          class="add-form-text"
-          placeholder="Введите ваш комментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button id="add-button" class="add-form-button"> Написать </button>
-          <!-- <button data-id="" id="delete-button" class="delete-button"> Удалить </button> -->
-        </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Проект "Комменты"</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <p id="loader-start"></p>
+    <ul id="list" class="comments">
+      <!-- Список рендерится из JS -->
+    </ul>
+    <div>
+      <p id="loader-post">Комментарий добавляется...</p>
+    </div>
+    <div class="add-form">
+      <input type="text" id="name-input" class="add-form-name" placeholder="Введите ваше имя" />
+      <textarea type="textarea" id="text-input" class="add-form-text" placeholder="Введите ваш комментарий"
+        rows="4"></textarea>
+      <div class="add-form-row">
+        <button id="add-button" class="add-form-button"> Написать </button>
+        <!-- <button data-id="" id="delete-button" class="delete-button"> Удалить </button> -->
       </div>
     </div>
-  </body>
+  </div>
+</body>
 
-  <script src="./index.js"></script>
+<script type="module" src="./index.js"></script>
+
 </html>

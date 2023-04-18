@@ -1,42 +1,28 @@
+import { options } from "./api.js";
+import getApi from "./api.js";
+import { postApi } from "./api.js";
+import { nameInputElement } from "./api.js";
+import { textInputElement } from "./api.js";
+import renderComments from "./render.js";
+
 const buttonElement = document.getElementById("add-button");
 // const deleteButtonElement = document.getElementById("delete-button");
-const listElement = document.getElementById("list");
-const nameInputElement = document.getElementById("name-input");
-const textInputElement = document.getElementById("text-input");
+export const listElement = document.getElementById("list");
+
 const mainForm = document.querySelector(".add-form");
 
 const loaderStartElement = document.getElementById("loader-start");
 const loaderPostElement = document.getElementById("loader-post");
 
-let comments = [];
-
-const options = {
-  year: "2-digit",
-  month: "numeric",
-  day: "numeric",
-  timezone: "UTC",
-  hour: "numeric",
-  minute: "2-digit",
-};
+export let comments = [];
 
 // Получаем данные из хранилища
 
-
 loaderStartElement.textContent = 'Пожалуйста, подождите, загружаю комментарии...';
-
-
-
 
 const fetchAndRenderComments = () => {
   // fetch - запускает запрос в api
-  return fetch("https://webdev-hw-api.vercel.app/api/v1/ekaterina-budylina/comments", {
-    method: "GET",
-    forceError: true,
-  })
-    .then((response) => {
-      // Запускаем преобразовываем "сырые" данные от API в json формат
-      return response.json();
-    })
+  return getApi()
     .then((responseData) => {
       comments = responseData.comments.map((comment) => {
         return {
@@ -65,7 +51,7 @@ loaderPostElement.style.display = "none";
 
 // Оживляем кнопку лайков
 
-const changeLikesListener = () => {
+export const changeLikesListener = () => {
   const buttonLikeElements = document.querySelectorAll(".like-button");
 
   for (const buttonLikeElement of buttonLikeElements) {
@@ -97,23 +83,7 @@ buttonElement.addEventListener("click", () => {
     return;
   }
 
-  const date = new Date().toLocaleString("ru-RU", options);
-
-  fetch("https://webdev-hw-api.vercel.app/api/v1/ekaterina-budylina/comments", {
-    method: "POST",
-    body: JSON.stringify({
-      name: nameInputElement.value
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;"),
-      date: date,
-      text: textInputElement.value
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;"),
-      counter: 0,
-      liked: false,
-      forceError: true,
-    }),
-  })
+  postApi()
     .then((response) => {
       console.log(response);
       if (response.status === 201) {
@@ -194,7 +164,7 @@ mainForm.addEventListener('keydown', (e) => {
 
 // ответ на комментарии
 
-const editComment = () => {
+export const editComment = () => {
   const comments = document.querySelectorAll(".comment");
   const textInputElement = document.getElementById("text-input");
   for (const comment of comments) {
@@ -206,43 +176,6 @@ const editComment = () => {
 };
 
 
-
-//DOM 2
-
-//рендер-функция
-
-const renderComments = () => {
-  const commentsHtml = comments
-    .map((comment, index) => {
-      return `
-        <li data-text = '&gt ${comment.text} \n ${comment.name
-        }' class="comment">
-          <div class="comment-header">
-            <div>${comment.name}</div>
-            <div>${comment.date}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${comment.text}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">${comment.counter}</span>
-              <button data-index = '${index}' class="${comment.liked ? "like-button -active-like" : "like-button"
-        }"></button>
-            </div>
-          </div>
-        </li>`;
-    })
-    .join("");
-  listElement.innerHTML = commentsHtml;
-
-  // deleteComments();
-  changeLikesListener();
-  editComment();
-};
 fetchAndRenderComments();
 renderComments();
 buttonBlock();
-
