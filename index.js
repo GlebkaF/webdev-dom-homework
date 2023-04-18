@@ -1,28 +1,41 @@
-import { options } from "./api.js";
-import getApi from "./api.js";
-import { postApi } from "./api.js";
-import { nameInputElement } from "./api.js";
-import { textInputElement } from "./api.js";
-import renderComments from "./render.js";
-
 const buttonElement = document.getElementById("add-button");
-// const deleteButtonElement = document.getElementById("delete-button");
-export const listElement = document.getElementById("list");
-
+const deleteButtonElement = document.getElementById("delete-button");
+const listElement = document.getElementById("list");
+const nameInputElement = document.getElementById("name-input");
+const textInputElement = document.getElementById("text-input");
 const mainForm = document.querySelector(".add-form");
 
 const loaderStartElement = document.getElementById("loader-start");
 const loaderPostElement = document.getElementById("loader-post");
 
-export let comments = [];
+let comments = [];
+
+
+const options = {
+  year: "2-digit",
+  month: "numeric",
+  day: "numeric",
+  timezone: "UTC",
+  hour: "numeric",
+  minute: "2-digit",
+};
 
 // Получаем данные из хранилища
 
+
 loaderStartElement.textContent = 'Пожалуйста, подождите, загружаю комментарии...';
+
 
 const fetchAndRenderComments = () => {
   // fetch - запускает запрос в api
-  return getApi()
+  return fetch("https://webdev-hw-api.vercel.app/api/v1/ekaterina-budylina/comments", {
+    method: "GET",
+    forceError: true,
+  })
+    .then((response) => {
+      // Запускаем преобразовываем "сырые" данные от API в json формат
+      return response.json();
+    })
     .then((responseData) => {
       comments = responseData.comments.map((comment) => {
         return {
@@ -51,7 +64,7 @@ loaderPostElement.style.display = "none";
 
 // Оживляем кнопку лайков
 
-export const changeLikesListener = () => {
+const changeLikesListener = () => {
   const buttonLikeElements = document.querySelectorAll(".like-button");
 
   for (const buttonLikeElement of buttonLikeElements) {
@@ -71,6 +84,7 @@ export const changeLikesListener = () => {
   }
 };
 
+
 //Добавление комментария
 
 buttonElement.addEventListener("click", () => {
@@ -83,7 +97,23 @@ buttonElement.addEventListener("click", () => {
     return;
   }
 
-  postApi()
+  const date = new Date().toLocaleString("ru-RU", options);
+
+  fetch("https://webdev-hw-api.vercel.app/api/v1/ekaterina-budylina/comments", {
+    method: "POST",
+    body: JSON.stringify({
+      name: nameInputElement.value
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;"),
+      date: date,
+      text: textInputElement.value
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;"),
+      counter: 0,
+      liked: false,
+      forceError: true,
+    }),
+  })
     .then((response) => {
       console.log(response);
       if (response.status === 201) {
@@ -92,13 +122,13 @@ buttonElement.addEventListener("click", () => {
         nameInputElement.value = "";
         textInputElement.value = "";
         return response.json();
-      } else if (response.status === 500) {
+      } else if (response.status === 500)  {
         alert("Сервер сломался, попробуй позже");
         // return Promise.reject("Сервер упал");
-      } else if (response.status === 400) {
+      } else if (response.status === 400)  {
         alert("Имя и комментарий должны быть не короче 3 символов");
         // return Promise.reject("Сервер упал");
-      }
+      } 
     })
     .then(() => {
       return fetchAndRenderComments();
@@ -118,23 +148,9 @@ buttonElement.addEventListener("click", () => {
   renderComments();
 });
 
-// кнопка удалить последний комментарий
-// function deleteComments() {
-//   const deleteButtons = document.querySelectorAll(".delete-button");
-//   for (const deleteButton of deleteButtons) {
-//     deleteButton.addEventListener("click", (event) => {
-//       console.log(deleteButton);
-//       event.stopPropagation();
-//       const index = deleteButton.dataset.id;
-//       comments.splice(index, 1);
-//       renderComments
-//     })
-//   }
-// };
 
 
-
-// блокировка кнопки написать
+// блокировка кнопки
 const validateInput = () => {
   if (nameInputElement.value === "" || textInputElement.value === "") {
     buttonElement.disabled = true;
@@ -164,7 +180,7 @@ mainForm.addEventListener('keydown', (e) => {
 
 // ответ на комментарии
 
-export const editComment = () => {
+const editComment = () => {
   const comments = document.querySelectorAll(".comment");
   const textInputElement = document.getElementById("text-input");
   for (const comment of comments) {
@@ -176,6 +192,42 @@ export const editComment = () => {
 };
 
 
+
+//DOM 2
+
+//рендер-функция
+
+const renderComments = () => {
+  const commentsHtml = comments
+    .map((student, index) => {
+      return `
+        <li data-text = '&gt ${student.text} \n ${student.name
+        }' class="comment">
+          <div class="comment-header">
+            <div>${student.name}</div>
+            <div>${student.date}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${student.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${student.counter}</span>
+              <button data-index = '${index}' class="${student.liked ? "like-button -active-like" : "like-button"
+        }"></button>
+            </div>
+          </div>
+        </li>`;
+    })
+    .join("");
+  listElement.innerHTML = commentsHtml;
+
+  changeLikesListener();
+  editComment();
+};
 fetchAndRenderComments();
 renderComments();
 buttonBlock();
+
