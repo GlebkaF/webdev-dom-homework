@@ -59,13 +59,13 @@
       },
     ];
     const initResponseCommentsListeners = () => {
-      const responseComments = document.querySelectorAll(".comment-text");
+      const responseComments = document.querySelectorAll(".comment");
 
       for (responseComment of responseComments) {
         const index = responseComment.dataset.index;
         responseComment.addEventListener("click", () => {
           textElement.value = `< ${comments[index].comText} \n
-${comments[index].name}`
+${comments[index].name}`;
         });
       }
     };
@@ -75,7 +75,7 @@ ${comments[index].name}`
 
       for (likeElement of likeElements) {
         const index = likeElement.dataset.index;
-        likeElement.addEventListener("click", () => {
+        likeElement.addEventListener("click", (event) => {
           if (comments[index].isLiked === false) {
             comments[index].likes += 1;
             comments[index].isLiked = true;
@@ -83,7 +83,7 @@ ${comments[index].name}`
             comments[index].likes -= 1;
             comments[index].isLiked = false;
           }
-
+          event.stopPropagation();
           renderComments();
         });
       }
@@ -105,7 +105,10 @@ ${comments[index].name}`
         const index = saveElement.dataset.index;
         const editTextElement = document.getElementById("edit-text");
         saveElement.addEventListener("click", () => {
-          comments[index].comText = editTextElement.value.replaceAll('<', '&gt');
+          comments[index].comText = editTextElement.value.replaceAll(
+            "<",
+            "&gt"
+          );
           comments[index].isEdit = false;
           renderComments();
         });
@@ -137,35 +140,43 @@ ${comments[index].name}`
     const renderComments = () => {
       const commentsHtml = comments
         .map((comment, index) => {
-          return  `<li class="comment" data-like='${
-                comment.likes
-              }' data-index="${index}" >
+          return `<li class="comment" data-like='${
+            comment.likes
+          }' data-index="${index}" >
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.comDate}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text" data-index='${index}'>
-              ${comment.isEdit == false ? comment.comText : `<textarea
+              ${
+                comment.isEdit == false
+                  ? comment.comText
+                  : `<textarea
           id="edit-text"
           type="textarea"
           class="add-form-text edit-text"
           placeholder="Введите ваш коментарий"
           rows="4"
-        >${comment.comText}</textarea>`}
+        >${comment.comText}</textarea>`
+              }
             </div>
           </div>
-          <div class="comment-footer"> ${comment.isEdit == false ?
-            `<button class="edit-comment" data-index="${index}">Редактировать</button>` :  `<button  class="save-comment" data-index='${index}'>Сохранить</button>`}
+          <div class="comment-footer"> ${
+            comment.isEdit == false
+              ? `<button class="edit-comment" data-index="${index}">Редактировать</button>`
+              : `<button  class="save-comment" data-index='${index}'>Сохранить</button>`
+          }
             <div class="likes">
               <span class="likes-counter">${comment.likes}</span>
               <button data-index='${index}' class="like-button  ${
-                comment.isLiked ? "-active-like" : ""
-              }"></button>
+            comment.isLiked ? "-active-like" : ""
+          }"></button>
             </div>
           </div>
-        </li>`
-        }).join("");
+        </li>`;
+        })
+        .join("");
 
       listElement.innerHTML = commentsHtml;
       initEventListeners();
