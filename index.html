@@ -162,8 +162,8 @@
         changeTextCommen.addEventListener("click", () => {
           let text = changeTextCommen.dataset.text;
           descrElement.innerHTML = changeTextCommen.dataset.text;
+          renderList();
         });
-        renderList();
       }
     }
     nameElement.addEventListener("input", () => {
@@ -221,8 +221,16 @@
         buttonAddElement.disabled = false;
 
         people.push({
-          name: nameElement.value,
-          descr: descrElement.value,
+          name: nameElement.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;"),
+          descr: descrElement.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;"),
           likesAmount: 0,
           isLike: false,
           date: new Date(),
