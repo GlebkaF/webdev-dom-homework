@@ -50,7 +50,7 @@
   date: "13.02.22 19:22",
   text: "Мне нравится как оформлена эта страница! ❤",
   likes: 75,
-  activeLike: false,
+  activeLike: true,
   activeClass: "-active-like",
   isEdit: true
 }];
@@ -78,9 +78,11 @@ return `<li>
       </li>`
   }).join('');
   listElement.innerHTML = commentHtml;
+  addLikeButton();
 }
 
 renderCommentList();
+
 
 
 const getDate = () => {
@@ -105,38 +107,25 @@ const getDate = () => {
         alert("Пожалуйста введите коментарий!");
         return;
       };
-      const oldListHtml = listElement.innerHTML;
-      listElement.innerHTML = oldListHtml + 
-      `<li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>${nameElement.value}</div>
-            <div>${getDate()}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${commentsElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button add-like-button"></button>
-            </div>
-          </div>
-        </li>
-      </li>`
+     commentList.push({
+        name: nameElement.value,
+        date: getDate(),
+        text: commentsElement.value,
+        likes: 0,
+        activeLike: false,
+        activeClass: ""
+        });
+    renderCommentList();
     });
 
 
-    const addLikeButton = () => {
-      const likeButtonElement = document.querySelectorAll('.add-like-button');
+    function addLikeButton(){
+      const likeButtonElement = document.querySelectorAll('.like-button');
   for (const buttonLike of likeButtonElement) {
     buttonLike.addEventListener("click", () => {
       index = buttonLike.dataset.buttonLike;
-
       if (commentList[index].activeLike === false) {
-        commentaddLikeButton();List[index].activeLike = true
+        commentList[index].activeLike = true
         commentList[index].likes += 1
         commentList[index].activeClass = "-active-like"
       } else {
