@@ -40,24 +40,36 @@
     const editElements = document.querySelectorAll(".edit-comment");
     const saveElements = document.querySelectorAll(".save-comment");
 
-    const comments = [
-      {
-        name: "Глеб Фокин",
-        comDate: "12.02.22 12:18",
-        likes: 3,
-        comText: "Это будет первый комментарий на этой странице",
-        isLiked: false,
-        isEdit: false,
-      },
-      {
-        name: "Варвара Н",
-        comDate: "13.02.22 19:22",
-        likes: 75,
-        comText: "Мне нравится как оформлена эта страница! ❤",
-        isLiked: false,
-        isEdit: false,
-      },
-    ];
+    let comments = [];
+    const getComments = () => {
+      const fetchPromise = fetch(
+        "https://webdev-hw-api.vercel.app/api/v1/ramal.bakirov/comments",
+        {
+          method: "GET",
+        }
+      );
+
+      fetchPromise.then((response) => {
+        const jsonPromise = response.json().then((responseData) => {
+          const appComments = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              comDate: new Date(comment.date)
+                .toLocaleString("ru-RU", options)
+                .replace(",", ""),
+              comText: comment.text,
+              likes: comment.likes,
+              isLiked: false,
+              isEdit: false,
+            };
+          });
+          comments = appComments;
+          renderComments();
+        });
+      });
+    };
+    getComments();
+
     const initResponseCommentsListeners = () => {
       const responseComments = document.querySelectorAll(".comment");
 
@@ -92,8 +104,9 @@ ${comments[index].name}`;
       const editElements = document.querySelectorAll(".edit-comment");
       for (editElement of editElements) {
         const index = editElement.dataset.index;
-        editElement.addEventListener("click", () => {
+        editElement.addEventListener("click", (event) => {
           comments[index].isEdit = true;
+          event.stopPropagation();
           renderComments();
         });
       }
@@ -104,12 +117,13 @@ ${comments[index].name}`;
       for (saveElement of saveElements) {
         const index = saveElement.dataset.index;
         const editTextElement = document.getElementById("edit-text");
-        saveElement.addEventListener("click", () => {
+        saveElement.addEventListener("click", (event) => {
           comments[index].comText = editTextElement.value.replaceAll(
             "<",
             "&gt"
           );
           comments[index].isEdit = false;
+          event.stopPropagation();
           renderComments();
         });
       }
@@ -202,21 +216,28 @@ ${comments[index].name}`;
         nameElement.classList.add("error");
         return;
       } else {
-        comments.push({
-          name: nameElement.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
-          comDate: forrmattedDate,
-          likes: 0,
-          comText: textElement.value
-            .replaceAll("<", "&lt")
-            .replaceAll(">", "&gt"),
-          isLiked: false,
-          isEdit: false,
-        });
+        const fetchPromise = fetch(
+          "https://webdev-hw-api.vercel.app/api/v1/ramal.bakirov/comments",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              name: nameElement.value,
+              text: textElement.value,
+            }),
+          }
+        ).then((response) =>
+          response.json().then((data) => {
+            if (data.result === "ok") {
+              getComments();
+            }
+          })
+        );
       }
-      renderComments();
+
       nameElement.value = "";
       textElement.value = "";
       buttonElement.disabled = true;
+      renderComments();
     });
   </script>
 </html>
