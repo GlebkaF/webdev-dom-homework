@@ -2,58 +2,32 @@ const inputName = document.querySelector(".add-form-name");
 const inputText = document.querySelector(".add-form-text");
 const comments = document.querySelector(".comments");
 const buttonAdd = document.querySelector(".add-form-button");
+const addFormBox = document.querySelector('.add-form');
+const preloader =  document.querySelector(".preloader");
 
-// масив комментариев, тут хранятся все комментарии
-let arrComments = [];
 
-// Получаем из API все комменты
-const getComments = () => {
-  document.querySelector(".preloader").classList.add("--ON");
-  fetch("https://webdev-hw-api.vercel.app/api/v1/Komoza_Maxim/comments", {
-    method: "GET",
-  }).then((response) =>
-    response.json().then((data) => {
-      arrComments = data.comments;
-      renderAllComments();
-      document.querySelector(".preloader").classList.remove("--ON");
-    })
-  );
-};
+// ===== EVENTS =====
 
-// форматирование даты
-const getDate = (date) => {
-  const day = date.getDate().toString().padStart(2, "0");
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
-  const year = date.getFullYear().toString().slice(-2);
-  const hours = date.getHours().toString().padStart(2, "0");
-  const minutes = date.getMinutes().toString().padStart(2, "0");
-
-  return `${day}.${month}.${year} ${hours}:${minutes}`;
-};
-
-// ивенты на кнопки лайка
 const eventLike = () => {
   document.querySelectorAll(".like-button").forEach((button) => {
     button.addEventListener("click", (event) => {
-      // отменяем всплытие
       event.stopPropagation();
 
       objComment = arrComments[button.dataset.index];
-      if (objComment.isLiked) {
-        objComment.likes -= 1;
-        objComment.isLiked = false;
-      } else {
-        objComment.likes += 1;
-        objComment.isLiked = true;
-      }
-      // после добавления лайка в объект, его надо перерендерить для отображения
-      renderAllComments();
+      button.classList.add('-loading-like');
+      delay(2000).then(() => {
+        if (objComment.isLiked) {
+          objComment.likes -= 1;
+          objComment.isLiked = false;
+        } else {
+          objComment.likes += 1;
+          objComment.isLiked = true;
+        }
+        renderAllComments();
+      })
     });
   });
 };
-
-// ивенты на редакитрования
-
 const eventEdit = () => {
   document.querySelectorAll(".edit-button").forEach((button, key) => {
     button.addEventListener("click", (event) => {
@@ -73,8 +47,6 @@ const eventEdit = () => {
     });
   });
 };
-
-// ивент на реплай коммента
 const eventReply = () => {
   document.querySelectorAll(".comment").forEach((item) => {
     item.addEventListener("click", () => {
@@ -98,8 +70,6 @@ const eventReply = () => {
     });
   });
 };
-
-// ивенты на запись нового комментария при редактировании input
 const evenEditInput = () => {
   document.querySelectorAll(".input-text").forEach((input) => {
     input.addEventListener("keyup", (key) => {
@@ -113,8 +83,95 @@ const evenEditInput = () => {
     });
   });
 };
+buttonAdd.addEventListener("click", sendComment);
+inputName.addEventListener("keyup", (key) => {
+  if (key.code === "Enter") {
+    key.preventDefault();
+    inputText.focus();
+  }
+});
+inputText.addEventListener("keydown", (key) => {
+  if (key.code === "Enter") {
+    // чтобы не срабатывал enter
+    key.preventDefault();
+    sendComment();
+  }
+});
+inputText.addEventListener("input", switchButton);
+inputName.addEventListener("input", switchButton);
 
-// рендер комментария
+
+// масив комментариев, тут хранятся все комментарии
+let arrComments = [];
+
+
+// Получаем из API все комменты
+const getComments = () => {
+  preloader.classList.add("--ON");
+  addFormBox.classList.remove('--ON');
+
+  fetch("https://webdev-hw-api.vercel.app/api/v1/Komoza_Maxim/comments", {
+    method: "GET",
+  })
+  .then((response) => response.json()
+  .then((data) => {
+      arrComments = data.comments;
+      renderAllComments();
+      preloader.classList.remove("--ON");
+      addFormBox.classList.add("--ON");
+    })
+  );
+};
+
+function sendComment() {
+  // проверка на пустые поля
+  if (
+    inputName.value.trim().length <= 3 ||
+    inputText.value.trim().length <= 3
+  ) {
+    return;
+  }
+
+  preloader.classList.add("--ON");
+  addFormBox.classList.remove("--ON");
+
+  fetch("https://webdev-hw-api.vercel.app/api/v1/Komoza_Maxim/comments", {
+    method: "POST",
+    body: JSON.stringify({
+      name: inputName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+      text: inputText.value
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll("[BEGIN_QUOTE]", "<div class='quote'>")
+        .replaceAll("[END_QUOTE]", "</div>"),
+    })
+  })
+  .then((response) => response.json()
+  .then((data) => {
+    if (data.result === 'ok') {
+        getComments();
+    }
+  })
+);
+
+  inputName.value = "";
+  inputText.value = "";
+
+  switchButton();
+};
+
+// форматирование даты
+const getDate = (date) => {
+  const day = date.getDate().toString().padStart(2, "0");
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const year = date.getFullYear().toString().slice(-2);
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+
+  return `${day}.${month}.${year} ${hours}:${minutes}`;
+};
+
+
 const renderComment = (id, name, text, date, isLike, likeCounter, isEdit) => {
   comments.innerHTML += ` 
         <li class="comment" data-index="${id}">
@@ -143,8 +200,6 @@ const renderComment = (id, name, text, date, isLike, likeCounter, isEdit) => {
         </li>
     `;
 };
-
-// отрисовка всех комментариев, из html комменты удалил
 const renderAllComments = () => {
   // перед рендером удаляем все комменты которые были, чтобы они не дублировались
   comments.innerHTML = "";
@@ -169,67 +224,8 @@ const renderAllComments = () => {
   eventReply();
 };
 
-const sendComment = () => {
-  // проверка на пустые поля
-  if (
-    inputName.value.trim().length <= 3 ||
-    inputText.value.trim().length <= 3
-  ) {
-    return;
-  }
 
-  document.querySelector(".preloader").classList.add("--ON");
-
-  fetch("https://webdev-hw-api.vercel.app/api/v1/Komoza_Maxim/comments", {
-    method: "POST",
-    body: JSON.stringify({
-      name: inputName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-      text: inputText.value
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll("[BEGIN_QUOTE]", "<div class='quote'>")
-        .replaceAll("[END_QUOTE]", "</div>"),
-    })
-  }).then((response) =>
-  response.json().then((data) => {
-    if (data.result === 'ok') {
-        getComments();
-    }
-  })
-);
-
-  inputName.value = "";
-  inputText.value = "";
-
-  // после добавления коммента кнопка снова становится неактивной, так как все поля пустые
-  switchButton();
-};
-
-// Не прописал колбек внутри потому что потом вызову эту функцию в другом событии
-buttonAdd.addEventListener("click", sendComment);
-
-// Прыжок на поле комментариев при нажатии на Enter в поле имя
-inputName.addEventListener("keyup", (key) => {
-  if (key.code === "Enter") {
-    key.preventDefault();
-    inputText.focus();
-  }
-});
-
-// Использовал событие keydown, потому что при написаном тексте можно было зажать Enter и он срабатывал до тех пор пока его не отпустят
-inputText.addEventListener("keydown", (key) => {
-  if (key.code === "Enter") {
-    // чтобы не срабатывал enter
-    key.preventDefault();
-    sendComment();
-  }
-});
-
-/* 
-1. else добавлен на случай, если пользователь напишет сообщение, а затем его сотрет 
-2. добавил класс avtive и накинул на него :hover потому что hover отрабатывал и на неактивную кнопку.
-*/
-const switchButton = () => {
+function switchButton () {
   // Проверка на > 3 так как в другом случае api даст ошибку
   if (inputName.value.trim().length > 3 && inputText.value.trim().length > 3) {
     buttonAdd.classList.add("active");
@@ -240,8 +236,13 @@ const switchButton = () => {
   }
 };
 
-inputText.addEventListener("input", switchButton);
-inputName.addEventListener("input", switchButton);
+function delay(interval = 300) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, interval);
+  });
+}
 
 // Пока у меня нет доступа к изменению или удалению, удаление не работает
 
