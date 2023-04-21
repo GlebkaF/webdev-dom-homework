@@ -108,15 +108,19 @@ const getDate = () => {
         return;
       };
      commentList.push({
-        name: nameElement.value,
+        name: nameElement.value.replaceAll('<', '&lt').replaceAll('>', '&gt'),
         date: getDate(),
-        text: commentsElement.value,
+        text: commentsElement.value.replaceAll('<', '&lt').replaceAll('>', '&gt'),
         likes: 0,
         activeLike: false,
         activeClass: ""
         });
     renderCommentList();
     });
+
+    
+
+    // <img src="." onerror="alert ('ха ха. Ваши данные украдены');">
 
 
     function addLikeButton(){
@@ -136,9 +140,15 @@ const getDate = () => {
       renderCommentList();
     })
   }
-}
-addLikeButton();
+};
 
+commentsListElement.addEventListener("click", () => {
+  const answerHtml = commentList.map((comment) => {
+    return `'&gt'${comment.text} ${comment.name},`
+  });
+  commentsElement.innerHTML = answerHtml;
+}
+);
 
 </script>
 </html>
