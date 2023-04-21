@@ -126,7 +126,8 @@ const getDate = () => {
     function addLikeButton(){
       const likeButtonElement = document.querySelectorAll('.like-button');
   for (const buttonLike of likeButtonElement) {
-    buttonLike.addEventListener("click", () => {
+    buttonLike.addEventListener("click", (event) => {
+      event.stopPropagation();
       index = buttonLike.dataset.buttonLike;
       if (commentList[index].activeLike === false) {
         commentList[index].activeLike = true
@@ -142,11 +143,13 @@ const getDate = () => {
   }
 };
 
-commentsListElement.addEventListener("click", () => {
+commentsListElement.addEventListener("click", (event) => {
+  event.stopPropagation();
   const answerHtml = commentList.map((comment) => {
     return `'&gt'${comment.text} ${comment.name},`
   });
   commentsElement.innerHTML = answerHtml;
+  
 }
 );
 
