@@ -43,6 +43,7 @@
     const nameInputElement = document.getElementById("name-input");
     const commentInputElement = document.getElementById("comment-input");
     const likeButtonElements = document.querySelectorAll(".like-button");
+    const editButtonElements = document.querySelectorAll(".edit-button");
 
     // Data in array
 
@@ -68,7 +69,7 @@
 
       // Like button
 
-      const initLikeButtonListeners = () => {
+      const initLikeButton = () => {
       const likeButtonElements = document.querySelectorAll(".like-button");
       for (const likeButtonElement of likeButtonElements) {
         const index = likeButtonElement.dataset.index;
@@ -86,6 +87,7 @@
         });
       }
     };
+
 
     const renderUserComments = () => {
       const userCommentsHtml = userComments.map((userComment, index) => {
@@ -108,7 +110,7 @@
         </li>`;
       }).join('');
       listElement.innerHTML = userCommentsHtml;
-      initLikeButtonListeners();
+      initLikeButton();
     };
   
 
