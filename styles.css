@@ -148,4 +148,21 @@ body {
   }
   .error{
     background-color: red;
-  };
+  }
+  .load-like{
+    animation: rotating 2s linear infinite;
+  }
+  @keyframes rotating {
+    from {
+      transform: rotate(0deg);
+    }
+    25% {
+      transform: rotate(30deg);;
+    }
+    75% {
+      transform: rotate(-30deg);;
+    }
+    to {
+      transform: rotate(0deg);
+    }
+  }

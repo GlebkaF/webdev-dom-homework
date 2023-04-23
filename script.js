@@ -3,14 +3,21 @@ const commentElement = document.querySelector(".comments");
 const formName = document.querySelector(".add-form-name");
 const formText = document.querySelector(".add-form-text");
 const deleteButton = document.querySelector(".delete-form-button");
-
-let commentsOld = [];
+const load = document.querySelector(".load");
+const form = document.querySelector(".add-form");
+const newForm = form.innerHTML;
+// Не работает?
+/*let commentsOld = [];
+load.textContent = "Подождите, пожалуйста, комментарии загружаются...";
 
 fetchComments = () => {
- fetch("https://webdev-hw-api.vercel.app/api/v1/Ekaterina_Ivanova/comments", {
+ return fetch("https://webdev-hw-api.vercel.app/api/v1/Ekaterina_Ivanova/comments", {
   method: "GET"
-}).then((response) => {
-    response.json().then((responseData) => {
+})
+.then((response) => {
+     return response.json();
+})
+.then((responseData) => {
       let commentsApp = responseData.comments.map((comment) => {
         return {
           name: comment.author.name,
@@ -19,12 +26,41 @@ fetchComments = () => {
           countLike: comment.likes,
           likeComment: false,
           isLoading: true,
-        };
-      });
+        }
+      })
       commentsOld = commentsApp;
-    renderLike();
-  });
-});
+      renderLike();
+      const newLoad = commentElement.innerHTML;
+      load.innerHTML = newLoad;
+    })
+};
+fetchComments();
+*/
+let commentsOld = [];
+
+load.textContent = "Подождите, пожалуйста, комментарии загружаются...";
+fetchComments = () => {
+ return fetch("https://webdev-hw-api.vercel.app/api/v1/Ekaterina_Ivanova/comments", {
+  method: "GET"
+})
+.then((response) => {
+     return response.json();
+})
+.then((responseData) => {
+      let commentsApp = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          data: new Date(comment.date).toLocaleString(),
+          text: comment.text,
+          countLike: comment.likes,
+          likeComment: false,
+          isLoading: true,
+        }
+      })
+      commentsOld = commentsApp;
+      renderLike();
+      load.style.display = 'none';
+    })
 };
 fetchComments();
 
@@ -47,18 +83,27 @@ const renderLike = () => {
         </div>
       </div>
     </li>`
-  }).join("");
+}).join("");
   commentElement.innerHTML = likeHtml;
   initEventLike();
   answer();
 };
 
+function delay(interval = 300) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, interval);
+  });
+};
 const initEventLike = () => {
   const likeButtons = document.querySelectorAll(".like-button");
   for(const likeButton of likeButtons){
     const index = likeButton.dataset.index;
   likeButton.addEventListener('click', (event) => {
     event.stopPropagation();
+    likeButton.classList.add("load-like");
+    delay(2000).then(() => {
     if (commentsOld[index].likeComment) {
       commentsOld[index].likeComment = false;
       commentsOld[index].countLike -= 1;
@@ -67,6 +112,7 @@ const initEventLike = () => {
       commentsOld[index].countLike += 1;
     }
     renderLike();
+    });
       });
     };
   };
@@ -82,7 +128,7 @@ const initEventLike = () => {
     });
   };
   };
-
+fetchComments();
 renderLike();
 
 buttonElement.addEventListener("click", () => {
@@ -97,20 +143,26 @@ buttonElement.addEventListener("click", () => {
     return;
   };
 
+  buttonElement.disabled = true;
+  form.innerHTML = "Комментарий добавляется...";
+
  const newComment = fetch("https://webdev-hw-api.vercel.app/api/v1/Ekaterina_Ivanova/comments", {
     method: "POST",
     body: JSON.stringify({
       name: formName.value.replaceAll('<','&lt;').replaceAll('>','&gt;'),
       text: formText.value.replaceAll('<','&lt;').replaceAll('>','&gt;'),
     })
-  }).then((response) => {
-    response.json().then((responseData) => {
-      if (responseData.result === 'ok') {
-        fetchComments();
-      }
-      commentsOld = responseData.comments;
-    })
   })
+  .then((response) => {
+    return response.json();
+  })
+  .then(() => {
+       return fetchComments();
+    })
+  .then(() => {
+    buttonElement.disabled = false;
+    form.innerHTML = newForm;
+  });
 
 
   renderLike();
@@ -119,6 +171,7 @@ formName.value = "";
 formText.value = "";
 
 });
+
 formName.addEventListener('keyup', function(event) {
   event.preventDefault();
   if(event.keyCode === 13) {
@@ -136,14 +189,3 @@ deleteButton.addEventListener("click", () => {
   const lastComment = commentElement.innerHTML.lastIndexOf('<li class="comment">');
     commentElement.innerHTML = commentElement.innerHTML.slice(0, lastComment);
 });
-
-/*const eventLoading = () => {
-const loading = document.querySelector(".container");
-buttonElement.addEventListener("click", (el) => {
-  el.stopPropagation();
- loading.addEventListener("load", () => {
-    loading.innerHTML = 'Комментарий добавляется...';
-  })
-});
-renderLike();
-}*/
