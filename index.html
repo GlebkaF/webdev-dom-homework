@@ -24,7 +24,7 @@
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button id="add-button" class="add-form-button">Написать</button>
+          <button disabled=""true id="add-button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
@@ -56,6 +56,7 @@
         likeCounter: 3,
         clicked: false,
         active: "",
+        isEdit: false,
       },
       {
         name: "Варвара Н.",
@@ -64,6 +65,7 @@
         likeCounter: 75,
         clicked: false,
         active: "",
+        isEdit: false,
       },
     ];
 
@@ -89,10 +91,47 @@
       }
     };
 
+     // Edit button
+
+     const initEditButton = () => {
+      const editButtonElements = document.querySelectorAll(".edit-button");
+      for (const editButtonElement of editButtonElements) {
+        const index = editButtonElement.dataset.index;
+        editButtonElement.addEventListener("click", () => {
+          if (!userComments[index].clicked) {
+            userComments[index].isEdit = true;
+          } else {
+            userComments[index].isEdit = false;
+          }
+          renderUserComments();
+        });
+      }
+    };
+
 
     const renderUserComments = () => {
       const userCommentsHtml = userComments.map((userComment, index) => {
-        return `<li class="comment">
+        return userComments.isEdit == true ?
+         `<li class="comment">
+          <div class="comment-header">
+            <div>${userComment.name}</div>
+            <div>${userComment.date}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              <textarea id="${index}" class="edit-text" type="textarea"></textarea>
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${userComment.likeCounter}</span>
+              <button data-index="${index}" class="like-button ${userComment.active}"></button>
+            </div>
+          </div>
+          <button data-index="${index}" class="save-button" type="button">Сохранить</button>
+        </li>`
+        :
+        `<li class="comment">
           <div class="comment-header">
             <div>${userComment.name}</div>
             <div>${userComment.date}</div>
@@ -102,6 +141,7 @@
               ${userComment.comment}
             </div>
           </div>
+          <button data-index="${index}" class="edit-button" type="button">Редактировать</button>
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${userComment.likeCounter}</span>
@@ -112,6 +152,7 @@
       }).join('');
       listElement.innerHTML = userCommentsHtml;
       initLikeButton();
+      initEditButton();
     };
   
 
@@ -141,6 +182,22 @@
         return;
       }
 
+      // Validation form check for the button
+    
+    const validateForm = () => {
+      if (nameInputElement.value.trim === "") {
+        buttonElement.disabled = true;
+        return;
+      }
+  
+      if (commentInputElement.value === "") {
+        buttonElement.disabled = true;
+        return;
+      }
+
+      buttonElement.disabled = false;
+    }
+
       // Adding new comment
 
       userComments.push({
@@ -150,6 +207,7 @@
         likeCounter: 0,
         clicked: false,
         active: "",
+        isEdit: false,
       });
 
 
