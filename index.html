@@ -231,15 +231,15 @@ ${comments[index].name}`;
         )
           .then((response) => {
             return response.json();
-          }).then(()=> {
-             getComments();
-            buttonElement.textContent = 'Написать'
-          }) 
+          })
           .then((data) => {
             if (data.result === "ok") {
-              
+              getComments();
             }
-          });
+          }).then(()=> {
+             
+            buttonElement.textContent = 'Написать'
+          }) 
       }
        
       nameElement.value = "";
