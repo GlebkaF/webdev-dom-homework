@@ -234,11 +234,10 @@ ${comments[index].name}`;
           })
           .then((data) => {
             if (data.result === "ok") {
-              getComments();
+              getComments().then(() => {
+                buttonElement.textContent = 'Написать'
+              })
             }
-          }).then(()=> {
-             
-            buttonElement.textContent = 'Написать'
           }) 
       }
        
