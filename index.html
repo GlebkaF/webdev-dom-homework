@@ -83,43 +83,12 @@
 
     const inputEnter = document.querySelector('.add-form');
    
-    inputEnter.addEventListener('keyup', function(event){
-      if (event.keyCode === 13) {
-        if (userNameElement.value === "" || userCommentElement.value === "") {
+
+const checkAndAdd = () => {
+  if (userNameElement.value === "" || userCommentElement.value === "") {
      addCommentElement.disabled = true;
      setTimeout(() => addCommentElement.disabled = false, 1000);
-     return;
-    }
-
-        commentsElement.innerHTML += 
-      `<li class="comment">
-          <div class="comment-header">
-            <div>${userNameElement.value}</div>
-            <div>${shortDate}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${userCommentElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
-      }
-    });
-
-    addCommentElement.addEventListener("click", () => {
-      
-      if (userNameElement.value === "" || userCommentElement.value === "") {
-     addCommentElement.disabled = true;
-     setTimeout(() => addCommentElement.disabled = false, 1000);
-     return;
-    }
-
+     return;}
       commentsElement.innerHTML += 
       `<li class="comment">
           <div class="comment-header">
@@ -138,10 +107,19 @@
             </div>
           </div>
         </li>`;
-    })
+}
+
+    addCommentElement.addEventListener("click", checkAndAdd);
+    inputEnter.addEventListener('keyup', function(event){
+      if (event.key === "Enter") {
+        checkAndAdd();
+      }
+    });
+
     deleteCommentElement.addEventListener("click", () => {
       commentsElement.removeChild(commentsElement.lastElementChild);
     })
+
     // Код писать здесь
     console.log("It works!");
   </script>
