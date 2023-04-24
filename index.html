@@ -24,7 +24,7 @@
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button disabled=""true id="add-button" class="add-form-button">Написать</button>
+          <button disabled="true" id="add-button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
@@ -168,11 +168,14 @@
     return fullDate;
     }
 
-    // Validation data check
     
-    buttonElement.addEventListener("click", () => {
+
+     const addNewElementToList = () => {
+
+      // Validation data check
+
       nameInputElement.classList.remove('error');
-      if (nameInputElement.value === "") {
+       if (nameInputElement.value === "") {
         nameInputElement.classList.add('error');
         return;
       }
@@ -181,22 +184,6 @@
         commentInputElement.classList.add('error');
         return;
       }
-
-      // Validation form check for the button
-    
-    const validateForm = () => {
-      if (nameInputElement.value.trim === "") {
-        buttonElement.disabled = true;
-        return;
-      }
-  
-      if (commentInputElement.value === "") {
-        buttonElement.disabled = true;
-        return;
-      }
-
-      buttonElement.disabled = false;
-    }
 
       // Adding new comment
 
@@ -209,13 +196,43 @@
         active: "",
         isEdit: false,
       });
-
-
-        renderUserComments();
+         renderUserComments();
 
         nameInputElement.value = "";
         commentInputElement.value = "";
-    });
+     };
 
+     buttonElement.addEventListener("click", addNewElementToList);
+
+
+
+    // Validation form check for the button
+
+    const validateForm = () => {
+      if (nameInputElement.value === "") {
+        buttonElement.disabled = true;
+        return;
+      }
+  
+      if (commentInputElement.value === "") {
+        buttonElement.disabled = true;
+        return;
+      }
+
+      buttonElement.disabled = false;
+    };
+
+    nameInputElement.addEventListener("input", validateForm);
+    commentInputElement.addEventListener("input", validateForm);
+
+    // Enter button
+
+    document.addEventListener("keyup", (event) => {
+      console.log("keyup", `${event.code}`);
+      if (event.code === 'Enter') {
+        addNewElementToList();
+      }
+    });
+  
   </script>
 </html>
