@@ -2,9 +2,8 @@ const inputName = document.querySelector(".add-form-name");
 const inputText = document.querySelector(".add-form-text");
 const comments = document.querySelector(".comments");
 const buttonAdd = document.querySelector(".add-form-button");
-const addFormBox = document.querySelector('.add-form');
-const preloader =  document.querySelector(".preloader");
-
+const addFormBox = document.querySelector(".add-form");
+const preloader = document.querySelector(".preloader");
 
 // ===== EVENTS =====
 
@@ -14,7 +13,7 @@ const eventLike = () => {
       event.stopPropagation();
 
       objComment = arrComments[button.dataset.index];
-      button.classList.add('-loading-like');
+      button.classList.add("-loading-like");
       delay(2000).then(() => {
         if (objComment.isLiked) {
           objComment.likes -= 1;
@@ -24,7 +23,7 @@ const eventLike = () => {
           objComment.isLiked = true;
         }
         renderAllComments();
-      })
+      });
     });
   });
 };
@@ -100,34 +99,36 @@ inputText.addEventListener("keydown", (key) => {
 inputText.addEventListener("input", switchButton);
 inputName.addEventListener("input", switchButton);
 
-
 // масив комментариев, тут хранятся все комментарии
 let arrComments = [];
-
 
 // Получаем из API все комменты
 const getComments = () => {
   preloader.classList.add("--ON");
-  addFormBox.classList.remove('--ON');
+  addFormBox.classList.remove("--ON");
 
   fetch("https://webdev-hw-api.vercel.app/api/v1/Komoza_Maxim/comments", {
     method: "GET",
   })
-  .then((response) => response.json()
-  .then((data) => {
+    .then((response) => response.json())
+    .then((data) => {
       arrComments = data.comments;
       renderAllComments();
       preloader.classList.remove("--ON");
       addFormBox.classList.add("--ON");
     })
-  );
+    .catch((error) => {
+      // если я правильно понял, то по идее в get тоже могут попадать ошибки, как минимум дроп связи и прочее...
+      alert("Упс, кажется что-то пошло не так...");
+      // тут должен быть код для записи ошибки в логи
+    });
 };
 
 function sendComment() {
   // проверка на пустые поля
   if (
-    inputName.value.trim().length <= 3 ||
-    inputText.value.trim().length <= 3
+    inputName.value.trim().length === 0 ||
+    inputText.value.trim().length === 0
   ) {
     return;
   }
@@ -144,21 +145,56 @@ function sendComment() {
         .replaceAll(">", "&gt;")
         .replaceAll("[BEGIN_QUOTE]", "<div class='quote'>")
         .replaceAll("[END_QUOTE]", "</div>"),
+      forceError: true,
+    }),
+  })
+    .then((response) => {
+      if (response.status === 201) {
+        return response.json();
+      } else if (response.status === 400) {
+        /* 
+          Решил показать ошибку которую уже обрабатывают на бэке, а не писать свою.
+          Не уверен, что так лучше
+        */
+        response.json().then((data) => {
+          const alertText = data.error
+            .replace("name", "Имя")
+            .replace("text", "Комментарий");
+
+          alert(alertText);
+        });
+        throw Error("400");
+
+        // тут должен быть код для записи ошибки в логи
+      } else if (response.status === 500) {
+        throw Error("500");
+      } else {
+        throw Error("Хз, мб с интернетом траблы");
+      }
     })
-  })
-  .then((response) => response.json()
-  .then((data) => {
-    if (data.result === 'ok') {
+    .then((data) => {
+      if (data.result === "ok") {
         getComments();
-    }
-  })
-);
+        inputName.value = "";
+        inputText.value = "";
 
-  inputName.value = "";
-  inputText.value = "";
-
-  switchButton();
-};
+        switchButton();
+      }
+    })
+    .catch((error) => {
+      if (error.message !== "500") {
+        if (error.message !== "400") {
+          alert("Упс, кажется что-то пошло не так...");
+        }
+        // тут должен быть код для записи ошибки в логи
+        preloader.classList.remove("--ON");
+        addFormBox.classList.add("--ON");
+      } else {
+        // мне кажется сюда стоит добавить количество попыток, чтобы глубоко не уходить в рекурсию
+        sendComment();
+      }
+    });
+}
 
 // форматирование даты
 const getDate = (date) => {
@@ -170,7 +206,6 @@ const getDate = (date) => {
 
   return `${day}.${month}.${year} ${hours}:${minutes}`;
 };
-
 
 const renderComment = (id, name, text, date, isLike, likeCounter, isEdit) => {
   comments.innerHTML += ` 
@@ -224,17 +259,19 @@ const renderAllComments = () => {
   eventReply();
 };
 
-
-function switchButton () {
+function switchButton() {
   // Проверка на > 3 так как в другом случае api даст ошибку
-  if (inputName.value.trim().length > 3 && inputText.value.trim().length > 3) {
+  if (
+    inputName.value.trim().length !== 0 &&
+    inputText.value.trim().length !== 0
+  ) {
     buttonAdd.classList.add("active");
     buttonAdd.classList.remove("inactive");
   } else {
     buttonAdd.classList.add("inactive");
     buttonAdd.classList.remove("active");
   }
-};
+}
 
 function delay(interval = 300) {
   return new Promise((resolve) => {
