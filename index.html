@@ -58,7 +58,7 @@
 const renderCommentList = () => {
 const commentHtml = commentList.map((comment, index) => {
 return `<li>
-        <li class="comment">
+        <li class="comment data-comment-content="${index}">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.date}</div>
@@ -103,7 +103,7 @@ const getDate = () => {
         alert("Пожалуйста введите имя!");
         return;
       };
-      if (commentsElement.value === ""){
+      if (с === ""){
         alert("Пожалуйста введите коментарий!");
         return;
       };
@@ -143,15 +143,24 @@ const getDate = () => {
   }
 };
 
-commentsListElement.addEventListener("click", (event) => {
-  event.stopPropagation();
-  const answerHtml = commentList.map((comment) => {
-    return `'&gt'${comment.text} ${comment.name},`
-  });
-  commentsElement.innerHTML = answerHtml;
-  
-}
-);
+function replyComment(){
+  const contentsReplyComments = document.querySelectorAll(".comment");
+  for (const replyComment of contentsReplyComments) {
+    replyComment.addEventListener("click", () => {
+      index = replyComment.dataset.commentContent;
+      commentsElement.value =
+        "QUOTE_START" +
+        ` ${commentList[index].text}` +
+        "QUOTE_END" + `${commentList[index].name}`
+    })
+   
+  }
+};
+replyComment();
+
+
+
+
 
 </script>
 </html>
