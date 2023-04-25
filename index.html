@@ -47,11 +47,14 @@
     </ul>
 
     <div class="add-form">
-      <input type="text" id="add-form-name" class="add-form-name" placeholder="Введите ваше имя" />
-      <textarea type="textarea" id="add-form-text" class="add-form-text" placeholder="Введите ваш коментарий"
-        rows="4"></textarea>
+      <input type="text" id="add-form-name" class="add-form-name" onchange="toggleButton()"
+        placeholder="Введите ваше имя" />
+
+      <textarea type="textarea" id="add-form-text" class="add-form-text" onchange="toggleButton()"
+        placeholder="Введите ваш коментарий" rows="4"></textarea>
+
       <div class="add-form-row">
-        <button id="add-form-button" class="add-form-button">Написать</button>
+        <button type="button" id="add-form-button" class="add-form-button" disabled>Написать</button>
       </div>
     </div>
   </div>
@@ -59,6 +62,10 @@
   <style>
     .error {
       background-color: #f55f5f;
+    }
+
+    button[type="button"]:disabled {
+      background: #ccc;
     }
   </style>
 
@@ -69,7 +76,35 @@
     const nameInputElement = document.getElementById("add-form-name");
     const commentInputElement = document.getElementById("add-form-text");
 
-    // функция клик
+    // функция на определение времени комментариев
+    let myDate = new Date();
+    let day = myDate.getDate();
+    let month = myDate.getMonth();
+    let year = myDate.getFullYear();
+    let hour = myDate.getHours();
+    let minute = myDate.getMinutes();
+
+    if (minute < 10) {
+      minute = "0" + minute;
+    }
+    if (month < 10) {
+      month = "0" + month;
+    }
+
+    let fullDate = day + "." + month + "." + year + " " + hour + ":" + minute;
+
+    // валидация на ввод (неактивная кнопка "Написать")
+    function toggleButton() {
+      if (nameInputElement.value && commentInputElement.value) {
+        document.getElementById('add-form-button').disabled = false;
+        return;
+      } else {
+        document.getElementById('add-form-button').disabled = true;
+        return;
+      }
+    }
+
+    // функция клик addEventListener
     buttonElement.addEventListener('click', () => {
 
       // валидация на ввод
@@ -84,23 +119,6 @@
         commentInputElement.classList.add("error");
         return;
       }
-
-      // функция на определение времени комментариев
-      let myDate = new Date();
-      let day = myDate.getDate();
-      let month = myDate.getMonth();
-      let year = myDate.getFullYear();
-      let hour = myDate.getHours();
-      let minute = myDate.getMinutes();
-
-      if (minute < 10) {
-        minute = "0" + minute;
-      }
-      if (month < 10) {
-        month = "0" + month;
-      }
-
-      let fullDate = day + "." + month + "." + year + " " + hour + ":" + minute;
 
       // добавление нового комментария
       const oldListOfComments = listOfComments.innerHTML;
