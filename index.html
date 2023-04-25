@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="list">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -49,14 +49,17 @@
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          value=""
+          id="name-input"
         />
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+          id="text-input"
         ></textarea>
-        <div class="add-form-row">
+        <div class="add-form-row" id="add-button">
           <button class="add-form-button">Написать</button>
         </div>
       </div>
@@ -66,6 +69,47 @@
   <script>
     "use strict";
     // Код писать здесь
-    console.log("It works!");
+
+    const addButton = document.getElementById('add-button');
+    const nameInputElement = document.getElementById('name-input');
+    const textInputElement = document.getElementById('text-input');
+    const listElement = document.getElementById('list');
+
+    const fullDate = new Date();
+    let time = fullDate.toTimeString().slice(0, 5);
+    let day = fullDate.getDate();
+    let month = ((fullDate.getMonth() + 1) < 10) ? '0' + (fullDate.getMonth() + 1) : (fullDate.getMonth() + 1);
+    let year = Number(String(fullDate.getFullYear()).substring(2));
+    let actualDate = day + '.' + month + '.' + year + ' ' + time;
+    
+
+      addButton.addEventListener('click', () => {
+        const oldListHtml = listElement.innerHTML;
+
+      if (nameInputElement.value === '' || textInputElement.value === '') {
+          alert('Пожалуйста, заполните формы корректно')
+          return
+      };
+
+      listElement.innerHTML = oldListHtml + `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${actualDate}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+    });
+    
+  console.log("It works!");
   </script>
 </html>
