@@ -66,6 +66,9 @@
     .error {
       background-color: red;
     }
+    .disabled {
+      background-color: gray;
+    }
   </style>
 
   <script>
@@ -79,13 +82,16 @@
     const commentInputElement = document.getElementById("comment-input");
     buttonElement.addEventListener("click",() => {
       nameInputElement.classList.remove("error");
+      buttonElement.classList.remove("disabled");
         if (nameInputElement.value === "") {
           nameInputElement.classList.add("error");
+          buttonElement.classList.add("disabled")
           return;
         };
         commentInputElement.classList.remove("error");
         if (commentInputElement.value === '') {
           commentInputElement.classList.add("error");
+          buttonElement.classList.add("disabled")
           return;
         };
       const oldListHtml = listElement.innerHTML;
