@@ -78,6 +78,7 @@ return `<li>
       </li>`
   }).join('');
   listElement.innerHTML = commentHtml;
+  replyComment();
   addLikeButton();
 }
 
@@ -103,7 +104,7 @@ const getDate = () => {
         alert("Пожалуйста введите имя!");
         return;
       };
-      if (с === ""){
+      if (commentsElement.value === ""){
         alert("Пожалуйста введите коментарий!");
         return;
       };
@@ -156,7 +157,6 @@ function replyComment(){
    
   }
 };
-replyComment();
 
 
 
