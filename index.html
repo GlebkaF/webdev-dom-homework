@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="comments-users">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -49,23 +49,96 @@
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          id="name-input"
         />
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+          id="text-input"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="button-add">Написать</button>
         </div>
       </div>
     </div>
   </body>
-
+  <style>
+    .error {
+      background-color: red;
+    }
+    .empty {
+      background-color: grey;
+    }
+  </style>
   <script>
     "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    
+    const buttonElement = document.getElementById("button-add");
+    const listElement = document.getElementById("comments-users");
+    const nameInputElement = document.getElementById("name-input");
+    const textInputElement = document.getElementById("text-input");
+    
+
+    buttonElement.addEventListener("click", () => {
+
+      if (nameInputElement.value === '' && textInputElement.value === '') {
+        nameInputElement.classList.add('error');
+        textInputElement.classList.add('error');
+        return;
+      }
+
+      if (nameInputElement.value === '') {
+        nameInputElement.classList.add('error');
+        buttonElement.classList.add('empty');
+        buttonElement.setAttribute('disabled', '');
+        return;
+      }
+
+      if (textInputElement.value === '') {
+        textInputElement.classList.add('error');
+        buttonElement.classList.add('empty');
+        buttonElement.setAttribute('disabled', '');
+        return;
+      }
+
+      let currentDate = new Date();
+      let currentMonth = Number(currentDate.getMonth() + 1);
+      let currentMinute = currentDate.getMinutes()
+
+      if (currentMonth < 10) {
+        currentMonth = "0" + currentMonth;
+      }
+    
+      if (currentMinute < 10) {
+        currentMinute = "0" + currentMinute;
+      }
+
+      let shownDate = currentDate.getDate() + '.' + currentMonth + '.' + currentDate.getFullYear() + ' ' + currentDate.getHours() + ':' + currentMinute;
+
+      const oldListHtml = listElement.innerHTML;
+      listElement.innerHTML = oldListHtml + 
+      `<li class="comment">
+        <div class="comment-header">
+          <div>${nameInputElement.value}</div>
+          <div>${shownDate}</div>
+        </div>
+        <div class="comment-body">
+            <div class="comment-text">
+              ${textInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+      </li>`;
+
+      nameInputElement.value = ''; // Очищаем форму для следующего комментария
+      textInputElement.value = '';
+    });
   </script>
 </html>
