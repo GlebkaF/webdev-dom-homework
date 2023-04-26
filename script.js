@@ -6,8 +6,8 @@ const deleteButton = document.querySelector(".delete-form-button");
 const load = document.querySelector(".load");
 const form = document.querySelector(".add-form");
 const newForm = form.innerHTML;
-// Не работает?
-/*let commentsOld = [];
+
+let comments = [];
 load.textContent = "Подождите, пожалуйста, комментарии загружаются...";
 
 fetchComments = () => {
@@ -18,7 +18,7 @@ fetchComments = () => {
      return response.json();
 })
 .then((responseData) => {
-      let commentsApp = responseData.comments.map((comment) => {
+      comments = responseData.comments.map((comment) => {
         return {
           name: comment.author.name,
           data: new Date(comment.date).toLocaleString(),
@@ -28,15 +28,17 @@ fetchComments = () => {
           isLoading: true,
         }
       })
-      commentsOld = commentsApp;
-      renderLike();
       const newLoad = commentElement.innerHTML;
       load.innerHTML = newLoad;
+      renderLike();
     })
+  .catch((err) => {
+    alert("Кажется, у вас сломался интернет, попробуйте позже");
+    console.warn(err);
+  });
 };
-fetchComments();
-*/
-let commentsOld = [];
+
+/*let comments = [];
 
 load.textContent = "Подождите, пожалуйста, комментарии загружаются...";
 fetchComments = () => {
@@ -47,7 +49,7 @@ fetchComments = () => {
      return response.json();
 })
 .then((responseData) => {
-      let commentsApp = responseData.comments.map((comment) => {
+      comments = responseData.comments.map((comment) => {
         return {
           name: comment.author.name,
           data: new Date(comment.date).toLocaleString(),
@@ -57,15 +59,14 @@ fetchComments = () => {
           isLoading: true,
         }
       })
-      commentsOld = commentsApp;
       renderLike();
       load.style.display = 'none';
     })
 };
-fetchComments();
+fetchComments();*/
 
 const renderLike = () => {
-  const likeHtml = commentsOld.map((comment, index) => {
+  const likeHtml = comments.map((comment, index) => {
     return ` <li data-index="${index}" class="comment">
       <div class="comment-header">
         <div>${comment.name}</div>
@@ -104,12 +105,12 @@ const initEventLike = () => {
     event.stopPropagation();
     likeButton.classList.add("load-like");
     delay(2000).then(() => {
-    if (commentsOld[index].likeComment) {
-      commentsOld[index].likeComment = false;
-      commentsOld[index].countLike -= 1;
+    if (comments[index].likeComment) {
+      comments[index].likeComment = false;
+      comments[index].countLike -= 1;
     } else {
-      commentsOld[index].likeComment = true;
-      commentsOld[index].countLike += 1;
+      comments[index].likeComment = true;
+      comments[index].countLike += 1;
     }
     renderLike();
     });
@@ -121,7 +122,7 @@ const initEventLike = () => {
   const answerComments = document.querySelectorAll(".comment");
   for (const answerComment of answerComments){
     answerComment.addEventListener('click', () =>{
-      const arr = commentsOld[answerComment.dataset.index];
+      const arr = comments[answerComment.dataset.index];
       let str = arr.text + ' ' + arr.name;
       formText.value += `${str}`;
       formText.focus();
@@ -151,10 +152,18 @@ buttonElement.addEventListener("click", () => {
     body: JSON.stringify({
       name: formName.value.replaceAll('<','&lt;').replaceAll('>','&gt;'),
       text: formText.value.replaceAll('<','&lt;').replaceAll('>','&gt;'),
-    })
+      forceError: true,
+    }),
   })
-  .then((response) => {
-    return response.json();
+ .then((response) => {
+    if(response.status === 500){
+      throw new Error("Ошибка сервера");
+    } 
+    if (response.status === 400){
+      throw new Error("Неверный запрос");
+    } else {
+      return response.json();
+    }
   })
   .then(() => {
        return fetchComments();
@@ -162,15 +171,62 @@ buttonElement.addEventListener("click", () => {
   .then(() => {
     buttonElement.disabled = false;
     form.innerHTML = newForm;
+    formName.value = "";
+    formText.value = "";
+  })
+  .catch((error) => {
+    buttonElement.disabled = false;
+    form.innerHTML = newForm;
+    if(error.message === "Ошибка сервера"){
+      alert("Сервер сломался")
+      return;
+    } 
+    if(formName.value.length < 3 || formText.value.length < 3){
+      alert('Имя и комментарий должны быть не короче 3 символов');
+      return;
+    } else {
+      alert("Кажется, у вас сломался интернет, попробуйте позже");
+    }
+    console.warn(error);
   });
-
-
-  renderLike();
-
-formName.value = "";
-formText.value = "";
-
 });
+renderLike();
+
+const handlePostClick = () => {
+  fetch("https://webdev-hw-api.vercel.app/api/v1/Ekaterina_Ivanova/comments", {
+    method: "POST",
+    body: JSON.stringify({
+      name: formName.value.replaceAll('<','&lt;').replaceAll('>','&gt;'),
+      text: formText.value.replaceAll('<','&lt;').replaceAll('>','&gt;'),
+      forceError: true,
+    }),
+  })
+  .then((response) => {
+    if(response.status === 500){
+      throw new Error("Ошибка сервера");
+    }
+    })
+    .then(() => {
+       return fetchComments();
+    })
+  .then(() => {
+    buttonElement.disabled = false;
+    form.innerHTML = newForm;
+    formName.value = "";
+    formText.value = "";
+  })
+  .catch((error) => {
+    buttonElement.disabled = false;
+    form.innerHTML = newForm;
+    if(error.message === "Ошибка сервера"){
+      alert("Сервер сломался")
+          handlePostClick();
+        }
+      });
+    renderLike();
+  };
+
+  buttonElement.addEventListener("click", handlePostClick);
 
 formName.addEventListener('keyup', function(event) {
   event.preventDefault();
