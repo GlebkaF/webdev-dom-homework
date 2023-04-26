@@ -236,9 +236,15 @@
       }
     });
 
+    // Delete button
+
     deleteButtonElement.addEventListener("click", () => {
-      const listComments = document.getElementById("list");
-      listComments.lastChild.remove();
+      // const listComments = document.getElementById("list");
+      // listComments.lastChild.remove();
+
+      const comments = document.getElementById("list");
+      const lastIndex = comments.innerHTML.lastIndexOf('<li class="comment"');
+      comments.innerHTML = comments.innerHTML.slice(0, lastIndex);
     });
 
   </script>
