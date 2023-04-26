@@ -42,7 +42,7 @@
 
     let comments = [];
     const getComments = () => {
-     return fetch(
+      return fetch(
         "https://webdev-hw-api.vercel.app/api/v1/ramal.bakirov/comments",
         {
           method: "GET",
@@ -201,6 +201,47 @@ ${comments[index].name}`;
     renderComments();
     nameElement.addEventListener("input", checkValidity);
     textElement.addEventListener("input", checkValidity);
+
+    const postMethod = () => {
+      fetch("https://webdev-hw-api.vercel.app/api/v1/ramal.bakirov/comments", {
+        method: "POST",
+        body: JSON.stringify({
+          name: nameElement.value,
+          text: textElement.value,
+          forceError: true,
+        }),
+      })
+        .then((response) => {
+          if (response.status === 500) {
+            throw new Error("Сервер сломался");
+          } else if (response.status === 400) {
+            throw new Error("Короткое имя или текст");
+          } else {
+            return response.json();
+          }
+        })
+        .then((data) => {
+          if (data.result === "ok") {
+            getComments().then(() => {
+              buttonElement.textContent = "Написать";
+              nameElement.value = "";
+              textElement.value = "";
+            });
+          }
+        })
+        .catch((error) => {
+          if (error.message == 'Сервер сломался') {
+            buttonElement.textContent = "Написать";
+            buttonElement.disabled = false;
+            postMethod()
+          } else if(error.message =="Короткое имя или текст") {
+            alert("Имя и комментарий должны быть не короче 3 символов")
+            buttonElement.textContent = "Написать";
+            buttonElement.disabled = false;
+          }
+        });
+    };
+
     buttonElement.addEventListener("click", () => {
       textElement.classList.remove("error");
       nameElement.classList.remove("error");
@@ -216,37 +257,14 @@ ${comments[index].name}`;
         nameElement.classList.add("error");
         return;
       } else {
-
         buttonElement.disabled = true;
-        buttonElement.textContent = "Отправляем..."
-        fetch(
-          "https://webdev-hw-api.vercel.app/api/v1/ramal.bakirov/comments",
-          {
-            method: "POST",
-            body: JSON.stringify({
-              name: nameElement.value,
-              text: textElement.value,
-            }),
-          }
-        )
-          .then((response) => {
-            return response.json();
-          })
-          .then((data) => {
-            if (data.result === "ok") {
-              getComments().then(() => {
-                buttonElement.textContent = 'Написать'
-              })
-            }
-          }) 
+        buttonElement.textContent = "Отправляем...";
+        postMethod();
       }
-       
-      nameElement.value = "";
-      textElement.value = "";
+
       buttonElement.disabled = true;
-    
+
       renderComments();
-     
     });
   </script>
 </html>
