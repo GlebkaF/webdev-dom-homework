@@ -221,13 +221,12 @@ ${comments[index].name}`;
           }
         })
         .then((data) => {
-          if (data.result === "ok") {
             getComments().then(() => {
               buttonElement.textContent = "Написать";
               nameElement.value = "";
               textElement.value = "";
             });
-          }
+          
         })
         .catch((error) => {
           if (error.message == 'Сервер сломался') {
