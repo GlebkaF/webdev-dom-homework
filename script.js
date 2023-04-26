@@ -6,6 +6,7 @@ const deleteButton = document.querySelector(".delete-form-button");
 const load = document.querySelector(".load");
 const form = document.querySelector(".add-form");
 const newForm = form.innerHTML;
+const newLoad = commentElement.innerHTML;
 
 let comments = [];
 load.textContent = "Подождите, пожалуйста, комментарии загружаются...";
@@ -28,7 +29,6 @@ fetchComments = () => {
           isLoading: true,
         }
       })
-      const newLoad = commentElement.innerHTML;
       load.innerHTML = newLoad;
       renderLike();
     })
@@ -37,7 +37,6 @@ fetchComments = () => {
     console.warn(err);
   });
 };
-
 /*let comments = [];
 
 load.textContent = "Подождите, пожалуйста, комментарии загружаются...";
@@ -105,7 +104,7 @@ const initEventLike = () => {
     event.stopPropagation();
     likeButton.classList.add("load-like");
     delay(2000).then(() => {
-    if (comments[index].likeComment) {
+    if (comments[index].likeComment = !comments[index].likeComment) {
       comments[index].likeComment = false;
       comments[index].countLike -= 1;
     } else {
@@ -181,7 +180,7 @@ buttonElement.addEventListener("click", () => {
       alert("Сервер сломался")
       return;
     } 
-    if(formName.value.length < 3 || formText.value.length < 3){
+    if(formName.value.length <= 3 || formText.value.length <= 3){
       alert('Имя и комментарий должны быть не короче 3 символов');
       return;
     } else {
@@ -223,8 +222,8 @@ const handlePostClick = () => {
           handlePostClick();
         }
       });
-    renderLike();
   };
+  renderLike();
 
   buttonElement.addEventListener("click", handlePostClick);
 
