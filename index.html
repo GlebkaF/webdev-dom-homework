@@ -100,12 +100,10 @@
       for (const editButtonElement of editButtonElements) {
         const index = editButtonElement.dataset.index;
         editButtonElement.addEventListener("click", () => {
-          if (!userComments[index].clicked) {
-            console.log(1);
-            // userComments[index].isEdit = true;
+          if (!userComments[index].isEdit) {
+            userComments[index].isEdit = true;
           } else {
-            console.log(2);
-            // userComments[index].isEdit = false;
+            userComments[index].isEdit = false;
           }
           renderUserComments();
         });
@@ -115,8 +113,9 @@
 
     const renderUserComments = () => {
       const userCommentsHtml = userComments.map((userComment, index) => {
-        return
-        `<li class="comment">
+        if (!userComments[index].isEdit) {
+          userComments.isEdit = true;
+          return `<li class="comment">
           <div class="comment-header">
             <div>${userComment.name}</div>
             <div>${userComment.date}</div>
@@ -134,6 +133,27 @@
             </div>
           </div>
         </li>`;
+        } else {
+          userComments.isEdit = false;
+          return `<li class="comment">
+          <div class="comment-header">
+            <div>${userComment.name}</div>
+            <div>${userComment.date}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${userComment.comment}
+            </div>
+          </div>
+          <button data-index="${index}" class="edit-button" type="button">Сохранить</button>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${userComment.likeCounter}</span>
+              <button data-index="${index}" class="like-button ${userComment.active}"></button>
+            </div>
+          </div>
+        </li>`;
+        }
       }).join('');
       listElement.innerHTML = userCommentsHtml;
       initLikeButton();
@@ -228,7 +248,9 @@
       const comments = document.getElementById("list");
       const lastIndex = comments.innerHTML.lastIndexOf('<li class="comment"');
       comments.innerHTML = comments.innerHTML.slice(0, lastIndex);
+      initLikeButton();
+      initEditButton();
     });
-
+    
   </script>
 </html>
