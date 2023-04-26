@@ -101,9 +101,11 @@
         const index = editButtonElement.dataset.index;
         editButtonElement.addEventListener("click", () => {
           if (!userComments[index].clicked) {
-            userComments[index].isEdit = true;
+            console.log(1);
+            // userComments[index].isEdit = true;
           } else {
-            userComments[index].isEdit = false;
+            console.log(2);
+            // userComments[index].isEdit = false;
           }
           renderUserComments();
         });
@@ -113,26 +115,7 @@
 
     const renderUserComments = () => {
       const userCommentsHtml = userComments.map((userComment, index) => {
-        return userComments.isEdit == true ?
-         `<li class="comment">
-          <div class="comment-header">
-            <div>${userComment.name}</div>
-            <div>${userComment.date}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              <textarea id="${index}" class="edit-text" type="textarea"></textarea>
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">${userComment.likeCounter}</span>
-              <button data-index="${index}" class="like-button ${userComment.active}"></button>
-            </div>
-          </div>
-          <button data-index="${index}" class="save-button" type="button">Сохранить</button>
-        </li>`
-        :
+        return
         `<li class="comment">
           <div class="comment-header">
             <div>${userComment.name}</div>
