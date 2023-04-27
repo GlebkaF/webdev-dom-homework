@@ -64,10 +64,10 @@
 </body>
 
 <script>
-  //Функция проверки полей ввода
   function addComment() {
     const nameInput = document.querySelector('.add-form-name');
     const textInput = document.querySelector('.add-form-text');
+    const addButton = document.querySelector('.add-form-button');
 
     // Проверяем, заполнены ли имя
     if (nameInput.value.trim() === '') {
@@ -75,7 +75,7 @@
       nameInput.placeholder = 'Вы не ввели имя';
       return;
     }
-    //Проверяем, заполнены ли комментарии
+    // Проверяем, заполнены ли комментарии
     if (textInput.value.trim() === '') {
       textInput.classList.add('invalid');
       textInput.placeholder = 'Вы не ввели комментарий';
@@ -93,7 +93,26 @@
     //Удаляем класс ошибки
     nameInput.classList.remove('invalid');
     textInput.classList.remove('invalid');
+
+    // Убираем класс disabled у кнопки
+    addButton.classList.remove('add-form-button-disabled');
   }
+
+  const nameInput = document.querySelector('.add-form-name');
+  nameInput.addEventListener('input', function () {
+    const addButton = document.querySelector('.add-form-button');
+    if (nameInput.value.trim() !== '' && textInput.value.trim() !== '') {
+      addButton.classList.remove('add-form-button-disabled');
+    }
+  });
+
+  const textInput = document.querySelector('.add-form-text');
+  textInput.addEventListener('input', function () {
+    const addButton = document.querySelector('.add-form-button');
+    if (nameInput.value.trim() !== '' && textInput.value.trim() !== '') {
+      addButton.classList.remove('add-form-button-disabled');
+    }
+  });
 
   //Создаем комментарий
   function createCommentElement(name, text) {
@@ -146,6 +165,7 @@
   const addButton = document.querySelector('.add-form-button');
   addButton.addEventListener('click', addComment);
 
+  //При клике на кнопку добавляем комментарии
   document.addEventListener('keyup', (event) => {
     if (event.key === 'Enter') {
       addComment();
