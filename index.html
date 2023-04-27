@@ -71,6 +71,7 @@
     // Проверяем, заполнены ли поля
     if (nameInput.value.trim() === '') {
       nameInput.classList.add('invalid');
+      nameInput.placeholder = 'Вы не ввели имя';
       return;
     }
 
