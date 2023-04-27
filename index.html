@@ -80,10 +80,12 @@
       textInput.placeholder = 'Вы не ввели комментарий';
       return;
     }
+
     //Если все ОК добавляем комментарий на страницу
     const commentsList = document.querySelector('.comments');
     commentsList.appendChild(createCommentElement(nameInput.value, textInput.value));
 
+    //Очищаем поля
     nameInput.value = '';
     textInput.value = '';
     nameInput.classList.remove('invalid');
@@ -99,6 +101,8 @@
       addButton.classList.add('add-form-button-disabled');
     }
   }
+
+  //Слушаем поля ввода и если все ок запускаем функцию heckInputs()
   nameInput.addEventListener('input', checkInputs);
   textInput.addEventListener('input', checkInputs);
 
@@ -126,8 +130,9 @@
     return newComment;
   }
 
-
+  //Слушаем кнопку добавления комментария
   addButton.addEventListener('click', addComment);
+
   //При клике на кнопку "Enter" добавляем комментарии
   document.addEventListener('keyup', (event) => {
     if (event.key === 'Enter') {
