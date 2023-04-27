@@ -131,14 +131,14 @@
   }
 
   //Слушаем кнопку добавления комментария
-  addButton.addEventListener('click', addComment);
 
-  //При клике на кнопку "Enter" добавляем комментарии
-  document.addEventListener('keyup', (event) => {
-    if (event.key === 'Enter') {
+  function addCommentOnButtonClickOrEnter(event) {
+    if (event.type === 'click' || (event.type === 'keyup' && event.key === 'Enter')) {
       addComment();
     }
-  });
+  }
+  addButton.addEventListener('click', addCommentOnButtonClickOrEnter);
+  document.addEventListener('keyup', addCommentOnButtonClickOrEnter);
 
 </script>
 
