@@ -64,24 +64,39 @@
 </body>
 
 <script>
+  //Функция проверки полей ввода
   function addComment() {
     const nameInput = document.querySelector('.add-form-name');
     const textInput = document.querySelector('.add-form-text');
 
-    // Проверяем, заполнены ли поля
+    // Проверяем, заполнены ли имя
     if (nameInput.value.trim() === '') {
       nameInput.classList.add('invalid');
       nameInput.placeholder = 'Вы не ввели имя';
       return;
     }
-
+    //Проверяем, заполнены ли комментарии
     if (textInput.value.trim() === '') {
       textInput.classList.add('invalid');
+      textInput.placeholder = 'Вы не ввели комментарий';
       return;
     }
 
-    // Создаем новый элемент комментария
     const commentsList = document.querySelector('.comments');
+    const newComment = createCommentElement(nameInput.value, textInput.value);
+    commentsList.appendChild(newComment);
+
+    // Очищаем поля ввода
+    nameInput.value = '';
+    textInput.value = '';
+
+    //Удаляем класс ошибки
+    nameInput.classList.remove('invalid');
+    textInput.classList.remove('invalid');
+  }
+
+  //Создаем комментарий
+  function createCommentElement(name, text) {
     const newComment = document.createElement('li');
     newComment.classList.add('comment');
 
@@ -89,7 +104,7 @@
     header.classList.add('comment-header');
 
     const author = document.createElement('div');
-    author.textContent = nameInput.value;
+    author.textContent = name;
     header.appendChild(author);
 
     const date = document.createElement('div');
@@ -99,10 +114,10 @@
     const body = document.createElement('div');
     body.classList.add('comment-body');
 
-    const text = document.createElement('div');
-    text.classList.add('comment-text');
-    text.textContent = textInput.value;
-    body.appendChild(text);
+    const commentText = document.createElement('div');
+    commentText.classList.add('comment-text');
+    commentText.textContent = text;
+    body.appendChild(commentText);
 
     const footer = document.createElement('div');
     footer.classList.add('comment-footer');
@@ -125,15 +140,12 @@
     newComment.appendChild(body);
     newComment.appendChild(footer);
 
-    commentsList.appendChild(newComment);
-
-    // Очищаем поля ввода
-    nameInput.value = '';
-    textInput.value = '';
+    return newComment;
   }
 
   const addButton = document.querySelector('.add-form-button');
   addButton.addEventListener('click', addComment);
+
 </script>
 
 </html>
