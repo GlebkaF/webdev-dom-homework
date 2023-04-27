@@ -12,7 +12,9 @@
 
 <body>
   <div class="container">
+
     <ul class="comments">
+
       <li class="comment">
         <div class="comment-header">
           <div>Глеб Фокин</div>
@@ -30,6 +32,7 @@
           </div>
         </div>
       </li>
+
       <li class="comment">
         <div class="comment-header">
           <div>Варвара Н.</div>
@@ -47,18 +50,26 @@
           </div>
         </div>
       </li>
+
     </ul>
     <div class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
+
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш комментарий" rows="4"></textarea>
+
       <div class="add-form-row">
         <button class="add-form-button">Написать</button>
       </div>
+
     </div>
   </div>
 </body>
 
 <script>
+  const inputName = document.querySelector(".add-form-name");
+  const inputText = document.querySelector(".add-form-text");
+  const button = document.querySelector(".add-form-button");
+
   "use strict";
   // Код писать здесь
   console.log("It works!");
