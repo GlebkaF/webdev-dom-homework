@@ -56,7 +56,7 @@
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш комментарий" rows="4"
         required></textarea>
       <div class="add-form-row">
-        <button class="add-form-button">Написать</button>
+        <button class="add-form-button add-form-button-disabled">Написать</button>
       </div>
 
     </div>
@@ -145,6 +145,12 @@
 
   const addButton = document.querySelector('.add-form-button');
   addButton.addEventListener('click', addComment);
+
+  document.addEventListener('keyup', (event) => {
+    if (event.key === 'Enter') {
+      addComment();
+    }
+  });
 
 </script>
 
