@@ -69,32 +69,25 @@
     const textInput = document.querySelector('.add-form-text');
     const addButton = document.querySelector('.add-form-button');
 
-    // Проверяем, заполнены ли имя
-    if (nameInput.value.trim() === '') {
+    if (!nameInput.value.trim()) {
       nameInput.classList.add('invalid');
       nameInput.placeholder = 'Вы не ввели имя';
       return;
     }
-    // Проверяем, заполнены ли комментарии
-    if (textInput.value.trim() === '') {
+
+    if (!textInput.value.trim()) {
       textInput.classList.add('invalid');
-      textInput.placeholder = 'Вы не ввели комментарий';
+      textInput.placeholder = 'Вы не ввели комментарий';
       return;
     }
 
     const commentsList = document.querySelector('.comments');
-    const newComment = createCommentElement(nameInput.value, textInput.value);
-    commentsList.appendChild(newComment);
+    commentsList.appendChild(createCommentElement(nameInput.value, textInput.value));
 
-    // Очищаем поля ввода
     nameInput.value = '';
     textInput.value = '';
-
-    //Удаляем класс ошибки
     nameInput.classList.remove('invalid');
     textInput.classList.remove('invalid');
-
-    // Убираем класс disabled у кнопки
     addButton.classList.remove('add-form-button-disabled');
   }
 
