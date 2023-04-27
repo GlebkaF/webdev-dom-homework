@@ -21,7 +21,7 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">3</span>
+              <span class="">3</span>
               <button class="like-button"></button>
             </div>
           </div>
@@ -46,18 +46,21 @@
       </ul>
       <div class="add-form">
         <input
+        minlength="2"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
+        minlength="5"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="del-form-button">Удалить последний комментарий </button>
+          <button class="add-form-button" disabled>Написать</button>
         </div>
       </div>
     </div>
@@ -68,4 +71,5 @@
     // Код писать здесь
     console.log("It works!");
   </script>
+  <script src="./script.js"></script>
 </html>
