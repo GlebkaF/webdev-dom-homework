@@ -116,52 +116,24 @@
 
   //Создаем комментарий
   function createCommentElement(name, text) {
+    const now = new Date();
     const newComment = document.createElement('li');
     newComment.classList.add('comment');
-
-    const header = document.createElement('div');
-    header.classList.add('comment-header');
-
-    const author = document.createElement('div');
-    author.textContent = name;
-    header.appendChild(author);
-
-    const date = document.createElement('div');
-    const now = new Date();
-    const dateText = `${now.toLocaleDateString('ru')}, ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-    date.textContent = dateText;
-    header.appendChild(date);
-
-
-    const body = document.createElement('div');
-    body.classList.add('comment-body');
-
-    const commentText = document.createElement('div');
-    commentText.classList.add('comment-text');
-    commentText.textContent = text;
-    body.appendChild(commentText);
-
-    const footer = document.createElement('div');
-    footer.classList.add('comment-footer');
-
-    const likes = document.createElement('div');
-    likes.classList.add('likes');
-
-    const likesCounter = document.createElement('span');
-    likesCounter.classList.add('likes-counter');
-    likesCounter.textContent = 0;
-    likes.appendChild(likesCounter);
-
-    const likeButton = document.createElement('button');
-    likeButton.classList.add('like-button');
-    likes.appendChild(likeButton);
-
-    footer.appendChild(likes);
-
-    newComment.appendChild(header);
-    newComment.appendChild(body);
-    newComment.appendChild(footer);
-
+    newComment.innerHTML = `
+    <div class="comment-header">
+      <div>${name}</div>
+      <div>${now.toLocaleDateString('ru')}, ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+    </div>
+    <div class="comment-body">
+      <div class="comment-text">${text}</div>
+    </div>
+    <div class="comment-footer">
+      <div class="likes">
+        <span class="likes-counter">0</span>
+        <button class="like-button"></button>
+      </div>
+    </div>
+  `;
     return newComment;
   }
 
