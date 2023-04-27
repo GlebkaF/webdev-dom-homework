@@ -168,7 +168,7 @@
   const addButton = document.querySelector('.add-form-button');
   addButton.addEventListener('click', addComment);
 
-  //При клике на кнопку добавляем комментарии
+  //При клике на кнопку "Enter" добавляем комментарии
   document.addEventListener('keyup', (event) => {
     if (event.key === 'Enter') {
       addComment();
