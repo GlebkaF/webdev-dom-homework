@@ -64,23 +64,23 @@
 </body>
 
 <script>
-  function addComment() {
-    const nameInput = document.querySelector('.add-form-name');
-    const textInput = document.querySelector('.add-form-text');
-    const addButton = document.querySelector('.add-form-button');
+  const nameInput = document.querySelector('.add-form-name');
+  const textInput = document.querySelector('.add-form-text');
+  const addButton = document.querySelector('.add-form-button');
 
+  //Функция сообщает пользователю о том что нужно заполнить все поля
+  function addComment() {
     if (!nameInput.value.trim()) {
       nameInput.classList.add('invalid');
       nameInput.placeholder = 'Вы не ввели имя';
       return;
     }
-
     if (!textInput.value.trim()) {
       textInput.classList.add('invalid');
       textInput.placeholder = 'Вы не ввели комментарий';
       return;
     }
-
+    //Если все ОК добавляем комментарий на страницу
     const commentsList = document.querySelector('.comments');
     commentsList.appendChild(createCommentElement(nameInput.value, textInput.value));
 
@@ -91,21 +91,17 @@
     addButton.classList.remove('add-form-button-disabled');
   }
 
-  const nameInput = document.querySelector('.add-form-name');
-  nameInput.addEventListener('input', function () {
-    const addButton = document.querySelector('.add-form-button');
+  //Проверяем что поле ввода заполнено и делаем кнопку активной
+  function checkInputs() {
     if (nameInput.value.trim() !== '' && textInput.value.trim() !== '') {
       addButton.classList.remove('add-form-button-disabled');
+    } else {
+      addButton.classList.add('add-form-button-disabled');
     }
-  });
+  }
+  nameInput.addEventListener('input', checkInputs);
+  textInput.addEventListener('input', checkInputs);
 
-  const textInput = document.querySelector('.add-form-text');
-  textInput.addEventListener('input', function () {
-    const addButton = document.querySelector('.add-form-button');
-    if (nameInput.value.trim() !== '' && textInput.value.trim() !== '') {
-      addButton.classList.remove('add-form-button-disabled');
-    }
-  });
 
   //Создаем комментарий
   function createCommentElement(name, text) {
@@ -130,9 +126,8 @@
     return newComment;
   }
 
-  const addButton = document.querySelector('.add-form-button');
-  addButton.addEventListener('click', addComment);
 
+  addButton.addEventListener('click', addComment);
   //При клике на кнопку "Enter" добавляем комментарии
   document.addEventListener('keyup', (event) => {
     if (event.key === 'Enter') {
