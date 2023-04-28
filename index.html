@@ -79,12 +79,13 @@
       form.forEach((element) => {
         if (element.value === "") {
           element.classList.add("error");
-          console.log(date);
-          return;
         } else {
           element.classList.remove("error");
         }
 
+        if (inputName.value === "" || inputText.value === "") {
+          return;
+        }
         comments.innerHTML =
           oldComments +
           `<li class='comment'>
