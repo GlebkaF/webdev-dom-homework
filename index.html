@@ -43,8 +43,8 @@
     let shortDate = `${currentDate.getDate()}.${month}.${currentDate.getFullYear()-2000} ${hours}:${min}`;
 
     let arrComments = [
-      {name: "Глеб Фокин", date: "12.02.22 12:18", text: "Это будет первый комментарий на этой странице", likeCounter: 0, likeStatus:false},
-      {name: "Варвара Н.", date: "13.02.22 19:22", text: "Мне нравится как оформлена эта страница! ❤", likeCounter: 75, likeStatus:false}
+      {name: "Глеб Фокин", date: "12.02.22 12:18", text: "Это будет первый комментарий на этой странице", likeCounter: 0, likeStatus:""},
+      {name: "Варвара Н.", date: "13.02.22 19:22", text: "Мне нравится как оформлена эта страница! ❤", likeCounter: 75, likeStatus:""}
     ];
 
     const commentsElement = document.getElementById("comments");
@@ -62,15 +62,13 @@
       for (const button of byttonLike) {
         button.addEventListener("click", () => {
           const index = button.dataset.index;
-         if (arrComments[index].likeStatus) {
-          button.classList.remove("-active-like");
+         if (arrComments[index].likeStatus === " -active-like") {
           arrComments[index].likeCounter -=1;
-          arrComments[index].likeStatus = false;
+          arrComments[index].likeStatus = "";
           renderComments();
          } else {
-          button.classList.add("-active-like");
           arrComments[index].likeCounter +=1;
-          arrComments[index].likeStatus = true;
+          arrComments[index].likeStatus = " -active-like";
           renderComments();
          }
         })
@@ -96,17 +94,15 @@
               </div>
             <div class="likes">
               <span class="likes-counter">${comment.likeCounter}</span>
-              <button class="like-button" data-index="${index}"></button>
+              <button class="like-button${comment.likeStatus}" data-index="${index}"></button>
             </div>
           </div>
         </li>`;
     })
     commentsElement.innerHTML = commentsHtml.join("");
     switchLike();
-    editCommentButton();
     }
     renderComments();
-   
 
     
 
@@ -116,7 +112,7 @@ const checkAndAdd = () => {
      setTimeout(() => addCommentElement.disabled = false, 1000);
      return;}
 
-      arrComments.push({name: userNameElement.value, date: shortDate, text: userCommentElement.value, likeCounter: 0});
+      arrComments.push({name: userNameElement.value, date: shortDate, text: userCommentElement.value, likeCounter: 0, likeStatus:""});
       renderComments();
         userNameElement.value = "";
         userCommentElement.value = "";
