@@ -33,52 +33,26 @@ function renderComments(comments) {
 
     //проходим по каждому комментарию и добавляем его в список
     comments.forEach(comment => {
-        const commentItem = document.createElement('li');
-        commentItem.classList.add('comment');
-
-        const commentHeader = document.createElement('div');
-        commentHeader.classList.add('comment-header');
-
-        const commentAuthor = document.createElement('div');
-        commentAuthor.textContent = comment.author;
-        commentHeader.appendChild(commentAuthor);
-
-        const commentDate = document.createElement('div');
-        commentDate.textContent = comment.date;
-        commentHeader.appendChild(commentDate);
-
-        const commentBody = document.createElement('div');
-        commentBody.classList.add('comment-body');
-
-        const commentText = document.createElement('div');
-        commentText.classList.add('comment-text');
-        commentText.textContent = comment.text;
-        commentBody.appendChild(commentText);
-
-        const commentFooter = document.createElement('div');
-        commentFooter.classList.add('comment-footer');
-
-        const likesContainer = document.createElement('div');
-        likesContainer.classList.add('likes');
-
-        const likesCounter = document.createElement('span');
-        likesCounter.classList.add('likes-counter');
-        likesCounter.textContent = comment.likes;
-        likesContainer.appendChild(likesCounter);
-
-        const likeButton = document.createElement('button');
-        likeButton.classList.add('like-button');
-        likesContainer.appendChild(likeButton);
-
-        commentFooter.appendChild(likesContainer);
-
-        commentItem.appendChild(commentHeader);
-        commentItem.appendChild(commentBody);
-        commentItem.appendChild(commentFooter);
-
-        commentsList.appendChild(commentItem);
-    });
-}
+        const commentItem = `
+          <li class="comment">
+            <div class="comment-header">
+              <div>${comment.author}</div>
+              <div>${comment.date}</div>
+            </div>
+            <div class="comment-body">
+              <div class="comment-text">${comment.text}</div>
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">${comment.likes}</span>
+                <button class="like-button"></button>
+              </div>
+            </div>
+          </li>
+        `;
+        commentsList.insertAdjacentHTML('beforeend', commentItem);
+      });
+    }
 
 renderComments(comments);
 
