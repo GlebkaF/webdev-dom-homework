@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="comments" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -45,19 +45,20 @@
         </li>
       </ul>
       <div class="add-form">
-        <input
+        <input id="userName"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
-        <textarea
+        <textarea id="userComment"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="addComment" class="add-form-button">Написать</button>
+          <button id="deleteComment" class="del-form-button">Удалить последний комментарий</button>
         </div>
       </div>
     </div>
@@ -65,6 +66,62 @@
 
   <script>
     "use strict";
+    let currentDate = new Date();
+    let month = currentDate.getMonth();
+    let min = currentDate.getMinutes();
+    let hours = currentDate.getHours();
+    if (month < 10) month = "0" + month;
+    if (hours < 10) hours = "0" + hours;
+    if (min < 10) min = "0" + min;
+    let shortDate = `${currentDate.getDate()}.${month}.${currentDate.getFullYear()-2000} ${hours}:${min}`;
+
+    const commentsElement = document.getElementById("comments");
+    const userNameElement = document.getElementById("userName");
+    const userCommentElement = document.getElementById("userComment");
+    const addCommentElement = document.getElementById("addComment");
+    const deleteCommentElement = document.getElementById("deleteComment");
+
+    const inputEnter = document.querySelector('.add-form');
+   
+
+const checkAndAdd = () => {
+  if (userNameElement.value === "" || userCommentElement.value === "") {
+     addCommentElement.disabled = true;
+     setTimeout(() => addCommentElement.disabled = false, 1000);
+     return;}
+      commentsElement.innerHTML += 
+      `<li class="comment">
+          <div class="comment-header">
+            <div>${userNameElement.value}</div>
+            <div>${shortDate}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${userCommentElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+        userNameElement.value = "";
+        userCommentElement.value = "";
+}
+
+    addCommentElement.addEventListener("click", checkAndAdd);
+    inputEnter.addEventListener('keyup', function(event){
+      if (event.key === "Enter") {
+        checkAndAdd();
+      }
+    });
+
+    deleteCommentElement.addEventListener("click", () => {
+      commentsElement.removeChild(commentsElement.lastElementChild);
+    })
+
     // Код писать здесь
     console.log("It works!");
   </script>
