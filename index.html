@@ -10,7 +10,9 @@
 <body>
   <div class="container">
     <ul class="comments">
-      <li class="comment">
+      <!-- комментарии рендерятся из JS -->
+      
+      <!-- <li class="comment">
         <div class="comment-header">
           <div>Глеб Фокин</div>
           <div>12.02.22 12:18</div>
@@ -43,7 +45,7 @@
             <button class="like-button -active-like"></button>
           </div>
         </div>
-      </li>
+      </li> -->
     </ul>
     <div class="delete_button">
       <button class="remove-last-comment-button">Удалить последний комментарий</button>
@@ -56,132 +58,9 @@
       </div>
     </div>
   </div>
+  <script src="script.js"></script>
 </body>
-
 <script>
-  "use strict";
-
-  // находим элементы формы и список комментариев
-  const form = document.querySelector(".add-form");
-
-  // находим кнопку "Написать" и добавляем обработчик на клик
-  const addButton = document.querySelector(".add-form-button");
-  addButton.addEventListener("click", (event) => {
-
-    // получаем значения полей ввода
-    const name = nameInput.value.trim();
-    const text = textInput.value.trim();
-
-    // проверяем поля на валидность
-    if (!name || !text) {
-      alert("Необходимо указать имя и комментарий!");
-      return;
-    }
-
-    // создаем элементы комментария
-    const commentItem = document.createElement("li");
-    commentItem.classList.add("comment");
-
-    const commentHeader = document.createElement("div");
-    commentHeader.classList.add("comment-header");
-
-    const author = document.createElement("div");
-    author.textContent = name;
-    commentHeader.appendChild(author);
-
-    const date = document.createElement("div");
-    date.textContent = new Date().toLocaleString();
-    commentHeader.appendChild(date);
-
-    const commentBody = document.createElement("div");
-    commentBody.classList.add("comment-body");
-
-    const commentText = document.createElement("div");
-    commentText.classList.add("comment-text");
-    commentText.textContent = text;
-    commentBody.appendChild(commentText);
-
-    const commentFooter = document.createElement("div");
-    commentFooter.classList.add("comment-footer");
-
-    const likes = document.createElement("div");
-    likes.classList.add("likes");
-
-    const likesCounter = document.createElement("span");
-    likesCounter.classList.add("likes-counter");
-    likesCounter.textContent = 0;
-    likes.appendChild(likesCounter);
-
-    const likeButton = document.createElement("button");
-    likeButton.classList.add("like-button");
-    likes.appendChild(likeButton);
-
-    commentFooter.appendChild(likes);
-
-    // дбавляем элементы в DOM
-    commentItem.appendChild(commentHeader);
-    commentItem.appendChild(commentBody);
-    commentItem.appendChild(commentFooter);
-    commentsList.appendChild(commentItem);
-
-    // очищаем поля ввода
-    nameInput.value = "";
-    textInput.value = "";
-  });
-
-
-  // disabled
-  const nameInput = document.querySelector('.add-form-name');
-  const textInput = document.querySelector('.add-form-text');
-  const submitButton = document.querySelector('.add-form-button');
-
-  function handleInput() {
-    const nameValue = nameInput.value.trim();
-    const textValue = textInput.value.trim();
-
-    if (nameValue !== '' && textValue !== '') {
-      submitButton.removeAttribute('disabled');
-      submitButton.classList.remove('disabled');
-    } else {
-      submitButton.setAttribute('disabled', true);
-      submitButton.classList.add('disabled');
-    }
-  }
-
-  nameInput.addEventListener('input', handleInput); // проверка заполнености двух полей
-  textInput.addEventListener('input', handleInput);
-
-  // разблокирует кнопку, если поля не пустые
-  function validateForm() {
-    const nameValue = addFormName.value.trim();
-    const textValue = addFormText.value.trim();
-    const isValid = nameValue !== "" && textValue !== "";
-    addFormButton.disabled = !isValid;
-    addFormButton.classList.toggle("disabled", !isValid);
-  }
-
-  // получает данные вставленных комментариев и удаляет последний 
-  const addFormButton = document.querySelector(".add-form-button");
-  const addFormName = document.querySelector(".add-form-name");
-  const addFormText = document.querySelector(".add-form-text");
-  const commentsList = document.querySelector(".comments");
-  const removeLastCommentButton = document.querySelector(".remove-last-comment-button");
-  function removeLastComment() {
-    const comments = commentsList.querySelectorAll(".comment");
-    if (comments.length > 0) {
-      comments[comments.length - 1].remove();
-    }
-  }
-
-  removeLastCommentButton.addEventListener("click", removeLastComment);
-
-  // нажатие enter 
-  addFormText.addEventListener("keyup", function (event) {
-    if (event.key === "Enter" && !addFormButton.disabled) {
-      addFormButton.click();
-    }
-  });
-
 </script>
 
 </html>
