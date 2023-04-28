@@ -60,12 +60,70 @@
           <button class="add-form-button">Написать</button>
         </div>
       </div>
+      <button class="delete-button">Удалить последний комментарий</button>
     </div>
   </body>
 
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const addFormName = document.querySelector('.add-form-name');
+    const addFormText = document.querySelector('.add-form-text');
+    const addFormButton = document.querySelector('.add-form-button');
+    const commentsElement = document.querySelector('.comments');
+
+    addFormButton.addEventListener('click', () => {
+      addFormName.classList.remove('error');
+      addFormText.classList.remove('error');
+
+      //Валидация
+      if(addFormName.value ==='') {
+         addFormName.classList.add('error');
+         return
+      } else {
+         addFormName.classList.remove('error');
+      }
+
+      if(addFormText.value === '') {
+         addFormText.classList.add('error');
+         return
+      } else {
+        addFormText.classList.remove('error');
+      }
+      
+      //Новая форма для комментария
+      const now = new Date();
+      const oldCommentsHtml = commentsElement.innerHTML;
+      commentsElement.innerHTML = oldCommentsHtml + 
+      `<li class="comment">
+        <div class="comment-header">
+          <div>${addFormName.value}.</div>
+          <div>${now.getDate()}.0${now.getMonth()}.${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${addFormText.value}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">0</span>
+            <button class="like-button -active-like"></button>
+          </div>
+        </div>
+      </li>`;
+      
+      addFormName.value = '';
+      addFormText.value = '';
+    })
+
+    // Расширенная валидация
+    // const addForm = document.querySelector('.add-form');
+    // addFormButton.disabled = true;
+    // addForm.addEventListener('input', () => {
+    //   if(addFormName.value !== '' && addFormText.value !== '') {
+    //     addFormButton.disabled = false;
+    //   }
+    // });
+
+
   </script>
 </html>
