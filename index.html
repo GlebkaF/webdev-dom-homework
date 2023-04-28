@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -46,26 +46,58 @@
       </ul>
       <div class="add-form">
         <input
+        id="add-form-name"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
+        id="add-form-text"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
 
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const buttonElement = document.getElementById('add-form-button');
+    const listElement = document.getElementById('comments');
+    const nameInputElement = document.getElementById('add-form-name');
+    const commentsInputElement = document.getElementById('add-form-text');
+    var today = new Date();
+
+    buttonElement.addEventListener("click", () => {
+        if(nameInputElement.value === '') {
+            return;
+        }
+      const oldListHtml = listElement.innerHTML;
+      listElement.innerHTML = 
+      oldListHtml + 
+        `<li class="comment">
+            <div class="comment-header">
+            <div> ${nameInputElement.value} </div>
+            <div> ${today} </div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${commentsInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button -active-like"></button>
+            </div>
+          </div>
+        </li>`;
+        nameInputElement.value = '';
+    });
   </script>
 </html>
+
