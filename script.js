@@ -85,69 +85,42 @@ renderComments(comments);
 // находим элементы формы и список комментариев
 const form = document.querySelector(".add-form");
 
-// находим кнопку "Написать" и добавляем обработчик на клик
-const addButton = document.querySelector(".add-form-button");
-addButton.addEventListener("click", (event) => {
+// находим кнопку "Написать", добавляем новый комментарий
+addFormButton.addEventListener("click", (event) => {
+    event.preventDefault();
 
-    // получаем значения полей ввода
-    const name = nameInput.value.trim();
-    const text = textInput.value.trim();
+    const name = addFormName.value.trim();
+    const text = addFormText.value.trim();
 
-    // проверяем поля на валидность
     if (!name || !text) {
         alert("Необходимо указать имя и комментарий!");
         return;
     }
 
-    // создаем элементы комментария
-    const commentItem = document.createElement("li");
-    commentItem.classList.add("comment");
+    const date = new Date().toLocaleString();
 
-    const commentHeader = document.createElement("div");
-    commentHeader.classList.add("comment-header");
+    const commentItem = `
+        <li class="comment">
+            <div class="comment-header">
+                <div>${name}</div>
+                <div>${date}</div>
+            </div>
+            <div class="comment-body">
+                <div class="comment-text">${text}</div>
+            </div>
+            <div class="comment-footer">
+                <div class="likes">
+                    <span class="likes-counter">0</span>
+                    <button class="like-button"></button>
+                </div>
+            </div>
+        </li>
+    `;
 
-    const author = document.createElement("div");
-    author.textContent = name;
-    commentHeader.appendChild(author);
+    commentsList.insertAdjacentHTML('beforeend', commentItem);
 
-    const date = document.createElement("div");
-    date.textContent = new Date().toLocaleString();
-    commentHeader.appendChild(date);
-
-    const commentBody = document.createElement("div");
-    commentBody.classList.add("comment-body");
-
-    const commentText = document.createElement("div");
-    commentText.classList.add("comment-text");
-    commentText.textContent = text;
-    commentBody.appendChild(commentText);
-
-    const commentFooter = document.createElement("div");
-    commentFooter.classList.add("comment-footer");
-
-    const likes = document.createElement("div");
-    likes.classList.add("likes");
-
-    const likesCounter = document.createElement("span");
-    likesCounter.classList.add("likes-counter");
-    likesCounter.textContent = 0;
-    likes.appendChild(likesCounter);
-
-    const likeButton = document.createElement("button");
-    likeButton.classList.add("like-button");
-    likes.appendChild(likeButton);
-
-    commentFooter.appendChild(likes);
-
-    // дбавляем элементы в DOM
-    commentItem.appendChild(commentHeader);
-    commentItem.appendChild(commentBody);
-    commentItem.appendChild(commentFooter);
-    commentsList.appendChild(commentItem);
-
-    // очищаем поля ввода
-    nameInput.value = "";
-    textInput.value = "";
+    addFormName.value = "";
+    addFormText.value = "";
 });
 
 
