@@ -10,40 +10,7 @@
 <body>
   <div class="container">
     <ul class="comments" id="list-comments">
-      <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>
+
     </ul>
     <div class="add-form">
       <input id="input-name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
@@ -58,14 +25,85 @@
 
 <script>
   "use strict";
+
+
+  const allUsersAndComments = [
+    {
+      name: 'Глеб Фокин',
+      time: '12.02.22 12:18',
+      comment: 'Это будет первый комментарий на этой странице',
+      counter: 3,
+    },
+    {
+      name: 'Варвара Н.',
+      time: '13.02.22 19:22',
+      comment: 'Мне нравится как оформлена эта страница! ❤',
+      counter: 75,
+    },
+  ];
+  const listComments = document.getElementById("list-comments");
+  const renderUsers = () => {
+    const usersHtml = allUsersAndComments.map((user) => {
+      return `<li class="comment">
+        <div class="comment-header">
+          <div>${user.name}</div>
+          <div>${user.time}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${user.comment}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${user.counter}</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>`;
+    })
+      .join("")
+    listComments.innerHTML = usersHtml;
+  };
+
+
+  function refresh() {
+    const likesUp = document.querySelectorAll(".like-button");
+    for (const likeUp of likesUp) {
+      
+      likeUp.addEventListener('click', () => {
+        if (likeUp.classList.contains("-active-like") === true) {
+          const counters = likeUp.parentNode.getElementsByClassName('likes-counter');
+          if (counters.length == 0) return;
+          counters[0].innerHTML = parseInt(counters[0].innerHTML) - 1;
+          likeUp.classList.remove('-active-like')
+
+        } else {
+          likeUp.classList.add('-active-like');
+          const counters = likeUp.parentNode.getElementsByClassName('likes-counter');
+          if (counters.length == 0) return;
+          counters[0].innerHTML = parseInt(counters[0].innerHTML) + 1;
+        }
+      });
+    };
+  }
+
+
+  renderUsers();
+  refresh();
+
+
+
   const nameText = document.getElementById("input-name");
   const text = document.getElementById("input-text");
   const buttonEnter = document.getElementById("button-enter");
-  const listComments = document.getElementById("list-comments");
   const currentDate = new Date();
   const option = {
     hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'long'
   };
+
+
+
 
   buttonEnter.addEventListener("click", () => {
     if (nameText.value === "" && text.value === "") {
@@ -90,11 +128,12 @@
               <button class="like-button"></button>
             </div>
           </div>
-        </li>`
+        </li>`;
+        refresh();
     }
   });
-  // Код писать здесь
-  console.log("It works!");
+
+
 </script>
 
 </html>
