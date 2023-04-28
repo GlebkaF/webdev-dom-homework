@@ -75,9 +75,11 @@
       const oldComments = comments.innerHTML;
       const date = new Date();
       
+
       form.forEach((element) => {
         if (element.value === "") {
           element.classList.add("error");
+          console.log(date);
           return;
         } else {
           element.classList.remove("error");
@@ -88,7 +90,7 @@
           `<li class='comment'>
       <div class='comment-header'>
         <div>${inputName.value}</div>
-        <div>${date}</div>
+        <div>${date.getDay()}.${date.getMonth()}.${date.getFullYear()}</div>
         </div>
 
         <div class='comment-body'>
