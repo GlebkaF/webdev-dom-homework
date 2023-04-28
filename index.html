@@ -74,9 +74,18 @@
     button.addEventListener("click", (event) => {
       const oldComments = comments.innerHTML;
       const date = new Date();
-      comments.innerHTML =
-        oldComments +
-        `<li class='comment'>
+      
+      form.forEach((element) => {
+        if (element.value === "") {
+          element.classList.add("error");
+          return;
+        } else {
+          element.classList.remove("error");
+        }
+
+        comments.innerHTML =
+          oldComments +
+          `<li class='comment'>
       <div class='comment-header'>
         <div>${inputName.value}</div>
         <div>${date}</div>
@@ -95,14 +104,6 @@
           
       
       </li>`;
-
-      form.forEach((element) => {
-        if (element.value === "") {
-          element.classList.add("error");
-          event.preventDefault();
-        } else {
-          element.classList.remove("error");
-        }
       });
     });
   </script>
