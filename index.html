@@ -91,6 +91,8 @@
       year = "0" + year;
     }
 
+    let commentTime = `${userDate.getDate()}.${month}.${year} ${userDate.getHours()}:${minutes}`;
+
     listElem.innerHTML = oldListElem +
       `<li class="comment">
           <div class="comment-header">
@@ -98,7 +100,7 @@
               ${addName.value}
             </div>
             <div>
-              ${userDate.getDate()}.${month}.${year} ${userDate.getHours()}:${minutes}
+              ${commentTime}
             </div>
           </div>
           <div class="comment-body">
