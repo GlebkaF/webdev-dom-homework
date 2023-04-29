@@ -43,25 +43,7 @@ function showNewComment() {
         return;
     }
 
-    const newCommentBlock = document.createElement('li');
-    newCommentBlock.classList.add('comment');
-    const newCommentHeader = document.createElement('div');
-    newCommentHeader.classList.add('comment-header');
-    const newCommentBody = document.createElement('div');
-    newCommentBody.classList.add('comment-body');
-
-    commentsList.appendChild(newCommentBlock);
-    newCommentBlock.appendChild(newCommentHeader);
-    newCommentBlock.appendChild(newCommentBody);
-
-    const newCommentName = document.createElement('div');
-    newCommentName.textContent = commentName.value;
-    newCommentHeader.appendChild(newCommentName);
-
-    const newCommentText = document.createElement('div');
-    newCommentText.textContent = commentText.value;
-    newCommentBody.appendChild(newCommentText);
-    newCommentText.classList.add('comment-text');
+    
 
     const commentDate = new Date();
     const year = commentDate.getFullYear() % 100;
@@ -88,26 +70,76 @@ function showNewComment() {
     
     const currentDate = day + '.' + month + '.' + year + ' ' + hours + ':' + minutes;
 
-    const dateBlock = document.createElement('div');
-    dateBlock.textContent = currentDate;
-    newCommentHeader.appendChild(dateBlock);
 
-    const commentFooter = document.createElement('div');
-    commentFooter.classList.add('comment-footer');
-    newCommentBlock.appendChild(commentFooter);
+    const oldListHtml = commentsList.innerHTML;
 
-    const likesBlock = document.createElement('div');
-    likesBlock.classList.add('likes');
-    commentFooter.appendChild(likesBlock);
+    
 
-    const likesCounter = document.createElement('span');
-    likesCounter.classList.add('lokes-counter');
-    likesBlock.appendChild(likesCounter);
-    likesCounter.textContent = '0';
+    commentsList.innerHTML = oldListHtml + 
+        `<li class="comment">
+            <div class="comment-header">
+                <div>${commentName.value} </div>
+                <div>${currentDate} </div>
+            </div>
+            <div class="comment-body"> 
+                <div class="comment-text">${commentText.value}</div>
+            </div>
+            <div class="comment-footer"> 
+                <div class="likes">
+                    <span class="likes-counter">0</span>
+                    <button class="like-button"</button>
+                </div>
+            </div> 
+        </li>`
 
-    const likeButton = document.createElement('button');
-    likeButton.classList.add('like-button');
-    likesBlock.appendChild(likeButton);
+
+
+    // const newCommentBlock = document.createElement('li');
+    // newCommentBlock.classList.add('comment');
+    // const newCommentHeader = document.createElement('div');
+    // newCommentHeader.classList.add('comment-header');
+    // const newCommentBody = document.createElement('div');
+    // newCommentBody.classList.add('comment-body');
+
+    // const newCommentName = document.createElement('div');
+    // const newCommentText = document.createElement('div');
+    // commentsList.appendChild(newCommentBlock);
+    // newCommentBlock.appendChild(newCommentHeader);
+    // newCommentBlock.appendChild(newCommentBody);
+
+    
+    // newCommentName.textContent = commentName.value;
+    // newCommentHeader.appendChild(newCommentName);
+
+    
+    // newCommentText.textContent = commentText.value;
+    // newCommentBody.appendChild(newCommentText);
+    // newCommentText.classList.add('comment-text');
+
+    
+
+    // const dateBlock = document.createElement('div');
+    // dateBlock.textContent = currentDate;
+    // newCommentHeader.appendChild(dateBlock);
+
+    // const commentFooter = document.createElement('div');
+    // commentFooter.classList.add('comment-footer');
+    // newCommentBlock.appendChild(commentFooter);
+
+    // const likesBlock = document.createElement('div');
+    // likesBlock.classList.add('likes');
+    // commentFooter.appendChild(likesBlock);
+
+    // const likesCounter = document.createElement('span');
+    // likesCounter.classList.add('lokes-counter');
+    // likesBlock.appendChild(likesCounter);
+    // likesCounter.textContent = '0';
+
+    // const likeButton = document.createElement('button');
+    // likeButton.classList.add('like-button');
+    // likesBlock.appendChild(likeButton);
+
+
 
     commentName.value = '';
     commentText.value = '';
