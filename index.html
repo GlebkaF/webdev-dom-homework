@@ -72,6 +72,7 @@
     const form = document.querySelectorAll(".form");
 
     const date = new Date();
+
     button.addEventListener("click", (event) => {
       const oldComments = comments.innerHTML;
       const date = new Date();
@@ -83,16 +84,30 @@
           element.classList.remove("error");
         }
 
-        if (inputName.value === "" || inputText.value === "") {
+        if (inputName.value === "" || inputText.value.length < 10) {
+          button.disabled = true;
           return;
         }
+
+        const month = date.getMonth() + 1;
+        const monthString = "0" + month;
+        if (month < 10) {
+          month === monthString;
+        }
+
+        const minutes = date.getMinutes();
+        const minutesString = "0" + minutes;
+        if (minutes < 10) {
+          minutes === minuteString;
+        }
+
         comments.innerHTML =
           oldComments +
           `<li class='comment'>
       <div class='comment-header'>
         <div>${inputName.value}</div>
-        <div>${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} 
-          ${date.getHours()}:${date.getMinutes()}
+        <div>${date.getDate()}.${monthString}.${date.getFullYear()}
+          ${date.getHours()}:${minutesString}
           </div>
         </div>
 
@@ -106,10 +121,29 @@
           <button class='like-button -active-like'></button>
           </div>
             </div>
-          
-      
+
+
       </li>`;
       });
     });
+
+    inputName.addEventListener("input", (event) => {
+      if (event.target.value !== "") {
+        button.disabled = false;
+      }
+    });
+
+    inputText.addEventListener("input", (event) => {
+      if (event.target.value !== "") {
+        button.disabled = false;
+      }
+    });
+
+    // if (inputName.value === "" || inputText.value === "") {
+    //   button.disabled = true;
+    //   return;
+    // } else {
+    //   button.disabled = false;
+    // }
   </script>
 </html>
