@@ -63,9 +63,64 @@
     </div>
   </body>
 
-  <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
-  </script>
+<script>
+  "use strict";
+  
+  const buttonElement = document.getElementById('add-button');
+  const listElement = document.getElementById('add-comments');
+  const nameElement = document.getElementById('name-input');
+  const commentElement = document.getElementById('comment-input');
+  const date = new Date(); 
+  let time = date.toTimeString().slice(0, 5);
+  let day = date.getDate();
+  let month = ((date.getMonth() + 1) < 10) ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
+  let year = Number(String(date.getFullYear()).substring(2));
+  let fullDate = day + '.' + month + '.' + year + ' ' + time;
+
+console.log(fullDate);
+
+
+  buttonElement.addEventListener('click', () => {
+
+    nameElement.classList.remove('error'); 
+    commentElement.classList.remove('error');
+    if (nameElement.value === ''){
+      nameElement.classList.add('error');
+      return;
+    }
+    if (commentElement.value === ''){
+      commentElement.classList.add('error');
+      return;
+    }
+
+
+    const oldList = listElement.innerHTML;
+    listElement.innerHTML = oldList + 
+    `<li class="comment">
+        <div class="comment-header">
+          <div>${nameElement.value}</div>
+          <div>${fullDate}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${commentElement.value}
+          </div>
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter"></span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>`;
+
+      nameElement.value = '';
+      commentElement.value = '';
+  });
+
+
+
+
+</script>
 </html>
