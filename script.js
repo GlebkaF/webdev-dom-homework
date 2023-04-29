@@ -8,7 +8,7 @@ const commentsList = document.querySelector(".comments");
 
 const comments = [ //ммассив с комментариями 
     {
-        author: ' <strong> Глеб Фокин </strong>',
+        author: 'Глеб Фокин',
         date: '12.02.22 12:18',
         text: 'Это будет первый комментарий на этой странице',
         likes: 3
@@ -96,29 +96,12 @@ addFormButton.addEventListener("click", (event) => { // находим кноп�
 
     const date = new Date().toLocaleString();
 
-    const commentItem = `
-        <li class="comment">
-            <div class="comment-header">
-                <div>${name}</div>
-                <div>${date}</div>
-            </div>
-            <div class="comment-body">
-                <div class="comment-text">${text}</div>
-            </div>
-            <div class="comment-footer">
-                <div class="likes">
-                    <span class="likes-counter">0</span>
-                    <button class="like-button"></button>
-                </div>
-            </div>
-        </li>
-    `;
-
-    commentsList.insertAdjacentHTML('beforeend', commentItem);
+    addComment()
 
     addFormName.value = "";
     addFormText.value = "";
 });
+
 
 
 // disabled
@@ -177,11 +160,7 @@ addFormText.addEventListener("keyup", function (event) {
 
 //кнопка лайка
 const commentsContainer = document.querySelector('ul.comments');
-
-commentsContainer.addEventListener('click', function (event) { 
-    // останавливаем всплытие 
-    event.stopPropagation() 
-
+commentsContainer.addEventListener('click', function (event) {
     //проверяем, что кликнули по кнопке лайка
     if (event.target.classList.contains('like-button')) {
         const likeButton = event.target;
