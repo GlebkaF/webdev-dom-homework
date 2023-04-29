@@ -6,61 +6,84 @@ const addFormText = document.querySelector(".add-form-text");
 const commentsList = document.querySelector(".comments");
 
 
-//рендер комментариев
-
 const comments = [ //ммассив с комментариями 
     {
-      author: 'Глеб Фокин',
-      date: '12.02.22 12:18',
-      text: 'Это будет первый комментарий на этой странице',
-      likes: 3
+        author: ' <strong> Глеб Фокин </strong>',
+        date: '12.02.22 12:18',
+        text: 'Это будет первый комментарий на этой странице',
+        likes: 3
     },
     {
-      author: 'Варвара Н.',
-      date: '13.02.22 19:22',
-      text: 'Мне нравится как оформлена эта страница! ❤',
-      likes: 74
+        author: 'Варвара Н.',
+        date: '13.02.22 19:22',
+        text: 'Мне нравится как оформлена эта страница! ❤',
+        likes: 74
     },
     // ...
-  ];
-  
+];
 
+
+//рендер комментариев 
 function renderComments(comments) {
-    const commentsList = document.querySelector('.comments');
-
-    //оичщаем список комментариев перед добавлением новых
+    // очищаем список комментариев перед добавлением новых
     commentsList.innerHTML = '';
 
-    //проходим по каждому комментарию и добавляем его в список
-    comments.forEach(comment => {
-        const commentItem = `
-          <li class="comment">
-            <div class="comment-header">
-              <div>${comment.author}</div>
-              <div>${comment.date}</div>
-            </div>
-            <div class="comment-body">
-              <div class="comment-text">${comment.text}</div>
-            </div>
-            <div class="comment-footer">
-              <div class="likes">
-                <span class="likes-counter">${comment.likes}</span>
-                <button class="like-button"></button>
-              </div>
-            </div>
-          </li>
-        `;
-        commentsList.insertAdjacentHTML('beforeend', commentItem);
-      });
-    }
+    // создаем новый массив с разметкой комментариев
+    const commentItems = comments
+        .map(comment => `
+      <li class="comment">
+        <div class="comment-header">
+          <div>${comment.author}</div>
+          <div>${comment.date}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">${comment.text}</div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${comment.likes}</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>`
+        );
+
+    const commentsHTML = commentItems
+        .join('');
+
+    // добавляем новый список комментариев на страницу
+    commentsList.insertAdjacentHTML('beforeend', commentsHTML);
+}
 
 renderComments(comments);
+
+
+//добавляем новый комментарий в массив
+function addComment() {
+    // получаем значения из формы ввода (тут же ставим защиту от XSS)
+    const author = addFormName.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
+    const text = addFormText.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
+    const date = new Date().toLocaleString();
+    const likes = 0;
+
+    // создаём новый объект комментария, чтобы добавить его в уже существующий
+    const newComment = {
+        author,
+        text,
+        date,
+        likes,
+    };
+
+    comments.push(newComment);
+
+    renderComments(comments);
+}
+
 
 // находим элементы формы и список комментариев
 const form = document.querySelector(".add-form");
 
-// находим кнопку "Написать", добавляем новый комментарий
-addFormButton.addEventListener("click", (event) => {
+addFormButton.addEventListener("click", (event) => { // находим кнопку "Написать", добавляем новый комментарий
     event.preventDefault();
 
     const name = addFormName.value.trim();
@@ -119,6 +142,7 @@ function handleInput() {
 nameInput.addEventListener('input', handleInput); // проверка заполнености двух полей
 textInput.addEventListener('input', handleInput);
 
+
 // разблокирует кнопку, если поля не пустые
 function validateForm() {
     const nameValue = addFormName.value.trim();
@@ -127,6 +151,9 @@ function validateForm() {
     addFormButton.disabled = !isValid;
     addFormButton.classList.toggle("disabled", !isValid);
 }
+
+validateForm();
+
 
 // получает данные вставленных комментариев и удаляет последний 
 const removeLastCommentButton = document.querySelector(".remove-last-comment-button");
@@ -139,6 +166,7 @@ function removeLastComment() {
 
 removeLastCommentButton.addEventListener("click", removeLastComment);
 
+
 // нажатие enter 
 addFormText.addEventListener("keyup", function (event) {
     if (event.key === "Enter" && !addFormButton.disabled) {
@@ -146,11 +174,14 @@ addFormText.addEventListener("keyup", function (event) {
     }
 });
 
+
 //кнопка лайка
 const commentsContainer = document.querySelector('ul.comments');
 
-//добавляем обработчик лайка
-commentsContainer.addEventListener('click', function (event) {
+commentsContainer.addEventListener('click', function (event) { 
+    // останавливаем всплытие 
+    event.stopPropagation() 
+
     //проверяем, что кликнули по кнопке лайка
     if (event.target.classList.contains('like-button')) {
         const likeButton = event.target;
@@ -171,3 +202,20 @@ commentsContainer.addEventListener('click', function (event) {
     }
 });
 
+
+//отвечаем на комментарии
+
+const commentItems = document.querySelectorAll('.comment'); //получаем комменты на которые нужен ответ (все из документа)
+
+// для каждого коммента добавляем событие клика
+commentItems.forEach(comment => {
+    comment.addEventListener('click', () => {
+        // получаем автора и текст комментария
+        const author = comment.querySelector('.comment-header div:first-child').textContent;
+        const text = comment.querySelector('.comment-text').textContent;
+
+        addFormText.value = `@${author} \n\n > ${text}, `;
+        addFormText.focus();
+
+    });
+});
