@@ -90,15 +90,13 @@
         }
 
         const month = date.getMonth() + 1;
-        const monthString = "0" + month;
         if (month < 10) {
-          month === monthString;
+          month = "0" + month;
         }
 
         const minutes = date.getMinutes();
-        const minutesString = "0" + minutes;
         if (minutes < 10) {
-          minutes === minuteString;
+          minutes = "0" + minutes;
         }
 
         comments.innerHTML =
@@ -106,8 +104,8 @@
           `<li class='comment'>
       <div class='comment-header'>
         <div>${inputName.value}</div>
-        <div>${date.getDate()}.${monthString}.${date.getFullYear()}
-          ${date.getHours()}:${minutesString}
+        <div>${date.getDate()}.${month}.${date.getFullYear()}
+          ${date.getHours()}:${minutes}
           </div>
         </div>
 
