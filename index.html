@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="comments-area">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -44,28 +44,126 @@
           </div>
         </li>
       </ul>
-      <div class="add-form">
+      <div class="add-form" id="inputs">
         <input
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          id="name-input"
         />
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+          id="comment-input"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="add-comment-button">Написать</button>
+        </div>
+        <div class="add-form-row">
+          <button class="add-form-button" id="remove-comment-button">Удалить</button>
         </div>
       </div>
     </div>
   </body>
+  <style>
+    .validation {
+      box-shadow: 0 0 10px 4px rgba(255, 0, 0, 1);
+
+    }
+  </style>
 
   <script>
     "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const commentsArea = document.getElementById("comments-area");
+    const nameElement = document.getElementById("name-input");
+    const commentElement = document.getElementById("comment-input");
+    const addCommentElement = document.getElementById("add-comment-button");
+    const removeCommentElement = document.getElementById("delete-comment-button");
+    
+    console.log(commentsArea.innerHTML);
+
+    // removeCommentElement.addEventListener("click", () => {
+    //   let newCommentsArea = commentsArea.innerHTML;
+    //   let lastComment = newCommentsArea.lastIndexOf('<li class="comment">');
+    //   console.log(lastComment);
+    // })//
+
+
+    window.addEventListener('input', () => {
+      if (nameElement.value === "" || commentElement.value === "") {
+      addCommentElement.disabled = true;
+    } else {
+      addCommentElement.disabled = false;
+    }
+    });
+
+
+    window.addEventListener('keyup', () => {
+      if (event.key === 'Enter') {
+          addCommentElement.click();
+        }
+    });
+
+    addCommentElement.addEventListener("click", () => {
+      nameElement.classList.remove("validation");
+      commentElement.classList.remove("validation");
+
+
+      if (nameElement.value == "" && commentElement.value == "") {
+        nameElement.classList.add("validation");
+        commentElement.classList.add("validation");
+        return;
+      } else if (commentElement.value == "") {
+        commentElement.classList.add("validation");
+        return;
+      } else if (nameElement.value == "") {
+        nameElement.classList.add("validation");
+        return;
+      };
+
+      const date = new Date;
+      let minutes = date.getMinutes();
+      if (minutes < 10) {
+        minutes = "0" +  minutes;
+      }
+      let hours = date.getHours();
+      if (hours < 10) {
+        hours = "0" + hours;
+      }
+      const time = hours + ":" + minutes;
+      let day = date.getDate();
+      if (day < 10) {
+        day = "0" + day;
+      }
+      let month = date.getMonth() + 1 ;
+        if (month < 10) {
+          month = "0" + month;
+        }
+      const newCommentsArea = commentsArea.innerHTML;
+      commentsArea.innerHTML = newCommentsArea +
+      `<li class="comment">
+          <div class="comment-header">
+            <div>${nameElement.value}</div>
+            <div>${day + "." + month + "." + date.getFullYear().toString().substr(-2) + " " + time}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${commentElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+        nameElement.value = "";
+        commentElement.value = "";
+    } )
+
+
   </script>
 </html>
