@@ -8,42 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
+      <ul class="comments"></ul>
       <div class="add-form">
         <input
           type="text"
@@ -72,98 +37,174 @@
     const textElement = document.querySelector('.add-form-text');
     const addButton = document.querySelector('.add-form-button');
     const removeButton = document.querySelector('.remove-form-button');
+    
+    const comments = [
+      {
+        tagComment: 'li',
+        classComment: 'comment',
+        header: {
+          tagHeader: 'div',
+          classHeader: 'comment-header',
+          name: 'Глеб Фокин',
+          date: '12.02.22 12:18'
+        },
+        body: {
+          tagBody: 'div',
+          classBody: 'comment-body',
+          html: '<div class="comment-text">Это будет первый комментарий на этой странице</div>'
+        },
+        footer: {
+          tagFooter: 'div',
+          classFooter: 'comment-footer',
+          likes: {
+            tagLikes: 'div',
+            classLikes: 'likes',
+            counter: {
+              tagCounter: 'span',
+              classCounter: 'likes-counter',
+              value: 3
+            },
+            button: {
+              tagButton: 'button',
+              classButton: 'like-button',
+              activeName: '-active-like',
+              activeStatus: false
+            }
+          }
+        }
+      },
+      {
+        tagComment: 'li',
+        classComment: 'comment',
+        header: {
+          tagHeader: 'div',
+          classHeader: 'comment-header',
+          name: 'Варвара Н.',
+          date: '13.02.22 19:22'
+        },
+        body: {
+          tagBody: 'div',
+          classBody: 'comment-body',
+          html: '<div class="comment-text">Мне нравится как оформлена эта страница! ❤</div>'
+        },
+        footer: {
+          tagFooter: 'div',
+          classFooter: 'comment-footer',
+          likes: {
+            tagLikes: 'div',
+            classLikes: 'likes',
+            counter: {
+              tagCounter: 'span',
+              classCounter: 'likes-counter',
+              value: 75
+            },
+            button: {
+              tagButton: 'button',
+              classButton: 'like-button',
+              activeName: '-active-like',
+              activeStatus: true
+            }
+          }
+        }
+      }
+    ];
 
-    let day = addZero((new Date).getDate());
-    let month = addZero((new Date).getMonth() + 1);
-    let year = editYear((new Date).getFullYear());
-    let hours = addZero((new Date).getHours());
-    let minutes = addZero((new Date).getMinutes());
+    const renderComments = () => {
+      for (let comment of comments) {
+        let commentItem = document.createElement(comment.tagComment);
+        commentItem.classList.add(comment.classComment);
+        commentList.appendChild(commentItem);
 
-    nameElement.addEventListener('input', activateButton);
-    textElement.addEventListener('input', activateButton);
-    addButton.addEventListener('click', addNewComment);
-    textElement.addEventListener('keyup', addNewCommentEnter);
-    removeButton.addEventListener('click', removeLast);
+        let itemHeader = document.createElement(comment.header.tagHeader);
+        itemHeader.classList.add(comment.header.classHeader);
+        itemHeader.innerHTML = `
+          <div>${comment.header.name}</div>
+          <div>${comment.header.date}</div>
+        `;
+        commentItem.appendChild(itemHeader);
 
-    function addNewComment() {
+        let itemBody = document.createElement(comment.body.tagBody);
+        itemBody.classList.add(comment.body.classBody);
+        itemBody.innerHTML = comment.body.html;
+        commentItem.appendChild(itemBody);
+
+        let itemFooter = document.createElement(comment.footer.tagFooter);
+        itemFooter.classList.add(comment.footer.classFooter);
+        commentItem.appendChild(itemFooter);
+
+        let footerLikes = document.createElement(comment.footer.likes.tagLikes);
+        footerLikes.classList.add(comment.footer.likes.classLikes);
+        itemFooter.appendChild(footerLikes);
+
+        let likesCounter = document.createElement(comment.footer.likes.counter.tagCounter);
+        likesCounter.classList.add(comment.footer.likes.counter.classCounter);
+        likesCounter.innerHTML = comment.footer.likes.counter.value;
+        footerLikes.appendChild(likesCounter);
+
+        let likesButton = document.createElement(comment.footer.likes.button.tagButton);
+        likesButton.classList.add(comment.footer.likes.button.classButton);
+
+        if (comment.footer.likes.button.activeStatus === true) {
+          likesButton.classList.add(comment.footer.likes.button.activeName);
+        }
+
+        footerLikes.appendChild(likesButton);
+
+        nameElement.value = '';
+        textElement.value = '';
+        nameElement.classList.remove('form-error');
+        textElement.classList.remove('form-error');
+      }
+    }
+
+    renderComments();
+
+    addButton.addEventListener('click', () => {
       if (!nameElement.value) {
         nameElement.classList.add('form-error');
       } else if (!textElement.value) {
         textElement.classList.add('form-error');
       } else {
-        let commentItem = document.createElement('li');
-        commentItem.classList.add('comment');
+        commentList.innerHTML = '';
 
-        commentList.appendChild(commentItem);
+        comments.push({
+          tagComment: 'li',
+          classComment: 'comment',
+          header: {
+            tagHeader: 'div',
+            classHeader: 'comment-header',
+            name: `${nameElement.value}`,
+            date: `${addZero((new Date).getDate())}.${addZero((new Date).getMonth())}.${editYear((new Date).getFullYear())} ${addZero((new Date).getHours())}:${addZero((new Date).getMinutes())}`
+          },
+          body: {
+            tagBody: 'div',
+            classBody: 'comment-body',
+            html: `<div class="comment-text">${textElement.value}</div>`
+          },
+          footer: {
+            tagFooter: 'div',
+            classFooter: 'comment-footer',
+            likes: {
+              tagLikes: 'div',
+              classLikes: 'likes',
+              counter: {
+                tagCounter: 'span',
+                classCounter: 'likes-counter',
+                value: 0
+              },
+              button: {
+                tagButton: 'button',
+                classButton: 'like-button',
+                activeName: '-active-like',
+                activeStatus: false
+              }
+            }
+          }
+        })
 
-        let commentHeader = document.createElement('div');
-        commentHeader.classList.add('comment-header');
-        commentHeader.innerHTML = `
-          <div>${nameElement.value}</div>
-          <div>${day}.${month}.${year} ${hours}:${minutes}</div>
-        `;
-
-        commentItem.appendChild(commentHeader);
-
-        let commentBody = document.createElement('div');
-        commentBody.classList.add('comment-body');
-        commentBody.innerHTML = `<div class="comment-text">${textElement.value}</div>`;
-
-        commentItem.appendChild(commentBody);
-
-        let commentFooter = document.createElement('div');
-        commentFooter.classList.add('comment-footer');
-
-        commentItem.appendChild(commentFooter);
-
-        let likes = document.createElement('div');
-        likes.classList.add('likes');
-
-        commentFooter.appendChild(likes);
-
-        let likesCount = document.createElement('span');
-        likesCount.classList.add('likes-counter');
-        likesCount.textContent = 0;
-
-        likes.appendChild(likesCount);
-
-        let likeButton = document.createElement('button');
-        likeButton.classList.add('like-button');
-
-        likes.appendChild(likeButton);
-
-        nameElement.classList.remove('form-error');
-        nameElement.value = '';
-        textElement.classList.remove('form-error');
-        textElement.value = '';
-
-        checkButton();
+        renderComments();
       }
-    }
-
-    function addNewCommentEnter(event) {
-      if (event.key === 'Enter') {
-        if (nameElement.value.trim() === '') {
-          nameElement.classList.add('form-error');
-          return;
-        } else if (textElement.value.trim() === '') {
-          textElement.classList.add('form-error');
-          return;
-        } else if ((nameElement.value.trim() === '' && textElement.value.trim() === '')) {
-          nameElement.classList.add('form-error');
-          textElement.classList.add('form-error');
-          return;
-        } else {
-          addNewComment();
-        }
-      }
-    }
-
-    function removeLast() {
-      let items = document.querySelectorAll('li');
-      
-      items[items.length - 1].remove();
-    }
+    });
 
     function addZero(num) {
       return String(num).length < 2 ? '0' + num : num;
@@ -171,18 +212,5 @@
     function editYear(year) {
       return String(year)[String(year).length - 2] + String(year)[String(year).length - 1];
     }
-    function checkButton() {
-      if (nameElement.value && textElement.value) {
-        addButton.disabled = false;
-      } else {
-        addButton.disabled = true;
-      }
-    }
-    function activateButton() {
-      addButton.disabled = false;
-      return;
-    }
-
-    checkButton();
   </script>
 </html>
