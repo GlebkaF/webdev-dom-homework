@@ -67,12 +67,15 @@
 
 
   let date = new Date();
-  const months = ["01", "02", "03", "04", "05", "06","07", "08", "09", "10", "11", "12"];
-  
   function getTime(now){
-    let fullDate = date.getDate() + "." + months[date.getMonth()] + "." + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes(); 
+    const months = ["01", "02", "03", "04", "05", "06","07", "08", "09", "10", "11", "12"];
+    let minute = date.getMinutes(); 
+    if (minute < 10) minute = '0' + minute;
+
+    let fullDate = date.getDate() + "." + months[date.getMonth()] + "." + date.getFullYear() + " " + date.getHours() + ":" + minute; 
     return fullDate; 
   }
+
 
   const comments = [
     {
@@ -93,7 +96,7 @@
 
 
   const likesElements = () => {
-    // const likesButtonsElements = document.querySelectorAll('.like-button');
+  const likesButtonsElements = document.querySelectorAll('.like-button');
 
   //   for (const likesButtonsElement of likesButtonsElements) {
   //   likesButtonsElement.addEventListener('click', () => {
