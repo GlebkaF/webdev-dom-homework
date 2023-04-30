@@ -1,71 +1,191 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
-      <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <ul id="add-comments" class="comments">
+      <!-- <li class="comment">
+        <div class="comment-header">
+          <div>Глеб Фокин</div>
+          <div>12.02.22 12:18</div>
         </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Это будет первый комментарий на этой странице
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">3</span>
+            <button data-like='3' id="like-btn" class="like-button"></button>
+          </div>
+        </div>
+      </li>
+      <li class="comment">
+        <div class="comment-header">
+          <div>Варвара Н.</div>
+          <div>13.02.22 19:22</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Мне нравится как оформлена эта страница! ❤
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">75</span>
+            <button data-like='75' id="like-btn" class="like-button -active-like"></button>
+          </div>
+        </div>
+      </li> -->
+    </ul>
+    <div class="add-form">
+      <input id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+      <textarea id="comment-input" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+        rows="4"></textarea>
+      <div class="add-form-row">
+        <button id='add-button' class="add-form-button">Написать</button>
       </div>
     </div>
-  </body>
+  </div>
+</body>
 
-  <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
-  </script>
+<script>
+  "use strict";
+
+  const buttonElement = document.getElementById('add-button');
+  const listElement = document.getElementById('add-comments');
+  const nameElement = document.getElementById('name-input');
+  const commentElement = document.getElementById('comment-input');
+  // const likesButtonsElements = document.querySelectorAll('.like-button');
+
+
+  let date = new Date();
+  const months = ["01", "02", "03", "04", "05", "06","07", "08", "09", "10", "11", "12"];
+  
+  function getTime(now){
+    let fullDate = date.getDate() + "." + months[date.getMonth()] + "." + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes(); 
+    return fullDate; 
+  }
+
+  const comments = [
+    {
+      name: 'Глеб Фокин',
+      data: '12.02.22 12:18',
+      comment: 'Это будет первый комментарий на этой странице',
+      like: 3,
+      likes: 'like-button'
+    },
+    {
+      name: 'Варвара Н.',
+      data: '13.02.22 19:22',
+      comment: 'Мне нравится как оформлена эта страница! ❤',
+      like: 75,
+      likes: 'like-button'
+    }
+  ];
+
+
+  const likesElements = () => {
+    // const likesButtonsElements = document.querySelectorAll('.like-button');
+
+  //   for (const likesButtonsElement of likesButtonsElements) {
+  //   likesButtonsElement.addEventListener('click', () => {
+  //     const index = likesButtonsElement.dataset.index;
+  //     let counter = comments[index]['like'];
+  //       if (likesButtonsElement.classList.contains('-active-like')) {
+  //         counter -=1;
+  //         likesBtn = likesButtonsElement.classList.remove('-active-like');
+  //       } else {
+  //         counter +=1;
+  //         likesBtn = likesButtonsElement.classList.add('-active-like');
+  //       }
+  //       console.log(comments[index]['like'] = counter);
+  //       renderComments(); 
+  //     });
+  //   };
+  // }
+
+  for (const likesButtonsElement of likesButtonsElements) {
+    likesButtonsElement.addEventListener('click', () => {
+      const index = likesButtonsElement.dataset.index;
+      let counter = comments[index]['like'];
+      
+        if (comments[index]['likes']  === 'like-button -active-like'){
+          counter -=1;
+          comments[index]['likes']  = 'like-button'
+        } else {
+          counter +=1;
+          comments[index]['likes'] = 'like-button -active-like';
+        }
+        console.log(comments[index]['like'] = counter);
+        renderComments(); 
+      });
+    };
+  }
+
+  likesElements();
+
+  const renderComments = () => {
+    const commentsHtml = comments.map((comment, index) => {
+      return `<li class="comment">
+        <div class="comment-header">
+          <div>${comment.name}</div>
+          <div>${comment.data}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${comment.comment}
+          </div>
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${comment.like}</span>
+            <button data-index='${index}' class="${comment.likes}"></button>
+          </div>
+        </div>
+      </li>`;
+    }).join('');
+
+    listElement.innerHTML = commentsHtml;
+    likesElements();
+  };
+
+renderComments();
+
+
+
+  buttonElement.addEventListener('click', () => {
+    nameElement.classList.remove('error');
+    commentElement.classList.remove('error');
+    if (nameElement.value === '') {
+      nameElement.classList.add('error');
+      return;
+    };
+    if (commentElement.value === '') {
+      commentElement.classList.add('error');
+      return;
+    };
+
+    comments.push({
+      name: nameElement.value,
+      data: getTime(date),
+      comment: commentElement.value,
+      like: 0,
+      likes: 'like-button'
+    })
+    nameElement.value = ''; 
+    commentElement.value = '';
+    renderComments()
+  });
+
+</script>
+
 </html>
