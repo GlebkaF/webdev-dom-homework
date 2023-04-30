@@ -109,6 +109,98 @@
       }
     ];
 
+    const addNewComment = () => {
+      if (!nameElement.value) {
+        nameElement.classList.add('form-error');
+      } else if (!textElement.value) {
+        textElement.classList.add('form-error');
+      } else {
+        commentList.innerHTML = '';
+
+        comments.push({
+          tagComment: 'li',
+          classComment: 'comment',
+          header: {
+            tagHeader: 'div',
+            classHeader: 'comment-header',
+            name: `${nameElement.value}`,
+            date: `${addZero((new Date).getDate())}.${addZero((new Date).getMonth())}.${editYear((new Date).getFullYear())} ${addZero((new Date).getHours())}:${addZero((new Date).getMinutes())}`
+          },
+          body: {
+            tagBody: 'div',
+            classBody: 'comment-body',
+            html: `<div class="comment-text">${textElement.value}</div>`
+          },
+          footer: {
+            tagFooter: 'div',
+            classFooter: 'comment-footer',
+            likes: {
+              tagLikes: 'div',
+              classLikes: 'likes',
+              counter: {
+                tagCounter: 'span',
+                classCounter: 'likes-counter',
+                value: 0
+              },
+              button: {
+                tagButton: 'button',
+                classButton: 'like-button',
+                activeName: '-active-like',
+                activeStatus: false
+              }
+            }
+          }
+        });
+
+        renderComments();
+        likeComment();
+      }
+    }
+
+    const checkButton = () => {
+      if (nameElement.value && textElement.value) {
+        addButton.disabled = false;
+      } else {
+        addButton.disabled = true;
+      }
+    }
+
+    const activateButton = () => {
+      nameElement.addEventListener('input', () => {
+        addButton.disabled = false;
+      });
+      textElement.addEventListener('input', () => {
+        addButton.disabled = false;
+      });
+    }
+
+    const removeLastComment = () => {
+      commentList.innerHTML = '';
+      comments.pop();
+
+      renderComments();
+    }
+
+    const likeComment = () => {
+      let likeButtons = document.querySelectorAll('.like-button');
+      let likeCounters = document.querySelectorAll('.likes-counter');
+ 
+      for (let i = 0; i < likeButtons.length; i++) {
+        likeButtons[i].addEventListener('click', () => {
+          if (likeButtons[i].classList.contains('-active-like')) {
+            likeButtons[i].classList.remove('-active-like');
+            likeCounters[i].textContent--;
+          } else {
+            likeButtons[i].classList.add('-active-like');
+            likeCounters[i].textContent++;
+          }
+        });
+      }
+    }
+
+    const addZero = (num) => String(num).length < 2 ? '0' + num : num;
+    const editYear = (year) => String(year)[String(year).length - 2] + String(year)[String(year).length - 1];
+
     const renderComments = () => {
       for (let comment of comments) {
         let commentItem = document.createElement(comment.tagComment);
@@ -154,63 +246,33 @@
         textElement.value = '';
         nameElement.classList.remove('form-error');
         textElement.classList.remove('form-error');
+
+        activateButton();
+        checkButton();
       }
     }
 
     renderComments();
 
-    addButton.addEventListener('click', () => {
-      if (!nameElement.value) {
-        nameElement.classList.add('form-error');
-      } else if (!textElement.value) {
-        textElement.classList.add('form-error');
-      } else {
-        commentList.innerHTML = '';
-
-        comments.push({
-          tagComment: 'li',
-          classComment: 'comment',
-          header: {
-            tagHeader: 'div',
-            classHeader: 'comment-header',
-            name: `${nameElement.value}`,
-            date: `${addZero((new Date).getDate())}.${addZero((new Date).getMonth())}.${editYear((new Date).getFullYear())} ${addZero((new Date).getHours())}:${addZero((new Date).getMinutes())}`
-          },
-          body: {
-            tagBody: 'div',
-            classBody: 'comment-body',
-            html: `<div class="comment-text">${textElement.value}</div>`
-          },
-          footer: {
-            tagFooter: 'div',
-            classFooter: 'comment-footer',
-            likes: {
-              tagLikes: 'div',
-              classLikes: 'likes',
-              counter: {
-                tagCounter: 'span',
-                classCounter: 'likes-counter',
-                value: 0
-              },
-              button: {
-                tagButton: 'button',
-                classButton: 'like-button',
-                activeName: '-active-like',
-                activeStatus: false
-              }
-            }
+    addButton.addEventListener('click', addNewComment);
+    textElement.addEventListener('keyup', (event) => {
+        if (event.key === 'Enter') {
+          if (nameElement.value.trim() === '') {
+            nameElement.classList.add('form-error');
+            return;
+          } else if (textElement.value.trim() === '') {
+            textElement.classList.add('form-error');
+            return;
+          } else if ((nameElement.value.trim() === '' && textElement.value.trim() === '')) {
+            nameElement.classList.add('form-error');
+            textElement.classList.add('form-error');
+            return;
+          } else {
+            addNewComment();
           }
-        })
-
-        renderComments();
-      }
-    });
-
-    function addZero(num) {
-      return String(num).length < 2 ? '0' + num : num;
-    }
-    function editYear(year) {
-      return String(year)[String(year).length - 2] + String(year)[String(year).length - 1];
-    }
+        }
+      });
+      removeButton.addEventListener('click', removeLastComment);
+      likeComment();
   </script>
 </html>
