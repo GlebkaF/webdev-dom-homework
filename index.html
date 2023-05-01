@@ -79,7 +79,8 @@
       const likeButtonElements = document.querySelectorAll(".like-button");
       for (const likeButtonElement of likeButtonElements) {
         const index = likeButtonElement.dataset.index;
-        likeButtonElement.addEventListener("click", () => {
+        likeButtonElement.addEventListener("click", (event) => {
+          event.stopPropagation();
           if (!userComments[index].clicked) {
             userComments[index].clicked = true;
             userComments[index].active = "-active-like";
@@ -100,7 +101,8 @@
       const editButtonElements = document.querySelectorAll(".edit-button");
       for (const editButtonElement of editButtonElements) {
         const index = editButtonElement.dataset.index;
-        editButtonElement.addEventListener("click", () => {
+        editButtonElement.addEventListener("click", (event) => {
+          event.stopPropagation();
           if (!userComments[index].isEdit) {
             userComments[index].isEdit = true;
           } else {
@@ -208,9 +210,9 @@
       // Adding new comment
 
       userComments.push({
-        name: nameInputElement.value,
+        name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
         date: time (),
-        comment: commentInputElement.value,
+        comment: commentInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
         likeCounter: 0,
         clicked: false,
         active: "",
