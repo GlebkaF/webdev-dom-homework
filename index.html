@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id = "list">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -46,26 +46,115 @@
       </ul>
       <div class="add-form">
         <input
+          id="name-input"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
+          id="text-input"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button disabled class="add-form-button" id="add-button">Написать</button>
         </div>
       </div>
+      <button class="add-form-button" id="delete-button">Удалить последний комментарий</button>
     </div>
   </body>
 
   <script>
     "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const buttonElement = document.getElementById("add-button");
+    const nameInputElement = document.getElementById("name-input");
+    const textInputElement = document.getElementById("text-input");
+    const listElement = document.getElementById("list");
+    const deleteButtonElement = document.getElementById("delete-button");
+    let today = new Date();
+    let day = today.getDate();
+    let month = today.getMonth();
+    let years = today.getFullYear();
+    let hours = today.getHours();
+    let minutes = today.getMinutes();
+
+    if (day < 10) {
+      day = "0" + day
+    }
+
+    if (month < 10) {
+      month = "0" + month
+    }
+
+    years = String(years).slice(2);
+
+    function checkForm() {
+      if (textInputElement.value !== "" && nameInputElement.value !== "") {
+        buttonElement.removeAttribute("disabled");
+      } else {
+        buttonElement.setAttribute("disabled", true);
+      }
+    }
+
+    function postComment() {
+      if (nameInputElement.value === "") {
+        nameInputElement.classList.add("error");
+        return;
+      }
+
+      if (textInputElement.value === "") {
+        textInputElement.classList.add("error");
+        return;
+      }
+
+      const oldListHtml = listElement.innerHTML;
+      listElement.innerHTML =
+        oldListHtml +
+        `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${day}.${month}.${years} ${hours}:${minutes}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button -active-like"></button>
+            </div>
+          </div>
+        </li>`;
+
+      nameInputElement.value = "";
+      textInputElement.value = "";
+    }
+
+    nameInputElement.addEventListener("input", () => {
+      nameInputElement.classList.remove("error");
+      checkForm();
+    });
+
+    textInputElement.addEventListener("input", () => {
+      textInputElement.classList.remove("error");
+      checkForm();
+    });
+
+    buttonElement.addEventListener("click", postComment);
+
+    document.addEventListener("keyup", (event) => {
+      if (event.code === 'Enter') {
+        postComment();
+      }
+    })
+
+    deleteButtonElement.addEventListener('click', () => {
+      listElement.innerHTML = listElement.innerHTML.slice(0, listElement.innerHTML.lastIndexOf('<li class="comment">'));
+    })
+
   </script>
 </html>
