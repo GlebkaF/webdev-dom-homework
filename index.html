@@ -47,6 +47,7 @@
     const commentInputElement = document.getElementById("comment-input");
     const likeButtonElements = document.querySelectorAll(".like-button");
     const editButtonElements = document.querySelectorAll(".edit-button");
+    const commentElements = document.querySelectorAll(".comment");
 
     // Data in array
 
@@ -110,12 +111,25 @@
       }
     };
 
+     // Reply to a comment
+
+     const replyToComment = () => {
+      const commentElements = document.querySelectorAll(".comment");
+      for (const commentElement of commentElements) {
+        commentElement.addEventListener("click", () => {
+            let userName = commentElement.dataset.userName;
+            let textComment = commentElement.dataset.comment;
+            commentInputElement.value = userName +"\n" + textComment;
+        });
+      }
+    };
+
 
     const renderUserComments = () => {
       const userCommentsHtml = userComments.map((userComment, index) => {
         if (!userComments[index].isEdit) {
           userComments.isEdit = true;
-          return `<li class="comment">
+          return `<li class="comment" data-comment="${userComment.comment}" data-userName="${userComment.name}">
           <div class="comment-header">
             <div>${userComment.name}</div>
             <div>${userComment.date}</div>
@@ -135,14 +149,14 @@
         </li>`;
         } else {
           userComments.isEdit = false;
-          return `<li class="comment">
+          return `<li class="comment" data-comment="${userComment.comment}>
           <div class="comment-header">
             <div>${userComment.name}</div>
             <div>${userComment.date}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${userComment.comment}
+              <textarea class="comment-text-edit">${userComment.comment}</textarea>
             </div>
           </div>
           <button data-index="${index}" class="edit-button" type="button">Сохранить</button>
@@ -158,6 +172,7 @@
       listElement.innerHTML = userCommentsHtml;
       initLikeButton();
       initEditButton();
+      replyToComment();
     };
   
 
