@@ -117,8 +117,8 @@
       const commentElements = document.querySelectorAll(".comment");
       for (const commentElement of commentElements) {
         commentElement.addEventListener("click", () => {
-            let userName = commentElement.dataset.userName;
-            let textComment = commentElement.dataset.comment;
+            let userName = commentElement.dataset.name;
+            let textComment = commentElement.dataset.text;
             commentInputElement.value = userName +"\n" + textComment;
         });
       }
@@ -129,13 +129,13 @@
       const userCommentsHtml = userComments.map((userComment, index) => {
         if (!userComments[index].isEdit) {
           userComments.isEdit = true;
-          return `<li class="comment" data-comment="${userComment.comment}" data-userName="${userComment.name}">
+          return `<li class="comment" data-index="${index}" data-name="${userComment.name}" data-text="${userComment.comment}">
           <div class="comment-header">
             <div>${userComment.name}</div>
             <div>${userComment.date}</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
+            <div style="white-space: pre-line" class="comment-text">
               ${userComment.comment}
             </div>
           </div>
@@ -149,13 +149,13 @@
         </li>`;
         } else {
           userComments.isEdit = false;
-          return `<li class="comment" data-comment="${userComment.comment}>
+          return `<li class="comment">
           <div class="comment-header">
             <div>${userComment.name}</div>
             <div>${userComment.date}</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
+            <div style="white-space: pre-line" class="comment-text">
               <textarea class="comment-text-edit">${userComment.comment}</textarea>
             </div>
           </div>
