@@ -134,10 +134,24 @@
   function addCommentOnButtonClickOrEnter(event) {
     if (event.type === 'click' || (event.type === 'keyup' && event.key === 'Enter')) {
       addComment();
+      addLike();
     }
   }
   addButton.addEventListener('click', addCommentOnButtonClickOrEnter);
   document.addEventListener('keyup', addCommentOnButtonClickOrEnter);
+
+  //Функция добавляет класс -active-like для кнопки лайка
+  const likesButton = document.querySelectorAll('.like-button');
+
+  function addLike(event) {
+    if (event.target.classList.contains('-active-like')) {
+      event.target.classList.remove('-active-like');
+    } else {
+      event.target.classList.add('-active-like');
+    }
+  }
+  likesButton.forEach(likeButton => likeButton.addEventListener('click', addLike));
+
 
 </script>
 
