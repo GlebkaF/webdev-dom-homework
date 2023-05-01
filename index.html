@@ -11,8 +11,8 @@
       <ul class="comments">
         <li class="comment">
           <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
+            <div class="comment-user-name">Глеб Фокин</div>
+            <div class="comment-date">12.02.22 12:18</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -62,10 +62,28 @@
       </div>
     </div>
   </body>
-
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const buttonNewComment = document.querySelector('.add-form-button');
+    const comment = document.querySelector('.comment');
+    const comments = document.querySelector('.comments');
+    const inputName = document.querySelector('.add-form-name');
+    const textAreaComment = document.querySelector('.add-form-text');
+
+    buttonNewComment.addEventListener('click', function () {
+      if (inputName.value === '') {
+        inputName.classList.add('error');
+      } if (textAreaComment.value === '') {
+        textAreaComment.classList.add('error');
+        return;
+      } else {
+        let newComment = comment.cloneNode(true);
+        let now = new Date();
+        newComment.querySelector('.comment-user-name').textContent = inputName.value;
+        newComment.querySelector('.comment-text').textContent = textAreaComment.value;
+        newComment.querySelector('.likes-counter').textContent = '0';
+        newComment.querySelector('.comment-date').textContent = now.toLocaleString().slice(0,-3);
+        comments.appendChild(newComment);
+      }
+    });
   </script>
 </html>
