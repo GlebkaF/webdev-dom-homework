@@ -75,6 +75,16 @@ const editClick = () => {
 
 }
 
+const delClick = () => {
+    const delClickElements = document.querySelectorAll('.del-comment');
+    for (const delClickElement of delClickElements) {
+        delClickElement.addEventListener('click', (e) => {
+            commentsListArray.splice(e.target.dataset.id, 1);
+            renderComments();
+        });
+    }
+}
+
 function saveEditComment(id,popap) {
     const saveButtonClick = document.querySelector('.save_button');
     saveButtonClick.addEventListener('click', (e) => {
@@ -101,17 +111,20 @@ function renderComments() {
             </div>
           </div>
           <div class="comment-footer">
-            <div class="edit-comment"><span data-id="${id}">&#9998;</span></div>
+
             <div class="likes">
               <span class="likes-counter" >${comment.like}</span>
               <button class="like-button ${Iliked}" data-id="${id}"></button>
             </div>
+            <div class="edit-comment"><span data-id="${id}" title="Редактироать">&#9998;</span></div>
+            <div class="del-comment"><span data-id="${id}" title="Удалить">&#10008;</span></div>
           </div>
         </li>`;
     }).join("");
     commentList.innerHTML = commentHtmlResult;
     initLikeClick();
     editClick();
+    delClick();
 }
 
 
