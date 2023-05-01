@@ -63,16 +63,12 @@
   const listElement = document.getElementById('add-comments');
   const nameElement = document.getElementById('name-input');
   const commentElement = document.getElementById('comment-input');
-  // const likesButtonsElements = document.querySelectorAll('.like-button');
 
-
-  let date = new Date();
-  function getTime(now){
+  
+  function getTime(){
+    let date = new Date();
     const months = ["01", "02", "03", "04", "05", "06","07", "08", "09", "10", "11", "12"];
-    let minute = date.getMinutes(); 
-    if (minute < 10) minute = '0' + minute;
-
-    let fullDate = date.getDate() + "." + months[date.getMonth()] + "." + date.getFullYear() + " " + date.getHours() + ":" + minute; 
+    let fullDate = date.getDate() + "." + months[date.getMonth()] + "." + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes(); 
     return fullDate; 
   }
 
@@ -80,14 +76,14 @@
   const comments = [
     {
       name: 'Глеб Фокин',
-      data: '12.02.22 12:18',
+      date: '12.02.22 12:18',
       comment: 'Это будет первый комментарий на этой странице',
       like: 3,
       likes: 'like-button'
     },
     {
       name: 'Варвара Н.',
-      data: '13.02.22 19:22',
+      date: '13.02.22 19:22',
       comment: 'Мне нравится как оформлена эта страница! ❤',
       like: 75,
       likes: 'like-button'
@@ -97,23 +93,6 @@
 
   const likesElements = () => {
   const likesButtonsElements = document.querySelectorAll('.like-button');
-
-  //   for (const likesButtonsElement of likesButtonsElements) {
-  //   likesButtonsElement.addEventListener('click', () => {
-  //     const index = likesButtonsElement.dataset.index;
-  //     let counter = comments[index]['like'];
-  //       if (likesButtonsElement.classList.contains('-active-like')) {
-  //         counter -=1;
-  //         likesBtn = likesButtonsElement.classList.remove('-active-like');
-  //       } else {
-  //         counter +=1;
-  //         likesBtn = likesButtonsElement.classList.add('-active-like');
-  //       }
-  //       console.log(comments[index]['like'] = counter);
-  //       renderComments(); 
-  //     });
-  //   };
-  // }
 
   for (const likesButtonsElement of likesButtonsElements) {
     likesButtonsElement.addEventListener('click', () => {
@@ -140,7 +119,7 @@
       return `<li class="comment">
         <div class="comment-header">
           <div>${comment.name}</div>
-          <div>${comment.data}</div>
+          <div>${comment.date}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
@@ -179,14 +158,16 @@ renderComments();
 
     comments.push({
       name: nameElement.value,
-      data: getTime(date),
+      date: getTime(),
       comment: commentElement.value,
       like: 0,
       likes: 'like-button'
     })
+
+    renderComments()
     nameElement.value = ''; 
     commentElement.value = '';
-    renderComments()
+  
   });
 
 </script>
