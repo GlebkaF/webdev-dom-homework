@@ -134,13 +134,13 @@
   function addCommentOnButtonClickOrEnter(event) {
     if (event.type === 'click' || (event.type === 'keyup' && event.key === 'Enter')) {
       addComment();
-
+      toggleLike()
     }
   }
   addButton.addEventListener('click', addCommentOnButtonClickOrEnter);
   document.addEventListener('keyup', addCommentOnButtonClickOrEnter);
 
-  //Функция увеличивает количество лайков на 1
+  //Функция увеличивает количество лайков на 1 при клике
   function toggleLike() {
     const likeButtons = document.querySelectorAll('.like-button');
 
@@ -163,11 +163,7 @@
       });
     });
   }
-
-  window.onload = function () {
-    toggleLike();
-  }
-
+  toggleLike()
 
 </script>
 
