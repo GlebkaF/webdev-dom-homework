@@ -51,7 +51,19 @@
         body: {
           tagBody: 'div',
           classBody: 'comment-body',
-          html: '<div class="comment-text">Это будет первый комментарий на этой странице</div>'
+          text: {
+            tagText: 'div',
+            classText: 'comment-text',
+            content: 'Это будет первый комментарий на этой странице'
+          },
+          editButton: {
+            tagEdit: 'button',
+            classEdit: 'edit-button',
+            isEdit: false,
+            editName: 'Редактировать',
+            saveName: 'Сохранить',
+            dataIndex: 'data-index'
+          }
         },
         footer: {
           tagFooter: 'div',
@@ -68,7 +80,8 @@
               tagButton: 'button',
               classButton: 'like-button',
               activeName: '-active-like',
-              activeStatus: false
+              activeStatus: false,
+              dataIndex: 'data-index'
             }
           }
         }
@@ -85,7 +98,19 @@
         body: {
           tagBody: 'div',
           classBody: 'comment-body',
-          html: '<div class="comment-text">Мне нравится как оформлена эта страница! ❤</div>'
+          text: {
+            tagText: 'div',
+            classText: 'comment-text',
+            content: 'Мне нравится как оформлена эта страница! ❤'
+          },
+          editButton: {
+            tagEdit: 'button',
+            classEdit: 'edit-button',
+            isEdit: false,
+            editName: 'Редактировать',
+            saveName: 'Сохранить',
+            dataIndex: 'data-index'
+          }
         },
         footer: {
           tagFooter: 'div',
@@ -102,7 +127,8 @@
               tagButton: 'button',
               classButton: 'like-button',
               activeName: '-active-like',
-              activeStatus: true
+              activeStatus: true,
+              dataIndex: 'data-index'
             }
           }
         }
@@ -110,9 +136,15 @@
     ];
 
     const addNewComment = () => {
-      if (!nameElement.value) {
+      let day = addZero((new Date).getDate());
+      let month = addZero((new Date).getMonth());
+      let year = editYear((new Date).getFullYear());
+      let hours = addZero((new Date).getHours());
+      let minutes = addZero((new Date).getMinutes());
+
+      if (!nameElement.value.trim()) {
         nameElement.classList.add('form-error');
-      } else if (!textElement.value) {
+      } else if (!textElement.value.trim()) {
         textElement.classList.add('form-error');
       } else {
         commentList.innerHTML = '';
@@ -124,12 +156,24 @@
             tagHeader: 'div',
             classHeader: 'comment-header',
             name: `${nameElement.value}`,
-            date: `${addZero((new Date).getDate())}.${addZero((new Date).getMonth())}.${editYear((new Date).getFullYear())} ${addZero((new Date).getHours())}:${addZero((new Date).getMinutes())}`
+            date: `${day}.${month}.${year} ${hours}:${minutes}`
           },
           body: {
             tagBody: 'div',
             classBody: 'comment-body',
-            html: `<div class="comment-text">${textElement.value}</div>`
+            text: {
+              tagText: 'div',
+              classText: 'comment-text',
+              content: `${textElement.value}`
+            },
+            editButton: {
+              tagEdit: 'button',
+              classEdit: 'edit-button',
+              isEdit: false,
+              editName: 'Редактировать',
+              saveName: 'Сохранить',
+              dataIndex: 'data-index'
+            }
           },
           footer: {
             tagFooter: 'div',
@@ -146,14 +190,14 @@
                 tagButton: 'button',
                 classButton: 'like-button',
                 activeName: '-active-like',
-                activeStatus: false
+                activeStatus: false,
+                dataIndex: 'data-index'
               }
             }
           }
         });
 
         renderComments();
-        likeComment();
       }
     }
 
@@ -183,25 +227,53 @@
 
     const likeComment = () => {
       let likeButtons = document.querySelectorAll('.like-button');
-      let likeCounters = document.querySelectorAll('.likes-counter');
- 
-      for (let i = 0; i < likeButtons.length; i++) {
-        likeButtons[i].addEventListener('click', () => {
-          if (likeButtons[i].classList.contains('-active-like')) {
-            likeButtons[i].classList.remove('-active-like');
-            likeCounters[i].textContent--;
+
+      for (let button of likeButtons) {
+        button.addEventListener('click', () => {
+          commentList.innerHTML = '';
+
+          if (comments[button.dataset.index].footer.likes.button.activeStatus) {
+            comments[button.dataset.index].footer.likes.button.activeStatus = false;
+            comments[button.dataset.index].footer.likes.counter.value--;
           } else {
-            likeButtons[i].classList.add('-active-like');
-            likeCounters[i].textContent++;
+            comments[button.dataset.index].footer.likes.button.activeStatus = true;
+            comments[button.dataset.index].footer.likes.counter.value++;
           }
+
+          renderComments();
         });
       }
     }
 
+    const editComment = () => {
+      let editButtons = document.querySelectorAll('.edit-button');
+      let editArea = document.querySelector('.edit-area');
+
+      for (let button of editButtons) {
+        button.addEventListener('click', () => {
+          commentList.innerHTML = '';
+
+          if (!comments[button.dataset.index].body.editButton.isEdit) {
+            comments[button.dataset.index].body.editButton.isEdit = true;
+            comments[button.dataset.index].body.text.content = `<textarea class="edit-area">${comments[button.dataset.index].body.text.content}</textarea>`;
+          } else if (!editArea.value.trim() && comments[button.dataset.index].body.editButton.isEdit) {
+            comments[button.dataset.index].body.text.content = '<textarea class="edit-area form-error"></textarea>';
+          } else {
+            comments[button.dataset.index].body.editButton.isEdit = false;
+            comments[button.dataset.index].body.text.content = `${editArea.value}`;
+          }
+
+          renderComments();
+        });
+      }
+    }
+    
     const addZero = (num) => String(num).length < 2 ? '0' + num : num;
     const editYear = (year) => String(year)[String(year).length - 2] + String(year)[String(year).length - 1];
 
     const renderComments = () => {
+      let indexCounter = 0;
+
       for (let comment of comments) {
         let commentItem = document.createElement(comment.tagComment);
         commentItem.classList.add(comment.classComment);
@@ -217,8 +289,24 @@
 
         let itemBody = document.createElement(comment.body.tagBody);
         itemBody.classList.add(comment.body.classBody);
-        itemBody.innerHTML = comment.body.html;
         commentItem.appendChild(itemBody);
+
+        let bodyText = document.createElement(comment.body.text.tagText);
+        bodyText.classList.add(comment.body.text.classText);
+        bodyText.innerHTML = comment.body.text.content;
+        itemBody.appendChild(bodyText);
+        
+        let editButton = document.createElement(comment.body.editButton.tagEdit);
+        editButton.classList.add(comment.body.editButton.classEdit);
+        
+        if (!comment.body.editButton.isEdit) {
+          editButton.textContent = comment.body.editButton.editName;
+        } else {
+          editButton.textContent = comment.body.editButton.saveName;
+        }
+
+        editButton.setAttribute(comment.body.editButton.dataIndex, `${indexCounter}`);
+        itemBody.appendChild(editButton);
 
         let itemFooter = document.createElement(comment.footer.tagFooter);
         itemFooter.classList.add(comment.footer.classFooter);
@@ -235,6 +323,7 @@
 
         let likesButton = document.createElement(comment.footer.likes.button.tagButton);
         likesButton.classList.add(comment.footer.likes.button.classButton);
+        likesButton.setAttribute(comment.footer.likes.button.dataIndex, `${indexCounter}`);
 
         if (comment.footer.likes.button.activeStatus === true) {
           likesButton.classList.add(comment.footer.likes.button.activeName);
@@ -242,14 +331,18 @@
 
         footerLikes.appendChild(likesButton);
 
-        nameElement.value = '';
-        textElement.value = '';
-        nameElement.classList.remove('form-error');
-        textElement.classList.remove('form-error');
-
-        activateButton();
-        checkButton();
+        indexCounter++;
       }
+
+      nameElement.value = '';
+      textElement.value = '';
+      nameElement.classList.remove('form-error');
+      textElement.classList.remove('form-error');
+
+      activateButton();
+      checkButton();
+      likeComment();
+      editComment();
     }
 
     renderComments();
@@ -272,7 +365,6 @@
           }
         }
       });
-      removeButton.addEventListener('click', removeLastComment);
-      likeComment();
+    removeButton.addEventListener('click', removeLastComment);
   </script>
 </html>
