@@ -134,23 +134,39 @@
   function addCommentOnButtonClickOrEnter(event) {
     if (event.type === 'click' || (event.type === 'keyup' && event.key === 'Enter')) {
       addComment();
-      addLike();
+
     }
   }
   addButton.addEventListener('click', addCommentOnButtonClickOrEnter);
   document.addEventListener('keyup', addCommentOnButtonClickOrEnter);
 
-  //Функция добавляет класс -active-like для кнопки лайка
-  const likesButton = document.querySelectorAll('.like-button');
+  //Функция увеличивает количество лайков на 1
+  function toggleLike() {
+    const likeButtons = document.querySelectorAll('.like-button');
 
-  function addLike(event) {
-    if (event.target.classList.contains('-active-like')) {
-      event.target.classList.remove('-active-like');
-    } else {
-      event.target.classList.add('-active-like');
-    }
+    likeButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const likesCounter = button.parentNode.querySelector('.likes-counter');
+        let likesCount = parseInt(likesCounter.textContent);
+
+        if (button.classList.contains('-active-like')) {
+          // Если кнопка уже была нажата, убираем лайк
+          likesCount--;
+          button.classList.remove('-active-like');
+        } else {
+          // Если кнопка еще не была нажата, добавляем лайк
+          likesCount++;
+          button.classList.add('-active-like');
+        }
+
+        likesCounter.textContent = likesCount;
+      });
+    });
   }
-  likesButton.forEach(likeButton => likeButton.addEventListener('click', addLike));
+
+  window.onload = function () {
+    toggleLike();
+  }
 
 
 </script>
