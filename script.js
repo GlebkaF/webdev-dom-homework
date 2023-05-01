@@ -1,6 +1,5 @@
 import { fetchComments, newComment } from "./api.js";
 import { renderLike } from "./render.js";
-import { listComment } from "./commentList.js";
 
 const buttonElement = document.querySelector(".add-form-button");
 const commentElement = document.querySelector(".comments");
@@ -30,7 +29,7 @@ fetchComments()
     })
   })
 .then((comments) => {
-  renderLike(comments, commentElement, listComment);
+  renderLike(comments, commentElement);
   initEventLike();
   answer();
 })
@@ -66,7 +65,7 @@ const initEventLike = () => {
       comments[index].countLike -= 1;
     }
     likeButton.classList.remove("load-like");
-    renderLike(comments, commentElement, listComment);
+    renderLike(comments, commentElement);
     initEventLike();
     });
       });
@@ -146,7 +145,7 @@ buttonElement.addEventListener("click", () => {
     }
     console.warn(error);
   });
-  renderLike(comments, commentElement, listComment);
+  renderLike(comments, commentElement);
 });
 
 const handlePostClick = () => {
@@ -173,7 +172,7 @@ const handlePostClick = () => {
           handlePostClick();
         }
       })
-    renderLike(comments, commentElement, listComment);
+    renderLike(comments, commentElement);
   };
 
   buttonElement.addEventListener("click", handlePostClick);
