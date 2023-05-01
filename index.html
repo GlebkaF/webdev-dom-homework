@@ -80,23 +80,21 @@
     },
   ];
 
-  
 
   const likeButtonsListeners = () => {
-
     const likeButtonElements = document.querySelectorAll('.like-button');
     const likeCountElements = document.querySelectorAll('.likes-counter');
-
+    console.log(likeCountElements);
 
     for (const likeButtonElement of likeButtonElements) {
       likeButtonElement.addEventListener("click", () => {
 
-        let likeCount = likeButtonElement.dataset.counter;
-        likeCount++;
-
-        // likeCountElements.innerHTML = likeCount;
-        // renderComments();
-        console.log(likeCount);
+        for (const likeCountElement of likeCountElements) {
+          let likeCount = likeButtonElement.dataset.counter;
+          likeCount++;
+          likeCountElement.innerHTML = likeCount;
+          console.log(likeCount);
+        }
       })
     }
   };
