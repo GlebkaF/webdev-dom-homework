@@ -50,7 +50,7 @@
       <textarea type="textarea" class="add-form-text" id="add-comment" placeholder="Введите ваш коментарий"
         rows="4"></textarea>
       <div class="add-form-row">
-        <button class="add-form-button" id="addFormButton">Написать</button>
+        <button class="add-form-button" id="form-add-button">Написать</button>
       </div>
     </div>
   </div>
@@ -58,8 +58,8 @@
 
 <script>
   "use strict";
-  const listElem = document.getElementById('list-comments')
-  const commentBtn = document.getElementById('addFormButton');
+  const listElem = document.getElementById('list-comments');
+  const commentBtn = document.getElementById('form-add-button');
   const addName = document.getElementById('add-name');
   const addComment = document.getElementById('add-comment');
 
@@ -80,6 +80,28 @@
     },
   ];
 
+  
+
+  const likeButtonsListeners = () => {
+
+    const likeButtonElements = document.querySelectorAll('.like-button');
+    const likeCountElements = document.querySelectorAll('.likes-counter');
+
+
+    for (const likeButtonElement of likeButtonElements) {
+      likeButtonElement.addEventListener("click", () => {
+
+        let likeCount = likeButtonElement.dataset.counter;
+        likeCount++;
+
+        // likeCountElements.innerHTML = likeCount;
+        // renderComments();
+        console.log(likeCount);
+      })
+    }
+  };
+
+
   const renderComments = () => {
     const commentsHtml = comments.map((comment) => {
       return `<li class="comment">
@@ -98,8 +120,10 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter"></span>
-              <button class="like-button">
+              <span class="likes-counter">
+                ${comment.likes}
+              </span>
+              <button class="like-button" data-counter="${comment.likes}">
               </button>
             </div>
           </div>
@@ -107,6 +131,7 @@
     }).join('');
 
     listElem.innerHTML = commentsHtml;
+    likeButtonsListeners();
   };
 
   renderComments();
@@ -119,27 +144,27 @@
       return addName.classList.add("error");
     } else if (addComment.value === '') {
       return addComment.classList.add("error");
-    }
+    };
 
     const oldListElem = listElem.innerHTML;
     let userDate = new Date();
-    let month = userDate.getMonth();
+    let month = userDate.getMonth() + 1;
     let minutes = userDate.getMinutes();
     let year = userDate.getFullYear() % 100;
 
     if (month < 10) {
       month = "0" + month;
-    }
+    };
 
     if (minutes < 10) {
       minutes = "0" + minutes;
-    }
+    };
 
     if (year < 10) {
       year = "0" + year;
-    }
+    };
 
-    let commentTime = `${userDate.getDate()}.${month}.${year} ${userDate.getHours()}:${minutes}`;
+    let nowDate = `${userDate.getDate()}.${month}.${year} ${userDate.getHours()}:${minutes}`;
 
     // listElem.innerHTML = oldListElem +
     //   `<li class="comment">
@@ -148,7 +173,7 @@
     //           ${addName.value}
     //         </div>
     //         <div>
-    //           ${commentTime}
+    //           ${nowDate}
     //         </div>
     //       </div>
     //       <div class="comment-body">
@@ -164,11 +189,12 @@
     //         </div>
     //       </div>
     //     </li>`
-    
+
     comments.push({
       userName: addName.value,
-      commentDate: commentTime,
+      commentDate: nowDate,
       userComment: addComment.value,
+      likes: 0,
     });
 
     renderComments();
