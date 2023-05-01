@@ -9,9 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments">
-
       </ul>
-
 
       <div class="add-form">
         <input
@@ -45,21 +43,61 @@ const commentsListArray = [
   date: "12.02.22 12:18",
   msg: "Это будет первый комментарий на этой странице",
   like: "3",
+  Iliked: false,
 },
 {name: "Варвара Н.",
   date: "13.02.22 19:22",
   msg: "Мне нравится как оформлена эта страница! ❤",
-  like: "75",}
+  like: "75",
+  Iliked: false,},
+  {name: "Евген",
+  date: "01.05.23 13:01",
+  msg: "Ничего не понимаю , но интересно ",
+  like: "1",
+  Iliked: true,}
 ];
 
-renderComments() ;
+const addLikes = (e) => {
+  commentsListArray[e.target.dataset.id].like =  Number(commentsListArray[e.target.dataset.id].like) + 1;
+  commentsListArray[e.target.dataset.id].Iliked = true;
+}
+const delLikes = (e) => {
+  commentsListArray[e.target.dataset.id].like =  Number(commentsListArray[e.target.dataset.id].like) - 1;
+  commentsListArray[e.target.dataset.id].Iliked = false;
+}
+
+const initLikeClick = () => {
+  const likeClickElements = document.querySelectorAll('.likes');
+for (const likeClickElement of likeClickElements) {
+  likeClickElement.addEventListener('click',(e)=>{
+    (commentsListArray[e.target.dataset.id].Iliked)? delLikes(e):addLikes(e);
+ renderComments();
+  }); 
+}
+}
+
+// const editClick = () => {
+//   const editClickElements = document.querySelectorAll('.edit-comment');
+//   for (const editClickElement of editClickElements) {
+//   editClickElement.addEventListener('click',(e)=>{
+//   console.dir(e.target.dataset.id);
+   
+//  renderComments();
+//   }); 
+// }  
+// }
+
 function renderComments() {
   const commentHtmlResult = commentsListArray.map((comment,id) => {
+    (comment.Iliked)? Iliked = '-active-like' : Iliked = '';
+ 
   (comment.date)? dates = comment.date:dates = `${("0"+date.getDate()).slice(-2)}.${("0"+(date.getMonth()+1)).slice(-2)}.${date.getFullYear().toString().slice(-2)} ${("0"+date.getHours()).slice(-2)}:${("0"+date.getMinutes()).slice(-2)}`
-    return  `<li class="comment">
+    return  `<li class="comment" data-id="${id}">
           <div class="comment-header">
             <div>${comment.name}</div>
+            
             <div>${dates}</div>
+            
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -67,15 +105,20 @@ function renderComments() {
             </div>
           </div>
           <div class="comment-footer">
+            <div class="edit-comment"><span data-id="${id}">&#9998;</span></div>
             <div class="likes">
-              <span class="likes-counter">${comment.like}</span>
-              <button class="like-button"></button>
+              <span class="likes-counter" >${comment.like}</span>
+              <button class="like-button ${Iliked}" data-id="${id}"></button>
             </div>
           </div>
         </li>`;
   }).join("");
   commentList.innerHTML = commentHtmlResult;
+  initLikeClick();
+  // editClick();
 }
+
+
 
 function valiate (){ //функция валидации простая
 if(userName.value.length === 0){ //если имя === 0
@@ -127,5 +170,8 @@ addForm.addEventListener('input',(event)=> { //отслеживаем ввод
 addForm.addEventListener('keydown',(e)=>{ 
   if(e.ctrlKey && e.keyCode == 13){addComment();} // если нажата Ctrl + Enter
 });
+
+
+renderComments() ;
   </script>
 </html>
