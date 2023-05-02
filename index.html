@@ -119,14 +119,11 @@
   function renderComments() {
     const commentHtmlResult = commentsListArray.map((comment, id) => {
       (comment.Iliked) ? Iliked = '-active-like' : Iliked = '';
-
       (comment.date) ? dates = comment.date : dates = `${("0" + date.getDate()).slice(-2)}.${("0" + (date.getMonth() + 1)).slice(-2)}.${date.getFullYear().toString().slice(-2)} ${("0" + date.getHours()).slice(-2)}:${("0" + date.getMinutes()).slice(-2)}`
       return `<li class="comment" data-id="${id}">
         <div class="comment-header">
-          <div>${comment.name}</div>
-          
-          <div>${dates}</div>
-          
+          <div>${comment.name}</div>         
+          <div>${dates}</div>          
         </div>
         <div class="comment-body">
           <div class="comment-text">
@@ -145,15 +142,13 @@
     initLikeClick();
   }
 
-
-
   const valiate = () => {
     userName.classList.toggle('error', userName.value.length === 0);
     textComment.classList.toggle('error', textComment.value.length < 1);
     return (userName.value.length > 0 && textComment.value.length >= 1);
   }
 
-  function addComment() {
+  const addComment = () => {
     const validate = valiate();
     const date = new Date();
     if (validate) {
@@ -162,32 +157,30 @@
         date: `${("0" + date.getDate()).slice(-2)}.${("0" + (date.getMonth() + 1)).slice(-2)}.${date.getFullYear().toString().slice(-2)} ${("0" + date.getHours()).slice(-2)}:${("0" + date.getMinutes()).slice(-2)}`,
         msg: textComment.value,
         like: 0,
-
       });
-
       renderComments();
       textComment.value = "";
       button.setAttribute('disabled', '');
     }
-  }
+  };
 
   button.addEventListener('click', (event) => {
     addComment();
   });
 
   addForm.addEventListener('input', (event) => {
-    const validate = valiate();
     if (validate) {
       button.removeAttribute('disabled');
       button.classList.remove('add-form-button-disabled');
     }
   });
 
-  addForm.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.keyCode == 13) { addComment(); }
+  addForm.addEventListener('keydown', (event) => {
+    if (event.ctrlKey && event.key === "Enter") {
+      event.preventDefault();
+      addComment();
+    }
   });
-
-
   renderComments();
 </script>
 
