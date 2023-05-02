@@ -4,7 +4,7 @@ const commentText = document.querySelector('.add-form-text');
 const commentsList = document.querySelector('.comments');
 const addForm = document.querySelector('.add-form');
 
-let comments = [
+const comments = [
     {
         name: "Глеб Фокин",
         date: "12.02.22 12:18",
@@ -33,7 +33,7 @@ const renderComments = () => {
         <div class="comment-footer"> 
             <div class="likes">
                 <span class="likes-counter">${comment.likes}</span>
-                <button class="like-button"</button>
+                <button class="like-button" data-status="false"</button>
             </div>
         </div> 
     </li>`
@@ -83,8 +83,6 @@ function showNewComment() {
         return;
     }
 
-    
-
     const commentDate = new Date();
     const year = commentDate.getFullYear() % 100;
 
@@ -121,6 +119,7 @@ function showNewComment() {
     });
 
     renderComments();
+    initLikesButton();
 
     // commentsList.innerHTML = oldListHtml + 
     //     `<li class="comment">
@@ -173,7 +172,7 @@ function showNewComment() {
     // commentFooter.appendChild(likesBlock);
 
     // const likesCounter = document.createElement('span');
-    // likesCounter.classList.add('lokes-counter');
+    // likesCounter.classList.add('likes-counter');
     // likesBlock.appendChild(likesCounter);
     // likesCounter.textContent = '0';
 
@@ -184,7 +183,6 @@ function showNewComment() {
     commentName.value = '';
     commentText.value = '';
     addButton.setAttribute('disabled', '');
-
 }
 
 const removeButton = document.querySelector('.remove-form-button');
@@ -192,5 +190,31 @@ const removeButton = document.querySelector('.remove-form-button');
 removeButton.addEventListener ('click', () => {
     const removedElement = commentsList.lastElementChild;
     removedElement.remove();
-})
+});
+
+const initLikesButton = () => {
+    const likesButtons = document.querySelectorAll('.like-button');
+
+    for (const likesButton of likesButtons) {
+        likesButton.addEventListener('click', (event) => {
+            const target = event.target;
+            const status = target.dataset.status;
+            const value = +target.previousElementSibling.textContent;
+
+            if (status === "false") {
+                target.previousElementSibling.textContent = value + 1;
+                target.dataset.status = "true";
+                likesButton.classList.add('-active-like');
+            } else {
+                target.previousElementSibling.textContent = value - 1;
+                target.dataset.status = "false";
+                likesButton.classList.remove('-active-like');
+            }
+        })
+    }
+}
+
+initLikesButton();
+
+
     
