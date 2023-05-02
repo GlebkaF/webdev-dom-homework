@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Проект "Комменты"</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <ul class="comments">
+        <!--список рендерится из js -->
+      </ul>
+      <div class="add-form">
+        <input
+          type="text"
+          class="form add-form-name"
+          placeholder="Введите ваше имя"
+        />
+        <textarea
+          type="textarea"
+          class="form add-form-text"
+          placeholder="Введите ваш коментарий"
+          rows="4"
+        ></textarea>
+        <div class="add-form-row">
+          <button class="add-form-button">Написать</button>
+        </div>
+      </div>
+    </div>
+  </body>
+
+  <script>
+    const date = new Date();
+    let month = date.getMonth() + 1;
+    let minutes = date.getMinutes();
+    const commentList = document.querySelector(".comments");
+    const addFormButton = document.querySelector(".add-form-button");
+    const inputName = document.querySelector(".add-form-name");
+    const inputText = document.querySelector(".add-form-text");
+    const form = document.querySelectorAll(".form");
+
+    let comments = [
+      {
+        name: "Глеб Фокин",
+        comment: "Это будет первый комментарий на этой странице",
+        time: "12.02.22 12:18",
+        day: "12",
+        month: "02",
+        year: "22",
+        hours: "12",
+        minutes: "18",
+        likes: 3,
+      },
+
+      {
+        name: "Варвара Н.",
+        comment: "Мне нравится как оформлена эта страница!",
+        day: "13",
+        month: "02",
+        year: "22",
+        hours: "19",
+        minutes: "22",
+        likes: "75",
+      },
+    ];
+
+    const renderComments = () => {
+      const commentsHtml = comments
+        .map((comment) => {
+          return `<li class='comment'>
+      <div class='comment-header'>
+        <div>${comment.name}</div>
+        <div>${comment.day}.${comment.month}.${comment.year}
+          ${comment.hours}:${comment.minutes}
+          </div>
+        </div>
+
+        <div class='comment-body'>
+          <div class= 'comment-text'> ${comment.comment} </div>
+          </div>
+
+          <div class='comment-footer'>
+          <div class='likes'>
+          <span class= 'likes-counter'> ${comment.likes} </div>
+          <button class='like-button'></button>
+          </div>
+            </div>
+      </li>`;
+        })
+        .join("");
+
+      commentList.innerHTML = commentsHtml;
+    };
+
+    renderComments();
+    const likeButtons = document.querySelectorAll(".like-button");
+    let count = 0;
+    likeButtons.forEach((likeButton) => {
+      likeButton.addEventListener("click", (event) => {
+        if (likeButton.classList.contains("active-like")) {
+          likeButton.classList.remove("active-like");
+          count -= 1;
+          console.log("if", count);
+        } else {
+          count += 1;
+          likeButton.classList.add("active-like");
+          console.log("else", count);
+        }
+      });
+    });
+
+    addFormButton.addEventListener("click", (event) => {
+      form.forEach((element) => {
+        if (element.value === "") {
+          element.classList.add("error");
+        } else {
+          element.classList.remove("error");
+        }
+      });
+
+      if (inputName.value === "" || inputText.value.length < 10) {
+        addFormButton.disabled = true;
+        return;
+      } else {
+        comments.push({
+          name: inputName.value,
+          comment: inputText.value,
+          day: date.getDate(),
+          month: month,
+          year: date.getFullYear(),
+          hours: date.getHours(),
+          minutes: minutes,
+          likes: "0",
+        });
+      }
+
+      renderComments();
+    });
+
+    inputName.addEventListener("input", (event) => {
+      if (event.target.value !== "") {
+        addFormButton.disabled = false;
+      }
+    });
+
+    inputText.addEventListener("input", (event) => {
+      if (event.target.value !== "") {
+        addFormButton.disabled = false;
+      }
+    });
+
+    if (month < 10) {
+      month = "0" + month;
+    }
+    if (minutes < 10) {
+      minutes = "0" + minutes;
+    }
+ 
+ </script>
+</html>
