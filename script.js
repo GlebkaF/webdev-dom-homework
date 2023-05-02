@@ -4,6 +4,46 @@ const commentText = document.querySelector('.add-form-text');
 const commentsList = document.querySelector('.comments');
 const addForm = document.querySelector('.add-form');
 
+let comments = [
+    {
+        name: "Глеб Фокин",
+        date: "12.02.22 12:18",
+        text: "Это будет первый комментарий на этой странице",
+        likes: "3",
+    },
+
+    {
+        name: "Варвара Н.",
+        date: "13.02.22 19:22",
+        text: "Мне нравится как оформлена эта страница! ❤",
+        likes: "75",
+    },
+];
+
+const renderComments = () => {
+    const commentsHtml = comments.map((comment) => {
+        return `<li class="comment">
+        <div class="comment-header">
+            <div>${comment.name} </div>
+            <div>${comment.date} </div>
+        </div>
+        <div class="comment-body"> 
+            <div class="comment-text">${comment.text}</div>
+        </div>
+        <div class="comment-footer"> 
+            <div class="likes">
+                <span class="likes-counter">${comment.likes}</span>
+                <button class="like-button"</button>
+            </div>
+        </div> 
+    </li>`
+    }).join("");
+
+    commentsList.innerHTML = commentsHtml;
+}
+
+renderComments();
+
 addButton.setAttribute('disabled', '');
 
 commentName.addEventListener ('input', () => {
@@ -73,26 +113,31 @@ function showNewComment() {
 
     const oldListHtml = commentsList.innerHTML;
 
-    
+    comments.push({
+        name: commentName.value,
+        date: currentDate,
+        text: commentText.value,
+        likes: 0,
+    });
 
-    commentsList.innerHTML = oldListHtml + 
-        `<li class="comment">
-            <div class="comment-header">
-                <div>${commentName.value} </div>
-                <div>${currentDate} </div>
-            </div>
-            <div class="comment-body"> 
-                <div class="comment-text">${commentText.value}</div>
-            </div>
-            <div class="comment-footer"> 
-                <div class="likes">
-                    <span class="likes-counter">0</span>
-                    <button class="like-button"</button>
-                </div>
-            </div> 
-        </li>`
+    renderComments();
 
-
+    // commentsList.innerHTML = oldListHtml + 
+    //     `<li class="comment">
+    //         <div class="comment-header">
+    //             <div>${commentName.value} </div>
+    //             <div>${currentDate} </div>
+    //         </div>
+    //         <div class="comment-body"> 
+    //             <div class="comment-text">${commentText.value}</div>
+    //         </div>
+    //         <div class="comment-footer"> 
+    //             <div class="likes">
+    //                 <span class="likes-counter">0</span>
+    //                 <button class="like-button"</button>
+    //             </div>
+    //         </div> 
+    //     </li>`
 
     // const newCommentBlock = document.createElement('li');
     // newCommentBlock.classList.add('comment');
@@ -106,7 +151,6 @@ function showNewComment() {
     // commentsList.appendChild(newCommentBlock);
     // newCommentBlock.appendChild(newCommentHeader);
     // newCommentBlock.appendChild(newCommentBody);
-
     
     // newCommentName.textContent = commentName.value;
     // newCommentHeader.appendChild(newCommentName);
@@ -115,8 +159,6 @@ function showNewComment() {
     // newCommentText.textContent = commentText.value;
     // newCommentBody.appendChild(newCommentText);
     // newCommentText.classList.add('comment-text');
-
-    
 
     // const dateBlock = document.createElement('div');
     // dateBlock.textContent = currentDate;
@@ -138,8 +180,6 @@ function showNewComment() {
     // const likeButton = document.createElement('button');
     // likeButton.classList.add('like-button');
     // likesBlock.appendChild(likeButton);
-
-
 
     commentName.value = '';
     commentText.value = '';
