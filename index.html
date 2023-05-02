@@ -70,19 +70,34 @@
     const textAreaComment = document.querySelector('.add-form-text');
 
     buttonNewComment.addEventListener('click', function () {
+      let oldComments = comments.innerHTML;
+
       if (inputName.value === '') {
         inputName.classList.add('error');
       } if (textAreaComment.value === '') {
         textAreaComment.classList.add('error');
         return;
       } else {
-        let newComment = comment.cloneNode(true);
         let now = new Date();
-        newComment.querySelector('.comment-user-name').textContent = inputName.value;
-        newComment.querySelector('.comment-text').textContent = textAreaComment.value;
-        newComment.querySelector('.likes-counter').textContent = '0';
-        newComment.querySelector('.comment-date').textContent = now.toLocaleString().slice(0,-3);
-        comments.appendChild(newComment);
+        let newComments = `<li class="comment">
+          <div class="comment-header">
+            <div class="comment-user-name">${inputName.value}</div>
+            <div class="comment-date">${now.toLocaleString().slice(0,-3)}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textAreaComment.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+
+        comments.innerHTML = oldComments + newComments;
       }
     });
   </script>
