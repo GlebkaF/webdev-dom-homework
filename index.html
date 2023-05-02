@@ -10,7 +10,7 @@
 <body>
   <div class="container">
     <ul id="list" class="comments">
-      <li class="comment">
+      <!-- <li class="comment">
         <div class="comment-header">
           <div>Глеб Фокин</div>
           <div>12.02.22 12:18</div>
@@ -43,7 +43,7 @@
             <button class="like-button -active-like"></button>
           </div>
         </div>
-      </li>
+      </li> -->
     </ul>
     <div class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input" />
@@ -62,6 +62,66 @@
     const listElement = document.getElementById("list");
     const nameInputElement = document.getElementById("name-input");
     const commentInputElement = document.getElementById("comment-input");
+    const messages = [
+      {
+        name: "Глеб Фокин",
+        time: "12.02.22 12:18",
+        comment: "Это будет первый комментарий на этой странице",
+        likesCount: 3,
+        liked: false,
+      },
+      {
+        name: "Варвара Н.",
+        time: "13.02.22 19:22",
+        comment: "Мне нравится как оформлена эта страница! ❤",
+        likesCount: 75,
+        liked: true,
+      }
+    ];
+
+    const initLikeButtonsListeners = () => {
+      const likeButtonsElements = document.querySelectorAll(".like-button");
+      for (const likeButtonElement of likeButtonsElements) {
+        likeButtonElement.addEventListener("click", () => {
+          const index = likeButtonElement.dataset.index;
+          messages[index].liked = !messages[index].liked;
+          if (messages[index].liked) {
+            messages[index].likesCount += 1;
+          }
+          else {
+            messages[index].likesCount -= 1;
+          }
+          renderMessages();
+        });
+      }
+    };
+    initLikeButtonsListeners();
+
+    const renderMessages = () => {
+      const messagesHtml = messages.map((message, index) => {
+        let like = (message.liked) ? 'like-button -active-like' : 'like-button';
+        return `<li class="comment">
+      <div class="comment-header">
+        <div>${message.name}</div>
+        <div>${message.time}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">
+        ${message.comment}
+        </div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">${message.likesCount}</span>
+          <button data-index="${index}" class="${like}"></button>
+        </div>
+      </div>
+    </li>`;
+      }).join("");
+      listElement.innerHTML = messagesHtml;
+      initLikeButtonsListeners();
+    }
+    renderMessages();
 
     buttonElement.addEventListener("click", () => {
       nameInputElement.classList.remove("input-error");
@@ -74,40 +134,49 @@
         commentInputElement.classList.add("input-error");
         return;
       }
-
-      let currentDate = new Date();
-      function getCurrentDate(date) {
-        let day = date.getDate();
-        if (day < 10) day = "0" + day;
-        let month = date.getMonth() + 1;
-        if (month < 10) month = "0" + month;
-        let hour = date.getHours();
-        if (hour < 10) hour = "0" + hour;
-        let minute = date.getMinutes();
-        if (minute < 10) minute = "0" + minute;
-        return day + '.' + month + '.' + date.getFullYear() % 100 + ' ' + hour + ':' + minute;
-      }
-
-
-      const oldListHtml = listElement.innerHTML;
-      listElement.innerHTML = oldListHtml + `<li class="comment">
-      <div class="comment-header">
-        <div>${nameInputElement.value}</div>
-        <div>${getCurrentDate(currentDate)}</div>
-      </div>
-      <div class="comment-body">
-        <div class="comment-text">
-        ${commentInputElement.value}
-        </div>
-      </div>
-      <div class="comment-footer">
-        <div class="likes">
-          <span class="likes-counter">0</span>
-          <button class="like-button"></button>
-        </div>
-      </div>
-    </li>`
+      messages.push({
+        name: nameInputElement.value,
+        time: getCurrentDate(currentDate),
+        comment: commentInputElement.value,
+        likesCount: 0,
+        liked: false,
+      });
+      renderMessages();
+      nameInputElement.value = "";
+      commentInputElement.value = "";
     });
+
+    let currentDate = new Date();
+    function getCurrentDate(date) {
+      let day = date.getDate();
+      if (day < 10) day = "0" + day;
+      let month = date.getMonth() + 1;
+      if (month < 10) month = "0" + month;
+      let hour = date.getHours();
+      if (hour < 10) hour = "0" + hour;
+      let minute = date.getMinutes();
+      if (minute < 10) minute = "0" + minute;
+      return day + '.' + month + '.' + date.getFullYear() % 100 + ' ' + hour + ':' + minute;
+    }
+    //   const oldListHtml = listElement.innerHTML;
+    //   listElement.innerHTML = oldListHtml + `<li class="comment">
+    //   <div class="comment-header">
+    //     <div>${nameInputElement.value}</div>
+    //     <div>${getCurrentDate(currentDate)}</div>
+    //   </div>
+    //   <div class="comment-body">
+    //     <div class="comment-text">
+    //     ${commentInputElement.value}
+    //     </div>
+    //   </div>
+    //   <div class="comment-footer">
+    //     <div class="likes">
+    //       <span class="likes-counter">0</span>
+    //       <button class="like-button"></button>
+    //     </div>
+    //   </div>
+    // </li>`
+    // });
   </script>
 </body>
 
