@@ -49,20 +49,22 @@
       {
         name: "Глеб Фокин",
         text: "Это будет первый комментарий на этой странице",
-        likes: "3",
+        likes: 3,
+        isLiked: false,
         data: "12.02.2022, 12:18",
       },
       {
         name: "Варвара Н.",
         text: "Мне нравится как оформлена эта страница! ❤",
-        likes: "75",
+        likes: 75,
+        isLiked: false,
         data: "13.02.2022, 19:22",
       },
     ];
 
 
     const renderComments = () => {
-      const commentsHtml = comments.map((comment) => {
+      const commentsHtml = comments.map((comment, index) => {
         return `<li class="comment">
           <div class="comment-header">
             <div>
@@ -80,7 +82,7 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${comment.likes}</span>
-              <button class="like-button -active-like"></button>
+              <button data-index="${index}" class="like-button ${comment.isLiked ? '-active-like' : ''}"></button>
             </div>
           </div>
         </li>`
@@ -94,22 +96,16 @@
 
     const initLikesButtonListeners = () => {
       const likesButtonElements = document.querySelectorAll('.like-button');
-      let i = 0;
+      
       for (const likesButtonElement of likesButtonElements) {
         likesButtonElement.addEventListener('click', () => {
-          i = i + 1;
-          if (i % 2 === 1) {
-            const counters = likesButtonElement.parentNode.getElementsByClassName('likes-counter');
-            if (counters.length == 0) return;
-            counters[0].innerHTML = parseInt(counters[0].innerHTML) + 1;
-            likesButtonElement.classList.add('-active-like')
-          } else {
-            //likesButtonElement.classList.remove('-active-like');
-            likesButtonElement.classList.remove('-active-like');
-            const counters = likesButtonElement.parentNode.getElementsByClassName('likes-counter');
-            if (counters.length == 0) return;
-            counters[0].innerHTML = parseInt(counters[0].innerHTML) - 1;
-          }
+        const index = likesButtonElement.dataset.index;
+
+        const comment = comments[index];
+        comment.likes = comment.isLiked ? comment.likes - 1 : comment.likes + 1;
+        comment.isLiked = !comment.isLiked;
+
+        renderComments();
         });
       };
     }
@@ -138,7 +134,7 @@
     comments.push({
       name: nameInputElement.value,
       text: textInputElement.value,
-      likes: "0",
+      likes: 0,
       data: dateElement(),
     })
 
