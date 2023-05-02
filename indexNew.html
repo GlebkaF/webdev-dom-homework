@@ -61,7 +61,7 @@
         year: "22",
         hours: "19",
         minutes: "22",
-        likes: "75",
+        likes: 75,
       },
     ];
 
@@ -75,11 +75,9 @@
           ${comment.hours}:${comment.minutes}
           </div>
         </div>
-
         <div class='comment-body'>
           <div class= 'comment-text'> ${comment.comment} </div>
           </div>
-
           <div class='comment-footer'>
           <div class='likes'>
           <span class= 'likes-counter'> ${comment.likes} </div>
@@ -93,22 +91,26 @@
       commentList.innerHTML = commentsHtml;
     };
 
-    renderComments();
-    const likeButtons = document.querySelectorAll(".like-button");
-    let count = 0;
-    likeButtons.forEach((likeButton) => {
-      likeButton.addEventListener("click", (event) => {
-        if (likeButton.classList.contains("active-like")) {
-          likeButton.classList.remove("active-like");
-          count -= 1;
-          console.log("if", count);
-        } else {
-          count += 1;
-          likeButton.classList.add("active-like");
-          console.log("else", count);
-        }
+    const initLikeButtonListener = () => {
+      const likeButtons = document.querySelectorAll(".like-button");
+      let count = 0;
+      likeButtons.forEach((likeButton) => {
+        likeButton.addEventListener("click", (event) => {
+          if (likeButton.classList.contains("active-like")) {
+            likeButton.classList.remove("active-like");
+            count -= 1;
+            console.log(event.target);
+          } else {
+            count += 1;
+            likeButton.classList.add("active-like");
+            console.log(event.target);
+          }
+        });
       });
-    });
+    };
+
+    renderComments();
+    initLikeButtonListener();
 
     addFormButton.addEventListener("click", (event) => {
       form.forEach((element) => {
@@ -136,6 +138,7 @@
       }
 
       renderComments();
+      initLikeButtonListener();
     });
 
     inputName.addEventListener("input", (event) => {
@@ -156,6 +159,5 @@
     if (minutes < 10) {
       minutes = "0" + minutes;
     }
- 
- </script>
+  </script>
 </html>
