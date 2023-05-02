@@ -37,334 +37,240 @@
     const textElement = document.querySelector('.add-form-text');
     const addButton = document.querySelector('.add-form-button');
     const removeButton = document.querySelector('.remove-form-button');
-    
+
     const comments = [
       {
-        tagComment: 'li',
-        classComment: 'comment',
-        header: {
-          tagHeader: 'div',
-          classHeader: 'comment-header',
-          name: 'Глеб Фокин',
-          date: '12.02.22 12:18'
+        class: 'comment',
+        headerHtml: {
+          class: 'comment-header',
+          contentName: 'Глеб Фокин',
+          contentDate: '12.02.22 12:18'
         },
-        body: {
-          tagBody: 'div',
-          classBody: 'comment-body',
-          text: {
-            tagText: 'div',
-            classText: 'comment-text',
+        bodyHtml: {
+          class: 'comment-body',
+          textHtml: {
+            class: 'comment-text',
             content: 'Это будет первый комментарий на этой странице'
           },
-          editButton: {
-            tagEdit: 'button',
-            classEdit: 'edit-button',
+          editButtonHtml: {
+            class: 'edit-button',
             isEdit: false,
-            editName: 'Редактировать',
-            saveName: 'Сохранить',
-            dataIndex: 'data-index'
+            editName: 'Редактировать'
           }
         },
-        footer: {
-          tagFooter: 'div',
-          classFooter: 'comment-footer',
-          likes: {
-            tagLikes: 'div',
-            classLikes: 'likes',
-            counter: {
-              tagCounter: 'span',
-              classCounter: 'likes-counter',
-              value: 3
-            },
-            button: {
-              tagButton: 'button',
-              classButton: 'like-button',
-              activeName: '-active-like',
+        footerHtml: {
+          class: 'comment-footer',
+          likesHtml: {
+            class: 'likes',
+            likeButtonHtml: {
+              class: 'like-button',
               activeStatus: false,
-              dataIndex: 'data-index'
+              activeName: ''
+            },
+            likeCounterHtml: {
+              class: 'likes-counter',
+              value: 3
             }
           }
         }
       },
       {
-        tagComment: 'li',
-        classComment: 'comment',
-        header: {
-          tagHeader: 'div',
-          classHeader: 'comment-header',
-          name: 'Варвара Н.',
-          date: '13.02.22 19:22'
+        class: 'comment',
+        headerHtml: {
+          class: 'comment-header',
+          contentName: 'Варвара Н.',
+          contentDate: '13.02.22 19:22'
         },
-        body: {
-          tagBody: 'div',
-          classBody: 'comment-body',
-          text: {
-            tagText: 'div',
-            classText: 'comment-text',
+        bodyHtml: {
+          class: 'comment-body',
+          textHtml: {
+            class: 'comment-text',
             content: 'Мне нравится как оформлена эта страница! ❤'
           },
-          editButton: {
-            tagEdit: 'button',
-            classEdit: 'edit-button',
+          editButtonHtml: {
+            class: 'edit-button',
             isEdit: false,
-            editName: 'Редактировать',
-            saveName: 'Сохранить',
-            dataIndex: 'data-index'
+            editName: 'Редактировать'
           }
         },
-        footer: {
-          tagFooter: 'div',
-          classFooter: 'comment-footer',
-          likes: {
-            tagLikes: 'div',
-            classLikes: 'likes',
-            counter: {
-              tagCounter: 'span',
-              classCounter: 'likes-counter',
-              value: 75
-            },
-            button: {
-              tagButton: 'button',
-              classButton: 'like-button',
-              activeName: '-active-like',
+        footerHtml: {
+          class: 'comment-footer',
+          likesHtml: {
+            class: 'likes',
+            likeButtonHtml: {
+              class: 'like-button',
               activeStatus: true,
-              dataIndex: 'data-index'
+              activeName: '-active-like'
+            },
+            likeCounterHtml: {
+              class: 'likes-counter',
+              value: 75
             }
           }
         }
       }
     ];
 
-    const addNewComment = () => {
-      let day = addZero((new Date).getDate());
-      let month = addZero((new Date).getMonth());
+    const renderComments = () => {
+      commentList.innerHTML = comments.map((el, i) => {
+        return `<li class="${el.class}">
+          <div class="${el.headerHtml.class}">
+            <div>${el.headerHtml.contentName}</div>
+            <div>${el.headerHtml.contentDate}</div>
+          </div>
+          <div class="${el.bodyHtml.class}">
+            <div class="${el.bodyHtml.textHtml.class}">${el.bodyHtml.textHtml.content}</div>
+            <button class="${el.bodyHtml.editButtonHtml.class}" data-index=${i}>${el.bodyHtml.editButtonHtml.editName}</button>
+          </div>
+          <footer class="${el.footerHtml.class}">
+            <div class="${el.footerHtml.likesHtml.class}">
+              <span class="${el.footerHtml.likesHtml.likeCounterHtml.class}">
+                ${el.footerHtml.likesHtml.likeCounterHtml.value}  
+              </span>
+              <button class="${el.footerHtml.likesHtml.likeButtonHtml.class} ${el.footerHtml.likesHtml.likeButtonHtml.activeName}" data-index="${i}"></button>  
+            </div>
+          </footer>
+        </li>`;
+      }).join('');
+
+      checkAddButton();
+      activateAddButton();
+      likeComment();
+      editComment();
+    }
+
+    const checkAddButton = () => {
+      if (!nameElement.value.trim() || !textElement.value.trim()) {
+        addButton.disabled = true;
+      }
+    }
+    const activateAddButton = () => {
+      nameElement.addEventListener('input', () => {
+        if (textElement.value.trim()) {
+          addButton.disabled = false;
+        }
+      });
+      textElement.addEventListener('input', () => {
+        if (nameElement.value.trim()) {
+          addButton.disabled = false;
+        }
+      });
+    }
+    const deleteLastComment = () => {
+      comments.pop();
+
+      renderComments();
+    }
+    const addComment = () => {
+      let day = addZeroBefore((new Date).getDate());
+      let month = addZeroBefore((new Date).getMonth());
       let year = editYear((new Date).getFullYear());
-      let hours = addZero((new Date).getHours());
-      let minutes = addZero((new Date).getMinutes());
+      let hours = addZeroBefore((new Date).getHours());
+      let minutes = addZeroBefore((new Date).getMinutes());
 
       if (!nameElement.value.trim()) {
         nameElement.classList.add('form-error');
+        return;
       } else if (!textElement.value.trim()) {
         textElement.classList.add('form-error');
+        return;
       } else {
-        commentList.innerHTML = '';
-
         comments.push({
-          tagComment: 'li',
-          classComment: 'comment',
-          header: {
-            tagHeader: 'div',
-            classHeader: 'comment-header',
-            name: `${nameElement.value}`,
-            date: `${day}.${month}.${year} ${hours}:${minutes}`
+          class: 'comment',
+          headerHtml: {
+            class: 'comment-header',
+            contentName: `${nameElement.value}`,
+            contentDate: `${day}.${month}.${year} ${hours}:${minutes}`
           },
-          body: {
-            tagBody: 'div',
-            classBody: 'comment-body',
-            text: {
-              tagText: 'div',
-              classText: 'comment-text',
+          bodyHtml: {
+            class: 'comment-body',
+            textHtml: {
+              class: 'comment-text',
               content: `${textElement.value}`
             },
-            editButton: {
-              tagEdit: 'button',
-              classEdit: 'edit-button',
+            editButtonHtml: {
+              class: 'edit-button',
               isEdit: false,
-              editName: 'Редактировать',
-              saveName: 'Сохранить',
-              dataIndex: 'data-index'
+              editName: 'Редактировать'
             }
           },
-          footer: {
-            tagFooter: 'div',
-            classFooter: 'comment-footer',
-            likes: {
-              tagLikes: 'div',
-              classLikes: 'likes',
-              counter: {
-                tagCounter: 'span',
-                classCounter: 'likes-counter',
-                value: 0
-              },
-              button: {
-                tagButton: 'button',
-                classButton: 'like-button',
-                activeName: '-active-like',
+          footerHtml: {
+            class: 'comment-footer',
+            likesHtml: {
+              class: 'likes',
+              likeButtonHtml: {
+                class: 'like-button',
                 activeStatus: false,
-                dataIndex: 'data-index'
+                activeName: ''
+              },
+              likeCounterHtml: {
+                class: 'likes-counter',
+                value: 0
               }
             }
           }
         });
 
-        renderComments();
+        nameElement.value = '';
+        textElement.value = '';
+        nameElement.classList.remove('form-error');
+        textElement.classList.remove('form-error');
       }
-    }
-
-    const checkButton = () => {
-      if (nameElement.value && textElement.value) {
-        addButton.disabled = false;
-      } else {
-        addButton.disabled = true;
-      }
-    }
-
-    const activateButton = () => {
-      nameElement.addEventListener('input', () => {
-        addButton.disabled = false;
-      });
-      textElement.addEventListener('input', () => {
-        addButton.disabled = false;
-      });
-    }
-
-    const removeLastComment = () => {
-      commentList.innerHTML = '';
-      comments.pop();
 
       renderComments();
     }
-
     const likeComment = () => {
-      let likeButtons = document.querySelectorAll('.like-button');
+      const likeButtons = document.querySelectorAll('.like-button');
 
       for (let button of likeButtons) {
         button.addEventListener('click', () => {
-          commentList.innerHTML = '';
-
-          if (comments[button.dataset.index].footer.likes.button.activeStatus) {
-            comments[button.dataset.index].footer.likes.button.activeStatus = false;
-            comments[button.dataset.index].footer.likes.counter.value--;
+          if (!comments[button.dataset.index].footerHtml.likesHtml.likeButtonHtml.activeStatus) {
+            comments[button.dataset.index].footerHtml.likesHtml.likeCounterHtml.value++;
+            comments[button.dataset.index].footerHtml.likesHtml.likeButtonHtml.activeName = '-active-like';
           } else {
-            comments[button.dataset.index].footer.likes.button.activeStatus = true;
-            comments[button.dataset.index].footer.likes.counter.value++;
+            comments[button.dataset.index].footerHtml.likesHtml.likeCounterHtml.value--;
+            comments[button.dataset.index].footerHtml.likesHtml.likeButtonHtml.activeName = '';
           }
+
+          comments[button.dataset.index].footerHtml.likesHtml.likeButtonHtml.activeStatus = !comments[button.dataset.index].footerHtml.likesHtml.likeButtonHtml.activeStatus;
 
           renderComments();
         });
       }
     }
-
     const editComment = () => {
-      let editButtons = document.querySelectorAll('.edit-button');
-      let editArea = document.querySelector('.edit-area');
+      const editButtons = document.querySelectorAll('.edit-button');
+      const editArea = document.querySelector('.edit-area');
 
       for (let button of editButtons) {
         button.addEventListener('click', () => {
-          commentList.innerHTML = '';
-
-          if (!comments[button.dataset.index].body.editButton.isEdit) {
-            comments[button.dataset.index].body.editButton.isEdit = true;
-            comments[button.dataset.index].body.text.content = `<textarea class="edit-area">${comments[button.dataset.index].body.text.content}</textarea>`;
-          } else if (!editArea.value.trim() && comments[button.dataset.index].body.editButton.isEdit) {
-            comments[button.dataset.index].body.text.content = '<textarea class="edit-area form-error"></textarea>';
+          if (!comments[button.dataset.index].bodyHtml.editButtonHtml.isEdit) {
+            comments[button.dataset.index].bodyHtml.textHtml.content = `<textarea class="edit-area">${comments[button.dataset.index].bodyHtml.textHtml.content}</textarea>`;
+            comments[button.dataset.index].bodyHtml.editButtonHtml.editName = 'Сохранить';
+            comments[button.dataset.index].bodyHtml.editButtonHtml.isEdit = !comments[button.dataset.index].bodyHtml.editButtonHtml.isEdit;
+          } else if (!editArea.value.trim() && comments[button.dataset.index].bodyHtml.editButtonHtml.isEdit) {
+            comments[button.dataset.index].bodyHtml.textHtml.content = '<textarea class="edit-area form-error"></textarea>';
           } else {
-            comments[button.dataset.index].body.editButton.isEdit = false;
-            comments[button.dataset.index].body.text.content = `${editArea.value}`;
+            comments[button.dataset.index].bodyHtml.textHtml.content = `${editArea.value}`;
+            comments[button.dataset.index].bodyHtml.editButtonHtml.editName = 'Редактировать';
+            comments[button.dataset.index].bodyHtml.editButtonHtml.isEdit = !comments[button.dataset.index].bodyHtml.editButtonHtml.isEdit;
           }
 
           renderComments();
         });
       }
     }
-    
-    const addZero = (num) => String(num).length < 2 ? '0' + num : num;
-    const editYear = (year) => String(year)[String(year).length - 2] + String(year)[String(year).length - 1];
+    const addZeroBefore = num => String(num).length < 2 ? '0' + num : num;
+    const editYear = year => String(year)[2] + String(year)[3];
 
-    const renderComments = () => {
-      let indexCounter = 0;
-
-      for (let comment of comments) {
-        let commentItem = document.createElement(comment.tagComment);
-        commentItem.classList.add(comment.classComment);
-        commentList.appendChild(commentItem);
-
-        let itemHeader = document.createElement(comment.header.tagHeader);
-        itemHeader.classList.add(comment.header.classHeader);
-        itemHeader.innerHTML = `
-          <div>${comment.header.name}</div>
-          <div>${comment.header.date}</div>
-        `;
-        commentItem.appendChild(itemHeader);
-
-        let itemBody = document.createElement(comment.body.tagBody);
-        itemBody.classList.add(comment.body.classBody);
-        commentItem.appendChild(itemBody);
-
-        let bodyText = document.createElement(comment.body.text.tagText);
-        bodyText.classList.add(comment.body.text.classText);
-        bodyText.innerHTML = comment.body.text.content;
-        itemBody.appendChild(bodyText);
-        
-        let editButton = document.createElement(comment.body.editButton.tagEdit);
-        editButton.classList.add(comment.body.editButton.classEdit);
-        
-        if (!comment.body.editButton.isEdit) {
-          editButton.textContent = comment.body.editButton.editName;
-        } else {
-          editButton.textContent = comment.body.editButton.saveName;
-        }
-
-        editButton.setAttribute(comment.body.editButton.dataIndex, `${indexCounter}`);
-        itemBody.appendChild(editButton);
-
-        let itemFooter = document.createElement(comment.footer.tagFooter);
-        itemFooter.classList.add(comment.footer.classFooter);
-        commentItem.appendChild(itemFooter);
-
-        let footerLikes = document.createElement(comment.footer.likes.tagLikes);
-        footerLikes.classList.add(comment.footer.likes.classLikes);
-        itemFooter.appendChild(footerLikes);
-
-        let likesCounter = document.createElement(comment.footer.likes.counter.tagCounter);
-        likesCounter.classList.add(comment.footer.likes.counter.classCounter);
-        likesCounter.innerHTML = comment.footer.likes.counter.value;
-        footerLikes.appendChild(likesCounter);
-
-        let likesButton = document.createElement(comment.footer.likes.button.tagButton);
-        likesButton.classList.add(comment.footer.likes.button.classButton);
-        likesButton.setAttribute(comment.footer.likes.button.dataIndex, `${indexCounter}`);
-
-        if (comment.footer.likes.button.activeStatus === true) {
-          likesButton.classList.add(comment.footer.likes.button.activeName);
-        }
-
-        footerLikes.appendChild(likesButton);
-
-        indexCounter++;
+    addButton.addEventListener('click', addComment);
+    textElement.addEventListener('keyup', (event) => {
+      if (event.key === 'Enter') {
+        addComment();
       }
-
-      nameElement.value = '';
-      textElement.value = '';
-      nameElement.classList.remove('form-error');
-      textElement.classList.remove('form-error');
-
-      activateButton();
-      checkButton();
-      likeComment();
-      editComment();
-    }
+    });
+    removeButton.addEventListener('click', deleteLastComment);
 
     renderComments();
-
-    addButton.addEventListener('click', addNewComment);
-    textElement.addEventListener('keyup', (event) => {
-        if (event.key === 'Enter') {
-          if (nameElement.value.trim() === '') {
-            nameElement.classList.add('form-error');
-            return;
-          } else if (textElement.value.trim() === '') {
-            textElement.classList.add('form-error');
-            return;
-          } else if ((nameElement.value.trim() === '' && textElement.value.trim() === '')) {
-            nameElement.classList.add('form-error');
-            textElement.classList.add('form-error');
-            return;
-          } else {
-            addNewComment();
-          }
-        }
-      });
-    removeButton.addEventListener('click', removeLastComment);
   </script>
 </html>
