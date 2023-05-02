@@ -68,7 +68,6 @@ const editClick = () => {
             saveEditComment(id,popap);
         });
     }
-
 }
 
 const delClick = () => {
