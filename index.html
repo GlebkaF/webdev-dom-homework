@@ -10,7 +10,8 @@
 <body>
   <div class="container">
     <ul id="list" class="comments">
-      <li class="comment">
+      <!-- Список рендерится из JS -->
+      <!-- <li class="comment">
         <div class="comment-header">
           <div>Глеб Фокин</div>
           <div>12.02.22 12:18</div>
@@ -22,12 +23,12 @@
         </div>
         <div class="comment-footer">
           <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
+            <span id="like-count" class="likes-counter">3</span>
+            <button id="like" class="like-button -active-like"></button>
           </div>
         </div>
-      </li>
-      <li class="comment">
+      </li> -->
+      <!-- <li class="comment">
         <div class="comment-header">
           <div>Варвара Н.</div>
           <div>13.02.22 19:22</div>
@@ -39,11 +40,11 @@
         </div>
         <div class="comment-footer">
           <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
+            <span id="like-count" class="likes-counter">75</span>
+            <button id="like" class="like-button -active-like"></button>
           </div>
         </div>
-      </li>
+      </li> -->
     </ul>
     <div class="add-form">
       <input id="name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
@@ -59,6 +60,10 @@
   .error {
     background-color: #fa7575c3;
   }
+
+  .error-button {
+    background-color: grey;
+  }
 </style>
 <script>
 
@@ -66,24 +71,119 @@
   const listElement = document.getElementById("list");
   const inputNameElement = document.getElementById("name");
   const inputTextElement = document.getElementById("comment-text");
+  const sumLikes = document.querySelectorAll(".like-button")
   let currenDate = new Date();
+
+
+  const usersComments = [
+    {
+      name: "Глеб Фокин",
+      comment: "Это будет первый комментарий на этой странице",
+      time: "12.02.22 12:18",
+      likes: 3
+    },
+    {
+      name: "Варвара Н.",
+      comment: "Мне нравится как оформлена эта страница! ❤",
+      time: "13.02.22 19:22",
+      likes: 75,
+    },
+  ];
+
+
+  const renderUsersComments = () => {
+    const usersCommentsHTML = usersComments.map((usersComment) => {
+      return `<ul id="list" class="comment">
+        <div class="comment-header">
+          <div>${usersComment.name}</div>
+          <div>${usersComment.time}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${usersComment.comment}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span id="like-count" class="likes-counter">${usersComment.likes}</span>
+            <button id="like" class="like-button -active-like"></button>
+          </div>
+        </div>
+      </ul>`;
+    }).join('');
+
+    listElement.innerHTML = usersCommentsHTML;
+
+  };
+
+  renderUsersComments();
+
+
+  const commentElements = document.querySelectorAll(".comment");
+
+  for (const commentElement of commentElements) {
+
+  }
+
+  // Функция добавления лайка 
+  function toggleLike(event) {
+    const likeHeart = event.target;
+    const likeCount = event.target.previousElementSibling;
+    let count = parseInt(likeCount.innerText);
+    let liked = likeHeart.classList.contains('liked');
+    if (liked) {
+      count--;
+      liked = false;
+      likeHeart.classList.remove('liked');
+    } else {
+      count++;
+      liked = true;
+      likeHeart.classList.add('liked');
+    }
+    likeCount.innerText = count;
+  }
+
+  listElement.addEventListener('click', function (event) {
+    if (event.target.matches('.like-button')) {
+      toggleLike(event);
+    }
+  });
 
   buttonElement.addEventListener("click", () => {
 
     inputNameElement.classList.remove('error');
     inputTextElement.classList.remove('error');
+    buttonElement.classList.remove('error-button');
 
     if (inputNameElement.value === "" && inputTextElement.value === "") {
       inputNameElement.classList.add('error');
       inputTextElement.classList.add('error');
+      buttonElement.classList.add('error-button');
       return;
     } else if (inputNameElement.value === " " || inputTextElement.value === "") {
       inputTextElement.classList.add('error');
+      buttonElement.classList.add('error-button');
       return;
     } else if (inputNameElement.value === "" || inputTextElement.value === " ") {
       inputNameElement.classList.add('error');
+      buttonElement.classList.add('error-button');
       return;
     }
+
+    function checkCommentFields() {
+
+      function togglePublishButton() {
+        if (inputNameElement.value.trim() === "" || inputTextElement.value.trim() === "") {
+          buttonElement.disabled = true;
+        } else {
+          buttonElement.disabled = false;
+        }
+      }
+
+      inputNameElement.addEventListener('input', togglePublishButton);
+      inputTextElement.addEventListener('input', togglePublishButton);
+    }
+    checkCommentFields();
 
     const currentDate = new Date();
     const day = currentDate.getDate().toString().padStart(2, '0');
@@ -94,28 +194,16 @@
     const timeString = hours + ':' + minutes;
     const formatedDate = `${day}.${month}.${year} ${timeString}`;
 
-    const oldList = listElement.innerHTML;
-    listElement.innerHTML = oldList + `<ul id="list" class="comment">
-        <div class="comment-header">
-          <div>${inputNameElement.value}</div>
-          <div>${formatedDate}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${inputTextElement.value}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </ul>`;
-    buttonElement.disabled = true;
+    usersComments.push({
+      name: inputNameElement.value,
+      comment: inputTextElement.value,
+      time: formatedDate,
+      likes: 0,
+    });
+
+    renderUsersComments();
   });
-  
-// Добавил комментарий для слияния веток
+
 </script>
 
 </html>
