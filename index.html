@@ -67,7 +67,7 @@
   const commentList = document.querySelector('.comments');
   const addForm = document.querySelector('.add-form');
   const userName = document.querySelector('.add-form-name');
-  const textCommment = document.querySelector('.add-form-text');
+  const textComment = document.querySelector('.add-form-text');
   const button = document.querySelector('.add-form-button');
   const comments = document.querySelectorAll('.comment');
   const commentsListArray = [
@@ -95,12 +95,15 @@
   ];
 
   const addLikes = (e) => {
-    commentsListArray[e.target.dataset.id].like = Number(commentsListArray[e.target.dataset.id].like) + 1;
-    commentsListArray[e.target.dataset.id].Iliked = true;
+    const comment = commentsListArray[e.target.dataset.id];
+    comment.like++;
+    comment.Iliked = true;
   }
+
   const delLikes = (e) => {
-    commentsListArray[e.target.dataset.id].like = Number(commentsListArray[e.target.dataset.id].like) - 1;
-    commentsListArray[e.target.dataset.id].Iliked = false;
+    const comment = commentsListArray[e.target.dataset.id];
+    comment.like--;
+    comment.Iliked = false;
   }
 
   const initLikeClick = () => {
@@ -144,24 +147,10 @@
 
 
 
-  function valiate() {
-    if (userName.value.length === 0) {
-      userName.classList.add('error');
-      return false;
-    } else { userName.classList.remove('error'); }
-
-    if (textCommment.value.length < 1) {
-      textCommment.classList.add('error');
-      return false;
-    } else { textCommment.classList.remove('error'); }
-
-    if (userName.value.length > 0 && textCommment.value.length >= 1) {
-      return true;
-    }
-    else {
-
-      return false;
-    }
+  const valiate = () => {
+    userName.classList.toggle('error', userName.value.length === 0);
+    textComment.classList.toggle('error', textComment.value.length < 1);
+    return (userName.value.length > 0 && textComment.value.length >= 1);
   }
 
   function addComment() {
@@ -171,13 +160,13 @@
       commentsListArray.push({
         name: userName.value,
         date: `${("0" + date.getDate()).slice(-2)}.${("0" + (date.getMonth() + 1)).slice(-2)}.${date.getFullYear().toString().slice(-2)} ${("0" + date.getHours()).slice(-2)}:${("0" + date.getMinutes()).slice(-2)}`,
-        msg: textCommment.value,
+        msg: textComment.value,
         like: 0,
 
       });
 
       renderComments();
-      textCommment.value = "";
+      textComment.value = "";
       button.setAttribute('disabled', '');
     }
   }
