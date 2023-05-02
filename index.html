@@ -107,9 +107,9 @@
     addName.classList.remove("error");
     addComment.classList.remove("error");
 
-    if (addName.value === '') {
+    if (addName.value.trim() === '') {
       return addName.classList.add("error");
-    } else if (addComment.value === '') {
+    } else if (addComment.value.trim() === '') {
       return addComment.classList.add("error");
     };
 
