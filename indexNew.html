@@ -51,6 +51,7 @@
         hours: "12",
         minutes: "18",
         likes: 3,
+        // isLiked: true,
       },
 
       {
@@ -62,6 +63,7 @@
         hours: "19",
         minutes: "22",
         likes: 75,
+        // isLiked: true,
       },
     ];
 
@@ -80,8 +82,11 @@
           </div>
           <div class='comment-footer'>
           <div class='likes'>
-          <span class= 'likes-counter'> ${comment.likes} </div>
-          <button class='like-button'></button>
+          <span class= 'likes-counter'> ${comment.likes} 
+            </div>
+          <button class='like-button ${
+            comment.isLiked ? "active-like" : ""
+          }'></button>
           </div>
             </div>
       </li>`;
@@ -91,19 +96,25 @@
       commentList.innerHTML = commentsHtml;
     };
 
+    // мне надо создать const comment footer и непосредственно в нем уже отыскивать спан для
+    //изменения количества лайков и отыскать кнопку для понимания куда нажали
+
     const initLikeButtonListener = () => {
-      const likeButtons = document.querySelectorAll(".like-button");
-      let count = 0;
-      likeButtons.forEach((likeButton) => {
+      const commentFooter = document.querySelectorAll(".comment-footer");
+      commentFooter.forEach((element) => {
+        const likesCounter = element.firstElementChild.firstElementChild;
+        const likeButton = element.lastElementChild;
+
         likeButton.addEventListener("click", (event) => {
+          const currentLikes = parseInt(likesCounter.textContent);
           if (likeButton.classList.contains("active-like")) {
             likeButton.classList.remove("active-like");
-            count -= 1;
-            console.log(event.target);
+            const oldLikes = currentLikes - 1;
+            likesCounter.textContent = oldLikes;
           } else {
-            count += 1;
             likeButton.classList.add("active-like");
-            console.log(event.target);
+            const newLikes = currentLikes + 1;
+            likesCounter.textContent = newLikes;
           }
         });
       });
@@ -121,7 +132,7 @@
         }
       });
 
-      if (inputName.value === "" || inputText.value.length < 10) {
+      if (inputName.value === "" || inputText.value.length < 1) {
         addFormButton.disabled = true;
         return;
       } else {
