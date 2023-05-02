@@ -13,6 +13,7 @@
 <body>
   <div class="container">
     <ul class="comments">
+
       <li class="comment">
         <div class="comment-header">
           <div>Глеб Фокин</div>
@@ -30,6 +31,7 @@
           </div>
         </div>
       </li>
+
       <li class="comment">
         <div class="comment-header">
           <div>Варвара Н.</div>
@@ -47,21 +49,96 @@
           </div>
         </div>
       </li>
+
     </ul>
     <div class="add-form">
-      <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
-      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
+      <input type="text" class="add-form-name" placeholder="Введите ваше имя" required />
+      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш комментарий" rows="4"
+        required></textarea>
       <div class="add-form-row">
-        <button class="add-form-button">Написать</button>
+        <button class="add-form-button add-form-button-disabled">Написать</button>
       </div>
+
     </div>
   </div>
 </body>
 
 <script>
-  "use strict";
-  // Код писать здесь
-  console.log("It works!");
+  const nameInput = document.querySelector('.add-form-name');
+  const textInput = document.querySelector('.add-form-text');
+  const addButton = document.querySelector('.add-form-button');
+
+  //Функция сообщает пользователю о том что нужно заполнить все поля
+  function addComment() {
+    if (!nameInput.value.trim()) {
+      nameInput.classList.add('invalid');
+      nameInput.placeholder = 'Вы не ввели имя';
+      return;
+    }
+    if (!textInput.value.trim()) {
+      textInput.classList.add('invalid');
+      textInput.placeholder = 'Вы не ввели комментарий';
+      return;
+    }
+
+    //Если все ОК добавляем комментарий на страницу
+    const commentsList = document.querySelector('.comments');
+    commentsList.appendChild(createCommentElement(nameInput.value, textInput.value));
+
+    //Очищаем поля
+    nameInput.value = '';
+    textInput.value = '';
+    nameInput.classList.remove('invalid');
+    textInput.classList.remove('invalid');
+    addButton.classList.remove('add-form-button-disabled');
+  }
+
+  //Проверяем что поле ввода заполнено и делаем кнопку активной
+  function checkInputs() {
+    if (nameInput.value.trim() !== '' && textInput.value.trim() !== '') {
+      addButton.classList.remove('add-form-button-disabled');
+    } else {
+      addButton.classList.add('add-form-button-disabled');
+    }
+  }
+
+  //Слушаем поля ввода и если все ок запускаем функцию heckInputs()
+  nameInput.addEventListener('input', checkInputs);
+  textInput.addEventListener('input', checkInputs);
+
+
+  //Создаем комментарий
+  function createCommentElement(name, text) {
+    const now = new Date();
+    const newComment = document.createElement('li');
+    newComment.classList.add('comment');
+    newComment.innerHTML = `
+    <div class="comment-header">
+      <div>${name}</div>
+      <div>${now.toLocaleDateString('ru')}, ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+    </div>
+    <div class="comment-body">
+      <div class="comment-text">${text}</div>
+    </div>
+    <div class="comment-footer">
+      <div class="likes">
+        <span class="likes-counter">0</span>
+        <button class="like-button"></button>
+      </div>
+    </div>
+  `;
+    return newComment;
+  }
+
+  //Слушаем кнопку добавления комментария
+  function addCommentOnButtonClickOrEnter(event) {
+    if (event.type === 'click' || (event.type === 'keyup' && event.key === 'Enter')) {
+      addComment();
+    }
+  }
+  addButton.addEventListener('click', addCommentOnButtonClickOrEnter);
+  document.addEventListener('keyup', addCommentOnButtonClickOrEnter);
+
 </script>
 
 </html>
