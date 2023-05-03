@@ -72,7 +72,7 @@
   const commentsListElement = document.getElementById('commentsList');
   const cancelButtonElement = document.getElementById('cancel-button');
 
-  function getDate(currentDate) {
+  function getDate(currentDate = new Date()) {
     let day = currentDate.getDate();
     let month = currentDate.getMonth() + 1;
     let year = currentDate.getFullYear().toString().substr(-2);
@@ -84,6 +84,10 @@
     if (minutes < 10) {
       minutes = "0" + minutes;
     }
+    if (day < 10) {
+      day = "0" + day;
+    }
+
     return day + '.' + month + '.' + year + ' ' + hour + ':' + minutes;
   };
 
@@ -117,7 +121,7 @@
       `<li class="comment">
         <div class="comment-header">
           <div>${nameInputElement.value}</div>
-          <div>${getDate(new Date())}</div>
+          <div>${getDate()}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
