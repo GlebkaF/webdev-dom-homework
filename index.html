@@ -39,6 +39,7 @@
       userComment: "Это будет первый комментарий на этой странице",
       likes: 3,
       isLiked: false,
+      isEdit: false,
     },
     {
       userName: "Варвара Н.",
@@ -46,6 +47,7 @@
       userComment: "Мне нравится как оформлена эта страница! ❤",
       likes: 75,
       isLiked: false,
+      isEdit: false,
     },
   ];
 
@@ -66,6 +68,38 @@
     };
   }
 
+  const editButtonsListeners = () => {
+    const editButtonElements = document.querySelectorAll('.edit-button');
+    const commentTextElements = document.querySelectorAll('.comment-text');
+
+    for (const editButtonElement of editButtonElements) {
+      editButtonElement.addEventListener("click", () => {
+
+        const edit = comments[editButtonElement.dataset.index];
+
+        for (const commentTextElement of commentTextElements) {
+          const editedComment = comments[commentTextElement.dataset.index];
+
+          if (edit.isEdit == false) {
+            editButtonElement.innerHTML = "Сохранить";
+            commentTextElement.innerHTML = `<textarea type="textarea" class="comment-text" rows="4">${editedComment.userComment}</textarea>`;
+
+            comments.push({
+              userComment: editedComment.value,
+            });
+
+          } else {
+            editButtonElement.innerHTML = "Редактировать";
+            commentTextElement.innerHTML = editedComment.userComment;
+          }
+        };
+
+        edit.isEdit = !edit.isEdit;
+        // renderComments();
+      });
+    };
+  };
+
   const renderComments = () => {
     const commentsHtml = comments
       .map((comment, index) => {
@@ -79,13 +113,13 @@
             </div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
+            <div class="comment-text" data-index="${index}">
               ${comment.userComment}
             </div>
           </div>
           <div class="comment-footer">
             <div>
-              <button class="add-form-button">Редактировать</button>
+              <button class="add-form-button edit-button" data-index="${index}">Редактировать</button>
             </div>
             <div class="likes">
               <span class="likes-counter">
@@ -101,11 +135,12 @@
 
     listElem.innerHTML = commentsHtml;
     likeButtonsListeners();
+    editButtonsListeners();
   };
 
   renderComments();
 
-
+  
   commentBtn.addEventListener("click", () => {
     addName.classList.remove("error");
     addComment.classList.remove("error");
@@ -141,6 +176,7 @@
       userComment: addComment.value,
       likes: 0,
       isLiked: false,
+      isEdit: false,
     });
 
     renderComments();
