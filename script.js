@@ -10,6 +10,7 @@ const comments = [
         date: "12.02.22 12:18",
         text: "Это будет первый комментарий на этой странице",
         likes: "3",
+        likeStatus: '',
     },
 
     {
@@ -17,11 +18,54 @@ const comments = [
         date: "13.02.22 19:22",
         text: "Мне нравится как оформлена эта страница! ❤",
         likes: "75",
+        likeStatus: '',
     },
 ];
 
+const initLikesButton = () => {
+    const likesButtons = document.querySelectorAll('.like-button');
+
+    for (const likesButton of likesButtons) {
+        likesButton.addEventListener('click', () => {
+
+            const index = likesButton.dataset.index;
+            const status = comments[index].likeStatus;
+            const value = +comments[index].likes;
+
+            if (status === '-active-like') {
+                comments[index].likes = value - 1;
+                comments[index].likes
+                comments[index].likeStatus = '';
+                likesButton.classList.remove('-active-like');
+            } else {
+                comments[index].likes = value + 1;
+                console.log(comments[index].likes)
+                comments[index].likeStatus = '-active-like';
+                likesButton.classList.add('-active-like');
+            }
+
+            renderComments();
+
+            // const target = event.target;
+            // const status = target.dataset.status;
+            // const value = +target.previousElementSibling.textContent;
+
+            // if (status === "false") {
+            //     target.previousElementSibling.textContent = value + 1;
+            //     target.dataset.status = "true";
+            //     likesButton.classList.add('-active-like');
+            // } else {
+            //     target.previousElementSibling.textContent = value - 1;
+            //     target.dataset.status = "false";
+            //     likesButton.classList.remove('-active-like');
+            // }
+        })
+    }
+}
+
 const renderComments = () => {
-    const commentsHtml = comments.map((comment) => {
+    const commentsHtml = comments.map((comment, index) => {
+        
         return `<li class="comment">
         <div class="comment-header">
             <div>${comment.name} </div>
@@ -33,13 +77,15 @@ const renderComments = () => {
         <div class="comment-footer"> 
             <div class="likes">
                 <span class="likes-counter">${comment.likes}</span>
-                <button class="like-button" data-status="false"</button>
+                <button class="like-button ${comment.likeStatus}" data-index="${index}"</button>
             </div>
         </div> 
     </li>`
     }).join("");
 
     commentsList.innerHTML = commentsHtml;
+
+    initLikesButton();
 }
 
 renderComments();
@@ -119,7 +165,6 @@ function showNewComment() {
     });
 
     renderComments();
-    initLikesButton();
 
     // commentsList.innerHTML = oldListHtml + 
     //     `<li class="comment">
@@ -188,33 +233,9 @@ function showNewComment() {
 const removeButton = document.querySelector('.remove-form-button');
 
 removeButton.addEventListener ('click', () => {
-    const removedElement = commentsList.lastElementChild;
-    removedElement.remove();
+    // const removedElement = commentsList.lastElementChild;
+    // removedElement.remove();
+    comments.pop();
+    renderComments();
 });
 
-const initLikesButton = () => {
-    const likesButtons = document.querySelectorAll('.like-button');
-
-    for (const likesButton of likesButtons) {
-        likesButton.addEventListener('click', (event) => {
-            const target = event.target;
-            const status = target.dataset.status;
-            const value = +target.previousElementSibling.textContent;
-
-            if (status === "false") {
-                target.previousElementSibling.textContent = value + 1;
-                target.dataset.status = "true";
-                likesButton.classList.add('-active-like');
-            } else {
-                target.previousElementSibling.textContent = value - 1;
-                target.dataset.status = "false";
-                likesButton.classList.remove('-active-like');
-            }
-        })
-    }
-}
-
-
-
-
-    
