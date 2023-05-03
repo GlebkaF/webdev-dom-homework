@@ -69,7 +69,7 @@
 
     const renderComments = () => {
       const commentsHtml = comments
-        .map((comment) => {
+        .map((comment, index) => {
           return `<li class='comment'>
       <div class='comment-header'>
         <div>${comment.name}</div>
@@ -86,7 +86,7 @@
             </div>
           <button class='like-button ${
             comment.isLiked ? "active-like" : ""
-          }'></button>
+          }' data-index="${index}"></button>
           </div>
             </div>
       </li>`;
@@ -107,14 +107,21 @@
 
         likeButton.addEventListener("click", (event) => {
           const currentLikes = parseInt(likesCounter.textContent);
+          const index = likeButton.dataset.index;
+          console.log(comments[index]);
+
           if (likeButton.classList.contains("active-like")) {
             likeButton.classList.remove("active-like");
             const oldLikes = currentLikes - 1;
             likesCounter.textContent = oldLikes;
+            comments[index].isLiked = false;
+            comments[index].likes = oldLikes;
           } else {
             likeButton.classList.add("active-like");
             const newLikes = currentLikes + 1;
             likesCounter.textContent = newLikes;
+            comments[index].isLiked = true;
+            comments[index].likes = newLikes;
           }
         });
       });
@@ -145,6 +152,7 @@
           hours: date.getHours(),
           minutes: minutes,
           likes: "0",
+          isLiked: false,
         });
       }
 
