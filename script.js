@@ -2,10 +2,82 @@ const form = document.querySelector('.add-form');
 const newName = form.querySelector('.add-form-name');
 const newComment = form.querySelector('.add-form-text');
 const addButton = form.querySelector('.add-form-button');
-const comments = document.querySelector('.comments')
-const delButton = form.querySelector('.del-form-button')
+const comments = document.querySelector('.comments');
+const delButton = form.querySelector('.del-form-button');
+const boxOfComments = document.querySelector('.comments');
 
 
+
+const usersComments = [
+  {
+    name: "Глеб Фокин",
+    date: "12.02.22 12:18",
+    comment: "Это будет первый комментарий на этой странице",
+    likes: "3",
+    Iliked: false,
+    isEdit: false
+  },
+  {
+    name: "Варвара Н.",
+    date: "13.02.22 19:22",
+    comment: "Мне нравится как оформлена эта страница! ❤",
+    likes: "75",
+    Iliked: false,
+    isEdit: false
+  }
+]
+
+const addLikes = (e) => {
+  usersComments[e.target.dataset.id].likes = Number(usersComments[e.target.dataset.id].likes) + 1;
+  usersComments[e.target.dataset.id].Iliked = true;
+}
+const delLikes = (e) => {
+  usersComments[e.target.dataset.id].likes = Number(usersComments[e.target.dataset.id].likes) - 1;
+  usersComments[e.target.dataset.id].Iliked = false;
+}
+
+const initEventListeners = () => {
+
+  const likeButtons = document.querySelectorAll('.likes');
+
+for (const likeButton of likeButtons) {
+  likeButton.addEventListener('click', (e) => {
+    (usersComments[e.target.dataset.id].Iliked) ? delLikes(e) : addLikes(e);
+  renderComments();
+  })
+  
+}
+}
+
+const renderComments = () => {
+  const commentsHtml = usersComments
+    .map((user, index) => {
+      (user.Iliked) ? Iliked = '-active-like' : Iliked = '';
+      return `<li class="comment">
+      <div class="comment-header">
+        <div>${user.name}</div>
+        <div>${user.date}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">
+          ${user.comment}
+        </div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">${user.likes}</span>
+          <button class="like-button ${Iliked}" data-id="${index}"></button>
+          <button class="edit-button" data-id="${index}"></button>
+        </div>
+      </div>
+    </li>`;
+    })
+    .join("");
+
+  boxOfComments.innerHTML = commentsHtml;
+  initEventListeners();
+};
+renderComments()
 newName.addEventListener('input', function () {
     if (newName.value.length < 2 || newComment.value.length < 5) {
         addButton.setAttribute('disabled', 'disabled')
@@ -27,27 +99,17 @@ newComment.addEventListener('input', function () {
 addButton.addEventListener('click', addNewComment)
 
 function addNewComment() {
-    let oldComments = comments.innerHTML
     const dateNow = new Date();
-    let newComments = `<li class="comment">
-    <div class="comment-header">
-      <div>${newName.value}</div>
-      <div>${formatDate(dateNow)}</div>
-    </div>
-    <div class="comment-body">
-      <div class="comment-text">
-        ${newComment.value}
-      </div>
-    </div>
-    <div class="comment-footer">
-      <div class="likes">
-        <span class="">0</span>
-        <button class="like-button"></button>
-      </div>
-    </div>
-  </li>`
-    comments.innerHTML = oldComments + newComments
+    usersComments.push({
+        name: `${newName.value}`,
+        date: `${formatDate(dateNow)}`,
+        comment: `${newComment.value}`,
+        likes: "0",
+        Iliked: false,
+        isEdit: false
+    })
     cleareInputs()
+    renderComments()
 }
 
 function formatDate(date) {
