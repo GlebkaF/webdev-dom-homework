@@ -14,6 +14,7 @@ const commentos = [
     text: 'Это будет первый комментарий на этой странице',
     likesNum: 3,
     isLiked: false,
+    isCorrecting: false,
   },
   {
     name: 'Варвара Н.',
@@ -21,6 +22,7 @@ const commentos = [
     text: 'Мне нравится как оформлена эта страница! ❤',
     likesNum: 75,
     isLiked: true,
+    isCorrecting: false,
   }
 ];
 
@@ -50,8 +52,62 @@ initLikeButtonsListeners = () => {
   }
 };
 
+initCorrectButtonsListeners = () => {
+  let correctButtonsElements = document.querySelectorAll('.correct-form-button');
+
+  // for(const correctButtonElement of correctButtonsElements) {
+  //   correctButtonElement.addEventListener('click', () => {
+  //     const correctIndex = correctButtonElement.dataset.index;
+
+  //     console.log(correctIndex);
+
+  //   });
+  // }
+
+  for(const correctButtonElement of correctButtonsElements) {
+    correctButtonElement.addEventListener('click', () => {
+      let correctIndex = correctButtonElement.dataset.index;
+
+      commentos[correctIndex].isCorrecting = !commentos[correctIndex].isCorrecting;
+
+      renderComments();
+
+      let correctedText = document.querySelector('.correcting-input');
+      let correctingBtn = document.querySelector('.correcting-btn');
+    
+        correctingBtn.addEventListener('click', () => {
+          commentos[correctIndex].text = correctedText.value;
+
+          commentos[correctIndex].isCorrecting = !commentos[correctIndex].isCorrecting;
+
+          renderComments();
+        });
+    });
+  }
+
+
+
+};
+
 const renderComments = () => {
   const commentsHtml = commentos.map((comment, index) => {
+    if(comment.isCorrecting) {
+      return `<li class="comment">
+      <div class="comment-header">
+        <div>${comment.name}</div>
+        <div>${comment.data}
+        </div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">
+          <input class='correcting-input' value='${comment.text}'></input>
+        </div>
+      </div>
+      <div class="comment-footer">
+        <button class='correcting-btn'>Сохранить</button>
+      </div>
+    </li>`;
+    }
     if(comment.isLiked) {
       return `<li class="comment">
       <div class="comment-header">
@@ -70,6 +126,7 @@ const renderComments = () => {
           <button class="like-button -active-like" data-index='${index}'></button>
         </div>
       </div>
+      <button class='correct-form-button' data-index='${index}'>Редактировать</button>
     </li>`;
     } else {
       return `<li class="comment">
@@ -89,6 +146,7 @@ const renderComments = () => {
           <button class="like-button" data-index='${index}'></button>
         </div>
       </div>
+      <button class='correct-form-button' data-index='${index}'>Редактировать</button>
     </li>`;
     }
   }).join('');
@@ -96,6 +154,7 @@ const renderComments = () => {
   comments.innerHTML = commentsHtml;
 
   initLikeButtonsListeners();
+  initCorrectButtonsListeners();
 };
 
 renderComments();
