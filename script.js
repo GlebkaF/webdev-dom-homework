@@ -214,7 +214,7 @@ const initLikesButton = () => {
     }
 }
 
-initLikesButton();
+
 
 
     
