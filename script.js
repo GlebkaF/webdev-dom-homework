@@ -4,7 +4,8 @@ const addFormButton = document.querySelector(".add-form-button");
 const addFormName = document.querySelector(".add-form-name");
 const addFormText = document.querySelector(".add-form-text");
 const commentsList = document.querySelector(".comments");
-
+const form = document.querySelector(".add-form");
+const removeLastCommentButton = document.querySelector(".remove-last-comment-button");
 
 let comments = [ //ммассив с комментариями 
     {
@@ -53,7 +54,8 @@ let comments = [ //ммассив с комментариями
 //     });
 // });
 
-//рендер комментариев, кнопка ответа на комментарии
+
+//рендер комментариев, вызываем функцию ответа на комментарии, вызываем функцию кнопки лайка
 function renderComments(comments) {
     // очищаем список комментариев перед добавлением новых
     commentsList.innerHTML = '';
@@ -61,21 +63,21 @@ function renderComments(comments) {
     // создаем новый массив с разметкой комментариев
     const commentItems = comments
         .map(comment => `
-      <li class="comment">
-        <div class="comment-header">
-          <div>${comment.author}</div>
-          <div>${comment.date}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">${comment.text}</div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">${comment.likes}</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>`
+          <li class="comment">
+            <div class="comment-header">
+              <div>${comment.author}</div>
+              <div>${comment.date}</div>
+            </div>
+            <div class="comment-body">
+              <div class="comment-text">${comment.text}</div>
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">${comment.likes}</span>
+                <button class="like-button ${comment.isLiked ? '-active-like' : ''}"></button>
+              </div>
+            </div>
+          </li>`
         );
 
     const commentsHTML = commentItems
@@ -83,7 +85,12 @@ function renderComments(comments) {
 
     // добавляем новый список комментариев на страницу
     commentsList.insertAdjacentHTML('beforeend', commentsHTML);
+    
     addCommentReplyEvent();
+
+    setupLikeButtons();
+
+
 }
 
 renderComments(comments);
@@ -111,9 +118,7 @@ function addComment() {
 }
 
 
-// находим элементы формы и список комментариев
-const form = document.querySelector(".add-form");
-
+//кнопка добавления комментария
 addFormButton.addEventListener("click", (event) => { // находим кнопку "Написать", добавляем новый комментарий
     event.preventDefault();
 
@@ -132,6 +137,72 @@ addFormButton.addEventListener("click", (event) => { // находим кноп�
     addFormName.value = "";
     addFormText.value = "";
 });
+
+validateForm();
+
+
+//удаление последнего комментария
+function removeLastComment() {
+    const comments = commentsList.querySelectorAll(".comment");
+    if (comments.length > 0) {
+        comments[comments.length - 1].remove();
+    }
+}
+
+removeLastCommentButton.addEventListener("click", removeLastComment);
+
+
+// нажатие enter 
+addFormText.addEventListener("keyup", function (event) {
+    if (event.key === "Enter" && !addFormButton.disabled) {
+        addFormButton.click();
+    }
+});
+
+
+//кнопка лайка
+function setupLikeButtons() {
+    const likesButton = document.querySelectorAll('.like-button');
+
+    likesButton.forEach(function (button) {
+        button.addEventListener('click', function (event) {
+            event.stopPropagation();
+            //проверяем, что кликнули по кнопке лайка
+            if (event.target.classList.contains('like-button')) {
+                const likeButton = event.target;
+                const likesCounter = likeButton.previousElementSibling; //находим счетчик лайков
+                let likesCount = parseInt(likesCounter.textContent); //получаем текущее количество лайков
+
+                if (likeButton.classList.contains('-active-like')) {
+                    //убираем лайк, также запоминаем состояние лайка, чтобы оно не сбрасывалось при обновлении массива
+                    likesCount--;
+                    likesCounter.textContent = likesCount;
+                    likeButton.classList.remove('-active-like');
+                } else {
+                    //ставим лайк, также запоминаем состояние лайка, чтобы оно не сбрасывалось при обновлении массива
+                    likesCount++;
+                    likesCounter.textContent = likesCount;
+                    likeButton.classList.add('-active-like');
+                    comments[button.dataset.index].isLiked = true;
+                }
+            }
+        });
+    });
+}
+
+
+//функция ответа на комментарии
+function addCommentReplyEvent() {
+    const commentToReply = document.querySelectorAll('.comment');
+    commentToReply.forEach(comment => {
+        comment.addEventListener('click', () => {
+            const author = comment.querySelector('.comment-header div:first-child').textContent;
+            const text = comment.querySelector('.comment-text').textContent;
+            addFormText.value = `@${author} \n\n > ${text}, `;
+            addFormText.focus();
+        });
+    });
+}
 
 
 
@@ -165,66 +236,3 @@ function validateForm() {
     addFormButton.disabled = !isValid;
     addFormButton.classList.toggle("disabled", !isValid);
 }
-
-validateForm();
-
-
-// получает данные вставленных комментариев и удаляет последний 
-const removeLastCommentButton = document.querySelector(".remove-last-comment-button");
-function removeLastComment() {
-    const comments = commentsList.querySelectorAll(".comment");
-    if (comments.length > 0) {
-        comments[comments.length - 1].remove();
-    }
-}
-
-removeLastCommentButton.addEventListener("click", removeLastComment);
-
-
-// нажатие enter 
-addFormText.addEventListener("keyup", function (event) {
-    if (event.key === "Enter" && !addFormButton.disabled) {
-        addFormButton.click();
-    }
-});
-
-
-//кнопка лайка
-const likesButton = document.querySelectorAll('.like-button');
-
-likesButton.forEach(function(button) { 
-    button.addEventListener('click', function (event) {
-        event.stopPropagation();
-        //проверяем, что кликнули по кнопке лайка
-        if (event.target.classList.contains('like-button')) {
-            const likeButton = event.target;
-            const likesCounter = likeButton.previousElementSibling; //находим счетчик лайков
-            let likesCount = parseInt(likesCounter.textContent); //получаем текущее количество лайков
-
-            if (likeButton.classList.contains('-active-like')) {
-                //убираем лайк
-                likesCount--;
-                likesCounter.textContent = likesCount;
-                likeButton.classList.remove('-active-like');
-            } else {
-                //ставим лайк
-                likesCount++;
-                likesCounter.textContent = likesCount;
-                likeButton.classList.add('-active-like');
-            }
-        }
-    });
-});
-
-//функция ответа на комментарии
-function addCommentReplyEvent() {
-    const commentToReply = document.querySelectorAll('.comment');
-    commentToReply.forEach(comment => {
-      comment.addEventListener('click', () => {
-        const author = comment.querySelector('.comment-header div:first-child').textContent;
-        const text = comment.querySelector('.comment-text').textContent;
-        addFormText.value = `@${author} \n\n > ${text}, `;
-        addFormText.focus();
-      });
-    });
-  }
