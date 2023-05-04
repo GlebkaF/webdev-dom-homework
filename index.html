@@ -69,7 +69,7 @@
   const userName = document.querySelector('.add-form-name');
   const textComment = document.querySelector('.add-form-text');
   const button = document.querySelector('.add-form-button');
-  const comments = document.querySelectorAll('.comment');
+
   const commentsListArray = [
     {
       name: "Глеб Фокин",
@@ -122,8 +122,8 @@
       (comment.date) ? dates = comment.date : dates = `${("0" + date.getDate()).slice(-2)}.${("0" + (date.getMonth() + 1)).slice(-2)}.${date.getFullYear().toString().slice(-2)} ${("0" + date.getHours()).slice(-2)}:${("0" + date.getMinutes()).slice(-2)}`
       return `<li class="comment" data-id="${id}">
         <div class="comment-header">
-          <div>${comment.name}</div>         
-          <div>${dates}</div>          
+          <div>${comment.name}</div>
+          <div>${dates}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
@@ -188,36 +188,7 @@
 
   // Функция добавляет ответ на комментарий
   function addCommentListener() {
-    const commentList = document.querySelector('.comments');
-    const addForm = document.querySelector('.add-form');
-    const userName = document.querySelector('.add-form-name');
-    const textComment = document.querySelector('.add-form-text');
-    const button = document.querySelector('.add-form-button');
     const comments = document.querySelectorAll('.comment');
-    const commentsListArray = [
-      {
-        name: "Глеб Фокин",
-        date: "12.02.22 12:18",
-        msg: "Это будет первый комментарий на этой странице",
-        like: "3",
-        Iliked: false,
-      },
-      {
-        name: "Варвара Н.",
-        date: "13.02.22 19:22",
-        msg: "Мне нравится как оформлена эта страница! ❤",
-        like: "75",
-        Iliked: false,
-      },
-      {
-        name: "Андрей",
-        date: "01.05.23 13:01",
-        msg: "Что то написал в этом коменте",
-        like: "1",
-        Iliked: true,
-      }
-    ];
-
     comments.forEach((comment) => {
       comment.addEventListener('click', (event) => {
         const answer = event.target.querySelector('.comment-body').textContent;
