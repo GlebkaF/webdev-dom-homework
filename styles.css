@@ -50,9 +50,13 @@ body {
 
 .comment-footer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  flex-direction: row;
 }
-
+.comment-func {
+  display: flex;
+  align-items: center;
+}
 .comment-body {
   margin-top: 32px;
   margin-bottom: 32px;
@@ -148,6 +152,12 @@ body {
   padding: 0 5px;
   cursor: pointer;
 }
+
+.quote-comment {
+  font-size: 24px;
+  padding: 0 5px;
+  cursor: pointer;
+}
 .popap {
   background: radial-gradient(75.42% 75.42% at 50% 42.37%, rgba(53, 53, 53, 0) 22.92%, #7334ea 100%);
   filter: drop-shadow(0px 20px 67px rgba(0, 0, 0, 0.08));
@@ -177,11 +187,16 @@ body {
 }
 
 .save_button {
-  margin-bottom: 3px;
+  margin-top: 24px;
   font-size: 24px;
   padding: 10px 20px;
   background-color: #bcec30;
   border: none;
   border-radius: 18px;
   cursor: pointer;
+}
+.edit-form-text {
+  margin-top: 12px;
+  padding: 22px;
+  resize: none;
 }

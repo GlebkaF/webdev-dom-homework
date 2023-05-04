@@ -6,6 +6,31 @@ const userName = document.querySelector('.add-form-name');
 const textCommment = document.querySelector('.add-form-text');
 const button = document.querySelector('.add-form-button');
 const comments = document.querySelectorAll('.comment');
+function dateFormat() {
+    const date = new Date();
+    (date.getDate() < 10) ? dd = '0' + date.getDate() : dd = date.getDate();
+    (date.getMonth() < 10) ? MM = '0' + (date.getMonth() + 1) : MM = (date.getMonth() + 1);
+    (date.getFullYear()) ? YY = date.getFullYear().toString().slice(-2) : YY = date.getFullYear().toString().slice(-2);
+    (date.getHours() < 10) ? hh = '0' + date.getHours() : hh = date.getHours();
+    (date.getMinutes() < 10) ? mm = '0' + date.getMinutes() : mm = date.getMinutes();
+    return `${dd}.${MM}.${YY} ${hh}:${mm}`;
+}
+container.addEventListener('click', (e) => {
+    const target = e.target.classList[0];
+    const id = e.target.dataset.id;
+    switch (target) {
+        case 'like-button': initLikeClick(id);
+            break;
+        case 'del-comment': delClick(id);
+            break;
+        case 'edit-comment': editClick(id);
+            editValid();
+            break;
+        case 'edit-form-button': saveEditComment(id);
+            break;
+        default: break;
+    }
+})
 
 const commentsListArray = [
     {
@@ -33,77 +58,57 @@ const commentsListArray = [
         isEdit: false,
     }
 ];
-
-const addLikes = (e) => {
-    commentsListArray[e.target.dataset.id].like++; //= Number(commentsListArray[e.target.dataset.id].like) + 1;
-    commentsListArray[e.target.dataset.id].Iliked = true;
+const addLikes = (id) => {
+    commentsListArray[id].like++;
+    commentsListArray[id].Iliked = true;
 }
-const delLikes = (e) => {
-    commentsListArray[e.target.dataset.id].like--;// = Number(commentsListArray[e.target.dataset.id].like) - 1;
-    commentsListArray[e.target.dataset.id].Iliked = false;
+const delLikes = (id) => {
+    commentsListArray[id].like--;
+    commentsListArray[id].Iliked = false;
 }
-const initLikeClick = () => {
-    const likeClickElements = document.querySelectorAll('.likes');
-    for (const likeClickElement of likeClickElements) {
-        likeClickElement.addEventListener('click', (e) => {
-            (commentsListArray[e.target.dataset.id].Iliked) ? delLikes(e) : addLikes(e);
-            renderComments();
-        });
+const initLikeClick = (id) => {
+    (commentsListArray[id].Iliked) ? delLikes(id) : addLikes(id);
+    renderComments();
+}
+const editClick = (id) => {
+    commentsListArray[id].isEdit = true;
+    renderComments();
+}
+const saveEditComment = (id) => {
+    const date = new Date(); // дата
+    const editText = document.querySelector('.edit-form-text');
+    if (editText.value.length > 10) {
+        commentsListArray[id].date = dateFormat();
+        commentsListArray[id].msg = editText.value;
+        commentsListArray[id].isEdit = false;
+        renderComments();
+    } else {
+        editText.classList.add('error');
     }
 }
-
-const editClick = () => {
-    const editClickElements = document.querySelectorAll('.edit-comment');
-    for (const editClickElement of editClickElements) {
-        editClickElement.addEventListener('click', (e) => {
-            const id = e.target.dataset.id;
-            commentsListArray[id].isEdit = true;
-            renderComments();
-        });
-    }
-
-}
-
-const saveEditComment = () => {
-    if (document.querySelector('.edit-form-button')) {
-        
-        const editButton = document.querySelector('.edit-form-button');
-        const id = editButton.dataset.id;
-        const editText = document.querySelector('.edit-form-text');
-        editText.addEventListener('input',()=>{
-        if (editText.value.length > 10) { 
+function editValid() {
+    const editText = document.querySelector('.edit-form-text');
+    const editButton = document.querySelector('.edit-form-button');
+    editText.addEventListener('input', () => {
+        if (editText.value.length > 10) {
             editText.classList.remove('error');
-            editButton.removeAttribute('disabled')
-        editButton.addEventListener('click', () => {
-            commentsListArray[id].date = dateFormat();
-            commentsListArray[id].msg = editText.value;
-            commentsListArray[id].isEdit = false;
-            renderComments();
-        });
-    }
-        else {editText.classList.add('error');
-        editButton.setAttribute('disabled', '');
-    }});
-    }
+            editButton.removeAttribute('disabled');
+        } else {
+            editText.classList.add('error');
+            editButton.setAttribute('disabled', '');
+        }
+    });
 }
-
-const delClick = () => {
-    const delClickElements = document.querySelectorAll('.del-comment');
-    for (const delClickElement of delClickElements) {
-        delClickElement.addEventListener('click', (e) => {
-            commentsListArray.splice(e.target.dataset.id, 1);
-            renderComments();
-        });
-    }
+const delClick = (id) => {
+    commentsListArray.splice(id, 1);
+    renderComments();
 }
-
-
 function renderComments() {
     const commentHtmlResult = commentsListArray.map((comment, id) => {
         (comment.Iliked) ? Iliked = '-active-like' : Iliked = '';
         if (comment.isEdit) {
 
-                    return `<div class="add-form">
+            return `<div class="add-form">
                     <textarea
                     type="textarea"
                     class="edit-form-text"
@@ -111,8 +116,9 @@ function renderComments() {
                     <div class="add-form-row">
                     <button data-id="${id}" class="edit-form-button save_button">Сохранить</button>
                     </div>
-                    </div>` 
-                    ;
+                    </div>`
+                ;
+
 
         } else {
 
@@ -128,8 +134,8 @@ function renderComments() {
                     </div>
                     <div class="comment-footer">
                     <div class="comment-func">
-                        <div class="edit-comment"><span data-id="${id}" title="Редактироать">&#9998;</span></div>
-                        <div class="del-comment"><span data-id="${id}" title="Удалить">&#10008;</span></div>
+                        <div><span class="edit-comment" data-id="${id}" title="Редактироать">&#9998;</span></div>
+                        <div><span class="del-comment" data-id="${id}" title="Удалить">&#10008;</span></div>
                         </div>
                     
                     <div class="likes">
@@ -141,13 +147,11 @@ function renderComments() {
         }
     }).join("");
     commentList.innerHTML = commentHtmlResult;
-    initLikeClick();
-    editClick();
-    delClick();
-    saveEditComment();
+    //   initLikeClick();
+    // editClick();
+
+    //   saveEditComment();
 }
-
-
 function valiate() { //функция валидации простая
     if (userName.value.length === 0) { //если имя === 0
         userName.classList.add('error'); //ставим класс
@@ -162,11 +166,9 @@ function valiate() { //функция валидации простая
         return true; //возвращаем true
     }
     else {
-
         return false; //возвращаем false
     }
 }
-
 function addComment() { //функция  добавления коммента
     const validate = valiate(); //присваиваем переменной результат валидации
     const date = new Date(); // дата
@@ -177,7 +179,6 @@ function addComment() { //функция  добавления коммента
             msg: textCommment.value,
             like: 0,
         });
-
         renderComments();
         textCommment.value = "";// очищаем поле коммента имя не трогаем 
         button.setAttribute('disabled', '');
@@ -197,15 +198,15 @@ addForm.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.keyCode == 13) { addComment(); } // если нажата Ctrl + Enter
 });
 
+if (document.querySelector('.edit-form-text')) {
+    const editText = document.querySelector('.edit-form-text');
+    const editButton = document.querySelector('.edit-form-button');
 
-function dateFormat() {
-    const date = new Date();
-    (date.getDate() < 10) ? dd = '0' + date.getDate() : dd = date.getDate();
-    (date.getMonth() < 10) ? MM = '0' + (date.getMonth() + 1) : MM = (date.getMonth() + 1);
-    (date.getFullYear()) ? YY = date.getFullYear().toString().slice(-2) : YY = date.getFullYear().toString().slice(-2);
-    (date.getHours() < 10) ? hh = '0' + date.getHours() : hh = date.getHours();
-    (date.getMinutes() < 10) ? mm = '0' + date.getMinutes() : mm = date.getMinutes();
-    return `${dd}.${MM}.${YY} ${hh}:${mm}`;
+    editText.addEventListener('input', () => {
+        if (editText.value.length > 10) {
+            editButton.removeAttribute('disabled');
+        }
+    });
 }
 
 renderComments();
