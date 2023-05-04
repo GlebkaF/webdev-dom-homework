@@ -76,12 +76,12 @@
       const oldCommentHtml = commentElement.innerHTML;
       commentElement.innerHTML = oldCommentHtml + `    <li class="comment">
           <div class="comment-header">
-            <div>Глеб Фокин</div>
+            <div>${nameInputElement.value}</div>
             <div>12.02.22 12:18</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              Это будет первый комментарий на этой странице
+              ${textInputElement.value}
             </div>
           </div>
           <div class="comment-footer">
