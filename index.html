@@ -17,6 +17,7 @@
       <textarea type="textarea" class="add-form-text" id="add-comment" placeholder="Введите ваш коментарий"
         rows="4"></textarea>
       <div class="add-form-row">
+        <button class="add-form-button" id="form-delete-button">Удалить последний комментарий</button>
         <button class="add-form-button" id="form-add-button">Написать</button>
       </div>
     </div>
@@ -30,6 +31,7 @@
   const addName = document.getElementById('add-name');
   const addComment = document.getElementById('add-comment');
   const commentElements = document.querySelectorAll('comments');
+  const lastCommentDeleteButton = document.getElementById('form-delete-button');
 
   const comments = [
     {
@@ -222,6 +224,16 @@
       };
     };
   };
+
+
+  const DeleteLastComment = () => {
+    lastCommentDeleteButton.addEventListener('click', () => {
+      comments.pop();
+      renderComments();
+    });
+  };
+
+  DeleteLastComment();
 
   addName.addEventListener('input', checkInputs);
   addName.addEventListener('keyup', addNewCommentOnEnter);
