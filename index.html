@@ -189,12 +189,12 @@
   function addCommentListener() {
     comments.forEach((comment) => {
       comment.addEventListener('click', (event) => {
-        const answer = event.target.querySelector('.comment-text').textContent;
+        const answer = event.target.querySelector('.comment-body').textContent;
         textComment.value = answer;
       });
     });
   }
-  addCommentListener()
+  addCommentListener();
 
 </script>
 
