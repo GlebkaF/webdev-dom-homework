@@ -142,20 +142,21 @@
     initLikeClick();
   }
 
-  const valiate = () => {
+  const validate = () => {
     userName.classList.toggle('error', userName.value.length === 0);
     textComment.classList.toggle('error', textComment.value.length < 1);
     return (userName.value.length > 0 && textComment.value.length >= 1);
   }
 
   const addComment = () => {
-    const validate = valiate();
     const date = new Date();
     if (validate) {
       commentsListArray.push({
-        name: userName.value,
+        //Убираем уязвимость, запрещаем вводить теги
+        name: userName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
         date: `${("0" + date.getDate()).slice(-2)}.${("0" + (date.getMonth() + 1)).slice(-2)}.${date.getFullYear().toString().slice(-2)} ${("0" + date.getHours()).slice(-2)}:${("0" + date.getMinutes()).slice(-2)}`,
-        msg: textComment.value,
+        //Убираем уязвимость, запрещаем вводить теги
+        msg: textComment.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
         like: 0,
       });
       renderComments();
