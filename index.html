@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="new-com" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -46,11 +46,13 @@
       </ul>
       <div class="add-form">
         <input
+        id="name-input"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
+        id="text-input"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
@@ -66,10 +68,30 @@
   <script>
     "use strict";
     const buttonElement = document.getElementById("button-comment");
-    console.log(buttonElement);
+    const commentElement = document.getElementById("new-com");
+    const nameInputElement = document.getElementById("name-input");
+    const textInputElement = document.getElementById("text-input");
+  
     buttonElement.addEventListener('click', () => {
-      
+      const oldCommentHtml = commentElement.innerHTML;
+      commentElement.innerHTML = oldCommentHtml + `    <li class="comment">
+          <div class="comment-header">
+            <div>Глеб Фокин</div>
+            <div>12.02.22 12:18</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              Это будет первый комментарий на этой странице
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">3</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
     });
-    console.log("It works!");
+    console.log("It works!")
   </script>
 </html>
