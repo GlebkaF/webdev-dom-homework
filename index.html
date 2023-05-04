@@ -10,7 +10,7 @@
 <body>
   <div class="container">
     <ul id="comments" class="comments">
-      <li class="comment">
+      <!-- <li class="comment">
         <div class="comment-header">
           <div>Глеб Фокин</div>
           <div>12.02.22 12:18</div>
@@ -43,7 +43,7 @@
             <button class="like-button -active-like"></button>
           </div>
         </div>
-      </li>
+      </li> -->
     </ul>
     <div>
       <button id="button-del" class="add-form-button">Удалить последний комментарий</button>
@@ -75,6 +75,21 @@
   const nameInputElement = document.getElementById("add-form-name");
   const textAreaElement = document.getElementById("add-form-text");
 
+  const comments = [
+    {
+      author: "Глеб Фокин",
+      date: "12.02.22 12:18",
+      text: "Это будет первый комментарий на этой странице",
+      likes: "3"
+    },
+    {
+      author: "Варвара Н.",
+      date: "13.02.22 19:22",
+      text: "Мне нравится как оформлена эта страница! ❤",
+      likes: "75"
+    }
+  ];
+
   function fullDate(date) {
 
     let dd = date.getDate();
@@ -96,6 +111,54 @@
   }
   let nowDate = new Date();
 
+  const renderComments = () => {
+    const commentsHtml = comments.
+      map((comment, index) => {
+        return `<li class="comment">
+        <div class="comment-header">
+          <div>${comment.author}</div>
+          <div>${comment.date} </div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${comment.text}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${comment.likes}</span>
+            <button data-index="${index}" class="like-button"></button>
+          </div>
+        </div>
+      </li>`;
+      })
+      .join("");
+
+    commentsElement.innerHTML = commentsHtml;
+    initCountLikesListeners();
+
+  };
+  renderComments();
+
+  const initCountLikesListeners = () => {
+    const countLikesElements = document.querySelectorAll(".like-button");
+
+    for (const countLikesElement of countLikesElements) {
+      countLikesElement.addEventListener("click", () => {
+        const index = countLikesElement.dataset.index;
+
+        if (countLikesElement.classList.add("-active-like") == true) {
+          return comments[index][likes] + 1;
+        }
+        if (countLikesElement.classList.remove("-active-like") == true) {
+          return comments[index][likes] - 1;
+        }
+        renderComments();
+      });
+    }
+  };
+
+
   buttonElement.addEventListener("click", () => {
 
     nameInputElement.classList.remove("error");
@@ -110,32 +173,22 @@
       return;
     }
 
-    const oldComments = commentsElement.innerHTML;
-    commentsElement.innerHTML = oldComments +
-      `<li class="comment">
-        <div class="comment-header">
-          <div>${nameInputElement.value}</div>
-          <div>${fullDate(nowDate)} </div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${textAreaElement.value}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>`;
+    comments.push({
+      author: nameInputElement.value,
+      date: `${fullDate()}`,
+      text: textAreaElement.value,
+      likes: "0"
+    });
+
+    renderComments();
 
     nameInputElement.value = "";
     textAreaElement.value = "";
+
   });
 
 
-  // Дополнительные задания
+  // Дополнительные задания DOM -1
 
   // Расширенная валидация
 
@@ -197,9 +250,25 @@
 
   const buttonDelElement = document.getElementById("button-del");
 
+  // Удалить последний комментарий без lastIndexOf
+
+  // buttonDelElement.addEventListener('click', () => {
+  //   const allComments = document.querySelectorAll('li');
+  //   allComments[allComments.length - 1].remove();
+  // });
+
+  // Удалить последний комментарий, используя lastIndexOf
+
   buttonDelElement.addEventListener('click', () => {
-    const allComments = document.querySelectorAll('li');
-    allComments[allComments.length - 1].remove();
+    const commentsHtml = commentsElement.innerHTML;
+    const lastIndex = commentsHtml.lastIndexOf('<li>');
+
+    if (lastIndex !== -1) {
+      const newCommentsHtml = commentsHtml.substring(0, lastIndex);
+      commentsElement.innerHTML = newCommentsHtml;
+    }
   });
+
 </script>
+
 </html>
