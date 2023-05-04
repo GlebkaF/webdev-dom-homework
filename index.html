@@ -10,47 +10,15 @@
 <body>
   <div class="container">
     <ul class="comments" id="list-comments">
-      <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like" id="commentButton"></button>
-          </div>
-        </div>
-      </li>
+      <!-- Список комментариев рендерится из JS -->
     </ul>
     <div class="add-form">
       <input type="text" class="add-form-name" id="add-name" placeholder="Введите ваше имя" />
       <textarea type="textarea" class="add-form-text" id="add-comment" placeholder="Введите ваш коментарий"
         rows="4"></textarea>
       <div class="add-form-row">
-        <button class="add-form-button" id="addFormButton">Написать</button>
+        <button class="add-form-button" id="form-delete-button">Удалить последний комментарий</button>
+        <button class="add-form-button" id="form-add-button">Написать</button>
       </div>
     </div>
   </div>
@@ -58,68 +26,219 @@
 
 <script>
   "use strict";
-  const listElem = document.getElementById('list-comments')
-  const commentBtn = document.getElementById('addFormButton');
+  const listElem = document.getElementById('list-comments');
+  const commentBtn = document.getElementById('form-add-button');
   const addName = document.getElementById('add-name');
   const addComment = document.getElementById('add-comment');
+  const commentElements = document.querySelectorAll('comments');
+  const lastCommentDeleteButton = document.getElementById('form-delete-button');
 
-  commentBtn.addEventListener("click", () => {
-    addName.classList.remove("error");
-    addComment.classList.remove("error");
+  const comments = [
+    {
+      userName: "Глеб Фокин",
+      commentDate: "13.02.22 19:22",
+      userComment: "Это будет первый комментарий на этой странице",
+      likes: 3,
+      isLiked: false,
+      isEdit: false,
+    },
+    {
+      userName: "Варвара Н.",
+      commentDate: "13.02.22 19:22",
+      userComment: "Мне нравится как оформлена эта страница! ❤",
+      likes: 75,
+      isLiked: false,
+      isEdit: false,
+    },
+  ];
 
-    if (addName.value === '') {
-      return addName.classList.add("error");
-    } else if (addComment.value === '') {
-      return addComment.classList.add("error");
-    }
 
-    const oldListElem = listElem.innerHTML;
-    let userDate = new Date();
-    let month = userDate.getMonth();
-    let minutes = userDate.getMinutes();
-    let year = userDate.getFullYear() % 100;
+  const likeButtonsListeners = () => {
+    const likeButtonElements = document.querySelectorAll('.like-button');
+    const likeCountElements = document.querySelectorAll('.likes-counter');
 
-    if (month < 10) {
-      month = "0" + month;
-    }
+    for (const likeButtonElement of likeButtonElements) {
 
-    if (minutes < 10) {
-      minutes = "0" + minutes;
-    }
+      likeButtonElement.addEventListener("click", () => {
 
-    if (year < 10) {
-      year = "0" + year;
-    }
+        const comment = comments[likeButtonElement.dataset.index];
+        comment.likes = comment.isLiked ? comment.likes - 1 : comment.likes + 1;
+        comment.isLiked = !comment.isLiked;
+        renderComments();
+      });
+    };
+  }
 
-    let commentTime = `${userDate.getDate()}.${month}.${year} ${userDate.getHours()}:${minutes}`;
 
-    listElem.innerHTML = oldListElem +
-      `<li class="comment">
+  const editButtonsListeners = () => {
+    const editButtonElements = document.querySelectorAll('.edit-button');
+    const commentTextElements = document.querySelectorAll('.comment-text');
+
+    for (const editButtonElement of editButtonElements) {
+      editButtonElement.addEventListener("click", () => {
+
+        const edit = comments[editButtonElement.dataset.index];
+
+        for (const commentTextElement of commentTextElements) {
+          const editedComment = comments[commentTextElement.dataset.index];
+
+          if (edit.isEdit == false) {
+            editButtonElement.innerHTML = "Сохранить";
+            commentTextElement.innerHTML = `<textarea type="textarea" class="comment-text" rows="4">${editedComment.userComment}</textarea>`;
+
+            comments.push({
+              userComment: editedComment.value,
+            });
+
+          } else {
+            editButtonElement.innerHTML = "Редактировать";
+            commentTextElement.innerHTML = editedComment.userComment;
+          }
+        };
+
+        edit.isEdit = !edit.isEdit;
+        // renderComments();
+      });
+    };
+  };
+
+
+  const renderComments = () => {
+    const commentsHtml = comments
+      .map((comment, index) => {
+        return `<li class="comment" data-index="${index}">
           <div class="comment-header">
             <div>
-              ${addName.value}
+              ${comment.userName}
             </div>
             <div>
-              ${commentTime}
+              ${comment.commentDate}
             </div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
-              ${addComment.value}
+            <div class="comment-text" data-index="${index}">
+              ${comment.userComment}
             </div>
           </div>
           <div class="comment-footer">
+            <div>
+              <button class="add-form-button edit-button" data-index="${index}">Редактировать</button>
+            </div>
             <div class="likes">
-              <span class="likes-counter"></span>
-              <button class="like-button">
+              <span class="likes-counter">
+                ${comment.likes}
+              </span>
+              <button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index="${index}">
               </button>
             </div>
           </div>
-        </li>`
+        </li>`;
+      })
+      .join('');
 
-    addName.value = '';
-    addComment.value = '';
-  });
+    listElem.innerHTML = commentsHtml;
+    likeButtonsListeners();
+    editButtonsListeners();
+  };
+
+  renderComments();
+
+
+  const addNewComment = () => {
+    commentBtn.addEventListener("click", () => {
+      addName.classList.remove("error");
+      addComment.classList.remove("error");
+
+      if (addName.value.trim() === '') {
+        return addName.classList.add("error");
+      } else if (addComment.value.trim() === '') {
+        return addComment.classList.add("error");
+      };
+
+      let userDate = new Date();
+      let month = userDate.getMonth() + 1;
+      let minutes = userDate.getMinutes();
+      let year = userDate.getFullYear() % 100;
+
+      if (month < 10) {
+        month = "0" + month;
+      };
+
+      if (minutes < 10) {
+        minutes = "0" + minutes;
+      };
+
+      if (year < 10) {
+        year = "0" + year;
+      };
+
+      let nowDate = `${userDate.getDate()}.${month}.${year} ${userDate.getHours()}:${minutes}`;
+
+      comments.push({
+        userName: addName.value,
+        commentDate: nowDate,
+        userComment: addComment.value,
+        likes: 0,
+        isLiked: false,
+        isEdit: false,
+      });
+
+      renderComments();
+
+      addName.value = '';
+      addComment.value = '';
+    });
+  }
+
+  addNewComment();
+
+
+  function checkInputs() {
+    let isFilled = true;
+
+    if (addName.value.trim() === '' || addComment.value.trim() === '') {
+      isFilled = false;
+    }
+
+    if (isFilled) {
+      commentBtn.disabled = false;
+      commentBtn.classList.remove("hidden-button");
+    } else {
+      commentBtn.disabled = true;
+      commentBtn.classList.add("hidden-button");
+    }
+  };
+
+
+  const addNewCommentOnEnter = (event) => {
+    if (event.keyCode === 13) {
+      addName.classList.remove("error");
+      addComment.classList.remove("error");
+
+      if (addName.value.trim() === '') {
+        return addName.classList.add("error");
+      } else if (addComment.value.trim() === '') {
+        return addComment.classList.add("error");
+      } else {
+        commentBtn.click();
+      };
+    };
+  };
+
+
+  const DeleteLastComment = () => {
+    lastCommentDeleteButton.addEventListener('click', () => {
+      comments.pop();
+      renderComments();
+    });
+  };
+
+  DeleteLastComment();
+
+  addName.addEventListener('input', checkInputs);
+  addName.addEventListener('keyup', addNewCommentOnEnter);
+  addComment.addEventListener('input', checkInputs);
+  addComment.addEventListener('keyup', addNewCommentOnEnter);
 </script>
 
 </html>
