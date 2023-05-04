@@ -192,7 +192,9 @@
     comments.forEach((comment) => {
       comment.addEventListener('click', (event) => {
         const answer = event.target.querySelector('.comment-body').textContent;
+        const nameUser = event.target.querySelector('.add-form-name').textContent;
         textComment.value = answer;
+        userName.value = nameUser;
       });
     });
   }
