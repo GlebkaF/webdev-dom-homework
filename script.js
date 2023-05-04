@@ -6,7 +6,7 @@ const addFormText = document.querySelector(".add-form-text");
 const commentsList = document.querySelector(".comments");
 
 
-const comments = [ //ммассив с комментариями 
+let comments = [ //ммассив с комментариями 
     {
         author: 'Глеб Фокин',
         date: '12.02.22 12:18',
@@ -22,8 +22,38 @@ const comments = [ //ммассив с комментариями
     // ...
 ];
 
+//подключение и рендер комментариев из API
+// const fetchPromise = fetch(
+//     "https://webdev-hw-api.vercel.app/api/v1/artyom-kovalchuk/comments",
+//     {
+//         method: "GET",
+//     }
+// );
 
-//рендер комментариев 
+// fetchPromise.then((response) => {
+//     console.log(response);
+
+//     const jsonPromise = response.json();
+
+//     jsonPromise.then((responseData) => {
+//         console.log(responseData);
+
+//         const appComments = responseData.comments.map((comment) => {
+//             return {
+//                 name: comment.author.name,
+//                 date: new Date(comment.date),
+//                 text: comment.text,
+//                 likes: comment.likes,
+//                 isliked: false,
+//             };
+//         });
+
+//         comments = appComments;
+//         renderComments(comments);
+//     });
+// });
+
+//рендер комментариев, кнопка ответа на комментарии
 function renderComments(comments) {
     // очищаем список комментариев перед добавлением новых
     commentsList.innerHTML = '';
@@ -53,6 +83,7 @@ function renderComments(comments) {
 
     // добавляем новый список комментариев на страницу
     commentsList.insertAdjacentHTML('beforeend', commentsHTML);
+    addCommentReplyEvent();
 }
 
 renderComments(comments);
@@ -159,42 +190,41 @@ addFormText.addEventListener("keyup", function (event) {
 
 
 //кнопка лайка
-const commentsContainer = document.querySelector('ul.comments');
-commentsContainer.addEventListener('click', function (event) {
-    //проверяем, что кликнули по кнопке лайка
-    if (event.target.classList.contains('like-button')) {
-        const likeButton = event.target;
-        const likesCounter = likeButton.previousElementSibling; //находим счетчик лайков
-        let likesCount = parseInt(likesCounter.textContent); //получаем текущее количество лайков
+const likesButton = document.querySelectorAll('.like-button');
 
-        if (likeButton.classList.contains('-active-like')) {
-            //убираем лайк
-            likesCount--;
-            likesCounter.textContent = likesCount;
-            likeButton.classList.remove('-active-like');
-        } else {
-            //ставим лайк
-            likesCount++;
-            likesCounter.textContent = likesCount;
-            likeButton.classList.add('-active-like');
+likesButton.forEach(function(button) { 
+    button.addEventListener('click', function (event) {
+        event.stopPropagation();
+        //проверяем, что кликнули по кнопке лайка
+        if (event.target.classList.contains('like-button')) {
+            const likeButton = event.target;
+            const likesCounter = likeButton.previousElementSibling; //находим счетчик лайков
+            let likesCount = parseInt(likesCounter.textContent); //получаем текущее количество лайков
+
+            if (likeButton.classList.contains('-active-like')) {
+                //убираем лайк
+                likesCount--;
+                likesCounter.textContent = likesCount;
+                likeButton.classList.remove('-active-like');
+            } else {
+                //ставим лайк
+                likesCount++;
+                likesCounter.textContent = likesCount;
+                likeButton.classList.add('-active-like');
+            }
         }
-    }
-});
-
-
-//отвечаем на комментарии
-
-const commentItems = document.querySelectorAll('.comment'); //получаем комменты на которые нужен ответ (все из документа)
-
-// для каждого коммента добавляем событие клика
-commentItems.forEach(comment => {
-    comment.addEventListener('click', () => {
-        // получаем автора и текст комментария
-        const author = comment.querySelector('.comment-header div:first-child').textContent;
-        const text = comment.querySelector('.comment-text').textContent;
-
-        addFormText.value = `@${author} \n\n > ${text}, `;
-        addFormText.focus();
-
     });
 });
+
+//функция ответа на комментарии
+function addCommentReplyEvent() {
+    const commentToReply = document.querySelectorAll('.comment');
+    commentToReply.forEach(comment => {
+      comment.addEventListener('click', () => {
+        const author = comment.querySelector('.comment-header div:first-child').textContent;
+        const text = comment.querySelector('.comment-text').textContent;
+        addFormText.value = `@${author} \n\n > ${text}, `;
+        addFormText.focus();
+      });
+    });
+  }
