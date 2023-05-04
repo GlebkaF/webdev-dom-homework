@@ -144,13 +144,13 @@
 
   const validate = () => {
     userName.classList.toggle('error', userName.value.length === 0);
-    textComment.classList.toggle('error', textComment.value.length < 1);
-    return (userName.value.length > 0 && textComment.value.length >= 1);
+    textComment.classList.toggle('error', textComment.value.length === 0);
+    return (userName.value.length >= 1 && textComment.value.length >= 1);
   }
 
   const addComment = () => {
     const date = new Date();
-    if (validate) {
+    if (validate()) {
       commentsListArray.push({
         //Убираем уязвимость, запрещаем вводить теги в поле ввода имени
         name: userName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
@@ -161,6 +161,7 @@
       });
       renderComments();
       textComment.value = "";
+      userName.value = "";
       button.setAttribute('disabled', '');
     }
   };
