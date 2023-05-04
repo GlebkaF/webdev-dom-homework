@@ -185,7 +185,18 @@
   });
   renderComments();
 
-  //Добавляем функцию ответа на комментарий
+
+  function addCommentListener() {
+    // Функция добавляет ответ на комментарий
+    comments.forEach((comment) => {
+      comment.addEventListener('click', (event) => {
+        const answer = event.target.value;
+        textComment.value = answer;
+      });
+    });
+  }
+
+  addCommentListener();
 
 
 </script>
