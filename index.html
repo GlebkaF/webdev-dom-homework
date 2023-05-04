@@ -57,7 +57,7 @@
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="button-comment" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
@@ -65,8 +65,11 @@
 
   <script>
     "use strict";
-    const buttonElement = document.getElementById("add-form-button");
-    
+    const buttonElement = document.getElementById("button-comment");
+    console.log(buttonElement);
+    buttonElement.addEventListener('click', () => {
+      
+    });
     console.log("It works!");
   </script>
 </html>
