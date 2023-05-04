@@ -29,7 +29,6 @@
   const commentBtn = document.getElementById('form-add-button');
   const addName = document.getElementById('add-name');
   const addComment = document.getElementById('add-comment');
-
   const commentElements = document.querySelectorAll('comments');
 
   const comments = [
@@ -68,6 +67,7 @@
     };
   }
 
+
   const editButtonsListeners = () => {
     const editButtonElements = document.querySelectorAll('.edit-button');
     const commentTextElements = document.querySelectorAll('.comment-text');
@@ -99,6 +99,7 @@
       });
     };
   };
+
 
   const renderComments = () => {
     const commentsHtml = comments
@@ -141,49 +142,54 @@
   renderComments();
 
 
-  commentBtn.addEventListener("click", () => {
-    addName.classList.remove("error");
-    addComment.classList.remove("error");
+  const addNewComment = () => {
+    commentBtn.addEventListener("click", () => {
+      addName.classList.remove("error");
+      addComment.classList.remove("error");
 
-    if (addName.value.trim() === '') {
-      return addName.classList.add("error");
-    } else if (addComment.value.trim() === '') {
-      return addComment.classList.add("error");
-    };
+      if (addName.value.trim() === '') {
+        return addName.classList.add("error");
+      } else if (addComment.value.trim() === '') {
+        return addComment.classList.add("error");
+      };
 
-    let userDate = new Date();
-    let month = userDate.getMonth() + 1;
-    let minutes = userDate.getMinutes();
-    let year = userDate.getFullYear() % 100;
+      let userDate = new Date();
+      let month = userDate.getMonth() + 1;
+      let minutes = userDate.getMinutes();
+      let year = userDate.getFullYear() % 100;
 
-    if (month < 10) {
-      month = "0" + month;
-    };
+      if (month < 10) {
+        month = "0" + month;
+      };
 
-    if (minutes < 10) {
-      minutes = "0" + minutes;
-    };
+      if (minutes < 10) {
+        minutes = "0" + minutes;
+      };
 
-    if (year < 10) {
-      year = "0" + year;
-    };
+      if (year < 10) {
+        year = "0" + year;
+      };
 
-    let nowDate = `${userDate.getDate()}.${month}.${year} ${userDate.getHours()}:${minutes}`;
+      let nowDate = `${userDate.getDate()}.${month}.${year} ${userDate.getHours()}:${minutes}`;
 
-    comments.push({
-      userName: addName.value,
-      commentDate: nowDate,
-      userComment: addComment.value,
-      likes: 0,
-      isLiked: false,
-      isEdit: false,
+      comments.push({
+        userName: addName.value,
+        commentDate: nowDate,
+        userComment: addComment.value,
+        likes: 0,
+        isLiked: false,
+        isEdit: false,
+      });
+
+      renderComments();
+
+      addName.value = '';
+      addComment.value = '';
     });
+  }
 
-    renderComments();
+  addNewComment();
 
-    addName.value = '';
-    addComment.value = '';
-  });
 
   function checkInputs() {
     let isFilled = true;
@@ -201,8 +207,26 @@
     }
   };
 
+
+  const addNewCommentOnEnter = (event) => {
+    if (event.keyCode === 13) {
+      addName.classList.remove("error");
+      addComment.classList.remove("error");
+
+      if (addName.value.trim() === '') {
+        return addName.classList.add("error");
+      } else if (addComment.value.trim() === '') {
+        return addComment.classList.add("error");
+      } else {
+        commentBtn.click();
+      };
+    };
+  };
+
   addName.addEventListener('input', checkInputs);
+  addName.addEventListener('keyup', addNewCommentOnEnter);
   addComment.addEventListener('input', checkInputs);
+  addComment.addEventListener('keyup', addNewCommentOnEnter);
 </script>
 
 </html>
