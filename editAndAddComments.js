@@ -11,8 +11,8 @@ function addNewComment() {
           .replaceAll("<", "&lt;")
           .replaceAll(">", "&gt;")
           .replaceAll('"', "&quot;")
-          .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
-          .replaceAll("QUOTE_END", "</div>"),
+          .replace("|", "<div class='quote'>")
+          .replace("|", "</div>"),
           likes: "0",
           Iliked: false,
           isEdit: false

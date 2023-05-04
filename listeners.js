@@ -6,7 +6,7 @@ const commentClickListener = () => {
       comment.addEventListener('click', () => {
         newComment.setAttribute('style', 'white-space: pre-line;');
         const replace = `${usersComments[comment.dataset.id].comment} \r\n \r\n ${usersComments[comment.dataset.id].name}`
-        newComment.value = `QUOTE_BEGIN ${replace} QUOTE_END \r\n\r\n`
+        newComment.value = `| ${replace} \r\n\|`
       })
     }
 }
@@ -57,4 +57,5 @@ form.addEventListener('keyup', function (event) {
 
 delButton.addEventListener('click', function () {
     comments.removeChild(comments.lastChild)
+    usersComments.pop()
 })
