@@ -152,10 +152,10 @@
     const date = new Date();
     if (validate) {
       commentsListArray.push({
-        //Убираем уязвимость, запрещаем вводить теги
+        //Убираем уязвимость, запрещаем вводить теги в поле ввода имени
         name: userName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
         date: `${("0" + date.getDate()).slice(-2)}.${("0" + (date.getMonth() + 1)).slice(-2)}.${date.getFullYear().toString().slice(-2)} ${("0" + date.getHours()).slice(-2)}:${("0" + date.getMinutes()).slice(-2)}`,
-        //Убираем уязвимость, запрещаем вводить теги
+        //Убираем уязвимость, запрещаем вводить теги в поле ввода текста
         msg: textComment.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
         like: 0,
       });
