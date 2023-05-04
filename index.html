@@ -140,7 +140,7 @@
 
   renderComments();
 
-  
+
   commentBtn.addEventListener("click", () => {
     addName.classList.remove("error");
     addComment.classList.remove("error");
@@ -184,6 +184,25 @@
     addName.value = '';
     addComment.value = '';
   });
+
+  function checkInputs() {
+    let isFilled = true;
+
+    if (addName.value.trim() === '' || addComment.value.trim() === '') {
+      isFilled = false;
+    }
+
+    if (isFilled) {
+      commentBtn.disabled = false;
+      commentBtn.classList.remove("hidden-button");
+    } else {
+      commentBtn.disabled = true;
+      commentBtn.classList.add("hidden-button");
+    }
+  };
+
+  addName.addEventListener('input', checkInputs);
+  addComment.addEventListener('input', checkInputs);
 </script>
 
 </html>
