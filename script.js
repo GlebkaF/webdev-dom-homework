@@ -26,7 +26,8 @@ const initLikesButton = () => {
     const likesButtons = document.querySelectorAll('.like-button');
 
     for (const likesButton of likesButtons) {
-        likesButton.addEventListener('click', () => {
+        likesButton.addEventListener('click', (event) => {
+            event.stopPropagation ();
 
             const index = likesButton.dataset.index;
             const status = comments[index].likeStatus;
@@ -63,16 +64,45 @@ const initLikesButton = () => {
     }
 }
 
+const addReply = () => {
+    const commentsElements = document.querySelectorAll('.comment');
+
+    for (const commentsElement of commentsElements) {
+
+        commentsElement.addEventListener('click', () => {
+
+            const index = commentsElement.dataset.index;
+            const mentionText = comments[index].text;
+            const mentionName = comments[index].name;
+            const newCommentText = `QUOTE_BEGIN ${mentionText} \n ${mentionName} QUOTE_END \n`;
+            commentText.value = newCommentText;
+    
+            renderComments();
+        })
+    }
+}
+
 const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
-        
-        return `<li class="comment">
+
+        return `<li class="comment" data-index="${index}">
         <div class="comment-header">
-            <div>${comment.name} </div>
+            <div>${comment.name.replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")} </div>
             <div>${comment.date} </div>
         </div>
         <div class="comment-body"> 
-            <div class="comment-text">${comment.text}</div>
+            <div class="comment-text">
+            ${comment.text.replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll('QUOTE_BEGIN', "<div class='quote'>")
+            .replaceAll ('QUOTE_END', "</div>")
+        }
+            </div>
         </div>
         <div class="comment-footer"> 
             <div class="likes">
@@ -85,7 +115,9 @@ const renderComments = () => {
 
     commentsList.innerHTML = commentsHtml;
 
-    initLikesButton();
+    initLikesButton();    
+    
+    addReply();
 }
 
 renderComments();
@@ -153,7 +185,6 @@ function showNewComment() {
     } 
     
     const currentDate = day + '.' + month + '.' + year + ' ' + hours + ':' + minutes;
-
 
     const oldListHtml = commentsList.innerHTML;
 
