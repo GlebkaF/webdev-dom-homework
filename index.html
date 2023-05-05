@@ -69,7 +69,6 @@
   const userName = document.querySelector('.add-form-name');
   const textComment = document.querySelector('.add-form-text');
   const button = document.querySelector('.add-form-button');
-
   const commentsListArray = [
     {
       name: "Глеб Фокин",
@@ -122,7 +121,7 @@
       (comment.date) ? dates = comment.date : dates = `${("0" + date.getDate()).slice(-2)}.${("0" + (date.getMonth() + 1)).slice(-2)}.${date.getFullYear().toString().slice(-2)} ${("0" + date.getHours()).slice(-2)}:${("0" + date.getMinutes()).slice(-2)}`
       return `<li class="comment" data-id="${id}">
         <div class="comment-header">
-          <div>${comment.name}</div>
+          <div class="comment-name">${comment.name}</div>
           <div>${dates}</div>
         </div>
         <div class="comment-body">
@@ -189,12 +188,12 @@
   // Функция добавляет ответ на комментарий
   function addCommentListener() {
     const comments = document.querySelectorAll('.comment');
+
     comments.forEach((comment) => {
       comment.addEventListener('click', (event) => {
         const answer = event.target.querySelector('.comment-body').textContent;
-        const nameUser = event.target.querySelector('.add-form-name').textContent;
-        textComment.value = answer;
-        userName.value = nameUser;
+        const nameUser = event.target.querySelector('.comment-name').textContent;
+        textComment.value = `>${answer} ${nameUser}`;
       });
     });
   }
