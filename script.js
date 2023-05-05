@@ -6,8 +6,12 @@ const addFormText = document.querySelector(".add-form-text");
 const commentsList = document.querySelector(".comments");
 const form = document.querySelector(".add-form");
 const removeLastCommentButton = document.querySelector(".remove-last-comment-button");
+const nameInput = document.querySelector('.add-form-name');
+const textInput = document.querySelector('.add-form-text');
+const submitButton = document.querySelector('.add-form-button');
 
-let comments = [ //ммассив с комментариями 
+
+const comments = [ //ммассив с комментариями 
     {
         author: 'Глеб Фокин',
         date: '12.02.22 12:18',
@@ -143,11 +147,11 @@ validateForm();
 
 //удаление последнего комментария
 function removeLastComment() {
-    const comments = commentsList.querySelectorAll(".comment");
     if (comments.length > 0) {
-        comments[comments.length - 1].remove();
+      comments.pop(); // удаляем последний элемент из массива комментариев
+      renderComments(comments); // рендерим обновленный список комментариев
     }
-}
+  }
 
 removeLastCommentButton.addEventListener("click", removeLastComment);
 
@@ -207,10 +211,6 @@ function addCommentReplyEvent() {
 
 
 // disabled
-const nameInput = document.querySelector('.add-form-name');
-const textInput = document.querySelector('.add-form-text');
-const submitButton = document.querySelector('.add-form-button');
-
 function handleInput() {
     const nameValue = nameInput.value.trim();
     const textValue = textInput.value.trim();
