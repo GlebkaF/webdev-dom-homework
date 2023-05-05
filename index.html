@@ -50,7 +50,8 @@
       <textarea id="comment-input" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
         rows="4"></textarea>
       <div class="add-form-row">
-        <button id="write-button" class="add-form-button">Написать</button>
+        <button id="delete-button" class="delete-button">Удалить последний комментарий</button>
+        <button id="write-button" class="add-form-button" disabled>Написать</button>
       </div>
     </div>
   </div>
@@ -62,6 +63,7 @@
     const listElement = document.getElementById("list");
     const nameInputElement = document.getElementById("name-input");
     const commentInputElement = document.getElementById("comment-input");
+    const deleteButtonElement = document.getElementById("delete-button");
     const messages = [
       {
         name: "Глеб Фокин",
@@ -69,6 +71,7 @@
         comment: "Это будет первый комментарий на этой странице",
         likesCount: 3,
         liked: false,
+        isEdit: false,
       },
       {
         name: "Варвара Н.",
@@ -76,6 +79,7 @@
         comment: "Мне нравится как оформлена эта страница! ❤",
         likesCount: 75,
         liked: true,
+        isEdit: false,
       }
     ];
 
@@ -97,20 +101,41 @@
     };
     initLikeButtonsListeners();
 
+    const initCorrectButtonsListeners = () => {
+      const correctButtonsElements = document.querySelectorAll(".correct-button");
+      const correctedComments = document.querySelector('.comment-correction');
+      for (const correctButtonElement of correctButtonsElements) {
+        correctButtonElement.addEventListener('click', () => {
+          const index = correctButtonElement.dataset.index;
+          if (messages[index].isEdit) {
+            messages[index].comment = correctedComments.value;
+            messages[index].isEdit = !messages[index].isEdit;
+          }
+          else {
+            messages[index].isEdit = !messages[index].isEdit;
+          };
+          renderMessages();
+          console.log(correctedComment);
+
+        });
+      };
+    };
+
     const renderMessages = () => {
       const messagesHtml = messages.map((message, index) => {
         let like = (message.liked) ? 'like-button -active-like' : 'like-button';
+        let edit = (message.isEdit) ? `<textarea type="textarea" class="comment-correction"rows="4">${message.comment}</textarea>` : `<div class="comment-text">${message.comment}</div>`;
+        let correctBtn = (message.isEdit) ? `<button data-index="${index}" class="correct-button save-button">Сохранить</button>` : `<button data-index="${index}" class="correct-button">Редактировать</button>`;
         return `<li class="comment">
       <div class="comment-header">
         <div>${message.name}</div>
         <div>${message.time}</div>
       </div>
       <div class="comment-body">
-        <div class="comment-text">
-        ${message.comment}
-        </div>
+        ${edit}
       </div>
       <div class="comment-footer">
+        ${correctBtn}
         <div class="likes">
           <span class="likes-counter">${message.likesCount}</span>
           <button data-index="${index}" class="${like}"></button>
@@ -120,10 +145,14 @@
       }).join("");
       listElement.innerHTML = messagesHtml;
       initLikeButtonsListeners();
+      initCorrectButtonsListeners();
+
     }
     renderMessages();
 
-    buttonElement.addEventListener("click", () => {
+    buttonElement.addEventListener("click", addComments);
+
+    function addComments() {
       nameInputElement.classList.remove("input-error");
       commentInputElement.classList.remove("input-error");
       if (nameInputElement.value.trim() === "") {
@@ -134,19 +163,42 @@
         commentInputElement.classList.add("input-error");
         return;
       }
+
       messages.push({
         name: nameInputElement.value,
-        time: getCurrentDate(currentDate),
+        time: getCurrentDate(new Date()),
         comment: commentInputElement.value,
         likesCount: 0,
         liked: false,
+        isEdit: false,
       });
+
+      deleteButtonElement.classList.add('delete-active');
       renderMessages();
+      buttonElement.setAttribute('disabled', '');
       nameInputElement.value = "";
       commentInputElement.value = "";
+    };
+
+    const inputElements = document.querySelectorAll(".add-form");
+    for (const inputElement of inputElements) {
+      inputElement.addEventListener('keyup', () => {
+        if (event.code === 'Enter') {
+          addComments();
+        };
+      });
+      inputElement.addEventListener('input', () => {
+        buttonElement.removeAttribute('disabled', '');
+      }
+      )
+    };
+    deleteButtonElement.addEventListener('click', () => {
+      messages.pop();
+      deleteButtonElement.classList.remove('delete-active');
+      renderMessages();
     });
 
-    let currentDate = new Date();
+    // let currentDate = new Date();
     function getCurrentDate(date) {
       let day = date.getDate();
       if (day < 10) day = "0" + day;
