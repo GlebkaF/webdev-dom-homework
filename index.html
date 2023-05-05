@@ -9,40 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+        <!-- рендерится в js -->
       </ul>
       <div class="add-form">
         <input
@@ -70,11 +37,84 @@
     const addFormButton = document.querySelector('.add-form-button');
     const commentsElement = document.querySelector('.comments');
 
+    // Массив имеющихся комментариев
+    const comments = [
+        {
+          name: 'Глеб Фокин',
+          date: '12.02.22 12:18',
+          text: 'Это будет первый комментарий на этой странице',
+          likes: '3',
+          liked: false
+        },
+        {
+          name: 'Варвара Н.',
+          date: '13.02.22 19:22',
+          text: 'Мне нравится как оформлена эта страница! ❤',
+          likes: '75',
+          liked: false
+        }
+      ];
+     
+    // Функция для добавления лайка к комментарию
+    const addLike =(event) => {
+      const comment = comments[event.target.dataset.index];
+      comment.likes++;
+      comment.liked = true;
+    }
+
+    // Функция для удаления лайка к комментарию
+    const removeLike =(event) => {
+      const comment = comments[event.target.dataset.index];
+      comment.likes--;
+      comment.liked = false;
+    }
+    
+    //Вешаем обработчик события на кнопки лайк
+    const initLikeClickListener = () => {
+      const likeClicks = document.querySelectorAll('.likes');
+      for(const likeClick of likeClicks) {
+        likeClick.addEventListener('click', (event) => {
+          (comments[event.target.dataset.index].liked) ? removeLike(event) : addLike(event);
+          renderComments();
+        });
+      }
+    }
+
+    const now = new Date();
+
+    // Создаем для каждого комментария HTML-разметку
+    const renderComments = () => {
+      const commentsHtml = comments.map((comment, index) => {
+        comment.liked ? comment.liked = '-active-like' : comment.liked = '';
+        return `<li class="comment" >
+        <div class="comment-header" data-index="${index}">
+          <div>${comment.name}.</div>
+          <div>${comment.date}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${comment.text}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${comment.likes}</span>
+            <button data-index="${index}" class="like-button ${comment.liked}"></button>
+          </div>
+        </div>
+        </li>`;
+        })
+        .join('')
+        commentsElement.innerHTML = commentsHtml;
+        initLikeClickListener();
+      };
+    renderComments();
+
+    //Обработчик события для добавления нового комментария
     addFormButton.addEventListener('click', () => {
       addFormName.classList.remove('error');
       addFormText.classList.remove('error');
 
-      
       if(addFormName.value ==='') {
          addFormName.classList.add('error');
          return
@@ -88,32 +128,18 @@
       } else {
         addFormText.classList.remove('error');
       }
-      
-      //Создание верстки для комментария
-      const now = new Date();
-      const oldCommentsHtml = commentsElement.innerHTML;
-      commentsElement.innerHTML = oldCommentsHtml + 
-      `<li class="comment">
-        <div class="comment-header">
-          <div>${addFormName.value}.</div>
-          <div>${now.getDate()}.0${now.getMonth()}.${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${addFormText.value}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>`;
-      
+
+      comments.push({
+        name:addFormName.value,
+        date: `${now.getDate()}.0${now.getMonth()}.${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`,
+        text: addFormText.value,
+        likes: 0
+      })
+     
       addFormName.value = '';
       addFormText.value = '';
-    })
+      renderComments();
+    });
 
     // Расширенная валидация
     // const addForm = document.querySelector('.add-form');
@@ -123,7 +149,5 @@
     //     addFormButton.disabled = false;
     //   }
     // });
-
-
   </script>
 </html>
