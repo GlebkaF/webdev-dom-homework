@@ -52,6 +52,7 @@
         minutes: "18",
         likes: 3,
         isLiked: true,
+        edit: false,
       },
 
       {
@@ -64,6 +65,7 @@
         minutes: "22",
         likes: 75,
         isLiked: true,
+        edit: false,
       },
     ];
 
@@ -78,22 +80,29 @@
           </div>
         </div>
         <div class='comment-body'>
-          <div class= 'comment-text'> ${comment.comment} </div>
+          <div class= 'comment-text'
+          data-index="${index}"
+          > ${comment.comment} </div>
           </div>
           <div class='comment-footer'>
           <div class='likes'>
           <span class= 'likes-counter'> ${comment.likes} 
             </div>
           <button class='like-button ${
-            comment.isLiked ? "active-like" : ""
+            comment.isLiked ? "-active-like" : ""
           }' data-index="${index}"></button>
           </div>
-            </div>
+          <div class='edit-container'>
+            <button class='edit-button' 
+            data-index="${index}">Изменить комментарий</button>
+          </div>
+          
       </li>`;
         })
         .join("");
 
       commentList.innerHTML = commentsHtml;
+      initLikeButtonListener();
     };
 
     // мне надо создать const comment footer и непосредственно в нем уже отыскивать спан для
@@ -101,28 +110,50 @@
 
     const initLikeButtonListener = () => {
       const commentFooter = document.querySelectorAll(".comment-footer");
+      const commentTexts = document.querySelectorAll(".comment-text");
+
+      //попытка сделать изменение комментария
+      // const editContainers = document.querySelectorAll(".edit-container");
+
+      // editContainers.forEach((editContainer) => {
+      //   const editButton = editContainer.firstElementChild;
+      //   const index = editButton.dataset.index;
+      //   editButton.addEventListener("click", (event) => {
+      //     console.log("click", index);
+      //   });
+      // });
+
+      commentTexts.forEach((commentText) => {
+        commentText.addEventListener("click", (event) => {
+          // event.stopPropagation();
+          const index = commentText.dataset.index;
+          const inputText = document.querySelector(".add-form-text");
+          inputText.value = `< ${comments[index].name} ${comments[index].comment}`;
+        });
+      });
       commentFooter.forEach((element) => {
         const likesCounter = element.firstElementChild.firstElementChild;
         const likeButton = element.lastElementChild;
-
         likeButton.addEventListener("click", (event) => {
           const currentLikes = parseInt(likesCounter.textContent);
           const index = likeButton.dataset.index;
-          console.log(comments[index]);
+          console.log("like", event.target);
 
-          if (likeButton.classList.contains("active-like")) {
-            likeButton.classList.remove("active-like");
+          if (comments[index].isLiked === true) {
+            // likeButton.classList.remove("active-like");
             const oldLikes = currentLikes - 1;
             likesCounter.textContent = oldLikes;
             comments[index].isLiked = false;
             comments[index].likes = oldLikes;
           } else {
-            likeButton.classList.add("active-like");
+            // likeButton.classList.add("active-like");
             const newLikes = currentLikes + 1;
             likesCounter.textContent = newLikes;
             comments[index].isLiked = true;
             comments[index].likes = newLikes;
           }
+
+          renderComments();
         });
       });
     };
@@ -144,15 +175,18 @@
         return;
       } else {
         comments.push({
-          name: inputName.value,
-          comment: inputText.value,
+          name: inputName.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
+          comment: inputText.value
+            .replaceAll("<", "&lt")
+            .replaceAll(">", "&gt"),
           day: date.getDate(),
           month: month,
           year: date.getFullYear(),
           hours: date.getHours(),
           minutes: minutes,
-          likes: "0",
+          likes: 0,
           isLiked: false,
+          edit: false,
         });
       }
 
