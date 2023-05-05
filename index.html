@@ -109,6 +109,7 @@
     const likeClickElements = document.querySelectorAll('.likes');
     for (const likeClickElement of likeClickElements) {
       likeClickElement.addEventListener('click', (e) => {
+        e.stopPropagation();
         (commentsListArray[e.target.dataset.id].Iliked) ? delLikes(e) : addLikes(e);
         renderComments();
       });
