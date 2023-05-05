@@ -16,13 +16,15 @@ const comments = [ //ммассив с комментариями
         author: 'Глеб Фокин',
         date: '12.02.22 12:18',
         text: 'Это будет первый комментарий на этой странице',
-        likes: 3
+        likes: 3,
+        isLiked: true
     },
     {
         author: 'Варвара Н.',
         date: '13.02.22 19:22',
         text: 'Мне нравится как оформлена эта страница! ❤',
-        likes: 74
+        likes: 74,
+        isLiked: false
     },
     // ...
 ];
@@ -89,7 +91,7 @@ function renderComments(comments) {
 
     // добавляем новый список комментариев на страницу
     commentsList.insertAdjacentHTML('beforeend', commentsHTML);
-    
+
     addCommentReplyEvent();
 
     setupLikeButtons();
@@ -107,6 +109,7 @@ function addComment() {
     const text = addFormText.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
     const date = new Date().toLocaleString();
     const likes = 0;
+    const isLiked = false;
 
     // создаём новый объект комментария, чтобы добавить его в уже существующий
     const newComment = {
@@ -114,11 +117,14 @@ function addComment() {
         text,
         date,
         likes,
+        isLiked: false
     };
 
     comments.push(newComment);
 
     renderComments(comments);
+    addFormName.value = '';
+    addFormText.value = '';
 }
 
 
@@ -148,10 +154,10 @@ validateForm();
 //удаление последнего комментария
 function removeLastComment() {
     if (comments.length > 0) {
-      comments.pop(); // удаляем последний элемент из массива комментариев
-      renderComments(comments); // рендерим обновленный список комментариев
+        comments.pop(); // удаляем последний элемент из массива комментариев
+        renderComments(comments); // рендерим обновленный список комментариев
     }
-  }
+}
 
 removeLastCommentButton.addEventListener("click", removeLastComment);
 
@@ -166,31 +172,32 @@ addFormText.addEventListener("keyup", function (event) {
 
 //кнопка лайка
 function setupLikeButtons() {
-    const likesButton = document.querySelectorAll('.like-button');
+    const likeButtons = document.querySelectorAll('.like-button');
 
-    likesButton.forEach(function (button) {
-        button.addEventListener('click', function (event) {
+    likeButtons.forEach((button, index) => {
+        const comment = comments[index];
+
+        button.addEventListener('click', event => {
             event.stopPropagation();
-            //проверяем, что кликнули по кнопке лайка
-            if (event.target.classList.contains('like-button')) {
-                const likeButton = event.target;
-                const likesCounter = likeButton.previousElementSibling; //находим счетчик лайков
-                let likesCount = parseInt(likesCounter.textContent); //получаем текущее количество лайков
 
-                if (likeButton.classList.contains('-active-like')) {
-                    //убираем лайк, также запоминаем состояние лайка, чтобы оно не сбрасывалось при обновлении массива
-                    likesCount--;
-                    likesCounter.textContent = likesCount;
-                    likeButton.classList.remove('-active-like');
-                } else {
-                    //ставим лайк, также запоминаем состояние лайка, чтобы оно не сбрасывалось при обновлении массива
-                    likesCount++;
-                    likesCounter.textContent = likesCount;
-                    likeButton.classList.add('-active-like');
-                    comments[button.dataset.index].isLiked = true;
-                }
+            if (comment.isLiked) {
+                comment.likes--;
+                comment.isLiked = false;
+                button.classList.remove('-active-like');
+            } else {
+                comment.likes++;
+                comment.isLiked = true;
+                button.classList.add('-active-like');
             }
+
+            renderComments(comments);
         });
+
+        if (comment.isLiked) {
+            button.classList.add('-active-like');
+        } else {
+            button.classList.remove('-active-like');
+        }
     });
 }
 
