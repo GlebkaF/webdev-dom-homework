@@ -77,27 +77,31 @@
     const blockElement = document.getElementsByClassName("comment");
     const likesElement = document.querySelectorAll(".like-button");
 
-    let people = [    ];
+    let people = [];
 
-    const fetchPromise = fetch(
-      "https://webdev-hw-api.vercel.app/api/v1/gromov-danil/comments",
-      {
-        method: "GET",
-      }
-    );
+    const getFetch = () => {
+      const fetchPromise = fetch(
+        "https://webdev-hw-api.vercel.app/api/v1/gromov-danil/comments",
+        {
+          method: "GET",
+        }
+      );
 
-    // подписываемся на успешное завершение запроса с помощью then
-    fetchPromise.then((response) => {
-      // Запускаем преобразовываем "сырые" данные от API в json формат
-      const jsonPromise = response.json();
+      // подписываемся на успешное завершение запроса с помощью then
+      fetchPromise.then((response) => {
+        // Запускаем преобразовываем "сырые" данные от API в json формат
+        const jsonPromise = response.json();
 
-      // Подписываемся на результат преобразования
-      jsonPromise.then((responseData) => {
-        // получили данные и рендерим их в приложении
-        people = responseData.comments;
-        renderList();
+        // Подписываемся на результат преобразования
+        jsonPromise.then((responseData) => {
+          // получили данные и рендерим их в приложении
+          people = responseData.comments;
+          renderList();
+        });
       });
-    });
+    };
+
+    getFetch();
 
     const renderList = () => {
       const peopleListComment = people
@@ -243,27 +247,11 @@
         }).then((response) => {
           response.json().then((responseData) => {
             // получили данные и рендерим их в приложении
+            console.log(responseData);
             people = responseData.comments;
-            renderList();
+            getFetch();
           });
         });
-        //
-        // people.push({
-        //   name: nameElement.value
-        //     .replaceAll("&", "&amp;")
-        //     .replaceAll("<", "&lt;")
-        //     .replaceAll(">", "&gt;")
-        //     .replaceAll('"', "&quot;"),
-        //   descr: descrElement.value
-        //     .replaceAll("&", "&amp;")
-        //     .replaceAll("<", "&lt;")
-        //     .replaceAll(">", "&gt;")
-        //     .replaceAll('"', "&quot;"),
-        //   likesAmount: 0,
-        //   isLiked: false,
-        //   date: new Date(),
-        // });
-
         renderList();
         nameElement.value = "";
         descrElement.value = "";
