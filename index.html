@@ -121,22 +121,19 @@
       (comment.Iliked) ? Iliked = '-active-like' : Iliked = '';
       (comment.date) ? dates = comment.date : dates = `${("0" + date.getDate()).slice(-2)}.${("0" + (date.getMonth() + 1)).slice(-2)}.${date.getFullYear().toString().slice(-2)} ${("0" + date.getHours()).slice(-2)}:${("0" + date.getMinutes()).slice(-2)}`
       return `<li class="comment" data-id="${id}">
-        <div class="comment-header">
-          <div class="comment-name">${comment.name}</div>
-          <div>${dates}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${comment.msg}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">${comment.like}</span>
-            <button class="like-button ${Iliked}" data-id="${id}"></button>
-          </div>
-        </div>
-      </li>`;
+<div class="comment-header">
+<div class="comment-name">${comment.name}</div>
+<div>${dates}</div>
+</div>
+<div class="comment-body"> <div class="comment-text">${comment.msg}</div>
+</div>
+<div class="comment-footer">
+<div class="likes">
+<span class="likes-counter">${comment.like}</span>
+<button class="like-button ${Iliked}" data-id="${id}"></button>
+</div>
+</div>
+</li>`;
     }).join("");
     commentList.innerHTML = commentHtmlResult;
     initLikeClick();
@@ -194,7 +191,7 @@
       comment.addEventListener('click', (event) => {
         const answer = event.target.querySelector('.comment-body').textContent;
         const nameUser = event.target.querySelector('.comment-name').textContent;
-        textComment.value = `>${answer} ${nameUser}.,`;
+        textComment.value = `>${answer}${nameUser}.,`;
       });
     });
   }
