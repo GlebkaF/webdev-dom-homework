@@ -75,31 +75,23 @@
     const commentTextElements = document.querySelectorAll('.comment-text');
 
     for (const editButtonElement of editButtonElements) {
-      editButtonElement.addEventListener("click", () => {
+      editButtonElement.addEventListener('click', () => {
 
-        const edit = comments[editButtonElement.dataset.index];
+        const index = editButtonElement.dataset.index;
+        const comment = comments[index];
+        const commentTextElement = commentTextElements[index];
+        const textArea = document.querySelectorAll('.comment-text');
 
-        for (const commentTextElement of commentTextElements) {
-          const editedComment = comments[commentTextElement.dataset.index];
+        if (comment.isEdit && textArea) {
+          comment.userComment = textArea[index].value;
+        }
 
-          if (edit.isEdit == false) {
-            editButtonElement.innerHTML = "Сохранить";
-            commentTextElement.innerHTML = `<textarea type="textarea" class="comment-text" rows="4">${editedComment.userComment}</textarea>`;
+        comment.isEdit = !comment.isEdit;
+        comments[index].isEdit = comment.isEdit;
 
-            comments.push({
-              userComment: editedComment.value,
-            });
-
-          } else {
-            editButtonElement.innerHTML = "Редактировать";
-            commentTextElement.innerHTML = editedComment.userComment;
-          }
-        };
-
-        edit.isEdit = !edit.isEdit;
-        // renderComments();
+        renderComments();
       });
-    };
+    }
   };
 
 
@@ -116,13 +108,17 @@
             </div>
           </div>
           <div class="comment-body">
-            <div class="comment-text" data-index="${index}">
+            ${comment.isEdit
+            ? `<textarea type="textarea" class="comment-text" rows="4">${comment.userComment}</textarea>`
+            : `<div class="comment-text" data-index="${index}">
               ${comment.userComment}
-            </div>
+            </div>`
+          }
           </div>
           <div class="comment-footer">
             <div>
-              <button class="add-form-button edit-button" data-index="${index}">Редактировать</button>
+              <button class="add-form-button edit-button" data-index="${index}">${comment.isEdit ? 'Сохранить' : 'Редактировать'
+          }</button>
             </div>
             <div class="likes">
               <span class="likes-counter">
