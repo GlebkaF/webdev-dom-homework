@@ -22,7 +22,7 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">3</span>
-              <button class="like-button"></button>
+              <button data-like="0" class="like-button"></button>
             </div>
           </div>
         </li>
@@ -39,7 +39,7 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
+              <button data-like="0" class="like-button -active-like"></button>
             </div>
           </div>
         </li>
@@ -65,12 +65,98 @@
   <script>
     const buttonNewComment = document.querySelector('.add-form-button');
     const comment = document.querySelector('.comment');
-    const comments = document.querySelector('.comments');
+    const boxComments = document.querySelector('.comments');
     const inputName = document.querySelector('.add-form-name');
     const textAreaComment = document.querySelector('.add-form-text');
+    let now = new Date();
+
+    const userComments = [
+      {
+        name: 'Глев фокин',
+        data: '12.02.22 12:18',
+        comment: 'Это будет первый комментарий на этой странице',
+        likes: '3',
+        Iliked: false,
+        isedit: false, 
+      },
+      {
+        name: 'Варвара Н.',
+        data: '13.02.22 19:22',
+        comment: 'Мне нравится как оформлена эта страница! ❤',
+        likes: '75',
+        Iliked: false,
+        isedit: false, 
+      },
+    ]
+
+    const addLike = (e) => {
+      const comment = userComments[e.target.dataset.id];
+      comment.likes++;
+      comment.Iliked = true;
+    }
+
+    const delLike = (e) => {
+      const comment = userComments[e.target.dataset.id];
+      comment.likes--;
+      comment.Iliked = false;
+    }
+    
+    const initLikeClick = () => {
+      const likeClickElems = document.querySelectorAll('.likes');
+      for (likeClickElem of likeClickElems) {
+        likeClickElem.addEventListener('click', (e) => {
+          (userComments[e.target.dataset.id].Iliked) ? delLike(e) : addLike(e);
+          renderComments();
+        })
+      }
+    }
+
+    const renderComments = () => {
+      const commentHtml = userComments.map((user,index) => {
+        (user.Iliked) ? Iliked = '-active-like' : Iliked = '';
+        return `<li class="comment">
+          <div class="comment-header">
+            <div class="comment-user-name">${user.name}</div>
+            <div class="comment-date">${now.toLocaleString().slice(0,-3)}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${user.comment}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${user.likes}</span>
+              <button class="like-button ${Iliked}" data-id='${index}'></button>
+            </div>
+          </div>
+        </li>`;
+      }).join('');
+
+      boxComments.innerHTML = commentHtml;
+      initLikeClick();
+    }
+
+    renderComments();
+
+    const addComment = () => {
+      userComments.push({
+        name: inputName.value,
+        date: `${now.toLocaleString().slice(0,-3)}`,
+        comment: textAreaComment.value,
+        likes: 0,
+        Iliked: false,
+        isedit: false,
+      });
+      renderComments();
+      inputName.value = '';
+      textAreaComment.value = '';
+
+    }
+
 
     buttonNewComment.addEventListener('click', function () {
-      let oldComments = comments.innerHTML;
+      let oldComments = boxComments.innerHTML;
 
       if (inputName.value === '') {
         inputName.classList.add('error');
@@ -78,27 +164,10 @@
         textAreaComment.classList.add('error');
         return;
       } else {
-        let now = new Date();
-        let newComments = `<li class="comment">
-          <div class="comment-header">
-            <div class="comment-user-name">${inputName.value}</div>
-            <div class="comment-date">${now.toLocaleString().slice(0,-3)}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${textAreaComment.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`
-
-        comments.innerHTML = oldComments + newComments;
-      }
+        addComment();
+        inputName.classList.remove('error');
+        textAreaComment.classList.remove('error');
+        }
     });
   </script>
 </html>
