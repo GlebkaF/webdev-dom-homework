@@ -93,8 +93,9 @@
           }' data-index="${index}"></button>
           </div>
           <div class='edit-container'>
-            <button class='edit-button' 
-            data-index="${index}">Изменить комментарий</button>
+            <button class='edit-button ${
+              comment.edit ? "" : "edit-click"
+            }' data-index="${index}">Изменить комментарий</button>
           </div>
           
       </li>`;
@@ -111,17 +112,31 @@
     const initLikeButtonListener = () => {
       const commentFooter = document.querySelectorAll(".comment-footer");
       const commentTexts = document.querySelectorAll(".comment-text");
+      const editContainers = document.querySelectorAll(".edit-container");
 
-      //попытка сделать изменение комментария
-      // const editContainers = document.querySelectorAll(".edit-container");
+      editContainers.forEach((editContainer) => {
+        const editButton = editContainer.firstElementChild;
+        const index = editButton.dataset.index;
+        editButton.addEventListener("click", (event) => {
+          editContainer.appendChild(editButton);
+          // console.log(editContainers[index], editContainer);
+          // console.log(editButton, editButton.textContent);
+          if (comments[index].edit === false) {
+            // likeButton.classList.remove("active-like");
+            comments[index].edit = true;
+            editButton.textContent = "Cохранить комментарий";
+            console.log(editButton, editButton.textContent);
+          } else {
+            // likeButton.classList.add("active-like");
+            comments[index].edit = false;
+            // editButton.innerHTML = "hhh";
+            console.log("было true", editButton);
+          }
+          renderComments();
 
-      // editContainers.forEach((editContainer) => {
-      //   const editButton = editContainer.firstElementChild;
-      //   const index = editButton.dataset.index;
-      //   editButton.addEventListener("click", (event) => {
-      //     console.log("click", index);
-      //   });
-      // });
+          // console.log(comments[index].comment);
+        });
+      });
 
       commentTexts.forEach((commentText) => {
         commentText.addEventListener("click", (event) => {
@@ -154,6 +169,7 @@
           }
 
           renderComments();
+          // initLikeButtonListener();
         });
       });
     };
