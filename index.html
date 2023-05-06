@@ -80,53 +80,101 @@
     let comment = [];
 
     const getFetch = () => {
-      const fetchPromise = fetch(
+      let changeText = () => {
+        return listElement.textContent = "подождите немного";
+      };
+
+      changeText();
+      return fetch(
         "https://webdev-hw-api.vercel.app/api/v1/gromov-danil/comments",
         {
           method: "GET",
         }
-      );
-
-      // подписываемся на успешное завершение запроса с помощью then
-      fetchPromise.then((response) => {
-        // Запускаем преобразовываем "сырые" данные от API в json формат
-        const jsonPromise = response.json();
-
-        // Подписываемся на результат преобразования
-        jsonPromise.then((responseData) => {
-          // получили данные и рендерим их в приложении
+      )
+        .then((response) => {
+          changeText();
+          return response;
+        })
+        .then((response) => {
+          return response.json();
+        })
+        .then((responseData) => {
           comment = responseData.comments;
           renderList();
         });
-      });
-    };
 
+      // подписываемся на успешное завершение запроса с помощью then
+      // fetchPromise.then((response) => {
+      // Запускаем преобразовываем "сырые" данные от API в json формат
+      // const jsonPromise = response.json();
+
+      // Подписываемся на результат преобразования
+      // jsonPromise.then((responseData) => {
+      // получили данные и рендерим их в приложении
+      //   });
+      // });
+    };
+    const addTodo = () => {
+      buttonAddElement.disabled = true;
+      buttonAddElement.textContent = "Элемент добавлятся...";
+      fetch("https://webdev-hw-api.vercel.app/api/v1/gromov-danil/comments", {
+        method: "POST",
+        body: JSON.stringify({
+          text: descrElement.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;"),
+          name: nameElement.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;"),
+          likes: 0,
+          isLiked: false,
+          date: new Date(),
+        }),
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((responseData) => {
+          // получили данные и рендерим их в приложении
+          return getFetch();
+        })
+        .then(() => {
+          buttonAddElement.disabled = false;
+          buttonAddElement.textContent = "Написать";
+        });
+    };
     getFetch();
 
     const renderList = () => {
       const commentListComment = comment
         .map((comment, index) => {
           return `<li class="comment">
-                     <div class="comment-header">
-                       <div>${comment.author.name}</div>
-                       <div>${comment.date}</div>
-                     </div>
-                     <div class="comment-body">
-                       <div class="comment-text" data-text="${comment.text}">
-                         ${comment.text}
-                       </div>
-                     </div>
-                     <div class="comment-footer">
-                       <div class="likes">
-                         <span class="likes-counter">${comment.likes}</span>
-                         <button class="${
-                           comment.isLiked
-                             ? "like-button -active-like"
-                             : "like-button"
-                         }" data-index="${index}"></button>
-                       </div>
-                     </div>
-                   </li>`;
+                         <div class="comment-header">
+                           <div>${comment.author.name}</div>
+                           <div>${comment.date}</div>
+                         </div>
+                         <div class="comment-body">
+                           <div class="comment-text" data-text="${
+                             comment.text
+                           }">
+                             ${comment.text}
+                           </div>
+                         </div>
+                         <div class="comment-footer">
+                           <div class="likes">
+                             <span class="likes-counter">${comment.likes}</span>
+                             <button class="${
+                               comment.isLiked
+                                 ? "like-button -active-like"
+                                 : "like-button"
+                             }" data-index="${index}"></button>
+                           </div>
+                         </div>
+                       </li>`;
         })
         .join("");
 
@@ -227,30 +275,7 @@
       } else {
         buttonAddElement.disabled = false;
         //
-        fetch("https://webdev-hw-api.vercel.app/api/v1/gromov-danil/comments", {
-          method: "POST",
-          body: JSON.stringify({
-            text: descrElement.value
-              .replaceAll("&", "&amp;")
-              .replaceAll("<", "&lt;")
-              .replaceAll(">", "&gt;")
-              .replaceAll('"', "&quot;"),
-            name: nameElement.value
-              .replaceAll("&", "&amp;")
-              .replaceAll("<", "&lt;")
-              .replaceAll(">", "&gt;")
-              .replaceAll('"', "&quot;"),
-            likes: 0,
-            isLiked: false,
-            date: new Date(),
-          }),
-        }).then((response) => {
-          response.json().then((responseData) => {
-            // получили данные и рендерим их в приложении
-            console.log(responseData);
-            getFetch();
-          });
-        });
+        addTodo();
         nameElement.value = "";
         descrElement.value = "";
       }
