@@ -10,40 +10,7 @@
 <body>
   <div class="container">
     <ul id="comments" class="comments">
-      <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>
+      <!-- rendering from JS -->
     </ul>
     <div class="add-form">
       <input type="text" id="add-form-name" class="add-form-name" placeholder="Введите ваше имя" />
@@ -65,7 +32,73 @@
   const addFormText = document.getElementById('add-form-text')
 
 
+  const comments = [
+    {
+      name: "Глеб Фокин",
+      date: "12.02.22 12:18",
+      text: "Это будет первый комментарий на этой странице",
+      likes: "3"
+    },
+    {
+      name: "Варвара Н.",
+      date: "13.02.22 19:22",
+      text: "Мне нравится как оформлена эта страница! ❤",
+      likes: "75"
+    }
+  ]
 
+  const renderComments = () => {
+    let commentsHtml = comments.map((comment) => {
+      return `<li class="comment">
+        <div class="comment-header">
+          <div> ${comment.name}</div>
+          <div>${comment.date}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${comment.text}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${comment.likes}</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>`
+    })
+      .join('')
+    commentsContainer.innerHTML = commentsHtml
+  }
+
+  renderComments()
+
+  const initLikeColor = () => {
+    const likeButtons = document.querySelectorAll(".like-button")
+    console.log(likeButtons);
+    // for (const [likeButton, index] of NodeList.entries(likeButtons)) {
+    //   likeButton.addEventListener("click", () => {
+    //     console.log(index);
+    //     likeButton.classList.add("-active-like")
+    //     initLikeCount()
+    //   })
+    // }
+    for (let index = 0; index < likeButtons.length; index++) {
+      console.log(likeButtons[index]);
+      likeButtons[index].addEventListener("click", () => {
+        likeButtons[index].classList.add("-active-like")
+        initLikeCount(index)
+      })
+
+    }
+  }
+  initLikeColor()
+
+  const initLikeCount = (index) => {
+    console.log(index);
+    comments[index].likes += 1
+    
+  }
 
 
   addFormButton.addEventListener('click', () => {
@@ -94,24 +127,19 @@
     let year = Number(String(myDate.getFullYear()).substring(2))
     let userDate = day + "." + month[myDate.getMonth()] + "." + year + ' ' + hours + ":" + minutes
 
-    let oldContainer = commentsContainer.innerHTML
-    commentsContainer.innerHTML = oldContainer + `<li class="comment">
-        <div class="comment-header">
-          <div> ${addFormName.value}</div>
-          <div>${userDate}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${addFormText.value}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>`
+
+    comments.push(
+      {
+        name: addFormName.value,
+        date: userDate,
+        text: addFormText.value,
+        likes: 0
+      }
+    )
+
+
+    renderComments()
+    initLikeColor()
     addFormName.value = ''
     addFormText.value = ''
 
