@@ -4,7 +4,6 @@ addFormButton = document.querySelector(".add-form-button"),
 comments = document.querySelector(".comments"),
 comment = document.getElementsByTagName('li'),
 deleteFormButton = document.querySelector(".delete-form-button");
-// let likeButtonsElements = document.querySelectorAll('.like-button');
 
 
 const commentos = [
@@ -35,7 +34,10 @@ initLikeButtonsListeners = () => {
   let likeButtonsElements = document.querySelectorAll('.like-button');
 
   for(const likeButtonElement of likeButtonsElements) {
-    likeButtonElement.addEventListener('click', () => {
+    likeButtonElement.addEventListener('click', (event) => {
+
+      event.stopPropagation();
+
       const index = likeButtonElement.dataset.index;
       // console.log(index);
 
@@ -55,17 +57,11 @@ initLikeButtonsListeners = () => {
 initCorrectButtonsListeners = () => {
   let correctButtonsElements = document.querySelectorAll('.correct-form-button');
 
-  // for(const correctButtonElement of correctButtonsElements) {
-  //   correctButtonElement.addEventListener('click', () => {
-  //     const correctIndex = correctButtonElement.dataset.index;
-
-  //     console.log(correctIndex);
-
-  //   });
-  // }
-
   for(const correctButtonElement of correctButtonsElements) {
-    correctButtonElement.addEventListener('click', () => {
+    correctButtonElement.addEventListener('click', (event) => {
+
+      event.stopPropagation();
+
       let correctIndex = correctButtonElement.dataset.index;
 
       commentos[correctIndex].isCorrecting = !commentos[correctIndex].isCorrecting;
@@ -74,8 +70,20 @@ initCorrectButtonsListeners = () => {
 
       let correctedText = document.querySelector('.correcting-input');
       let correctingBtn = document.querySelector('.correcting-btn');
+
+      //.replaceAll(`<div class='quote'>`, 'QUOTE_BEGIN').replaceAll('</div>', 'QUOTE_END')
     
-        correctingBtn.addEventListener('click', () => {
+        correctingBtn.addEventListener('click', (event) => {
+
+          event.stopPropagation();
+
+          correctedText.value = correctedText.value
+          .replaceAll('<', '&lt')
+          .replaceAll('>', '&gt')
+          .replaceAll('QUOTE_BEGIN', `<div class='quote'>`)
+          .replaceAll('QUOTE_END', '</div>');
+
+
           commentos[correctIndex].text = correctedText.value;
 
           commentos[correctIndex].isCorrecting = !commentos[correctIndex].isCorrecting;
@@ -84,15 +92,31 @@ initCorrectButtonsListeners = () => {
         });
     });
   }
+};
 
+initCommentariesListeners = () => {
+  let commentaries = document.querySelectorAll('.comment');
 
+  for(const commentarie of commentaries) {
+    commentarie.addEventListener('click', () => {
+      let index = commentarie.dataset.index;
 
+      commentos[index].text = commentos[index].text
+      .replaceAll(`<div class='quote'>`, 'QUOTE_BEGIN')
+      .replaceAll('</div>', 'QUOTE_END');
+
+      addFormText.value = `QUOTE_BEGIN ${commentos[index].name}: \n ${commentos[index].text} QUOTE_END`;
+    });
+  }
 };
 
 const renderComments = () => {
   const commentsHtml = commentos.map((comment, index) => {
     if(comment.isCorrecting) {
-      return `<li class="comment">
+      comment.text = comment.text
+      .replaceAll(`<div class='quote'>`, 'QUOTE_BEGIN')
+      .replaceAll('</div>', 'QUOTE_END');
+      return `<li class="comment" data-index='${index}'>
       <div class="comment-header">
         <div>${comment.name}</div>
         <div>${comment.data}
@@ -109,7 +133,7 @@ const renderComments = () => {
     </li>`;
     }
     if(comment.isLiked) {
-      return `<li class="comment">
+      return `<li class="comment" data-index='${index}'>
       <div class="comment-header">
         <div>${comment.name}</div>
         <div>${comment.data}
@@ -129,7 +153,7 @@ const renderComments = () => {
       <button class='correct-form-button' data-index='${index}'>Редактировать</button>
     </li>`;
     } else {
-      return `<li class="comment">
+      return `<li class="comment" data-index='${index}'>
       <div class="comment-header">
         <div>${comment.name}</div>
         <div>${comment.data}
@@ -155,6 +179,7 @@ const renderComments = () => {
 
   initLikeButtonsListeners();
   initCorrectButtonsListeners();
+  initCommentariesListeners();
 };
 
 renderComments();
@@ -190,31 +215,16 @@ function clickable() {
         return;
     }
 
-    // let oldComments = comments.innerHTML;
-    // comments.innerHTML = oldComments + 
-    // `<li class="comment">
-    //       <div class="comment-header">
-    //         <div>${addFormName.value}</div>
-    //         <div>${currentDate.toLocaleDateString() + ' ' + currentDate.getHours() + ':' + currentDate.getMinutes()}
-    //         </div>
-    //       </div>
-    //       <div class="comment-body">
-    //         <div class="comment-text">
-    //           ${addFormText.value}
-    //         </div>
-    //       </div>
-    //       <div class="comment-footer">
-    //         <div class="likes">
-    //           <span class="likes-counter">0</span>
-    //           <button class="like-button"></button>
-    //         </div>
-    //       </div>
-    //     </li>`;
-
         commentos.push({
-          name: addFormName.value,
+          name: addFormName.value
+            .replaceAll('<', '&lt')
+            .replaceAll('>', '&gt'),
           data: currentDate.toLocaleDateString() + ' ' + currentDate.getHours() + ':' + currentDate.getMinutes(),
-          text: addFormText.value,
+          text: addFormText.value
+            .replaceAll('<', '&lt')
+            .replaceAll('>', '&gt')
+            .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+            .replaceAll("QUOTE_END", "</div>"),
           likesNum: 0,
         });
 
