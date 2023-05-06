@@ -9,42 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
       </ul>
-
 
       <div class="add-form">
         <input
@@ -63,81 +28,8 @@
       </div>
     </div>
   </body>
-
-  <script>
-    //обЪявляем переменные
-const commentList = document.querySelector('.comments');
-const addForm = document.querySelector('.add-form');
-const userName = document.querySelector('.add-form-name');
-const textCommment = document.querySelector('.add-form-text');
-const button = document.querySelector('.add-form-button');
-const comments = document.querySelectorAll('.comment');
-
-
-function valiate (){ //функция валидации простая
-if(userName.value.length === 0){ //если имя === 0
-  userName.classList.add('error'); //ставим класс
-  return false; //возвращаем false 
-} else {userName.classList.remove('error');} // иначе удаляем
-
-if(textCommment.value.length < 10){// если количество символов коммента менше 10 
-  textCommment.classList.add('error'); //ставим класс 
-  return false; //возвращаем false
-}else {textCommment.classList.remove('error');} //иначе удаляе класс
-
-if(userName.value.length > 0  && textCommment.value.length >= 10){ //если  оба поля заполнены 
-return true; //возвращаем true
-
-}
-else {
-  
-  return false; //возвращаем false
-}
-}
-
-function addComment(){ //функция  добавления коммента
-  const validate = valiate(); //присваиваем переменной результат валидации
-  const date = new Date(); // дата
-if(validate){ //если true 
-let comment = `<li class="comment">
-          <div class="comment-header">
-            <div>${userName.value}</div>
-            <div>
-             
-              ${("0"+date.getDate()).slice(-2)}.${("0"+(date.getMonth()+1)).slice(-2)}.${date.getFullYear().toString().slice(-2)} 
-               ${("0"+date.getHours()).slice(-2)}:${("0"+date.getMinutes()).slice(-2)}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${textCommment.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
-commentList.innerHTML =  commentList.innerHTML + comment; //добавляем наш коммент к предыдущим
-textCommment.value="";// очищаем поле коммента имя не трогаем 
-button.setAttribute('disabled','');
-}
-}
-
-button.addEventListener('click', (event)=>{ // если клик по буттон
-addComment();
-
-})
-
-addForm.addEventListener('input',(event)=> { //отслеживаем ввод 
-  const validate = valiate();
-(validate) ? button.removeAttribute('disabled'):button.setAttribute('disabled','');
-})
-
-addForm.addEventListener('keydown',(e)=>{ 
-  if(e.ctrlKey && e.keyCode == 13){addComment();} // если нажата Ctrl + Enter
-})
-
-  </script>
+  <!-- Первый вариант решения -->
+  <!-- <script src="script.js"></script> -->
+  <!-- второй вариант решения -->
+  <script src="script_2.js"></script>
 </html>

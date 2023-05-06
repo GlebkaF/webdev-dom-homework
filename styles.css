@@ -25,11 +25,9 @@ body {
 .add-form {
   width: 596px;
   box-sizing: border-box;
-  background: radial-gradient(
-    75.42% 75.42% at 50% 42.37%,
-    rgba(53, 53, 53, 0) 22.92%,
-    #7334ea 100%
-  );
+  background: radial-gradient(75.42% 75.42% at 50% 42.37%,
+      rgba(53, 53, 53, 0) 22.92%,
+      #7334ea 100%);
   filter: drop-shadow(0px 20px 67px rgba(0, 0, 0, 0.08));
   border-radius: 20px;
 }
@@ -52,9 +50,13 @@ body {
 
 .comment-footer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  flex-direction: row;
 }
-
+.comment-func {
+  display: flex;
+  align-items: center;
+}
 .comment-body {
   margin-top: 32px;
   margin-bottom: 32px;
@@ -136,4 +138,65 @@ body {
   opacity: 0.9;
 }
 
-.error {outline: solid 1px red;}
+.error {
+  outline: solid 1px red;
+}
+
+.edit-comment {
+  font-size: 24px;
+  padding: 0 5px;
+  cursor: pointer;
+}
+.del-comment {
+  font-size: 24px;
+  padding: 0 5px;
+  cursor: pointer;
+}
+
+.quote-comment {
+  font-size: 24px;
+  padding: 0 5px;
+  cursor: pointer;
+}
+.popap {
+  background: radial-gradient(75.42% 75.42% at 50% 42.37%, rgba(53, 53, 53, 0) 22.92%, #7334ea 100%);
+  filter: drop-shadow(0px 20px 67px rgba(0, 0, 0, 0.08));
+  width: 500px;
+  height: 200px;
+  z-index: 2;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.popap textarea {
+  border-radius: 10px;
+  resize: none;
+  width: 95%;
+  height: 70%;
+  border: none;
+  outline: none;
+  padding-left: 10px;
+  padding-top: 5px;
+  margin-top: 2%;
+  font-size: 16px;
+  font-family: Helvetica;
+}
+
+.save_button {
+  margin-top: 24px;
+  font-size: 24px;
+  padding: 10px 20px;
+  background-color: #bcec30;
+  border: none;
+  border-radius: 18px;
+  cursor: pointer;
+}
+.edit-form-text {
+  margin-top: 12px;
+  padding: 22px;
+  resize: none;
+}
