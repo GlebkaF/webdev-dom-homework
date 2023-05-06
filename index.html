@@ -73,7 +73,7 @@
     const userComments = [
       {
         name: 'Глев фокин',
-        data: '12.02.22 12:18',
+        date: '12.02.22 12:18',
         comment: 'Это будет первый комментарий на этой странице',
         likes: '3',
         Iliked: false,
@@ -81,7 +81,7 @@
       },
       {
         name: 'Варвара Н.',
-        data: '13.02.22 19:22',
+        date: '13.02.22 19:22',
         comment: 'Мне нравится как оформлена эта страница! ❤',
         likes: '75',
         Iliked: false,
@@ -117,7 +117,7 @@
         return `<li class="comment">
           <div class="comment-header">
             <div class="comment-user-name">${user.name}</div>
-            <div class="comment-date">${now.toLocaleString().slice(0,-3)}</div>
+            <div class="comment-date">${user.date}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -135,6 +135,7 @@
 
       boxComments.innerHTML = commentHtml;
       initLikeClick();
+      // answerComment();
     }
 
     renderComments();
@@ -143,7 +144,7 @@
       userComments.push({
         name: inputName.value,
         date: `${now.toLocaleString().slice(0,-3)}`,
-        comment: textAreaComment.value,
+        comment: `${textAreaComment.value}`,
         likes: 0,
         Iliked: false,
         isedit: false,
@@ -153,7 +154,6 @@
       textAreaComment.value = '';
 
     }
-
 
     buttonNewComment.addEventListener('click', function () {
       let oldComments = boxComments.innerHTML;
@@ -169,5 +169,17 @@
         textAreaComment.classList.remove('error');
         }
     });
+
+    const answerComment = () => {
+      const boxCommentsTexts = document.querySelectorAll('.comment');
+      boxCommentsTexts.forEach((comment) => {
+        comment.addEventListener('click', (e) => {
+          const answer = e.target.textContent;
+          textAreaComment.value = `>${answer}`;
+        });
+      });
+    }
+
+    answerComment();
   </script>
 </html>
