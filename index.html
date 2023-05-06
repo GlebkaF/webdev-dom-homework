@@ -68,6 +68,7 @@
     const boxComments = document.querySelector('.comments');
     const inputName = document.querySelector('.add-form-name');
     const textAreaComment = document.querySelector('.add-form-text');
+    const boxCommentsTexts = boxComments.querySelectorAll('.comment');
     let now = new Date();
 
     const userComments = [
@@ -111,7 +112,33 @@
       }
     }
 
+    // Первый вариан ответа на коммент
+    const answerComment = () => {
+      const boxCommentsTexts = document.querySelectorAll('.comment');
+      boxCommentsTexts.forEach((comment) => {
+        comment.addEventListener('click', (e) => {
+          const author = comment.querySelector('.comment-header div:first-child').textContent;
+          const text = comment.querySelector('.comment-text').textContent;
+          textAreaComment.value = `@${author} \n\n > ${text}, `;
+        });
+      });
+    }
+    answerComment();
+
+    // Второй вариант ответа на коммент
+    // const AddAnswerComment = () => {
+    //   const boxCommentsTexts = boxComments.querySelectorAll('.comment');
+
+    //   for(const comment of boxCommentsTexts) {
+    //     comment.addEventListener('click', () => {
+    //       const replace = `${userComments[comment.dataset.id].comment}`;
+    //       textAreaComment.value = replace;
+    //     })
+    //   }
+    // }
+
     const renderComments = () => {
+      // const boxCommentsTexts = document.querySelectorAll('.comment');
       const commentHtml = userComments.map((user,index) => {
         (user.Iliked) ? Iliked = '-active-like' : Iliked = '';
         return `<li class="comment">
@@ -135,7 +162,8 @@
 
       boxComments.innerHTML = commentHtml;
       initLikeClick();
-      // answerComment();
+      // AddAnswerComment();
+      answerComment();
     }
 
     renderComments();
@@ -150,6 +178,7 @@
         isedit: false,
       });
       renderComments();
+      answerComment();
       inputName.value = '';
       textAreaComment.value = '';
 
@@ -160,6 +189,7 @@
 
       if (inputName.value === '') {
         inputName.classList.add('error');
+        return;
       } if (textAreaComment.value === '') {
         textAreaComment.classList.add('error');
         return;
@@ -169,17 +199,5 @@
         textAreaComment.classList.remove('error');
         }
     });
-
-    const answerComment = () => {
-      const boxCommentsTexts = document.querySelectorAll('.comment');
-      boxCommentsTexts.forEach((comment) => {
-        comment.addEventListener('click', (e) => {
-          const answer = e.target.textContent;
-          textAreaComment.value = `>${answer}`;
-        });
-      });
-    }
-
-    answerComment();
   </script>
 </html>
