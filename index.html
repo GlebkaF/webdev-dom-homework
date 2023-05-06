@@ -26,6 +26,21 @@
 <script>
   "use strict";
 
+  const listComments = document.getElementById("list-comments");
+  const nameText = document.getElementById("input-name");
+  const text = document.getElementById("input-text");
+  const buttonEnter = document.getElementById("button-enter");
+  const currentDate = new Date();
+  const option = {
+    hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'long'
+  };
+  const answersComments = document.getElementsByClassName('comment-text');
+  const textAreaText = document.getElementById('input-text');
+  let quoteText = '';
+
+
+
+
 
   const allUsersAndComments = [
     {
@@ -41,12 +56,12 @@
       counter: 75,
     },
   ];
-  const listComments = document.getElementById("list-comments");
+
   const renderUsers = () => {
     const usersHtml = allUsersAndComments.map((user) => {
       return `<li class="comment">
         <div class="comment-header">
-          <div>${user.name}</div>
+          <div class="name-user">${user.name}</div>
           <div>${user.time}</div>
         </div>
         <div class="comment-body">
@@ -64,13 +79,14 @@
     })
       .join("")
     listComments.innerHTML = usersHtml;
+
   };
 
 
   function refresh() {
     const likesUp = document.querySelectorAll(".like-button");
     for (const likeUp of likesUp) {
-      
+
       likeUp.addEventListener('click', () => {
         if (likeUp.classList.contains("-active-like") === true) {
           const counters = likeUp.parentNode.getElementsByClassName('likes-counter');
@@ -88,21 +104,9 @@
     };
   }
 
-
   renderUsers();
   refresh();
-
-
-
-  const nameText = document.getElementById("input-name");
-  const text = document.getElementById("input-text");
-  const buttonEnter = document.getElementById("button-enter");
-  const currentDate = new Date();
-  const option = {
-    hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'long'
-  };
-
-
+  quotes();
 
 
   buttonEnter.addEventListener("click", () => {
@@ -114,12 +118,22 @@
         oldListComments +
         `        <li class="comment">
           <div class="comment-header">
-            <div>${nameText.value}</div>
+            <div class="name-user">${nameText.value.replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")}</div>
             <div>${currentDate.toLocaleDateString('ru-RU', option)}</div>
           </div>
           <div class="comment-body">
+            <div class="quote">${quoteText}</div>
             <div class="comment-text">
-              ${text.value}
+              ${text.value.replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+        // .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+        // .replaceAll("QUOTE_END", "</div'>")
+        }
             </div>
           </div>
           <div class="comment-footer">
@@ -129,10 +143,37 @@
             </div>
           </div>
         </li>`;
-        refresh();
+      nameText.value = "";
+      text.value = "";
+      refresh();
+      quotes();
     }
   });
+  function quotes() {
 
+    for (const answerComment of answersComments) {
+      answerComment.addEventListener('click', () => {
+
+        const comment = answerComment.innerHTML;
+        const userComment = answerComment.parentNode.parentNode.getElementsByClassName("name-user")[0].innerHTML;
+        textAreaText.placeholder = `Введите ваш ответ пользователю ${userComment} `;
+        quoteText = `${comment} ${userComment}`;
+      })
+    }
+  };
+
+//   function quotes() {
+
+// for (const answerComment of answersComments) {
+//   answerComment.addEventListener('click', () => {
+
+//     const comment = answerComment.innerHTML;
+//     const userComment = answerComment.parentNode.parentNode.getElementsByClassName("name-user")[0].innerHTML;
+//     textAreaText.placeholder = `Введите ваш ответ пользователю ${userComment} `;
+//     textAreaText.value = `${comment} ${userComment}`;
+//   })
+// }
+// }
 
 </script>
 
