@@ -77,7 +77,7 @@
     const blockElement = document.getElementsByClassName("comment");
     const likesElement = document.querySelectorAll(".like-button");
 
-    let people = [];
+    let comment = [];
 
     const getFetch = () => {
       const fetchPromise = fetch(
@@ -95,7 +95,7 @@
         // Подписываемся на результат преобразования
         jsonPromise.then((responseData) => {
           // получили данные и рендерим их в приложении
-          people = responseData.comments;
+          comment = responseData.comments;
           renderList();
         });
       });
@@ -104,23 +104,23 @@
     getFetch();
 
     const renderList = () => {
-      const peopleListComment = people
-        .map((people, index) => {
+      const commentListComment = comment
+        .map((comment, index) => {
           return `<li class="comment">
                      <div class="comment-header">
-                       <div>${people.author.name}</div>
-                       <div>${people.date}</div>
+                       <div>${comment.author.name}</div>
+                       <div>${comment.date}</div>
                      </div>
                      <div class="comment-body">
-                       <div class="comment-text" data-text="${people.text}">
-                         ${people.text}
+                       <div class="comment-text" data-text="${comment.text}">
+                         ${comment.text}
                        </div>
                      </div>
                      <div class="comment-footer">
                        <div class="likes">
-                         <span class="likes-counter">${people.likes}</span>
+                         <span class="likes-counter">${comment.likes}</span>
                          <button class="${
-                           people.isLiked
+                           comment.isLiked
                              ? "like-button -active-like"
                              : "like-button"
                          }" data-index="${index}"></button>
@@ -130,7 +130,7 @@
         })
         .join("");
 
-      listElement.innerHTML = peopleListComment;
+      listElement.innerHTML = commentListComment;
       initButtonsLikes();
       changeComment();
     };
@@ -148,14 +148,14 @@
 
           let index = numberLikesElement.dataset.index;
 
-          if (people[index].isLiked === false) {
-            people[index].likes += 1;
+          if (comment[index].isLiked === false) {
+            comment[index].likes += 1;
             numberLikesElement.classList.add("-active-like");
-            people[index].isLiked = true;
+            comment[index].isLiked = true;
           } else {
             numberLikesElement.classList.remove("-active-like");
-            people[index].likes -= 1;
-            people[index].isLiked = false;
+            comment[index].likes -= 1;
+            comment[index].isLiked = false;
           }
           renderList();
         });
@@ -203,7 +203,7 @@
         } else {
           buttonAddElement.disabled = false;
 
-          people.push({
+          comment.push({
             name: nameElement.value,
             descr: descrElement.value,
           });
@@ -248,11 +248,9 @@
           response.json().then((responseData) => {
             // получили данные и рендерим их в приложении
             console.log(responseData);
-            people = responseData.comments;
             getFetch();
           });
         });
-        renderList();
         nameElement.value = "";
         descrElement.value = "";
       }
