@@ -95,7 +95,7 @@
           <div class='edit-container'>
             <button class='edit-button ${
               comment.edit ? "" : "edit-click"
-            }' data-index="${index}">Изменить комментарий</button>
+            }' data-index="${index}"></button>
           </div>
           
       </li>`;
@@ -117,24 +117,17 @@
       editContainers.forEach((editContainer) => {
         const editButton = editContainer.firstElementChild;
         const index = editButton.dataset.index;
+
         editButton.addEventListener("click", (event) => {
-          editContainer.appendChild(editButton);
-          // console.log(editContainers[index], editContainer);
-          // console.log(editButton, editButton.textContent);
+          console.log(index);
           if (comments[index].edit === false) {
-            // likeButton.classList.remove("active-like");
             comments[index].edit = true;
             editButton.textContent = "Cохранить комментарий";
-            console.log(editButton, editButton.textContent);
           } else {
-            // likeButton.classList.add("active-like");
             comments[index].edit = false;
-            // editButton.innerHTML = "hhh";
-            console.log("было true", editButton);
+            editButton.textContent = "Изменить комментарий";
           }
           renderComments();
-
-          // console.log(comments[index].comment);
         });
       });
 
@@ -149,10 +142,11 @@
       commentFooter.forEach((element) => {
         const likesCounter = element.firstElementChild.firstElementChild;
         const likeButton = element.lastElementChild;
+        // console.log(likeButton);
         likeButton.addEventListener("click", (event) => {
           const currentLikes = parseInt(likesCounter.textContent);
           const index = likeButton.dataset.index;
-          console.log("like", event.target);
+          // console.log("like", event.target);
 
           if (comments[index].isLiked === true) {
             // likeButton.classList.remove("active-like");
