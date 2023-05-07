@@ -49,6 +49,20 @@
     }
   ]
 
+  const initLikeButtons = () => {
+    const likeButtonElements = document.querySelectorAll('.like-button')
+    const likeCountElements = document.querySelectorAll('.likes-counter')
+    for (const likeButtonElement of likeButtonElements) {
+      likeButtonElement.addEventListener('click', () => {
+        const comment = comments[likeButtonElement.dataset.index]
+        comment.likes = comment.isLiked ? comment.likes - 1 : comment.likes + 1
+        comment.isLiked = !comment.isLiked
+        renderComments()
+      })
+    }
+  }
+  initLikeButtons()
+
   const renderComments = () => {
     let commentsHtml = comments.map((comment, index) => {
       return `<li class="comment" data-index="${index}">
@@ -71,6 +85,7 @@
     })
       .join('')
     commentsContainer.innerHTML = commentsHtml
+    initLikeButtons()
   }
 
   renderComments()
@@ -102,19 +117,7 @@
 
   // }
 
-  const initLikeButtons = () => {
-    const likeButtonElements = document.querySelectorAll('.like-button')
-    const likeCountElements = document.querySelectorAll('.likes-counter')
-    for (const likeButtonElement of likeButtonElements) {
-      likeButtonElement.addEventListener('click', () => {
-        const comment = comments[likeButtonElement.dataset.index]
-        comment.likes = comment.isLiked ? comment.likes - 1 : comment.likes + 1
-        comment.isLiked = !comment.isLiked
-        renderComments()
-      })
-    }
-  }
-initLikeButtons()
+ 
 
   addFormButton.addEventListener('click', () => {
     addFormName.classList.remove('error')
@@ -148,7 +151,8 @@ initLikeButtons()
         name: addFormName.value,
         date: userDate,
         text: addFormText.value,
-        likes: 0
+        likes: 0,
+        isLiked: false
       }
     )
 
