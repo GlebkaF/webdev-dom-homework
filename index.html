@@ -188,9 +188,9 @@
     const comments = document.querySelectorAll('.comment');
 
     comments.forEach((comment) => {
-      comment.addEventListener('click', (event) => {
-        const answer = event.target.querySelector('.comment-body').textContent;
-        const nameUser = event.target.querySelector('.comment-name').textContent;
+      comment.addEventListener('click', () => {
+        const answer = comment.querySelector('.comment-body').textContent;
+        const nameUser = comment.querySelector('.comment-name').textContent;
         textComment.value = `>${answer}${nameUser}.,`;
       });
     });
