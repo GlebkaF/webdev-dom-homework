@@ -37,19 +37,21 @@
       name: "Глеб Фокин",
       date: "12.02.22 12:18",
       text: "Это будет первый комментарий на этой странице",
-      likes: "3"
+      likes: 3,
+      isLiked: false
     },
     {
       name: "Варвара Н.",
       date: "13.02.22 19:22",
       text: "Мне нравится как оформлена эта страница! ❤",
-      likes: "75"
+      likes: 75,
+      isLiked: false
     }
   ]
 
   const renderComments = () => {
-    let commentsHtml = comments.map((comment) => {
-      return `<li class="comment">
+    let commentsHtml = comments.map((comment, index) => {
+      return `<li class="comment" data-index="${index}">
         <div class="comment-header">
           <div> ${comment.name}</div>
           <div>${comment.date}</div>
@@ -62,7 +64,7 @@
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${comment.likes}</span>
-            <button class="like-button"></button>
+            <button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index="${index}"></button>
           </div>
         </div>
       </li>`
@@ -73,33 +75,46 @@
 
   renderComments()
 
-  const initLikeColor = () => {
-    const likeButtons = document.querySelectorAll(".like-button")
-    console.log(likeButtons);
-    // for (const [likeButton, index] of NodeList.entries(likeButtons)) {
-    //   likeButton.addEventListener("click", () => {
-    //     console.log(index);
-    //     likeButton.classList.add("-active-like")
-    //     initLikeCount()
-    //   })
-    // }
-    for (let index = 0; index < likeButtons.length; index++) {
-      console.log(likeButtons[index]);
-      likeButtons[index].addEventListener("click", () => {
-        likeButtons[index].classList.add("-active-like")
-        initLikeCount(index)
-      })
+  // const initLikeColor = () => {
+  //   const likeButtons = document.querySelectorAll(".like-button")
+  //   console.log(likeButtons);
+  //   // for (const [likeButton, index] of NodeList.entries(likeButtons)) {
+  //   //   likeButton.addEventListener("click", () => {
+  //   //     console.log(index);
+  //   //     likeButton.classList.add("-active-like")
+  //   //     initLikeCount()
+  //   //   })
+  //   // }
+  //   for (let index = 0; index < likeButtons.length; index++) {
+  //     console.log(likeButtons[index]);
+  //     likeButtons[index].addEventListener("click", () => {
+  //       likeButtons[index].classList.add("-active-like")
+  //       initLikeCount(index)
+  //     })
 
+  //   }
+  // }
+  // initLikeColor()
+
+  // const initLikeCount = (index) => {
+  //   console.log(index);
+  //   comments[index].likes += 1
+
+  // }
+
+  const initLikeButtons = () => {
+    const likeButtonElements = document.querySelectorAll('.like-button')
+    const likeCountElements = document.querySelectorAll('.likes-counter')
+    for (const likeButtonElement of likeButtonElements) {
+      likeButtonElement.addEventListener('click', () => {
+        const comment = comments[likeButtonElement.dataset.index]
+        comment.likes = comment.isLiked ? comment.likes - 1 : comment.likes + 1
+        comment.isLiked = !comment.isLiked
+        renderComments()
+      })
     }
   }
-  initLikeColor()
-
-  const initLikeCount = (index) => {
-    console.log(index);
-    comments[index].likes += 1
-    
-  }
-
+initLikeButtons()
 
   addFormButton.addEventListener('click', () => {
     addFormName.classList.remove('error')
@@ -139,7 +154,8 @@
 
 
     renderComments()
-    initLikeColor()
+    // initLikeColor()
+    initLikeButtons()
     addFormName.value = ''
     addFormText.value = ''
 
