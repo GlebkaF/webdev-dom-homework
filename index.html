@@ -83,10 +83,12 @@
     const commentInputElement = document.getElementById("comment-input");
     const comment = document.getElementsByTagName('li');
     const deleteFormButtonElement = document.getElementById("delete-form-button");
+    
     deleteFormButtonElement.addEventListener("click", () => {
       comments.pop();
       renderComments();
       initLikeButtonListeners();
+      initCommentsListeners();
     })
 
     const comments = [
@@ -109,7 +111,7 @@
     const renderComments = () => {
       const commentsHtml = comments.map((comment, index) => {
         if(comment.isLiked) {
-          return `<li  class="comment">
+          return `<li  class="comment" data-index="${index}">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.date}</div>
@@ -127,7 +129,7 @@
           </div>
         </li>`;
         } else {
-          return `<li  class="comment">
+          return `<li  class="comment" data-index="${index}">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.date}</div>
@@ -150,6 +152,7 @@
       //console.log(commentsHtml);
       
       listElement.innerHTML = commentsHtml;
+      
     }
 
     renderComments();
@@ -159,7 +162,8 @@
     //console.log(likesElements);
       for (const likeElement of likesElements) {
         //console.log(likeElement);
-        likeElement.addEventListener ("click", () => {
+        likeElement.addEventListener ("click", (event) => {
+          event.stopPropagation();
           const likes = likeElement.dataset.likes
           //console.log(likes);
           const index = likeElement.dataset.index;
@@ -170,17 +174,20 @@
             comments[index].likes -= 1;
             renderComments();
             initLikeButtonListeners();
+            initCommentsListeners();
           } else {
             comments[index].isLiked = !comments[index].isLiked;
             comments[index].likes += 1;
             renderComments();
             initLikeButtonListeners();
+            initCommentsListeners();
           }
 
         });
       }
     }
     initLikeButtonListeners();
+    
     buttonElement.addEventListener("click",() => {
       nameInputElement.classList.remove("error");
       buttonElement.classList.remove("disabled");
@@ -202,9 +209,13 @@
       //console.log(nameInputElement.value);
 
       comments.push({
-        name: nameInputElement.value,
+        name: nameInputElement.value
+          .replaceAll('<', '&lt')
+          .replaceAll('>', '&gt'),
         date: nowDate,
-        comment: commentInputElement.value,
+        comment: commentInputElement.value
+          .replaceAll('<', '&lt')
+          .replaceAll('>', '&gt'),
         likes: 0,
         isLiked: false,
       });
@@ -227,11 +238,33 @@
         </li>`*/
       renderComments();
       initLikeButtonListeners();
+      initCommentsListeners();
       nameInputElement.value = "";  
       commentInputElement.value = ""; 
-    })
+    });
+
     
-  
+    const initCommentsListeners = () => {
+
+    
+      const commentsAnswers = document.querySelectorAll(".comment");
+      for (let commentAnswer of commentsAnswers) {
+        //console.log(commentAnswer);
+        commentAnswer.addEventListener ("click", () => {
+        let index = commentAnswer.dataset.index;
+
+        comments[index].comment = comments[index].comment
+        
+
+          commentInputElement.value = `>${comments[index].comment} \n ${comments[index].name}, `;
+      
+        
+      initLikeButtonListeners();
+      initCommentsListeners();
+        })
+      }
+    }
+    initCommentsListeners();
     console.log("It works!");
   </script>
 </html>
