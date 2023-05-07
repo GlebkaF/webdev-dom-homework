@@ -49,29 +49,61 @@
     const editButtonElements = document.querySelectorAll(".edit-button");
     const commentElements = document.querySelectorAll(".comment");
 
+
+
     // Data in array
 
-    const userComments = [
-      {
-        name: "Глеб Фокин",
-        date: "12.02.22 12:18",
-        comment: "Это будет первый комментарий на этой странице",
-        likeCounter: 3,
-        clicked: false,
-        active: "",
-        isEdit: false,
-      },
-      {
-        name: "Варвара Н.",
-        date: "13.02.22 19:22",
-        comment: "Мне нравится как оформлена эта страница! ❤",
-        likeCounter: 75,
-        clicked: false,
-        active: "",
-        isEdit: false,
-      },
-    ];
 
+     let userComments = [
+     //  {
+     //    name: "Глеб Фокин",
+     //    date: "12.02.22 12:18",
+     //    comment: "Это будет первый комментарий на этой странице",
+     //    likeCounter: 3,
+     //    isLiked: false,
+     //    active: "",
+     //    isEdit: false,
+     //  },
+     //  {
+     //    name: "Варвара Н.",
+     //    date: "13.02.22 19:22",
+     //    comment: "Мне нравится как оформлена эта страница! ❤",
+     //    likeCounter: 75,
+     //    isLiked: false,
+     //    active: "",
+     //    isEdit: false,
+     //  },
+     ];
+
+
+      // Data from API
+
+        const fetchComments = () => {
+          fetch("https://webdev-hw-api.vercel.app/api/v1/mariia-goppa/comments", {
+          method: "GET",
+        }).then((response) => {
+        return response.json();
+        })
+        .then((responseData) => {
+            userComments = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: time(comment.date),
+              comment: comment.text,
+              likeCounter: 0,
+              isLiked: false,
+              active: "",
+              isEdit: false,
+              };
+          });
+
+            renderUserComments();
+          });
+        };
+
+        fetchComments();
+
+        
 
       // Like button
 
@@ -81,12 +113,12 @@
         const index = likeButtonElement.dataset.index;
         likeButtonElement.addEventListener("click", (event) => {
           event.stopPropagation();
-          if (!userComments[index].clicked) {
-            userComments[index].clicked = true;
+          if (!userComments[index].isLiked) {
+            userComments[index].isLiked = true;
             userComments[index].active = "-active-like";
             userComments[index].likeCounter += 1;
           } else {
-            userComments[index].clicked = false;
+            userComments[index].isLiked = false;
             userComments[index].active = "";
             userComments[index].likeCounter -= 1;
           }
@@ -194,6 +226,7 @@
 
      const addNewElementToList = () => {
 
+
       // Validation data check
 
       nameInputElement.classList.remove('error');
@@ -209,24 +242,40 @@
 
       // Adding new comment
 
-      userComments.push({
-        name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-        date: time (),
-        comment: commentInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-        likeCounter: 0,
-        clicked: false,
-        active: "",
-        isEdit: false,
-      });
-         renderUserComments();
+    //  userComments.push({
+    //    name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+    //    date: time (),
+    //    comment: commentInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+    //    likeCounter: 0,
+    //    isLiked: false,
+    //    active: "",
+    //    isEdit: false,
+    //  });
 
+      // Post from API
+
+      const postComment = () => {
+          fetch("https://webdev-hw-api.vercel.app/api/v1/mariia-goppa/comments", {
+            method: "POST",
+            body: JSON.stringify({ 
+              text: commentInputElement.value, 
+              name: nameInputElement.value,
+            }),
+          }).then((response) => {
+            fetchComments();
+          });
+        };
+
+        postComment();
+//
+        renderUserComments();
+//
         nameInputElement.value = "";
         commentInputElement.value = "";
      };
 
+
      buttonElement.addEventListener("click", addNewElementToList);
-
-
 
     // Validation form check for the button
 
