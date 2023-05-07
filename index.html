@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -45,19 +45,19 @@
         </li>
       </ul>
       <div class="add-form">
-        <input
+        <input id="input-name"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
-        <textarea
+        <textarea id="input-comment"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="button-form" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
@@ -66,6 +66,40 @@
   <script>
     "use strict";
     // Код писать здесь
-    console.log("It works!");
+
+    const inputName = document.getElementById('input-name');
+    const inputComment = document.getElementById('input-comment');
+    const buttonForm = document.getElementById('button-form');
+    
+    const comments = document.getElementById('comments');
+  
+    buttonForm.addEventListener('click', (event) => {
+      if (inputName.value === '' || inputComment.value === '') {
+        return;
+      }
+
+      const date = new Date();
+
+      const oldComments = comments.innerHTML;
+      comments.innerHTML = oldComments + 
+      `<li class="comment">
+        <div class="comment-header">
+          <div>${inputName.value}</div>
+          <div>${`${("0" + date.getDate()).slice(-2)}.${("0" + (date.getMonth() + 1)).slice(-2)}.${date.getFullYear().toString().slice(-2)} ${("0" + date.getHours()).slice(-2)}:${("0" + date.getMinutes()).slice(-2)}`}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${inputComment.value}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">0</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>`;
+    });
+
   </script>
 </html>
