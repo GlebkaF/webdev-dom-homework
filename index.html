@@ -81,7 +81,7 @@
 
     const getFetch = () => {
       let changeText = () => {
-        return listElement.textContent = "подождите немного";
+        return (listElement.textContent = "подождите немного");
       };
 
       changeText();
@@ -93,9 +93,6 @@
       )
         .then((response) => {
           changeText();
-          return response;
-        })
-        .then((response) => {
           return response.json();
         })
         .then((responseData) => {
@@ -136,15 +133,34 @@
         }),
       })
         .then((response) => {
-          return response.json();
+          console.log(response);
+          if (response.status === 400) {
+            return alert("Ведите в поле больше 2-ух символов");
+          } else {
+            return response.json();
+          }
+          if (response.status === 500) {
+            return alert("Сервер лег");
+          } else {
+            return response.json();
+          }
         })
-        .then((responseData) => {
+        .then(() => {
           // получили данные и рендерим их в приложении
           return getFetch();
         })
         .then(() => {
           buttonAddElement.disabled = false;
           buttonAddElement.textContent = "Написать";
+          nameElement.value = "";
+          descrElement.value = "";
+        })
+        .catch((error) => {
+          buttonAddElement.disabled = false;
+          buttonAddElement.textContent = "Написать";
+          alert("Кажется, что-то пошло не так, попробуй позже");
+          // TODO: Отправлять в систему сбора ошибок
+          console.warn(error);
         });
     };
     getFetch();
@@ -274,10 +290,7 @@
         descrElement.placeholder = "Впишите данные";
       } else {
         buttonAddElement.disabled = false;
-        //
         addTodo();
-        nameElement.value = "";
-        descrElement.value = "";
       }
     });
   </script>
