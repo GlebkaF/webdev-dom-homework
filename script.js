@@ -11,54 +11,71 @@ const textInput = document.querySelector('.add-form-text');
 const submitButton = document.querySelector('.add-form-button');
 
 
-const comments = [ //ммассив с комментариями 
-    {
-        author: 'Глеб Фокин',
-        date: '12.02.22 12:18',
-        text: 'Это будет первый комментарий на этой странице',
-        likes: 3,
-        isLiked: true
-    },
-    {
-        author: 'Варвара Н.',
-        date: '13.02.22 19:22',
-        text: 'Мне нравится как оформлена эта страница! ❤',
-        likes: 74,
-        isLiked: false
-    },
+let comments = [ //ммассив с комментариями 
+    // {
+    //     author: 'Глеб Фокин',
+    //     date: '12.02.22 12:18',
+    //     text: 'Это будет первый комментарий на этой странице',
+    //     likes: 3,
+    //     isLiked: true
+    // },
+    // {
+    //     author: 'Варвара Н.',
+    //     date: '13.02.22 19:22',
+    //     text: 'Мне нравится как оформлена эта страница! ❤',
+    //     likes: 74,
+    //     isLiked: false
+    // },
+
     // ...
 ];
 
+
+function dateElement() {
+    let date = new Date()
+    let monthArray = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+    let Minute = String(date.getMinutes()).length < 2 ? '0' + date.getMinutes() : date.getMinutes();
+    let Hours = String(date.getHours()).length < 2 ? '0' + date.getHours() : date.getHours();
+    let Day = String(date.getDate()).length < 2 ? '0' + date.getDate() : date.getDate();
+    let Month = monthArray[+date.getMonth()]
+    let Year = String(date.getFullYear()).slice(2);
+    let str = Day + '.' + Month + '.' + Year + ' ' + Hours + ':' + Minute;
+    return str
+}
+
+
 //подключение и рендер комментариев из API
-// const fetchPromise = fetch(
-//     "https://webdev-hw-api.vercel.app/api/v1/artyom-kovalchuk/comments",
-//     {
-//         method: "GET",
-//     }
-// );
+//получение данных с сервера
+const fetchPromise = fetch(
+    "https://webdev-hw-api.vercel.app/api/v1/artyom-kovalchuk/comments",
+    {
+        method: "GET",
+    }
+);
 
-// fetchPromise.then((response) => {
-//     console.log(response);
+fetchPromise.then((response) => {
+    console.log(response);
 
-//     const jsonPromise = response.json();
+    const jsonPromise = response.json();
 
-//     jsonPromise.then((responseData) => {
-//         console.log(responseData);
+    jsonPromise.then((responseData) => {
+        console.log(responseData);
 
-//         const appComments = responseData.comments.map((comment) => {
-//             return {
-//                 name: comment.author.name,
-//                 date: new Date(comment.date),
-//                 text: comment.text,
-//                 likes: comment.likes,
-//                 isliked: false,
-//             };
-//         });
+        const appComments = responseData.comments.map((comment) => {
+            return {
+                name: comment.author.name,
+                date: dateElement(),
+                text: comment.text,
+                likes: comment.likes,
+                isliked: false,
+            };
 
-//         comments = appComments;
-//         renderComments(comments);
-//     });
-// });
+        });
+
+        comments = appComments;
+        renderComments(comments);
+    });
+});
 
 
 //рендер комментариев, вызываем функцию ответа на комментарии, вызываем функцию кнопки лайка
@@ -71,7 +88,7 @@ function renderComments(comments) {
         .map(comment => `
           <li class="comment">
             <div class="comment-header">
-              <div>${comment.author}</div>
+              <div>${comment.name}</div>
               <div>${comment.date}</div>
             </div>
             <div class="comment-body">
@@ -104,28 +121,26 @@ renderComments(comments);
 
 //добавляем новый комментарий в массив
 function addComment() {
-    // получаем значения из формы ввода (тут же ставим защиту от XSS)
-    const author = addFormName.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
-    const text = addFormText.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
-    const date = new Date().toLocaleString();
-    const likes = 0;
-    const isLiked = false;
-
-    // создаём новый объект комментария, чтобы добавить его в уже существующий
     const newComment = {
-        author,
-        text,
-        date,
-        likes,
-        isLiked: false
+      name: nameInput.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
+      date: dateElement(),
+      text: textInput.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
+      likes: 0,
+      isLiked: false,
     };
-
+  
+    fetch("https://webdev-hw-api.vercel.app/api/v1/artyom-kovalchuk/comments", {
+      method: "POST",
+      body: JSON.stringify(newComment),
+    }).then((response) => {
+      console.log(response);
+    });
+  
     comments.push(newComment);
-
     renderComments(comments);
-    addFormName.value = '';
-    addFormText.value = '';
-}
+  }
+
+
 
 
 //кнопка добавления комментария
@@ -183,21 +198,13 @@ function setupLikeButtons() {
             if (comment.isLiked) {
                 comment.likes--;
                 comment.isLiked = false;
-                button.classList.remove('-active-like');
             } else {
                 comment.likes++;
                 comment.isLiked = true;
-                button.classList.add('-active-like');
             }
 
             renderComments(comments);
         });
-
-        if (comment.isLiked) {
-            button.classList.add('-active-like');
-        } else {
-            button.classList.remove('-active-like');
-        }
     });
 }
 
