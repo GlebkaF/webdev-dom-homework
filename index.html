@@ -106,6 +106,7 @@
       const likeClickElems = document.querySelectorAll('.likes');
       for (likeClickElem of likeClickElems) {
         likeClickElem.addEventListener('click', (e) => {
+          e.stopPropagation();
           (userComments[e.target.dataset.id].Iliked) ? delLike(e) : addLike(e);
           renderComments();
         })
@@ -138,7 +139,6 @@
     // }
 
     const renderComments = () => {
-      // const boxCommentsTexts = document.querySelectorAll('.comment');
       const commentHtml = userComments.map((user,index) => {
         (user.Iliked) ? Iliked = '-active-like' : Iliked = '';
         return `<li class="comment">
@@ -162,7 +162,6 @@
 
       boxComments.innerHTML = commentHtml;
       initLikeClick();
-      // AddAnswerComment();
       answerComment();
     }
 
@@ -170,9 +169,13 @@
 
     const addComment = () => {
       userComments.push({
-        name: inputName.value,
+        name: inputName.value
+        .replaceAll('<', '&lt;')
+        .replaceAll('<', '&gt;'),
         date: `${now.toLocaleString().slice(0,-3)}`,
-        comment: `${textAreaComment.value}`,
+        comment: `${textAreaComment.value
+        .replaceAll('<', '&lt;')
+        .replaceAll('<', '&gt;')}`,
         likes: 0,
         Iliked: false,
         isedit: false,
@@ -181,7 +184,6 @@
       answerComment();
       inputName.value = '';
       textAreaComment.value = '';
-
     }
 
     buttonNewComment.addEventListener('click', function () {
