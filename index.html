@@ -82,7 +82,7 @@
       for (const comment of comments) {
         comment.addEventListener("click", () => {
           const index = comment.dataset.index;
-         userCommentElement.value = `${arrComments[index].name} - "${arrComments[index].text}"`;
+         userCommentElement.value = `QUOTE_BEGIN ${arrComments[index].name} - "${arrComments[index].text}"QUOTE_END`;
           
         })
       }
@@ -97,7 +97,7 @@
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${comment.text.replaceAll("<", "&lt;").replaceAll(">", "&gt;")}
+              ${comment.text.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("QUOTE_BEGIN", "<div class='comment-quote'>").replaceAll("QUOTE_END", "</div>")}
             </div>
           </div>
           <div class="comment-footer">
