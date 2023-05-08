@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
   <head>
     <title>Проект "Комменты"</title>
     <meta charset="utf-8" />
@@ -12,14 +13,24 @@
       </ul>
 
       <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
+        <input type="text" class="add-form-name" placeholder="Введите ваше имя"
           />
-        <textarea
-          type="textarea"
-          class="add-form-text"
+        <div class="bb_code">
+          <input class="bb_code_button" data-code="b" title="Выделите текст и нажмите сюда" type="button" value="B">
+          <input class="bb_code_button" data-code="u" title="Выделите текст и нажмите сюда" type="button" value="U">
+          <input class="bb_code_button" data-code="i" title="Выделите текст и нажмите сюда" type="button" value="I">
+          <input class="bb_code_button" data-code="video" title="Нажмите для вставки адреса видео" type="button" value="&#127902;">
+          <input class="bb_code_button" data-code="iframe" title="Нажмите для вставки адреса iframe" type="button" value="&#127916;">
+          <input class="bb_code_button" data-code="img" title="Нажмите для вставки адреса изображения" type="button" value="&#128444;">
+          <input class="bb_code_button" data-code="audio" title="Нажмите для вставки адреса аудио" type="button" value="&#127925;">
+          <!-- <input type="color" list="colorList"></p>
+          <datalist id="colorList">
+          <option value="#ff0000" label="Красный">
+          <option value="#008000" label="Зелёный">
+          <option value="#0000ff" label="Синий">
+          </datalist> -->
+        </div>
+        <textarea type="textarea" class="add-form-text"
           placeholder="Введите ваш коментарий , количество символов не менее 10"
           rows="4"></textarea>
         <div class="add-form-row">
@@ -28,8 +39,6 @@
       </div>
     </div>
   </body>
-  <!-- Первый вариант решения -->
-  <!-- <script src="script.js"></script> -->
-  <!-- второй вариант решения -->
   <script src="script_2.js"></script>
+
 </html>
