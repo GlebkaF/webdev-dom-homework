@@ -170,10 +170,21 @@
 
       let nowDate = `${userDate.getDate()}.${month}.${year} ${userDate.getHours()}:${minutes}`;
 
+
+      function escapeHtml(text) {
+        return text
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("$", "&#36");
+      };
+
+
       comments.push({
-        userName: addName.value,
+        userName: escapeHtml(addName.value),
         commentDate: nowDate,
-        userComment: addComment.value,
+        userComment: escapeHtml(addComment.value),
         likes: 0,
         isLiked: false,
         isEdit: false,
