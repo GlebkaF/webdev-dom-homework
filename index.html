@@ -136,15 +136,13 @@
           console.log(response);
           if (response.status === 400) {
             return alert("Ведите в поле больше 2-ух символов");
-          } else {
-            return response.json();
           }
           if (response.status === 500) {
             return alert("Сервер лег");
-          } else {
-            return response.json();
           }
+          return response.json();
         })
+
         .then(() => {
           // получили данные и рендерим их в приложении
           return getFetch();
