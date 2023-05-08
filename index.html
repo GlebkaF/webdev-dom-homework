@@ -102,7 +102,8 @@
         const index = commentText.dataset.index;
         const comment = comments[index];
         addComment.classList.add('reply-comment');
-        addComment.value = `> ${commentText.innerHTML.replaceAll('  ', '')}\n${comment.userName}, `;
+        addComment.value = `QUOTE_BEGIN ${commentText.innerHTML.replaceAll('  ', '')}\n${comment.userName} QUOTE_END, `;
+        addComment.focus();
         renderComments();
       });
     }
@@ -125,7 +126,7 @@
             ${comment.isEdit
             ? `<textarea type="textarea" class="comment-text" rows="4">${comment.userComment}</textarea>`
             : `<div class="comment-text" data-index="${index}">
-              ${comment.userComment}
+              ${comment.userComment.replaceAll("QUOTE_BEGIN", "<div class='quote'>").replaceAll("QUOTE_END,", "</div>")}
             </div>`
           }
           </div>
