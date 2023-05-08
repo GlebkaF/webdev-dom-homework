@@ -1,4 +1,5 @@
 "use strict";
+window.scrollTo(0, 0)
 
 const addFormButton = document.querySelector(".add-form-button");
 const addFormName = document.querySelector(".add-form-name");
@@ -46,36 +47,56 @@ function dateElement() {
 
 //подключение и рендер комментариев из API
 //получение данных с сервера
-const fetchPromise = fetch(
-    "https://webdev-hw-api.vercel.app/api/v1/artyom-kovalchuk/comments",
-    {
-        method: "GET",
-    }
-);
+function fetchComments() {
+    
+    //скрываем лишние элементы во время загрузки страницы
+    form.classList.add('hidden');
+    removeLastCommentButton.style.display = 'none';
+    //загружаем лоадер
+    const loader = document.querySelector('.loader-page');
+    loader.classList.add('visible');
 
-fetchPromise.then((response) => {
-    console.log(response);
+    const fetchPromise = fetch(
+        "https://webdev-hw-api.vercel.app/api/v1/artyom-kovalchuk/comments",
+        {
+            method: "GET",
+        }
+    );
 
-    const jsonPromise = response.json();
+    return fetchPromise
+        .then((response) => {
+            console.log(response);
+            const jsonPromise = response.json();
+            return jsonPromise;
+        })
+        .then((responseData) => {
+            console.log(responseData);
+            const appComments = responseData.comments.map((comment) => {
+                return {
+                    name: comment.author.name,
+                    date: dateElement(),
+                    text: comment.text,
+                    likes: comment.likes,
+                    isliked: false,
+                };
+            });
 
-    jsonPromise.then((responseData) => {
-        console.log(responseData);
+            comments = appComments;
+            renderComments(comments);
+            return loader;
+        })
+        .then((loader) => {
+            loader.classList.remove('visible');
+            loader.parentNode.removeChild(loader);
+        })
+        .then(() => {
+            form.classList.remove('hidden');
+            removeLastCommentButton.style.display = 'block';
+        })
+}
 
-        const appComments = responseData.comments.map((comment) => {
-            return {
-                name: comment.author.name,
-                date: dateElement(),
-                text: comment.text,
-                likes: comment.likes,
-                isliked: false,
-            };
+fetchComments();
 
-        });
-
-        comments = appComments;
-        renderComments(comments);
-    });
-});
 
 
 //рендер комментариев, вызываем функцию ответа на комментарии, вызываем функцию кнопки лайка
@@ -119,26 +140,41 @@ function renderComments(comments) {
 renderComments(comments);
 
 
-//добавляем новый комментарий в массив
 function addComment() {
+
+    // Скрыть форму, кнопку удал. комм.
+    form.classList.add('hidden');
+    removeLastCommentButton.style.display = 'none';
+    //загружаем лоадер
+    const loader = document.querySelector('.loader-comments');
+    loader.classList.remove('hidden');
+
     const newComment = {
-      name: nameInput.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
-      date: dateElement(),
-      text: textInput.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
-      likes: 0,
-      isLiked: false,
+        name: nameInput.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
+        date: dateElement(),
+        text: textInput.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
+        likes: 0,
+        isLiked: false,
     };
-  
+
     fetch("https://webdev-hw-api.vercel.app/api/v1/artyom-kovalchuk/comments", {
-      method: "POST",
-      body: JSON.stringify(newComment),
-    }).then((response) => {
-      console.log(response);
-    });
-  
-    comments.push(newComment);
-    renderComments(comments);
-  }
+        method: "POST",
+        body: JSON.stringify(newComment),
+    })
+        .then((response) => {
+            console.log(response);
+
+            //возвращаем обратно форму и кнопку удаления, скрываем лоадер
+            form.classList.remove('hidden');
+            removeLastCommentButton.style.display = 'block';
+            loader.classList.add('hidden');
+
+        })
+        .then(() => {
+            comments.push(newComment);
+            renderComments(comments);
+        });
+}
 
 
 

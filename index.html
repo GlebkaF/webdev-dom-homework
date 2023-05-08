@@ -8,7 +8,12 @@
 </head>
 
 <body>
+
   <div class="container">
+    <div class="loader-page">
+      <div class="spinner" id="spinner-page"></div>
+      <div class="text-loader" id="loader-page">Загружаем комментарии...</div>
+    </div>
     <ul class="comments">
       <!-- комментарии рендерятся из JS -->
       
@@ -47,10 +52,14 @@
         </div>
       </li> -->
     </ul>
+    <div class="loader-comments hidden">
+      <div class="spinner" id="spinner-comments"></div>
+      <div class="text-loader" id="loader-comments">Добавляем Ваш комментарий...</div>
+    </div>
     <div class="delete_button">
       <button class="remove-last-comment-button">Удалить последний комментарий</button>
     </div>
-    <div class="add-form">
+    <div class="add-form hidden">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
       <div class="add-form-row">
