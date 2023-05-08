@@ -79,7 +79,7 @@
       name: "Глеб Фокин",
       comment: "Это будет первый комментарий на этой странице",
       time: "12.02.22 12:18",
-      likes: 3
+      likes: 3,
     },
     {
       name: "Варвара Н.",
@@ -113,10 +113,10 @@
     }).join('');
 
     listElement.innerHTML = usersCommentsHTML;
-
   };
 
   renderUsersComments();
+
 
   // Функция добавления лайка 
 
@@ -138,7 +138,6 @@
   }
 
   listElement.addEventListener('click', function (event) {
-    event.stopPropagation();
     if (event.target.matches('.like-button')) {
       toggleLike(event);
     }
@@ -192,8 +191,7 @@
       const author = commentElement.querySelector(".comment-header div:first-child").textContent;
       const text = commentElement.querySelector(".comment-text").textContent;
 
-
-      inputTextElement.value = `>${text}\n@${author},`;
+      inputTextElement.value = `>${text.trim()}\n@${author}, `;
       inputTextElement.focus();
     });
   }
