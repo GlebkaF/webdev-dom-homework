@@ -27,7 +27,6 @@
           <button class="add-form-button">Написать</button>
         </div>
       </div>
-      <button class="delete-button">Удалить последний комментарий</button>
     </div>
   </body>
 
@@ -75,6 +74,8 @@
       for(const likeClick of likeClicks) {
         likeClick.addEventListener('click', (event) => {
           (comments[event.target.dataset.index].liked) ? removeLike(event) : addLike(event);
+          //Отмена всплытия на кнопке лайка
+          event.stopPropagation();
           renderComments();
         });
       }
@@ -107,6 +108,20 @@
         .join('')
         commentsElement.innerHTML = commentsHtml;
         initLikeClickListener();
+
+        //Функция ответа на комментарий
+        const commentResponse = () => {
+          const commentTexts = document.querySelectorAll('.comment');
+          for(const comment of commentTexts) {
+            comment.addEventListener('click', (event) => {
+              const message = event.target.textContent;
+              const author = comment.querySelector('.comment-header div:first-child').textContent;
+              addFormText.value = `>${message} \n @${author}`;
+           })
+          }
+        }
+        commentResponse();
+
       };
     renderComments();
 
@@ -130,9 +145,16 @@
       }
 
       comments.push({
-        name:addFormName.value,
+        //Закрытие уязвимостей
+        name:addFormName.value.replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
         date: `${now.getDate()}.0${now.getMonth()}.${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`,
-        text: addFormText.value,
+        text: addFormText.value.replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
         likes: 0
       })
      
@@ -141,6 +163,7 @@
       renderComments();
     });
 
+    
     // Расширенная валидация
     // const addForm = document.querySelector('.add-form');
     // addFormButton.disabled = true;
