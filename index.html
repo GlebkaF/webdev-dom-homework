@@ -30,7 +30,7 @@
     const nameText = document.getElementById("input-name");
     const text = document.getElementById("input-text");
     const buttonEnter = document.getElementById("button-enter");
-    const currentDate = new Date();
+    let currentDate = new Date();
     const option = {
         hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'long'
     };
@@ -39,48 +39,50 @@
     let quoteText = '';
 
 
-
-
-
-    const allUsersAndComments = [
+    let allUsersAndComments = [
         {
             name: 'Глеб Фокин',
             time: '12.02.22 12:18',
-            comment: 'Это будет первый комментарий на этой странице',
+            comment: "Это будет первый комментарий на этой странице",
             counter: 3,
+            quoteText: '',
         },
         {
             name: 'Варвара Н.',
             time: '13.02.22 19:22',
             comment: 'Мне нравится как оформлена эта страница! ❤',
             counter: 75,
+            quoteText: '',
         },
     ];
+
 
     const renderUsers = () => {
         const usersHtml = allUsersAndComments.map((user) => {
             return `<li class="comment">
-        <div class="comment-header">
-          <div class="name-user">${user.name}</div>
-          <div>${user.time}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${user.comment}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">${user.counter}</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>`;
+    <div class="comment-header">
+      <div class="name-user">${user.name}</div>
+      <div>${user.time}</div>
+    </div>
+    <div class="comment-body">
+        <div class="quote">${user.quoteText}</div>
+      <div class="comment-text">
+        ${user.comment}
+      </div>
+    </div>
+    <div class="comment-footer">
+      <div class="likes">
+        <span class="likes-counter">${user.counter}</span>
+        <button class="like-button"></button>
+      </div>
+    </div>
+  </li>`;
         })
             .join("")
         listComments.innerHTML = usersHtml;
-
+        refresh();
     };
+
 
 
     function refresh() {
@@ -90,15 +92,22 @@
 
                 if (likeUp.classList.contains("-active-like") === true) {
                     event.stopPropagation();
+                    likeUp.classList.remove('-active-like')
+                    let findObj = likeUp.parentNode.parentNode.parentNode.getElementsByClassName('name-user');
+                    // МОЖНО ИЗМЕНИТЬ ПРОВЕРКУ ПО ВРЕМЕНИ, ЧТО ПОЧТИ ИСКЛЮЧИТ ВОЗМОЖНОСТЬ СОВПАДЕНИЯ. НО ВАРИАНТ ВСЕ РАВНО ТОПОРНЫЙ.
+                    let valueName = findObj[0].innerHTML;
+                    let found = allUsersAndComments.find(e => e.name == valueName);
+                    found.counter = parseInt(found.counter) - 1;
                     const counters = likeUp.parentNode.getElementsByClassName('likes-counter');
                     if (counters.length == 0) return;
                     counters[0].innerHTML = parseInt(counters[0].innerHTML) - 1;
-                    likeUp.classList.remove('-active-like')
-
-
                 } else {
                     event.stopPropagation();
                     likeUp.classList.add('-active-like');
+                    let findObj = likeUp.parentNode.parentNode.parentNode.getElementsByClassName('name-user');
+                    let valueName = findObj[0].innerHTML;
+                    let found = allUsersAndComments.find(e => e.name == valueName);
+                    found.counter = parseInt(found.counter) + 1;
                     const counters = likeUp.parentNode.getElementsByClassName('likes-counter');
                     if (counters.length == 0) return;
                     counters[0].innerHTML = parseInt(counters[0].innerHTML) + 1;
@@ -110,8 +119,9 @@
 
     }
 
+
     renderUsers();
-    refresh();
+
 
 
 
@@ -119,42 +129,31 @@
         if (nameText.value === "" && text.value === "") {
             return;
         } else {
-            const oldListComments = listComments.innerHTML;
-            listComments.innerHTML =
-                oldListComments +
-                `        <li class="comment">
-          <div class="comment-header">
-            <div class="name-user">${nameText.value.replaceAll("&", "&amp;")
+            allUsersAndComments.push({
+                name: nameText.value.replaceAll("&", "&amp;")
                     .replaceAll("<", "&lt;")
                     .replaceAll(">", "&gt;")
-                    .replaceAll('"', "&quot;")}</div>
-            <div>${currentDate.toLocaleDateString('ru-RU', option)}</div>
-          </div>
-          <div class="comment-body">
-            <div class="quote">${quoteText}</div>
-            <div class="comment-text">
-              ${text.value.replaceAll("&", "&amp;")
+                    .replaceAll('"', "&quot;"),
+                time: new Date().toLocaleDateString('ru-RU', option),
+                comment: text.value.replaceAll("&", "&amp;")
                     .replaceAll("<", "&lt;")
                     .replaceAll(">", "&gt;")
-                    .replaceAll('"', "&quot;")
-                }
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
-            refresh();
+                    .replaceAll('"', "&quot;"),
+                counter: 0,
+                quoteText: quoteText,
+            })
+
+            renderUsers();
             quoteText = "";
             nameText.value = "";
             text.value = "";
+
             textAreaText.placeholder = `Введите ваше сообщение`;
 
         }
     });
+
+
     function quotes() {
         const answersComments = document.getElementsByClassName('comment');
         for (const answerComment of answersComments) {
@@ -167,7 +166,6 @@
             })
         }
     };
-
 
 
 </script>
