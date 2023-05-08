@@ -5,7 +5,6 @@
     <meta charset="utf-8" />
     <link rel="stylesheet" href="styles.css" />
   </head>
-
   <body>
     <div class="container">
       <ul class="comments"></ul>
@@ -28,7 +27,6 @@
       </div>
     </div>
   </body>
-
   <script>
     "use strict";
     
@@ -44,7 +42,6 @@
         date: '12.02.22 12:18',
         text: 'Это будет первый комментарий на этой странице',
         isActive: false,
-        activateName: '',
         counter: 3
       },
       {
@@ -52,7 +49,6 @@
         date: '13.02.22 19:22',
         text: 'Мне нравится как оформлена эта страница! ❤',
         isActive: true,
-        activateName: '-active-like',
         counter: 75
       }
     ];
@@ -70,7 +66,7 @@
           <footer class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${el.counter}</span>
-              <button class="like-button ${el.activateName}" data-index="${i}"></button>  
+              <button class="like-button ${el.isActive ? '-active-like' : ''}" data-index="${i}"></button>  
             </div>
           </footer>
         </li>`;
@@ -126,7 +122,6 @@
           .replaceAll('END_QUOTE', '</div>'),
           isEdit: false,
           isActive: false,
-          activateName: '',
           counter: 0
         });
       }
@@ -151,10 +146,8 @@
 
           if (!comments[index].isActive) {
             comments[index].counter++;
-            comments[index].activateName = '-active-like';
           } else {
             comments[index].counter--;
-            comments[index].activateName = '';
           }
 
           comments[index].isActive = !comments[index].isActive;
