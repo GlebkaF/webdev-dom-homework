@@ -3,6 +3,7 @@ const getComments = () => {
       "https://webdev-hw-api.vercel.app/api/v1/ramal.bakirov/comments",
       {
         method: "GET",
+        
       }
     ).then((response) => {
       return response.json();

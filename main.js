@@ -1,39 +1,38 @@
-import { getCommentsEdit } from "./getComment.js";
-import { getComments} from "./api.js";
-import renderComments from "./renderCommet.js";
+import { getComments } from "./api.js";
+import renderContainer from "./renderContainer.js";
 import { postMethod } from "./api.js";
+const containerElement = document.getElementById('container');
+let comments = [];
+
+function getPromise() {
+  getComments().then((responseData) => {
+    const appComments = responseData.comments.map((comment) => {
+      return {
+        name: comment.author.name,
+        comDate: new Date(comment.date)
+          .toLocaleString("ru-RU", options)
+          .replace(",", ""),
+        comText: comment.text,
+        likes: comment.likes,
+        isLiked: false,
+        isEdit: false,
+      };
+    });
+    comments = appComments;
+    renderContainer(comments, containerElement);
+    initEditListeners();
+    initResponseCommentsListeners();
+    initSaveListener();
+    initEventListeners();
+  });
+}
+getPromise();
 const buttonElement = document.getElementById("add-button");
 const textElement = document.getElementById("add-text");
 const nameElement = document.getElementById("input-name");
 const listElement = document.getElementById("list-comments");
 const likeElements = document.querySelectorAll(".like-button");
 const editElements = document.querySelectorAll(".edit-comment");
-
-let comments = [];
-function getPromise() {
-getComments().then((responseData) => {
-  const appComments = responseData.comments.map((comment) => {
-    return {
-      name: comment.author.name,
-      comDate: new Date(comment.date)
-        .toLocaleString("ru-RU", options)
-        .replace(",", ""),
-      comText: comment.text,
-      likes: comment.likes,
-      isLiked: false,
-      isEdit: false,
-    };
-  });
-  comments = appComments;
-  renderComments(comments, listElement, getCommentsEdit);
-  initEditListeners();
-  initResponseCommentsListeners();
-  initSaveListener();
-  initEventListeners();
-});
-};
-getPromise();
-
 const initResponseCommentsListeners = () => {
   const responseComments = document.querySelectorAll(".comment");
 
@@ -60,7 +59,7 @@ const initEventListeners = () => {
         comments[index].isLiked = false;
       }
       event.stopPropagation();
-      renderComments(comments, listElement, getCommentsEdit);
+      renderContainer(comments, containerElement);
       initEditListeners();
       initResponseCommentsListeners();
       initSaveListener();
@@ -74,7 +73,7 @@ const initEditListeners = () => {
     editElement.addEventListener("click", (event) => {
       comments[index].isEdit = true;
       event.stopPropagation();
-      renderComments(comments, listElement, getCommentsEdit);
+      renderContainer(comments,  containerElement);
       initResponseCommentsListeners();
       initSaveListener();
       initEventListeners();
@@ -91,7 +90,7 @@ const initSaveListener = () => {
       comments[index].comText = editTextElement.value.replaceAll("<", "&gt");
       event.stopPropagation();
       comments[index].isEdit = false;
-      renderComments(comments, listElement, getCommentsEdit);
+      renderContainer(comments, containerElement);
       initEditListeners();
       initResponseCommentsListeners();
       initEventListeners();
@@ -110,7 +109,7 @@ const options = {
 };
 const forrmattedDate = date.toLocaleString("ru-RU", options).replace(",", "");
 
-const checkValidity = (event) => {
+const checkValidity = () => {
   const nameValue = nameElement.value;
   const textValue = textElement.value;
   if (nameValue !== "" && textValue !== "") {
@@ -120,21 +119,20 @@ const checkValidity = (event) => {
   }
 };
 
-renderComments(comments, listElement, getCommentsEdit);
+renderContainer(comments, containerElement);
 nameElement.addEventListener("input", checkValidity);
 textElement.addEventListener("input", checkValidity);
 
-function addComment() { 
+function addComment() {
   postMethod(nameElement.value, textElement.value)
     .then(() => {
-     getPromise();
-    
+      getPromise();
     })
     .then(() => {
-        buttonElement.textContent = "Написать";
-        nameElement.value = "";
-        textElement.value = "";
-        renderComments(comments, listElement, getCommentsEdit);
+      buttonElement.textContent = "Написать";
+      nameElement.value = "";
+      textElement.value = "";
+      renderContainer(comments);
     })
     .catch((error) => {
       if (error.message == "Сервер сломался") {
@@ -147,7 +145,7 @@ function addComment() {
         buttonElement.disabled = false;
       }
     });
-};
+}
 
 buttonElement.addEventListener("click", () => {
   textElement.classList.remove("error");
@@ -170,5 +168,5 @@ buttonElement.addEventListener("click", () => {
   }
 
   buttonElement.disabled = true;
-  renderComments(comments, listElement, getCommentsEdit);
+  renderContainer(comments,  containerElement);
 });
