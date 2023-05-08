@@ -95,6 +95,20 @@
   };
 
 
+  const replyToCommentListeners = () => {
+    const commentTextElements = document.querySelectorAll('.comment-text');
+    for (const commentText of commentTextElements) {
+      commentText.addEventListener('click', () => {
+        const index = commentText.dataset.index;
+        const comment = comments[index];
+        addComment.classList.add('reply-comment');
+        addComment.value = `> ${commentText.innerHTML.replaceAll('  ', '')}\n${comment.userName}, `;
+        renderComments();
+      });
+    }
+  }
+
+
   const renderComments = () => {
     const commentsHtml = comments
       .map((comment, index) => {
@@ -135,6 +149,7 @@
     listElem.innerHTML = commentsHtml;
     likeButtonsListeners();
     editButtonsListeners();
+    replyToCommentListeners();
   };
 
   renderComments();
@@ -173,11 +188,11 @@
 
       function escapeHtml(text) {
         return text
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("$", "&#36");
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("$", "&#36");
       };
 
 
