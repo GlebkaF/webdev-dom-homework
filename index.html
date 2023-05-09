@@ -84,9 +84,8 @@
       replyButtonElement.addEventListener('click', (e) => {
         e.stopPropagation();
         const index = replyButtonElement.dataset.index;
-        comments[index].isEdit ? '' : textInputElement.innerHTML = `> ${comments[index].text} 
-        ${comments[index].name}, 
-        `;
+        comments[index].isEdit ? '' : textInputElement.innerHTML = `QUOTE_BEGIN ${comments[index].text} 
+        ${comments[index].name} QUOTE_END`;
         renderComments();
       });
     };
@@ -177,7 +176,7 @@
         <div class="comment-body">
           ${comment.isEdit ? `<textarea type="textarea" class="add-form-text" rows="4"
         id="textInput">${comment.text}</textarea>` : `<div class="comment-text">
-            ${comment.text}
+            ${comment.text.replaceAll('QUOTE_BEGIN', "<div class='quote'>").replaceAll('QUOTE_END', '</div>')}
           </div>`}          
         </div>
         <div class="comment-footer">
