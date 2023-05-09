@@ -80,19 +80,21 @@
       comment: "Это будет первый комментарий на этой странице",
       time: "12.02.22 12:18",
       likes: 3,
+      isLiked: false,
     },
     {
       name: "Варвара Н.",
       comment: "Мне нравится как оформлена эта страница! ❤",
       time: "13.02.22 19:22",
       likes: 75,
+      isLiked: false,
     },
   ];
 
   // Рендер-функция 
 
   const renderUsersComments = () => {
-    const usersCommentsHTML = usersComments.map((usersComment) => {
+    const usersCommentsHTML = usersComments.map((usersComment, index) => {
       return `<ul id="list" class="comment">
         <div class="comment-header">
           <div>${usersComment.name}</div>
@@ -106,65 +108,64 @@
         <div class="comment-footer">
           <div class="likes">
             <span id="like-count" class="likes-counter">${usersComment.likes}</span>
-            <button id="like" class="like-button -active-like"></button>
+            <button id="like" data-index="${index}" class="like-button liked ${usersComment.isLiked ? '-active-like' : ''}"></button>
           </div>
         </div>
       </ul>`;
     }).join('');
 
     listElement.innerHTML = usersCommentsHTML;
+    toggleLike();
   };
-
   renderUsersComments();
 
+  // Плохая функция добавления лайка 
 
-  // Функция добавления лайка 
+  // function toggleLike(event) {
+  //   const likeHeart = event.target;
+  //   const likeCount = event.target.previousElementSibling;
+  //   let count = parseInt(likeCount.innerText);
+  //   let liked = likeHeart.classList.contains('liked');
+  //   if (liked) {
+  //     count--;
+  //     liked = false;
+  //     likeHeart.classList.remove('liked');
+  //   } else {
+  //     count++;
+  //     liked = true;
+  //     likeHeart.classList.add('liked');
+  //   }
+  //   likeCount.innerText = count;
+  // }
 
-  function toggleLike(event) {
-    const likeHeart = event.target;
-    const likeCount = event.target.previousElementSibling;
-    let count = parseInt(likeCount.innerText);
-    let liked = likeHeart.classList.contains('liked');
-    if (liked) {
-      count--;
-      liked = false;
-      likeHeart.classList.remove('liked');
-    } else {
-      count++;
-      liked = true;
-      likeHeart.classList.add('liked');
+  // listElement.addEventListener('click', function (event) {
+  //   if (event.target.matches('.like-button')) {
+  //     toggleLike(event);
+  //   }
+  // });
+
+  //Хорошая функция добавления лайка с использованием stopPropagation
+
+  function toggleLike() {
+
+    const likeButtons = document.querySelectorAll('.like-button');
+
+    for (const button of likeButtons) {
+      button.addEventListener('click', function (event) {
+        event.stopPropagation();
+        const index = button.dataset.index;
+        if (usersComments[index].isLiked) {
+          usersComments[index].likes--
+        } else {
+          usersComments[index].likes++
+        }
+
+        usersComments[index].isLiked = !usersComments[index].isLiked;
+        renderUsersComments();
+        addCommentReplyHandlers();
+      })
     }
-    likeCount.innerText = count;
-  }
-
-  listElement.addEventListener('click', function (event) {
-    if (event.target.matches('.like-button')) {
-      toggleLike(event);
-    }
-  });
-
-  //Обработчик клика на лайк с использованием stopPropagation
-
-  const likeButtons = document.querySelectorAll('.like-button');
-
-  for (const button of likeButtons) {
-    button.addEventListener('click', function (event) {
-      event.stopPropagation();
-      const likeCount = this.previousElementSibling;
-      let count = parseInt(likeCount.innerText);
-      let liked = this.classList.contains('liked');
-      if (liked) {
-        count--;
-        liked = false;
-        this.classList.remove('liked');
-      } else {
-        count++;
-        liked = true;
-        this.classList.add('liked');
-      }
-      likeCount.innerText = count;
-    });
-  }
+  };
 
   // Функция отключения кнопки "написать" при незаполненных input
 
@@ -182,19 +183,22 @@
     inputTextElement.addEventListener('input', togglePublishButton);
   }
 
-  // Цикл для ответа на комментарий
+  // Функция для ответа на комментарий
 
-  const commentElements = document.querySelectorAll(".comment");
+  function addCommentReplyHandlers() {
+    const commentElements = document.querySelectorAll(".comment");
 
-  for (const commentElement of commentElements) {
-    commentElement.addEventListener("click", (event) => {
-      const author = commentElement.querySelector(".comment-header div:first-child").textContent;
-      const text = commentElement.querySelector(".comment-text").textContent;
+    for (const commentElement of commentElements) {
+      commentElement.addEventListener("click", (event) => {
+        const author = commentElement.querySelector(".comment-header div:first-child").textContent;
+        const text = commentElement.querySelector(".comment-text").textContent;
 
-      inputTextElement.value = `>${text.trim()}\n@${author}, `;
-      inputTextElement.focus();
-    });
+        inputTextElement.value = `>${text.trim()}\n@${author}, `;
+        inputTextElement.focus();
+      });
+    }
   }
+  addCommentReplyHandlers();
 
   // Обработчик клика на кнопку "написать"
 
@@ -252,6 +256,7 @@
         .replaceAll('"', "&quot;"),
       time: formatDateTime(currentDate),
       likes: 0,
+      isLiked: false,
     });
 
     checkCommentFields();
