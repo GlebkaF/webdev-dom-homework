@@ -33,12 +33,11 @@
 
 <script>
   "use strict";
-  const buttonElement = document.getElementById('add-button');
-  const nameInputElement = document.getElementById('nameInput');
   const textInputElement = document.getElementById('textInput');
   const commentsListElement = document.getElementById('commentsList');
+  const buttonElement = document.getElementById('add-button');
+  const nameInputElement = document.getElementById('nameInput');
   const cancelButtonElement = document.getElementById('cancel-button');
-
 
   const comments = [
     {
@@ -78,10 +77,26 @@
     return day + '.' + month + '.' + year + ' ' + hour + ':' + minutes;
   };
 
+  const initReplyButtonListeners = () => {
+    const replyButtonElements = document.querySelectorAll('.comment');
+
+    for (const replyButtonElement of replyButtonElements) {
+      replyButtonElement.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const index = replyButtonElement.dataset.index;
+        comments[index].isEdit ? '' : textInputElement.innerHTML = `> ${comments[index].text} 
+        ${comments[index].name}, 
+        `;
+        renderComments();
+      });
+    };
+  };
+
   const initEditButtonListeners = () => {
     const editButtonElements = document.querySelectorAll('.edit-button');
     for (const editButtonElement of editButtonElements) {
-      editButtonElement.addEventListener('click', () => {
+      editButtonElement.addEventListener('click', (e) => {
+        e.stopPropagation();
         const index = editButtonElement.dataset.index;
 
         if (comments[index].isEdit === false) {
@@ -98,7 +113,8 @@
   const initLikeButtonListeners = () => {
     const likeButtonElements = document.querySelectorAll('.like-button');
     for (const likeButtonElement of likeButtonElements) {
-      likeButtonElement.addEventListener('click', () => {
+      likeButtonElement.addEventListener('click', (e) => {
+        e.stopPropagation();
         const index = likeButtonElement.dataset.index;
 
         if (comments[index].isLiked === false) {
@@ -115,12 +131,45 @@
     };
   };
 
+  const initDisabledButton = () => {
+    buttonElement.disabled = true;
+    buttonElement.classList.add('disabledButton');
+    buttonElement.classList.remove('add-form-button:hover');
+
+    nameInputElement.addEventListener('input', () => {
+      buttonElement.disabled = false;
+      buttonElement.classList.remove('disabledButton');
+      if (nameInputElement.value === '' || textInputElement.value === '') {
+        buttonElement.disabled = true;
+        buttonElement.classList.add('disabledButton');
+      }
+      return;
+    });
+
+    textInputElement.addEventListener('input', () => {
+      buttonElement.disabled = false;
+      buttonElement.classList.remove('disabledButton');
+      if (nameInputElement.value === '' || textInputElement.value === '') {
+        buttonElement.disabled = true;
+        buttonElement.classList.add('disabledButton');
+      }
+      return;
+    });
+
+    textInputElement.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        buttonElement.click();
+      }
+    });
+  };
+
 
 
   const renderComments = () => {
     const commentsHtml = comments
       .map((comment, index) => {
-        return `<li class="comment">
+        return `<li class="comment" data-index='${index}'>
         <div class="comment-header">
           <div>${comment.name}</div>
           <div>${comment.date}</div>
@@ -144,45 +193,27 @@
       })
       .join('');
     commentsListElement.innerHTML = commentsHtml;
+
+    initReplyButtonListeners();
     initLikeButtonListeners();
     initEditButtonListeners();
+    initDisabledButton();
   };
   renderComments();
 
-
-  
-
-
-
-  buttonElement.disabled = true;
-  buttonElement.classList.add('disabledButton');
-  buttonElement.classList.remove('add-form-button:hover');
-
-  nameInputElement.addEventListener('input', () => {
-    buttonElement.disabled = false;
-    buttonElement.classList.remove('disabledButton');
-    if (nameInputElement.value === '' || textInputElement.value === '') {
-      buttonElement.disabled = true;
-      buttonElement.classList.add('disabledButton');
-    }
-    return;
-  });
-
-  textInputElement.addEventListener('input', () => {
-    buttonElement.disabled = false;
-    buttonElement.classList.remove('disabledButton');
-    if (nameInputElement.value === '' || textInputElement.value === '') {
-      buttonElement.disabled = true;
-      buttonElement.classList.add('disabledButton');
-    }
-    return;
-  });
-
   buttonElement.addEventListener('click', () => {
     comments.push({
-      name: nameInputElement.value,
+      name: nameInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       date: getDate(),
-      text: textInputElement.value,
+      text: textInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       likes: 0,
       isLiked: false,
       isEdit: false
@@ -192,16 +223,9 @@
     textInputElement.value = '';
   });
 
-  textInputElement.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      buttonElement.click();
-    }
-  });
-
   cancelButtonElement.addEventListener('click', () => {
-    let str = commentsListElement.innerHTML.lastIndexOf('<li class="comment">');
-    commentsListElement.innerHTML = commentsListElement.innerHTML.slice(0, str);
+    comments.splice(-1, 1);
+    renderComments();
   });
 
 </script>
