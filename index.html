@@ -25,91 +25,42 @@
     </div>
   </div>
 </body>
-<style>
-  .error {
-    background-color: rgb(235, 170, 170);
-  }
-
-  .button-no-active {
-    background-color: #d1d0d0;
-  }
-</style>
 
 <script>
-  "use strict";
-  const buttonElement = document.getElementById("add-form-button");
-  const commentsElement = document.getElementById("comments");
-  const nameInputElement = document.getElementById("add-form-name");
-  const textAreaElement = document.getElementById("add-form-text");
+  'use strict';
+  const buttonElement = document.getElementById('add-form-button');
+  const commentsElement = document.getElementById('comments');
+  const nameInputElement = document.getElementById('add-form-name');
+  const textAreaElement = document.getElementById('add-form-text');
 
   const comments = [
     {
-      author: "Глеб Фокин",
-      date: "12.02.22 12:18",
-      text: "Это будет первый комментарий на этой странице",
+      author: 'Глеб Фокин',
+      date: '12.02.22 12:18',
+      text: 'Это будет первый комментарий на этой странице',
       likes: 3,
       isLiked: false,
       isEdit: false
     },
     {
-      author: "Варвара Н.",
-      date: "13.02.22 19:22",
-      text: "Мне нравится как оформлена эта страница! ❤",
+      author: 'Варвара Н.',
+      date: '13.02.22 19:22',
+      text: 'Мне нравится как оформлена эта страница! ❤',
       likes: 75,
-      isLiked: true,
+      isLiked: false,
       isEdit: false
     }
   ];
 
-  function fullDate(date) {
-
-    let dd = date.getDate();
-    if (dd < 10) dd = '0' + dd;
-
-    let mm = date.getMonth() + 1;
-    if (mm < 10) mm = '0' + mm;
-
-    let yy = date.getFullYear() % 100;
-    if (yy < 10) yy = '0' + yy;
-
-    let hh = date.getHours();
-    if (hh < 10) hh = '0' + hh;
-
-    let min = date.getMinutes();
-    if (min < 10) min = '0' + min;
-
-    return dd + '.' + mm + '.' + yy + ' ' + hh + ':' + min;
-  };
-
-  const addComment = () => {
-    let nowDate = new Date();
-
-    comments.push({
-      author: nameInputElement.value,
-      date: `${fullDate(nowDate)}`,
-      text: textAreaElement.value,
-      likes: 0,
-      isLiked: false,
-      isEdit: false
-    })
-  };
-
-
   const initCountLikesListeners = () => {
-    const countLikesElements = document.querySelectorAll(".like-button");
+    const countLikesElements = document.querySelectorAll('.like-button');
 
     for (const countLikesElement of countLikesElements) {
-      countLikesElement.addEventListener("click", () => {
+      countLikesElement.addEventListener('click', () => {
         const index = countLikesElement.dataset.index;
         const comment = comments[index];
 
-
-        if (comment.isLiked === false) {
-          comment.likes = comment.likes - 1;
-        }
-        if (comment.isLiked === true) {
-          comment.likes = comment.likes + 1;;
-        }
+        comment.likes = comment.isLiked ? comment.likes - 1 : comment.likes + 1;
         comment.isLiked = !comment.isLiked;
 
         renderComments();
@@ -117,23 +68,23 @@
     }
   };
 
-  // Дополнительное задание DOM-2
+  // Дополнительное задание DOM-2 - работа кнопок "Редактировать комментарий"
 
   const initEditCommentListeners = () => {
-    const editCommentElements = document.querySelectorAll(".edit-comment");
+    const editCommentElements = document.querySelectorAll('.edit-comment');
 
     for (const editCommentElement of editCommentElements) {
-      editCommentElement.addEventListener("click", () => {
+      editCommentElement.addEventListener('click', () => {
         const index = editCommentElement.dataset.index;
         const comment = comments[index];
+        const textArea = document.querySelectorAll('.comment-text');
 
-        if (comment.isEdit === false) {
-          comment.text = `<textarea type="textarea" class="add-form-text" rows="4">${comment.text}</textarea>`;
+        if (comment.isEdit && textArea) {
+          comment.text = textArea[index].value;
         }
-        if (comment.isEdit === true) {
-          comment.text;
-        }
+
         comment.isEdit = !comment.isEdit;
+        comments[index].isEdit = comment.isEdit;
 
         renderComments();
       });
@@ -145,57 +96,95 @@
       map((comment, index) => {
         return `<li class="comment" data-index="${index}">
         <div class="comment-header">
-          <div>${comment.author}</div>
-          <div>${comment.date} </div>
+          <div>
+            ${comment.author}
+          </div>
+          <div>
+            ${comment.date}
+          </div>
         </div>
         <div class="comment-body">
-          <div class="comment-text">
-            ${comment.text}
-          </div>
+            ${comment.isEdit
+            ? `<textarea type="textarea" data-index=${index} class="comment-text" rows="4">${comment.text}</textarea>`
+            : `<div class="comment-text" data-index="${index}">
+              ${comment.text}
+            </div>`
+          }
         </div>
         <div class="comment-footer">
+          <div>
+            <button data-index="${index}" class="add-form-button edit-comment">
+              ${comment.isEdit ? 'Сохранить' : 'Редактировать'}
+            </button>
+          </div>
           <div class="likes">
             <span class="likes-counter">${comment.likes}</span>
-            <button data-index="${index}" class="like-button ${comment.isLiked ? '-active-like' : ''}"></button>
+            <button data-index="${index}" class="like-button ${comment.isLiked ? '-active-like' : ''}">
+            </button>
           </div>
         </div>
-        <button class ="edit-comment" data-index="${index}" class="add-form-button" >${comment.isEdit ? 'Сохранить' : 'Редактировать'}</button>
       </li>`;
       })
-      .join("");
+      .join('');
 
     commentsElement.innerHTML = commentsHtml;
     initCountLikesListeners();
     initEditCommentListeners();
-    onblur();
   };
+
   renderComments();
 
-  buttonElement.addEventListener("click", () => {
+  const addComment = () => {
 
-    nameInputElement.classList.remove("error");
-    if (nameInputElement.value === "") {
-      nameInputElement.classList.add("error");
-      return;
-    }
+    let userDate = new Date();
 
-    textAreaElement.classList.remove("error");
-    if (textAreaElement.value === "") {
-      textAreaElement.classList.add("error");
-      return;
+    let date = userDate.getDate();
+    if (date < 10) date = '0' + date;
+
+    let month = userDate.getMonth() + 1;
+    if (month < 10) month = '0' + month;
+
+    let year = userDate.getFullYear() % 100;
+    if (year < 10) year = '0' + year;
+
+    let hours = userDate.getHours();
+    if (hours < 10) hours = '0' + hours;
+
+    let minutes = userDate.getMinutes();
+    if (minutes < 10) minutes = '0' + minutes;
+
+    let nowDate = `${date}.${month}.${year} ${hours}:${minutes}`;
+
+    comments.push({
+      author: nameInputElement.value,
+      date: nowDate,
+      text: textAreaElement.value,
+      likes: 0,
+      isLiked: false,
+      isEdit: false
+    });
+  };
+
+  buttonElement.addEventListener('click', () => {
+
+    nameInputElement.classList.remove('error');
+    textAreaElement.classList.remove('error');
+
+    if (nameInputElement.value.trim() === '') {
+      return nameInputElement.classList.add('error');
+    } else if (textAreaElement.value.trim() === '') {
+      return textAreaElement.classList.add('error');
     }
 
     addComment();
     renderComments();
 
-    nameInputElement.value = "";
-    textAreaElement.value = "";
+    nameInputElement.value = '';
+    textAreaElement.value = '';
 
   });
 
-  // Дополнительные задания DOM -1
-
-  // Расширенная валидация
+  // Выключение кнопки при пустом поле ввода
 
   function onblur(e) {
     if (nameInputElement.value === '' || textAreaElement.value === '') {
@@ -212,24 +201,26 @@
 
   // Добавление элемента в список по нажатию Enter
 
-  document.addEventListener("keyup", function (event) {
-    let nowDate = new Date();
+  const formElement = document.getElementById('form');
+
+  formElement.addEventListener('keyup', function (event) {
 
     if (event.keyCode === 13) {
       addComment();
-      nameInputElement.value = "";
-      textAreaElement.value = "";
+      nameInputElement.value = '';
+      textAreaElement.value = '';
     }
+
     renderComments();
   });
 
 
   // Удаление последнего элемента
 
-  const buttonDelElement = document.getElementById("button-del");
+  const buttonDelElement = document.getElementById('button-del');
 
   buttonDelElement.addEventListener('click', () => {
-    const commentsElements = document.querySelectorAll("li");
+    const commentsElements = document.querySelectorAll('li');
     const index = commentsElement.dataset.index;
     const comment = comments[index];
     comments.pop();
