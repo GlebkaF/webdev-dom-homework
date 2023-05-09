@@ -36,66 +36,48 @@
       background-color: gray;
       color: black;
     }
+    .form-error {
+      background-color: rgb(248, 204, 204);
+      opacity: 0.9;
+    }
+    .quote {
+      margin-bottom: 32px;
+      padding: 15px 20px;
+      white-space: pre-line;
+      background: #d5d2d2;
+      font-size: 16px;
+      color: #000000;
+      border-radius: 5px;
+  }
   </style>
   <script>
     "use strict";
     
-
     const addButton = document.getElementById('add-button');
     const nameInputElement = document.getElementById('name-input');
     const textInputElement = document.getElementById('text-input');
     const listElement = document.getElementById('list');
     
-    const fullDate = new Date();
-    let time = fullDate.toTimeString().slice(0, 5);
-    let day = fullDate.getDate();
-    let month = ((fullDate.getMonth() + 1) < 10) ? '0' + (fullDate.getMonth() + 1) : (fullDate.getMonth() + 1);
-    let year = Number(String(fullDate.getFullYear()).substring(2));
-    let actualDate = day + '.' + month + '.' + year + ' ' + time;
-    
+
     const comments = [{
       name: 'Глеб Фокин',
-      text: 'Это будет первый комментарий на этой странице',
+      text: 'Это будет первый коментарий на этой странице',
       date: '12.02.22 12:18',
-      likeQuantity: 3,
-      likeCondition: 'like-button',
+      activeClass: '',
+      counter: 3,
     },
     {
       name: 'Варвара Н.',
       text: 'Мне нравится как оформлена эта страница! ❤',
       date: '13.02.22 19:22',
-      likeQuantity: 75,
-      likeCondition: 'like-button -active-like',
-    },
-  ];
-  
-  const initLikesButtonsListeners = () => {
-  const likeButtonsElements = document.querySelectorAll('.like-button');
+      activeClass: 'like-button -active-like',
+      counter: 75,
+    }];
 
-  for (const likeButtonElement of likeButtonsElements) {
-    likeButtonElement.addEventListener('click', () => {
 
-      const index = likeButtonElement.dataset.index;
-      let likeCounter = comments[index].likeQuantity;
-      
-        if (comments[index].likeCondition === 'like-button -active-like') {
-          likeCounter -= 1;
-          comments[index].likeCondition = 'like-button'
-        } else {
-          likeCounter += 1;
-          comments[index].likeCondition = 'like-button -active-like';
-        };
-        comments[index].likeQuantity = likeCounter;
-        renderComments(); 
-      });
-    };
-  };
-
-initLikesButtonsListeners();
-
-const renderComments = () => {
+   const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
-      return `<li class="comment">
+      return `<li data-index=${index} class="comment">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.date}</div>
@@ -107,44 +89,119 @@ const renderComments = () => {
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">${comment.likeQuantity}</span>
-              <button data-index="${index}" data-likequantity="${comment.likeQuantity}" class="${comment.likeCondition}"></button>
+              <span class="likes-counter">${comment.counter}</span>
+              <button data-index="${index}" class="like-button ${comment.activeClass}"></button>
             </div>
           </div>
         </li>`;
     }).join('');
-    
+
     listElement.innerHTML = commentsHtml;
     
-    nameInputElement.value = '';
-    textInputElement.value = '';
-    
-    initLikesButtonsListeners();
+    likeComment()
+    newReply()
   };
 
-  renderComments();
-
   
-  addButton.addEventListener('click', () => {
-        const oldListHtml = listElement.innerHTML;
+  const getTime = () => {
+    let date = new Date ();
+    let time = date.toTimeString().slice(0, 5);
+    let day = (date.getDate() < 10) ? '0' + date.getDate() : date.getDate();
+    let month = ((date.getMonth() + 1) < 10) ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
+    let year = Number(String(date.getFullYear()).substring(2));
+    let actualDate = day + '.' + month + '.' + year + ' ' + time;
+    return actualDate;
+  };
 
-      if (nameInputElement.value === '' || textInputElement.value === '') {
-          alert('Пожалуйста, заполните формы корректно')
-          return
-      };
 
-      comments.push({
-        name: nameInputElement.value,
-        text: textInputElement.value,
-        date: actualDate,
-        likeQuantity: 0,
-        likeCondition: 'like-button',
+  const addComment = () => {
+      
+      if (nameInputElement.value === '') {
+        nameInputElement.classList.add('form-error');
+        return
+      } else if (textInputElement.value === '') {
+        textInputElement.classList.add('form-error')
+        return
+      } else {
+        comments.push({
+          name: replaceValue(nameInputElement.value),
+          text: replaceValue(textInputElement.value).replaceAll('QUOTE_BEGIN', '<div class="quote">').replaceAll('QUOTE_END', '</div>'),
+          date: getTime(),
+          activeClass: '',
+          counter: 0,
+        });
+      }
+    renderComments();
+
+    textInputElement.value = '';
+    nameInputElement.value = '';
+    textInputElement.classList.remove('form-error');
+    nameInputElement.classList.remove('form-error');
+    
+  };
+
+
+  const likeComment = () => {
+    const likeButtons = document.querySelectorAll('.like-button');
+      
+    for (const likeButton of likeButtons) {
+      likeButton.addEventListener('click', (event) => {
+        
+        event.stopPropagation();
+
+        let index = likeButton.dataset.index;
+        let counter = comments[index].counter;
+        
+        if (comments[index].activeClass === 'like-button -active-like') {
+          counter -= 1;
+          comments[index].activeClass = 'like-button';
+        } else {
+          counter += 1;
+          comments[index].activeClass = 'like-button -active-like';
+        }
+        comments[index].counter = counter;
+        renderComments()
       });
-      
-      renderComments();
-      
-  });
+    };
+  };
   
+
+  const newReply = () => {
+    const commentElements = document.querySelectorAll('.comment');
+
+    for (const commentElement of commentElements) {
+      commentElement.addEventListener('click', () => {
+        
+        let index = commentElement.dataset.index;
+
+        textInputElement.value = `QUOTE_BEGIN${comments[index].name} : ${comments[index].text.replaceAll('<div class="quote">', '').replaceAll('</div>', '')}QUOTE_END`;
+      });
+    };
+  };
+
+  const replaceValue = (value) => {
+    return value
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;");
+  };
+
+  renderComments()
+
+  addButton.addEventListener('click', addComment);
+
+  textInputElement.addEventListener('keyup', event => {
+    if (event.key === 'Enter') {
+      addComment();
+    }
+  });
+
+  nameInputElement.addEventListener('keyup', event => {
+    if (event.key === 'Enter') {
+      addComment();
+    }
+  });
   console.log("It works!");
   </script>
 </html>
