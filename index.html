@@ -58,7 +58,7 @@
 
 
     const renderUsers = () => {
-        const usersHtml = allUsersAndComments.map((user) => {
+        const usersHtml = allUsersAndComments.map((user, index) => {
             return `<li class="comment">
     <div class="comment-header">
       <div class="name-user">${user.name}</div>
@@ -73,7 +73,7 @@
     <div class="comment-footer">
       <div class="likes">
         <span class="likes-counter">${user.counter}</span>
-        <button class="like-button"></button>
+        <button class="like-button" data-index=${index}></button>
       </div>
     </div>
   </li>`;
@@ -81,39 +81,34 @@
             .join("")
         listComments.innerHTML = usersHtml;
         refresh();
+
     };
 
 
 
     function refresh() {
+
         const likesUp = document.querySelectorAll(".like-button");
         for (const likeUp of likesUp) {
             likeUp.addEventListener('click', (event) => {
-
+                event.stopPropagation();
+                let found = allUsersAndComments[likeUp.dataset.index];
                 if (likeUp.classList.contains("-active-like") === true) {
-                    event.stopPropagation();
                     likeUp.classList.remove('-active-like')
-                    let findObj = likeUp.parentNode.parentNode.parentNode.getElementsByClassName('name-user');
-                    // МОЖНО ИЗМЕНИТЬ ПРОВЕРКУ ПО ВРЕМЕНИ, ЧТО ПОЧТИ ИСКЛЮЧИТ ВОЗМОЖНОСТЬ СОВПАДЕНИЯ. НО ВАРИАНТ ВСЕ РАВНО ТОПОРНЫЙ.
-                    let valueName = findObj[0].innerHTML;
-                    let found = allUsersAndComments.find(e => e.name == valueName);
                     found.counter = parseInt(found.counter) - 1;
                     const counters = likeUp.parentNode.getElementsByClassName('likes-counter');
                     if (counters.length == 0) return;
                     counters[0].innerHTML = parseInt(counters[0].innerHTML) - 1;
                 } else {
-                    event.stopPropagation();
-                    likeUp.classList.add('-active-like');
-                    let findObj = likeUp.parentNode.parentNode.parentNode.getElementsByClassName('name-user');
-                    let valueName = findObj[0].innerHTML;
-                    let found = allUsersAndComments.find(e => e.name == valueName);
                     found.counter = parseInt(found.counter) + 1;
+                    likeUp.classList.add('-active-like');
                     const counters = likeUp.parentNode.getElementsByClassName('likes-counter');
                     if (counters.length == 0) return;
                     counters[0].innerHTML = parseInt(counters[0].innerHTML) + 1;
+                };
 
-                }
             });
+
         };
         quotes();
 
