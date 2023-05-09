@@ -62,10 +62,57 @@
       </div>
     </div>
   </body>
-
+  <style>
+    .error {
+      background-color: red;
+    }
+  </style>
   <script>
     "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const buttonElement = document.getElementById("button")
+    const listElement = document.getElementById("list");
+    const nameInputElement = document.getElementById("name-input");
+    const commentInputElement = document.getElementById("comment-input");
+    let date = new Date();
+    let month = (date.getMonth() + 1).toString().padStart(2, '0');
+    let day = date.getDate().toString().padStart(2, '0');
+    let year = date.getFullYear().toString();
+    let hours = date.getHours().toString().padStart(2, '0');
+    let minutes = date.getMinutes().toString().padStart(2, '0');
+    let myDate = `${day}.${month}.${year} ${hours}:${minutes}`;
+    let likes = 0;
+
+    buttonElement.addEventListener("click", () => {
+      nameInputElement.classList.remove("error");
+      if (nameInputElement.value === "") {
+        nameInputElement.classList.add("error");
+        return;
+      }
+      commentInputElement.classList.remove("error");
+      if (commentInputElement.value === "") {
+        commentInputElement.classList.add("error");
+        return;
+      }
+      const oldListHtml = listElement.innerHTML;
+      listElement.innerHTML =
+        oldListHtml +
+        `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${myDate} </div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${commentInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${likes}</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+    });
   </script>
 </html>
