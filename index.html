@@ -64,6 +64,7 @@
     const nameInputElement = document.getElementById("name-input");
     const commentInputElement = document.getElementById("comment-input");
     const deleteButtonElement = document.getElementById("delete-button");
+    // const answer = messages [1].name.value; 
     const messages = [
       {
         name: "Глеб Фокин",
@@ -86,7 +87,8 @@
     const initLikeButtonsListeners = () => {
       const likeButtonsElements = document.querySelectorAll(".like-button");
       for (const likeButtonElement of likeButtonsElements) {
-        likeButtonElement.addEventListener("click", () => {
+        likeButtonElement.addEventListener("click", (event) => {
+          event.stopPropagation();
           const index = likeButtonElement.dataset.index;
           messages[index].liked = !messages[index].liked;
           if (messages[index].liked) {
@@ -105,29 +107,55 @@
       const correctButtonsElements = document.querySelectorAll(".correct-button");
       const correctedComments = document.querySelector('.comment-correction');
       for (const correctButtonElement of correctButtonsElements) {
-        correctButtonElement.addEventListener('click', () => {
+        correctButtonElement.addEventListener('click', (event) => {
+          event.stopPropagation();
           const index = correctButtonElement.dataset.index;
           if (messages[index].isEdit) {
-            messages[index].comment = correctedComments.value;
+            messages[index].comment = correctedComments.value
+              .replaceAll("&", "&amp;")
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;")
+              .replaceAll('"', "&quot;");
             messages[index].isEdit = !messages[index].isEdit;
           }
           else {
             messages[index].isEdit = !messages[index].isEdit;
           };
           renderMessages();
-          console.log(correctedComment);
-
         });
       };
     };
+    const initAnswersListeners = () => {
+      const answersElements = document.querySelectorAll(".comment-text");
+      for (const answerElement of answersElements) {
+        answerElement.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const index = answerElement.dataset.index;
+          // console.log(answersElements);
+          const quote = (answerElement.hasChildren == true)? answerElement.replaceChildren() : answerElement;
+          commentInputElement.value = `QUOTE_BEGIN ${messages[index].name}: \n ${quote.innerHTML}, QUOTE_END \n`;
+          renderMessages();
+        });
+      };
+    };
+    // const initQuoteListeners = () => {
+    //   const quoteElements = document.querySelectorAll(".quote");
+    //   for (const quoteElement of quoteElements) {
+    //     quoteElement.addEventListener("click", (event) => {
+    //       event.stopPropagation();
+    //       // return
+    //     });
+    //   };
+    // };
+
 
     const renderMessages = () => {
       const messagesHtml = messages.map((message, index) => {
         let like = (message.liked) ? 'like-button -active-like' : 'like-button';
-        let edit = (message.isEdit) ? `<textarea type="textarea" class="comment-correction"rows="4">${message.comment}</textarea>` : `<div class="comment-text">${message.comment}</div>`;
+        let edit = (message.isEdit) ? `<textarea type="textarea" class="comment-correction"rows="4">${message.comment}</textarea>` : `<div class="comment-text" data-index="${index}">${message.comment.replaceAll("QUOTE_BEGIN", "<div class='quote'>").replaceAll("QUOTE_END", "</div>").replaceAll("\n", "<br>")}</div>`;
         let correctBtn = (message.isEdit) ? `<button data-index="${index}" class="correct-button save-button">Сохранить</button>` : `<button data-index="${index}" class="correct-button">Редактировать</button>`;
         return `<li class="comment">
-      <div class="comment-header">
+      <div class="comment-header" >
         <div>${message.name}</div>
         <div>${message.time}</div>
       </div>
@@ -146,6 +174,8 @@
       listElement.innerHTML = messagesHtml;
       initLikeButtonsListeners();
       initCorrectButtonsListeners();
+      initAnswersListeners();
+      // initQuoteListeners();
 
     }
     renderMessages();
@@ -153,6 +183,7 @@
     buttonElement.addEventListener("click", addComments);
 
     function addComments() {
+      event.stopPropagation();
       nameInputElement.classList.remove("input-error");
       commentInputElement.classList.remove("input-error");
       if (nameInputElement.value.trim() === "") {
@@ -165,9 +196,17 @@
       }
 
       messages.push({
-        name: nameInputElement.value,
+        name: nameInputElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
         time: getCurrentDate(new Date()),
-        comment: commentInputElement.value,
+        comment: commentInputElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
         likesCount: 0,
         liked: false,
         isEdit: false,
@@ -183,16 +222,19 @@
     const inputElements = document.querySelectorAll(".add-form");
     for (const inputElement of inputElements) {
       inputElement.addEventListener('keyup', () => {
+        event.stopPropagation();
         if (event.code === 'Enter') {
           addComments();
         };
       });
       inputElement.addEventListener('input', () => {
+        event.stopPropagation();
         buttonElement.removeAttribute('disabled', '');
       }
       )
     };
     deleteButtonElement.addEventListener('click', () => {
+      event.stopPropagation();
       messages.pop();
       deleteButtonElement.classList.remove('delete-active');
       renderMessages();
