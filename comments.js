@@ -2,8 +2,14 @@ const buttonElement = document.getElementById('add-button');
     const listElement = document.getElementById('list'); 
     const nameElement = document.getElementById('name');
     const commentsElement = document.getElementById('comments');
-    const commentsListElement = document.getElementById('comments-list')
+    const commentsListElement = document.getElementById('comments-list');
+    const addingAComment = document.getElementById('adding');
+    const commentsLoader = document.getElementById('loader');
+
     let commentList = []
+
+    commentsLoader.className = "_hidden";
+   
 
     const getComments = () => {
     const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/valeriy-poletaev/comments",
@@ -15,8 +21,10 @@ const buttonElement = document.getElementById('add-button');
         const jsonPromise = response.json();
 
       jsonPromise.then((responseData) => {
+        addingAComment.className = "add-form";
+        commentsLoader.className = "_hidden";
         console.log(responseData);
-        commentList = responseData.comments.map((comment) => {
+          commentList = responseData.comments.map((comment) => {
           let activeClass = ""
           if(comment.isLiked === true){
             activeClass = "-active-like"
@@ -54,7 +62,7 @@ const buttonElement = document.getElementById('add-button');
           getComments();
         });
     };
-    
+
 const renderCommentList = () => {
 const commentHtml = commentList.map((comment, index) => {
 return `<li class="comment data-comment-content="${index}">
@@ -80,8 +88,6 @@ return `<li class="comment data-comment-content="${index}">
   addLikeButton();
 }
 
-renderCommentList();
-
 
 
 const getDate = (startDate) => {
@@ -106,8 +112,12 @@ const getDate = (startDate) => {
         alert("Пожалуйста введите коментарий!");
         return;
       };
+      addingAComment.className = "_hidden";
+      commentsLoader.className = "comments";
+
       postComment();
     });
+
 
     function addLikeButton(){
       const likeButtonElement = document.querySelectorAll('.like-button');

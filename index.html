@@ -7,9 +7,11 @@
 
   <body>
     <div class="container" id="comments-list">
-      <ul class="comments" id="list"></ul>
+      <ul class="comments" id="list">
+        Подождите. Комментарии добавляются...
+      </ul>
       
-      <div class="add-form">
+      <div class="add-form" id="adding">
         <input
           type="text"
           class="add-form-name"
@@ -27,10 +29,10 @@
           <button class="add-form-button" id="add-button">Написать</button>
         </div> 
       </div>
+      <div id="loader">Комментарий добавляются...</div>
     </div>
+    <script src="./comments.js">
+    </script>
   </body>
 
-  <script src="./comments.js">
-    
-</script>
 </html>
