@@ -69,7 +69,6 @@
     };
   }
 
-
   const editButtonsListeners = () => {
     const editButtonElements = document.querySelectorAll('.edit-button');
     const commentTextElements = document.querySelectorAll('.comment-text');
@@ -94,7 +93,6 @@
     }
   };
 
-
   const replyToCommentListeners = () => {
     const commentTextElements = document.querySelectorAll('.comment');
     for (const commentText of commentTextElements) {
@@ -109,7 +107,7 @@
     }
   }
 
-
+  
   const renderComments = () => {
     const commentsHtml = comments
       .map((comment, index) => {
@@ -154,7 +152,6 @@
   };
 
   renderComments();
-
 
   const addNewComment = () => {
     commentBtn.addEventListener("click", () => {
