@@ -46,7 +46,7 @@
       date: '12.02.22 12:18',
       text: 'Это будет первый комментарий на этой странице',
       likes: 3,
-      isLiked: 'no',
+      isLiked: false,
       isEdit: false
     },
     {
@@ -54,7 +54,7 @@
       date: '13.02.22 19:22',
       text: 'Мне нравится как оформлена эта страница! ❤',
       likes: 75,
-      isLiked: 'no',
+      isLiked: false,
       isEdit: false
     }
   ];
@@ -78,28 +78,22 @@
     return day + '.' + month + '.' + year + ' ' + hour + ':' + minutes;
   };
 
-  // const initEditButtonListeners = () => {
-  //   const editButtonElements = document.querySelectorAll('.edit-button');
-  //   for (const editButtonElement of editButtonElements) {
-  //     editButtonElement.addEventListener('click', () => {
-  //       const index = editButtonElement.dataset.index;
+  const initEditButtonListeners = () => {
+    const editButtonElements = document.querySelectorAll('.edit-button');
+    for (const editButtonElement of editButtonElements) {
+      editButtonElement.addEventListener('click', () => {
+        const index = editButtonElement.dataset.index;
 
-  //       if (comments[index].isEdit === false) {
-  //         comments[index].isEdit = true;
-  //       }
-  //       else {
-  //         comments[index].isEdit = false;
-  //       }
-  //       renderComments();
-  //     });
-  //   };
-  //   for (const editButtonElement of editButtonElements) {
-  //     const index = editButtonElement.dataset.index;
-  //     if (comments[index].isEdit === true) {
-
-  //     }
-  //   }
-  // }
+        if (comments[index].isEdit === false) {
+          comments[index].isEdit = true;
+        }
+        else {
+          comments[index].isEdit = false;
+        }
+        renderComments();
+      });
+    };
+  };
 
   const initLikeButtonListeners = () => {
     const likeButtonElements = document.querySelectorAll('.like-button');
@@ -107,26 +101,17 @@
       likeButtonElement.addEventListener('click', () => {
         const index = likeButtonElement.dataset.index;
 
-        if (comments[index].isLiked === 'no') {
-          comments[index].likes = ++comments[index].likes;
-          comments[index].isLiked = 'yes';
+        if (comments[index].isLiked === false) {
+          comments[index].likes++;
+          comments[index].isLiked = true;
         }
 
         else {
           comments[index].likes = --comments[index].likes;
-          comments[index].isLiked = 'no';
+          comments[index].isLiked = false;
         }
         renderComments();
       });
-    };
-    for (const likeButtonElement of likeButtonElements) {
-      const index = likeButtonElement.dataset.index;
-      if (comments[index].isLiked === 'yes') {
-        likeButtonElement.classList.add('-active-like');
-      }
-      else {
-        likeButtonElement.classList.remove('-active-like');
-      }
     };
   };
 
@@ -141,17 +126,18 @@
           <div>${comment.date}</div>
         </div>
         <div class="comment-body">
-          <div class="comment-text">
+          ${comment.isEdit ? `<textarea type="textarea" class="add-form-text" rows="4"
+        id="textInput">${comment.text}</textarea>` : `<div class="comment-text">
             ${comment.text}
-          </div>
+          </div>`}          
         </div>
         <div class="comment-footer">
           <div class="edit">
-            <button data-index='${index}' class="edit-button">Edit</button>
+            <button data-index='${index}' class="edit-button">${comment.isEdit ? 'Save' : 'Edit'}</button>
           </div>
           <div class="likes">
             <span class="likes-counter">${comment.likes}</span>
-            <button data-index='${index}' class="like-button"></button>
+            <button data-index='${index}' class="like-button ${comment.isLiked ? '-active-like' : ''}"></button>
           </div>
         </div>  
       </li>`;
@@ -159,11 +145,12 @@
       .join('');
     commentsListElement.innerHTML = commentsHtml;
     initLikeButtonListeners();
+    initEditButtonListeners();
   };
   renderComments();
 
 
-
+  
 
 
 
@@ -197,7 +184,7 @@
       date: getDate(),
       text: textInputElement.value,
       likes: 0,
-      isLiked: 'no',
+      isLiked: false,
       isEdit: false
     });
     renderComments();
