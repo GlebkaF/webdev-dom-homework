@@ -61,50 +61,60 @@
         comment: "Это будет первый комментарий на этой странице",
         date: "12.02.22 12:18",
         likes: 3,
+        isActive: false,
       },
       {
         name: "Варвара Н",
         comment: "Мне нравится как оформлена эта страница! ❤",
         date: '13.02.22 19:22',
         likes: 75,
+        isActive: true,
       },
     ]
 
 
-    let liked = 0;
     const likeCountButtonListener = () => {
       const likeButtonElements = document.querySelectorAll('.like-button');
       for (const likeButtonElement of likeButtonElements) {
-        likeButtonElement.addEventListener("click", () => {
+        likeButtonElement.addEventListener('click', () => {
           let index = likeButtonElement.dataset.index;
-          if (liked === 0) {
+          if (comments[index].isActive == false) {
             comments[index].likes++;
-            liked++;
+            comments[index].isActive = true;
           } else {
-            comments[index].likes--
-            liked--;
+            comments[index].likes--;
+            comments[index].isActive = false;
           }
           renderComments();
-      })
+        })
       }
     }
 
-    const likeButtonListener = () => {
-      const likeButtonElements = document.querySelectorAll('.like-button');
-      for (const likeButtonElement of likeButtonElements) {
-        likeButtonElement.addEventListener("click", () => {
-          likeButtonElement.classList.toggle("-active-like");
-          renderComments();
-      })       
-      }
-    }
     likeCountButtonListener();
-    likeButtonListener();
 
 
     const renderComments = () => {
       const commentsHtml = comments.map((i, index) => {
-        return `<li class="comment">
+        if (i.isActive === true) {
+          return `<li class="comment">
+          <div class="comment-header">
+            <div>${i.name}</div>
+            <div>${i.date}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${i.comment}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${i.likes}</span>
+              <button data-index="${index}" id="likes-button" class="like-button -active-like"></button>
+            </div>
+          </div>
+        </li>`
+        } else {
+          return `<li class="comment">
           <div class="comment-header">
             <div>${i.name}</div>
             <div>${i.date}</div>
@@ -121,11 +131,10 @@
             </div>
           </div>
         </li>`
+        }
       }).join('');
       commentsArea.innerHTML = commentsHtml;
-      likeButtonListener();
       likeCountButtonListener();
-
     }
     renderComments();
     
@@ -195,6 +204,7 @@
         date: day + "." + month + "." + date.getFullYear().toString().substr(-2) + " " + time,
         comment: commentElement.value,
         likes: 0,
+        isActive: false,
       })
 
       nameElement.value = "";
