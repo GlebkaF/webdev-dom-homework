@@ -10,7 +10,7 @@
 <body>
   <div class="container">
     <ul id="list" class="comments">
-      <li class="comment">
+      <!-- <li class="comment">
         <div class="comment-header">
           <div>Глеб Фокин</div>
           <div>12.02.22 12:18</div>
@@ -43,14 +43,15 @@
             <button class="like-button -active-like"></button>
           </div>
         </div>
-      </li>
+      </li> -->
     </ul>
     <div class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input" />
       <textarea id="comment-input" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
         rows="4"></textarea>
       <div class="add-form-row">
-        <button id="write-button" class="add-form-button">Написать</button>
+        <button id="delete-button" class="delete-button">Удалить последний комментарий</button>
+        <button id="write-button" class="add-form-button" disabled>Написать</button>
       </div>
     </div>
   </div>
@@ -62,8 +63,96 @@
     const listElement = document.getElementById("list");
     const nameInputElement = document.getElementById("name-input");
     const commentInputElement = document.getElementById("comment-input");
+    const deleteButtonElement = document.getElementById("delete-button");
+    const messages = [
+      {
+        name: "Глеб Фокин",
+        time: "12.02.22 12:18",
+        comment: "Это будет первый комментарий на этой странице",
+        likesCount: 3,
+        liked: false,
+        isEdit: false,
+      },
+      {
+        name: "Варвара Н.",
+        time: "13.02.22 19:22",
+        comment: "Мне нравится как оформлена эта страница! ❤",
+        likesCount: 75,
+        liked: true,
+        isEdit: false,
+      }
+    ];
 
-    buttonElement.addEventListener("click", () => {
+    const initLikeButtonsListeners = () => {
+      const likeButtonsElements = document.querySelectorAll(".like-button");
+      for (const likeButtonElement of likeButtonsElements) {
+        likeButtonElement.addEventListener("click", () => {
+          const index = likeButtonElement.dataset.index;
+          messages[index].liked = !messages[index].liked;
+          if (messages[index].liked) {
+            messages[index].likesCount += 1;
+          }
+          else {
+            messages[index].likesCount -= 1;
+          }
+          renderMessages();
+        });
+      }
+    };
+    initLikeButtonsListeners();
+
+    const initCorrectButtonsListeners = () => {
+      const correctButtonsElements = document.querySelectorAll(".correct-button");
+      const correctedComments = document.querySelector('.comment-correction');
+      for (const correctButtonElement of correctButtonsElements) {
+        correctButtonElement.addEventListener('click', () => {
+          const index = correctButtonElement.dataset.index;
+          if (messages[index].isEdit) {
+            messages[index].comment = correctedComments.value;
+            messages[index].isEdit = !messages[index].isEdit;
+          }
+          else {
+            messages[index].isEdit = !messages[index].isEdit;
+          };
+          renderMessages();
+          console.log(correctedComment);
+
+        });
+      };
+    };
+
+    const renderMessages = () => {
+      const messagesHtml = messages.map((message, index) => {
+        let like = (message.liked) ? 'like-button -active-like' : 'like-button';
+        let edit = (message.isEdit) ? `<textarea type="textarea" class="comment-correction"rows="4">${message.comment}</textarea>` : `<div class="comment-text">${message.comment}</div>`;
+        let correctBtn = (message.isEdit) ? `<button data-index="${index}" class="correct-button save-button">Сохранить</button>` : `<button data-index="${index}" class="correct-button">Редактировать</button>`;
+        return `<li class="comment">
+      <div class="comment-header">
+        <div>${message.name}</div>
+        <div>${message.time}</div>
+      </div>
+      <div class="comment-body">
+        ${edit}
+      </div>
+      <div class="comment-footer">
+        ${correctBtn}
+        <div class="likes">
+          <span class="likes-counter">${message.likesCount}</span>
+          <button data-index="${index}" class="${like}"></button>
+        </div>
+      </div>
+    </li>`;
+      }).join("");
+      listElement.innerHTML = messagesHtml;
+      initLikeButtonsListeners();
+      initCorrectButtonsListeners();
+
+    }
+    renderMessages();
+
+    buttonElement.addEventListener("click", addComments);
+
+    function addComments() {
       nameInputElement.classList.remove("input-error");
       commentInputElement.classList.remove("input-error");
       if (nameInputElement.value.trim() === "") {
@@ -75,39 +164,71 @@
         return;
       }
 
-      let currentDate = new Date();
-      function getCurrentDate(date) {
-        let day = date.getDate();
-        if (day < 10) day = "0" + day;
-        let month = date.getMonth() + 1;
-        if (month < 10) month = "0" + month;
-        let hour = date.getHours();
-        if (hour < 10) hour = "0" + hour;
-        let minute = date.getMinutes();
-        if (minute < 10) minute = "0" + minute;
-        return day + '.' + month + '.' + date.getFullYear() % 100 + ' ' + hour + ':' + minute;
+      messages.push({
+        name: nameInputElement.value,
+        time: getCurrentDate(new Date()),
+        comment: commentInputElement.value,
+        likesCount: 0,
+        liked: false,
+        isEdit: false,
+      });
+
+      deleteButtonElement.classList.add('delete-active');
+      renderMessages();
+      buttonElement.setAttribute('disabled', '');
+      nameInputElement.value = "";
+      commentInputElement.value = "";
+    };
+
+    const inputElements = document.querySelectorAll(".add-form");
+    for (const inputElement of inputElements) {
+      inputElement.addEventListener('keyup', () => {
+        if (event.code === 'Enter') {
+          addComments();
+        };
+      });
+      inputElement.addEventListener('input', () => {
+        buttonElement.removeAttribute('disabled', '');
       }
-
-
-      const oldListHtml = listElement.innerHTML;
-      listElement.innerHTML = oldListHtml + `<li class="comment">
-      <div class="comment-header">
-        <div>${nameInputElement.value}</div>
-        <div>${getCurrentDate(currentDate)}</div>
-      </div>
-      <div class="comment-body">
-        <div class="comment-text">
-        ${commentInputElement.value}
-        </div>
-      </div>
-      <div class="comment-footer">
-        <div class="likes">
-          <span class="likes-counter">0</span>
-          <button class="like-button"></button>
-        </div>
-      </div>
-    </li>`
+      )
+    };
+    deleteButtonElement.addEventListener('click', () => {
+      messages.pop();
+      deleteButtonElement.classList.remove('delete-active');
+      renderMessages();
     });
+
+    // let currentDate = new Date();
+    function getCurrentDate(date) {
+      let day = date.getDate();
+      if (day < 10) day = "0" + day;
+      let month = date.getMonth() + 1;
+      if (month < 10) month = "0" + month;
+      let hour = date.getHours();
+      if (hour < 10) hour = "0" + hour;
+      let minute = date.getMinutes();
+      if (minute < 10) minute = "0" + minute;
+      return day + '.' + month + '.' + date.getFullYear() % 100 + ' ' + hour + ':' + minute;
+    }
+    //   const oldListHtml = listElement.innerHTML;
+    //   listElement.innerHTML = oldListHtml + `<li class="comment">
+    //   <div class="comment-header">
+    //     <div>${nameInputElement.value}</div>
+    //     <div>${getCurrentDate(currentDate)}</div>
+    //   </div>
+    //   <div class="comment-body">
+    //     <div class="comment-text">
+    //     ${commentInputElement.value}
+    //     </div>
+    //   </div>
+    //   <div class="comment-footer">
+    //     <div class="likes">
+    //       <span class="likes-counter">0</span>
+    //       <button class="like-button"></button>
+    //     </div>
+    //   </div>
+    // </li>`
+    // });
   </script>
 </body>
 
