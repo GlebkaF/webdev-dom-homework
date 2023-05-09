@@ -46,6 +46,7 @@
             comment: "Это будет первый комментарий на этой странице",
             counter: 3,
             quoteText: '',
+            isLiked: false,
         },
         {
             name: 'Варвара Н.',
@@ -53,6 +54,7 @@
             comment: 'Мне нравится как оформлена эта страница! ❤',
             counter: 75,
             quoteText: '',
+            isLiked: true,
         },
     ];
 
@@ -73,7 +75,7 @@
     <div class="comment-footer">
       <div class="likes">
         <span class="likes-counter">${user.counter}</span>
-        <button class="like-button" data-index=${index}></button>
+        <button class="${user.isLiked ? 'like-button -active-like' : 'like-button'}" data-index=${index}></button>
       </div>
     </div>
   </li>`;
@@ -93,20 +95,18 @@
             likeUp.addEventListener('click', (event) => {
                 event.stopPropagation();
                 let found = allUsersAndComments[likeUp.dataset.index];
-                if (likeUp.classList.contains("-active-like") === true) {
-                    likeUp.classList.remove('-active-like')
-                    found.counter = parseInt(found.counter) - 1;
-                    const counters = likeUp.parentNode.getElementsByClassName('likes-counter');
-                    if (counters.length == 0) return;
-                    counters[0].innerHTML = parseInt(counters[0].innerHTML) - 1;
-                } else {
-                    found.counter = parseInt(found.counter) + 1;
-                    likeUp.classList.add('-active-like');
-                    const counters = likeUp.parentNode.getElementsByClassName('likes-counter');
-                    if (counters.length == 0) return;
-                    counters[0].innerHTML = parseInt(counters[0].innerHTML) + 1;
-                };
+                if (found.isLiked === true) {
+                    likeUp.classList.remove('-active-like');
+                    found.counter--;
+                    found.isLiked = false;
 
+                } else {
+                    likeUp.classList.add('-active-like');
+                    found.counter++;
+                    found.isLiked = true;
+
+                };
+                renderUsers();
             });
 
         };
@@ -136,6 +136,7 @@
                     .replaceAll('"', "&quot;"),
                 counter: 0,
                 quoteText: quoteText,
+                isLiked: false,
             })
 
             renderUsers();
