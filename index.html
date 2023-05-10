@@ -84,7 +84,7 @@
       replyButtonElement.addEventListener('click', (e) => {
         e.stopPropagation();
         const index = replyButtonElement.dataset.index;
-        comments[index].isEdit ? '' : textInputElement.innerHTML = `QUOTE_BEGIN ${comments[index].text} 
+        comments[index].isEdit ? '' : textInputElement.value = `QUOTE_BEGIN ${comments[index].text} 
         ${comments[index].name} QUOTE_END`;
         renderComments();
       });
@@ -148,7 +148,7 @@
     textInputElement.addEventListener('input', () => {
       buttonElement.disabled = false;
       buttonElement.classList.remove('disabledButton');
-      if (nameInputElement.value === '' || textInputElement.value === '') {
+      if (nameInputElement.value === '' || textInputElement.value === '' || textInputElement.value.endsWith('QUOTE_END ')) {
         buttonElement.disabled = true;
         buttonElement.classList.add('disabledButton');
       }
