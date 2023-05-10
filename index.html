@@ -70,7 +70,7 @@
           });
         }
       };
-      
+
       const commentsHtml = comments.map((comment,index) => {
         return `<li class="comment">
           <div class="comment-header">
@@ -136,8 +136,16 @@
       }
 
       comments.push({
-        name: nameInputElement.value,
-        text: textInputElement.value,
+        name: nameInputElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
+        text: textInputElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
         date: `${day}.${month}.${years} ${hours}:${minutes}`,
         likes: 0,
         favorite: false

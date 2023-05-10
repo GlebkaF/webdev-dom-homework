@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div class="container">
+    <button class="button1">Button 1</button>
+    <div class="inner-container">
+      <button class="button2">Button 2</button>
+    </div>
+  </div>
+</body>
+</html>
+
+<script>
+  const button1 = document.querySelector(".button1");
+  const button2 = document.querySelector(".button2");
+  const container = document.querySelector(".container");
+
+  container.addEventListener("click", () => {
+    // Теперь этот console.log не будет срабатывать, когда пользователь
+    // кликает на Button 1, потому что мы выключили всплытие у события на Button 1
+    // но будет срабатывать при клике на Button 2,
+    // потому что всплытие у него мы не отключали
+    console.log("Container clicked");
+  });
+
+  button1.addEventListener("click", (event) => {
+    // stopPropagation() отключает всплытие события вверх по дереву
+    event.stopPropagation();
+    console.log("Button 1 clicked");
+  });
+
+  button2.addEventListener("click", (event) => {
+    event.stopPropagation();
+    console.log("Button 2 clicked");
+  });
+
+  document.querySelector("html").addEventListener("click", () => {
+      alert("Клик по html");
+  });
+</script>
