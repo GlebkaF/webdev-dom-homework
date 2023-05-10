@@ -58,8 +58,42 @@
 
 <script>
   "use strict";
-
-  console.log("It works!");
+  const listElement = document.getElementById("list")
+  const buttonElement = document.getElementById("add-button");
+  const nameElement = document.getElementById("add-name");
+  const textElement = document.getElementById("add-text");
+  buttonElement.addEventListener("click", () => {
+    let now = new Date().toLocaleDateString();
+    let timeNow = new Date().toLocaleTimeString().slice(0, -3);
+    let like = Number();
+    if (nameElement === "") {
+      nameElement.classList.add("add-form-name");
+      return;
+    } else if (textElement === "") {
+      textElement.classList.add("add-form-text");
+      return;
+    }
+    const tryListHtml = listElement.innerHTML;
+    listElement.innerHTML =
+      tryListHtml +
+      `<li class="comment">
+        <div class="comment-header">
+          <div>${nameElement.value}</div>
+          <div>${now} ${timeNow}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${textElement.value}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${like}</span>
+            <button class="like-button -active-like"></button>
+          </div>
+        </div>
+      </li>`;
+  });
 </script>
 
 </html>
