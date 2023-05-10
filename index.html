@@ -70,6 +70,7 @@
 
   buttonElement.addEventListener("click", () => {
     nameInputElement.classList.remove("error");
+    commentInputElement.classList.remove("error");
     if (nameInputElement.value === "") {
       nameInputElement.classList.add("error");
       return;
