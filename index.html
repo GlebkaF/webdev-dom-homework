@@ -56,7 +56,9 @@
     const countLikesElements = document.querySelectorAll('.like-button');
 
     for (const countLikesElement of countLikesElements) {
-      countLikesElement.addEventListener('click', () => {
+      countLikesElement.addEventListener('click', (event) => {
+        event.stopPropagation();
+
         const index = countLikesElement.dataset.index;
         const comment = comments[index];
 
@@ -74,7 +76,9 @@
     const editCommentElements = document.querySelectorAll('.edit-comment');
 
     for (const editCommentElement of editCommentElements) {
-      editCommentElement.addEventListener('click', () => {
+      editCommentElement.addEventListener('click', (event) => {
+        event.stopPropagation();
+
         const index = editCommentElement.dataset.index;
         const comment = comments[index];
         const textArea = document.querySelectorAll('.comment-text');
@@ -89,6 +93,24 @@
         renderComments();
       });
     }
+  };
+
+  // Сценарий "Ответ на комментарий"
+
+  const initReplyToCommentListeners = () => {
+    const replyToCommentElements = document.querySelectorAll('.comment');
+
+    for (const replyToCommentElement of replyToCommentElements) {
+      replyToCommentElement.addEventListener('click', () => {
+        const index = replyToCommentElement.dataset.index;
+        const comment = comments[index];
+
+        // Строка кода к основному заданию по DOM -3
+        // textAreaElement.value = comment.author +"\r\n" + comment.text;
+
+        textAreaElement.value = `QUOTE_BEGIN ${comment.author + ':' + "\r\n" + comment.text} QUOTE_END`;
+      });
+    };
   };
 
   const renderComments = () => {
@@ -130,6 +152,7 @@
     commentsElement.innerHTML = commentsHtml;
     initCountLikesListeners();
     initEditCommentListeners();
+    initReplyToCommentListeners();
   };
 
   renderComments();
@@ -156,9 +179,19 @@
     let nowDate = `${date}.${month}.${year} ${hours}:${minutes}`;
 
     comments.push({
-      author: nameInputElement.value,
+      author: nameInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       date: nowDate,
-      text: textAreaElement.value,
+      text: textAreaElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+        .replaceAll("QUOTE_END", "</div>"),
       likes: 0,
       isLiked: false,
       isEdit: false
