@@ -64,7 +64,6 @@
     const nameInputElement = document.getElementById("name-input");
     const commentInputElement = document.getElementById("comment-input");
     const deleteButtonElement = document.getElementById("delete-button");
-    // const answer = messages [1].name.value; 
     const messages = [
       {
         name: "Глеб Фокин",
@@ -105,13 +104,19 @@
 
     const initCorrectButtonsListeners = () => {
       const correctButtonsElements = document.querySelectorAll(".correct-button");
-      const correctedComments = document.querySelector('.comment-correction');
+      const correctedComments = document.querySelectorAll('.comment-correction');
+      for (const correctedComment of correctedComments) {
+        correctedComment.addEventListener('click', (event) => {
+          event.stopPropagation();
+        });
+      };
       for (const correctButtonElement of correctButtonsElements) {
         correctButtonElement.addEventListener('click', (event) => {
           event.stopPropagation();
           const index = correctButtonElement.dataset.index;
           if (messages[index].isEdit) {
-            messages[index].comment = correctedComments.value
+            const correctionText = document.querySelector('.comment-correction')
+            messages[index].comment = correctionText.value
               .replaceAll("&", "&amp;")
               .replaceAll("<", "&lt;")
               .replaceAll(">", "&gt;")
@@ -126,35 +131,24 @@
       };
     };
     const initAnswersListeners = () => {
-      const answersElements = document.querySelectorAll(".comment-text");
+      const answersElements = document.querySelectorAll(".comment");
       for (const answerElement of answersElements) {
         answerElement.addEventListener("click", (event) => {
-          event.stopPropagation();
+          // event.stopPropagation();
           const index = answerElement.dataset.index;
-          // console.log(answersElements);
-          const quote = (answerElement.hasChildren == true)? answerElement.replaceChildren() : answerElement;
-          commentInputElement.value = `QUOTE_BEGIN ${messages[index].name}: \n ${quote.innerHTML}, QUOTE_END \n`;
+          const quote = answerElement.querySelector(".comment-text");
+          commentInputElement.value = `QUOTE_BEGIN ${messages[index].name}: \n ${quote.innerText}, QUOTE_END \n`;
           renderMessages();
         });
       };
     };
-    // const initQuoteListeners = () => {
-    //   const quoteElements = document.querySelectorAll(".quote");
-    //   for (const quoteElement of quoteElements) {
-    //     quoteElement.addEventListener("click", (event) => {
-    //       event.stopPropagation();
-    //       // return
-    //     });
-    //   };
-    // };
-
 
     const renderMessages = () => {
       const messagesHtml = messages.map((message, index) => {
         let like = (message.liked) ? 'like-button -active-like' : 'like-button';
-        let edit = (message.isEdit) ? `<textarea type="textarea" class="comment-correction"rows="4">${message.comment}</textarea>` : `<div class="comment-text" data-index="${index}">${message.comment.replaceAll("QUOTE_BEGIN", "<div class='quote'>").replaceAll("QUOTE_END", "</div>").replaceAll("\n", "<br>")}</div>`;
+        let edit = (message.isEdit) ? `<textarea type="textarea" class="comment-correction"rows="4">${message.comment}</textarea>` : `<div class="comment-text">${message.comment.replaceAll("QUOTE_BEGIN", "<div class='quote'>").replaceAll("QUOTE_END", "</div>").replaceAll("\n", "<br>")}</div>`;
         let correctBtn = (message.isEdit) ? `<button data-index="${index}" class="correct-button save-button">Сохранить</button>` : `<button data-index="${index}" class="correct-button">Редактировать</button>`;
-        return `<li class="comment">
+        return `<li class="comment" data-index="${index}">
       <div class="comment-header" >
         <div>${message.name}</div>
         <div>${message.time}</div>
@@ -175,14 +169,12 @@
       initLikeButtonsListeners();
       initCorrectButtonsListeners();
       initAnswersListeners();
-      // initQuoteListeners();
-
     }
     renderMessages();
 
     buttonElement.addEventListener("click", addComments);
 
-    function addComments() {
+    function addComments(event) {
       event.stopPropagation();
       nameInputElement.classList.remove("input-error");
       commentInputElement.classList.remove("input-error");
@@ -233,14 +225,14 @@
       }
       )
     };
+    
     deleteButtonElement.addEventListener('click', () => {
-      event.stopPropagation();
+      // event.stopPropagation();
       messages.pop();
       deleteButtonElement.classList.remove('delete-active');
       renderMessages();
     });
 
-    // let currentDate = new Date();
     function getCurrentDate(date) {
       let day = date.getDate();
       if (day < 10) day = "0" + day;
