@@ -60,7 +60,8 @@
     const switchLike = () => {
       let byttonLike = document.querySelectorAll(".like-button");
       for (const button of byttonLike) {
-        button.addEventListener("click", () => {
+        button.addEventListener("click", (event) => {
+          event.stopPropagation();
           const index = button.dataset.index;
          if (arrComments[index].likeStatus === " -active-like") {
           arrComments[index].likeCounter -=1;
@@ -76,16 +77,27 @@
       
     }
 
+    const replyToComment = () => {
+      let comments = document.querySelectorAll(".comment");
+      for (const comment of comments) {
+        comment.addEventListener("click", () => {
+          const index = comment.dataset.index;
+         userCommentElement.value = `QUOTE_BEGIN ${arrComments[index].name} - "${arrComments[index].text}"QUOTE_END`;
+          
+        })
+      }
+    }
+
     const renderComments = () => {
       let commentsHtml = arrComments.map((comment,index) => {
-      return     `<li class="comment">
+      return     `<li class="comment" data-index="${index}">
           <div class="comment-header">
-            <div>${comment.name}</div>
+            <div>${comment.name.replaceAll("<", "&lt;").replaceAll(">", "&gt;")}</div>
             <div>${comment.date}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${comment.text}
+              ${comment.text.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("QUOTE_BEGIN", "<div class='comment-quote'>").replaceAll("QUOTE_END", "</div>")}
             </div>
           </div>
           <div class="comment-footer">
@@ -101,6 +113,7 @@
     })
     commentsElement.innerHTML = commentsHtml.join("");
     switchLike();
+    replyToComment();
     }
     renderComments();
 
