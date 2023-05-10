@@ -65,7 +65,7 @@
 
     const renderComments = () => {
       const commentsHtml = comments.map((comment, index) => {
-        return `<li class="comment">
+        return `<li class="comment" data-comment="< ${comment.text} ${comment.name}">
           <div class="comment-header">
             <div>
               ${comment.name}
@@ -75,7 +75,7 @@
             </div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
+            <div class="comment-text" white-space: pre-line>
               ${comment.text}
             </div>
           </div>
@@ -90,6 +90,7 @@
       listElement.innerHTML = commentsHtml;
 
       initLikesButtonListeners();
+      initQuoteCommentListeners();
     };
 
    
@@ -109,6 +110,20 @@
         });
       };
     }
+
+    const initQuoteCommentListeners = () => {
+      const quoteCommentElements = document.querySelectorAll('.comment');
+
+      for (const quoteCommentElement of quoteCommentElements) {
+        quoteCommentElement.addEventListener('click', () => {
+          return quoteCommentElement.dataset.comment;
+
+          renderComments();
+        });
+      };
+    }
+
+    
 
     renderComments();
 
@@ -132,11 +147,19 @@
       }
 
     comments.push({
-      name: nameInputElement.value,
-      text: textInputElement.value,
+      name: nameInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
+      text: textInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       likes: 0,
       data: dateElement(),
-    })
+    });
 
     renderComments();
 
