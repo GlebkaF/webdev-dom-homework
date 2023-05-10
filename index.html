@@ -59,8 +59,8 @@
 
     for (const likeButtonElement of likeButtonElements) {
 
-      likeButtonElement.addEventListener("click", () => {
-
+      likeButtonElement.addEventListener("click", (event) => {
+        event.stopPropagation();
         const comment = comments[likeButtonElement.dataset.index];
         comment.likes = comment.isLiked ? comment.likes - 1 : comment.likes + 1;
         comment.isLiked = !comment.isLiked;
@@ -69,14 +69,13 @@
     };
   }
 
-
   const editButtonsListeners = () => {
     const editButtonElements = document.querySelectorAll('.edit-button');
     const commentTextElements = document.querySelectorAll('.comment-text');
 
     for (const editButtonElement of editButtonElements) {
-      editButtonElement.addEventListener('click', () => {
-
+      editButtonElement.addEventListener('click', (event) => {
+        event.stopPropagation();
         const index = editButtonElement.dataset.index;
         const comment = comments[index];
         const commentTextElement = commentTextElements[index];
@@ -94,7 +93,21 @@
     }
   };
 
+  const replyToCommentListeners = () => {
+    const commentTextElements = document.querySelectorAll('.comment');
+    for (const commentText of commentTextElements) {
+      commentText.addEventListener('click', () => {
+        const index = commentText.dataset.index;
+        const comment = comments[index];
+        addComment.classList.add('reply-comment');
+        addComment.value = `QUOTE_BEGIN ${comment.userName}:\n${comment.userComment.replaceAll("QUOTE_BEGIN", "").replaceAll("QUOTE_END", "")}QUOTE_END\n `;
+        addComment.focus();
+        renderComments();
+      });
+    }
+  }
 
+  
   const renderComments = () => {
     const commentsHtml = comments
       .map((comment, index) => {
@@ -109,9 +122,9 @@
           </div>
           <div class="comment-body">
             ${comment.isEdit
-            ? `<textarea type="textarea" class="comment-text" rows="4">${comment.userComment}</textarea>`
+            ? `<textarea type="textarea" class="comment-text" rows="4" onclick="event.stopPropagation()">${comment.userComment}</textarea>`
             : `<div class="comment-text" data-index="${index}">
-              ${comment.userComment}
+              ${comment.userComment.replaceAll("QUOTE_BEGIN", "<div class='quote'>").replaceAll("QUOTE_END", "</div>")}
             </div>`
           }
           </div>
@@ -135,10 +148,10 @@
     listElem.innerHTML = commentsHtml;
     likeButtonsListeners();
     editButtonsListeners();
+    replyToCommentListeners();
   };
 
   renderComments();
-
 
   const addNewComment = () => {
     commentBtn.addEventListener("click", () => {
@@ -170,10 +183,21 @@
 
       let nowDate = `${userDate.getDate()}.${month}.${year} ${userDate.getHours()}:${minutes}`;
 
+
+      function escapeHtml(text) {
+        return text
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("$", "&#36");
+      };
+
+
       comments.push({
-        userName: addName.value,
+        userName: escapeHtml(addName.value),
         commentDate: nowDate,
-        userComment: addComment.value,
+        userComment: escapeHtml(addComment.value),
         likes: 0,
         isLiked: false,
         isEdit: false,
