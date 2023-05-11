@@ -115,6 +115,7 @@ buttonElement.addEventListener('click', () => {
         return;
     }
 
+
     // добавление нового комментария (update)
     comments.push({
         userName: nameInputElement.value,
