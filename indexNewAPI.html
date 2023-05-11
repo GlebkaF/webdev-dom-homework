@@ -40,7 +40,16 @@
     const inputText = document.querySelector(".add-form-text");
     const form = document.querySelectorAll(".form");
     const container = document.querySelector(".container");
-    
+
+    const fetchPromise = fetch(
+      "https://github.com/GlebkaF/webdev-hw-api/blob/main/pages/api/v1/[key]/comments/README.md",
+      {
+        method: "GET",
+      }
+    );
+
+    console.log(fetchPromise);
+
     let comments = [
       {
         name: "Глеб Фокин",
@@ -199,7 +208,7 @@
         const date = new Date();
         let month = date.getMonth() + 1;
         let minutes = date.getMinutes();
-        
+
         if (month < 10) {
           month = "0" + month;
         }
