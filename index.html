@@ -92,29 +92,34 @@
       Iliked: true,
     }
   ];
-
+  //Добавляем лайк
   const addLikes = (e) => {
     const comment = commentsListArray[e.target.dataset.id];
     comment.like++;
     comment.Iliked = true;
   }
-
+  //Удаляем лайк
   const delLikes = (e) => {
     const comment = commentsListArray[e.target.dataset.id];
     comment.like--;
     comment.Iliked = false;
   }
-
+  //Функция проверки был ли поставлен лайк
   const initLikeClick = () => {
     const likeClickElements = document.querySelectorAll('.likes');
     for (const likeClickElement of likeClickElements) {
       likeClickElement.addEventListener('click', (e) => {
         e.stopPropagation();
-        (commentsListArray[e.target.dataset.id].Iliked) ? delLikes(e) : addLikes(e);
+        const comment = commentsListArray[e.target.dataset.id];
+        if (comment.Iliked) {
+          delLikes(e);
+        } else {
+          addLikes(e);
+        }
         renderComments();
       });
     }
-  }
+  };
 
   function renderComments() {
     const commentHtmlResult = commentsListArray.map((comment, id) => {
@@ -148,6 +153,7 @@
 
   const addComment = () => {
     const date = new Date();
+
     if (validate()) {
       const day = ("0" + date.getDate()).slice(-2);
       const month = ("0" + (date.getMonth() + 1)).slice(-2);
