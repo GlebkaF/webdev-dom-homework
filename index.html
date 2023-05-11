@@ -99,12 +99,10 @@
       });
     }
   };
-
   //Получение комментариев из API https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments
   const fetchPromise = fetch('https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments', {
     method: 'GET',
   });
-
   fetchPromise.then((response) => {
     // Запускаем, преобразовываем сырые данные от API в JSON-формат
     const jsonPromise = response.json();
@@ -130,7 +128,6 @@
       renderComments();
     });
   });
-
   //Рендер комментариев
   function renderComments() {
     const commentHtmlResult = appComments.map((comment, id) => {
@@ -174,7 +171,6 @@
     initLikeClick();
     addCommentListener();
   }
-
   //Функция, которая отправляет новый добавленный комментарий на сервер по указанному API
   const sendCommentToServer = (comment) => {
     fetch('https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments', {
@@ -191,7 +187,6 @@
         console.error('Ошибка при отправке комментария на сервер:', error);
       });
   };
-
   //Добавление комментария
   const addComment = () => {
     const date = new Date();
@@ -221,25 +216,51 @@
       button.setAttribute('disabled', '');
     }
   };
-
   //Проверка форм на введенные данные
   const validate = () => {
-    userName.classList.toggle('error', userName.value.length === 0);
-    textComment.classList.toggle('error', textComment.value.length === 0);
-    return (userName.value.length >= 1 && textComment.value.length >= 1);
-  }
+    const userNameValue = userName.value.trim();
+    const textCommentValue = textComment.value.trim();
 
+    const isUserNameValid = userNameValue.length >= 3;
+    const isTextCommentValid = textCommentValue.length >= 3;
+
+    userName.classList.toggle('error', !isUserNameValid);
+    textComment.classList.toggle('error', !isTextCommentValid);
+
+    if (!isUserNameValid) {
+      if (userNameValue === "Напишите не менее 3 символов") {
+        userName.placeholder = "Напишите не менее 3 символов";
+      } else {
+        userName.value = "";
+        userName.placeholder = "Напишите не менее 3 символов";
+        console.log("Напишите не менее 3 символов (Имя)");
+      }
+    }
+
+    if (!isTextCommentValid) {
+      if (textCommentValue === "Напишите не менее 3 символов") {
+        textComment.placeholder = "Напишите не менее 3 символов";
+      } else {
+        textComment.value = "";
+        textComment.placeholder = "Напишите не менее 3 символов";
+        console.log("Напишите не менее 3 символов (Текст комментария)");
+      }
+    }
+
+    return isUserNameValid && isTextCommentValid;
+  };
+  //Слушаем кнопку и добавляем комментарий
   button.addEventListener('click', (event) => {
     addComment();
   });
-
+  //Слушаем ввод в поле и добавляем комментарий
   addForm.addEventListener('input', (event) => {
     if (validate) {
       button.removeAttribute('disabled');
       button.classList.remove('add-form-button-disabled');
     }
   });
-
+  //Слушаем нажатие Enter
   addForm.addEventListener('keydown', (event) => {
     if (event.ctrlKey && event.key === "Enter") {
       event.preventDefault();
@@ -247,7 +268,6 @@
     }
   });
   renderComments();
-
   // Функция добавляет ответ на комментарий
   function addCommentListener() {
     const comments = document.querySelectorAll('.comment');
@@ -261,9 +281,6 @@
     });
   }
   addCommentListener();
-
-
-
 </script>
 
 </html>
