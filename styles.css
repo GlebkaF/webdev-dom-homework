@@ -22,7 +22,7 @@ body {
 }
 
 .comment,
-.add-form, .authorization {
+.add-form, .authorization, .registr {
   width: 596px;
   box-sizing: border-box;
   background: radial-gradient(
@@ -34,23 +34,19 @@ body {
   border-radius: 20px;
 }
 
-.authorization {
+.authorization, .registr {
   display: flex;
   align-items: center;
 }
-.authorization__title {
+.authorization__title, .registr__title {
   font-size: 32px;
   margin-bottom: 10px;
 }
-.authorization__login {
+.authorization__login, .registr__name, .registr__login {
   margin-bottom: 10px;
-  
-  min-width: 190px;
-  padding: 4px 10px;
-  border-radius: 8px;
 }
-.authorization__password {
-  min-width: 190px;
+.authorization__password, .authorization__login, .registr__name, .registr__login, .registr__password {
+  min-width: 300px;
   padding: 4px 10px;
   border-radius: 8px;
 }
@@ -114,7 +110,7 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg width='22' height='20' viewBox='0 0 22 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15.95 0C14.036 0 12.199 0.882834 11 2.26703C9.801 0.882834 7.964 0 6.05 0C2.662 0 0 2.6267 0 5.99455C0 10.1035 3.74 13.4714 9.405 18.5613L11 20L12.595 18.5613C18.26 13.4714 22 10.1035 22 5.99455C22 2.6267 19.338 0 15.95 0Z' fill='%23BCEC30'/%3E%3C/svg%3E");
 }
 
-.add-form, .authorization {
+.add-form, .authorization, .registr {
   padding: 20px;
   margin-top: 48px;
   display: flex;
@@ -151,7 +147,7 @@ body {
   justify-content: flex-end;
 }
 
-.add-form-button {
+.add-form-button, .registr-form-button {
   margin-top: 24px;
   font-size: 24px;
   padding: 10px 20px;
@@ -161,7 +157,7 @@ body {
   cursor: pointer;
 }
 
-.add-form-button:hover {
+.add-form-button:hover, .registr-form-button:hover {
   opacity: 0.9;
 }
 .edit-comment,
