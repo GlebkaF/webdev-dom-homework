@@ -132,7 +132,7 @@
 
     // Подписываемся на результат преобразования
     jsonPromise.then((responseData) => {
-      appComments = responseData.comments.map((comment) => {
+      const appComments = responseData.comments.map((comment) => {
         return {
           //Имя автора
           name: comment.author.name,
