@@ -149,14 +149,20 @@
   const addComment = () => {
     const date = new Date();
     if (validate()) {
+      const day = ("0" + date.getDate()).slice(-2);
+      const month = ("0" + (date.getMonth() + 1)).slice(-2);
+      const year = date.getFullYear().toString().slice(-2);
+      const hours = ("0" + date.getHours()).slice(-2);
+      const minutes = ("0" + date.getMinutes()).slice(-2);
+      const formattedDate = `${day}.${month}.${year} ${hours}:${minutes}`;
+
       commentsListArray.push({
-        //Убираем уязвимость, запрещаем вводить теги в поле ввода имени
         name: userName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-        date: `${("0" + date.getDate()).slice(-2)}.${("0" + (date.getMonth() + 1)).slice(-2)}.${date.getFullYear().toString().slice(-2)} ${("0" + date.getHours()).slice(-2)}:${("0" + date.getMinutes()).slice(-2)}`,
-        //Убираем уязвимость, запрещаем вводить теги в поле ввода текста
+        date: formattedDate,
         msg: textComment.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
         like: 0,
       });
+
       renderComments();
       textComment.value = "";
       userName.value = "";
