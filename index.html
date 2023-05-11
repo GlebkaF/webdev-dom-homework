@@ -49,6 +49,19 @@
     }
   ]
 
+  const editCommentText = () => {
+    const commentsText = document.querySelectorAll('.comment-text')
+    const commentName = document.querySelectorAll('.comment-name')
+    for (const commentText of commentsText) {
+      commentText.addEventListener('click', () => {
+        // console.log('1');
+        addFormText.value = `>${commentText.innerHTML} \n${commentName.innerHTML}, `
+      })
+    }
+
+  }
+  editCommentText()
+
   const initLikeButtons = () => {
     const likeButtonElements = document.querySelectorAll('.like-button')
     const likeCountElements = document.querySelectorAll('.likes-counter')
@@ -67,7 +80,9 @@
     let commentsHtml = comments.map((comment, index) => {
       return `<li class="comment" data-index="${index}">
         <div class="comment-header">
-          <div> ${comment.name}</div>
+          <div class="comment-name">
+             ${comment.name}
+             </div>
           <div>${comment.date}</div>
         </div>
         <div class="comment-body">
@@ -86,6 +101,7 @@
       .join('')
     commentsContainer.innerHTML = commentsHtml
     initLikeButtons()
+    editCommentText()
   }
 
   renderComments()
@@ -117,8 +133,7 @@
 
   // }
 
- 
-
+  
   addFormButton.addEventListener('click', () => {
     addFormName.classList.remove('error')
     addFormText.classList.remove('error')
@@ -128,6 +143,7 @@
     if (addFormText.value === "") {
       return addFormText.classList.add('error')
     }
+
     let myDate = new Date()
 
 
@@ -145,21 +161,24 @@
     let year = Number(String(myDate.getFullYear()).substring(2))
     let userDate = day + "." + month[myDate.getMonth()] + "." + year + ' ' + hours + ":" + minutes
 
-
     comments.push(
       {
-        name: addFormName.value,
+        name: addFormName.value
+          .replaceAll('<', '&lt')
+          .replaceAll('>', '&gt'),
         date: userDate,
-        text: addFormText.value,
+        text: addFormText.value
+          .replaceAll('<', '&lt')
+          .replaceAll('>', '&gt'),
         likes: 0,
-        isLiked: false
+        isLiked: false,
       }
     )
 
 
     renderComments()
     // initLikeColor()
-    initLikeButtons()
+    // initLikeButtons()
     addFormName.value = ''
     addFormText.value = ''
 
