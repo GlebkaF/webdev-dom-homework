@@ -95,13 +95,13 @@
             likeUp.addEventListener('click', (event) => {
                 event.stopPropagation();
                 let found = allUsersAndComments[likeUp.dataset.index];
-                if (found.isLiked === true) {
-                    likeUp.classList.remove('-active-like');
+                if (found.isLiked) {
+
                     found.counter--;
                     found.isLiked = false;
 
                 } else {
-                    likeUp.classList.add('-active-like');
+
                     found.counter++;
                     found.isLiked = true;
 
