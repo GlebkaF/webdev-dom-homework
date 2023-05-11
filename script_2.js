@@ -6,6 +6,7 @@ const userName = document.querySelector('.add-form-name');
 const textCommment = document.querySelector('.add-form-text');
 const button = document.querySelector('.add-form-button');
 const comments = document.querySelectorAll('.comment');
+
 function dateFormat() {
     const date = new Date();
     (date.getDate() < 10) ? dd = '0' + date.getDate() : dd = date.getDate();
@@ -23,10 +24,19 @@ container.addEventListener('click', (e) => {
             break;
         case 'del-comment': delClick(id);
             break;
-        case 'edit-comment': editClick(id);
-            editValid();
+        case 'edit-comment': editClick(id); editValid();
             break;
         case 'edit-form-button': saveEditComment(id);
+            break;
+        case 'comment-body': quoteComment(id);
+            break;
+        case 'comment-text': quoteComment(id);
+            break;
+        case 'quote_title': quoteComment(id);
+            break;
+        case 'quote': quoteComment(id);
+            break;
+            case 'comment': quoteComment(id);
             break;
         default: break;
     }
@@ -56,7 +66,25 @@ const commentsListArray = [
         like: "1",
         Iliked: true,
         isEdit: false,
-    }
+    },
+    {
+        Iliked: true,
+        date: "08.05.23 13:28",
+        isEdit: false,
+        like: 1,
+        msg: "[audio=https://ruo.morsmusic.org/load/2099268863/Artik_Asti_-_Devochka_tancujj_(musmore.com).mp3][/audio]",
+        name: "Евген",
+    },
+
+    {
+        Iliked: false,
+        date: "08.05.23 14:28",
+        isEdit: false,
+        like: 1,
+        msg: "[img=https://grand-prixf1.ru/uploads/posts/2023-05/gran-pri-majami.jpg][/img]",
+        name: "Евген",
+    },
+    
 ];
 const addLikes = (id) => {
     commentsListArray[id].like++;
@@ -73,6 +101,8 @@ const initLikeClick = (id) => {
 const editClick = (id) => {
     commentsListArray[id].isEdit = true;
     renderComments();
+    const editFormText = document.querySelector('.edit-form-text');
+    editFormText.scrollIntoView({ behavior: "smooth" });
 }
 const saveEditComment = (id) => {
     const date = new Date(); // дата
@@ -103,12 +133,35 @@ const delClick = (id) => {
     commentsListArray.splice(id, 1);
     renderComments();
 }
+function quoteComment(id) {
+    const comment_body = document.querySelectorAll('.comment-text');
+    textCommment.scrollIntoView({ behavior: "smooth" });
+    const quoteText = `[quote=${commentsListArray[id].name}]\n${commentsListArray[id].msg}[/quote]\n`;
+    textCommment.value += quoteText;
+}
+function htmlBbDecode(text, id) {
+    return text
+        .replaceAll(/\[quote=(.*?)\]/g, `<div class="quote_title" data-id="${id}">Цитата: $1</div><div class="quote" data-id="${id}">`)
+        .replaceAll(/\[iframe=(.*?)\]/g, `<iframe src="$1" width="100%" height="240" allow="autoplay; encrypted-media; fullscreen; picture-in-picture;" frameborder="0" allowfullscreen>`)
+        .replaceAll(/\[video=(.*?)\]/g, `<video src="$1" width="100%" height="240" controls>`)
+        .replaceAll(/\[img=(.*?)\]/g, `<img src="$1" width="100%" height="240">`)
+        .replaceAll(/\[audio=(.*?)\]/g, `<audio src="$1" width="100%" height="240" controls>`)
+        .replaceAll(/\[(.*?)\]/g, '<$1>')
+        .replaceAll(/\[\/(.*?)\]/g, '</$1>')
+}
+function htmlSpecialChars(text) {
+    return text
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+}
 function renderComments() {
     const commentHtmlResult = commentsListArray.map((comment, id) => {
         (comment.Iliked) ? Iliked = '-active-like' : Iliked = '';
         if (comment.isEdit) {
-
-            return `<div class="add-form">
+            return `
+            <div class="add-form">
                     <textarea
                     type="textarea"
                     class="edit-form-text"
@@ -116,7 +169,8 @@ function renderComments() {
                     <div class="add-form-row">
                     <button data-id="${id}" class="edit-form-button save_button">Сохранить</button>
                     </div>
-                    </div>`
+                    </div>
+                   `
                 ;
 
 
@@ -127,9 +181,9 @@ function renderComments() {
                     <div>${comment.name}</div>      
                     <div>${comment.date}</div>   
                     </div>
-                    <div class="comment-body">
+                    <div class="comment-body" data-id="${id}">
                     <div class="comment-text" data-id="${id}">
-                    ${comment.msg}
+                    ${htmlBbDecode(comment.msg, id)}
                     </div>
                     </div>
                     <div class="comment-footer">
@@ -147,10 +201,6 @@ function renderComments() {
         }
     }).join("");
     commentList.innerHTML = commentHtmlResult;
-    //   initLikeClick();
-    // editClick();
-
-    //   saveEditComment();
 }
 function valiate() { //функция валидации простая
     if (userName.value.length === 0) { //если имя === 0
@@ -174,9 +224,9 @@ function addComment() { //функция  добавления коммента
     const date = new Date(); // дата
     if (validate) { //если true 
         commentsListArray.push({
-            name: userName.value,
+            name: htmlSpecialChars(userName.value),
             date: dateFormat(),
-            msg: textCommment.value,
+            msg: htmlSpecialChars(textCommment.value),
             like: 0,
         });
         renderComments();
@@ -184,29 +234,43 @@ function addComment() { //функция  добавления коммента
         button.setAttribute('disabled', '');
     }
 }
-
 button.addEventListener('click', (event) => { // если клик по буттон
     addComment();
 });
-
 addForm.addEventListener('input', (event) => { //отслеживаем ввод 
     const validate = valiate();
     (validate) ? button.removeAttribute('disabled') : button.setAttribute('disabled', '');
 });
-
 addForm.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.keyCode == 13) { addComment(); } // если нажата Ctrl + Enter
 });
-
 if (document.querySelector('.edit-form-text')) {
     const editText = document.querySelector('.edit-form-text');
     const editButton = document.querySelector('.edit-form-button');
-
     editText.addEventListener('input', () => {
         if (editText.value.length > 10) {
             editButton.removeAttribute('disabled');
         }
     });
 }
+const bbCodeButton = document.querySelectorAll('.bb_code_button');
+for (let i = 0; i < bbCodeButton.length; i++) {
+    const element = bbCodeButton[i];
+
+    element.addEventListener('click', (event) => {
+        const bbTag = event.target.dataset.code;
+        if (bbTag === 'iframe' || bbTag === 'video' || bbTag === 'img' || bbTag === 'audio') {
+            const iframeUrl = prompt(`Вставьте адрес ${bbTag}`);
+            if (iframeUrl) { textCommment.value += `[${bbTag}=${iframeUrl}][/${bbTag}]` }
+        }
+        if (textCommment.selectionStart === textCommment.selectionEnd) {
+            return; // ничего не выделено
+        }
+        let selected = textCommment.value.slice(textCommment.selectionStart, textCommment.selectionEnd);
+        textCommment.setRangeText(`[${bbTag}]${selected}[/${bbTag}]`);
+    });
+
+}
+
 
 renderComments();
