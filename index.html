@@ -229,6 +229,16 @@
   }
   addCommentListener();
 
+  //Получение комментариев из API https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments
+  const fetchPromise = fetch('https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments', {
+    method: 'GET',
+  });
+  fetchPromise.then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+    });
+
+
 </script>
 
 </html>
