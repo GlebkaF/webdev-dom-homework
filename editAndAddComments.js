@@ -14,6 +14,8 @@ function getComments () {
           isLiked: comment.isLiked
         }
       });
+      loadedComment = false
+      renderForm(loadedComment)
       renderComments();
     });
   });
@@ -22,6 +24,8 @@ function getComments () {
 
 function addNewComment() {
       const dateNow = new Date();
+      let loadedComment = true
+      renderForm(loadedComment)
       fetch("https://webdev-hw-api.vercel.app/api/v1/yan-lagun/comments", {
     method: "POST",
     body: JSON.stringify({
@@ -39,8 +43,10 @@ function addNewComment() {
         response.json().then((responseData) => {
           getComments()
             renderComments();
+
         })
     })
+    
       cleareInputs()
       renderComments()
       commentClickListener()

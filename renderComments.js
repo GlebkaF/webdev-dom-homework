@@ -33,3 +33,15 @@ const renderComments = () => {
 };
 
 renderComments()
+
+
+
+function renderForm(loadedComment) {
+  if (loadedComment == true){
+    addForm.classList.add('hide')
+    loader.classList.remove('hide')
+  } if(loadedComment == false){
+    loader.classList.add('hide')
+    addForm.classList.remove('hide')
+  }
+}
