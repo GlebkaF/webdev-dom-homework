@@ -87,23 +87,41 @@
   ]
 
   const initLikeButtonsElements = () => {
-    const likeButtonsElements = document.querySelectorAll('.like-button');
-    for (likeButtonElement of likeButtonsElements) {
-      likeButtonElement.addEventListener('click', () => {
-        let index = likeButtonElement.dataset.index;
-        if (comentarios[index].isLiked) {
-          comentarios[index].isLiked = !comentarios[index].isLiked;
-          comentarios[index].likesNumber -= 1;
-          renderComments();
-        } else {
-          comentarios[index].isLiked = !comentarios[index].isLiked;
-          comentarios[index].likesNumber += 1;
-          renderComments();
-        }
-        // console.log(index);
-      })
-    }
-  }
+    const likeButtons = document.querySelectorAll('.like-button');
+
+    likeButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const index = button.dataset.index;
+        const comment = comentarios[index];
+
+
+        comment.likesNumber = comment.isLiked ? comment.likesNumber - 1 : comment.likesNumber + 1;
+        comment.isLiked = !comment.isLiked;
+
+
+        renderComments();
+      });
+    });
+  };
+
+  // const initLikeButtonsElements = () => {
+  //   const likeButtonsElements = document.querySelectorAll('.like-button');
+  //   for (likeButtonElement of likeButtonsElements) {
+  //     likeButtonElement.addEventListener('click', () => {
+  //       let index = likeButtonElement.dataset.index;
+  //       if (comentarios[index].isLiked) {
+  //         comentarios[index].isLiked = !comentarios[index].isLiked;
+  //         comentarios[index].likesNumber -= 1;
+  //         renderComments();
+  //       } else {
+  //         comentarios[index].isLiked = !comentarios[index].isLiked;
+  //         comentarios[index].likesNumber += 1;
+  //         renderComments();
+  //       }
+  //       // console.log(index);
+  //     })
+  //   }
+  // }
 
   const renderComments = () => {
     const commentsHtml = comentarios.map((comment, index) => {
