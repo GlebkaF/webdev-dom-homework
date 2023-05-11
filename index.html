@@ -35,6 +35,10 @@
     .error {
       background-color: red;
     }
+
+    .add-form-text {
+      white-space: pre-line
+    }
   </style>
 
   <script>
@@ -44,6 +48,7 @@
     const listElement = document.getElementById("list-comments");
     const nameInputElement = document.getElementById("name-input");
     const textInputElement = document.getElementById("text-input");
+    
 
     const comments = [
       {
@@ -65,7 +70,7 @@
 
     const renderComments = () => {
       const commentsHtml = comments.map((comment, index) => {
-        return `<li class="comment" data-comment="< ${comment.text} ${comment.name}">
+        return `<li class="comment" data-comment="< ${comment.text} \n ${comment.name}">
           <div class="comment-header">
             <div>
               ${comment.name}
@@ -99,7 +104,8 @@
       const likesButtonElements = document.querySelectorAll('.like-button');
       
       for (const likesButtonElement of likesButtonElements) {
-        likesButtonElement.addEventListener('click', () => {
+        likesButtonElement.addEventListener('click', (event) => {
+        event.stopPropagation();
         const index = likesButtonElement.dataset.index;
 
         const comment = comments[index];
@@ -116,12 +122,14 @@
 
       for (const quoteCommentElement of quoteCommentElements) {
         quoteCommentElement.addEventListener('click', () => {
-          return quoteCommentElement.dataset.comment;
+          document.getElementById("text-input").value = quoteCommentElement.dataset.comment;
 
           renderComments();
         });
       };
     }
+
+    
 
     
 
@@ -162,6 +170,9 @@
     });
 
     renderComments();
+
+    nameInputElement.value = "";
+    textInputElement.value = "";
 
   });
 
