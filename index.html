@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="list" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -45,27 +45,76 @@
         </li>
       </ul>
       <div class="add-form">
-        <input
+        <input id="name-input"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
-        <textarea
+        <textarea id="text-input"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="add-button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
 
+  <style>
+    .error {
+      border: 3px solid red;
+    }
+  </style>
+
   <script>
     "use strict";
-    // Код писать здесь
+    const buttonElement = document.getElementById("add-button");
+    const listElement = document.getElementById("list");
+    const nameInputElement = document.getElementById("name-input");  
+    const textInputElement = document.getElementById("text-input");
+    const date = new Date();
+    const formattedDate =
+    date.getDate().toString().padStart(2, '0') + '.' +
+      (date.getMonth() + 1).toString().padStart(2, '0') + '.' +
+      date.getFullYear().toString().slice(-2) + ' ' +
+      date.getHours().toString().padStart(2, '0') + ':' +
+      date.getMinutes().toString().padStart(2, '0');
+
+      buttonElement.addEventListener("click", () => {
+          nameInputElement.classList.remove("error");
+            if (nameInputElement.value === "") {
+              nameInputElement.classList.add("error");
+            return;
+          }
+          textInputElement.classList.remove("error");
+            if (textInputElement.value === "") {
+              textInputElement.classList.add("error");
+            return;
+          }
+
+        const oldListHtml = listElement.innerHTML;
+        listElement.innerHTML = oldListHtml + `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${formattedDate}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+      });
+    
     console.log("It works!");
   </script>
 </html>
