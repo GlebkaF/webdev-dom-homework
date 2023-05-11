@@ -123,14 +123,32 @@
 
   function renderComments() {
     const commentHtmlResult = commentsListArray.map((comment, id) => {
-      (comment.Iliked) ? Iliked = '-active-like' : Iliked = '';
-      (comment.date) ? dates = comment.date : dates = `${("0" + date.getDate()).slice(-2)}.${("0" + (date.getMonth() + 1)).slice(-2)}.${date.getFullYear().toString().slice(-2)} ${("0" + date.getHours()).slice(-2)}:${("0" + date.getMinutes()).slice(-2)}`
+      let Iliked = '';
+      let dates = '';
+
+      if (comment.Iliked) {
+        Iliked = '-active-like';
+      }
+
+      if (comment.date) {
+        dates = comment.date;
+      } else {
+        const date = new Date();
+        const day = ("0" + date.getDate()).slice(-2);
+        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+        const year = date.getFullYear().toString().slice(-2);
+        const hours = ("0" + date.getHours()).slice(-2);
+        const minutes = ("0" + date.getMinutes()).slice(-2);
+        dates = `${day}.${month}.${year} ${hours}:${minutes}`;
+      }
+
       return `<li class="comment" data-id="${id}">
 <div class="comment-header">
 <div class="comment-name">${comment.name}</div>
 <div>${dates}</div>
 </div>
-<div class="comment-body"> <div class="comment-text">${comment.msg}</div>
+<div class="comment-body">
+<div class="comment-text">${comment.msg}</div>
 </div>
 <div class="comment-footer">
 <div class="likes">
@@ -140,10 +158,12 @@
 </div>
 </li>`;
     }).join("");
+
     commentList.innerHTML = commentHtmlResult;
     initLikeClick();
-    addCommentListener()
+    addCommentListener();
   }
+
 
   const validate = () => {
     userName.classList.toggle('error', userName.value.length === 0);
