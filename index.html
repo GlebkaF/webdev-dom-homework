@@ -118,7 +118,7 @@
           //Преобразуем дату строку в date
           dates: new Date(comment.date),
           //Текст комментария
-          msg: comment.text,
+          text: comment.text,
           //Количество лайков
           like: comment.likes,
           //Лайки
@@ -159,7 +159,7 @@
 <div>${dates}</div>
 </div>
 <div class="comment-body">
-<div class="comment-text">${comment.msg}</div>
+<div class="comment-text">${comment.text}</div>
 </div>
 <div class="comment-footer">
 <div class="likes">
@@ -213,6 +213,7 @@
 
       appComments.push(newComment);
       sendCommentToServer(newComment); // Отправка комментария на сервер
+
 
       renderComments();
       textComment.value = "";
