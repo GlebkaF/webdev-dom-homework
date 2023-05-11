@@ -69,38 +69,17 @@
   const userName = document.querySelector('.add-form-name');
   const textComment = document.querySelector('.add-form-text');
   const button = document.querySelector('.add-form-button');
-  const commentsListArray = [
-    {
-      name: "Глеб Фокин",
-      date: "12.02.22 12:18",
-      msg: "Это будет первый комментарий на этой странице",
-      like: "3",
-      Iliked: false,
-    },
-    {
-      name: "Варвара Н.",
-      date: "13.02.22 19:22",
-      msg: "Мне нравится как оформлена эта страница! ❤",
-      like: "75",
-      Iliked: false,
-    },
-    {
-      name: "Андрей",
-      date: "01.05.23 13:01",
-      msg: "Я учусь писать код в SkyPro",
-      like: "1",
-      Iliked: true,
-    }
-  ];
+  let appComments = [];
+
   //Добавляем лайк
   const addLikes = (e) => {
-    const comment = commentsListArray[e.target.dataset.id];
+    const comment = appComments[e.target.dataset.id];
     comment.like++;
     comment.Iliked = true;
   }
   //Удаляем лайк
   const delLikes = (e) => {
-    const comment = commentsListArray[e.target.dataset.id];
+    const comment = appComments[e.target.dataset.id];
     comment.like--;
     comment.Iliked = false;
   }
@@ -110,7 +89,7 @@
     for (const likeClickElement of likeClickElements) {
       likeClickElement.addEventListener('click', (e) => {
         e.stopPropagation();
-        const comment = commentsListArray[e.target.dataset.id];
+        const comment = appComments[e.target.dataset.id];
         if (comment.Iliked) {
           delLikes(e);
         } else {
@@ -132,7 +111,7 @@
 
     // Подписываемся на результат преобразования
     jsonPromise.then((responseData) => {
-      const appComments = responseData.comments.map((comment) => {
+      appComments = responseData.comments.map((comment) => {
         return {
           //Имя автора
           name: comment.author.name,
@@ -214,7 +193,7 @@
       const minutes = ("0" + date.getMinutes()).slice(-2);
       const formattedDate = `${day}.${month}.${year} ${hours}:${minutes}`;
 
-      commentsListArray.push({
+      appComments.push({
         name: userName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
         date: formattedDate,
         msg: textComment.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
