@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="comments-list">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -44,28 +44,93 @@
           </div>
         </li>
       </ul>
-      <div class="add-form">
+      <div class="add-form" id="form">
         <input
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
-        />
+          id="user-name" />
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
-        ></textarea>
+          id="user-text"></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="button-form">Написать</button>
         </div>
+      </div>
+      <div class="button-delete">
+        <button class="add-form-button" id="button-delete-comment">
+          Удалить последний комментарий
+        </button>
       </div>
     </div>
   </body>
 
   <script>
     "use strict";
-    // Код писать здесь
+    const listElement = document.getElementById("comments-list");
+    const buttonElement = document.getElementById("button-form");
+    const nameInputElement = document.getElementById("user-name");
+    const textInputElement = document.getElementById("user-text");
+    const buttonDelete = document.getElementById("button-delete-comment");
+    const formElement = document.getElementById("form");
+    let date = new Date();
+    let userDate =
+      date.getDate() +
+      "." +
+      date.getMonth() +
+      "." +
+      date.getFullYear() +
+      " " +
+      date.getHours() +
+      ":" +
+      date.getMinutes();
+
+    buttonElement.addEventListener("click", () => {
+      buttonElement.classList.remove("add-form-button-error");
+      buttonElement.classList.add("add-form-button");
+      nameInputElement.classList.remove("error");
+      textInputElement.classList.remove("error");
+
+      if (nameInputElement.value === "" || textInputElement.value === "") {
+        buttonElement.classList.remove("add-form-button");
+        buttonElement.classList.add("add-form-button-error");
+
+        if (nameInputElement.value === "") {
+          nameInputElement.classList.add("error");
+          return;
+        }
+        if (textInputElement.value === "") {
+          textInputElement.classList.add("error");
+          return;
+        }
+
+        return;
+      }
+      const oldListElement = listElement.innerHTML;
+      listElement.innerHTML =
+        oldListElement +
+        `<li class="comment">
+            <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${userDate}</div>
+            </div>
+            <div class="comment-body">
+              <div class="comment-text">
+                 ${textInputElement.value}
+              </div>
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">0</span>
+                <button class="like-button"></button>
+              </div>
+            </div>
+          </li>`;
+    });
+
     console.log("It works!");
   </script>
 </html>
