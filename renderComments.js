@@ -1,27 +1,32 @@
 const renderComments = () => {
     const commentsHtml = usersComments
-      .map((user, index) => {
-        (user.Iliked) ? Iliked = '-active-like' : Iliked = '';
-        return `<li class="comment" data-id="${index}">
+      .map((comment, id) => {
+        let isLiked = ''
+        if (comment.isLiked) {
+          isLiked = '-active-like';
+        }
+        
+        date = formatDate(comment.date)
+        return `<li class="comment" data-id="${id}">
         <div class="comment-header">
-          <div>${user.name}</div>
-          <div>${user.date}</div>
+          <div>${comment.name}</div>
+          <div>${date}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
-            ${user.comment}
+            ${comment.text}
           </div>
         </div>
         <div class="comment-footer">
           <div class="likes">
-            <span class="likes-counter">${user.likes}</span>
-            <button class="like-button ${Iliked}" data-id="${index}"></button>
+            <span class="likes-counter">${comment.likes}</span>
+            <button class="like-button ${isLiked}" data-id="${id}"></button>
           </div>
         </div>
       </li>`;
       })
       .join("");
-  
+      
     boxOfComments.innerHTML = commentsHtml;
     initEventListeners();
     commentClickListener()

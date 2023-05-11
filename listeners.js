@@ -17,9 +17,15 @@ const likeButtons = document.querySelectorAll('.likes');
   
   for (const likeButton of likeButtons) {
     likeButton.addEventListener('click', (e) => {
-      (usersComments[e.target.dataset.id].Iliked) ? delLikes(e) : addLikes(e);
+      e.stopPropagation()
+      const comment = usersComments[e.target.dataset.id];
+        if (comment.isLiked) {
+          delLikes(e);
+        } else {
+          addLikes(e);
+        }
     renderComments();
-    e.stopPropagation()
+    
     })
     
   }

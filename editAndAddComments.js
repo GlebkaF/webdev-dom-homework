@@ -1,26 +1,51 @@
+function getComments () {
+  const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/yan-lagun/comments", {
+    method: "GET"
+  });
+  fetchPromise.then((response) => {
+    const jsonPromise = response.json();
+    jsonPromise.then((responseData) => {
+      usersComments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: new Date(comment.date),
+          text: comment.text,
+          likes: comment.likes,
+          isLiked: comment.isLiked
+        }
+      });
+      renderComments();
+    });
+  });
+}
+
+
 function addNewComment() {
       const dateNow = new Date();
-      usersComments.push({
-          name: `${newName.value}`.replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;"),
-          date: `${formatDate(dateNow)}`,
-          comment: `${newComment.value}`
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;")
-          .replace("|", "<div class='quote'>")
-          .replace("|", "</div>"),
-          likes: "0",
-          Iliked: false,
-          isEdit: false
-      })
+      fetch("https://webdev-hw-api.vercel.app/api/v1/yan-lagun/comments", {
+    method: "POST",
+    body: JSON.stringify({
+      "text": newComment.value.replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replace("|", "<div class='quote'>")
+            .replace("|", "</div>"),
+      "name": newName.value.replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;"),
+    })}).then((response) => {
+        response.json().then((responseData) => {
+          getComments()
+            renderComments();
+        })
+    })
       cleareInputs()
       renderComments()
       commentClickListener()
 }
+getComments()
 
 function formatDate(date) {
   
