@@ -121,8 +121,40 @@
     }
   };
 
+  //Получение комментариев из API https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments
+  const fetchPromise = fetch('https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments', {
+    method: 'GET',
+  });
+
+  fetchPromise.then((response) => {
+    // Запускаем, преобразовываем сырые данные от API в JSON-формат
+    const jsonPromise = response.json();
+
+    // Подписываемся на результат преобразования
+    jsonPromise.then((responseData) => {
+      appComments = responseData.comments.map((comment) => {
+        return {
+          //Имя автора
+          name: comment.author.name,
+          //Преобразуем дату строку в date
+          dates: new Date(comment.date),
+          //Текст комментария
+          msg: comment.text,
+          //Количество лайков
+          like: comment.like,
+          //Лайки
+          Iliked: 0,
+        }
+      })
+
+      comments = appComments;
+      renderComments();
+    });
+  });
+
+  //Рендер комментариев
   function renderComments() {
-    const commentHtmlResult = commentsListArray.map((comment, id) => {
+    const commentHtmlResult = comments.map((comment, id) => {
       let Iliked = '';
       let dates = '';
 
@@ -229,37 +261,7 @@
   }
   addCommentListener();
 
-  //Получение комментариев из API https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments
-  const fetchPromise = fetch('https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments', {
-    method: 'GET',
-  });
 
-  fetchPromise.then((response) => {
-    // Запускаем, преобразовываем сырые данные от API в JSON-формат
-    const jsonPromise = response.json();
-
-    // Подписываемся на результат преобразования
-    jsonPromise.then((responseData) => {
-      appComments = responseData.comments.map((comment) => {
-        return {
-          //Имя автора
-          name: comment.author.name,
-          //Преобразуем дату строку в date
-          dates: new Date(comment.date),
-          //Текст комментария
-          msg: comment.text,
-          //Количество лайков
-          like: comment.like,
-          //Лайки
-          Iliked: false,
-        }
-      })
-
-      comments = appComments;
-      renderComments();
-      console.log(comments);
-    });
-  });
 
 </script>
 
