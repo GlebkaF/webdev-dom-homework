@@ -233,11 +233,32 @@
   const fetchPromise = fetch('https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments', {
     method: 'GET',
   });
-  fetchPromise.then((response) => response.json())
-    .then((data) => {
-      console.log(data);
-    });
 
+  fetchPromise.then((response) => {
+    // Запускаем, преобразовываем сырые данные от API в JSON-формат
+    const jsonPromise = response.json();
+
+    // Подписываемся на результат преобразования
+    jsonPromise.then((responseData) => {
+      appComments = responseData.comments.map((comment) => {
+        return {
+          //Имя автора
+          name: comment.author.name,
+          //Преобразуем дату строку в date
+          date: new Date(comment.date),
+          //Текст комментария
+          text: comment.text,
+          //Количество лайков
+          like: comment.like,
+          //Лайки
+          isLiked: false,
+        }
+      })
+
+      comments = appComments;
+      renderComments();
+    });
+  });
 
 </script>
 
