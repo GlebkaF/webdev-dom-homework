@@ -42,11 +42,21 @@
     const container = document.querySelector(".container");
 
     const fetchPromise = fetch(
-      "https://github.com/GlebkaF/webdev-hw-api/blob/main/pages/api/v1/[key]/comments/README.md",
+      "https://webdev-hw-api.vercel.app/api/v1/:eldar/comments",
       {
         method: "GET",
       }
     );
+
+    fetchPromise.then((response) => {
+      const jsonPromise = response.json();
+
+      jsonPromise.then((responseData) => {
+        comments = responseData.comments;
+        renderComments();
+        console.log(comments);
+      });
+    });
 
     console.log(fetchPromise);
 
@@ -85,14 +95,13 @@
           return `<li class='comment'>
       <div class='comment-header'>
         <div>${comment.name}</div>
-        <div>${comment.day}.${comment.month}.${comment.year}
-          ${comment.hours}:${comment.minutes}
+        <div>${comment.date}
           </div>
         </div>
         <div class='comment-body'>
           <div class= 'comment-text'
           data-index="${index}"
-          > ${comment.comment} </div>
+          > ${comment.text} </div>
           </div>
           <div class='comment-footer'>
           <div class='likes'>
@@ -215,21 +224,42 @@
         if (minutes < 10) {
           minutes = "0" + minutes;
         }
-        comments.push({
-          name: inputName.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
-          comment: inputText.value
-            .replaceAll("<", "&lt")
-            .replaceAll(">", "&gt"),
-          day: date.getDate(),
-          month: month,
-          year: date.getFullYear(),
-          hours: date.getHours(),
-          minutes: minutes,
-          likes: 0,
-          isLiked: false,
-          edit: false,
+        // comments.push({
+        //   name: inputName.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
+        //   comment: inputText.value
+        //     .replaceAll("<", "&lt")
+        //     .replaceAll(">", "&gt"),
+        //   date: `${date.getFullYear()}.${month}.${date.getDate()} ${hours}:${minutes}`,
+        //   likes: 0,
+        //   isLiked: false,
+        //   edit: false,
+        // });
+        // initLikeButtonListener();
+
+        const fetchPromise = fetch(
+          "https://webdev-hw-api.vercel.app/api/v1/:eldar/comments",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              text: inputText.value
+                .replaceAll("<", "&lt")
+                .replaceAll(">", "&gt"),
+              name: inputName.value
+                .replaceAll("<", "&lt")
+                .replaceAll(">", "&gt"),
+              date: `${date.getFullYear()}.${month}.${date.getDate()} ${date.getHours()}:${minutes}`,
+            }),
+          }
+        );
+
+        fetchPromise.then((response) => {
+          const jsonPromise = response.json();
+
+          jsonPromise.then((responseData) => {
+            comments = responseData.comments;
+            // renderComments();
+          });
         });
-        initLikeButtonListener();
       }
 
       renderComments();
