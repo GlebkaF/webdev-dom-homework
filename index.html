@@ -10,40 +10,7 @@
 <body>
   <div class="container">
     <ul class="comments">
-      <!-- <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.2022 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li> -->
-      <!-- <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.2022 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li> -->
+      <!-- рендеринг -->
     </ul>
     <div class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
@@ -90,38 +57,34 @@
     const likeButtons = document.querySelectorAll('.like-button');
 
     likeButtons.forEach((button) => {
-      button.addEventListener('click', () => {
+      button.addEventListener('click', (event) => {
+        event.stopPropagation();
         const index = button.dataset.index;
         const comment = comentarios[index];
 
-
         comment.likesNumber = comment.isLiked ? comment.likesNumber - 1 : comment.likesNumber + 1;
         comment.isLiked = !comment.isLiked;
-
 
         renderComments();
       });
     });
   };
 
-  // const initLikeButtonsElements = () => {
-  //   const likeButtonsElements = document.querySelectorAll('.like-button');
-  //   for (likeButtonElement of likeButtonsElements) {
-  //     likeButtonElement.addEventListener('click', () => {
-  //       let index = likeButtonElement.dataset.index;
-  //       if (comentarios[index].isLiked) {
-  //         comentarios[index].isLiked = !comentarios[index].isLiked;
-  //         comentarios[index].likesNumber -= 1;
-  //         renderComments();
-  //       } else {
-  //         comentarios[index].isLiked = !comentarios[index].isLiked;
-  //         comentarios[index].likesNumber += 1;
-  //         renderComments();
-  //       }
-  //       // console.log(index);
-  //     })
-  //   }
-  // }
+  const initCommsListeners = () => {
+    const comms = document.querySelectorAll('.comment');
+
+    comms.forEach((comm) => {
+      comm.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const index = comm.dataset.index;
+        const comment = comentarios[index];
+
+        commentInputElement.value = `${comentarios[index].name}: ${comentarios[index].text}`;
+
+        renderComments();
+      });
+    });
+  };
 
   const renderComments = () => {
     const commentsHtml = comentarios.map((comment, index) => {
@@ -165,6 +128,7 @@
     }).join('');
     listElement.innerHTML = commentsHtml;
     initLikeButtonsElements();
+    initCommsListeners();
   }
 
   renderComments();
@@ -180,30 +144,15 @@
       commentInputElement.classList.add("error");
       return;
     }
-    // const oldListHtml = listElement.innerHTML;
-    // listElement.innerHTML =
-    //   oldListHtml +
-    //   `<li class="comment">
-    //     <div class="comment-header">
-    //       <div>${nameInputElement.value}</div>
-    //       <div>${currentDate.toLocaleDateString() + ' ' + currentDate.getHours() + ':' + currentDate.getMinutes()}</div>
-    //     </div>
-    //     <div class="comment-body">
-    //       <div class="comment-text">
-    //         ${commentInputElement.value}
-    //       </div>
-    //     </div>
-    //     <div class="comment-footer">
-    //       <div class="likes">
-    //         <span class="likes-counter">0</span>
-    //         <button class="like-button"></button>
-    //       </div>
-    //     </div>`
 
     comentarios.push({
-      name: nameInputElement.value,
+      name: nameInputElement.value
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;"),
       date: currentDate.toLocaleDateString() + ' ' + currentDate.getHours() + ':' + currentDate.getMinutes(),
-      text: commentInputElement.value,
+      text: commentInputElement.value
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;"),
       likesNumber: 0,
     });
     renderComments();
