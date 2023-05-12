@@ -5,7 +5,7 @@ const commentClickListener = () => {
     for (const comment of boxOfCommentsTexts) {
       comment.addEventListener('click', () => {
         newComment.setAttribute('style', 'white-space: pre-line;');
-        const replace = `${usersComments[comment.dataset.id].comment} \r\n \r\n ${usersComments[comment.dataset.id].name}`
+        const replace = `${usersComments[comment.dataset.id].text} \r\n \r\n ${usersComments[comment.dataset.id].name}`
         newComment.value = `| ${replace} \r\n\|`
       })
     }
