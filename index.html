@@ -81,10 +81,12 @@
 
         const index = editCommentElement.dataset.index;
         const comment = comments[index];
-        const textArea = document.querySelectorAll('.comment-text');
 
-        if (comment.isEdit && textArea) {
-          comment.text = textArea[index].value;
+
+        if (comment.isEdit) {
+          const textArea = document.querySelector('.textarea-text');
+
+          comment.text = textArea.value;
         }
 
         comment.isEdit = !comment.isEdit;
@@ -98,7 +100,7 @@
   // Сценарий "Ответ на комментарий"
 
   const initReplyToCommentListeners = () => {
-    const replyToCommentElements = document.querySelectorAll('.comment');
+    const replyToCommentElements = document.querySelectorAll('.comment-text');
 
     for (const replyToCommentElement of replyToCommentElements) {
       replyToCommentElement.addEventListener('click', () => {
@@ -127,7 +129,7 @@
         </div>
         <div class="comment-body">
             ${comment.isEdit
-            ? `<textarea type="textarea" data-index=${index} class="comment-text" rows="4">${comment.text}</textarea>`
+            ? `<textarea type="textarea" data-index=${index} class="textarea-text" rows="4">${comment.text}</textarea>`
             : `<div class="comment-text" data-index="${index}">
               ${comment.text}
             </div>`
