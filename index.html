@@ -155,6 +155,11 @@
           listElement.innerHTML = listElement.innerHTML.substring( 0, lastCommentIndex ); 
         } });
     
+        document.addEventListener("keyup", (event) => {
+           if (event.key === "Enter") { 
+            buttonElement.click(); 
+          } 
+        });
   
     console.log("It works!");
   </script>
