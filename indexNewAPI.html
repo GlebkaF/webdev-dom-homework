@@ -31,9 +31,9 @@
   </body>
 
   <script>
-    // const date = new Date();
-    // let month = date.getMonth() + 1;
-    // let minutes = date.getMinutes();
+    const date = new Date();
+    let month = date.getMonth() + 1;
+    let minutes = date.getMinutes();
     const commentList = document.querySelector(".comments");
     const addFormButton = document.querySelector(".add-form-button");
     const inputName = document.querySelector(".add-form-name");
@@ -58,35 +58,32 @@
       });
     });
 
-    console.log(fetchPromise);
-
     let comments = [
-      {
-        name: "Глеб Фокин",
-        comment: "Это будет первый комментарий на этой странице",
-        time: "12.02.22 12:18",
-        day: "12",
-        month: "02",
-        year: "22",
-        hours: "12",
-        minutes: "18",
-        likes: 3,
-        isLiked: true,
-        edit: false,
-      },
-
-      {
-        name: "Варвара Н.",
-        comment: "Мне нравится как оформлена эта страница!",
-        day: "13",
-        month: "02",
-        year: "22",
-        hours: "19",
-        minutes: "22",
-        likes: 75,
-        isLiked: true,
-        edit: false,
-      },
+      // {
+      //   name: "Глеб Фокин",
+      //   comment: "Это будет первый комментарий на этой странице",
+      //   time: "12.02.22 12:18",
+      //   day: "12",
+      //   month: "02",
+      //   year: "22",
+      //   hours: "12",
+      //   minutes: "18",
+      //   likes: 3,
+      //   isLiked: true,
+      //   edit: false,
+      // },
+      // {
+      //   name: "Варвара Н.",
+      //   comment: "Мне нравится как оформлена эта страница!",
+      //   day: "13",
+      //   month: "02",
+      //   year: "22",
+      //   hours: "19",
+      //   minutes: "22",
+      //   likes: 75,
+      //   isLiked: true,
+      //   edit: false,
+      // },
     ];
 
     const renderComments = () => {
