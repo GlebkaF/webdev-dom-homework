@@ -6,9 +6,9 @@ const userName = document.querySelector('.add-form-name');
 const textCommment = document.querySelector('.add-form-text');
 const button = document.querySelector('.add-form-button');
 const comments = document.querySelectorAll('.comment');
-
-function dateFormat() {
-    const date = new Date();
+const loader = document.querySelector('.loader');
+function dateFormat(date) {
+   // const date = new Date();
     (date.getDate() < 10) ? dd = '0' + date.getDate() : dd = date.getDate();
     (date.getMonth() < 10) ? MM = '0' + (date.getMonth() + 1) : MM = (date.getMonth() + 1);
     (date.getFullYear()) ? YY = date.getFullYear().toString().slice(-2) : YY = date.getFullYear().toString().slice(-2);
@@ -36,66 +36,45 @@ container.addEventListener('click', (e) => {
             break;
         case 'quote': quoteComment(id);
             break;
-            case 'comment': quoteComment(id);
+        case 'comment': quoteComment(id);
             break;
         default: break;
     }
 })
-
-const commentsListArray = [
-    {
-        name: "Глеб Фокин",
-        date: "12.02.22 12:18",
-        msg: "Это будет первый комментарий на этой странице",
-        like: "3",
-        Iliked: false,
-        isEdit: false,
-    },
-    {
-        name: "Варвара Н.",
-        date: "13.02.22 19:22",
-        msg: "Мне нравится как оформлена эта страница! ❤",
-        like: "75",
-        Iliked: false,
-        isEdit: false,
-    },
-    {
-        name: "Евген",
-        date: "01.05.23 13:01",
-        msg: "Ничего не понимаю , но интересно ",
-        like: "1",
-        Iliked: true,
-        isEdit: false,
-    },
-    {
-        Iliked: true,
-        date: "08.05.23 13:28",
-        isEdit: false,
-        like: 1,
-        msg: "[audio=https://ruo.morsmusic.org/load/2099268863/Artik_Asti_-_Devochka_tancujj_(musmore.com).mp3][/audio]",
-        name: "Евген",
-    },
-
-    {
-        Iliked: false,
-        date: "08.05.23 14:28",
-        isEdit: false,
-        like: 1,
-        msg: "[img=https://grand-prixf1.ru/uploads/posts/2023-05/gran-pri-majami.jpg][/img]",
-        name: "Евген",
-    },
-    
+let commentsListArray = [
+   
 ];
+function fetchRequest(method, data = null) {
+    return fetch("https://webdev-hw-api.vercel.app/api/v1/gleb-fokin/comments",
+        {
+            method: method,
+            body: data,
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.result === 'ok') {
+                fetchRequest("GET");
+                commentsListArray = data.comments
+                renderComments();
+            } else {
+                commentsListArray = data.comments
+                renderComments();
+            }
+
+
+        }).catch((error) => error);
+
+}
 const addLikes = (id) => {
-    commentsListArray[id].like++;
-    commentsListArray[id].Iliked = true;
+    commentsListArray[id].likes++;
+    commentsListArray[id].isLiked = true;
 }
 const delLikes = (id) => {
-    commentsListArray[id].like--;
-    commentsListArray[id].Iliked = false;
+    commentsListArray[id].likes--;
+    commentsListArray[id].isLiked = false;
 }
 const initLikeClick = (id) => {
-    (commentsListArray[id].Iliked) ? delLikes(id) : addLikes(id);
+    (commentsListArray[id].isLiked) ? delLikes(id) : addLikes(id);
     renderComments();
 }
 const editClick = (id) => {
@@ -107,11 +86,17 @@ const editClick = (id) => {
 const saveEditComment = (id) => {
     const date = new Date(); // дата
     const editText = document.querySelector('.edit-form-text');
+    console.dir(commentsListArray);
     if (editText.value.length > 10) {
-        commentsListArray[id].date = dateFormat();
-        commentsListArray[id].msg = editText.value;
-        commentsListArray[id].isEdit = false;
-        renderComments();
+
+        const data = JSON.stringify({
+            id: id,
+            name: commentsListArray[id].author.name,
+          //  date: dateFormat(),
+            text: htmlSpecialChars(editText.value),
+            like: 0,
+        });
+        fetchRequest("POST", data);
     } else {
         editText.classList.add('error');
     }
@@ -136,7 +121,7 @@ const delClick = (id) => {
 function quoteComment(id) {
     const comment_body = document.querySelectorAll('.comment-text');
     textCommment.scrollIntoView({ behavior: "smooth" });
-    const quoteText = `[quote=${commentsListArray[id].name}]\n${commentsListArray[id].msg}[/quote]\n`;
+    const quoteText = `[quote=${commentsListArray[id].author.name}]\n${commentsListArray[id].text}[/quote]\n`;
     textCommment.value += quoteText;
 }
 function htmlBbDecode(text, id) {
@@ -157,15 +142,16 @@ function htmlSpecialChars(text) {
         .replaceAll('"', "&quot;");
 }
 function renderComments() {
+
     const commentHtmlResult = commentsListArray.map((comment, id) => {
-        (comment.Iliked) ? Iliked = '-active-like' : Iliked = '';
+        (comment.isLiked) ? Iliked = '-active-like' : Iliked = '';
         if (comment.isEdit) {
             return `
             <div class="add-form">
                     <textarea
                     type="textarea"
                     class="edit-form-text"
-                    rows="4">${comment.msg}</textarea>
+                    rows="4">${comment.text}</textarea>
                     <div class="add-form-row">
                     <button data-id="${id}" class="edit-form-button save_button">Сохранить</button>
                     </div>
@@ -178,12 +164,12 @@ function renderComments() {
 
             return `<li class="comment" data-id="${id}">
                     <div class="comment-header">
-                    <div>${comment.name}</div>      
-                    <div>${comment.date}</div>   
+                    <div>${comment.author.name}</div>      
+                    <div>${dateFormat(new Date(comment.date))}</div>   
                     </div>
                     <div class="comment-body" data-id="${id}">
                     <div class="comment-text" data-id="${id}">
-                    ${htmlBbDecode(comment.msg, id)}
+                    ${htmlBbDecode(comment.text, id)}
                     </div>
                     </div>
                     <div class="comment-footer">
@@ -193,14 +179,18 @@ function renderComments() {
                         </div>
                     
                     <div class="likes">
-                        <span class="likes-counter" >${comment.like}</span>
+                        <span class="likes-counter" >${comment.likes}</span>
                         <button class="like-button ${Iliked}" data-id="${id}"></button>
                     </div>
                 </div>
                 </li>`;
         }
     }).join("");
+    loader.classList.remove('loader_visible');
+    loader.classList.add('loader_hidden');
+    addForm.style.visibility = "visible";
     commentList.innerHTML = commentHtmlResult;
+
 }
 function valiate() { //функция валидации простая
     if (userName.value.length === 0) { //если имя === 0
@@ -223,13 +213,18 @@ function addComment() { //функция  добавления коммента
     const validate = valiate(); //присваиваем переменной результат валидации
     const date = new Date(); // дата
     if (validate) { //если true 
-        commentsListArray.push({
+
+        const data = JSON.stringify({
+
             name: htmlSpecialChars(userName.value),
-            date: dateFormat(),
-            msg: htmlSpecialChars(textCommment.value),
+         //   date: dateFormat(),
+            text: htmlSpecialChars(textCommment.value),
             like: 0,
         });
-        renderComments();
+        addForm.style.visibility = "hidden";
+        loader.classList.add('loader_visible');
+        loader.classList.remove('loader_hidden');
+        fetchRequest("POST", data);
         textCommment.value = "";// очищаем поле коммента имя не трогаем 
         button.setAttribute('disabled', '');
     }
@@ -272,5 +267,4 @@ for (let i = 0; i < bbCodeButton.length; i++) {
 
 }
 
-
-renderComments();
+fetchRequest("GET");
