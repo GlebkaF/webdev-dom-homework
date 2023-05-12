@@ -55,7 +55,9 @@
     for (const commentText of commentsText) {
       commentText.addEventListener('click', () => {
         // console.log('1');
-        addFormText.value = `>${commentText.innerHTML} \n${commentName.innerHTML}, `
+        
+        const userName = comments[commentName.dataset.index]
+        addFormText.value = `>${commentText.innerHTML} \n${userName}, `
       })
     }
 
@@ -80,15 +82,11 @@
     let commentsHtml = comments.map((comment, index) => {
       return `<li class="comment" data-index="${index}">
         <div class="comment-header">
-          <div class="comment-name">
-             ${comment.name}
-             </div>
+          <div class="comment-name" data-index="${index}">${comment.name}</div>
           <div>${comment.date}</div>
         </div>
         <div class="comment-body">
-          <div class="comment-text">
-            ${comment.text}
-          </div>
+          <div class="comment-text">${comment.text}</div>
         </div>
         <div class="comment-footer">
           <div class="likes">
