@@ -42,7 +42,7 @@ const renderComments = () => {
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${comment.likes}</span>
-            <button data-index="${index}" id="like-button" class="like-button"></button>
+            <button data-index="${index}" id="like-button" class="like-button ${comment.isLiked ? '-active-like' : ''}"></button>
           </div>
         </div>
       </li>`
@@ -56,21 +56,20 @@ const renderComments = () => {
 
         for (const likeButtonsElement of likeButtonsElements) {
 
-            likeButtonsElement.addEventListener('click', () => {
+            likeButtonsElement.addEventListener('click', (event) => {
+                event.stopPropagation();
 
                 const comment = comments[likeButtonsElement.dataset.index];
                 if (comment.isLiked === true) {
                     comment.likes = comment.likes - 1;
-                    // comment.style.backgroundColor = "red";
                 } else {
                     comment.likes = comment.likes + 1;
-                    // comment.style.backgroundColor = "white";
                 }
 
                 comment.isLiked = !comment.isLiked;
 
                 renderComments();
-            })
+            });
         }
     }
     initLikeButtons();
