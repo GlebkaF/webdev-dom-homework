@@ -73,6 +73,8 @@
   const inputTextElement = document.getElementById("comment-text");
   let currenDate = new Date();
 
+
+  // GET-запрос связка данных с сервером с помощью API
   const fetchPromise = fetch(
     "https://webdev-hw-api.vercel.app/api/v1/kostasdvor/comments",
     {
@@ -263,19 +265,19 @@
 
     // Функция текущей даты и времени
 
-    function formatDateTime(date) {
-      const day = date.getDate().toString().padStart(2, '0');
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      const year = date.getFullYear().toString().slice(-2);
-      const hours = date.getHours().toString().padStart(2, '0');
-      const minutes = date.getMinutes().toString().padStart(2, '0');
-      const timeString = hours + ':' + minutes;
-      const formatedDate = `${day}.${month}.${year} ${timeString}`;
-      return formatedDate;
-    }
+    // function formatDateTime(date) {
+    //   const day = date.getDate().toString().padStart(2, '0');
+    //   const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    //   const year = date.getFullYear().toString().slice(-2);
+    //   const hours = date.getHours().toString().padStart(2, '0');
+    //   const minutes = date.getMinutes().toString().padStart(2, '0');
+    //   const timeString = hours + ':' + minutes;
+    //   const formatedDate = `${day}.${month}.${year} ${timeString}`;
+    //   return formatedDate;
+    // }
 
-    const currentDate = new Date();
-    formatDateTime(currentDate);
+    // const currentDate = new Date();
+    // formatDateTime(currentDate);
 
     // Пуш комментариев пользователя в массив с заменой html символов 
 
@@ -295,6 +297,8 @@
     //   isLiked: false,
     // });
 
+
+    // Получение новых комментов на сервер с помощью API
     const fetchPromise = fetch(
       "https://webdev-hw-api.vercel.app/api/v1/kostasdvor/comments",
       {
@@ -317,7 +321,7 @@
       });
     });
 
-
+    // Новый GET-запрос на получение актуального списка
     const fetchPromiseNew = fetch(
       "https://webdev-hw-api.vercel.app/api/v1/kostasdvor/comments",
       {
