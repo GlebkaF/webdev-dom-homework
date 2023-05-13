@@ -176,7 +176,6 @@ buttonElement.addEventListener('click', () => {
         isLiked: false,
     })
 
-
     // отчистка поля для ввода для новых комментариев
     nameInputElement.value = "";
     commentInputElement.value = "";
