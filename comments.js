@@ -8,7 +8,9 @@ const buttonElement = document.getElementById('add-button');
 
     let commentList = []
 
-    commentsLoader.className = "_hidden";
+    // commentsLoader.className = "_hidden";
+    console.log(commentsLoader);
+    commentsLoader.classList.add("_hidden");
    
 
     const getComments = () => {
@@ -21,9 +23,8 @@ const buttonElement = document.getElementById('add-button');
         const jsonPromise = response.json();
 
       jsonPromise.then((responseData) => {
-        addingAComment.className = "add-form";
-        commentsLoader.className = "_hidden";
-        console.log(responseData);
+        
+        console.log(responseData); 
           commentList = responseData.comments.map((comment) => {
           let activeClass = ""
           if(comment.isLiked === true){
@@ -38,10 +39,10 @@ const buttonElement = document.getElementById('add-button');
               activeClass: activeClass, 
               isEdit: false,
           }
-        })
+        });
         renderCommentList();
-      })
-      })
+      });
+      });
     };
     getComments();
 
@@ -55,12 +56,30 @@ const buttonElement = document.getElementById('add-button');
           text: commentsElement.value.replaceAll('<', '&lt').replaceAll('>', '&gt'),
           likes: 0,
           activeLike: false,
-          activeClass: ""
+          activeClass: "",
+          forceError: true,
         })
       });
         fetchPromise.then((response) => {
+          console.log(response);
+          commentsLoader.classList.add("_hidden");
+          addingAComment.classList.remove("_hidden");
+          if (response.status === 400) {
+            alert("Имя и комментарий не должны быть меньше трех симвалов");
+            addErrors()
+            
+          }
+          else if (response.status === 500){
+            alert("Сервер сломался, Попробуй позже");
+          }
+          
+          else{
+            commentsElement.value = "";
+            nameElement.value = "";  
+          }
           getComments();
         });
+
     };
 
 const renderCommentList = () => {
@@ -112,9 +131,8 @@ const getDate = (startDate) => {
         alert("Пожалуйста введите коментарий!");
         return;
       };
-      addingAComment.className = "_hidden";
-      commentsLoader.className = "comments";
-
+      addingAComment.classList.add("_hidden");
+      commentsLoader.classList.remove("_hidden");
       postComment();
     });
 
@@ -155,3 +173,13 @@ function replyComment(){
     })
   })
 };
+
+function addErrors(){
+  nameElement.classList.add("_error");
+  commentsElement.classList.add("_error");
+  setTimeout(() => {
+    nameElement.classList.remove("_error");
+    commentsElement.classList.remove("_error");
+  },1000)
+};
+
