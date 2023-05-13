@@ -1,6 +1,7 @@
 import { fetchComments, newComment } from "./api.js";
 import { renderLogin } from "./login-component.js";
 import { delay } from "./dalay.js";
+import { format } from "date-fns";
 
 const load = document.querySelector(".load");
 load.style.display = "flex";
@@ -95,7 +96,6 @@ const answer = () => {
       const appAddForm =
       `<ul class="comments">
       ${listComment}
-      <div class="form-autoriz">Чтобы добавить комментарий, <button class ="autoriz">авторизуйтесь</button></div>
       </ul>
       <div class="add-form">
         <input
