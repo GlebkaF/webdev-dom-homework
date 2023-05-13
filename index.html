@@ -39,42 +39,46 @@
     let quoteText = '';
 
 
-    let allUsersAndComments = [
-        {
-            name: 'Глеб Фокин',
-            time: '12.02.22 12:18',
-            comment: "Это будет первый комментарий на этой странице",
-            counter: 3,
-            quoteText: '',
-            isLiked: false,
-        },
-        {
-            name: 'Варвара Н.',
-            time: '13.02.22 19:22',
-            comment: 'Мне нравится как оформлена эта страница! ❤',
-            counter: 75,
-            quoteText: '',
-            isLiked: true,
-        },
-    ];
+    let allUsersAndComments = [];
+
+function getUsers() {
+    const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/denis-sokurenko/comments", {
+        method: "GET",
+    });
+
+    fetchPromise.then((response) => {
+    });
+    fetchPromise.then((response) => {
+        const jsonPromise = response.json();
+
+        jsonPromise.then((responseData) => {
+            console.log(responseData)
+            allUsersAndComments = responseData.comments;
+            renderUsers();
+        });
+    });
+}
+
+getUsers();
+
+
 
 
     const renderUsers = () => {
         const usersHtml = allUsersAndComments.map((user, index) => {
             return `<li class="comment">
     <div class="comment-header">
-      <div class="name-user">${user.name}</div>
-      <div>${user.time}</div>
+      <div class="name-user">${user.author.name}</div>
+      <div>${user.date}</div>
     </div>
     <div class="comment-body">
-        <div class="quote">${user.quoteText}</div>
       <div class="comment-text">
-        ${user.comment}
+        ${user.text}
       </div>
     </div>
     <div class="comment-footer">
       <div class="likes">
-        <span class="likes-counter">${user.counter}</span>
+        <span class="likes-counter">${user.likes}</span>
         <button class="${user.isLiked ? 'like-button -active-like' : 'like-button'}" data-index=${index}></button>
       </div>
     </div>
@@ -87,6 +91,46 @@
     };
 
 
+    buttonEnter.addEventListener("click", () => {
+        if (text.value === "") {
+            return;
+        }
+
+        
+        fetch("https://webdev-hw-api.vercel.app/api/v1/denis-sokurenko/comments", {
+            method: "POST",
+            body: JSON.stringify({
+                date: new Date().toLocaleDateString('ru-RU', option),
+                likes: 0,
+                isLiked: false,
+                text: text.value.replaceAll("&", "&amp;")
+                    .replaceAll("<", "&lt;")
+                    .replaceAll(">", "&gt;")
+                    .replaceAll('"', "&quot;"),
+                    name: nameText.value.replaceAll("&", "&amp;")
+                        .replaceAll("<", "&lt;")
+                        .replaceAll(">", "&gt;")
+                        .replaceAll('"', "&quot;"),
+
+
+            })
+        }).then((response) => {
+            response.json().then((responseData) => {
+
+                allUsersAndComments = responseData.comments;
+                getUsers()
+            });
+        });
+        getUsers()
+
+            nameText.value = "";
+            text.value = "";
+
+            textAreaText.placeholder = `Введите ваше сообщение`;
+    });
+
+
+
 
     function refresh() {
 
@@ -97,12 +141,12 @@
                 let found = allUsersAndComments[likeUp.dataset.index];
                 if (found.isLiked) {
 
-                    found.counter--;
+                    found.likes--;
                     found.isLiked = false;
 
                 } else {
 
-                    found.counter++;
+                    found.likes++;
                     found.isLiked = true;
 
                 };
@@ -120,48 +164,47 @@
 
 
 
-    buttonEnter.addEventListener("click", () => {
-        if (nameText.value === "" && text.value === "") {
-            return;
-        } else {
-            allUsersAndComments.push({
-                name: nameText.value.replaceAll("&", "&amp;")
-                    .replaceAll("<", "&lt;")
-                    .replaceAll(">", "&gt;")
-                    .replaceAll('"', "&quot;"),
-                time: new Date().toLocaleDateString('ru-RU', option),
-                comment: text.value.replaceAll("&", "&amp;")
-                    .replaceAll("<", "&lt;")
-                    .replaceAll(">", "&gt;")
-                    .replaceAll('"', "&quot;"),
-                counter: 0,
-                quoteText: quoteText,
-                isLiked: false,
-            })
+    // buttonEnter.addEventListener("click", () => {
+    //     if (nameText.value === "" && text.value === "") {
+    //         return;
+    //     } else {
+    //         allUsersAndComments.push({
+    //             name: nameText.value.replaceAll("&", "&amp;")
+    //                 .replaceAll("<", "&lt;")
+    //                 .replaceAll(">", "&gt;")
+    //                 .replaceAll('"', "&quot;"),
+    //             time: new Date().toLocaleDateString('ru-RU', option),
+    //             comment: text.value.replaceAll("&", "&amp;")
+    //                 .replaceAll("<", "&lt;")
+    //                 .replaceAll(">", "&gt;")
+    //                 .replaceAll('"', "&quot;"),
+    //             counter: 0,
+    //             quoteText: quoteText,
+    //             isLiked: false,
+    //         })
 
-            renderUsers();
-            quoteText = "";
-            nameText.value = "";
-            text.value = "";
+            // renderUsers();
+            // nameText.value = "";
+            // text.value = "";
 
-            textAreaText.placeholder = `Введите ваше сообщение`;
+            // textAreaText.placeholder = `Введите ваше сообщение`;
 
-        }
-    });
+    //     }
+    // });
 
 
-    function quotes() {
-        const answersComments = document.getElementsByClassName('comment');
-        for (const answerComment of answersComments) {
-            answerComment.addEventListener('click', () => {
+    // function quotes() {
+    //     const answersComments = document.getElementsByClassName('comment');
+    //     for (const answerComment of answersComments) {
+    //         answerComment.addEventListener('click', () => {
 
-                const comment = answerComment.getElementsByClassName('comment-text')[0].innerHTML;
-                const userNameComment = answerComment.getElementsByClassName("name-user")[0].innerHTML;
-                textAreaText.placeholder = `Введите ваш ответ пользователю ${userNameComment} `;
-                quoteText = `${comment} ${userNameComment}`;
-            })
-        }
-    };
+    //             const comment = answerComment.getElementsByClassName('comment-text')[0].innerHTML;
+    //             const userNameComment = answerComment.getElementsByClassName("name-user")[0].innerHTML;
+    //             textAreaText.placeholder = `Введите ваш ответ пользователю ${userNameComment} `;
+    //             quoteText = `${comment} ${userNameComment}`;
+    //         })
+    //     }
+    // };
 
 
 </script>
