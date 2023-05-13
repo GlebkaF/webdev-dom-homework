@@ -26,11 +26,10 @@ const comments = [
     }
 ]
 
-
 // Функция render для исходных комментариев перенесена в js
 const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
-        return `<li id="comment" class="comment">
+        return `<li id="comment" class="comment" data-index="${index}">
         <div class="comment-header">
           <div id="userName">${comment.userName}</div>
           <div id="userDate">${comment.userDate}</div>
@@ -51,55 +50,79 @@ const renderComments = () => {
 
     listOfComments.innerHTML = commentsHtml;
 
-    // Добавление клика на лайк
-    const initLikeButtons = () => {
-        const likeButtonsElements = document.querySelectorAll(".like-button");
-
-        for (const likeButtonsElement of likeButtonsElements) {
-
-            likeButtonsElement.addEventListener('click', (event) => {
-                event.stopPropagation();
-
-                const comment = comments[likeButtonsElement.dataset.index];
-                if (comment.isLiked === true) {
-                    comment.likes = comment.likes - 1;
-                } else {
-                    comment.likes = comment.likes + 1;
-                }
-
-                comment.isLiked = !comment.isLiked;
-
-                renderComments();
-            });
-        }
-    }
+    checkAddButton();
     initLikeButtons();
+    answerComment();
 }
 
-renderComments();
+// Добавление клика на лайк
+const initLikeButtons = () => {
+    const likeButtonsElements = document.querySelectorAll(".like-button");
 
+    for (const likeButtonsElement of likeButtonsElements) {
+
+        likeButtonsElement.addEventListener('click', (event) => {
+            event.stopPropagation();
+
+            const comment = comments[likeButtonsElement.dataset.index];
+            if (comment.isLiked) {
+                comment.likes = comment.likes - 1;
+            } else {
+                comment.likes = comment.likes + 1;
+            }
+            comment.isLiked = !comment.isLiked;
+            renderComments();
+        });
+    }
+}
+
+// Добавление ответа на комментарии
+const answerComment = () => {
+    const commentElements = document.querySelectorAll('.comment');
+
+    for (let element of commentElements) {
+        element.addEventListener('click', () => {
+            let index = element.dataset.index;
+
+            commentInputElement.value = `START_QUOTE${comments[index].userName}:
+            \n${comments[index].userComment.replaceAll('<div class="comment-quote">', 'START_QUOTE').replaceAll('</div>', 'END_QUOTE')}END_QUOTE`;
+        });
+    }
+}
+
+// Замена символов
+const replaceValue = (value) => {
+    return value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+}
 
 // валидация на ввод (неактивная кнопка "Написать")
-nameInputElement.addEventListener('click', () => {
-    if (nameInputElement.value) {
-        document.getElementById('add-form-button').disabled = false;
-        return;
-    } else {
-        document.getElementById('add-form-button').disabled = true;
-        return;
-    }
-});
+const checkAddButton = () => {
+    nameInputElement.addEventListener('input', () => {
+        if (nameInputElement.value) {
+            document.getElementById('add-form-button').disabled = false;
+            return;
+        } else {
+            document.getElementById('add-form-button').disabled = true;
+            return;
+        }
+    });
 
-commentInputElement.addEventListener('click', () => {
-    if (commentInputElement.value) {
-        document.getElementById('add-form-button').disabled = false;
-        return;
-    } else {
-        document.getElementById('add-form-button').disabled = true;
-        return;
-    }
-});
+    commentInputElement.addEventListener('input', () => {
+        if (commentInputElement.value) {
+            document.getElementById('add-form-button').disabled = false;
+            return;
+        } else {
+            document.getElementById('add-form-button').disabled = true;
+            return;
+        }
+    });
+}
 
+//  удаление последнего комментария
 const deleteLastComment = () => {
     comments.pop();
 
@@ -107,7 +130,6 @@ const deleteLastComment = () => {
 }
 
 // функция клик addEventListener на добавление комментария
-
 buttonElement.addEventListener('click', () => {
 
     // валидация на ввод
@@ -143,9 +165,13 @@ buttonElement.addEventListener('click', () => {
 
     // добавление нового комментария (update)
     comments.push({
-        userName: nameInputElement.value,
+        userName: replaceValue(nameInputElement.value),
         userDate: fullDate,
-        userComment: commentInputElement.value,
+
+        userComment: replaceValue(commentInputElement.value)
+            .replaceAll('START_QUOTE', '<div class="comment-quote">')
+            .replaceAll('END_QUOTE', '</div>'),
+
         likes: 0,
         isLiked: false,
     })
@@ -159,5 +185,7 @@ buttonElement.addEventListener('click', () => {
     initLikeButtons();
 
 });
+renderComments();
 
 removeButton.addEventListener('click', deleteLastComment);
+
