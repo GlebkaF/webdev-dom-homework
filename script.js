@@ -8,35 +8,41 @@ const removeButton = document.querySelector('.remove-form-button');
 
 
 // Данные о комментариях
-const comments = [
-    {
-        userName: 'Глеб Фокин',
-        userDate: '12.02.22 12:18',
-        userComment: 'Это будет первый комментарий на этой странице',
-        likes: 3,
-        isLiked: false,
-    },
+let comments = []
 
+// Получаем с сервера через API данные по комментариям с помощью GET
+fetch(
+    'https://webdev-hw-api.vercel.app/api/v1/marina-obruch/comments',
     {
-        userName: 'Варвара Н.',
-        userDate: '13.02.22 19:22',
-        userComment: 'Мне нравится как оформлена эта страница! ❤',
-        likes: 75,
-        isLiked: true,
-    }
-]
+        method: "GET"
+    }).then((response) => {
+        response.json().then((responseData) => {
+            const appComments = responseData.comments.map((comment) => {
+                return {
+                    name: comment.author.name,
+                    date: new Date(comment.date),
+                    text: comment.text,
+                    likes: comment.likes,
+                    isLiked: false,
+                };
+            })
+            comments = appComments;
+            renderComments();
+        });
+    });
+
 
 // Функция render для исходных комментариев перенесена в js
 const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
         return `<li id="comment" class="comment" data-index="${index}">
         <div class="comment-header">
-          <div id="userName">${comment.userName}</div>
-          <div id="userDate">${comment.userDate}</div>
+          <div id="name">${comment.name}</div>
+          <div id="date">${comment.date}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
-            ${comment.userComment}
+            ${comment.text}
           </div>
         </div>
         <div class="comment-footer">
@@ -84,8 +90,8 @@ const answerComment = () => {
         element.addEventListener('click', () => {
             let index = element.dataset.index;
 
-            commentInputElement.value = `START_QUOTE${comments[index].userName}:
-            \n${comments[index].userComment.replaceAll('<div class="comment-quote">', 'START_QUOTE').replaceAll('</div>', 'END_QUOTE')}END_QUOTE`;
+            commentInputElement.value = `START_QUOTE${comments[index].name}:
+            \n${comments[index].text.replaceAll('<div class="comment-quote">', 'START_QUOTE').replaceAll('</div>', 'END_QUOTE')}END_QUOTE`;
         });
     }
 }
@@ -146,35 +152,75 @@ buttonElement.addEventListener('click', () => {
     }
 
     // функция на определение времени комментариев
-    let myDate = new Date();
-    let day = myDate.getDate();
-    let month = myDate.getMonth();
-    let year = myDate.getFullYear();
-    let hour = myDate.getHours();
-    let minute = myDate.getMinutes();
+    const correctDate = date => {
+        let year = editYear((new Date(date)).getFullYear());
+        let month = (new Date(date)).getMonth() + 1;
+        let day = (new Date(date)).getDate();
+        let hours = (new Date(date)).getHours();
+        let minutes = (new Date(date)).getMinutes();
 
-    if (minute < 10) {
-        minute = "0" + minute;
+        if (minutes < 10) {
+            minutes = "0" + minutes;
+        }
+        if (month < 10) {
+            month = "0" + month;
+        }
+
+        return `${day}.${month}.${year} ${hours}:${minutes}`;
     }
-    if (month < 10) {
-        month = "0" + month;
-    }
-
-    let fullDate = day + "." + month + "." + year + " " + hour + ":" + minute;
+    const editYear = year => String(year)[2] + String(year)[3];
 
 
-    // добавление нового комментария (update)
-    comments.push({
-        userName: replaceValue(nameInputElement.value),
-        userDate: fullDate,
+    // Добавляем новый комментарий в ленту с помощью POST
+    fetch(
+        'https://webdev-hw-api.vercel.app/api/v1/marina-obruch/comments',
+        {
+            method: "POST",
+            body: JSON.stringify({
+                name: replaceValue(nameInputElement.value),
+                text: replaceValue(commentInputElement.value)
+                    .replaceAll('START_QUOTE', '<div class="comment-quote">')
+                    .replaceAll('END_QUOTE', '</div>'),
+                date: new Date,
+            }),
+        }).then((response) => {
+            response.json().then(() => {
+                fetch("https://webdev-hw-api.vercel.app/api/v1/dmitry-teleganov/comments", {
+                    method: "GET"
+                }).then((responseAdd) => {
+                    responseAdd.json().then((addJson) => {
+                        comments = addJson.comments;
 
-        userComment: replaceValue(commentInputElement.value)
-            .replaceAll('START_QUOTE', '<div class="comment-quote">')
-            .replaceAll('END_QUOTE', '</div>'),
+                        renderComments();
+                    });
+                });
+            });
+        });
 
-        likes: 0,
-        isLiked: false,
-    })
+
+    renderComments();
+
+    // Инициируем обновление ленты через повторный GET
+    fetch(
+        'https://webdev-hw-api.vercel.app/api/v1/marina-obruch/comments',
+        {
+            method: "GET"
+        }).then((response) => {
+            response.json().then((responseData) => {
+                const appComments = responseData.comments.map((comment) => {
+                    return {
+                        name: comment.author.name,
+                        date: new Date(comment.date),
+                        text: comment.text,
+                        likes: comment.likes,
+                        isLiked: false,
+                    };
+                })
+                comments = appComments;
+                renderComments();
+            });
+        });
+
 
     // отчистка поля для ввода для новых комментариев
     nameInputElement.value = "";
