@@ -51,13 +51,14 @@
           placeholder="Введите ваше имя"
         />
         <textarea
-          type="textarea" id="commet-input" value =""
+          type="textarea" id="text-input" value =""
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button onclick="removeLastElement()"class="delete-button">Удалить последний комментарий</button>
+          <button id ="add-button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
@@ -67,13 +68,15 @@
       background-color: white;
     }
   </style>
-  <script>
-    const buttonElementLikes = document.getElementById("like-button");
+  <script src="part_1.js">
+   /* const buttonElementLikes = document.getElementById("like-button");
     const listElement = document.getElementById("list");
     const buttonElement = document.getElementById("add-form-button");
     const nameInputElement = document.getElementById("name-input");
     const commetInputElement = document.getElementById("commet-input");
+    const commentsElement = document.getElementById("comments");
     listElement.innerHTML =
+
     buttonElement.addEventListener("click", () => {
       alert("Меня нажали");
       nameInputElement.classList.remove("error")
@@ -89,5 +92,6 @@
     "use strict";
     // Код писать здесь
     console.log("It works!");
+    */
   </script>
 </html>
