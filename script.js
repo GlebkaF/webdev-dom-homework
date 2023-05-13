@@ -15,18 +15,9 @@ fetch(
     'https://webdev-hw-api.vercel.app/api/v1/marina-obruch/comments',
     {
         method: "GET"
-    }).then((response) => {
-        response.json().then((responseData) => {
-            const appComments = responseData.comments.map((comment) => {
-                return {
-                    name: comment.author.name,
-                    date: new Date(comment.date),
-                    text: comment.text,
-                    likes: comment.likes,
-                    isLiked: false,
-                };
-            })
-            comments = appComments;
+    }).then((responseStart) => {
+        responseStart.json().then((startJson) => {
+            comments = startJson.comments;
             renderComments();
         });
     });
@@ -37,8 +28,8 @@ const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
         return `<li id="comment" class="comment" data-index="${index}">
         <div class="comment-header">
-          <div id="name">${comment.name}</div>
-          <div id="date">${comment.date}</div>
+          <div id="name">${comment.author.name}</div>
+          <div id="date">${correctDate(comment.date)}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
@@ -56,7 +47,6 @@ const renderComments = () => {
 
     listOfComments.innerHTML = commentsHtml;
 
-    checkAddButton();
     initLikeButtons();
     answerComment();
 }
@@ -104,6 +94,7 @@ const replaceValue = (value) => {
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;");
 }
+renderComments();
 
 // валидация на ввод (неактивная кнопка "Написать")
 const checkAddButton = () => {
@@ -127,6 +118,7 @@ const checkAddButton = () => {
         }
     });
 }
+checkAddButton();
 
 //  удаление последнего комментария
 const deleteLastComment = () => {
@@ -137,7 +129,6 @@ const deleteLastComment = () => {
 
 // функция клик addEventListener на добавление комментария
 buttonElement.addEventListener('click', () => {
-
     // валидация на ввод
     nameInputElement.classList.remove("error");
     if (nameInputElement.value === "") {
@@ -151,26 +142,6 @@ buttonElement.addEventListener('click', () => {
         return;
     }
 
-    // функция на определение времени комментариев
-    const correctDate = date => {
-        let year = editYear((new Date(date)).getFullYear());
-        let month = (new Date(date)).getMonth() + 1;
-        let day = (new Date(date)).getDate();
-        let hours = (new Date(date)).getHours();
-        let minutes = (new Date(date)).getMinutes();
-
-        if (minutes < 10) {
-            minutes = "0" + minutes;
-        }
-        if (month < 10) {
-            month = "0" + month;
-        }
-
-        return `${day}.${month}.${year} ${hours}:${minutes}`;
-    }
-    const editYear = year => String(year)[2] + String(year)[3];
-
-
     // Добавляем новый комментарий в ленту с помощью POST
     fetch(
         'https://webdev-hw-api.vercel.app/api/v1/marina-obruch/comments',
@@ -181,24 +152,10 @@ buttonElement.addEventListener('click', () => {
                 text: replaceValue(commentInputElement.value)
                     .replaceAll('START_QUOTE', '<div class="comment-quote">')
                     .replaceAll('END_QUOTE', '</div>'),
-                date: new Date,
+                date: correctDate,
             }),
-        }).then((response) => {
-            response.json().then(() => {
-                fetch("https://webdev-hw-api.vercel.app/api/v1/dmitry-teleganov/comments", {
-                    method: "GET"
-                }).then((responseAdd) => {
-                    responseAdd.json().then((addJson) => {
-                        comments = addJson.comments;
-
-                        renderComments();
-                    });
-                });
-            });
         });
 
-
-    renderComments();
 
     // Инициируем обновление ленты через повторный GET
     fetch(
@@ -230,6 +187,19 @@ buttonElement.addEventListener('click', () => {
     initLikeButtons();
 
 });
+renderComments();
+
+const correctDate = date => {
+    let year = (new Date(date)).getFullYear();
+    let month = fixNumbers((new Date(date)).getMonth() + 1);
+    let day = fixNumbers((new Date(date)).getDate());
+    let hours = fixNumbers((new Date(date)).getHours());
+    let minutes = fixNumbers((new Date(date)).getMinutes());
+
+    return `${day}.${month}.${year} ${hours}:${minutes}`;
+}
+const fixNumbers = number => String(number).length < 2 ? '0' + number : number;
+
 renderComments();
 
 removeButton.addEventListener('click', deleteLastComment);
