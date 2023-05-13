@@ -16,7 +16,7 @@
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              Это будет первый комментарий на этой странице
+              Это будет комментарий на этой странице
             </div>
           </div>
           <div class="comment-footer">
@@ -60,8 +60,8 @@
           <button class="add-form-button" id="button-form">Написать</button>
         </div>
       </div>
-      <div class="button-delete">
-        <button class="add-form-button" id="button-delete-comment">
+      <div>
+        <button class="add-form-button" id="delete-button">
           Удалить последний комментарий
         </button>
       </div>
@@ -74,19 +74,16 @@
     const buttonElement = document.getElementById("button-form");
     const nameInputElement = document.getElementById("user-name");
     const textInputElement = document.getElementById("user-text");
-    const buttonDelete = document.getElementById("button-delete-comment");
     const formElement = document.getElementById("form");
+    const deleteButtonElement = document.getElementById("delete-button");
+
     let date = new Date();
-    let userDate =
-      date.getDate() +
-      "." +
-      date.getMonth() +
-      "." +
-      date.getFullYear() +
-      " " +
-      date.getHours() +
-      ":" +
-      date.getMinutes();
+    const formattedDate =
+      date.getDate().toString().padStart(2, '0') + '.' +
+      (date.getMonth() + 1).toString().padStart(2, '0') + '.' +
+      date.getFullYear().toString().slice(-2) + ' ' +
+      date.getHours().toString().padStart(2, '0') + ':' +
+      date.getMinutes().toString().padStart(2, '0');
 
     buttonElement.addEventListener("click", () => {
       buttonElement.classList.remove("add-form-button-error");
@@ -115,7 +112,7 @@
         `<li class="comment">
             <div class="comment-header">
             <div>${nameInputElement.value}</div>
-            <div>${userDate}</div>
+            <div>${formattedDate}</div>
             </div>
             <div class="comment-body">
               <div class="comment-text">
@@ -130,6 +127,18 @@
             </div>
           </li>`;
     });
+
+    deleteButtonElement.addEventListener("click", () => { 
+      const lastCommentIndex = listElement.innerHTML.lastIndexOf( '<li class="comment">' ); 
+        if (lastCommentIndex !== -1) { 
+          listElement.innerHTML = listElement.innerHTML.substring( 0, lastCommentIndex ); 
+        } });
+
+        document.addEventListener("keyup", (event) => {
+           if (event.key === "Enter") { 
+            buttonElement.click(); 
+          } 
+        });
 
     console.log("It works!");
   </script>
