@@ -4,6 +4,7 @@ const buttonElement = document.getElementById("add-form-button");
 const listOfComments = document.getElementById("comments");
 const nameInputElement = document.getElementById("add-form-name");
 const commentInputElement = document.getElementById("add-form-text");
+const removeButton = document.querySelector('.remove-form-button');
 
 
 // Данные о комментариях
@@ -78,7 +79,6 @@ const renderComments = () => {
 renderComments();
 
 
-
 // валидация на ввод (неактивная кнопка "Написать")
 nameInputElement.addEventListener('click', () => {
     if (nameInputElement.value) {
@@ -99,6 +99,12 @@ commentInputElement.addEventListener('click', () => {
         return;
     }
 });
+
+const deleteLastComment = () => {
+    comments.pop();
+
+    renderComments();
+}
 
 // функция клик addEventListener на добавление комментария
 
@@ -153,3 +159,5 @@ buttonElement.addEventListener('click', () => {
     initLikeButtons();
 
 });
+
+removeButton.addEventListener('click', deleteLastComment);
