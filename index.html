@@ -10,51 +10,18 @@
 <body>
   <div class="container">
     <ul id="comments" class="comments">
-      <li class="comment">
-        <div class="comment-header">
-          <div id="userName">Глеб Фокин</div>
-          <div id="userDate">12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div id="userName">Варвара Н.</div>
-          <div id="userDate">13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>
+      <!-- Список рендерится в js -->
     </ul>
 
     <div class="add-form">
-      <input type="text" id="add-form-name" class="add-form-name" onchange="toggleButton()"
-        placeholder="Введите ваше имя" />
+      <input type="text" id="add-form-name" class="add-form-name" placeholder="Введите ваше имя" />
 
-      <textarea type="textarea" id="add-form-text" class="add-form-text" onchange="toggleButton()"
-        placeholder="Введите ваш коментарий" rows="4"></textarea>
+      <textarea type="textarea" id="add-form-text" class="add-form-text" placeholder="Введите ваш коментарий"
+        rows="4"></textarea>
 
       <div class="add-form-row">
         <button type="button" id="add-form-button" class="add-form-button" disabled>Написать</button>
+        <button class="remove-form-button">Удалить последний</button>
       </div>
     </div>
   </div>
@@ -69,86 +36,7 @@
     }
   </style>
 
-  <script>
-    // Определение переменных
-    const buttonElement = document.getElementById("add-form-button");
-    const listOfComments = document.getElementById("comments");
-    const nameInputElement = document.getElementById("add-form-name");
-    const commentInputElement = document.getElementById("add-form-text");
-
-    // функция на определение времени комментариев
-    let myDate = new Date();
-    let day = myDate.getDate();
-    let month = myDate.getMonth();
-    let year = myDate.getFullYear();
-    let hour = myDate.getHours();
-    let minute = myDate.getMinutes();
-
-    if (minute < 10) {
-      minute = "0" + minute;
-    }
-    if (month < 10) {
-      month = "0" + month;
-    }
-
-    let fullDate = day + "." + month + "." + year + " " + hour + ":" + minute;
-
-    // валидация на ввод (неактивная кнопка "Написать")
-    function toggleButton() {
-      if (nameInputElement.value && commentInputElement.value) {
-        document.getElementById('add-form-button').disabled = false;
-        return;
-      } else {
-        document.getElementById('add-form-button').disabled = true;
-        return;
-      }
-    }
-
-    // функция клик addEventListener
-    buttonElement.addEventListener('click', () => {
-
-      // валидация на ввод
-      nameInputElement.classList.remove("error");
-      if (nameInputElement.value === "") {
-        nameInputElement.classList.add("error");
-        return;
-      }
-
-      commentInputElement.classList.remove("error");
-      if (commentInputElement.value === "") {
-        commentInputElement.classList.add("error");
-        return;
-      }
-
-      // добавление нового комментария
-      const oldListOfComments = listOfComments.innerHTML;
-
-      listOfComments.innerHTML = oldListOfComments +
-        `<li id="comment" class="comment">
-        <div class="comment-header">
-          <div id="userName">${nameInputElement.value}</div>
-          <div id="userDate">${fullDate}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${commentInputElement.value}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>`
-
-      // отчистка поля для ввода для новых комментариев
-      nameInputElement.value = "";
-      commentInputElement.value = "";
-
-    });
-
-  </script>
+  <script src="script.js"></script>
 </body>
 
 </html>
