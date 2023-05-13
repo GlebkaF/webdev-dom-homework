@@ -5,23 +5,6 @@ const listOfComments = document.getElementById("comments");
 const nameInputElement = document.getElementById("add-form-name");
 const commentInputElement = document.getElementById("add-form-text");
 
-// функция на определение времени комментариев
-let myDate = new Date();
-let day = myDate.getDate();
-let month = myDate.getMonth();
-let year = myDate.getFullYear();
-let hour = myDate.getHours();
-let minute = myDate.getMinutes();
-
-if (minute < 10) {
-    minute = "0" + minute;
-}
-if (month < 10) {
-    month = "0" + month;
-}
-
-let fullDate = day + "." + month + "." + year + " " + hour + ":" + minute;
-
 
 // Данные о комментариях
 const comments = [
@@ -32,6 +15,7 @@ const comments = [
         likes: 3,
         isLiked: false,
     },
+
     {
         userName: 'Варвара Н.',
         userDate: '13.02.22 19:22',
@@ -65,41 +49,60 @@ const renderComments = () => {
     }).join("");
 
     listOfComments.innerHTML = commentsHtml;
+
+    // Добавление клика на лайк
+    const initLikeButtons = () => {
+        const likeButtonsElements = document.querySelectorAll(".like-button");
+
+        for (const likeButtonsElement of likeButtonsElements) {
+
+            likeButtonsElement.addEventListener('click', () => {
+
+                const comment = comments[likeButtonsElement.dataset.index];
+                if (comment.isLiked === true) {
+                    comment.likes = comment.likes - 1;
+                    // comment.style.backgroundColor = "red";
+                } else {
+                    comment.likes = comment.likes + 1;
+                    // comment.style.backgroundColor = "white";
+                }
+
+                comment.isLiked = !comment.isLiked;
+
+                renderComments();
+            })
+        }
+    }
+    initLikeButtons();
 }
 
 renderComments();
 
-// Добавление клика на лайк
-const initLikeButtons = () => {
-    const likeButtonsElements = document.querySelectorAll(".like-button");
-
-    for (const likeButtonsElement of likeButtonsElements) {
-
-        likeButtonsElement.addEventListener('click', () => {
-
-            const comment = comments[likeButtonsElement.dataset.index];
-            comment.likes = comment.isLiked ? comment.likes - 1 : comment.likes + 1;
-            comment.isLiked = !comment.isLiked;
-            renderComments();
-        })
-    }
-}
-initLikeButtons();
 
 
 // валидация на ввод (неактивная кнопка "Написать")
-function toggleButton() {
-    if (nameInputElement.value && commentInputElement.value) {
+nameInputElement.addEventListener('click', () => {
+    if (nameInputElement.value) {
         document.getElementById('add-form-button').disabled = false;
         return;
     } else {
         document.getElementById('add-form-button').disabled = true;
         return;
     }
-}
+});
 
+commentInputElement.addEventListener('click', () => {
+    if (commentInputElement.value) {
+        document.getElementById('add-form-button').disabled = false;
+        return;
+    } else {
+        document.getElementById('add-form-button').disabled = true;
+        return;
+    }
+});
 
 // функция клик addEventListener на добавление комментария
+
 buttonElement.addEventListener('click', () => {
 
     // валидация на ввод
@@ -115,6 +118,23 @@ buttonElement.addEventListener('click', () => {
         return;
     }
 
+    // функция на определение времени комментариев
+    let myDate = new Date();
+    let day = myDate.getDate();
+    let month = myDate.getMonth();
+    let year = myDate.getFullYear();
+    let hour = myDate.getHours();
+    let minute = myDate.getMinutes();
+
+    if (minute < 10) {
+        minute = "0" + minute;
+    }
+    if (month < 10) {
+        month = "0" + month;
+    }
+
+    let fullDate = day + "." + month + "." + year + " " + hour + ":" + minute;
+
 
     // добавление нового комментария (update)
     comments.push({
@@ -125,13 +145,12 @@ buttonElement.addEventListener('click', () => {
         isLiked: false,
     })
 
-    renderComments();
-    initLikeButtons();
 
     // отчистка поля для ввода для новых комментариев
     nameInputElement.value = "";
     commentInputElement.value = "";
+
+    renderComments();
+    initLikeButtons();
+
 });
-
-
-toggleButton();
