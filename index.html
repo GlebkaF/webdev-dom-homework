@@ -71,24 +71,60 @@
   const listElement = document.getElementById("list");
   const inputNameElement = document.getElementById("name");
   const inputTextElement = document.getElementById("comment-text");
-
   let currenDate = new Date();
 
-  const usersComments = [
+  const fetchPromise = fetch(
+    "https://webdev-hw-api.vercel.app/api/v1/kostasdvor/comments",
     {
-      name: "Глеб Фокин",
-      comment: "Это будет первый комментарий на этой странице",
-      time: "12.02.22 12:18",
-      likes: 3,
-      isLiked: false,
-    },
-    {
-      name: "Варвара Н.",
-      comment: "Мне нравится как оформлена эта страница! ❤",
-      time: "13.02.22 19:22",
-      likes: 75,
-      isLiked: false,
-    },
+      method: "GET"
+    });
+
+  fetchPromise.then((response) => {
+
+    const jsonPromise = response.json();
+    jsonPromise.then((responseData) => {
+
+      const appComments = responseData.comments.map((comment) => {
+
+        const commentDate = new Date(comment.date);
+        const day = commentDate.getDate();
+        const month = commentDate.getMonth() + 1;
+        const year = commentDate.getFullYear();
+        const formattedDate = `${day < 10 ? "0" : ""}${day}.${month < 10 ? "0" : ""}${month}.${year}`;
+        const hours = commentDate.getHours();
+        const minutes = commentDate.getMinutes();
+        const formattedTime = `${hours < 10 ? "0" : ""}${hours}:${minutes < 10 ? "0" : ""}${minutes}`;
+        const formattedDateTime = `${formattedDate} ${formattedTime}`;
+
+        return {
+          name: comment.author.name,
+          date: formattedDateTime,
+          text: comment.text,
+          likes: comment.likes,
+          isLikes: false,
+        };
+      });
+
+      usersComments = appComments;
+      renderUsersComments();
+    });
+  });
+
+  let usersComments = [
+    // {
+    //   date: "12.02.22 12:18",
+    //   likes: 3,
+    //   isLiked: false,
+    //   text: "Это будет первый комментарий на этой странице",
+    //   name: "Глеб Фокин",
+    // },
+    // {
+    //   name: "Варвара Н.",
+    //   comment: "Мне нравится как оформлена эта страница! ❤",
+    //   time: "13.02.22 19:22",
+    //   likes: 75,
+    //   isLiked: false,
+    // },
   ];
 
   // Рендер-функция 
@@ -98,11 +134,11 @@
       return `<ul id="list" class="comment">
         <div class="comment-header">
           <div>${usersComment.name}</div>
-          <div>${usersComment.time}</div>
+          <div>${usersComment.date}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
-            ${usersComment.comment}
+            ${usersComment.text}
           </div>
         </div>
         <div class="comment-footer">
@@ -243,21 +279,50 @@
 
     // Пуш комментариев пользователя в массив с заменой html символов 
 
-    usersComments.push({
-      name: inputNameElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-      comment: inputTextElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-      time: formatDateTime(currentDate),
-      likes: 0,
-      isLiked: false,
+    // usersComments.push({
+    //   name: inputNameElement.value
+    //     .replaceAll("&", "&amp;")
+    //     .replaceAll("<", "&lt;")
+    //     .replaceAll(">", "&gt;")
+    //     .replaceAll('"', "&quot;"),
+    //   comment: inputTextElement.value
+    //     .replaceAll("&", "&amp;")
+    //     .replaceAll("<", "&lt;")
+    //     .replaceAll(">", "&gt;")
+    //     .replaceAll('"', "&quot;"),
+    //   time: formatDateTime(currentDate),
+    //   likes: 0,
+    //   isLiked: false,
+    // });
+
+    const fetchPromise = fetch(
+      "https://webdev-hw-api.vercel.app/api/v1/kostasdvor/comments",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          date: formatDateTime(currentDate),
+          likes: 0,
+          isLiked: false,
+          text: inputTextElement.value,
+          name: inputNameElement.value,
+        }),
+      });
+
+    fetchPromise.then((response) => {
+      const jsonPromise = response.json();
+      jsonPromise.then((responseData) => {
+        console.log(responseData);
+        usersComments = responseData.comments;
+        renderUsersComments();
+      });
     });
+
+
+    const fetchPromiseNew = fetch(
+      "https://webdev-hw-api.vercel.app/api/v1/kostasdvor/comments",
+      {
+        method: "GET"
+      });
 
     checkCommentFields();
     renderUsersComments();
