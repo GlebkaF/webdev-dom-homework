@@ -1,23 +1,33 @@
-import { fetchComments, newComment, registerUser } from "./api.js";
-import { isLogin, renderLogin } from "./login-component.js";
-import { renderTasksList } from "./commentList.js";
+import { fetchComments, newComment } from "./api.js";
+import { renderLogin } from "./login-component.js";
 import { delay } from "./dalay.js";
-import { loginUser } from "./api.js";
 
 const load = document.querySelector(".load");
 load.style.display = "flex";
-let comment = [];
+let comments = [];
 
 let token = 'Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k';
 token = null;
 
+const fetch = () => {
+  return fetchComments({ token })
+  .then((responseData) => {
+  comments = responseData.comments;
+  load.style.display = "none";
+  renderTasks();
+  })
+  .catch((err) => {
+    alert("Кажется, у вас сломался интернет, попробуйте позже");
+    console.warn(err);
+  });
+  };
 
 const answer = () => {
   const answerComments = document.querySelectorAll(".comment");
   const formText = document.querySelector(".add-form-text");
   for (const answerComment of answerComments){
     answerComment.addEventListener('click', () =>{
-      const arr = comment[answerComment.dataset.index];
+      const arr = comments[answerComment.dataset.index];
       let str = arr.text + ' ' + arr.name;
       formText.value += `${str}`;
       formText.focus();
@@ -33,12 +43,12 @@ const answer = () => {
       event.stopPropagation();
       likeButton.classList.add("load-like");
       delay(2000).then(() => {
-      if (comment[index].likeComment = !comment[index].likeComment) {
-        comment[index].likeComment = false;
-        comment[index].likes += 1;
+      if (comments[index].likeComment = !comments[index].likeComment) {
+        comments[index].likeComment = false;
+        comments[index].likes += 1;
       } else {
-        comment[index].likeComment = true;
-        comment[index].likes -= 1;
+        comments[index].likeComment = true;
+        comments[index].likes -= 1;
       }
       likeButton.classList.remove("load-like");
       renderTasks();
@@ -47,20 +57,71 @@ const answer = () => {
         });
       };
     };
+
     const renderTasks = () => {
       const appEl = document.querySelector(".container");
-      
       if(!token) {
-      renderLogin({appEl});
-      initializeLoginListener();
+      renderLogin({appEl,
+        comments,
+        setToken: (newToken) => {
+          token = newToken;
+        },
+        renderTasks,
+      });
       return;
-      };
-      
-      renderTasksList({root: appEl, comments: comment});
+      }
+
+      const listComment = comments.map((user, index) => {
+        return `<li data-index="${index}" class="comment">
+        <div class="comment-header">
+          <div>${user.author.name}</div>
+          <div>${new Date(user.date).toLocaleString()}</div>
+        </div>
+        <div data-index="${index}" class="comment-body">
+          <div class="comment-text">
+            ${user.text}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${user.likes}</span>
+            <button data-index="${index}"class="like-button ${user.likeComment ? '-active-like' : ''}"></button>
+          </div>
+        </div>
+      </li>`;
+      }
+      ).join("");
+    
+      const appAddForm =
+      `<ul class="comments">
+      ${listComment}
+      <div class="form-autoriz">Чтобы добавить комментарий, <button class ="autoriz">авторизуйтесь</button></div>
+      </ul>
+      <div class="add-form">
+        <input
+          type="text"
+          class="add-form-name"
+          placeholder="Введите ваше имя"
+        />
+        <textarea
+          type="textarea"
+          class="add-form-text"
+          placeholder="Введите ваш комментарий"
+          rows="4"
+        ></textarea>
+        <div class="add-form-row">
+          <button class="add-form-button">Написать</button>
+        </div>
+        <div class="add-form-row">
+          <button class="delete-form-button">Удалить последний комментарий</button>
+        </div>
+      </div>`;
+      appEl.innerHTML= appAddForm;
+
     
       const deleteButton = document.querySelector('.delete-form-button');
       deleteButton.addEventListener("click", () => {
-        comment.pop();
+        comments.pop();
         renderTasks();
       });
     
@@ -88,6 +149,7 @@ const answer = () => {
     
       buttonElement.disabled = true;
       form.innerHTML = "Комментарий добавляется...";
+
       });
     
     const handlePostClick = () => {
@@ -115,7 +177,7 @@ const answer = () => {
           })
       };
     
-      buttonElement.addEventListener("click", handlePostClick);
+    buttonElement.addEventListener("click", handlePostClick);
     
     formName.addEventListener('keyup', function(event) {
       if(event.keyCode === 13) {
@@ -130,80 +192,6 @@ const answer = () => {
        buttonElement.click();
       }
     });   
-    };
-
-const fetch = () => {
-return fetchComments({ token })
-.then((responseData) => {
-comment = responseData.comments;
-load.style.display = "none";
+   };
 renderTasks();
-})
-.catch((err) => {
-  alert("Кажется, у вас сломался интернет, попробуйте позже");
-  console.warn(err);
-});
-};
-
-const initializeLoginListener = () => {
-  document.querySelector(".form-button-enter").addEventListener("click", () => {
-    if(isLogin){
-    const login = document.querySelector(".add-form-login");
-    const password = document.querySelector(".add-form-password");
-    if (!login) {
-      alert("Введите логин");
-      return;
-    }
-    if (!password) {
-      alert("Введите пароль");
-      return;
-    }
-    loginUser({
-      login: login.value,
-      password: password.value,
-    }).then((user) => {
-      token = `Bearer ${user.user.token}`;
-      fetchComments({token: user.user.token}).then(data => {
-        comment = data.comments;
-        renderTasks()
-      });
-    }).catch((error) => {
-      console.log(error);
-      alert(error.message);
-    });
-  return;
-} else {
-    const login = document.querySelector(".add-form-login");
-    const password = document.querySelector(".add-form-password");
-    const name = document.querySelector(".add-form-name");
-    if (!name) {
-      alert("Введите имя");
-      return;
-    }
-    if (!login) {
-      alert("Введите логин");
-      return;
-    }
-    if (!password) {
-      alert("Введите пароль");
-      return;
-    }
-    registerUser({
-      login: login.value,
-      password: password.value,
-      name: name.value,
-    }).then((user) => {
-      token = `Bearer ${user.user.token}`;
-      fetchComments({token: user.user.token}).then(data => {
-        comment = data.comments;
-        renderTasks()
-      });
-    }).catch((error) => {
-      console.log(error);
-      alert(error.message);
-    });
-  };
-  return;
-});
-};
-renderTasks();
+fetch();

@@ -64,7 +64,8 @@ export function registerUser({ login, password, name }) {
   }).then((response) => {
     if (response.status === 400) {
       throw new Error("Такой пользователь уже существует");
-    }
+    } else {
     return response.json();
+    }
   });
 };

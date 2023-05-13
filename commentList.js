@@ -1,3 +1,5 @@
+const appEl = document.querySelector(".container");
+
 export const renderTasksList = ({root, comments}) =>{
   const listComment = comments.map((user, index) => {
     return `<li data-index="${index}" class="comment">
@@ -23,7 +25,7 @@ export const renderTasksList = ({root, comments}) =>{
   const appAddForm =
   `<ul class="comments">
   ${listComment}
-  <div>Чтобы добавить комментарий, <a href="" class ="autoriz">авторизуйтесь</a></div>
+  <div class="form-autoriz">Чтобы добавить комментарий, <button class ="autoriz">авторизуйтесь</button></div>
   </ul>
   <div class="add-form">
     <input
@@ -45,12 +47,4 @@ export const renderTasksList = ({root, comments}) =>{
     </div>
   </div>`
   root.innerHTML= appAddForm;
-
-
-  document.querySelector('.add-form').style.display = 'none';
-  document.querySelector(".autoriz").addEventListener("click", () => {
-  renderLogin({appEl});
-  document.querySelector('.add-form').style.display = 'flex';
- });
-
-}
+};
