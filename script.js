@@ -80,7 +80,7 @@ const answerComment = () => {
         element.addEventListener('click', () => {
             let index = element.dataset.index;
 
-            commentInputElement.value = `START_QUOTE${comments[index].name}:
+            commentInputElement.value = `START_QUOTE${comments[index].author.name}:
             \n${comments[index].text.replaceAll('<div class="comment-quote">', 'START_QUOTE').replaceAll('</div>', 'END_QUOTE')}END_QUOTE`;
         });
     }
@@ -151,8 +151,7 @@ buttonElement.addEventListener('click', () => {
                 name: replaceValue(nameInputElement.value),
                 text: replaceValue(commentInputElement.value)
                     .replaceAll('START_QUOTE', '<div class="comment-quote">')
-                    .replaceAll('END_QUOTE', '</div>'),
-                date: correctDate,
+                    .replaceAll('END_QUOTE', '</div>')
             }),
         });
 
