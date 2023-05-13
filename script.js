@@ -4,23 +4,31 @@ const commentText = document.querySelector('.add-form-text');
 const commentsList = document.querySelector('.comments');
 const addForm = document.querySelector('.add-form');
 
-const comments = [
-    {
-        name: "Глеб Фокин",
-        date: "12.02.22 12:18",
-        text: "Это будет первый комментарий на этой странице",
-        likes: "3",
-        likeStatus: '',
-    },
+let comments = [];
 
-    {
-        name: "Варвара Н.",
-        date: "13.02.22 19:22",
-        text: "Мне нравится как оформлена эта страница! ❤",
-        likes: "75",
-        likeStatus: '',
-    },
-];
+const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/daria/comments", {
+    method: "GET"
+});
+
+fetchPromise.then((response) => {
+    const jsonPromise = response.json();
+
+    jsonPromise.then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+            return {
+                name: comment.author.name,
+                date: new Date (comment.date),
+                text: comment.text,
+                likes: comment.likes,
+                likeStatus: false,
+            }
+        })
+
+        comments = appComments;
+
+        renderComments();
+    })
+})
 
 const initLikesButton = () => {
     const likesButtons = document.querySelectorAll('.like-button');
@@ -204,11 +212,33 @@ function showNewComment() {
 
     const oldListHtml = commentsList.innerHTML;
 
-    comments.push({
-        name: commentName.value,
-        date: currentDate,
-        text: commentText.value,
-        likes: 0,
+    fetch("https://webdev-hw-api.vercel.app/api/v1/daria/comments", {
+        method: "POST",
+        body: JSON.stringify({
+            "text": commentText.value, 
+            "name": commentName.value,
+        })
+    }).then((response) => {
+        response.json().then((responseData) => {
+            console.log(responseData)
+            comments = responseData.comments;
+
+            const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/daria/comments", {
+        method: "GET"
+    });
+
+        fetchPromise.then((response) => {
+            const jsonPromise = response.json();
+
+            jsonPromise.then((responseData) => {
+                console.log(responseData)
+                comments = responseData.comments;
+                renderComments();
+            })
+    })
+
+        renderComments();
+        })
     });
 
     renderComments();
