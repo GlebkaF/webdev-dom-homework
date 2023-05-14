@@ -83,3 +83,13 @@ export function renderRegFormComponent (element, commentsHtml) {
     </div>`
     element.innerHTML = containerHtml;
 }
+export function renderMainRegFormComponent (element, commentsHtml) {
+  const containerHtml = ` <ul id="list-comments" class="comments">
+  <!--Рендерится из JS-->
+  ${commentsHtml}
+  </ul> 
+  <div class="registr">
+   <p>Что бы добавить комментарий, <span class = "main__authorization" id = "main__authorization">авторизуйтесь</span></p>
+  </div>`
+  element.innerHTML = containerHtml;
+}

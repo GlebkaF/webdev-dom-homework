@@ -4,11 +4,12 @@ import {
   renderAddFormComponent,
   renderLoginComponent,
   renderRegFormComponent,
+  renderMainRegFormComponent,
 } from "./login-company.js";
 
 const containerElement = document.getElementById("container");
 
-let display = "login";
+let display = "";
 
 let comments = [];
 
@@ -25,26 +26,10 @@ const getCommentsEdit = (comment, index) => {
       </div>
       <div class="comment-body">
         <div id = "comment-text" class="comment-text" data-index='${index}'>
-          ${
-            comment.isEdit == false
-              ? comment.comText
-              : `<textarea
-      id="edit-text"
-      type="textarea"
-      class="add-form-text edit-text"
-      placeholder="Введите ваш коментарий"
-      rows="4"
-    >${comment.comText}</textarea>`
-          }
+          ${comment.comText}
         </div>
       </div>
-      <div class="comment-footer"> ${
-        token == false
-          ? ""
-          : comment.isEdit == false
-          ? `<button class="edit-comment" data-index="${index}">Редактировать</button>`
-          : `<button  class="save-comment" data-index='${index}'>Сохранить</button>`
-      }
+      <div class="comment-footer"> 
         <div class="likes">
           <span class="likes-counter">${comment.likes}</span>
           <button data-index='${index}' class="like-button  ${
@@ -80,16 +65,14 @@ const renderContainer = (comments) => {
       buttonElement.textContent = "Отправляем...";
       addComment();
       renderContainer(comments, containerElement);
-      initEditListeners();
       initResponseCommentsListeners();
-      initSaveListener();
+
       initEventListeners();
       buttonElement.disabled = true;
     });
   } else if (display === "registr") {
-   
     renderRegFormComponent(containerElement, commentsHtml);
-    initRegisterListener()
+    initRegisterListener();
     const loginElement = document.getElementById("registr__authorization");
     loginElement.addEventListener("click", (event) => {
       display = "login";
@@ -97,6 +80,14 @@ const renderContainer = (comments) => {
       initLoginListener();
       event.stopPropagation();
     });
+  } else {
+    renderMainRegFormComponent(containerElement, commentsHtml) 
+    const mainAuthorization = document.getElementById("main__authorization");
+    mainAuthorization.addEventListener('click', (event) => {
+      display = 'login';
+      renderContainer(comments, containerElement)
+      event.stopPropagation();
+    })
   }
 
   function addComment() {
@@ -143,9 +134,7 @@ function getPromise() {
     comments = appComments;
     renderContainer(comments, containerElement);
     initLoginListener();
-    initEditListeners();
     initResponseCommentsListeners();
-    initSaveListener();
     initEventListeners();
   });
 }
@@ -182,21 +171,6 @@ const initEventListeners = () => {
       renderContainer(comments);
       event.stopPropagation();
       initEventListeners();
-    });
-  }
-};
-const initEditListeners = () => {
-  const editElements = document.querySelectorAll(".edit-comment");
-  for (const editElement of editElements) {
-    const index = editElement.dataset.index;
-    editElement.addEventListener("click", (event) => {
-      comments[index].isEdit = true;
-
-      renderContainer(comments, containerElement, token);
-      initResponseCommentsListeners();
-      initSaveListener();
-      initEventListeners();
-      event.stopPropagation();
     });
   }
 };
@@ -266,7 +240,7 @@ const initRegisterListener = () => {
       regUser({
         login: loginElement,
         password: passwordElement,
-        name: nameRegElement
+        name: nameRegElement,
       })
         .then((user) => {
           token = `Bearer ${user.user.token}`;
@@ -282,21 +256,6 @@ const initRegisterListener = () => {
   }
   getComments();
 };
-const initSaveListener = () => {
-  const saveElements = document.querySelectorAll(".save-comment");
-  for (const saveElement of saveElements) {
-    const index = saveElement.dataset.index;
-    const editTextElement = document.getElementById("edit-text");
-    saveElement.addEventListener("click", (event) => {
-      comments[index].comText = editTextElement.value.replaceAll("<", "&gt");
-
-      comments[index].isEdit = false;
-      getPromise();
-      event.stopPropagation();
-    });
-  }
-};
-
 const date = new Date();
 const options = {
   year: "2-digit",
