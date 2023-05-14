@@ -128,9 +128,14 @@ buttonElement.disabled = true;
       return
     }
   });
-
-
-
+  //Удаление последнего комментария
+  const deleteComment = document.getElementById('delComment');
+  deleteComment.addEventListener ('click', () => {
+    const lastCommentIndex = listElement.innerHTML.lastIndexOf(`<li class="comment">`);
+      if (lastCommentIndex !== -1){
+        listElement.innerHTML = listElement.innerHTML.substring(0, lastCommentIndex)
+      }
+  })
 
   console.log("It works!");
 </script>
