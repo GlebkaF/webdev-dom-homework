@@ -86,6 +86,7 @@ const renderContainer = (comments) => {
     mainAuthorization.addEventListener('click', (event) => {
       display = 'login';
       renderContainer(comments, containerElement)
+      initLoginListener();
       event.stopPropagation();
     })
   }
