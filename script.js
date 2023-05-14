@@ -6,29 +6,33 @@ const addForm = document.querySelector('.add-form');
 
 let comments = [];
 
-const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/daria/comments", {
-    method: "GET"
-});
+function getData () {
+    const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/daria/comments", {
+        method: "GET",
+    });
 
-fetchPromise.then((response) => {
-    const jsonPromise = response.json();
-
-    jsonPromise.then((responseData) => {
-        const appComments = responseData.comments.map((comment) => {
-            return {
-                name: comment.author.name,
-                date: new Date (comment.date),
-                text: comment.text,
-                likes: comment.likes,
-                likeStatus: false,
-            }
+    fetchPromise.then((response) => {
+        const jsonPromise = response.json();
+    
+        jsonPromise.then((responseData) => {
+            const appComments = responseData.comments.map((comment) => {
+                return {
+                    name: comment.author.name,
+                    date: new Date(comment.date).toLocaleString().slice(0,-3),
+                    text: comment.text,
+                    likes: comment.likes,
+                    likeStatus: false,
+                }
+            })
+    
+            comments = appComments;
+            renderComments();       
         })
-
-        comments = appComments;
-
-        renderComments();
     })
-})
+}
+
+getData();
+
 
 const initLikesButton = () => {
     const likesButtons = document.querySelectorAll('.like-button');
@@ -54,20 +58,6 @@ const initLikesButton = () => {
             }
 
             renderComments();
-
-            // const target = event.target;
-            // const status = target.dataset.status;
-            // const value = +target.previousElementSibling.textContent;
-
-            // if (status === "false") {
-            //     target.previousElementSibling.textContent = value + 1;
-            //     target.dataset.status = "true";
-            //     likesButton.classList.add('-active-like');
-            // } else {
-            //     target.previousElementSibling.textContent = value - 1;
-            //     target.dataset.status = "false";
-            //     likesButton.classList.remove('-active-like');
-            // }
         })
     }
 }
@@ -89,21 +79,6 @@ const addReply = () => {
         })
     }
 }
-
-// const editComment = () => {
-//     const editButtons = document.querySelectorAll('.edit-button');
-
-//     for (const editButton of editButtons) {
-
-//         editButton.addEventListener('click', (event) => {
-//             console.log ('comments[index].text')
-//             event.stopPropagation();
-
-//         })
-//         renderComments();
-//     }
-
-// }
 
 const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
@@ -141,38 +116,26 @@ const renderComments = () => {
 
     initLikesButton();
     addReply();
-    // editComment();
 }
 
 renderComments();
 
-addButton.setAttribute('disabled', '');
+const addToServer = (comment) => {
+    
+    fetch ("https://webdev-hw-api.vercel.app/api/v1/daria/comments", {
+        method: "POST",
+        body: JSON.stringify(comment)
+    }).then((response) => {
+        const jsonPromise = response.json();
 
-commentName.addEventListener('input', () => {
-    if (commentText.value) {
-        addButton.removeAttribute('disabled');
-    } else
-        return;
-})
+        jsonPromise.then((responseData) => {
+            console.log(responseData);
+        })
+    })
+}
 
-commentText.addEventListener('input', () => {
-    if (commentName.value) {
-        addButton.removeAttribute('disabled');
-    } else
-        return;
-})
+const addToList = () => {
 
-addButton.addEventListener('click', () => {
-    showNewComment();
-})
-
-addForm.addEventListener('keyup', (event) => {
-    if (event.keyCode === 13) {
-        showNewComment();
-    }
-})
-
-function showNewComment() {
     commentName.classList.remove('error');
     if (commentName.value === '') {
         commentName.classList.add('error');
@@ -210,109 +173,60 @@ function showNewComment() {
 
     const currentDate = day + '.' + month + '.' + year + ' ' + hours + ':' + minutes;
 
-    const oldListHtml = commentsList.innerHTML;
+    const newComment = {
+        name: commentName.value
+        .replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+        text: commentText.value
+        .replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+        date: currentDate,
+        like: 0,
+        likeStatus: false,
+    }
 
-    fetch("https://webdev-hw-api.vercel.app/api/v1/daria/comments", {
-        method: "POST",
-        body: JSON.stringify({
-            "text": commentText.value, 
-            "name": commentName.value,
-        })
-    }).then((response) => {
-        response.json().then((responseData) => {
-            console.log(responseData)
-            comments = responseData.comments;
+    console.log(newComment);
 
-            const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/daria/comments", {
-        method: "GET"
-    });
+    addToServer(newComment);
 
-        fetchPromise.then((response) => {
-            const jsonPromise = response.json();
-
-            jsonPromise.then((responseData) => {
-                console.log(responseData)
-                comments = responseData.comments;
-                renderComments();
-            })
-    })
-
-        renderComments();
-        })
-    });
-
-    renderComments();
-
-    // commentsList.innerHTML = oldListHtml + 
-    //     `<li class="comment">
-    //         <div class="comment-header">
-    //             <div>${commentName.value} </div>
-    //             <div>${currentDate} </div>
-    //         </div>
-    //         <div class="comment-body"> 
-    //             <div class="comment-text">${commentText.value}</div>
-    //         </div>
-    //         <div class="comment-footer"> 
-    //             <div class="likes">
-    //                 <span class="likes-counter">0</span>
-    //                 <button class="like-button"</button>
-    //             </div>
-    //         </div> 
-    //     </li>`
-
-    // const newCommentBlock = document.createElement('li');
-    // newCommentBlock.classList.add('comment');
-    // const newCommentHeader = document.createElement('div');
-    // newCommentHeader.classList.add('comment-header');
-    // const newCommentBody = document.createElement('div');
-    // newCommentBody.classList.add('comment-body');
-
-    // const newCommentName = document.createElement('div');
-    // const newCommentText = document.createElement('div');
-    // commentsList.appendChild(newCommentBlock);
-    // newCommentBlock.appendChild(newCommentHeader);
-    // newCommentBlock.appendChild(newCommentBody);
-
-    // newCommentName.textContent = commentName.value;
-    // newCommentHeader.appendChild(newCommentName);
-
-
-    // newCommentText.textContent = commentText.value;
-    // newCommentBody.appendChild(newCommentText);
-    // newCommentText.classList.add('comment-text');
-
-    // const dateBlock = document.createElement('div');
-    // dateBlock.textContent = currentDate;
-    // newCommentHeader.appendChild(dateBlock);
-
-    // const commentFooter = document.createElement('div');
-    // commentFooter.classList.add('comment-footer');
-    // newCommentBlock.appendChild(commentFooter);
-
-    // const likesBlock = document.createElement('div');
-    // likesBlock.classList.add('likes');
-    // commentFooter.appendChild(likesBlock);
-
-    // const likesCounter = document.createElement('span');
-    // likesCounter.classList.add('likes-counter');
-    // likesBlock.appendChild(likesCounter);
-    // likesCounter.textContent = '0';
-
-    // const likeButton = document.createElement('button');
-    // likeButton.classList.add('like-button');
-    // likesBlock.appendChild(likeButton);
 
     commentName.value = '';
     commentText.value = '';
     addButton.setAttribute('disabled', '');
 }
 
+addButton.setAttribute('disabled', '');
+
+commentName.addEventListener('input', () => {
+    if (commentText.value) {
+        addButton.removeAttribute('disabled');
+    } else
+        return;
+})
+
+commentText.addEventListener('input', () => {
+    if (commentName.value) {
+        addButton.removeAttribute('disabled');
+    } else
+        return;
+})
+
+addButton.addEventListener('click', () => {
+    addToList();
+    getData();
+    renderComments();
+})
+
+addForm.addEventListener('keyup', (event) => {
+    if (event.keyCode === 13) {
+        addToList();
+        getData();
+        renderComments();
+    }
+})
+
 const removeButton = document.querySelector('.remove-form-button');
 
 removeButton.addEventListener('click', () => {
-    // const removedElement = commentsList.lastElementChild;
-    // removedElement.remove();
+
     comments.pop();
     renderComments();
 });
-
