@@ -9,40 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments" id="comments-area">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+        <!-- Рендерится из JS -->
       </ul>
       <div class="add-form" id="inputs">
         <input
@@ -62,7 +29,7 @@
           <button class="add-form-button" id="add-comment-button">Написать</button>
         </div>
         <div class="add-form-row">
-          <button class="add-form-button" id="remove-comment-button">Удалить</button>
+          <button class="add-form-button" id="delete-comment-button">Удалить последний комментарий</button>
         </div>
       </div>
     </div>
@@ -70,8 +37,12 @@
   <style>
     .validation {
       box-shadow: 0 0 10px 4px rgba(255, 0, 0, 1);
-
     }
+    .active-like-button {
+      background-color: #BCEC30;
+    }
+
+    
   </style>
 
   <script>
@@ -81,16 +52,82 @@
     const commentElement = document.getElementById("comment-input");
     const addCommentElement = document.getElementById("add-comment-button");
     const removeCommentElement = document.getElementById("delete-comment-button");
+
+  
+   
+    const comments = [
+      {
+        name: "Глеб Фокин",
+        comment: "Это будет первый комментарий на этой странице",
+        date: "12.02.22 12:18",
+        likes: 3,
+        isActive: false,
+      },
+      {
+        name: "Варвара Н",
+        comment: "Мне нравится как оформлена эта страница! ❤",
+        date: '13.02.22 19:22',
+        likes: 75,
+        isActive: true,
+      },
+    ]
+
+
+    const likeCountButtonListener = () => {
+      const likeButtonElements = document.querySelectorAll('.like-button');
+      for (const likeButtonElement of likeButtonElements) {
+        likeButtonElement.addEventListener('click', () => {
+          let index = likeButtonElement.dataset.index;
+          if (comments[index].isActive == false) {
+            comments[index].likes++;
+            comments[index].isActive = true;
+          } else {
+            comments[index].likes--;
+            comments[index].isActive = false;
+          }
+          renderComments();
+        })
+      }
+    }
+
+    likeCountButtonListener();
+
+
+    const renderComments = () => {
+      const commentsHtml = comments.map((i, index) => {
+          return `<li class="comment">
+          <div class="comment-header">
+            <div>${i.name}</div>
+            <div>${i.date}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${i.comment}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${i.likes}</span>
+              <button data-index="${index}" id="likes-button" class="like-button ${i.isActive ? "-active-like" : ""}"></button>
+            </div>
+          </div>
+        </li>`
+      }).join('');
+      commentsArea.innerHTML = commentsHtml;
+      likeCountButtonListener();
+    }
+    renderComments();
     
-    console.log(commentsArea.innerHTML);
-
-    // removeCommentElement.addEventListener("click", () => {
-    //   let newCommentsArea = commentsArea.innerHTML;
-    //   let lastComment = newCommentsArea.lastIndexOf('<li class="comment">');
-    //   console.log(lastComment);
-    // })//
 
 
+
+    // Удаляет последний комментарий
+    removeCommentElement.addEventListener("click", () => {
+      comments.splice(-1);
+      renderComments();
+    })
+
+    // Выключает кнопку при пустых инпутах
     window.addEventListener('input', () => {
       if (nameElement.value === "" || commentElement.value === "") {
       addCommentElement.disabled = true;
@@ -99,17 +136,17 @@
     }
     });
 
-
+    // Кнопка Enter 
     window.addEventListener('keyup', () => {
       if (event.key === 'Enter') {
           addCommentElement.click();
         }
     });
 
+    // Отправка комментариев
     addCommentElement.addEventListener("click", () => {
       nameElement.classList.remove("validation");
       commentElement.classList.remove("validation");
-
 
       if (nameElement.value == "" && commentElement.value == "") {
         nameElement.classList.add("validation");
@@ -124,45 +161,37 @@
       };
 
       const date = new Date;
-      let minutes = date.getMinutes();
-      if (minutes < 10) {
-        minutes = "0" +  minutes;
-      }
-      let hours = date.getHours();
-      if (hours < 10) {
-        hours = "0" + hours;
-      }
-      const time = hours + ":" + minutes;
-      let day = date.getDate();
-      if (day < 10) {
-        day = "0" + day;
-      }
-      let month = date.getMonth() + 1 ;
-        if (month < 10) {
-          month = "0" + month;
-        }
-      const newCommentsArea = commentsArea.innerHTML;
-      commentsArea.innerHTML = newCommentsArea +
-      `<li class="comment">
-          <div class="comment-header">
-            <div>${nameElement.value}</div>
-            <div>${day + "." + month + "." + date.getFullYear().toString().substr(-2) + " " + time}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${commentElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`
-        nameElement.value = "";
-        commentElement.value = "";
-    } )
+        let minutes = date.getMinutes();
+          if (minutes < 10) {
+            minutes = "0" +  minutes;
+          }
+        let hours = date.getHours();
+          if (hours < 10) {
+            hours = "0" + hours;
+          }
+        const time = hours + ":" + minutes;
+        let day = date.getDate();
+          if (day < 10) {
+            day = "0" + day;
+          }
+        let month = date.getMonth() + 1 ;
+          if (month < 10) {
+            month = "0" + month;
+          }
+
+      comments.push({
+        name: nameElement.value,
+        date: day + "." + month + "." + date.getFullYear().toString().substr(-2) + " " + time,
+        comment: commentElement.value,
+        likes: 0,
+        isActive: false,
+      })
+
+      nameElement.value = "";
+      commentElement.value = "";
+      renderComments();
+      
+    });
 
 
   </script>
