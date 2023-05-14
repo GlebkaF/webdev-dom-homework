@@ -1,7 +1,7 @@
 import { fetchComments, newComment } from "./api.js";
 import { renderLogin } from "./login-component.js";
 import { delay } from "./dalay.js";
-import { format } from "date-fns";
+import { format } from 'date-fns';
 
 const load = document.querySelector(".load");
 load.style.display = "flex";
@@ -73,10 +73,13 @@ const answer = () => {
       }
 
       const listComment = comments.map((user, index) => {
+        const createDate = format(new Date(comments.created_at), 'YYYY-MM-DD hh.mm.ss');
+        const now = new Date();
+        format(now, "MM-dd-yyyy hh:mm"); // 03-26-2023 10:33
         return `<li data-index="${index}" class="comment">
         <div class="comment-header">
           <div>${user.author.name}</div>
-          <div>${new Date(user.date).toLocaleString()}</div>
+          <div>${createDate}</div>
         </div>
         <div data-index="${index}" class="comment-body">
           <div class="comment-text">
@@ -118,7 +121,6 @@ const answer = () => {
       </div>`;
       appEl.innerHTML= appAddForm;
 
-    
       const deleteButton = document.querySelector('.delete-form-button');
       deleteButton.addEventListener("click", () => {
         comments.pop();
