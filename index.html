@@ -95,7 +95,6 @@
 
     const renderComments = () => {
       const commentsHtml = comments.map((i, index) => {
-        if (i.isActive === true) {
           return `<li class="comment">
           <div class="comment-header">
             <div>${i.name}</div>
@@ -109,29 +108,10 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${i.likes}</span>
-              <button data-index="${index}" id="likes-button" class="like-button -active-like"></button>
+              <button data-index="${index}" id="likes-button" class="like-button ${i.isActive ? "-active-like" : ""}"></button>
             </div>
           </div>
         </li>`
-        } else {
-          return `<li class="comment">
-          <div class="comment-header">
-            <div>${i.name}</div>
-            <div>${i.date}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${i.comment}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">${i.likes}</span>
-              <button data-index="${index}" id="likes-button" class="like-button"></button>
-            </div>
-          </div>
-        </li>`
-        }
       }).join('');
       commentsArea.innerHTML = commentsHtml;
       likeCountButtonListener();
