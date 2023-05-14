@@ -111,6 +111,14 @@
     elementComment.value = '';
     buttonElement.disabled = true;
   });
+  // Отправка коммента с помощью кнопки Enter
+  document.addEventListener('keyup', (event) => {
+    if (event.key === "Enter"){
+      buttonElement.click()
+    }
+  });
+
+
 
   console.log("It works!");
 </script>
