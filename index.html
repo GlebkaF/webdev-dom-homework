@@ -38,10 +38,14 @@
     .validation {
       box-shadow: 0 0 10px 4px rgba(255, 0, 0, 1);
     }
-    .active-like-button {
-      background-color: #BCEC30;
+    .replyComment {
+      background-color: #fff;
+      font-size: 14px;
+      color: black;
+      padding: 15px;
+      border-radius: 10px;
+      white-space: pre-line
     }
-
     
   </style>
 
@@ -72,11 +76,12 @@
       },
     ]
 
-
+ // Обработчик лайков
     const likeCountButtonListener = () => {
       const likeButtonElements = document.querySelectorAll('.like-button');
       for (const likeButtonElement of likeButtonElements) {
         likeButtonElement.addEventListener('click', () => {
+          event.stopPropagation();
           let index = likeButtonElement.dataset.index;
           if (comments[index].isActive == false) {
             comments[index].likes++;
@@ -92,34 +97,48 @@
 
     likeCountButtonListener();
 
+    // Ответ на комментарий
+    const replyCommentsListener = () => {
+      const replyButtonElements = document.querySelectorAll('.comment');
+       for (const replyButtonElement of replyButtonElements) {
+        replyButtonElement.addEventListener('click', () => {
+          let index = replyButtonElement.dataset.index;
+          commentElement.value =`Quote_start${comments[index].name}: New_line ${comments[index].comment} Quote_end`
+          renderComments();
+        })
+      } 
 
+    }
+    replyCommentsListener();
+
+
+    // Рендер комментариев в HTML
     const renderComments = () => {
-      const commentsHtml = comments.map((i, index) => {
-          return `<li class="comment">
+      const commentsHtml = comments.map((comment, index) => {
+          return `<li class="comment" data-index="${index}">
           <div class="comment-header">
-            <div>${i.name}</div>
-            <div>${i.date}</div>
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${i.comment}
+              ${comment.comment}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">${i.likes}</span>
-              <button data-index="${index}" id="likes-button" class="like-button ${i.isActive ? "-active-like" : ""}"></button>
+              <span class="likes-counter">${comment.likes}</span>
+              <button data-index="${index}" id="likes-button" class="like-button ${comment.isActive ? "-active-like" : ""}"></button>
             </div>
           </div>
         </li>`
       }).join('');
       commentsArea.innerHTML = commentsHtml;
       likeCountButtonListener();
+      replyCommentsListener();
     }
     renderComments();
     
-
-
 
     // Удаляет последний комментарий
     removeCommentElement.addEventListener("click", () => {
@@ -182,7 +201,14 @@
       comments.push({
         name: nameElement.value,
         date: day + "." + month + "." + date.getFullYear().toString().substr(-2) + " " + time,
-        comment: commentElement.value,
+        comment: commentElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("Quote_start", "<div class='replyComment'>")
+        .replaceAll("Quote_end", "</div>")
+        .replaceAll("New_line", "</br>"),
         likes: 0,
         isActive: false,
       })
