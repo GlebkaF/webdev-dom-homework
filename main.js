@@ -90,7 +90,6 @@ const renderContainer = (comments) => {
       event.stopPropagation();
     })
   }
-
   function addComment() {
     const nameElement = document.getElementById("input-name");
     const textElement = document.getElementById("add-text");
