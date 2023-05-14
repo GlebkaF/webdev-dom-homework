@@ -71,24 +71,36 @@
     const boxCommentsTexts = boxComments.querySelectorAll('.comment');
     let now = new Date();
 
-    const userComments = [
-      {
-        name: 'Глев фокин',
-        date: '12.02.22 12:18',
-        comment: 'Это будет первый комментарий на этой странице',
-        likes: '3',
-        Iliked: false,
-        isedit: false, 
-      },
-      {
-        name: 'Варвара Н.',
-        date: '13.02.22 19:22',
-        comment: 'Мне нравится как оформлена эта страница! ❤',
-        likes: '75',
-        Iliked: false,
-        isedit: false, 
-      },
-    ]
+    let userComments = [];
+
+    function getApi() {
+        const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/alex-toporov/comments", {
+        method: "GET"
+      });
+        
+      fetchPromise.then((response) => {
+        const jsonPromise = response.json();
+
+        // Подписываемся на результат преобразования
+        jsonPromise.then((responseData) => {
+          // получили данные и рендерим их в приложении
+          const appComments = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: new Date(comment.date).toLocaleString().slice(0,-3),
+              text: comment.text,
+              likes: comment.likes,
+              isLiked: false,
+            };
+          });
+          userComments = appComments;
+          console.log(userComments);
+          renderComments();
+        });
+      });
+    }
+
+    getApi();
 
     const addLike = (e) => {
       const comment = userComments[e.target.dataset.id];
@@ -126,34 +138,22 @@
     }
     answerComment();
 
-    // Второй вариант ответа на коммент
-    // const AddAnswerComment = () => {
-    //   const boxCommentsTexts = boxComments.querySelectorAll('.comment');
-
-    //   for(const comment of boxCommentsTexts) {
-    //     comment.addEventListener('click', () => {
-    //       const replace = `${userComments[comment.dataset.id].comment}`;
-    //       textAreaComment.value = replace;
-    //     })
-    //   }
-    // }
-
     const renderComments = () => {
-      const commentHtml = userComments.map((user,index) => {
-        (user.Iliked) ? Iliked = '-active-like' : Iliked = '';
+      const commentHtml = userComments.map((comment,index) => {
+        (comment.Iliked) ? Iliked = '-active-like' : Iliked = '';
         return `<li class="comment">
           <div class="comment-header">
-            <div class="comment-user-name">${user.name}</div>
-            <div class="comment-date">${user.date}</div>
+            <div class="comment-user-name">${comment.name}</div>
+            <div class="comment-date">${comment.date}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${user.comment}
+              ${comment.text}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">${user.likes}</span>
+              <span class="likes-counter">${comment.likes}</span>
               <button class="like-button ${Iliked}" data-id='${index}'></button>
             </div>
           </div>
@@ -168,18 +168,34 @@
     renderComments();
 
     const addComment = () => {
-      userComments.push({
-        name: inputName.value
-        .replaceAll('<', '&lt;')
-        .replaceAll('<', '&gt;'),
-        date: `${now.toLocaleString().slice(0,-3)}`,
-        comment: `${textAreaComment.value
-        .replaceAll('<', '&lt;')
-        .replaceAll('<', '&gt;')}`,
-        likes: 0,
-        Iliked: false,
-        isedit: false,
+      const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/alex-toporov/comments", {
+        method: "POST",
+        body: JSON.stringify({
+          id: 1,
+          date: `${now.toLocaleString().slice(0,-3)}`,
+          likes: 0,
+          isLiked: false,
+          text: `${textAreaComment.value
+          .replaceAll('<', '&lt;')
+          .replaceAll('<', '&gt;')}`,
+          name: inputName.value
+          .replaceAll('<', '&lt;')
+          .replaceAll('<', '&gt;'), 
+          })
+        });
+      
+      fetchPromise.then((response) => {
+        const jsonPromise = response.json();
+
+        // Подписываемся на результат преобразования
+        jsonPromise.then((responseData) => {
+          // получили данные и рендерим их в приложении
+          userComments = responseData.comments;
+          renderComments();
+        });
       });
+
+      getApi();
       renderComments();
       answerComment();
       inputName.value = '';
