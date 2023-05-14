@@ -117,6 +117,18 @@
       buttonElement.click()
     }
   });
+// Активность кнопки
+buttonElement.disabled = true;
+  elementName.addEventListener('input', () => {
+    if (elementName.value.trim() !== ""){
+      buttonElement.disabled = false;
+      return;
+    } else {
+      buttonElement.disabled = true;
+      return
+    }
+  });
+
 
 
 
