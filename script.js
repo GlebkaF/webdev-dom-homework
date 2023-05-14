@@ -153,14 +153,6 @@ buttonElement.addEventListener('click', () => {
                     .replaceAll('START_QUOTE', '<div class="comment-quote">')
                     .replaceAll('END_QUOTE', '</div>')
             }),
-        });
-
-
-    // Инициируем обновление ленты через повторный GET
-    fetch(
-        'https://webdev-hw-api.vercel.app/api/v1/marina-obruch/comments',
-        {
-            method: "GET"
         }).then((response) => {
             response.json().then((responseData) => {
                 const appComments = responseData.comments.map((comment) => {
