@@ -30,20 +30,27 @@ const commentsListArray = [
     }
 ];
 
-const toggleLikes = (e) => {
+const addLikes = (e) => {
   const comment = commentsListArray[e.target.dataset.id];
-  comment.like += comment.Iliked ? -1 : 1;
-  comment.Iliked = !comment.Iliked;
+  comment.like++;
+  comment.Iliked = true;
+}
+
+const delLikes = (e) => {
+  const comment = commentsListArray[e.target.dataset.id];
+  comment.like--;
+  comment.Iliked = false;
 }
 
 const initLikeClick = () => {
   const likeClickElements = document.querySelectorAll('.likes');
-  likeClickElements.forEach((likeClickElement) => {
+  for (const likeClickElement of likeClickElements) {
     likeClickElement.addEventListener('click', (e) => {
-      toggleLikes(e);
+      e.stopPropagation();
+      (commentsListArray[e.target.dataset.id].Iliked) ? delLikes(e) : addLikes(e);
       renderComments();
     });
-  });
+  }
 }
 
 const editClick = () => {
@@ -111,7 +118,7 @@ function renderComments() {
               <span class="likes-counter" >${comment.like}</span>
               <button class="like-button ${Iliked}" data-id="${id}"></button>
             </div>
-            <div class="edit-comment"><span data-id="${id}" title="Редактироать">&#9998;</span></div>
+            <div class="edit-comment"><span data-id="${id}" title="Редактировать">&#9998;</span></div>
             <div class="del-comment"><span data-id="${id}" title="Удалить">&#10008;</span></div>
           </div>
         </li>`;
@@ -122,7 +129,7 @@ function renderComments() {
     delClick();
 }
 
-function valiate() {
+function validate() {
     if (userName.value.length === 0) {
         userName.classList.add('error');
     } else { userName.classList.remove('error'); }
@@ -140,7 +147,7 @@ function valiate() {
 }
 
 function addComment() {
-    const validate = valiate();
+    const validate = validate();
     const date = new Date();
     if (validate) {
         commentsListArray.push({
