@@ -10,7 +10,7 @@
     <div class="container">
       <ul id="comments" class="comments">
       </ul>
-      <div class="add-form">
+      <div class="add-form" id="form">
         <input id="userName"
           type="text"
           class="add-form-name"
@@ -32,19 +32,6 @@
 
   <script>
     "use strict";
-    let currentDate = new Date();
-    let month = currentDate.getMonth();
-    let min = currentDate.getMinutes();
-    let hours = currentDate.getHours();
-    if (month < 10) month = "0" + month;
-    if (hours < 10) hours = "0" + hours;
-    if (min < 10) min = "0" + min;
-    let shortDate = `${currentDate.getDate()}.${month}.${currentDate.getFullYear()-2000} ${hours}:${min}`;
-
-    let arrComments = [
-      {name: "Глеб Фокин", date: "12.02.22 12:18", text: "Это будет первый комментарий на этой странице", likeCounter: 0, likeStatus:""},
-      {name: "Варвара Н.", date: "13.02.22 19:22", text: "Мне нравится как оформлена эта страница! ❤", likeCounter: 75, likeStatus:""}
-    ];
 
     const commentsElement = document.getElementById("comments");
     const userNameElement = document.getElementById("userName");
@@ -53,8 +40,44 @@
     const deleteCommentElement = document.getElementById("deleteComment");
     const likeElement = document.getElementById("like");
     const inputEnter = document.querySelector('.add-form');
+    const formElement = document.getElementById("form");
 
- 
+    let currentDate = new Date();
+    const shortDate = (value) => {
+      let date = new Date(value);
+      let month = date.getMonth();
+      let min = date.getMinutes();
+      let hours = date.getHours();
+      if (month < 10) month = "0" + month;
+      if (hours < 10) hours = "0" + hours;
+      if (min < 10) min = "0" + min;
+      return `${date.getDate()}.${month}.${date.getFullYear()-2000} ${hours}:${min}`;
+    }
+
+    let arrComments = [];
+    const getComments = () => {
+      fetch("https://webdev-hw-api.vercel.app/api/v1/maxim/comments", {
+  method: "GET",
+}).then((response) => {
+  const jsonPromise = response.json().then((responseData) => {
+    const appComments = responseData.comments.map((comment) => {
+      return {
+          name: comment.author.name,
+          date: shortDate(comment.date),
+          text: comment.text,
+          likeCounter: comment.likes,
+          likeStatus: "",
+      };
+    });
+    arrComments = appComments;
+    renderComments();
+  });
+});
+
+}
+
+    getComments();
+
     
     const switchLike = () => {
       let byttonLike = document.querySelectorAll(".like-button");
@@ -88,6 +111,7 @@
     }
 
     const renderComments = () => {
+      console.log(arrComments);
       let commentsHtml = arrComments.map((comment,index) => {
       return     `<li class="comment" data-index="${index}">
           <div class="comment-header">
@@ -111,24 +135,36 @@
         </li>`;
     })
     commentsElement.innerHTML = commentsHtml.join("");
+    
     switchLike();
     replyToComment();
     }
-    renderComments();
+   
 
     
-
 const checkAndAdd = () => {
   if (userNameElement.value === "" || userCommentElement.value === "") {
      addCommentElement.disabled = true;
      setTimeout(() => addCommentElement.disabled = false, 1000);
      return;}
-
-      arrComments.push({name: userNameElement.value, date: shortDate, text: userCommentElement.value, likeCounter: 0, likeStatus:""});
-      renderComments();
+     fetch("https://webdev-hw-api.vercel.app/api/v1/maxim/comments", {
+        method: "POST",
+        body: JSON.stringify({
+          name: userNameElement.value,
+          text: userCommentElement.value,
+      })
+      }).then((response) => {
+        response.json().then((responseData) => {
+          arrComments = responseData.comments;
+          getComments();
+        });
+      });
+      
         userNameElement.value = "";
         userCommentElement.value = "";
 }
+
+
 
     addCommentElement.addEventListener("click", checkAndAdd);
     inputEnter.addEventListener('keyup', function(event){
@@ -140,7 +176,6 @@ const checkAndAdd = () => {
     deleteCommentElement.addEventListener("click", () => {
       commentsElement.removeChild(commentsElement.lastElementChild);
     })
-
-
+ 
   </script>
 </html>
