@@ -40,35 +40,15 @@ fetchGet = () => {
 
 
     fetchPromise.then((response) => {
-      // const jsonPromise = response.json();
-      // jsonPromise.then((responseData) => {
-      //   commentos = responseData.comments;
-      //   renderComments();
-      // });
-
-      response.json().then((responseData) => {
-        const appComments = responseData.comments
-        .map((comment) => {
-          return {
-            name: comment.author.name,
-            date: new Date(Date.parse(comment.date)).toLocaleDateString() + ' ' + new Date(Date.parse(comment.date)).getHours() + ':' + new Date(Date.parse(comment.date)).getMinutes(),
-            text: comment.text,
-            likes: comment.likes,
-            isLiked: false,
-            id: comment.id,
-          };
-        });
-        commentos = appComments;
+      const jsonPromise = response.json();
+      jsonPromise.then((responseData) => {
+        commentos = responseData.comments;
         renderComments();
-        return commentos;
       });
     });
 };
 
 fetchGet();
-
-console.log(commentos);
-
 
 
 addFormButton.classList.add('add-form-button-inactive');
@@ -96,6 +76,8 @@ initLikeButtonsListeners = () => {
 
       const index = likeButtonElement.dataset.id;
       console.log(index);
+
+
 
 
 
@@ -162,12 +144,9 @@ initCommentariesListeners = () => {
 const renderComments = () => {
   const commentsHtml = commentos.map((comment) => {
 
-    // let time = Date.parse(comment.date);
-    // let data = new Date(time);
-    // let date = data.toLocaleDateString() + ' ' + data.getHours() + ':' + data.getMinutes();
-
-    //new Date(Date.parse(comment.date)).toLocaleDateString() + ' ' + new Date(Date.parse(comment.date)).getHours() + ':' + new Date(Date.parse(comment.date)).getMinutes()
-
+    let time = Date.parse(comment.date);
+    let data = new Date(time);
+    let date = data.toLocaleDateString() + ' ' + data.getHours() + ':' + data.getMinutes();
 
 
     if(comment.isCorrecting) {
@@ -176,8 +155,8 @@ const renderComments = () => {
       .replaceAll('</div>', 'QUOTE_END');
       return `<li class="comment" data-id='${comment.id}'>
       <div class="comment-header">
-        <div>${comment.name}</div>
-        <div>${comment.date}
+        <div>${comment.author.name}</div>
+        <div>${date}
         </div>
       </div>
       <div class="comment-body">
@@ -193,8 +172,8 @@ const renderComments = () => {
     if(comment.isLiked) {
       return `<li class="comment" data-id='${comment.id}'>
       <div class="comment-header">
-        <div>${comment.name}</div>
-        <div>${comment.date}
+        <div>${comment.author.name}</div>
+        <div>${date}
         </div>
       </div>
       <div class="comment-body">
@@ -213,8 +192,8 @@ const renderComments = () => {
     } else {
       return `<li class="comment" data-id='${comment.id}'>
       <div class="comment-header">
-        <div>${comment.name}</div>
-        <div>${comment.date}
+        <div>${comment.author.name}</div>
+        <div>${date}
         </div>
       </div>
       <div class="comment-body">
@@ -297,15 +276,13 @@ function clickable() {
           })
         }).then((response) => {
           response.json().then((responseData) => {
-
             commentos = responseData.comments;
-    
             renderComments();
           });
         });
 
-        
         fetchGet();
+
         renderComments();
 
         addFormName.value = '';
