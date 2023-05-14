@@ -50,25 +50,27 @@
   ]
 
   const editCommentText = () => {
-    const commentsText = document.querySelectorAll('.comment-text')
-    const commentName = document.querySelectorAll('.comment-name')
-    for (const commentText of commentsText) {
-      commentText.addEventListener('click', () => {
-        // console.log('1');
-        
-        const userName = comments[commentName.dataset.index]
-        addFormText.value = `>${commentText.innerHTML} \n${userName}, `
+    const commentElements = document.querySelectorAll('.comment')
+    for (const comment of commentElements) {
+      comment.addEventListener('click', () => {
+        const index = comment.dataset.index
+        const userName = comments[index].name
+        const text = comments[index].text
+        addFormText.value = `>${text} \n${userName}, `
       })
     }
 
   }
   editCommentText()
 
+
+
   const initLikeButtons = () => {
     const likeButtonElements = document.querySelectorAll('.like-button')
     const likeCountElements = document.querySelectorAll('.likes-counter')
     for (const likeButtonElement of likeButtonElements) {
-      likeButtonElement.addEventListener('click', () => {
+      likeButtonElement.addEventListener('click', (e) => {
+        e.stopPropagation()
         const comment = comments[likeButtonElement.dataset.index]
         comment.likes = comment.isLiked ? comment.likes - 1 : comment.likes + 1
         comment.isLiked = !comment.isLiked
@@ -131,7 +133,7 @@
 
   // }
 
-  
+
   addFormButton.addEventListener('click', () => {
     addFormName.classList.remove('error')
     addFormText.classList.remove('error')
