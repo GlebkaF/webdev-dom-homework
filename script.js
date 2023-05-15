@@ -127,10 +127,12 @@ const addToServer = (comment) => {
         body: JSON.stringify(comment)
     }).then((response) => {
         const jsonPromise = response.json();
-
+        
         jsonPromise.then((responseData) => {
             console.log(responseData);
         })
+
+        getData();
     })
 }
 
@@ -187,7 +189,6 @@ const addToList = () => {
 
     addToServer(newComment);
 
-
     commentName.value = '';
     commentText.value = '';
     addButton.setAttribute('disabled', '');
@@ -211,15 +212,15 @@ commentText.addEventListener('input', () => {
 
 addButton.addEventListener('click', () => {
     addToList();
-    getData();
-    renderComments();
+    // getData();
+    // renderComments();
 })
 
 addForm.addEventListener('keyup', (event) => {
     if (event.keyCode === 13) {
         addToList();
-        getData();
-        renderComments();
+        // getData();
+        // renderComments();
     }
 })
 
