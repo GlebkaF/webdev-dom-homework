@@ -1,32 +1,28 @@
 function getComments () {
-  const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/yan-lagun/comments", {
+  loadrComments()
+  return fetch("https://webdev-hw-api.vercel.app/api/v1/yan-lagun/comments", {
     method: "GET"
-  });
-  fetchPromise.then((response) => {
-    const jsonPromise = response.json();
-    jsonPromise.then((responseData) => {
-      usersComments = responseData.comments.map((comment) => {
-        return {
-          name: comment.author.name,
-          date: new Date(comment.date),
-          text: comment.text,
-          likes: comment.likes,
-          isLiked: comment.isLiked
-        }
-      });
-      loadedComment = false
-      renderForm(loadedComment)
-      renderComments();
+  }).then((response) => {
+    return response.json();
+  }).then((responseData) => {
+    usersComments = responseData.comments.map((comment) => {
+      
+      return {
+        name: comment.author.name,
+        date: new Date(comment.date),
+        text: comment.text,
+        likes: comment.likes,
+        isLiked: comment.isLiked
+      }
     });
+    loadedComment = false
+    renderForm(loadedComment)
+    renderComments();
   });
 }
 
-
-function addNewComment() {
-      const dateNow = new Date();
-      let loadedComment = true
-      renderForm(loadedComment)
-      fetch("https://webdev-hw-api.vercel.app/api/v1/yan-lagun/comments", {
+function postComments () {
+  return fetch("https://webdev-hw-api.vercel.app/api/v1/yan-lagun/comments", {
     method: "POST",
     body: JSON.stringify({
       "text": newComment.value.replaceAll("&", "&amp;")
@@ -40,13 +36,19 @@ function addNewComment() {
             .replaceAll(">", "&gt;")
             .replaceAll('"', "&quot;"),
     })}).then((response) => {
-        response.json().then((responseData) => {
-          getComments()
-            renderComments();
+        return response.json()
+    }).then((responseData) => {
+      getComments()
+        renderComments();
+    });
+}
 
-        })
-    })
-    
+
+function addNewComment() {
+      const dateNow = new Date();
+      let loadedComment = true
+      renderForm(loadedComment)
+      postComments()
       cleareInputs()
       renderComments()
       commentClickListener()

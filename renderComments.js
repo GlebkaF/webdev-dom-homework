@@ -20,7 +20,7 @@ const renderComments = () => {
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${comment.likes}</span>
-            <button class="like-button ${isLiked}" data-id="${id}"></button>
+            <button class=" like-button ${isLiked}" data-id="${id}"></button>
           </div>
         </div>
       </li>`;
@@ -32,7 +32,7 @@ const renderComments = () => {
     commentClickListener()
 };
 
-renderComments()
+
 
 
 

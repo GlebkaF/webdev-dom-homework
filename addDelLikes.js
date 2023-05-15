@@ -1,9 +1,21 @@
-const addLikes = (e) => {
-    usersComments[e.target.dataset.id].likes = Number(usersComments[e.target.dataset.id].likes) + 1;
-    usersComments[e.target.dataset.id].isLiked = true;
+function delay(interval = 300) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, interval);
+    });
 }
 
-const delLikes = (e) => {
-    usersComments[e.target.dataset.id].likes = Number(usersComments[e.target.dataset.id].likes) - 1;
-    usersComments[e.target.dataset.id].isLiked = false;
+function AddLikeOrDelLike (e) {
+    e.target.classList.add('loading-like')
+      const comment = usersComments[e.target.dataset.id];
+      delay(2000).then(() => {
+        comment.likes = comment.isLiked
+          ? comment.likes - 1
+          : comment.likes + 1;
+        comment.isLiked = !comment.isLiked;
+        comment.isLikeLoading = false;
+        e.target.classList.remove('loading-like')
+        renderComments();
+      });
 }

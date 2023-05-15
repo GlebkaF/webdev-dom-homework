@@ -81,6 +81,7 @@ body {
   .likes {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
   }
 
   .like-button {
@@ -266,3 +267,81 @@ body {
     filter: drop-shadow(0px 20px 67px rgba(0, 0, 0, 0.08));
     border-radius: 20px;
   }
+
+ 
+
+.comment_loader{
+  height: 244px;
+}
+
+.comment__header_loader{
+  height: 18px;
+}
+
+.comment__name_loader{
+  width: 90px;
+  background: #5728af;
+}
+
+.comment__date_loader{
+  width: 110px;
+  background: #5728af;
+}
+
+.comment__body_loader{
+  height: 36px;
+  background: #5728af;
+}
+
+.likes_loader{
+  height: 30px;
+}
+
+.likes__counter_loader,
+.like__button_loader{
+width: 20px;
+height: 30px;
+margin-left: 5px;
+background: #5728af;
+}
+
+
+@keyframes placeHolderShimmer {
+  0% {
+    background-position: -596px 0
+  }
+  100% {
+    background-position: 596px 0
+  }
+}
+
+.animated-background {
+  animation-duration: 3s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-name: placeHolderShimmer;
+  animation-timing-function: linear;
+  background-color: #401b83 ;
+  background: linear-gradient(to right, #5728af 8%, #642dc9  18%, #5728af 33%);
+  background-size: 596px 244px;
+  position: relative;
+}
+
+@keyframes rotating {
+  from {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(30deg);;
+  }
+  75% {
+    transform: rotate(-30deg);;
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+.loading-like {
+  animation: rotating 2s linear infinite;
+}
