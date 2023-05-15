@@ -93,14 +93,13 @@ const onCommentLikeClick = () => {
       const likesContainer = likeButtonsElement.closest('.comment-footer');
       const likesCounter = likesContainer.querySelector('.likes-counter');
       let likesCount = likesCounter.textContent;
-      if (likeButtonsElement.classList.contains("-active-like")) {
+      if (comments[index].active === true) {
         likesCount = (+likesCount) - 1;
         comments[index].active = false;
       } else {
         likesCount = (+likesCount) + 1;
         comments[index].active = true;
       }
-      likesCounter.textContent = likesCount;
       comments[index].like = likesCount;
       renderComments();
     });
