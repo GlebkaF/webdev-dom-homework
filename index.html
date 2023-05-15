@@ -46,24 +46,25 @@
       </li> -->
     </ul>
     <div class="add-form" id="addForm">
-      <!-- <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input" />
+      <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input" />
       <textarea id="comment-input" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
         rows="4"></textarea>
       <div class="add-form-row">
         <button id="delete-button" class="delete-button">Удалить последний комментарий</button>
         <button id="write-button" class="add-form-button" disabled>Написать</button>
-      </div> -->
+      </div>
     </div>
+    <div class="loading"></div>
   </div>
-  </div>
-
 
   <script>
     "use strict";
     // Код писать здесь
     const listElement = document.getElementById("list");
     const addFormElement = document.getElementById("addForm");
-    function getAPI(params) {
+    const loadingElement = document.querySelector(".loading");
+
+    function getAPI() {
       fetch("https://webdev-hw-api.vercel.app/api/v1/ruslan-shevelev/comments", {
         method: "GET"
       }).then((response) => {
@@ -196,21 +197,6 @@
     }
     renderMessages();
 
-    let addFormIsLoading = false;
-    const renderAddForm = () => {
-      const addFormHtml = (addFormIsLoading === true) ? `<div class="loading"></div>` : `<input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input" />
-      <textarea id="comment-input" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
-        rows="4"></textarea>
-      <div class="add-form-row">
-        <button id="delete-button" class="delete-button">Удалить последний комментарий</button>
-        <button id="write-button" class="add-form-button" disabled>Написать</button>
-      </div>
-    </div>`
-      addFormElement.innerHTML = addFormHtml;
-      renderMessages();
-    };
-    renderAddForm();
-
     const nameInputElement = document.getElementById("name-input");
     const commentInputElement = document.getElementById("comment-input");
     const deleteButtonElement = document.getElementById("delete-button");
@@ -245,9 +231,9 @@
       //   liked: false,
       //   isEdit: false,
       // });
-      addFormIsLoading = true;
-      renderAddForm();
 
+      addFormElement.style.display = 'none';
+      loadingElement.style.display = 'block';
       fetch("https://webdev-hw-api.vercel.app/api/v1/ruslan-shevelev/comments", {
         method: "POST",
         body: JSON.stringify({
@@ -269,9 +255,9 @@
       }).then((response) => {
         response.json().then((responseData) => {
           if (responseData.result == "ok") {
-            addFormIsLoading = false;
-            renderAddForm();
             getAPI();
+            loadingElement.style.display = 'none';
+            addFormElement.style.display = "flex";
           }
           else {
             alert('Что-то пошло не так');
@@ -291,8 +277,8 @@
         // renderMessages();
       });
 
-      renderMessages();
-
+      // renderMessages();
+      // renderAddForm();
       deleteButtonElement.classList.add('delete-active');
       buttonElement.setAttribute('disabled', '');
       nameInputElement.value = "";
