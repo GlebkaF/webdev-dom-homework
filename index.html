@@ -12,10 +12,13 @@
 
 <body>
   <div class="container">
-    <p class="loading" style="text-align: center; color: darkgray;">Комментарии загружаются</p>
+
     <div class="comments">
       <!-- На этом месте будет список комментариев -->
     </div>
+
+    <p class="loading" style="text-align: center; color: darkgray;">Комментарии загружаются</p>
+
     <div class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" required />
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш комментарий" rows="4"
@@ -145,6 +148,12 @@
 
   //Функция, которая отправляет новый добавленный комментарий на сервер по указанному API
   const sendCommentToServer = (comment) => {
+
+    if (addForm) {
+      addForm.style.display = 'none';
+      loading.style.display = 'block';
+    }
+
     fetch('https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments', {
       method: 'POST',
       body: JSON.stringify(comment),
@@ -152,7 +161,11 @@
       .then((response) => response.json())
 
       .then((responseData) => {
-        // Обработка ответа сервера (при необходимости)
+        if (addForm) {
+          addForm.style.display = 'block';
+          loading.style.display = 'none';
+        }
+        // Обработка ответа сервера
         console.log('Комментарий успешно отправлен на сервер:', responseData);
       })
 
