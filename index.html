@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="list_wrapper">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -49,15 +49,17 @@
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          id="name_for_comment"
         />
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+          id="comment_area"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="button_submit">Написать</button>
         </div>
       </div>
     </div>
@@ -65,7 +67,61 @@
 
   <script>
     "use strict";
-    // Код писать здесь
+    const buttonWrite = document.getElementById("button_submit");
+    const nameInput = document.getElementById("name_for_comment");
+    const commentItself = document.getElementById("comment_area");
+    const newList = document.getElementById("list_wrapper");
+    buttonWrite.addEventListener("click", () => {
+      nameInput.classList.remove("error")
+      commentItself.classList.remove("error")
+      if ((nameInput.value === '') && (commentItself.value === '')) {
+        nameInput.classList.add("error")
+        commentItself.classList.add("error")
+        return;
+      }
+      if (nameInput.value === '') {
+        nameInput.classList.add("error")
+        return;
+      }
+      if (commentItself.value === '') {
+        commentItself.classList.add("error")
+        return;
+      }
+      const date = new Date();
+      let formattedDate = date.toLocaleString("en-GB", {
+        day: "numeric",
+        month: "numeric",
+        year: "2-digit",
+        hour: "numeric",
+        minute: "numeric"
+      });
+      formattedDate = formattedDate.replace('/', '.')
+      formattedDate = formattedDate.replace('/', '.')
+      formattedDate = formattedDate.replace(',', '')
+      const list = newList.innerHTML;
+      newList.innerHTML = list + `
+      <li class="comment">
+          <div class="comment-header">
+            <div>${nameInput.value}</div>
+            <div>${formattedDate}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${commentItself.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+      </li>`
+      console.log(newList);
+      console.log(list);
+    })
+    
+    
     console.log("It works!");
   </script>
 </html>
