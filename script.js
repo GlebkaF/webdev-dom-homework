@@ -1,9 +1,9 @@
 
 // Определение переменных
-const buttonElement = document.getElementById("add-form-button");
-const listOfComments = document.getElementById("comments");
-const nameInputElement = document.getElementById("add-form-name");
-const commentInputElement = document.getElementById("add-form-text");
+const buttonElement = document.querySelector(".add-form-button");
+const listOfComments = document.querySelector(".comments");
+const nameInputElement = document.querySelector(".add-form-name");
+const commentInputElement = document.querySelector(".add-form-text");
 const removeButton = document.querySelector('.remove-form-button');
 
 
@@ -12,20 +12,20 @@ let comments = []
 
 // Получаем с сервера через API данные по комментариям с помощью GET
 fetch(
-    'https://webdev-hw-api.vercel.app/api/v1/marina-obruch/comments',
-    {
-        method: "GET"
-    }).then((responseStart) => {
-        responseStart.json().then((startJson) => {
-            comments = startJson.comments;
-            renderComments();
-        });
+    "https://webdev-hw-api.vercel.app/api/v1/marina-obruch/comments", {
+    method: "GET"
+}).then((responseStart) => {
+    responseStart.json().then((startJson) => {
+        comments = startJson.comments;
+
+        renderComments();
     });
+});
 
 
 // Функция render для исходных комментариев перенесена в js
 const renderComments = () => {
-    const commentsHtml = comments.map((comment, index) => {
+    listOfComments.innerHTML = comments.map((comment, index) => {
         return `<li id="comment" class="comment" data-index="${index}">
         <div class="comment-header">
           <div id="name">${comment.author.name}</div>
@@ -44,8 +44,6 @@ const renderComments = () => {
         </div>
       </li>`
     }).join("");
-
-    listOfComments.innerHTML = commentsHtml;
 
     initLikeButtons();
     answerComment();
@@ -153,18 +151,9 @@ buttonElement.addEventListener('click', () => {
                     .replaceAll('START_QUOTE', '<div class="comment-quote">')
                     .replaceAll('END_QUOTE', '</div>')
             }),
-        }).then((response) => {
-            response.json().then((responseData) => {
-                const appComments = responseData.comments.map((comment) => {
-                    return {
-                        name: comment.author.name,
-                        date: new Date(comment.date),
-                        text: comment.text,
-                        likes: comment.likes,
-                        isLiked: false,
-                    };
-                })
-                comments = appComments;
+        }).then((responseStart) => {
+            responseStart.json().then((startJson) => {
+                comments = startJson.comments;
                 renderComments();
             });
         });
