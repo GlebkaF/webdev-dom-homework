@@ -65,22 +65,25 @@
   const likeButtonElements = document.querySelectorAll(".like-button");
 
   const initLikeButtonListener = () => {
-    const likeCounterElements = document.querySelectorAll(".likes-counter");
     const likeButtonElements = document.querySelectorAll(".like-button");
     for (let likeButtonElement of likeButtonElements) {
-      for (let likeCounterElement of likeCounterElements) {
-        likeButtonElement.addEventListener("click", () => {
-          if (likeButtonElement === "-active-like") {
-            likeButtonElement.classList.remove("-active-like");
-            likeCounterElement.innerHTML = (likeCounterElement.innerHTML | 0) - 1;
-          } else {
-            likeButtonElement.classList.add("-active-like");
-            likeCounterElement.innerHTML = (likeCounterElement.innerHTML | 0) + 1;
-          }
-        });
-      }
+      likeButtonElement.addEventListener("click", () => {
+        const index = likeButtonElement.dataset.index;
+        let countInLike = Number(comments[index].like);
+        if (likeButtonElement.classList.contains("-active-like")) {
+          countInLike -= 1;
+          comments[index].isLiked = false;
+        } else {
+          countInLike += 1;
+          comments[index].isLiked = true;
+        }
+        comments[index].like = countInLike;
+        renderComments();
+      });
     }
-  }
+  };
+
+
 
   const comments = [
     {
@@ -89,6 +92,7 @@
       hour: "12:18",
       text: "Это будет первый комментарий на этой странице",
       like: 3,
+      isLiked: false
     },
     {
       name: "Варвара Н.",
@@ -96,10 +100,17 @@
       hour: "19:12",
       text: "Мне нравится как оформлена эта страница! ❤",
       like: 75,
+      isLiked: false
     }
+
   ];
+
   const renderComments = () => {
-    const commentsHtml = comments.map((comment) => {
+    const commentsHtml = comments.map((comment, index) => {
+      let isLike = '';
+      if (comments[index].isLiked) {
+        isLike = '-active-like'
+      }
       return `<li class="comment">
         <div class="comment-header">
           <div>${comment.name}</div>
@@ -113,23 +124,20 @@
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter" >${comment.like}</span>
-            <button class="like-button type="button"></button>
+            <button class="like-button ${isLike}" data-index="${index}" ></button>
           </div>
         </div>
       </li>`
-    })
-      .join("");
-
+    }).join("");
     listElement.innerHTML = commentsHtml;
-
     initLikeButtonListener();
   };
-
   renderComments();
+
   buttonElement.addEventListener("click", () => {
+    let countInLike;
     let now = new Date().toLocaleDateString();
     let timeNow = new Date().toLocaleTimeString().slice(0, -3);
-    let like = Number();
     if (nameElement === "") {
       nameElement.classList.add("add-form-name");
       return;
@@ -137,12 +145,32 @@
       textElement.classList.add("add-form-text");
       return;
     }
+    listElement.innerHTML += `<li class="comment">
+  <div class="comment-header">
+    <div>${nameElement.value}</div>
+    <div>${now}</div>
+  </div>
+  <div class="comment-body">
+    <div class="comment-text">
+      ${textElement.value}
+    </div>
+  </div>
+  <div class="comment-footer">
+    <div class="likes">
+      <span class="likes-counter">${countInLike}</span>
+      <button class="like-button"></button>
+    </div>
+  </div>
+</li>`;
+    countInLike = 0;
+
     comments.push({
       name: nameElement.value,
       time: now,
       hour: timeNow,
       text: textElement.value,
-      like: like,
+      like: countInLike,
+      isLiked: false,
     });
     renderComments();
     initLikeButtonListener();
