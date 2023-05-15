@@ -8,7 +8,7 @@ const removeButton = document.querySelector('.remove-form-button');
 
 
 // Данные о комментариях
-let comments = []
+let comments = [];
 
 // Получаем с сервера через API данные по комментариям с помощью GET
 fetch(
