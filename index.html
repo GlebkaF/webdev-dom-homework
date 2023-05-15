@@ -103,15 +103,14 @@
   };
 
   //Получение комментариев из API https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments
-  const fetchPromise = fetch('https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments', {
+  fetch('https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments', {
     method: 'GET',
-  });
-  fetchPromise.then((response) => {
-    // Запускаем, преобразовываем сырые данные от API в JSON-формат
-    const jsonPromise = response.json();
+  })
+
+    .then((response) => response.json())
 
     // Подписываемся на результат преобразования
-    jsonPromise.then((responseData) => {
+    .then((responseData) => {
       appComments = responseData.comments.map((comment) => {
         return {
           //Имя автора
@@ -130,7 +129,6 @@
       comments = appComments;
       renderComments();
     });
-  });
 
   //Рендер комментариев
   function renderComments() {
@@ -183,10 +181,12 @@
       body: JSON.stringify(comment),
     })
       .then((response) => response.json())
+
       .then((responseData) => {
         // Обработка ответа сервера (при необходимости)
         console.log('Комментарий успешно отправлен на сервер:', responseData);
       })
+
       .catch((error) => {
         // Обработка ошибок при отправке на сервер
         console.error('Ошибка при отправке комментария на сервер:', error);
