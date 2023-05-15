@@ -40,31 +40,37 @@
     const inputText = document.querySelector(".add-form-text");
     const form = document.querySelectorAll(".form");
     const container = document.querySelector(".container");
-
+    getComments();
     let comments = [];
-
-    const fetchPromise = fetch(
-      "https://webdev-hw-api.vercel.app/api/v1/:eldar/comments",
-      {
-        method: "GET",
-      }
-    );
-
-    fetchPromise.then((response) => {
-      const jsonPromise = response.json();
-
-      jsonPromise.then((responseData) => {
-        comments = responseData.comments;
-        renderComments();
+    function getComments() {
+      const fetchPromise = fetch(
+        "https://webdev-hw-api.vercel.app/api/v1/:eldar/comments",
+        {
+          method: "GET",
+        }
+      );
+      fetchPromise.then((response) => {
+        const jsonPromise = response.json();
+        jsonPromise.then((responseData) => {
+          comments = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: new Date(comment.date),
+              text: comment.text,
+              likes: comment.likes,
+              isLiked: comment.isLiked,
+            };
+          });
+          renderComments();
+        });
       });
-    });
-
+    }
     const renderComments = () => {
       const commentsHtml = comments
         .map((comment, index) => {
           return `<li class='comment'>
       <div class='comment-header'>
-        <div>${comment.author.name}</div>
+        <div>${comment.name}</div>
         <div>${comment.date}
           </div>
         </div>
@@ -75,7 +81,7 @@
           </div>
           <div class='comment-footer'>
           <div class='likes'>
-          <span class= 'likes-counter'> ${comment.likes} 
+          <span class= 'likes-counter'> ${comment.likes}
             </div>
           <button class='like-button ${
             comment.isLiked ? "-active-like" : ""
@@ -86,7 +92,7 @@
               comment.edit ? "" : "edit-click"
             }' data-index="${index}">Изменить комментарий</button>
           </div>
-          
+
       </li>`;
         })
         .join("");
@@ -101,6 +107,7 @@
 
       for (const editButton of editButtons) {
         editButton.addEventListener("click", (event) => {
+          console.log("click", event.target);
           const index = editButton.dataset.index;
           // const commentText = commentsListArray[id].msg;
           const fragment = document.createDocumentFragment();
@@ -183,7 +190,7 @@
         addFormButton.disabled = true;
         return;
       } else {
-        let date = new Date();
+        const date = new Date();
         let month = date.getMonth() + 1;
         let minutes = date.getMinutes();
 
@@ -198,41 +205,49 @@
         //   comment: inputText.value
         //     .replaceAll("<", "&lt")
         //     .replaceAll(">", "&gt"),
-        //   date: `${date.getFullYear()}.${month}.${date.getDate()} ${hours}:${minutes}`,
+        //   day: date.getDate(),
+        //   month: month,
+        //   year: date.getFullYear(),
+        //   hours: date.getHours(),
+        //   minutes: minutes,
         //   likes: 0,
         //   isLiked: false,
         //   edit: false,
         // });
-        initLikeButtonListener();
+        // initLikeButtonListener();
 
-        const fetchPromise = fetch(
-          "https://webdev-hw-api.vercel.app/api/v1/:eldar/comments",
-          {
+        function addNewComment() {
+          const dateNow = new Date();
+
+          fetch("https://webdev-hw-api.vercel.app/api/v1/yan-lagun/comments", {
             method: "POST",
             body: JSON.stringify({
               text: inputText.value
-                .replaceAll("<", "&lt")
-                .replaceAll(">", "&gt"),
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replace("|", "<div class='quote'>")
+                .replace("|", "</div>"),
               name: inputName.value
-                .replaceAll("<", "&lt")
-                .replaceAll(">", "&gt"),
-              date: `${date.getFullYear()}.${month}.${date.getDate()} ${date.getHours()}:${minutes}`,
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;"),
             }),
-          }
-        );
-
-        fetchPromise.then((response) => {
-          const jsonPromise = response.json();
-
-          jsonPromise.then((responseData) => {
-            comments = responseData.comments;
-            // renderComments();
+          }).then((response) => {
+            response.json().then((responseData) => {
+              getComments();
+              renderComments();
+            });
           });
-        });
+          renderComments();
+        }
+        getComments();
       }
 
       renderComments();
-      // initLikeButtonListener();
+      initLikeButtonListener();
     });
 
     inputName.addEventListener("input", (event) => {
