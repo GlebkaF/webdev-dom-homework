@@ -42,29 +42,6 @@
     const container = document.querySelector(".container");
     getComments();
     let comments = [];
-    function getComments() {
-      const fetchPromise = fetch(
-        "https://webdev-hw-api.vercel.app/api/v1/eldar/comments",
-        {
-          method: "GET",
-        }
-      );
-      fetchPromise.then((response) => {
-        const jsonPromise = response.json();
-        jsonPromise.then((responseData) => {
-          comments = responseData.comments.map((comment) => {
-            return {
-              name: comment.author.name,
-              date: new Date(comment.date),
-              text: comment.text,
-              likes: comment.likes,
-              isLiked: comment.isLiked,
-            };
-          });
-          renderComments();
-        });
-      });
-    }
     const renderComments = () => {
       const commentsHtml = comments
         .map((comment, index) => {
@@ -100,85 +77,6 @@
       commentList.innerHTML = commentsHtml;
       initLikeButtonListener();
       editClick();
-    };
-
-    const editClick = () => {
-      const editButtons = document.querySelectorAll(".edit-button");
-
-      for (const editButton of editButtons) {
-        editButton.addEventListener("click", (event) => {
-          console.log("click", event.target);
-          const index = editButton.dataset.index;
-          // const commentText = commentsListArray[id].msg;
-          const fragment = document.createDocumentFragment();
-          const popup = document.createElement("div");
-          popup.classList.add("popup");
-          container.appendChild(popup);
-          const popupTextarea = document.createElement("textarea");
-          popupTextarea.classList.add("editText");
-          //popupTextarea.textContent = comments[index].comment;
-          //у тебя в массиве comments[index].text , а ты пишешь в textContent  comments[index].comment
-          // в saveEditComment тоже самое
-
-          popupTextarea.textContent = comments[index].text;
-          const saveButton = document.createElement("button");
-          saveButton.textContent = "cохранить комментарий";
-          saveButton.classList.add("save_button");
-          fragment.appendChild(popupTextarea);
-          fragment.appendChild(saveButton);
-          popup.appendChild(fragment);
-          saveEditComment(index, popup);
-        });
-      }
-    };
-
-    function saveEditComment(index, popup) {
-      const saveButtonClick = document.querySelector(".save_button");
-      saveButtonClick.addEventListener("click", (e) => {
-        const editText = document.querySelector(".editText");
-        if (editText.value.length > 10) {
-          //comments[index].comment = editText.value;
-          // тут было тоже самое
-          comments[index].text = editText.value;
-          popup.remove();
-          renderComments();
-        }
-      });
-    }
-
-    const initLikeButtonListener = () => {
-      const commentFooter = document.querySelectorAll(".comment-footer");
-      const commentTexts = document.querySelectorAll(".comment-text");
-
-      commentTexts.forEach((commentText) => {
-        commentText.addEventListener("click", (event) => {
-          const index = commentText.dataset.index;
-          const inputText = document.querySelector(".add-form-text");
-          inputText.value = `< ${comments[index].name} ${comments[index].comment}`;
-        });
-      });
-      commentFooter.forEach((element) => {
-        const likesCounter = element.firstElementChild.firstElementChild;
-        const likeButton = element.lastElementChild;
-        likeButton.addEventListener("click", (event) => {
-          const currentLikes = parseInt(likesCounter.textContent);
-          const index = likeButton.dataset.index;
-
-          if (comments[index].isLiked === true) {
-            const oldLikes = currentLikes - 1;
-            likesCounter.textContent = oldLikes;
-            comments[index].isLiked = false;
-            comments[index].likes = oldLikes;
-          } else {
-            const newLikes = currentLikes + 1;
-            likesCounter.textContent = newLikes;
-            comments[index].isLiked = true;
-            comments[index].likes = newLikes;
-          }
-
-          renderComments();
-        });
-      });
     };
 
     renderComments();
@@ -280,4 +178,7 @@
       }
     });
   </script>
+  <script src="getComments.js"></script>
+  <script src="editComment.js"></script>
+  <script src="addLike.js"></script>
 </html>
