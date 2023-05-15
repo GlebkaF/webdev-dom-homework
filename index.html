@@ -8,8 +8,140 @@
 
   <body>
     <div class="container">
-      <ul class="comments" id="comments-list">
-        <li class="comment">
+      <ul class="comments" id="comments-list"></ul>
+      <div class="add-form" id="form">
+        <input
+          type="text"
+          class="add-form-name"
+          placeholder="Введите ваше имя"
+          id="user-name" />
+        <textarea
+          type="textarea"
+          class="add-form-text"
+          placeholder="Введите ваш коментарий"
+          rows="4"
+          id="user-text"></textarea>
+        <div class="add-form-row">
+          <button class="add-form-button" id="button-form">Написать</button>
+        </div>
+      </div>
+      <div>
+        <button class="add-form-button" id="delete-button">
+          Удалить последний комментарий
+        </button>
+      </div>
+    </div>
+  </body>
+
+  <script>
+        "use strict";
+        const listElement = document.getElementById("comments-list");
+        const buttonElement = document.getElementById("button-form");
+        const nameInputElement = document.getElementById("user-name");
+        const textInputElement = document.getElementById("user-text");
+        const formElement = document.getElementById("form");
+        const deleteButtonElement = document.getElementById("delete-button");
+        const likesButtonElement = document.getElementById("like-button");
+        let date = new Date();
+        const formattedDate =
+          date.getDate().toString().padStart(2, '0') + '.' +
+          (date.getMonth() + 1).toString().padStart(2, '0') + '.' +
+          date.getFullYear().toString().slice(-2) + ' ' +
+          date.getHours().toString().padStart(2, '0') + ':' +
+          date.getMinutes().toString().padStart(2, '0');
+
+        const comments = [
+          {
+            name: "Глеб Фокин",
+            date: "12.02.22 12:18",
+            text: "Это будет комментарий на этой странице",
+            likeCount: "0"
+          },
+          {
+            name: "Варвара Н.",
+            date: "13.02.22 19:22",
+            text: "Мне нравится как оформлена эта страница! ❤",
+            likeCount: "0"
+          }
+        ];
+
+        const renderComments = () => {
+            const commentsHtml = comments.map((comment) => {
+              return `<li class="comment">
+                <div class="comment-header">
+                <div>${comment.name}</div>
+                <div>${comment.date}</div>
+                </div>
+                <div class="comment-body">
+                  <div class="comment-text">
+                     ${comment.text}
+                  </div>
+                </div>
+                <div class="comment-footer">
+                  <div class="likes">
+                    <span class="likes-counter" id="likeCount">${comment.likeCount}</span>
+                    <button class="like-button" id="like-button"></button>
+                  </div>
+                </div>
+              </li>`;
+            }).join("");
+
+            listElement.innerHTML = commentsHtml;
+          };
+
+        renderComments();
+
+        buttonElement.addEventListener("click", () => {
+          buttonElement.classList.remove("add-form-button-error");
+          buttonElement.classList.add("add-form-button");
+          nameInputElement.classList.remove("error");
+          textInputElement.classList.remove("error");
+
+          if (nameInputElement.value === "" || textInputElement.value === "") {
+            buttonElement.classList.remove("add-form-button");
+            buttonElement.classList.add("add-form-button-error");
+
+            if (nameInputElement.value === "") {
+              nameInputElement.classList.add("error");
+              return;
+            }
+            if (textInputElement.value === "") {
+              textInputElement.classList.add("error");
+              return;
+            }
+
+            return;
+          }
+
+          comments.push({
+            name: nameInputElement.value,
+            date: formattedDate,
+            text: textInputElement.value,
+            likeCount: "0"
+          });
+
+          renderComments();
+        });
+
+
+
+        deleteButtonElement.addEventListener("click", () => {
+          const lastCommentIndex = listElement.innerHTML.lastIndexOf( '<li class="comment">' );
+            if (lastCommentIndex !== -1) {
+              listElement.innerHTML = listElement.innerHTML.substring( 0, lastCommentIndex );
+            } });
+
+        document.addEventListener("keyup", (event) => {
+               if (event.key === "Enter") {
+                buttonElement.click();
+              }
+            });
+
+        console.log("It works!");
+  </script>
+</html>
+
+<!-- <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -42,104 +174,4 @@
               <button class="like-button -active-like"></button>
             </div>
           </div>
-        </li>
-      </ul>
-      <div class="add-form" id="form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-          id="user-name" />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-          id="user-text"></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button" id="button-form">Написать</button>
-        </div>
-      </div>
-      <div>
-        <button class="add-form-button" id="delete-button">
-          Удалить последний комментарий
-        </button>
-      </div>
-    </div>
-  </body>
-
-  <script>
-    "use strict";
-    const listElement = document.getElementById("comments-list");
-    const buttonElement = document.getElementById("button-form");
-    const nameInputElement = document.getElementById("user-name");
-    const textInputElement = document.getElementById("user-text");
-    const formElement = document.getElementById("form");
-    const deleteButtonElement = document.getElementById("delete-button");
-
-    let date = new Date();
-    const formattedDate =
-      date.getDate().toString().padStart(2, '0') + '.' +
-      (date.getMonth() + 1).toString().padStart(2, '0') + '.' +
-      date.getFullYear().toString().slice(-2) + ' ' +
-      date.getHours().toString().padStart(2, '0') + ':' +
-      date.getMinutes().toString().padStart(2, '0');
-
-    buttonElement.addEventListener("click", () => {
-      buttonElement.classList.remove("add-form-button-error");
-      buttonElement.classList.add("add-form-button");
-      nameInputElement.classList.remove("error");
-      textInputElement.classList.remove("error");
-
-      if (nameInputElement.value === "" || textInputElement.value === "") {
-        buttonElement.classList.remove("add-form-button");
-        buttonElement.classList.add("add-form-button-error");
-
-        if (nameInputElement.value === "") {
-          nameInputElement.classList.add("error");
-          return;
-        }
-        if (textInputElement.value === "") {
-          textInputElement.classList.add("error");
-          return;
-        }
-
-        return;
-      }
-      const oldListElement = listElement.innerHTML;
-      listElement.innerHTML =
-        oldListElement +
-        `<li class="comment">
-            <div class="comment-header">
-            <div>${nameInputElement.value}</div>
-            <div>${formattedDate}</div>
-            </div>
-            <div class="comment-body">
-              <div class="comment-text">
-                 ${textInputElement.value}
-              </div>
-            </div>
-            <div class="comment-footer">
-              <div class="likes">
-                <span class="likes-counter">0</span>
-                <button class="like-button"></button>
-              </div>
-            </div>
-          </li>`;
-    });
-
-    deleteButtonElement.addEventListener("click", () => { 
-      const lastCommentIndex = listElement.innerHTML.lastIndexOf( '<li class="comment">' ); 
-        if (lastCommentIndex !== -1) { 
-          listElement.innerHTML = listElement.innerHTML.substring( 0, lastCommentIndex ); 
-        } });
-
-        document.addEventListener("keyup", (event) => {
-           if (event.key === "Enter") { 
-            buttonElement.click(); 
-          } 
-        });
-
-    console.log("It works!");
-  </script>
-</html>
+        </li> -->
