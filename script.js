@@ -1,42 +1,39 @@
 
 // Определение переменных
-const buttonElement = document.getElementById("add-form-button");
-const listOfComments = document.getElementById("comments");
-const nameInputElement = document.getElementById("add-form-name");
-const commentInputElement = document.getElementById("add-form-text");
+const buttonElement = document.querySelector(".add-form-button");
+const listOfComments = document.querySelector(".comments");
+const nameInputElement = document.querySelector(".add-form-name");
+const commentInputElement = document.querySelector(".add-form-text");
 const removeButton = document.querySelector('.remove-form-button');
 
 
 // Данные о комментариях
-const comments = [
-    {
-        userName: 'Глеб Фокин',
-        userDate: '12.02.22 12:18',
-        userComment: 'Это будет первый комментарий на этой странице',
-        likes: 3,
-        isLiked: false,
-    },
+let comments = [];
 
-    {
-        userName: 'Варвара Н.',
-        userDate: '13.02.22 19:22',
-        userComment: 'Мне нравится как оформлена эта страница! ❤',
-        likes: 75,
-        isLiked: true,
-    }
-]
+// Получаем с сервера через API данные по комментариям с помощью GET
+fetch(
+    "https://webdev-hw-api.vercel.app/api/v1/marina-obruch/comments", {
+    method: "GET"
+}).then((responseStart) => {
+    responseStart.json().then((startJson) => {
+        comments = startJson.comments;
+
+        renderComments();
+    });
+});
+
 
 // Функция render для исходных комментариев перенесена в js
 const renderComments = () => {
-    const commentsHtml = comments.map((comment, index) => {
+    listOfComments.innerHTML = comments.map((comment, index) => {
         return `<li id="comment" class="comment" data-index="${index}">
         <div class="comment-header">
-          <div id="userName">${comment.userName}</div>
-          <div id="userDate">${comment.userDate}</div>
+          <div id="name">${comment.author.name}</div>
+          <div id="date">${correctDate(comment.date)}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
-            ${comment.userComment}
+            ${comment.text}
           </div>
         </div>
         <div class="comment-footer">
@@ -48,9 +45,6 @@ const renderComments = () => {
       </li>`
     }).join("");
 
-    listOfComments.innerHTML = commentsHtml;
-
-    checkAddButton();
     initLikeButtons();
     answerComment();
 }
@@ -84,8 +78,8 @@ const answerComment = () => {
         element.addEventListener('click', () => {
             let index = element.dataset.index;
 
-            commentInputElement.value = `START_QUOTE${comments[index].userName}:
-            \n${comments[index].userComment.replaceAll('<div class="comment-quote">', 'START_QUOTE').replaceAll('</div>', 'END_QUOTE')}END_QUOTE`;
+            commentInputElement.value = `START_QUOTE${comments[index].author.name}:
+            \n${comments[index].text.replaceAll('<div class="comment-quote">', 'START_QUOTE').replaceAll('</div>', 'END_QUOTE')}END_QUOTE`;
         });
     }
 }
@@ -98,6 +92,7 @@ const replaceValue = (value) => {
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;");
 }
+renderComments();
 
 // валидация на ввод (неактивная кнопка "Написать")
 const checkAddButton = () => {
@@ -121,6 +116,7 @@ const checkAddButton = () => {
         }
     });
 }
+checkAddButton();
 
 //  удаление последнего комментария
 const deleteLastComment = () => {
@@ -131,7 +127,6 @@ const deleteLastComment = () => {
 
 // функция клик addEventListener на добавление комментария
 buttonElement.addEventListener('click', () => {
-
     // валидация на ввод
     nameInputElement.classList.remove("error");
     if (nameInputElement.value === "") {
@@ -145,36 +140,31 @@ buttonElement.addEventListener('click', () => {
         return;
     }
 
-    // функция на определение времени комментариев
-    let myDate = new Date();
-    let day = myDate.getDate();
-    let month = myDate.getMonth();
-    let year = myDate.getFullYear();
-    let hour = myDate.getHours();
-    let minute = myDate.getMinutes();
+    // Добавляем новый комментарий в ленту с помощью POST
+    fetch(
+        'https://webdev-hw-api.vercel.app/api/v1/marina-obruch/comments',
+        {
+            method: "POST",
+            body: JSON.stringify({
+                name: replaceValue(nameInputElement.value),
+                text: replaceValue(commentInputElement.value)
+                    .replaceAll('START_QUOTE', '<div class="comment-quote">')
+                    .replaceAll('END_QUOTE', '</div>')
+            }),
+        }).then((response) => {
+            response.json().then(() => {
+                fetch("https://webdev-hw-api.vercel.app/api/v1/marina-obruch/comments", {
+                    method: "GET"
+                }).then((responseAdd) => {
+                    responseAdd.json().then((addJson) => {
+                        comments = addJson.comments;
 
-    if (minute < 10) {
-        minute = "0" + minute;
-    }
-    if (month < 10) {
-        month = "0" + month;
-    }
+                        renderComments();
+                    });
+                });
+            });
+        });
 
-    let fullDate = day + "." + month + "." + year + " " + hour + ":" + minute;
-
-
-    // добавление нового комментария (update)
-    comments.push({
-        userName: replaceValue(nameInputElement.value),
-        userDate: fullDate,
-
-        userComment: replaceValue(commentInputElement.value)
-            .replaceAll('START_QUOTE', '<div class="comment-quote">')
-            .replaceAll('END_QUOTE', '</div>'),
-
-        likes: 0,
-        isLiked: false,
-    })
 
     // отчистка поля для ввода для новых комментариев
     nameInputElement.value = "";
@@ -186,5 +176,19 @@ buttonElement.addEventListener('click', () => {
 });
 renderComments();
 
+const correctDate = date => {
+    let year = (new Date(date)).getFullYear();
+    let month = fixNumbers((new Date(date)).getMonth() + 1);
+    let day = fixNumbers((new Date(date)).getDate());
+    let hours = fixNumbers((new Date(date)).getHours());
+    let minutes = fixNumbers((new Date(date)).getMinutes());
+
+    return `${day}.${month}.${year} ${hours}:${minutes}`;
+}
+const fixNumbers = number => String(number).length < 2 ? '0' + number : number;
+
+renderComments();
+
 removeButton.addEventListener('click', deleteLastComment);
+
 
