@@ -46,11 +46,11 @@
       </ul>
       <div class="add-form">
         <input
-          type="text"
+          type="text" id="name-input"
           class="add-form-name"
-          placeholder="Введите ваше имя"
+          placeholder="Введите ваше имя" 
         />
-        <textarea
+        <textarea id="comment-input"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
@@ -65,7 +65,87 @@
 
   <script>
     "use strict";
-    // Код писать здесь
-    console.log("It works!");
+  // 1. нужно найти элементы формы DOM с помощью метода document.querySelector(), используя добавленные id:
+const nameInput = document.querySelector('#name-input');
+const commentInput = document.querySelector('#comment-input');
+const addButton = document.querySelector('.add-form-button');
+const commentsList = document.querySelector('.comments');
+
+addButton.addEventListener('click', function() {
+  // проверяем, заполнены ли поля ввода
+  if (nameInput.value.trim() === '' || commentInput.value.trim() === '') {
+    alert('Заполните все поля ввода!');
+    return;
+  }
+  
+  // создаем новый элемент комментария
+  const newComment = document.createElement('li');
+  newComment.classList.add('comment');
+
+  const now = new Date();
+  const dateString = `${now.getDate()}.${now.getMonth() + 1}.${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`;
+
+  newComment.innerHTML = `
+    <div class="comment-header">
+      <div>${nameInput.value}</div>
+      <div>${dateString}</div>
+    </div>
+    <div class="comment-body">
+      <div class="comment-text">
+        ${commentInput.value}
+      </div>
+    </div>
+    <div class="comment-footer">
+      <div class="likes">
+        <span class="likes-counter">0</span>
+        <button class="like-button"></button>
+      </div>
+    </div>
+  `;
+
+  commentsList.appendChild(newComment);
+
+  // очищаем поля ввода
+  nameInput.value = '';
+  commentInput.value = '';
+});
+
+
+ 
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    //console.log("It works!");
   </script>
 </html>
