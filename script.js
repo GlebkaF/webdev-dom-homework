@@ -151,10 +151,17 @@ buttonElement.addEventListener('click', () => {
                     .replaceAll('START_QUOTE', '<div class="comment-quote">')
                     .replaceAll('END_QUOTE', '</div>')
             }),
-        }).then((responseStart) => {
-            responseStart.json().then((startJson) => {
-                comments = startJson.comments;
-                renderComments();
+        }).then((response) => {
+            response.json().then(() => {
+                fetch("https://webdev-hw-api.vercel.app/api/v1/marina-obruch/comments", {
+                    method: "GET"
+                }).then((responseAdd) => {
+                    responseAdd.json().then((addJson) => {
+                        comments = addJson.comments;
+
+                        renderComments();
+                    });
+                });
             });
         });
 
