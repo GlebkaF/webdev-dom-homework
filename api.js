@@ -26,16 +26,6 @@ export const getFetch = () => {
       renderList();
     });
 
-  // подписываемся на успешное завершение запроса с помощью then
-  // fetchPromise.then((response) => {
-  // Запускаем преобразовываем "сырые" данные от API в json формат
-  // const jsonPromise = response.json();
-
-  // Подписываемся на результат преобразования
-  // jsonPromise.then((responseData) => {
-  // получили данные и рендерим их в приложении
-  //   });
-  // });
 };
 export const addTodo = () => {
   buttonAddElement.disabled = true;
@@ -70,7 +60,7 @@ export const addTodo = () => {
     })
 
     .then(() => {
-      // получили данные и рендерим их в приложении
+   
       return getFetch();
     })
     .then(() => {
@@ -83,7 +73,7 @@ export const addTodo = () => {
       buttonAddElement.disabled = false;
       buttonAddElement.textContent = "Написать";
       alert("Кажется, что-то пошло не так, попробуй позже");
-      // TODO: Отправлять в систему сбора ошибок
+
       console.warn(error);
     });
 };
