@@ -44,7 +44,7 @@
     let comments = [];
     function getComments() {
       const fetchPromise = fetch(
-        "https://webdev-hw-api.vercel.app/api/v1/:eldar/comments",
+        "https://webdev-hw-api.vercel.app/api/v1/eldar/comments",
         {
           method: "GET",
         }
@@ -116,7 +116,11 @@
           container.appendChild(popup);
           const popupTextarea = document.createElement("textarea");
           popupTextarea.classList.add("editText");
-          popupTextarea.textContent = comments[index].comment;
+          //popupTextarea.textContent = comments[index].comment;
+          //у тебя в массиве comments[index].text , а ты пишешь в textContent  comments[index].comment
+          // в saveEditComment тоже самое
+
+          popupTextarea.textContent = comments[index].text;
           const saveButton = document.createElement("button");
           saveButton.textContent = "cохранить комментарий";
           saveButton.classList.add("save_button");
@@ -133,7 +137,9 @@
       saveButtonClick.addEventListener("click", (e) => {
         const editText = document.querySelector(".editText");
         if (editText.value.length > 10) {
-          comments[index].comment = editText.value;
+          //comments[index].comment = editText.value;
+          // тут было тоже самое
+          comments[index].text = editText.value;
           popup.remove();
           renderComments();
         }
@@ -178,6 +184,7 @@
     renderComments();
 
     addFormButton.addEventListener("click", (event) => {
+      // debugger;
       form.forEach((element) => {
         if (element.value === "") {
           element.classList.add("error");
@@ -216,37 +223,48 @@
         // });
         // initLikeButtonListener();
 
-        function addNewComment() {
-          const dateNow = new Date();
+        /*Объявлена функции в функции , так насколько мне известно работать не будет*/
+        //     function addNewComment() {
 
-          fetch("https://webdev-hw-api.vercel.app/api/v1/yan-lagun/comments", {
-            method: "POST",
-            body: JSON.stringify({
-              text: inputText.value
-                .replaceAll("&", "&amp;")
-                .replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;")
-                .replaceAll('"', "&quot;")
-                .replace("|", "<div class='quote'>")
-                .replace("|", "</div>"),
-              name: inputName.value
-                .replaceAll("&", "&amp;")
-                .replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;")
-                .replaceAll('"', "&quot;"),
-            }),
-          }).then((response) => {
-            response.json().then((responseData) => {
-              getComments();
-              renderComments();
-            });
+        const dateNow = new Date();
+        // у тебя в отправке нового коммента один адрес API в функции получения комментов другой
+        //то есть даже при условие что обработчик клика по кнопке отправить не содержал ы в себе ошибки function addNewComment() {
+        //ты бы все равно не получил ответа с новым комментом
+        //  получается ты отправил сообщение на Сахалин , а хочешь получить его из Москвы )))
+        //поменял адреса API на - из урока
+        fetch("https://webdev-hw-api.vercel.app/api/v1/eldar/comments", {
+          method: "POST",
+          body: JSON.stringify({
+            text: inputText.value
+              .replaceAll("&", "&amp;")
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;")
+              .replaceAll('"', "&quot;")
+              .replace("|", "<div class='quote'>")
+              .replace("|", "</div>"),
+            name: inputName.value
+              .replaceAll("&", "&amp;")
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;")
+              .replaceAll('"', "&quot;"),
+          }),
+        }).then((response) => {
+          response.json().then((responseData) => {
+            getComments(); // можно  тут попробуй по очереди закомментить в разных участках и раскомментить в других , если
+            //вдруг будет что-то плохо работать.
+            renderComments();
           });
-          renderComments();
-        }
-        getComments();
+        });
+        //  renderComments(); //
+        //   }
+        //  getComments();
+        //Зачем столько вызовов функций getComments(); renderComments();  можно
+        //оставить либо тут либо чуть выше или чуть ниже
+        //     getComments();
+        //    renderComments();
       }
 
-      renderComments();
+      // renderComments(); возможно будет работать и тут
       initLikeButtonListener();
     });
 
