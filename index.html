@@ -62,6 +62,8 @@
   }
 ]
 
+
+
 const addLikes = (e) => {
   usersComments[e.target.dataset.id].likes = Number(usersComments[e.target.dataset.id].likes) + 1;
   usersComments[e.target.dataset.id].Iliked = true;
@@ -70,6 +72,9 @@ const delLikes = (e) => {
   usersComments[e.target.dataset.id].likes = Number(usersComments[e.target.dataset.id].likes) - 1;
   usersComments[e.target.dataset.id].Iliked = false;
 }
+
+
+
 
 const initEventListeners = () => {
 
@@ -84,35 +89,21 @@ for (const likeButton of likeButtons) {
 }
 }
 
-const renderComments = () => {
-  const commentsHtml = usersComments
-    .map((user, index) => {
-      (user.Iliked) ? Iliked = '-active-like' : Iliked = '';
-      return `<li class="comment">
-      <div class="comment-header">
-        <div>${user.name}</div>
-        <div>${user.date}</div>
-      </div>
-      <div class="comment-body">
-        <div class="comment-text">
-          ${user.comment}
-        </div>
-      </div>
-      <div class="comment-footer">
-        <div class="likes">
-          <span class="likes-counter">${user.likes}</span>
-          <button class="like-button ${Iliked}" data-id="${index}"></button>
-          <button class="edit-button" data-id="${index}"></button>
-        </div>
-      </div>
-    </li>`;
-    })
-    .join("");
 
-  boxOfComments.innerHTML = commentsHtml;
-  initEventListeners();
-};
-renderComments()
+
+const commentClickListener = () => {
+
+    const boxOfCommentsTexts = boxOfComments.querySelectorAll('.comment')
+
+    for (const comment of boxOfCommentsTexts) {
+      comment.addEventListener('click', () => {
+        newComment.setAttribute('style', 'white-space: pre-line;');
+        const replace = `${usersComments[comment.dataset.id].comment} \r\n \r\n ${usersComments[comment.dataset.id].name}`
+        newComment.value = `QUOTE_BEGIN ${replace} QUOTE_END \r\n\r\n`
+      })
+    }
+}
+
 
 newName.addEventListener('input', function () {
     if (newName.value.length < 2 || newComment.value.length < 5) {
@@ -133,18 +124,60 @@ newComment.addEventListener('input', function () {
 
 addButton.addEventListener('click', addNewComment)
 
+const renderComments = () => {
+    const commentsHtml = usersComments
+      .map((user, index) => {
+        (user.Iliked) ? Iliked = '-active-like' : Iliked = '';
+        return `<li class="comment" data-id="${index}">
+        <div class="comment-header">
+          <div>${user.name}</div>
+          <div>${user.date}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${user.comment}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${user.likes}</span>
+            <button class="like-button ${Iliked}" data-id="${index}"></button>
+          </div>
+        </div>
+      </li>`;
+      })
+      .join("");
+
+    boxOfComments.innerHTML = commentsHtml;
+    initEventListeners();
+    commentClickListener()
+};
+
+renderComments()
+
+
 function addNewComment() {
-  const dateNow = new Date();
-  usersComments.push({
-        name: `${newName.value}`,
-        date: `${formatDate(dateNow)}`,
-        comment: `${newComment.value}`,
-        likes: "0",
-        Iliked: false,
-        isEdit: false
-    })
-    cleareInputs()
-    renderComments()
+      const dateNow = new Date();
+      usersComments.push({
+          name: `${newName.value}`.replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
+          date: `${formatDate(dateNow)}`,
+          comment: `${newComment.value}`
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+          .replaceAll("QUOTE_END", "</div>"),
+          likes: "0",
+          Iliked: false,
+          isEdit: false
+      })
+      cleareInputs()
+      renderComments()
+      commentClickListener()
 }
 
 function formatDate(date) {
@@ -181,9 +214,13 @@ form.addEventListener('keyup', function (event) {
     }
 })
 
+
+
+
 delButton.addEventListener('click', function () {
     comments.removeChild(comments.lastChild)
 })
+
 
   </script>
  
