@@ -77,12 +77,14 @@
     comment.like++;
     comment.Iliked = true;
   }
+
   //Удаляем лайк
   const delLikes = (e) => {
     const comment = appComments[e.target.dataset.id];
     comment.like--;
     comment.Iliked = false;
   }
+
   //Функция проверки был ли поставлен лайк
   const initLikeClick = () => {
     const likeClickElements = document.querySelectorAll('.likes');
@@ -99,6 +101,7 @@
       });
     }
   };
+
   //Получение комментариев из API https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments
   const fetchPromise = fetch('https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments', {
     method: 'GET',
@@ -128,6 +131,7 @@
       renderComments();
     });
   });
+
   //Рендер комментариев
   function renderComments() {
     const commentHtmlResult = appComments.map((comment, id) => {
@@ -171,6 +175,7 @@
     initLikeClick();
     addCommentListener();
   }
+
   //Функция, которая отправляет новый добавленный комментарий на сервер по указанному API
   const sendCommentToServer = (comment) => {
     fetch('https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments', {
@@ -187,6 +192,7 @@
         console.error('Ошибка при отправке комментария на сервер:', error);
       });
   };
+
   //Добавление комментария
   const addComment = () => {
     const date = new Date();
@@ -216,6 +222,7 @@
       button.setAttribute('disabled', '');
     }
   };
+
   //Проверка форм на введенные данные
   const validate = () => {
     const userNameValue = userName.value.trim();
@@ -249,10 +256,12 @@
 
     return isUserNameValid && isTextCommentValid;
   };
+
   //Слушаем кнопку и добавляем комментарий
   button.addEventListener('click', (event) => {
     addComment();
   });
+
   //Слушаем ввод в поле и добавляем комментарий
   addForm.addEventListener('input', (event) => {
     if (validate) {
@@ -260,6 +269,7 @@
       button.classList.remove('add-form-button-disabled');
     }
   });
+
   //Слушаем нажатие Enter
   addForm.addEventListener('keydown', (event) => {
     if (event.ctrlKey && event.key === "Enter") {
@@ -268,6 +278,7 @@
     }
   });
   renderComments();
+
   // Функция добавляет ответ на комментарий
   function addCommentListener() {
     const comments = document.querySelectorAll('.comment');
