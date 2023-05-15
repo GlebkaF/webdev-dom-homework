@@ -110,12 +110,6 @@
       renderComments();
     }
     const addComment = () => {
-      let day = addZeroBefore((new Date).getDate());
-      let month = addZeroBefore((new Date).getMonth());
-      let year = editYear((new Date).getFullYear());
-      let hours = addZeroBefore((new Date).getHours());
-      let minutes = addZeroBefore((new Date).getMinutes());
-
       if (!nameElement.value.trim()) {
         nameElement.classList.add('form-error');
         checkAddButton();
