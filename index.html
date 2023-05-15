@@ -62,11 +62,6 @@
       </div>
     </div>
   </body>
-  <style>
-    .error {
-      background-color: red;
-    }
-  </style>
 
 <script>
   "use strict";
@@ -79,125 +74,123 @@
     name: "Глеб Фокин",
     date: "12.02.22 12:18",
     text: "Это будет первый комментарий на этой странице",
+    active: false,
     like: "3",
   },
   {
     name: "Варвара Н.",
     date: "13.02.22 19:22",
     text: "Мне нравится как оформлена эта страница! ❤",
+    active: true,
     like: "75",
   }
 ];
-
-const onCommentEditClick = () => {
-  const button = event.target;
-  const buttonTitle = button.innerText;
-  const commentElement = button.parentNode.parentNode;
-  const text = commentElement.getElementsByClassName('comment-text')[0];
-  if (buttonTitle === 'Редактировать') {
-    button.innerText = 'Сохранить';
-    text.innerHTML = "<textarea>" + text.innerText + "</textarea>";
-  }
-  else {
-    button.innerText = 'Редактировать';
-    const textArea = text.getElementsByTagName('textarea')[0];
-    text.innerHTML = textArea.value;
-  }
-}
-
 const onCommentLikeClick = () => {
-  const button = event.target;
-  const likesContainer = button.parentNode;
-  const likesCounter = likesContainer.querySelectorAll('.likes-counter')[0];
-  let likesCount = likesCounter.textContent;
-  if (button.classList.contains('-active-like')) {
-    likesCount = (+likesCount) - 1;
-    button.classList.remove('-active-like');
+  const likeButtonsElements = document.querySelectorAll(".like-button");
+  for (const likeButtonsElement of likeButtonsElements) {
+    likeButtonsElement.addEventListener("click", () => {
+      const index = likeButtonsElement.dataset.index;
+      const likesContainer = likeButtonsElement.closest('.comment-footer');
+      const likesCounter = likesContainer.querySelector('.likes-counter');
+      let likesCount = likesCounter.textContent;
+      if (likeButtonsElement.classList.contains("-active-like")) {
+        likesCount = (+likesCount) - 1;
+        comments[index].active = false;
+      } else {
+        likesCount = (+likesCount) + 1;
+        comments[index].active = true;
+      }
+      likesCounter.textContent = likesCount;
+      comments[index].like = likesCount;
+      renderComments();
+    });
   }
-  else {
-    likesCount = (+likesCount) + 1;
-    button.classList.add('-active-like');
-  }
-  likesCounter.textContent = likesCount;
-}
+};
 
-const renderComment = (comment) => {
-  const html = `<li class="comment">
-        <div class="comment-header">
-          <div>${comment.name}</div>
-          <div>${comment.date} </div>
-        </div>
-        <div class="comment-body">
-          <div id = "text" class="comment-text">
-            ${comment.text}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <button class="edited-button" onclick="onCommentEditClick(event)">Редактировать</button>
-          <div class="likes">
-            <span class="likes-counter">${comment.like}</span>
-            <button class="like-button" onclick="onCommentLikeClick(event)"></button> 
-          </div>
-        </div>
-      </li>`;
-    return html;
+const onCommentEditClick = () => { 
+  const editButtonsElements = document.querySelectorAll(".edited-button"); 
+  for (const editButtonElement of editButtonsElements) { 
+    editButtonElement.addEventListener("click", () => { 
+      const index = editButtonElement.dataset.index; 
+      const button = event.target; 
+      const buttonTitle = button.innerText; 
+      const commentElement = button.parentNode.parentNode; 
+      const text = commentElement.getElementsByClassName('comment-text')[0]; 
+      const isEdit = comments[index].isEdit; 
+      if (buttonTitle === 'Редактировать') { 
+        button.innerText = 'Сохранить'; 
+        if (!isEdit) { 
+          comments[index].isEdit = true; 
+          text.innerHTML = `<textarea>${text.innerText}</textarea>`; 
+        } 
+      } 
+      else { 
+        button.innerText = 'Редактировать'; 
+        if (isEdit) { 
+          comments[index].isEdit = false; 
+          const textArea = text.getElementsByTagName('textarea')[0]; 
+          comments[index].text = textArea.value; 
+          text.innerHTML = comments[index].text; 
+        } 
+      } 
+    });
+  } 
 }
 
 const renderComments = () => {
- const commentsHtml = comments.map((comment) => {
-    return renderComment(comment);
- }).join("");
- listElement.innerHTML = commentsHtml
-}
-renderComments();
+   const commentsHtml = comments.map((comment, index) => {
+    let likeClass = comment.active ? "-active-like" : "";
+    return `<li class="comment">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.date} </div>
+          </div>
+          <div class="comment-body">
+            <div id = "text" class="comment-text">
+              ${comment.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <button data-index="${index}" class="edited-button">Редактировать</button>
+            <div class="likes">
+              <span class="likes-counter">${comment.like}</span>
+              <button data-index="${index}" class="like-button ${likeClass}"></button> 
+            </div>
+          </div>
+        </li>`
+    }).join('');
+    listElement.innerHTML = commentsHtml;
+    onCommentLikeClick();
+    onCommentEditClick();
+  }
+  renderComments();
 
-buttonElement.addEventListener("click", (event) => {
-    let date = new Date();
-    let month = (date.getMonth() + 1).toString().padStart(2, '0');
-    let day = date.getDate().toString().padStart(2, '0');
-    let year = date.getFullYear().toString().substr(-2);
-    let hours = date.getHours().toString().padStart(2, '0');
-    let minutes = date.getMinutes().toString().padStart(2, '0');
-    let myDate = `${day}.${month}.${year} ${hours}:${minutes}`;
-    let likes = 0;
-    nameInputElement.classList.remove("error");
-    if (nameInputElement.value === "") {
-      nameInputElement.classList.add("error");
-      return;
-    }
-    commentInputElement.classList.remove("error");
-    if (commentInputElement.value === "") {
-      commentInputElement.classList.add("error");
-      return;
-    }
-    comments.push({
-      name: nameInputElement.value,
-      date: myDate,
-      text: commentInputElement.value,
-      like: likes,
-    })
-    renderComments();
-   
-    // const oldListHtml = listElement.innerHTML;
-    // listElement.innerHTML =
-    //   oldListHtml +
-    //   `<li class="comment">
-    //     <div class="comment-header">
-    //       <div>${nameInputElement.value}</div>
-    //       <div>${myDate} </div>
-    //     </div>
-    //     <div class="comment-body">
-    //       <div class="comment-text">
-    //         ${commentInputElement.value}
-    //       </div>
-    //     </div>
-    //     <div class="comment-footer">
-    //       <div class="likes">
-    //         <span class="likes-counter">${likes}</span>
-    //         <button class="like-button"></button>
-    //       </div>
-    //     </div>
-    //   </li>`;  
-  });
+    buttonElement.addEventListener("click", () => {
+      let date = new Date();
+      let month = (date.getMonth() + 1).toString().padStart(2, '0');
+      let day = date.getDate().toString().padStart(2, '0');
+      let year = date.getFullYear().toString().substr(-2);
+      let hours = date.getHours().toString().padStart(2, '0');
+      let minutes = date.getMinutes().toString().padStart(2, '0');
+      let myDate = `${day}.${month}.${year} ${hours}:${minutes}`;
+      let likes = 0;
+      nameInputElement.classList.remove("error");
+      if (nameInputElement.value === "") {
+        nameInputElement.classList.add("error");
+        return;
+      }
+      commentInputElement.classList.remove("error");
+      if (commentInputElement.value === "") {
+        commentInputElement.classList.add("error");
+        return;
+      }
+      comments.push({ 
+      name: nameInputElement.value, 
+      date: myDate, 
+      text: commentInputElement.value, 
+      like: likes, 
+});
+      renderComments();
+         });
 </script>
 </html>

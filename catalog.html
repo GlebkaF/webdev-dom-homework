@@ -1,43 +1,111 @@
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Книжки</title>
+    <title>Урок "Динамические обработчики событий и всплытие"</title>
+    <link rel="stylesheet" href="styles.css" />
   </head>
 
   <body>
-    <div id="books">Заглушка</div>
-    <button id="show-button">Посмотреть книги</button>
+    <h1>Любимые цвета студентов</h1>
+    <ul class="students" id="list">
+      <!-- Список рендерится из JS -->
+    </ul>
+
+    <div class="form">
+      <h3 class="form-title">Форма добавления</h3>
+      <div class="form-row">
+        Имя:&nbsp;&nbsp;
+        <input
+          type="text"
+          id="name-input"
+          class="input"
+          placeholder="Василий"/>
+      </div>
+      <div class="form-row">
+        Цвет:&nbsp;
+        <input type="color" id="color-input" class="color-input input" />
+        <br /><br />
+      </div>
+      <button class="button" id="add-button">Добавить</button>
+    </div>
   </body>
 
   <script>
-    const books = [
+    const buttonElement = document.getElementById("add-button");
+    const listElement = document.getElementById("list");
+    const nameInputElement = document.getElementById("name-input");
+    const colorInputElement = document.getElementById("color-input");
+
+    const students = [
       {
-        title: "Искусство программирования",
-        price: 1300,
+        name: "Глеб",
+        color: "#ff2600"
       },
       {
-        title: "Тихо!",
-        price: 700,
+        name: "Иван",
+        color: "#00f900"
       },
       {
-        title: "Ночной дозор",
-        price: 980,
-      },
+        name: "Люси",
+        color: "#0432ff"
+      }
     ];
 
-    let totalPrice = 0;
-    for (const book of books) {
-        totalPrice += book.price;
-    }
-    console.log(totalPrice);
+    const renderStudents = () => {
+      const studentsHtml = students.map((student, index) => {
+          return `<li class="student" data-color="${student.color}">
+            <p class ="student-name">${student.name}</p>
+            <button data-index="${index}" class="button delete-button">Удалить</button>
+          </li>`;
+        }).join("");
 
-    const booksList = books.map((book) => book.title).join(", ");
-    console.log(booksList)
+      listElement.innerHTML = studentsHtml;
 
-    const buttonElement = document.getElementById("show-button");
+      const deleteButtons = document.querySelectorAll(".delete-button");
+
+      for (const deleteButton of deleteButtons) {
+        deleteButton.addEventListener("click", () => {
+          const index = deleteButton.dataset.index;
+
+          students.splice(index, 1);
+
+          renderStudents();
+        });
+      }
+    
+
+    const studentElements = document.querySelectorAll(".student");
+
+      for (const student of studentElements) {
+        student.addEventListener("click", () => {
+        const color = student.dataset.color;
+        alert(`Любимый цвет: ${color}`);
+        });
+      }
+    };
+
+    document.querySelector("html").addEventListener("click", () => {
+      alert("Клик по html");
+});
+    renderStudents();
+
     buttonElement.addEventListener("click", () => {
-      const booksElement = document.getElementById("books");
-      booksElement.innerHTML = `${booksList} = ${totalPrice} рублей`;
+      nameInputElement.classList.remove("input-error");
+
+      if (nameInputElement.value === "") {
+        nameInputElement.classList.add("input-error");
+        return;
+      }
+
+      students.push({
+        name: nameInputElement.value,
+        color: colorInputElement.value
+      });
+
+      renderStudents();
+
+      nameInputElement.value = "";
     });
-</script>
+  </script>
 </html>
