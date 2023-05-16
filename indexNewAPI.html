@@ -34,9 +34,6 @@
   <script src="editComment.js"></script>
   <script src="addLike.js"></script>
   <script>
-    // const date = new Date();
-    // let month = date.getMonth() + 1;
-    // let minutes = date.getMinutes();
     const commentList = document.querySelector(".comments");
     const addFormButton = document.querySelector(".add-form-button");
     const inputName = document.querySelector(".add-form-name");
@@ -44,6 +41,24 @@
     const form = document.querySelectorAll(".form");
     const container = document.querySelector(".container");
     getComments();
+
+    function dateFormat() {
+      const date = new Date();
+      date.getDate() < 10 ? (dd = "0" + date.getDate()) : (dd = date.getDate());
+      date.getMonth() < 10
+        ? (MM = "0" + (date.getMonth() + 1))
+        : (MM = date.getMonth() + 1);
+      date.getFullYear()
+        ? (YY = date.getFullYear().toString().slice(-2))
+        : (YY = date.getFullYear().toString().slice(-2));
+      date.getHours() < 10
+        ? (hh = "0" + date.getHours())
+        : (hh = date.getHours());
+      date.getMinutes() < 10
+        ? (mm = "0" + date.getMinutes())
+        : (mm = date.getMinutes());
+      return `${dd}.${MM}.${YY} ${hh}:${mm}`;
+    }
     let comments = [];
     const renderComments = () => {
       const commentsHtml = comments
@@ -51,7 +66,7 @@
           return `<li class='comment'>
       <div class='comment-header'>
         <div>${comment.name}</div>
-        <div>${comment.date}
+        <div>${dateFormat(new Date(comment.date))}
           </div>
         </div>
         <div class='comment-body'>
@@ -97,17 +112,6 @@
         addFormButton.disabled = true;
         return;
       } else {
-        const date = new Date();
-        let month = date.getMonth() + 1;
-        let minutes = date.getMinutes();
-
-        if (month < 10) {
-          month = "0" + month;
-        }
-        if (minutes < 10) {
-          minutes = "0" + minutes;
-        }
-
         /*Объявлена функции в функции , так насколько мне известно работать не будет*/
         //     function addNewComment() {
 
