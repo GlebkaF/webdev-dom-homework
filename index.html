@@ -45,7 +45,7 @@
         </div>
       </li> -->
     </ul>
-    <div class="add-form">
+    <div class="add-form" id="addForm">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input" />
       <textarea id="comment-input" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
         rows="4"></textarea>
@@ -54,34 +54,59 @@
         <button id="write-button" class="add-form-button" disabled>Написать</button>
       </div>
     </div>
+    <div class="loading"></div>
   </div>
 
   <script>
     "use strict";
     // Код писать здесь
-    const buttonElement = document.getElementById("write-button");
     const listElement = document.getElementById("list");
-    const nameInputElement = document.getElementById("name-input");
-    const commentInputElement = document.getElementById("comment-input");
-    const deleteButtonElement = document.getElementById("delete-button");
-    const messages = [
-      {
-        name: "Глеб Фокин",
-        time: "12.02.22 12:18",
-        comment: "Это будет первый комментарий на этой странице",
-        likesCount: 3,
-        liked: false,
-        isEdit: false,
-      },
-      {
-        name: "Варвара Н.",
-        time: "13.02.22 19:22",
-        comment: "Мне нравится как оформлена эта страница! ❤",
-        likesCount: 75,
-        liked: true,
-        isEdit: false,
-      }
-    ];
+    const addFormElement = document.getElementById("addForm");
+    const loadingElement = document.querySelector(".loading");
+
+    function getAPI() {
+      fetch("https://webdev-hw-api.vercel.app/api/v1/ruslan-shevelev/comments", {
+        method: "GET"
+      }).then((response) => {
+        response.json().then((responseData) => {
+          const appComments = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              time: getCurrentDate(new Date(comment.date)),
+              comment: comment.text,
+              likesCount: comment.likes,
+              liked: comment.isLiked,
+              isEdit: false,
+              isLoading: false
+            };
+          });
+          // console.log(responseData);
+          messages = appComments;
+          renderMessages();
+        });
+      });
+    };
+    getAPI();
+    let messages = [];
+
+    //  messages = [
+    //   {
+    //     name: "Глеб Фокин",
+    //     time: "12.02.22 12:18",
+    //     comment: "Это будет первый комментарий на этой странице",
+    //     likesCount: 3,
+    //     liked: false,
+    //     isEdit: false,
+    //   },
+    //   {
+    //     name: "Варвара Н.",
+    //     time: "13.02.22 19:22",
+    //     comment: "Мне нравится как оформлена эта страница! ❤",
+    //     likesCount: 75,
+    //     liked: true,
+    //     isEdit: false,
+    //   }
+    // ];
 
     const initLikeButtonsListeners = () => {
       const likeButtonsElements = document.querySelectorAll(".like-button");
@@ -172,8 +197,12 @@
     }
     renderMessages();
 
-    buttonElement.addEventListener("click", addComments);
+    const nameInputElement = document.getElementById("name-input");
+    const commentInputElement = document.getElementById("comment-input");
+    const deleteButtonElement = document.getElementById("delete-button");
+    const buttonElement = document.getElementById("write-button");
 
+    buttonElement.addEventListener("click", addComments);
     function addComments(event) {
       event.stopPropagation();
       nameInputElement.classList.remove("input-error");
@@ -186,26 +215,71 @@
         commentInputElement.classList.add("input-error");
         return;
       }
+      // messages.push({
+      //   name: nameInputElement.value
+      //     .replaceAll("&", "&amp;")
+      //     .replaceAll("<", "&lt;")
+      //     .replaceAll(">", "&gt;")
+      //     .replaceAll('"', "&quot;"),
+      //   time: getCurrentDate(new Date()),
+      //   comment: commentInputElement.value
+      //     .replaceAll("&", "&amp;")
+      //     .replaceAll("<", "&lt;")
+      //     .replaceAll(">", "&gt;")
+      //     .replaceAll('"', "&quot;"),
+      //   likesCount: 0,
+      //   liked: false,
+      //   isEdit: false,
+      // });
 
-      messages.push({
-        name: nameInputElement.value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;"),
-        time: getCurrentDate(new Date()),
-        comment: commentInputElement.value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;"),
-        likesCount: 0,
-        liked: false,
-        isEdit: false,
+      addFormElement.style.display = 'none';
+      loadingElement.style.display = 'block';
+      fetch("https://webdev-hw-api.vercel.app/api/v1/ruslan-shevelev/comments", {
+        method: "POST",
+        body: JSON.stringify({
+          name: nameInputElement.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;"),
+
+          date: new Date(),
+          isLiked: false,
+          likes: 0,
+          text: commentInputElement.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;"),
+        }),
+      }).then((response) => {
+        response.json().then((responseData) => {
+          if (responseData.result == "ok") {
+            getAPI();
+            loadingElement.style.display = 'none';
+            addFormElement.style.display = "flex";
+          }
+          else {
+            alert('Что-то пошло не так');
+            return
+          }
+          // const appComments = responseData.comments.map((comment) => {
+          //   return {
+          //     name: comment.author.name,
+          //     time: getCurrentDate(new Date(comment.date)),
+          //     comment: comment.text,
+          //     likesCount: comment.likes,
+          //     liked: comment.isLiked,
+          //     isEdit: false,
+        });
+        // console.log(appComments);
+        // messages = appComments;
+        // renderMessages();
       });
 
+      // renderMessages();
+      // renderAddForm();
       deleteButtonElement.classList.add('delete-active');
-      renderMessages();
       buttonElement.setAttribute('disabled', '');
       nameInputElement.value = "";
       commentInputElement.value = "";
@@ -225,7 +299,7 @@
       }
       )
     };
-    
+
     deleteButtonElement.addEventListener('click', () => {
       // event.stopPropagation();
       messages.pop();
