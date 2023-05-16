@@ -283,10 +283,10 @@
         method: "POST",
         body: JSON.stringify({
           name: nameInputElement.value,
-          date: new Date(Date.parse(comment.date)).toLocaleDateString() + ' ' + new Date(Date.parse(comment.date)).getHours() + ':' + new Date(Date.parse(comment.date)).getMinutes(),
+          //date: new Date(Date.parse(comment.date)).toLocaleDateString() + ' ' + new Date(Date.parse(comment.date)).getHours() + ':' + new Date(Date.parse(comment.date)).getMinutes(),
           text: commentInputElement.value,
-          likes: 0,
-          isLiked: false,
+          //likes: 0,
+          //isLiked: false,
         }),
       });
       //console.log(fetchPromise);
@@ -298,7 +298,7 @@
         jsonPromise.then((responseData) => {
           //console.log(responseData);
 
-          const appComments = responseData.comments.map((comment) => {
+          /*const appComments = responseData.comments.map((comment) => {
             return{
               name: comment.author.name,
               date: new Date(Date.parse(comment.date)).toLocaleDateString() + ' ' + new Date(Date.parse(comment.date)).getHours() + ':' + new Date(Date.parse(comment.date)).getMinutes(),
@@ -306,7 +306,7 @@
               likes: comment.likes,
               isLiked: false,
             };
-          });
+          });*/
           comments = appComments;
           renderComments();
           initLikeButtonListeners();
@@ -315,7 +315,7 @@
         initLikeButtonListeners();
       });
       initLikeButtonListeners();
-      fetchGet();
+      //fetchGet();
       /*listElement.innerHTML = oldListHtml + `<li  class="comment">
           <div class="comment-header">
             <div>${nameInputElement.value}</div>
