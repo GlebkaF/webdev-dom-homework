@@ -34,58 +34,65 @@
   </body>
 
   <script>
-        "use strict";
-        const listElement = document.getElementById("comments-list");
-        const buttonElement = document.getElementById("button-form");
-        const nameInputElement = document.getElementById("user-name");
-        const textInputElement = document.getElementById("user-text");
-        const formElement = document.getElementById("form");
-        const deleteButtonElement = document.getElementById("delete-button");
-        let date = new Date();
-        const formattedDate =
-          date.getDate().toString().padStart(2, '0') + '.' +
-          (date.getMonth() + 1).toString().padStart(2, '0') + '.' +
-          date.getFullYear().toString().slice(-2) + ' ' +
-          date.getHours().toString().padStart(2, '0') + ':' +
-          date.getMinutes().toString().padStart(2, '0');
+    "use strict";
+    const listElement = document.getElementById("comments-list");
+    const buttonElement = document.getElementById("button-form");
+    const nameInputElement = document.getElementById("user-name");
+    const textInputElement = document.getElementById("user-text");
+    const formElement = document.getElementById("form");
+    const deleteButtonElement = document.getElementById("delete-button");
+    let date = new Date();
+    const formattedDate =
+      date.getDate().toString().padStart(2, "0") +
+      "." +
+      (date.getMonth() + 1).toString().padStart(2, "0") +
+      "." +
+      date.getFullYear().toString().slice(-2) +
+      " " +
+      date.getHours().toString().padStart(2, "0") +
+      ":" +
+      date.getMinutes().toString().padStart(2, "0");
 
-        const comments = [
-          {
-            name: "Глеб Фокин",
-            date: "12.02.22 12:18",
-            text: "Это будет комментарий на этой странице",
-            likeCount: "0"
-          },
-          {
-            name: "Варвара Н.",
-            date: "13.02.22 19:22",
-            text: "Мне нравится как оформлена эта страница! ❤",
-            likeCount: "0"
-          }
-        ];
+    const comments = [
+      {
+        name: "Глеб Фокин",
+        date: "12.02.22 12:18",
+        text: "Это будет комментарий на этой странице",
+        likeCount: "0",
+      },
+      {
+        name: "Варвара Н.",
+        date: "13.02.22 19:22",
+        text: "Мне нравится как оформлена эта страница! ❤",
+        likeCount: "0",
+      },
+    ];
 
-        const initLike = () => {
-          const likeButtons = document.querySelectorAll(".like-button");
-          for (const likeButton of likeButtons) {
-            likeButton.addEventListener("click", () => {
-              if (likeButton.classList.value === "like-button -active-like") {
-                
-                likeButton.classList.remove("-active-like");
-                
-              } else {
 
-                likeButton.classList.add("-active-like");
 
-              }
-              
-            })
-          }
-          return;
-        }
+    const initLike = () => {
+      const likeButtons = document.querySelectorAll(".like-button");
 
-        const renderComments = () => {
-            const commentsHtml = comments.map((comment) => {
-              return `<li class="comment">
+      for (const likeButton of likeButtons) {
+        likeButton.addEventListener("click", () => {
+          if (likeButton.classList.value === "like-button -active-like") {
+            likeButton.classList.remove("-active-like");
+          } else {
+              likeButton.classList.add("-active-like");
+            };
+
+
+        });
+        return;
+      }
+
+
+    };
+
+    const renderComments = () => {
+      const commentsHtml = comments
+        .map((comment, index) => {
+          return `<li class="comment">
                 <div class="comment-header">
                 <div>${comment.name}</div>
                 <div>${comment.date}</div>
@@ -97,103 +104,88 @@
                 </div>
                 <div class="comment-footer">
                   <div class="likes">
-                    <span class="likes-counter" id="likeCount">${comment.likeCount}</span>
-                    <button class="like-button" id="like-button"></button>
+                    <span class="likes-counter" id="likeCount" data-like=${index}>${comment.likeCount}</span>
+                    <button class="like-button" id="like-button" ></button>
                   </div>
                 </div>
               </li>`;
-            }).join("");
-            
-            listElement.innerHTML = commentsHtml;
+        })
+        .join("");
 
-            initLike();
-          };
-        
-        renderComments();
+      listElement.innerHTML = commentsHtml;
 
-        
-       
+      initLike();
 
-        buttonElement.addEventListener("click", () => {
-          buttonElement.classList.remove("add-form-button-error");
-          buttonElement.classList.add("add-form-button");
-          nameInputElement.classList.remove("error");
-          textInputElement.classList.remove("error");
+      const initLikeCount = () => {
+        const likeButtons = document.querySelectorAll(".like-button");
 
-          if (nameInputElement.value === "" || textInputElement.value === "") {
-            buttonElement.classList.remove("add-form-button");
-            buttonElement.classList.add("add-form-button-error");
+        for (const likeButton of likeButtons) {
+          likeButton.addEventListener("click", () => {
+          if (likeButton.classList.value === "like-button -active-like") {
+            comments[index].likeCount += 1;
+          } else {
+              comments[index].likeCount -= 1;
+            };
+           });
+          return;
+        }
+      };
 
-            if (nameInputElement.value === "") {
-              nameInputElement.classList.add("error");
-              return;
-            }
-            if (textInputElement.value === "") {
-              textInputElement.classList.add("error");
-              return;
-            }
+      initLikeCount();
+    }
 
-            return;
-          }
+    renderComments();
 
-          comments.push({
-            name: nameInputElement.value,
-            date: formattedDate,
-            text: textInputElement.value,
-            likeCount: "0"
-          });
+    buttonElement.addEventListener("click", () => {
+      buttonElement.classList.remove("add-form-button-error");
+      buttonElement.classList.add("add-form-button");
+      nameInputElement.classList.remove("error");
+      textInputElement.classList.remove("error");
 
-          renderComments();
+      if (nameInputElement.value === "" || textInputElement.value === "") {
+        buttonElement.classList.remove("add-form-button");
+        buttonElement.classList.add("add-form-button-error");
 
-        });        
+        if (nameInputElement.value === "") {
+          nameInputElement.classList.add("error");
+          return;
+        }
+        if (textInputElement.value === "") {
+          textInputElement.classList.add("error");
+          return;
+        }
 
-        deleteButtonElement.addEventListener("click", () => {
-          const lastCommentIndex = listElement.innerHTML.lastIndexOf( '<li class="comment">' );
-            if (lastCommentIndex !== -1) {
-              listElement.innerHTML = listElement.innerHTML.substring( 0, lastCommentIndex );
-            } });
+        return;
+      }
 
-        document.addEventListener("keyup", (event) => {
-               if (event.key === "Enter") {
-                buttonElement.click();
-              }
-            });
-            
-        console.log("It works!");
+      comments.push({
+        name: nameInputElement.value,
+        date: formattedDate,
+        text: textInputElement.value,
+        likeCount: "0",
+      });
+
+      renderComments();
+    });
+
+    deleteButtonElement.addEventListener("click", () => {
+      const lastCommentIndex = listElement.innerHTML.lastIndexOf(
+        '<li class="comment">'
+      );
+      if (lastCommentIndex !== -1) {
+        listElement.innerHTML = listElement.innerHTML.substring(
+          0,
+          lastCommentIndex
+        );
+      }
+    });
+
+    document.addEventListener("keyup", (event) => {
+      if (event.key === "Enter") {
+        buttonElement.click();
+      }
+    });
+
+    console.log("It works!");
   </script>
 </html>
-
-<!-- <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li> -->
