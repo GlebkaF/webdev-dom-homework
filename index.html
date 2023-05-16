@@ -48,24 +48,35 @@
     const listElement = document.getElementById("list-comments");
     const nameInputElement = document.getElementById("name-input");
     const textInputElement = document.getElementById("text-input");
-    
 
-    const comments = [
-      {
-        name: "Глеб Фокин",
-        text: "Это будет первый комментарий на этой странице",
-        likes: 3,
-        isLiked: false,
-        data: "12.02.2022, 12:18",
-      },
-      {
-        name: "Варвара Н.",
-        text: "Мне нравится как оформлена эта страница! ❤",
-        likes: 75,
-        isLiked: false,
-        data: "13.02.2022, 19:22",
-      },
-    ];
+    const getComments = () => {
+      const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/dmitry-buntov/comments", {
+        method: "GET"
+      });
+
+      fetchPromise.then((response) => {
+        const jsonPromise = response.json();
+
+        jsonPromise.then((responseData) => {
+          const appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: new Date(comment.date).toLocaleString().slice(0, -3),
+            text: comment.text,
+            likes: comment.likes,
+            isLiked: false,
+          };
+        });
+
+          comments = appComments;
+          renderComments();
+        });
+      });
+    };
+    
+    getComments();
+
+    let comments = [];
 
 
     const renderComments = () => {
@@ -76,7 +87,7 @@
               ${comment.name}
             </div>
             <div>
-              ${comment.data}
+              ${comment.date}
             </div>
           </div>
           <div class="comment-body">
@@ -129,9 +140,6 @@
       };
     }
 
-    
-
-    
 
     renderComments();
 
@@ -154,19 +162,23 @@
         return;
       }
 
-    comments.push({
-      name: nameInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-      text: textInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-      likes: 0,
-      data: dateElement(),
+
+    fetch("https://webdev-hw-api.vercel.app/api/v1/dmitry-buntov/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        name: nameInputElement.value,
+        text: textInputElement.value,
+      }),
+    }).then((response) => {
+      response.json().then((responseData) => {
+        fetch("https://webdev-hw-api.vercel.app/api/v1/alexei-rybak/comments").then((response) => { 
+          response.json().then((responseData) => {
+            comments = responseData.comments;
+            getComments();
+            renderComments();
+          });
+        });
+      });
     });
 
     renderComments();
@@ -176,7 +188,6 @@
 
   });
 
-    
 
     console.log("It works!");
   </script>
