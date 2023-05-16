@@ -12,45 +12,13 @@
 
 <body>
   <div class="container">
-    <ul class="comments">
 
-      <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
+    <div class="comments">
+      <!-- На этом месте будет список комментариев -->
+    </div>
 
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>
+    <p class="loading" style="text-align: center; color: darkgray;">Комментарии загружаются</p>
 
-    </ul>
     <div class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" required />
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш комментарий" rows="4"
@@ -64,6 +32,7 @@
 </body>
 
 <script>
+  const loading = document.querySelector('.loading');
   const commentList = document.querySelector('.comments');
   const addForm = document.querySelector('.add-form');
   const userName = document.querySelector('.add-form-name');
@@ -103,15 +72,14 @@
   };
 
   //Получение комментариев из API https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments
-  const fetchPromise = fetch('https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments', {
+  fetch('https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments', {
     method: 'GET',
-  });
-  fetchPromise.then((response) => {
-    // Запускаем, преобразовываем сырые данные от API в JSON-формат
-    const jsonPromise = response.json();
+  })
+
+    .then((response) => response.json())
 
     // Подписываемся на результат преобразования
-    jsonPromise.then((responseData) => {
+    .then((responseData) => {
       appComments = responseData.comments.map((comment) => {
         return {
           //Имя автора
@@ -129,8 +97,10 @@
 
       comments = appComments;
       renderComments();
+
+      //Скрываем тест загрузки
+      loading.style.display = 'none';
     });
-  });
 
   //Рендер комментариев
   function renderComments() {
@@ -178,15 +148,27 @@
 
   //Функция, которая отправляет новый добавленный комментарий на сервер по указанному API
   const sendCommentToServer = (comment) => {
+
+    if (addForm) {
+      addForm.style.display = 'none';
+      loading.style.display = 'block';
+    }
+
     fetch('https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments', {
       method: 'POST',
       body: JSON.stringify(comment),
     })
       .then((response) => response.json())
+
       .then((responseData) => {
-        // Обработка ответа сервера (при необходимости)
+        if (addForm) {
+          addForm.style.display = 'block';
+          loading.style.display = 'none';
+        }
+        // Обработка ответа сервера
         console.log('Комментарий успешно отправлен на сервер:', responseData);
       })
+
       .catch((error) => {
         // Обработка ошибок при отправке на сервер
         console.error('Ошибка при отправке комментария на сервер:', error);
