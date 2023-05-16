@@ -84,7 +84,7 @@
         return `<li class="comment" data-comment="< ${comment.text} \n ${comment.name}">
           <div class="comment-header">
             <div>
-              ${comment.name}
+              ${sanitizeHtml(comment.name)}
             </div>
             <div>
               ${comment.date}
@@ -92,7 +92,7 @@
           </div>
           <div class="comment-body">
             <div class="comment-text" white-space: pre-line>
-              ${comment.text}
+              ${sanitizeHtml(comment.text)}
             </div>
           </div>
           <div class="comment-footer">
@@ -107,6 +107,10 @@
 
       initLikesButtonListeners();
       initQuoteCommentListeners();
+    };
+
+    const sanitizeHtml = (htmlString) => {
+      return htmlString.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
     };
 
    
