@@ -23,7 +23,7 @@
                 <div class="comment-footer">
                     <div class="likes">
                         <span class="likes-counter">3</span>
-                        <button class="like-button" data-like="index"></button>
+                        <button class="like-button ${isLike}" data-like="${index}"></button>
                     </div>
                 </div>
             </li>
@@ -40,7 +40,7 @@
                 <div class="comment-footer">
                     <div class="likes">
                         <span class="likes-counter">75</span>
-                        <button class="like-button -active-like" data-like="index"></button>
+                        <button class="like-button -active-like" data-like="${index}"></button>
                     </div>
                 </div>
             </li> -->
@@ -104,6 +104,13 @@
         },
     ];
 
+    const commentsHtml = comments.map((comment, index) => {
+      let isLike = '';
+      if (comments[index].isLiked) {
+        isLike = '-active-like'
+      }
+    });
+
     const renderComments = () => {
        const commentsHtml = comments.map((comment) => {
             return `<li class="comment">
@@ -124,8 +131,9 @@
           </div>
         </li>`
         }).join('');
-        console.log(commentsHtml);
-        commentElements.innerHTML = commentsHtml;
+        // console.log(commentsHtml);
+  
+        listElement.innerHTML = commentsHtml;
     };
 
     renderComments();
@@ -169,7 +177,7 @@
         const date = new Date();
         const formatteDate = date.getDate().toString().padStart(2, '0') + '.' + (date.getMonth() + 1).toString().padStart(2, '0') + '.' + date.getFullYear().toString().slice(-2) + ' ' + date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
 
-        const oldComment = listElement.innerHTML;
+        const oldComment = listElement.innerHTML; 
         listElement.innerHTML = oldComment +
             `<li class="comment">
           <div class="comment-header">
@@ -189,6 +197,7 @@
           </div>
         </li>`
         initLikeButtonListeners();
+        renderComments();
         // initEventListeners();
 
         nameInputElement.value = "";
