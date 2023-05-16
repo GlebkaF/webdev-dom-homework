@@ -41,7 +41,6 @@
         const textInputElement = document.getElementById("user-text");
         const formElement = document.getElementById("form");
         const deleteButtonElement = document.getElementById("delete-button");
-        const likesButtonElement = document.getElementById("like-button");
         let date = new Date();
         const formattedDate =
           date.getDate().toString().padStart(2, '0') + '.' +
@@ -65,6 +64,25 @@
           }
         ];
 
+        const initLike = () => {
+          const likeButtons = document.querySelectorAll(".like-button");
+          for (const likeButton of likeButtons) {
+            likeButton.addEventListener("click", () => {
+              if (likeButton.classList.value === "like-button -active-like") {
+                
+                likeButton.classList.remove("-active-like");
+                
+              } else {
+
+                likeButton.classList.add("-active-like");
+
+              }
+              
+            })
+          }
+          return;
+        }
+
         const renderComments = () => {
             const commentsHtml = comments.map((comment) => {
               return `<li class="comment">
@@ -85,11 +103,16 @@
                 </div>
               </li>`;
             }).join("");
-
+            
             listElement.innerHTML = commentsHtml;
-          };
 
+            initLike();
+          };
+        
         renderComments();
+
+        
+       
 
         buttonElement.addEventListener("click", () => {
           buttonElement.classList.remove("add-form-button-error");
@@ -121,9 +144,8 @@
           });
 
           renderComments();
-        });
 
-
+        });        
 
         deleteButtonElement.addEventListener("click", () => {
           const lastCommentIndex = listElement.innerHTML.lastIndexOf( '<li class="comment">' );
@@ -136,7 +158,7 @@
                 buttonElement.click();
               }
             });
-
+            
         console.log("It works!");
   </script>
 </html>
