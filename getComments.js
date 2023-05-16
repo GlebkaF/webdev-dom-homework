@@ -5,13 +5,13 @@ function getComments() {
       method: "GET",
     }
   );
-  fetchPromise.then((response) => {
+  return fetchPromise.then((response) => {
     const jsonPromise = response.json();
     jsonPromise.then((responseData) => {
       comments = responseData.comments.map((comment) => {
         return {
           name: comment.author.name,
-          date: new Date(comment.date),
+          date: comment.date,
           text: comment.text,
           likes: comment.likes,
           isLiked: comment.isLiked,

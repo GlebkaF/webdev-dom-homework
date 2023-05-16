@@ -85,7 +85,6 @@
     renderComments();
 
     addFormButton.addEventListener("click", (event) => {
-      // debugger;
       form.forEach((element) => {
         if (element.value === "") {
           element.classList.add("error");
@@ -108,31 +107,20 @@
         if (minutes < 10) {
           minutes = "0" + minutes;
         }
-        // comments.push({
-        //   name: inputName.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
-        //   comment: inputText.value
-        //     .replaceAll("<", "&lt")
-        //     .replaceAll(">", "&gt"),
-        //   day: date.getDate(),
-        //   month: month,
-        //   year: date.getFullYear(),
-        //   hours: date.getHours(),
-        //   minutes: minutes,
-        //   likes: 0,
-        //   isLiked: false,
-        //   edit: false,
-        // });
-        // initLikeButtonListener();
 
         /*Объявлена функции в функции , так насколько мне известно работать не будет*/
         //     function addNewComment() {
 
-        const dateNow = new Date();
+        const dateNow = Date.now();
         // у тебя в отправке нового коммента один адрес API в функции получения комментов другой
         //то есть даже при условие что обработчик клика по кнопке отправить не содержал ы в себе ошибки function addNewComment() {
         //ты бы все равно не получил ответа с новым комментом
         //  получается ты отправил сообщение на Сахалин , а хочешь получить его из Москвы )))
         //поменял адреса API на - из урока
+
+        addFormButton.disabled = true;
+        addFormButton.textContent = "Комментарий добавляется, подождите";
+
         fetch("https://webdev-hw-api.vercel.app/api/v1/eldar/comments", {
           method: "POST",
           body: JSON.stringify({
@@ -149,20 +137,26 @@
               .replaceAll(">", "&gt;")
               .replaceAll('"', "&quot;"),
           }),
-        }).then((response) => {
-          response.json().then((responseData) => {
-            getComments(); // можно  тут попробуй по очереди закомментить в разных участках и раскомментить в других , если
-            //вдруг будет что-то плохо работать.
-            renderComments();
+        })
+          .then((response) => {
+            console.log("Время", Date.now() - dateNow);
+            return response;
+          })
+          .then((response) => {
+            console.log(response);
+            return response.json();
+          })
+          .then((response) => {
+            console.log("Время", Date.now() - dateNow);
+            return response;
+          })
+          .then(() => {
+            return getComments();
+          })
+          .then((data) => {
+            addFormButton.disabled = false;
+            addFormButton.textContent = "Написать";
           });
-        });
-        //  renderComments(); //
-        //   }
-        //  getComments();
-        //Зачем столько вызовов функций getComments(); renderComments();  можно
-        //оставить либо тут либо чуть выше или чуть ниже
-        //     getComments();
-        //    renderComments();
       }
 
       // renderComments(); возможно будет работать и тут
