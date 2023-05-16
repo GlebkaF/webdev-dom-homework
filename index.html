@@ -64,20 +64,37 @@
       </div>
     </div>
   </body>
-
+  <style>
+    .error {
+      background-color: red;
+    }
+  </style>
   <script>
     "use strict";
     const buttonElement = document.getElementById("button-comment");
     const commentElement = document.getElementById("new-com");
     const nameInputElement = document.getElementById("name-input");
     const textInputElement = document.getElementById("text-input");
-  
+    let currentDate = new Date();
     buttonElement.addEventListener('click', () => {
+      nameInputElement.classList.remove("error");
+      textInputElement.classList.remove("error");
+      if (nameInputElement.value === "") {
+        nameInputElement.classList.add("error");
+        return;
+      };
+      if (textInputElement.value === "") {
+        textInputElement.classList.add("error");
+        return;
+      }
+
+
+
       const oldCommentHtml = commentElement.innerHTML;
       commentElement.innerHTML = oldCommentHtml + `    <li class="comment">
           <div class="comment-header">
             <div>${nameInputElement.value}</div>
-            <div>12.02.22 12:18</div>
+            <div>${currentDate}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -86,12 +103,11 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">3</span>
+              <span class="likes-counter"></span>
               <button class="like-button"></button>
             </div>
           </div>
         </li>`;
     });
-    console.log("It works!")
   </script>
 </html>
