@@ -89,6 +89,7 @@ const onCommentLikeClick = () => {
   const likeButtonsElements = document.querySelectorAll(".like-button");
   for (const likeButtonsElement of likeButtonsElements) {
     likeButtonsElement.addEventListener("click", () => {
+      event.stopPropagation();
       const index = likeButtonsElement.dataset.index;
       const likesContainer = likeButtonsElement.closest('.comment-footer');
       const likesCounter = likesContainer.querySelector('.likes-counter');
@@ -110,6 +111,7 @@ const onCommentEditClick = () => {
   const editButtonsElements = document.querySelectorAll(".edited-button"); 
   for (const editButtonElement of editButtonsElements) { 
     editButtonElement.addEventListener("click", () => { 
+      event.stopPropagation();
       const index = editButtonElement.dataset.index; 
       const button = event.target; 
       const buttonTitle = button.innerText; 
@@ -136,16 +138,28 @@ const onCommentEditClick = () => {
   } 
 }
 
+let currentCommentFeedback = null;
+const onCommentFeedbackClick = () => {  
+  const feedbackButtonsElements = document.querySelectorAll(".comment-text");   
+  for (const feedbackButtonsElement of feedbackButtonsElements) {   
+    feedbackButtonsElement.addEventListener("click", () => {  
+      currentCommentFeedback = feedbackButtonsElement.dataset.index;
+      const commentText = comments[currentCommentFeedback].text;
+      commentInputElement.value = `>${commentText} ${comments[currentCommentFeedback].name}`;
+    });  
+  }  
+};
+
 const renderComments = () => {
    const commentsHtml = comments.map((comment, index) => {
     let likeClass = comment.active ? "-active-like" : "";
     return `<li class="comment">
           <div class="comment-header">
-            <div>${comment.name}</div>
+            <div id ="name">${comment.name}</div>
             <div>${comment.date} </div>
           </div>
           <div class="comment-body">
-            <div id = "text" class="comment-text">
+            <div id = "text" data-index="${index}" class="comment-text" style={{ whiteSpace: 'pre-line' }}>
               ${comment.text}
             </div>
           </div>
@@ -161,6 +175,7 @@ const renderComments = () => {
     listElement.innerHTML = commentsHtml;
     onCommentLikeClick();
     onCommentEditClick();
+    onCommentFeedbackClick();
   }
   renderComments();
 
@@ -184,9 +199,13 @@ const renderComments = () => {
         return;
       }
       comments.push({ 
-      name: nameInputElement.value, 
+      name: nameInputElement.value
+      .replaceAll("<", "&lt;")
+      .replaceAll(">","&gt;"), 
       date: myDate, 
-      text: commentInputElement.value, 
+      text: commentInputElement.value
+      .replaceAll("<", "&lt;")
+      .replaceAll(">","&gt;"), 
       like: likes, 
 });
       renderComments();

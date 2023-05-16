@@ -66,10 +66,9 @@
 
       for (const deleteButton of deleteButtons) {
         deleteButton.addEventListener("click", () => {
+          event.stopPropagation();
           const index = deleteButton.dataset.index;
-
           students.splice(index, 1);
-
           renderStudents();
         });
       }
@@ -79,6 +78,7 @@
 
       for (const student of studentElements) {
         student.addEventListener("click", () => {
+          event.stopPropagation();
         const color = student.dataset.color;
         alert(`Любимый цвет: ${color}`);
         });
