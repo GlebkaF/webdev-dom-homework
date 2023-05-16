@@ -80,6 +80,34 @@ const addReply = () => {
     }
 }
 
+function formatDate() {
+    const commentDate = new Date();
+    const year = commentDate.getFullYear() % 100;
+
+    let month = commentDate.getMonth() + 1;
+    if (month < 10) {
+        month = '0' + month;
+    }
+
+    let day = commentDate.getDate();
+    if (day < 10) {
+        day = '0' + day;
+    }
+
+    let hours = commentDate.getHours();
+    if (hours < 10) {
+        hours = '0' + hours;
+    }
+
+    let minutes = commentDate.getMinutes();
+    if (minutes < 10) {
+        minutes = '0' + minutes;
+    }
+
+    const currentDate = day + '.' + month + '.' + year + ' ' + hours + ':' + minutes;
+    return currentDate;
+}
+
 const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
 
@@ -150,37 +178,12 @@ const addToList = () => {
         return;
     }
 
-    const commentDate = new Date();
-    const year = commentDate.getFullYear() % 100;
-
-    let month = commentDate.getMonth() + 1;
-    if (month < 10) {
-        month = '0' + month;
-    }
-
-    let day = commentDate.getDate();
-    if (day < 10) {
-        day = '0' + day;
-    }
-
-    let hours = commentDate.getHours();
-    if (hours < 10) {
-        hours = '0' + hours;
-    }
-
-    let minutes = commentDate.getMinutes();
-    if (minutes < 10) {
-        minutes = '0' + minutes;
-    }
-
-    const currentDate = day + '.' + month + '.' + year + ' ' + hours + ':' + minutes;
-
     const newComment = {
         name: commentName.value
         .replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
         text: commentText.value
         .replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-        date: currentDate,
+        date:     formatDate(),
         like: 0,
         likeStatus: false,
     }
@@ -212,15 +215,11 @@ commentText.addEventListener('input', () => {
 
 addButton.addEventListener('click', () => {
     addToList();
-    // getData();
-    // renderComments();
 })
 
 addForm.addEventListener('keyup', (event) => {
     if (event.keyCode === 13) {
         addToList();
-        // getData();
-        // renderComments();
     }
 })
 
