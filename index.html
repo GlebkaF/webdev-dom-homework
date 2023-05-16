@@ -191,7 +191,6 @@
         jsonPromise.then((responseData) => {
           // получили данные и рендерим их в приложении
           userComments = responseData.comments;
-          renderComments();
         });
       });
 
@@ -212,6 +211,7 @@
         textAreaComment.classList.add('error');
         return;
       } else {
+        getApi();
         addComment();
         inputName.classList.remove('error');
         textAreaComment.classList.remove('error');
