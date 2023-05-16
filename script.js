@@ -7,7 +7,6 @@ deleteFormButton = document.querySelector(".delete-form-button");
 
 
 let commentos = [];
-let isLiked = [];
 
 
 
@@ -49,14 +48,15 @@ addFormButton.classList.add('add-form-button-inactive');
 
 
 
+
+
 initLikeButtonsListeners = () => {
   let likeButtonsElements = document.querySelectorAll('.like-button');
 
   
 
   for(const likeButtonElement of likeButtonsElements) {
-    likeButtonElement.classList.remove('-active-like');
-    isLiked.push(0);
+
     likeButtonElement.addEventListener('click', (event) => {
 
       event.stopPropagation();
@@ -64,18 +64,18 @@ initLikeButtonsListeners = () => {
       const index = likeButtonElement.dataset.index;
       console.log(index);
 
-
-        if(isLiked[index] === 0) {
-          likeButtonElement.classList.add('-active-like');
-          isLiked[index] += 1;
-          // console.log(isLiked[index]);
+        if(commentos[index].isLiked) {
+          commentos[index].likes -= 1;
+          commentos[index].isLiked = !commentos[index].isLiked;
         } else {
-          likeButtonElement.classList.remove('-active-like');
-          isLiked[index] -= 1;
-          // console.log(isLiked[index]);
+          commentos[index].likes += 1;
+          commentos[index].isLiked = !commentos[index].isLiked;
+          
         }
+        renderComments();
     });
   }
+  
 };
 
 initCorrectButtonsListeners = () => {
@@ -134,6 +134,17 @@ initCommentariesListeners = () => {
   }
 };
 
+// commentos.push({
+//   name: "",
+//   text: '',
+//   date: '',
+//   likes: 0,
+//   isLiked: false,
+//   isCorrecting: false,
+// });
+
+
+
 const renderComments = () => {
 
   const commentsHtml = commentos.map((comment, index) => {
@@ -160,7 +171,7 @@ const renderComments = () => {
       </div>
     </li>`;
     }
-    if(isLiked[index] === 1) {
+    if(commentos[index].isLiked) {
       return `<li class="comment" data-id='${comment.id}'>
       <div class="comment-header">
         <div>${comment.name}</div>
@@ -174,7 +185,7 @@ const renderComments = () => {
       </div>
       <div class="comment-footer">
         <div class="likes">
-          <span class="likes-counter" data-id='${comment.id}'>${isLiked[index]}</span>
+          <span class="likes-counter" data-id='${comment.id}'>${commentos[index].likes}</span>
           <button class="like-button -active-like" data-index='${index}'></button>
         </div>
       </div>
@@ -194,7 +205,7 @@ const renderComments = () => {
       </div>
       <div class="comment-footer">
         <div class="likes">
-          <span class="likes-counter" data-id='${comment.id}'>${isLiked[index]}</span>
+          <span class="likes-counter" data-id='${comment.id}'>${commentos[index].likes}</span>
           <button class="like-button" data-index='${index}'></button>
         </div>
       </div>
