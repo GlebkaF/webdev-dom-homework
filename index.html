@@ -7,7 +7,10 @@
   </head>
   <body>
     <div class="container">
-      <ul class="comments"></ul>
+      <ul class="comments">
+        <!--Render JS-->
+      </ul>
+      <p class="starting hidden">Список загружается...</p>
       <div class="add-form">
         <input
           type="text"
@@ -32,6 +35,7 @@
     "use strict";
     
     const commentList = document.querySelector('.comments');
+    const startingElement = document.querySelector('.starting');
     const addFormElement = document.querySelector('.add-form');
     const waitingElement = document.querySelector('.add-waiting');
     const nameElement = document.querySelector('.add-form-name');
@@ -40,18 +44,24 @@
     const removeButton = document.querySelector('.remove-form-button');
 
     let comments = [];
+    let isStarting = true;
     let isWaiting = false;
 
-    fetch("https://webdev-hw-api.vercel.app/api/v1/dmitry-teleganov/comments", {
-      method: "GET"
-    }).then((responseStart) => {
-      responseStart.json().then((startJson) => {
-        comments = startJson.comments;
+    const startFetch = () => {
+      fetch("https://webdev-hw-api.vercel.app/api/v1/dmitry-teleganov/comments", {
+        method: "GET"
+      })
+      .then(response => {
+        return response.json();
+      })
+      .then(responseData => {
+        comments = responseData.comments;
+        isStarting = false;
+        isWaiting = false;
 
         renderComments();
-        });
       });
-
+    }
     const renderComments = () => {
       commentList.innerHTML = comments.map((comment, index) => {
         return `<li class="comment" data-index="${index}">
@@ -65,12 +75,13 @@
           <footer class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${comment.likes}</span>
-              <button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index="${index}"></button>  
+              <button class="like-button ${comment.isLiked ? '-active-like' : ''} ${comment.isLikeLoading ? '-loading-like' : ''}" data-index="${index}"></button>  
             </div>
           </footer>
         </li>`;
       }).join('');
 
+      checkFirstStart();
       checkWaiting();
       checkAddButton();
       activateAddButton();
@@ -78,6 +89,15 @@
       answerComment();
     }
 
+    const checkFirstStart = () => {
+      if (isStarting) {
+        startingElement.classList.remove('hidden');
+        commentList.classList.add('hidden');
+      } else {
+        commentList.classList.remove('hidden');
+        startingElement.classList.add('hidden');
+      }
+    }
     const checkWaiting = () => {
       if (isWaiting) {
         waitingElement.classList.remove('hidden');
@@ -131,20 +151,9 @@
               .replaceAll('START_QUOTE', '<div class="comment-quote">')
               .replaceAll('END_QUOTE', '</div>')
           })
-        }).then((response) => {
-          response.json().then(() => {
-            fetch("https://webdev-hw-api.vercel.app/api/v1/dmitry-teleganov/comments", {
-              method: "GET"
-            }).then((responseAdd) => {
-              responseAdd.json().then((addJson) => {
-                comments = addJson.comments;
-                isWaiting = false;
-
-                renderComments();
-              });
-            });
-          });
-        });
+        })
+        .then(response => response.json())
+        .then(() => startFetch());
       }
 
       nameElement.classList.remove('form-error');
@@ -160,16 +169,22 @@
           event.stopPropagation();
           
           let index = button.dataset.index;
-
-          if (!comments[index].isLiked) {
-            comments[index].likes++;
-          } else {
-            comments[index].likes--;
-          }
-
-          comments[index].isLiked = !comments[index].isLiked;
+          comments[index].isLikeLoading = true;
 
           renderComments();
+
+          delay(2000).then(() => {
+            if(comments[index].isLiked) {
+              comments[index].likes--;
+            } else {
+              comments[index].likes++;
+            }
+
+            comments[index].isLiked = !comments[index].isLiked;
+            comments[index].isLikeLoading = false;
+
+            renderComments();
+          });
         });
       }
     }
@@ -184,8 +199,15 @@
         });
       }
     }
+    const delay = (interval = 300) => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, interval);
+      });
+    }
     
-    const replaceValue = (value) => {
+    const replaceValue = value => {
       return value
       .replaceAll("&", "&amp;")
       .replaceAll("<", "&lt;")
@@ -204,6 +226,7 @@
     const addZeroBefore = num => String(num).length < 2 ? '0' + num : num;
     const editYear = year => String(year)[2] + String(year)[3];
 
+    startFetch();
     renderComments();
 
     addButton.addEventListener('click', addComment);
