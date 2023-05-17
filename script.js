@@ -58,7 +58,7 @@ const renderComments = () => {
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${comment.likes}</span>
-            <button data-index="${index}" id="like-button" class="like-button ${comment.isLiked ? '-active-like' : ''}"></button>
+            <button data-index="${index}" id="like-button" class="like-button ${comment.isLiked ? '-active-like' : ''} ${comment.isLikeLoading ? '-loading-like' : ''}"></button>
           </div>
         </div>
       </li>`
@@ -84,6 +84,7 @@ const waitingAddComment = () => {
     }
 };
 
+// style - "-loading-like"
 // Добавление клика на лайк
 const initLikeButtons = () => {
     const likeButtonsElements = document.querySelectorAll(".like-button");
@@ -93,16 +94,32 @@ const initLikeButtons = () => {
         likeButtonsElement.addEventListener('click', (event) => {
             event.stopPropagation();
 
-            const comment = comments[likeButtonsElement.dataset.index];
-            if (comment.isLiked) {
-                comment.likes = comment.likes - 1;
-            } else {
-                comment.likes = comment.likes + 1;
-            }
-            comment.isLiked = !comment.isLiked;
+            let comment = comments[likeButtonsElement.dataset.index];
+            comment.isLikeLoading = true;
+
             renderComments();
+
+            delay(2000).then(() => {
+                if (comment.isLiked) {
+                    comment.likes = comment.likes - 1;
+                } else {
+                    comment.likes = comment.likes + 1;
+                }
+
+                comment.isLiked = !comment.isLiked;
+                comment.isLikeLoading = false;
+                renderComments();
+            });
         });
     }
+}
+
+function delay(interval = 300) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve();
+        }, interval);
+    });
 }
 
 // Добавление ответа на комментарии
