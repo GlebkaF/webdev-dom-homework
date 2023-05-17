@@ -68,6 +68,7 @@ const renderComments = () => {
     waitingAddComment();
     initLikeButtons();
     answerComment();
+    checkAddButton();
 }
 
 fetchAndRenderTasks();
@@ -132,20 +133,20 @@ renderComments();
 const checkAddButton = () => {
     nameInputElement.addEventListener('input', () => {
         if (nameInputElement.value) {
-            document.getElementById('add-form-button').disabled = false;
+            buttonElement.disabled = false;
             return;
         } else {
-            document.getElementById('add-form-button').disabled = true;
+            buttonElement.disabled = true;
             return;
         }
     });
 
     commentInputElement.addEventListener('input', () => {
         if (commentInputElement.value) {
-            document.getElementById('add-form-button').disabled = false;
+            buttonElement.disabled = false;
             return;
         } else {
-            document.getElementById('add-form-button').disabled = true;
+            buttonElement.disabled = true;
             return;
         }
     });
