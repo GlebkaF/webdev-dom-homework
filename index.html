@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="ul">
         <li class="comment">
           <div class="comment-header">
             <div class="comment-user-name">Глеб Фокин</div>
@@ -69,22 +69,22 @@
     const inputName = document.querySelector('.add-form-name');
     const textAreaComment = document.querySelector('.add-form-text');
     const boxCommentsTexts = boxComments.querySelectorAll('.comment');
+    const formBox = document.querySelector('.add-form');
     let now = new Date();
 
     let userComments = [];
 
     function getApi() {
-        const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/alex-toporov/comments", {
+        return fetch("https://webdev-hw-api.vercel.app/api/v1/alex-toporov/comments", {
         method: "GET"
-      });
-        
-      fetchPromise.then((response) => {
-        const jsonPromise = response.json();
+      })
 
-        // Подписываемся на результат преобразования
-        jsonPromise.then((responseData) => {
-          // получили данные и рендерим их в приложении
-          const appComments = responseData.comments.map((comment) => {
+      .then((response) => {
+        return response.json();
+      })
+
+      .then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
             return {
               name: comment.author.name,
               date: new Date(comment.date).toLocaleString().slice(0,-3),
@@ -96,8 +96,7 @@
           userComments = appComments;
           console.log(userComments);
           renderComments();
-        });
-      });
+      })
     }
 
     getApi();
@@ -168,6 +167,12 @@
     renderComments();
 
     const addComment = () => {
+      formBox.classList.add('hidden');
+      let loader = document.createElement('p');
+      loader.className = "loader";
+      loader.textContent = 'Комментарии загружаются...';
+      ul.appendChild(loader);
+
       const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/alex-toporov/comments", {
         method: "POST",
         body: JSON.stringify({
@@ -182,17 +187,25 @@
           .replaceAll('<', '&lt;')
           .replaceAll('<', '&gt;'), 
           })
-        });
-      
-      fetchPromise.then((response) => {
-        const jsonPromise = response.json();
+        })
 
-        // Подписываемся на результат преобразования
-        jsonPromise.then((responseData) => {
-          // получили данные и рендерим их в приложении
-          userComments = responseData.comments;
+        .then((response) => {
+          return response.json();
+        })
+
+        .then((responseData) => {
+          return userComments = responseData.comments;
+        })
+
+        .then(() => {
+          return getApi();
+          return renderComments();
+        })
+
+        .then((data) => {
+          loader.classList.add('hidden');
+          formBox.classList.remove('hidden');
         });
-      });
 
       getApi();
       renderComments();
