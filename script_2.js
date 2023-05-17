@@ -7,6 +7,11 @@ const textCommment = document.querySelector('.add-form-text');
 const button = document.querySelector('.add-form-button');
 const comments = document.querySelectorAll('.comment');
 const loader = document.querySelector('.loader');
+window.addEventListener('load',()=>{
+    loader.classList.add('loader_visible');
+    loader.classList.remove('loader_hidden');
+});
+
 function dateFormat(date) {
    // const date = new Date();
     (date.getDate() < 10) ? dd = '0' + date.getDate() : dd = date.getDate();
@@ -21,6 +26,7 @@ container.addEventListener('click', (e) => {
     const id = e.target.dataset.id;
     switch (target) {
         case 'like-button': initLikeClick(id);
+        e.target.classList.add('-loading-like');
             break;
         case 'del-comment': delClick(id);
             break;
@@ -44,6 +50,15 @@ container.addEventListener('click', (e) => {
 let commentsListArray = [
    
 ];
+
+function delay(interval = 300) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, interval);
+    });
+}
+
 function fetchRequest(method, data = null) {
     return fetch("https://webdev-hw-api.vercel.app/api/v1/gleb-fokin/comments",
         {
@@ -66,16 +81,35 @@ function fetchRequest(method, data = null) {
 
 }
 const addLikes = (id) => {
+    delay(2000).then(() => {
     commentsListArray[id].likes++;
     commentsListArray[id].isLiked = true;
+    // const data = JSON.stringify({
+    //     id: id,
+    //     likes: likes++,
+    //     isLiked:  true,
+    // });
+    // fetchRequest("POST", data);
+    renderComments();
+});
 }
 const delLikes = (id) => {
+    commentsListArray[id].isLikeLoading = true;
+    delay(2000).then(() => {
     commentsListArray[id].likes--;
     commentsListArray[id].isLiked = false;
+    // const data = JSON.stringify({
+    //     id: id,
+    //     likes: likes--,
+    //     isLiked:  false,
+    // });
+    // fetchRequest("POST", data);
+    renderComments();
+});
 }
 const initLikeClick = (id) => {
     (commentsListArray[id].isLiked) ? delLikes(id) : addLikes(id);
-    renderComments();
+    
 }
 const editClick = (id) => {
     commentsListArray[id].isEdit = true;
