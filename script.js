@@ -7,29 +7,36 @@ const addForm = document.querySelector('.add-form');
 let comments = [];
 
 function getData () {
+
+    addButton.disabled = true;
+    addButton.textContent = 'Список обновляется';
+
     fetch("https://webdev-hw-api.vercel.app/api/v1/daria/comments", {
         method: "GET",
     })
-    .then((response) => {
-        return response.json();
-})
-        .then((responseData) => {
-            const appComments = responseData.comments.map((comment) => {
+        .then((response) => {
+            return response.json();
+        })
+            .then((responseData) => {
+                const appComments = responseData.comments.map((comment) => {
                 return {
-                    name: comment.author.name,
-                    date: new Date(comment.date).toLocaleString().slice(0,-3),
-                    text: comment.text,
-                    likes: comment.likes,
-                    likeStatus: false,
+                        name: comment.author.name,
+                        date: new Date(comment.date).toLocaleString().slice(0,-3),
+                        text: comment.text,
+                        likes: comment.likes,
+                        likeStatus: false,
                 }
             })
-    
+        
             comments = appComments;
-            renderComments();       
+            renderComments();  
+            
+            addButton.disabled = false;
+            addButton.textContent = 'Написать';
         })
 }
-getData();
 
+getData();
 
 const initLikesButton = () => {
     const likesButtons = document.querySelectorAll('.like-button');
@@ -147,6 +154,9 @@ renderComments();
 
 const addToServer = (comment) => {
     
+    addButton.disabled = true;
+    addButton.textContent = 'Публикуется...';
+
     fetch ("https://webdev-hw-api.vercel.app/api/v1/daria/comments", {
         method: "POST",
         body: JSON.stringify(comment)
