@@ -29,8 +29,7 @@
           <button class="add-form-button" id="add-button">Написать</button>
         </div>
       </div>
-    </div>
-  </body>
+    </body>
   <style>
     .error {
       background-color: gray;
@@ -48,7 +47,7 @@
       font-size: 16px;
       color: #000000;
       border-radius: 5px;
-  }
+    }
   </style>
   <script>
     "use strict";
@@ -57,30 +56,27 @@
     const nameInputElement = document.getElementById('name-input');
     const textInputElement = document.getElementById('text-input');
     const listElement = document.getElementById('list');
+    const addForm = document.querySelectorAll('add-form');
+    const isLoadingEl = document.querySelectorAll('loading');
+
+    let comments = [];
     
+    fetch('https://webdev-hw-api.vercel.app/api/v1/denis-sharin/comments', {
+      method: 'GET',
+    }).then((response) => {
+      response.json().then((responseData) => {
+        comments = responseData.comments;
+        renderComments()
+      })
+    });
 
-    const comments = [{
-      name: 'Глеб Фокин',
-      text: 'Это будет первый коментарий на этой странице',
-      date: '12.02.22 12:18',
-      activeClass: '',
-      counter: 3,
-    },
-    {
-      name: 'Варвара Н.',
-      text: 'Мне нравится как оформлена эта страница! ❤',
-      date: '13.02.22 19:22',
-      activeClass: 'like-button -active-like',
-      counter: 75,
-    }];
-
-
-   const renderComments = () => {
+  
+    const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
       return `<li data-index=${index} class="comment">
           <div class="comment-header">
-            <div>${comment.name}</div>
-            <div>${comment.date}</div>
+            <div>${comment.author.name}</div>
+            <div>${getTime(comment.date)}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -89,28 +85,26 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">${comment.counter}</span>
-              <button data-index="${index}" class="like-button ${comment.activeClass}"></button>
+              <span class="likes-counter">${comment.likes}</span>
+              <button data-index="${index}" class="like-button ${comment.isLiked ? '-active-like' : 'like-button'}"></button>
             </div>
           </div>
         </li>`;
     }).join('');
 
     listElement.innerHTML = commentsHtml;
-    
     likeComment()
     newReply()
   };
 
-  
+
   const getTime = () => {
     let date = new Date ();
     let time = date.toTimeString().slice(0, 5);
     let day = (date.getDate() < 10) ? '0' + date.getDate() : date.getDate();
     let month = ((date.getMonth() + 1) < 10) ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
     let year = Number(String(date.getFullYear()).substring(2));
-    let actualDate = day + '.' + month + '.' + year + ' ' + time;
-    return actualDate;
+    return day + '.' + month + '.' + year + ' ' + time;
   };
 
 
@@ -123,23 +117,35 @@
         textInputElement.classList.add('form-error')
         return
       } else {
-        comments.push({
-          name: replaceValue(nameInputElement.value),
-          text: replaceValue(textInputElement.value).replaceAll('QUOTE_BEGIN', '<div class="quote">').replaceAll('QUOTE_END', '</div>'),
-          date: getTime(),
-          activeClass: '',
-          counter: 0,
+
+    fetch('https://webdev-hw-api.vercel.app/api/v1/denis-sharin/comments', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: replaceValue(nameInputElement.value),
+        text: replaceValue(textInputElement.value)
+              .replaceAll('QUOTE_BEGIN', '<div class="quote">')
+              .replaceAll('QUOTE_END', '</div>')
+      })
+    }).then((response) => {
+      response.json().then(() => {
+        fetch('https://webdev-hw-api.vercel.app/api/v1/denis-sharin/comments', {
+          method: 'GET',
+        }).then((addResponse) => {
+          addResponse.json().then((addJson) => {
+            comments = addJson.comments;
+            renderComments()
+          });
         });
-      }
-    renderComments();
+      });
+    });
+  }
+  renderComments();
 
     textInputElement.value = '';
     nameInputElement.value = '';
     textInputElement.classList.remove('form-error');
     nameInputElement.classList.remove('form-error');
-    
   };
-
 
   const likeComment = () => {
     const likeButtons = document.querySelectorAll('.like-button');
@@ -150,16 +156,15 @@
         event.stopPropagation();
 
         let index = likeButton.dataset.index;
-        let counter = comments[index].counter;
-        
-        if (comments[index].activeClass === 'like-button -active-like') {
-          counter -= 1;
-          comments[index].activeClass = 'like-button';
+        let counter = comments[index].likes;
+        console.log(counter)
+        if (!comments[index].isLiked) {
+          counter +=1;
         } else {
-          counter += 1;
-          comments[index].activeClass = 'like-button -active-like';
+          counter -=1;
         }
-        comments[index].counter = counter;
+        comments[index].isLiked = !comments[index].isLiked;
+        comments[index].likes = counter;
         renderComments()
       });
     };
@@ -174,10 +179,11 @@
         
         let index = commentElement.dataset.index;
 
-        textInputElement.value = `QUOTE_BEGIN${comments[index].name} : ${comments[index].text.replaceAll('<div class="quote">', '').replaceAll('</div>', '')}QUOTE_END`;
+        textInputElement.value = `QUOTE_BEGIN${comments[index].author.name} : ${comments[index].text.replaceAll('<div class="quote">', '').replaceAll('</div>', '')}QUOTE_END`;
       });
     };
   };
+
 
   const replaceValue = (value) => {
     return value
