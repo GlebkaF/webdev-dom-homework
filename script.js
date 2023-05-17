@@ -7,14 +7,13 @@ const addForm = document.querySelector('.add-form');
 let comments = [];
 
 function getData () {
-    const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/daria/comments", {
+    fetch("https://webdev-hw-api.vercel.app/api/v1/daria/comments", {
         method: "GET",
-    });
-
-    fetchPromise.then((response) => {
-        const jsonPromise = response.json();
-    
-        jsonPromise.then((responseData) => {
+    })
+    .then((response) => {
+        return response.json();
+})
+        .then((responseData) => {
             const appComments = responseData.comments.map((comment) => {
                 return {
                     name: comment.author.name,
@@ -28,9 +27,7 @@ function getData () {
             comments = appComments;
             renderComments();       
         })
-    })
 }
-
 getData();
 
 
@@ -154,15 +151,13 @@ const addToServer = (comment) => {
         method: "POST",
         body: JSON.stringify(comment)
     }).then((response) => {
-        const jsonPromise = response.json();
-        
-        jsonPromise.then((responseData) => {
-            console.log(responseData);
-        })
-
-        getData();
+        return response.json();
     })
-}
+    .then((responseData) => {
+            console.log(responseData);
+            return getData();
+        })
+    }
 
 const addToList = () => {
 
