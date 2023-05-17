@@ -121,6 +121,7 @@ body {
 .add-form-row {
   display: flex;
   justify-content: flex-end;
+  gap: 20px;
 }
 
 .add-form-button {
@@ -131,10 +132,18 @@ body {
   border: none;
   border-radius: 18px;
   cursor: pointer;
+  margin-left: 20px;
 }
 
 .add-form-button:hover {
   opacity: 0.9;
+}
+
+.error {
+  background-color: red;
+}
+.empty {
+  background-color: grey;
 }
 
 .quote {
@@ -146,4 +155,12 @@ body {
   border: none;
   padding: 10px 20px;
   margin-bottom: 20px;
+}
+
+.comment textarea {
+  display: none;
+}
+
+.comment .edit-button {
+  margin: 0 0 0 10px;
 }

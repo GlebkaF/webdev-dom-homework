@@ -1,97 +1,114 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
-      <ul class="comments" id="comments-users">
-      </ul>
-      <div class="add-form" id="add-comment">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-          id="name-input"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-          id="text-input"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button" id="button-add">Написать</button>
-        </div>
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <ul class="comments" id="comments-users">
+    </ul>
+    <div class="add-form-row">
+      <button class="add-form-button" id="button-delete">Удалить последний комментарий</button>
+    </div>
+    <div class="add-form" id="add-comment">
+      <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input" />
+      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
+        id="text-input"></textarea>
+      <div class="add-form-row">
+        <button class="add-form-button" id="button-add">Написать</button>
       </div>
     </div>
-  </body>
-  <style>
-    .error {
-      background-color: red;
-    }
-    .empty {
-      background-color: grey;
-    }
-    
-  </style>
-  <script>
-    "use strict";
+  </div>
+</body>
+<style>
+  .error {
+    background-color: red;
+  }
 
-    const comments = [
-      {
-        name: 'Глеб Фокин',
-        date: '12.02.22 12:18',
-        text: 'Это будет первый комментарий на этой странице',
-        likes: 2,
-        isLiked: true,
-      },
+  .empty {
+    background-color: grey;
+  }
+</style>
+<script>
+  "use strict";
 
-      {
-        name: 'Варвара Н.',
-        date: '13.02.22 19:22',
-        text: 'Мне нравится как оформлена эта страница! ❤',
-        likes: 75,
-        isLiked: false,
-      },
-    ];
+  
+let comments = []
 
-    const listComments = document.getElementById("comments-users");
-    const renderComments = () => {
-      const commentsHTML = comments.map((comment, index) => {
-        return `<li data-index = "${index}" class="comment">
-        <div class="comment-header">
-          <div>${comment.name}</div>
-          <div>${comment.date}</div>
-        </div>
-        <div class="comment-body">
+const getComments = () => {
+
+  const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/alexei-rybak/comments", 
+  {
+    method: "GET",
+  });
+
+  fetchPromise.then((response) => {
+    const jsonPromise = response.json();
+    jsonPromise.then((responseData) => {
+      const appComments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: new Date(comment.date),
+          text: comment.text,
+          likes: comment.likes,
+          isLiked: false,
+        };
+      });
+
+      comments = appComments;
+
+      renderComments();
+    });
+  });
+};
+
+getComments();
+
+  const listComments = document.getElementById("comments-users");
+
+  const renderComments = () => {
+    const commentsHTML = comments.map((comment, index) => {
+        const formattedDate = formatDate(new Date(comment.date));
+        return `<li data-index="${index}" class="comment">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${formattedDate}</div>
+          </div>
+          <div class="comment-body">
             <div class="comment-text">${comment.text}</div>
           </div>
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${comment.likes}</span>
-              <button data-index="${index}" class="like-button ${
-            comment.isLiked ? "-active-like" : ""
-          }"></button>
+              <button data-index="${index}" class="like-button ${comment.isLiked ? "-active-like" : ""}"></button>
             </div>
           </div>
-      </li>`;
-      }
-      ).join('');
+        </li>`;
+      }).join('');
 
-      listComments.innerHTML = commentsHTML;
-      counterLikes();
-    };
+    listComments.innerHTML = commentsHTML;
+    counterLikes();
+    answerComment();
+  };
 
-    renderComments();
-    
-    function counterLikes() {
+  renderComments();
+
+  function formatDate(date) {
+    const year = date.getFullYear().toString().slice(-2);
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+    const hours = ('0' + date.getHours()).slice(-2);
+    const minutes = ('0' + date.getMinutes()).slice(-2);
+    return `${day}.${month}.${year} ${hours}:${minutes}`;
+  }
+
+  function counterLikes() {
     const likesButtonElements = document.querySelectorAll('.like-button');
-    
+
     likesButtonElements.forEach((likesButtonElement) => {
         likesButtonElement.addEventListener('click', (event) => {
           event.stopPropagation();
@@ -105,96 +122,99 @@
             comment.likes = comment.likes + 1;
             likesButtonElement.classList.add('-active-like');
           }
+
           comment.isLiked = !comment.isLiked;
           
           renderComments();
         });
       })
-    };
+  };
+  
+  function answerComment() {
+    const oldComments = document.querySelectorAll(".comment");
 
-    function answerComment() {
-      const oldComments = document.querySelectorAll(".comment");
+    for (let oldComment of oldComments) {
+      oldComment.addEventListener("click", (event) => {
+        event.stopPropagation();
+        
+        const index = oldComment.dataset.index;
+        const comment = comments[index];
 
-      for (let oldComment of oldComments) {
-        oldComment.addEventListener("click", (event) => {
-          event.stopPropagation();
-          
-          const index = oldComment.dataset.index;
-          const comment = comments[index];
-
-          textInputElement.value = `QUOTE_BEGIN ${comment.text}\n\n${comment.name} QUOTE_END`;
-        });
-      }
+        textInputElement.value = `QUOTE_BEGIN ${comment.text}\n${comment.name} QUOTE_END`;
+      });
     }
+  }
 
-    answerComment() 
+  const buttonElement = document.getElementById("button-add");
+  const listElement = document.getElementById("comments-users");
+  const nameInputElement = document.getElementById("name-input");
+  const textInputElement = document.getElementById("text-input");
 
-    
-    const buttonElement = document.getElementById("button-add");
-    const listElement = document.getElementById("comments-users");
-    const nameInputElement = document.getElementById("name-input");
-    const textInputElement = document.getElementById("text-input");
+  const addComment = () => {
 
-    buttonElement.addEventListener("click", () => {
-        nameInputElement.classList.remove('error');
-        textInputElement.classList.remove('error');
-
-      if (nameInputElement.value === '' && textInputElement.value === '') {
-        nameInputElement.classList.add('error');
-        textInputElement.classList.add('error');
-        return;
-      }
-
-      if (nameInputElement.value === '') {
-        nameInputElement.classList.add('error');
-        buttonElement.classList.add('empty');
-        buttonElement.setAttribute('disabled', '');
-        return;
-      }
-
-      if (textInputElement.value === '') {
-        textInputElement.classList.add('error');
-        buttonElement.classList.add('empty');
-        buttonElement.setAttribute('disabled', '');
-        return;
-      }
-
-      let currentDate = new Date();
-      let currentMonth = Number(currentDate.getMonth() + 1);
-      let currentMinute = currentDate.getMinutes();
-      let currentYear = String(currentDate.getFullYear());
-      currentYear = currentYear.split('').splice(2, 3).join('');
-
-      if (currentMonth < 10) {
-        currentMonth = "0" + currentMonth;
-      }
-
-      if (currentMinute < 10) {
-        currentMinute = "0" + currentMinute;
-      }
-
-      let shownDate = currentDate.getDate() + '.' + currentMonth + '.' + currentYear + ' ' + currentDate.getHours() + ':' + currentMinute;
-
-      comments.push({
+    const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/alexei-rybak/comments", {
+      method: "POST",
+      body: JSON.stringify({
         name: nameInputElement.value,
-        date: shownDate,
-        text: textInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll('QUOTE_BEGIN', '<div class="quote">')
-        .replaceAll('QUOTE_END', '</div>'),
-        likes: 0,
-        isLiked: false,
-      })
-
-      renderComments();
-      counterLikes();
-
-      nameInputElement.value = '';
-      textInputElement.value = '';
+        text: textInputElement.value,
+      }),
     });
 
-  </script>
+    fetchPromise.then((response) => {
+    
+    const jsonPromise = response.json();
+    
+    jsonPromise.then((responseData) => {
+      console.log(responseData);
+      comments = responseData.comments;
+
+      getComments();
+      renderComments();
+    })
+    });
+    renderComments();
+
+  nameInputElement.value = '';
+  textInputElement.value = '';
+  addButtonElement.disabled = true;
+  addButtonElement.classList.add("empty");
+
+  };
+
+  buttonElement.addEventListener("click", addComment);
+
+  const deleteComment = () => {
+    comments.pop();
+    renderComments();
+  }
+
+  textInputElement.addEventListener("keypress", (event) => {
+    if (event.key === "Enter") {
+      addComment();
+      event.preventDefault();
+    }
+  });
+  
+  const buttonDeleteElement = document.getElementById("button-delete");
+  
+  buttonDeleteElement.addEventListener("click", deleteComment);
+
+
+  const addButtonElement = document.getElementById("button-add");
+  addButtonElement.disabled = true;
+  addButtonElement.classList.add("empty"); 
+  nameInputElement.addEventListener("input", handleInput);
+  textInputElement.addEventListener("input", handleInput);
+
+  function handleInput() {
+    if (nameInputElement.value.trim() !== "" && textInputElement.value.trim() !== "") {
+      addButtonElement.disabled = false;
+      addButtonElement.classList.remove("empty"); 
+    } else {
+      addButtonElement.disabled = true;
+      addButtonElement.classList.add("empty");
+    }
+  }
+</script>
+
 </html>
