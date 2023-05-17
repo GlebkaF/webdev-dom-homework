@@ -1,30 +1,49 @@
 
 // Определение переменных
+
+const addCommentForm = document.querySelector(".add-form");
 const buttonElement = document.querySelector(".add-form-button");
 const listOfComments = document.querySelector(".comments");
 const nameInputElement = document.querySelector(".add-form-name");
 const commentInputElement = document.querySelector(".add-form-text");
 const removeButton = document.querySelector('.remove-form-button');
+const constWaitingComment = document.querySelector('.add-waiting');
 
 
 // Данные о комментариях
 let comments = [];
+let isLoading = true;
+let isWaitingComment = false;
 
 // Получаем с сервера через API данные по комментариям с помощью GET
-fetch(
-    "https://webdev-hw-api.vercel.app/api/v1/marina-obruch/comments", {
-    method: "GET"
-}).then((responseStart) => {
-    responseStart.json().then((startJson) => {
-        comments = startJson.comments;
+// Создаем функцию fetchAndRenderTasks для чистоты кода
 
-        renderComments();
-    });
-});
+const fetchAndRenderTasks = () => {
+    return fetch("https://webdev-hw-api.vercel.app/api/v1/marina-obruch/comments", {
+        method: "GET"
+    })
+        .then((responseStart) => {
+            return responseStart.json();
+        })
+        .then((startJson) => {
+            comments = startJson.comments;
+            isWaitingComment = false;
+            isLoading = false;
 
+            renderComments();
+        });
+};
 
-// Функция render для исходных комментариев перенесена в js
+// Функция render
 const renderComments = () => {
+    // Лоадинг на загрузку комментариев на страницу
+    if (isLoading) {
+        document.getElementById('comments').innerHTML =
+            'Пожалуйста подождите, загружаю комментарии...';
+        constWaitingComment.classList.add(`hidden`);
+        return;
+    }
+
     listOfComments.innerHTML = comments.map((comment, index) => {
         return `<li id="comment" class="comment" data-index="${index}">
         <div class="comment-header">
@@ -45,9 +64,25 @@ const renderComments = () => {
       </li>`
     }).join("");
 
+
+    waitingAddComment();
     initLikeButtons();
     answerComment();
+    checkAddButton();
 }
+
+fetchAndRenderTasks();
+
+// Функция лоадинг при добавлении комментариев в ленту
+const waitingAddComment = () => {
+    if (isWaitingComment) {
+        constWaitingComment.classList.remove(`hidden`);
+        addCommentForm.classList.add(`hidden`);
+    } else {
+        constWaitingComment.classList.add(`hidden`);
+        addCommentForm.classList.remove(`hidden`);
+    }
+};
 
 // Добавление клика на лайк
 const initLikeButtons = () => {
@@ -98,20 +133,20 @@ renderComments();
 const checkAddButton = () => {
     nameInputElement.addEventListener('input', () => {
         if (nameInputElement.value) {
-            document.getElementById('add-form-button').disabled = false;
+            buttonElement.disabled = false;
             return;
         } else {
-            document.getElementById('add-form-button').disabled = true;
+            buttonElement.disabled = true;
             return;
         }
     });
 
     commentInputElement.addEventListener('input', () => {
         if (commentInputElement.value) {
-            document.getElementById('add-form-button').disabled = false;
+            buttonElement.disabled = false;
             return;
         } else {
-            document.getElementById('add-form-button').disabled = true;
+            buttonElement.disabled = true;
             return;
         }
     });
@@ -140,6 +175,11 @@ buttonElement.addEventListener('click', () => {
         return;
     }
 
+    // Инициализация лоадинга при добавлении комментария
+    isWaitingComment = true;
+    renderComments();
+
+
     // Добавляем новый комментарий в ленту с помощью POST
     fetch(
         'https://webdev-hw-api.vercel.app/api/v1/marina-obruch/comments',
@@ -151,29 +191,24 @@ buttonElement.addEventListener('click', () => {
                     .replaceAll('START_QUOTE', '<div class="comment-quote">')
                     .replaceAll('END_QUOTE', '</div>')
             }),
-        }).then((response) => {
-            response.json().then(() => {
-                fetch("https://webdev-hw-api.vercel.app/api/v1/marina-obruch/comments", {
-                    method: "GET"
-                }).then((responseAdd) => {
-                    responseAdd.json().then((addJson) => {
-                        comments = addJson.comments;
-
-                        renderComments();
-                    });
-                });
-            });
-        });
-
+        })
+        .then((response) => {
+            return response.json()
+        })
+        .then(() => {
+            return fetchAndRenderTasks();
+        })
 
     // отчистка поля для ввода для новых комментариев
     nameInputElement.value = "";
     commentInputElement.value = "";
-
-    renderComments();
-    initLikeButtons();
-
 });
+
+
+
+renderComments();
+initLikeButtons();
+
 renderComments();
 
 const correctDate = date => {
