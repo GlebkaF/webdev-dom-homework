@@ -9,40 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments" id="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+        <!-- Комментарии рендерятся из JS -->
       </ul>
       <div class="add-form">
         <input id="input-name"
@@ -70,8 +37,79 @@
     const inputName = document.getElementById('input-name');
     const inputComment = document.getElementById('input-comment');
     const buttonForm = document.getElementById('button-form');
-    
-    const comments = document.getElementById('comments');
+    const listElement = document.getElementById('comments');
+
+    const commentsElements = document.querySelectorAll('.comment');
+
+    const comments = [
+      {
+        name: 'Глеб Фокин',
+        time: '12.02.22 12:18',
+        text: 'Это будет первый комментарий на этой странице',
+        likes: 3,
+      },
+      {
+        name: 'Варвара Н.',
+        time: '13.02.22 19:22',
+        text: 'Мне нравится как оформлена эта страница',
+        likes: 75,
+      }
+    ];
+
+    const renderComments = () => {
+      const commentsHtml = comments.map((comment, index) => {
+        return `<li class="comment">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.time}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.likes}</span>
+              <button data-index="${index}" class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+      })
+      .join('');
+
+      listElement.innerHTML = commentsHtml;
+
+      likeTheComments();
+    };
+
+    const likeTheComments = () => {
+      const likeButtons = document.querySelectorAll('.like-button');
+      const likesCounters = document.querySelectorAll('.likes-counter');
+
+      for (const likeButton of likeButtons) {
+        likeButton.addEventListener('click', () => {
+          const index = likeButton.dataset.index;
+
+          let likes = likesCounters[index].innerHTML;
+          likes = Number(likes);
+          console.log(likes);
+
+          if (likeButton.classList.contains('-active-like')) {
+            likeButton.classList.remove('-active-like');
+            likes -= 1;
+          } else {
+            likeButton.classList.add('-active-like');
+            likes += 1;
+            console.log(likes);
+            
+          }
+
+        });
+      }
+    };
+
+    renderComments();
   
     buttonForm.addEventListener('click', (event) => {
       if (inputName.value === '' || inputComment.value === '') {
@@ -80,26 +118,26 @@
 
       const date = new Date();
 
-      const oldComments = comments.innerHTML;
-      comments.innerHTML = oldComments + 
-      `<li class="comment">
-        <div class="comment-header">
-          <div>${inputName.value}</div>
-          <div>${`${("0" + date.getDate()).slice(-2)}.${("0" + (date.getMonth() + 1)).slice(-2)}.${date.getFullYear().toString().slice(-2)} ${("0" + date.getHours()).slice(-2)}:${("0" + date.getMinutes()).slice(-2)}`}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${inputComment.value}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>`;
+      comments.push({
+        name: inputName.value,
+        time: `${`${("0" + date.getDate()).slice(-2)}.${("0" + (date.getMonth() + 1)).slice(-2)}.${date.getFullYear().toString().slice(-2)} ${("0" + date.getHours()).slice(-2)}:${("0" + date.getMinutes()).slice(-2)}`}`,
+        text: inputComment.value,
+        likes: 0,
+      });
+
+      renderComments();
+
+      inputName.value = '';
+      inputComment.value = '';
+
     });
+
+    // Функция лайка
+    // 1. Повесить обработчик событий на кнопку лайка
+    // 2. Сделать так, что при нажатии на кнопку лайка - добавлялся или убирался класс -active-like
+    // 3. Сделать так, что при нажатии на кнопку лайка - прибавлялось или увеличивалосьь количество лайков
+    // Схема: (если на кнопке есть класс -active-like, то этотт класс убирается, а кол-во лайков уменьшается на один)
+    // (в остальных случаях кнопке добавляется класс -active-like, а кол-во лайков увеличивается на один)
 
   </script>
 </html>
