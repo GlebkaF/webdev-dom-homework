@@ -40,6 +40,7 @@
     const inputName = document.querySelector(".add-form-name");
     const inputText = document.querySelector(".add-form-text");
     const form = document.querySelectorAll(".form");
+    const addForm = document.querySelectorAll(".add-form");
     const container = document.querySelector(".container");
     getComments();
 
@@ -110,7 +111,7 @@
       });
 
       if (inputName.value === "" || inputText.value.length < 1) {
-        addFormButton.disabled = true;
+        // addFormButton.disabled = true;
         return;
       } else {
         /*Объявлена функции в функции , так насколько мне известно работать не будет*/
@@ -125,7 +126,8 @@
 
         addFormButton.disabled = true;
         addFormButton.textContent = "Комментарий добавляется, подождите";
-
+        addForm.hidden = true;
+        // form.hiden = true;
         fetch("https://webdev-hw-api.vercel.app/api/v1/eldar/comments", {
           method: "POST",
           body: JSON.stringify({
