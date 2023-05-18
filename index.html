@@ -146,9 +146,8 @@
     addCommentListener();
   }
 
-  //Функция, которая отправляет новый добавленный комментарий на сервер по указанному API
+  // Функция, которая отправляет новый добавленный комментарий на сервер по указанному API
   const sendCommentToServer = (comment) => {
-
     if (addForm) {
       addForm.style.display = 'none';
       loading.style.display = 'block';
@@ -158,8 +157,12 @@
       method: 'POST',
       body: JSON.stringify(comment),
     })
-      .then((response) => response.json())
-
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Ошибка сервера: " + response.status);
+        }
+        return response.json();
+      })
       .then((responseData) => {
         if (addForm) {
           addForm.style.display = 'block';
@@ -168,12 +171,15 @@
         // Обработка ответа сервера
         console.log('Комментарий успешно отправлен на сервер:', responseData);
       })
-
       .catch((error) => {
         // Обработка ошибок при отправке на сервер
         console.error('Ошибка при отправке комментария на сервер:', error);
+        if (comment.name.length < 3 || comment.text.length < 3) {
+          alert("Введите не менее 3 символов");
+        }
       });
   };
+
 
   //Добавление комментария
   const addComment = () => {
@@ -205,7 +211,7 @@
     }
   };
 
-  //Проверка форм на введенные данные
+  // Проверка форм на введенные данные
   const validate = () => {
     const userNameValue = userName.value.trim();
     const textCommentValue = textComment.value.trim();
@@ -220,7 +226,6 @@
       if (userNameValue === "Напишите не менее 3 символов") {
         userName.placeholder = "Напишите не менее 3 символов";
       } else {
-        userName.value = "";
         userName.placeholder = "Напишите не менее 3 символов";
         console.log("Напишите не менее 3 символов (Имя)");
       }
@@ -230,14 +235,19 @@
       if (textCommentValue === "Напишите не менее 3 символов") {
         textComment.placeholder = "Напишите не менее 3 символов";
       } else {
-        textComment.value = "";
         textComment.placeholder = "Напишите не менее 3 символов";
         console.log("Напишите не менее 3 символов (Текст комментария)");
       }
     }
 
-    return isUserNameValid && isTextCommentValid;
+    if (!isUserNameValid || !isTextCommentValid) {
+      alert("Введите не менее 3 символов");
+      return false; // Добавляем эту строку, чтобы прервать выполнение функции
+    }
+
+    return true;
   };
+
 
   //Слушаем кнопку и добавляем комментарий
   button.addEventListener('click', (event) => {
