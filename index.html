@@ -82,6 +82,24 @@
       });
     }
   };
+  const initAnswerButton = () => {
+    const commentsAnswers = document.querySelectorAll('.comment');
+    for (let commentsAnswer of commentsAnswers) {
+      commentsAnswer.addEventListener("click", () => {
+        textElement.value = `> ${commentsAnswer.querySelector('.comment-text').innerHTML
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('&', '&amp;')
+          .replaceAll('"', '&quot;')}`
+          + `\n\n${commentsAnswer.querySelector('.comment-header').children[0].innerHTML
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('&', '&amp;')
+            .replaceAll('"', '&quot;')
+          }`
+      })
+    }
+  }
 
 
 
@@ -104,6 +122,7 @@
     }
 
   ];
+
 
   const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
@@ -130,6 +149,7 @@
       </li>`
     }).join("");
     listElement.innerHTML = commentsHtml;
+    initAnswerButton();
     initLikeButtonListener();
   };
   renderComments();
@@ -165,13 +185,22 @@
     countInLike = 0;
 
     comments.push({
-      name: nameElement.value,
+      name: nameElement.value
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('&', '&amp;')
+        .replaceAll('"', '&quot;'),
       time: now,
       hour: timeNow,
-      text: textElement.value,
+      text: textElement.value
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('&', '&amp;')
+        .replaceAll('"', '&quot;'),
       like: countInLike,
       isLiked: false,
     });
+    initAnswerButton();
     renderComments();
     initLikeButtonListener();
     nameElement.value = "";
