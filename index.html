@@ -41,23 +41,57 @@
 
     let allUsersAndComments = [];
 
+
     function getUsers() {
-        const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/denis-sokurenko/comments", {
+        fetch("https://webdev-hw-api.vercel.app/api/v1/denis-sokurenko/comments", {
             method: "GET",
-        });
-
-        fetchPromise.then((response) => {
-        });
-        fetchPromise.then((response) => {
-            const jsonPromise = response.json();
-
-            jsonPromise.then((responseData) => {
-                console.log(responseData)
-                allUsersAndComments = responseData.comments;
-                renderUsers();
+        })
+            .then((response) => {
+                response.json()
+                    .then((responseData) => {
+                        allUsersAndComments = responseData.comments;
+                        renderUsers();
+                    });
             });
-        });
+
     }
+
+
+
+    buttonEnter.addEventListener("click", () => {
+        if (text.value === "") {
+            return;
+        };
+        buttonEnter.disabled = true;
+        buttonEnter.textContent = 'Комментарий добавляется';
+        fetch("https://webdev-hw-api.vercel.app/api/v1/denis-sokurenko/comments", {
+            method: "POST",
+            body: JSON.stringify({
+                date: new Date().toLocaleDateString('ru-RU', option),
+                likes: 0,
+                isLiked: false,
+                text: text.value.replaceAll("&", "&amp;")
+                    .replaceAll("<", "&lt;")
+                    .replaceAll(">", "&gt;")
+                    .replaceAll('"', "&quot;"),
+                name: nameText.value.replaceAll("&", "&amp;")
+                    .replaceAll("<", "&lt;")
+                    .replaceAll(">", "&gt;")
+                    .replaceAll('"', "&quot;"),
+            })
+        })
+            .then((response) => {
+                return response.json();
+            })
+            .then(() => {
+                getUsers();
+                buttonEnter.disabled = false;
+                buttonEnter.textContent = 'Написать';
+                nameText.value = "";
+                text.value = "";
+            })
+    });
+
 
     getUsers();
 
@@ -90,40 +124,6 @@
 
     };
 
-
-    buttonEnter.addEventListener("click", () => {
-        if (text.value === "") {
-            return;
-        };
-
-
-        fetch("https://webdev-hw-api.vercel.app/api/v1/denis-sokurenko/comments", {
-            method: "POST",
-            body: JSON.stringify({
-                date: new Date().toLocaleDateString('ru-RU', option),
-                likes: 0,
-                isLiked: false,
-                text: text.value.replaceAll("&", "&amp;")
-                    .replaceAll("<", "&lt;")
-                    .replaceAll(">", "&gt;")
-                    .replaceAll('"', "&quot;"),
-                name: nameText.value.replaceAll("&", "&amp;")
-                    .replaceAll("<", "&lt;")
-                    .replaceAll(">", "&gt;")
-                    .replaceAll('"', "&quot;"),
-
-
-            })
-        })
-        getUsers();
-        nameText.value = "";
-        text.value = "";
-
-    });
-
-
-
-
     function refresh() {
 
         const likesUp = document.querySelectorAll(".like-button");
@@ -146,59 +146,9 @@
             });
 
         };
-        // quotes();
+
 
     }
-
-
-
-
-
-
-
-    // buttonEnter.addEventListener("click", () => {
-    //     if (nameText.value === "" && text.value === "") {
-    //         return;
-    //     } else {
-    //         allUsersAndComments.push({
-    //             name: nameText.value.replaceAll("&", "&amp;")
-    //                 .replaceAll("<", "&lt;")
-    //                 .replaceAll(">", "&gt;")
-    //                 .replaceAll('"', "&quot;"),
-    //             time: new Date().toLocaleDateString('ru-RU', option),
-    //             comment: text.value.replaceAll("&", "&amp;")
-    //                 .replaceAll("<", "&lt;")
-    //                 .replaceAll(">", "&gt;")
-    //                 .replaceAll('"', "&quot;"),
-    //             counter: 0,
-    //             quoteText: quoteText,
-    //             isLiked: false,
-    //         })
-
-            // renderUsers();
-            // nameText.value = "";
-            // text.value = "";
-
-            // textAreaText.placeholder = `Введите ваше сообщение`;
-
-    //     }
-    // });
-
-
-    // function quotes() {
-    //     const answersComments = document.getElementsByClassName('comment');
-    //     for (const answerComment of answersComments) {
-    //         answerComment.addEventListener('click', () => {
-
-    //             const comment = answerComment.getElementsByClassName('comment-text')[0].innerHTML;
-    //             const userNameComment = answerComment.getElementsByClassName("name-user")[0].innerHTML;
-    //             textAreaText.placeholder = `Введите ваш ответ пользователю ${userNameComment} `;
-    //             quoteText = `${comment} ${userNameComment}`;
-    //         })
-    //     }
-    // };
-
-
 </script>
 
 </html>
