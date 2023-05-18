@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments" id="ul">
+      <ul class="comments">
         <li class="comment">
           <div class="comment-header">
             <div class="comment-user-name">Глеб Фокин</div>
@@ -167,11 +167,12 @@
     renderComments();
 
     const addComment = () => {
+      const container = document.querySelector('.container')
       formBox.classList.add('hidden');
       let loader = document.createElement('p');
       loader.className = "loader";
       loader.textContent = 'Комментарии загружаются...';
-      ul.appendChild(loader);
+      container.appendChild(loader);
 
       const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/alex-toporov/comments", {
         method: "POST",
