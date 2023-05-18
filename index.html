@@ -159,6 +159,9 @@
     })
       .then((response) => {
         if (!response.ok) {
+          if (response.status === 500) {
+            throw new Error('Server Error');
+          }
           throw new Error("Ошибка сервера: " + response.status);
         }
         return response.json();
@@ -177,9 +180,13 @@
         if (comment.name.length < 3 || comment.text.length < 3) {
           alert("Введите не менее 3 символов");
         }
+        else if (error.message === 'Server Error') {
+          alert('Сервер сломался, попробуй позже');
+        }
+        addForm.style.display = 'block';
+        loading.style.display = 'none';
       });
   };
-
 
   //Добавление комментария
   const addComment = () => {
