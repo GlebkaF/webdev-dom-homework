@@ -32,22 +32,26 @@
   const addFormText = document.getElementById('add-form-text')
 
 
-  const comments = [
-    {
-      name: "Глеб Фокин",
-      date: "12.02.22 12:18",
-      text: "Это будет первый комментарий на этой странице",
-      likes: 3,
-      isLiked: false
-    },
-    {
-      name: "Варвара Н.",
-      date: "13.02.22 19:22",
-      text: "Мне нравится как оформлена эта страница! ❤",
-      likes: 75,
-      isLiked: false
-    }
+  let comments = [
   ]
+
+  fetch('https://webdev-hw-api.vercel.app/api/v1/sergey-bondarenko/comments', {
+    method: "GET",
+  }).then((response) => {
+    response.json().then((responseData) => {
+      const appComents = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: new Date(comment.date),
+          text: comment.text,
+          likes: comment.likes,
+          isLiked: false,
+        }
+      })
+      comments = appComents
+      renderComments()
+    })
+  })
 
   const editCommentText = () => {
     const commentElements = document.querySelectorAll('.comment')
@@ -81,14 +85,26 @@
   initLikeButtons()
 
   const renderComments = () => {
-    let commentsHtml = comments.map((comment, index) => {
+    const commentsHtml = comments.map((comment, index) => {
       return `<li class="comment" data-index="${index}">
         <div class="comment-header">
-          <div class="comment-name" data-index="${index}">${comment.name}</div>
-          <div>${comment.date}</div>
+          <div class="comment-name" data-index="${index}">${comment.name
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")}</div>
+          <div>
+            ${comment.date}
+            </div>
         </div>
         <div class="comment-body">
-          <div class="comment-text">${comment.text}</div>
+          <div class="comment-text">
+            ${comment.text
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")}
+            </div>
         </div>
         <div class="comment-footer">
           <div class="likes">
@@ -132,18 +148,7 @@
   //   comments[index].likes += 1
 
   // }
-
-
-  addFormButton.addEventListener('click', () => {
-    addFormName.classList.remove('error')
-    addFormText.classList.remove('error')
-    if (addFormName.value === "") {
-      return addFormName.classList.add('error')
-    }
-    if (addFormText.value === "") {
-      return addFormText.classList.add('error')
-    }
-
+  function getDate() {
     let myDate = new Date()
 
 
@@ -160,20 +165,63 @@
     let month = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
     let year = Number(String(myDate.getFullYear()).substring(2))
     let userDate = day + "." + month[myDate.getMonth()] + "." + year + ' ' + hours + ":" + minutes
+    return userDate
+  }
 
-    comments.push(
-      {
-        name: addFormName.value
-          .replaceAll('<', '&lt')
-          .replaceAll('>', '&gt'),
-        date: userDate,
-        text: addFormText.value
-          .replaceAll('<', '&lt')
-          .replaceAll('>', '&gt'),
-        likes: 0,
-        isLiked: false,
-      }
-    )
+  addFormButton.addEventListener('click', () => {
+    addFormName.classList.remove('error')
+    addFormText.classList.remove('error')
+    if (addFormName.value === "") {
+      return addFormName.classList.add('error')
+    }
+    if (addFormText.value === "") {
+      return addFormText.classList.add('error')
+    }
+
+    fetch('https://webdev-hw-api.vercel.app/api/v1/sergey-bondarenko/comments', {
+      method: "POST",
+      body: JSON.stringify({
+        name: addFormName.value,
+        text: addFormText.value,
+      })
+    }).then((response) => {
+      response.json().then((responseData) => {
+        comments = responseData.comments
+        renderComments()
+      })
+    })
+
+    fetch('https://webdev-hw-api.vercel.app/api/v1/sergey-bondarenko/comments', {
+    method: "GET",
+  }).then((response) => {
+    response.json().then((responseData) => {
+      const appComents = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: new Date(comment.date),
+          text: comment.text,
+          likes: comment.likes,
+          isLiked: false,
+        }
+      })
+      comments = appComents
+      renderComments()
+    })
+  })
+
+    // comments.push(
+    //   {
+    //     name: addFormName.value
+    //       .replaceAll('<', '&lt')
+    //       .replaceAll('>', '&gt'),
+    //     date: getDate(),
+    //     text: addFormText.value
+    //       .replaceAll('<', '&lt')
+    //       .replaceAll('>', '&gt'),
+    //     likes: 0,
+    //     isLiked: false,
+    //   }
+    // )
 
 
     renderComments()
