@@ -8,23 +8,26 @@
 
   <body>
     <div class="container">
+      <div id="timeLoad">Подождите коментарии загружаются</div>
       <ul id="comments" class="comments">
       </ul>
-      <div class="add-form" id="form">
-        <input id="userName"
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea id="userComment"
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button id="addComment" class="add-form-button">Написать</button>
-          <button id="deleteComment" class="del-form-button">Удалить последний комментарий</button>
+      <div id="formContain">
+        <div class="add-form" id="form">
+          <input id="userName"
+            type="text"
+            class="add-form-name"
+            placeholder="Введите ваше имя"
+          />
+          <textarea id="userComment"
+            type="textarea"
+            class="add-form-text"
+            placeholder="Введите ваш коментарий"
+            rows="4"
+          ></textarea>
+          <div class="add-form-row">
+            <button id="addComment" class="add-form-button">Написать</button>
+            <button id="deleteComment" class="del-form-button">Удалить последний комментарий</button>
+          </div>
         </div>
       </div>
     </div>
@@ -41,6 +44,7 @@
     const likeElement = document.getElementById("like");
     const inputEnter = document.querySelector('.add-form');
     const formElement = document.getElementById("form");
+    const timeLoadElement = document.getElementById("timeLoad");
 
     let currentDate = new Date();
     const shortDate = (value) => {
@@ -55,11 +59,13 @@
     }
 
     let arrComments = [];
+
     const getComments = () => {
-      fetch("https://webdev-hw-api.vercel.app/api/v1/maxim/comments", {
+     return fetch("https://webdev-hw-api.vercel.app/api/v1/maxim/comments", {
   method: "GET",
 }).then((response) => {
-  const jsonPromise = response.json().then((responseData) => {
+  return response.json()
+}).then((responseData) => {
     const appComments = responseData.comments.map((comment) => {
       return {
           name: comment.author.name,
@@ -72,12 +78,11 @@
     arrComments = appComments;
     renderComments();
   });
-});
-
 }
 
-    getComments();
-
+    getComments().then((response) => {
+      timeLoadElement.style.display = "none"
+    });
     
     const switchLike = () => {
       let byttonLike = document.querySelectorAll(".like-button");
@@ -85,7 +90,9 @@
         button.addEventListener("click", (event) => {
           event.stopPropagation();
           const index = button.dataset.index;
-         if (arrComments[index].likeStatus === " -active-like") {
+         button.classList.add("-loading-like");
+          delay(2000).then(() => {
+            if (arrComments[index].likeStatus === " -active-like") {
           arrComments[index].likeCounter -=1;
           arrComments[index].likeStatus = "";
           renderComments();
@@ -94,18 +101,20 @@
           arrComments[index].likeStatus = " -active-like";
           renderComments();
          }
+          });
         })
       }
       
     }
 
     const replyToComment = () => {
+      const userCommentElement = document.getElementById("userComment");
       let comments = document.querySelectorAll(".comment");
       for (const comment of comments) {
         comment.addEventListener("click", () => {
+          const userCommentElement = document.getElementById("userComment");
           const index = comment.dataset.index;
          userCommentElement.value = `QUOTE_BEGIN ${arrComments[index].name} - "${arrComments[index].text}"QUOTE_END`;
-          
         })
       }
     }
@@ -140,33 +149,46 @@
     replyToComment();
     }
    
+    function delay(interval = 300) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, interval);
+      });
+}
 
-    
-const checkAndAdd = () => {
+    const checkAndAdd = () => {
+  const commentsElement = document.getElementById("comments");
+  const userCommentElement = document.getElementById("userComment");
+    const userNameElement = document.getElementById("userName");
   if (userNameElement.value === "" || userCommentElement.value === "") {
      addCommentElement.disabled = true;
      setTimeout(() => addCommentElement.disabled = false, 1000);
      return;}
-     fetch("https://webdev-hw-api.vercel.app/api/v1/maxim/comments", {
+     let oldForm = formElement.innerHTML;
+     formElement.innerHTML = `<span style='text-align:center'>Коментарий добавляется...</span>`;
+    fetch("https://webdev-hw-api.vercel.app/api/v1/maxim/comments", {
         method: "POST",
         body: JSON.stringify({
           name: userNameElement.value,
-          text: userCommentElement.value,
-      })
+          text: userCommentElement.value,})
       }).then((response) => {
-        response.json().then((responseData) => {
+        return response.json()
+      }).then((responseData) => {
           arrComments = responseData.comments;
-          getComments();
+          return getComments();
+        }).then(()=>{
+          formElement.innerHTML = oldForm;
         });
-      });
-      
         userNameElement.value = "";
         userCommentElement.value = "";
 }
 
 
+    document.getElementById("formContain").addEventListener("click", event => {
+      if (event.target.className === "add-form-button") checkAndAdd();
+    });
 
-    addCommentElement.addEventListener("click", checkAndAdd);
     inputEnter.addEventListener('keyup', function(event){
       if (event.key === "Enter") {
         checkAndAdd();
