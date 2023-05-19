@@ -128,7 +128,7 @@
         addFormButton.textContent = "Комментарий добавляется, подождите";
         addForm.hidden = true;
         // form.hiden = true;
-        fetch("https://webdev-hw-api.vercel.app/api/todos/with-error", {
+        fetch("https://webdev-hw-api.vercel.app/api/v1/eldar/comments", {
           method: "POST",
           body: JSON.stringify({
             text: inputText.value
