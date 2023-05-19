@@ -128,7 +128,7 @@
         addFormButton.textContent = "Комментарий добавляется, подождите";
         addForm.hidden = true;
         // form.hiden = true;
-        fetch("https://webdev-hw-api.vercel.app/api/v1/eldar/comments", {
+        fetch("https://webdev-hw-api.vercel.app/api/todos/with-error", {
           method: "POST",
           body: JSON.stringify({
             text: inputText.value
@@ -164,6 +164,14 @@
             addFormButton.disabled = false;
             addFormButton.textContent = "Написать";
             addForm.hidden = false;
+            inputName.value = "";
+            inputText.value = "";
+          })
+          .catch((error) => {
+            addFormButton.disabled = false;
+            addFormButton.textContent = "Написать";
+            alert("чето не так");
+            console.warn(error);
           });
       }
 

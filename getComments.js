@@ -1,7 +1,7 @@
 const loader = document.querySelector(".loader");
 function getComments() {
   const fetchPromise = fetch(
-    "https://webdev-hw-api.vercel.app/api/v1/eldar/comments",
+    "https://webdev-hw-api.vercel.app/api/todos/with-error",
     {
       method: "GET",
     }
@@ -23,4 +23,4 @@ function getComments() {
     });
   });
 }
-
+// "https://webdev-hw-api.vercel.app/api/v1/eldar/comments",
