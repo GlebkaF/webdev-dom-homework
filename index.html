@@ -8,6 +8,7 @@
 
   <body>
     <div class="container">
+      <p id="loading-comments">Пожалуйста, подождите, загружаю комментарии...</p>
       <ul id="list" class="comments">
         <!-- The list is rendering from JS --> 
       </ul>
@@ -78,10 +79,13 @@
 
       // Data from API
 
+
         const fetchComments = () => {
           fetch("https://webdev-hw-api.vercel.app/api/v1/mariia-goppa/comments", {
           method: "GET",
         }).then((response) => {
+          const loadingComments = document.getElementById('loading-comments');
+          loadingComments.style.display = 'none';
         return response.json();
         })
         .then((responseData) => {
@@ -261,7 +265,8 @@
               text: commentInputElement.value, 
               name: nameInputElement.value,
             }),
-          }).then((response) => {
+          })
+          .then((response) => {
             fetchComments();
           });
         };
