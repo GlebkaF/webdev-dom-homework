@@ -21,6 +21,7 @@
         <button class="add-form-button" id="cancel-button">Удалить коментарий</button>
       </div>
     </div>
+    <div class="downloading">Комментарий загружается...</div>
   </div>
 </body>
 
@@ -33,30 +34,12 @@
 
 <script>
   "use strict";
-  const textInputElement = document.getElementById('textInput');
   const commentsListElement = document.getElementById('commentsList');
-  const buttonElement = document.getElementById('add-button');
-  const nameInputElement = document.getElementById('nameInput');
   const cancelButtonElement = document.getElementById('cancel-button');
+  const formElement = document.querySelector('.add-form');
 
-  const comments = [
-    {
-      name: 'Глеб Фокин',
-      date: '12.02.22 12:18',
-      text: 'Это будет первый комментарий на этой странице',
-      likes: 3,
-      isLiked: false,
-      isEdit: false
-    },
-    {
-      name: 'Варвара Н.',
-      date: '13.02.22 19:22',
-      text: 'Мне нравится как оформлена эта страница! ❤',
-      likes: 75,
-      isLiked: false,
-      isEdit: false
-    }
-  ];
+  let comments = [];
+
 
   function getDate(currentDate = new Date()) {
     let day = currentDate.getDate();
@@ -69,6 +52,9 @@
     }
     if (minutes < 10) {
       minutes = "0" + minutes;
+    }
+    if (hour < 10) {
+      hour = "0" + hour;
     }
     if (day < 10) {
       day = "0" + day;
@@ -131,6 +117,9 @@
   };
 
   const initDisabledButton = () => {
+    const buttonElement = document.getElementById('add-button');
+    const nameInputElement = document.getElementById('nameInput');
+    const textInputElement = document.getElementById('textInput');
     buttonElement.disabled = true;
     buttonElement.classList.add('disabledButton');
     buttonElement.classList.remove('add-form-button:hover');
@@ -163,6 +152,24 @@
     });
   };
 
+  // const renderForm = () => {
+  //   formElement.innerHTML = `
+  //   <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="nameInput" />
+  //     <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
+  //       id="textInput"></textarea>
+  //     <div class="add-form-row">
+  //       <button class="add-form-button" id="add-button">Написать</button>
+  //       <button class="add-form-button" id="cancel-button">Удалить коментарий</button>`;
+
+  //   initDisabledButton();
+
+  //   const cancelButtonElement = document.getElementById('cancel-button');
+  //   cancelButtonElement.addEventListener('click', () => {
+  //     comments.splice(-1, 1);
+  //     renderComments();
+  //   });
+  // };
+
 
 
   const renderComments = () => {
@@ -170,13 +177,23 @@
       .map((comment, index) => {
         return `<li class="comment" data-index='${index}'>
         <div class="comment-header">
-          <div>${comment.name}</div>
-          <div>${comment.date}</div>
+          <div>${comment.name
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")}</div>
+          <div>${getDate(comment.date)}</div>
         </div>
         <div class="comment-body">
           ${comment.isEdit ? `<textarea type="textarea" class="add-form-text" rows="4"
         id="textInput">${comment.text}</textarea>` : `<div class="comment-text">
-            ${comment.text.replaceAll('QUOTE_BEGIN', "<div class='quote'>").replaceAll('QUOTE_END', '</div>')}
+            ${comment.text
+            .replaceAll('QUOTE_BEGIN', "<div class='quote'>")
+            .replaceAll('QUOTE_END', '</div>')
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")}
           </div>`}          
         </div>
         <div class="comment-footer">
@@ -197,34 +214,71 @@
     initLikeButtonListeners();
     initEditButtonListeners();
     initDisabledButton();
+
   };
-  renderComments();
+
+
+  const getComments = () => {
+    fetch('https://webdev-hw-api.vercel.app/api/v1/katerina-nosova/comments', {
+      method: 'GET'
+    }).then((response) => {
+      response.json().then((responseData) => {
+        //преобразование данных формата api в наш формат
+        comments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: new Date(comment.date),
+            text: comment.text,
+            likes: comment.likes,
+            isLiked: false
+          };
+        });
+        renderComments();
+      });
+    });
+  };
+  getComments();
+  // renderForm();
+
+  const textInputElement = document.getElementById('textInput');
+  const nameInputElement = document.getElementById('nameInput');
+  const buttonElement = document.getElementById('add-button');
+
+  const toggleForm = (isLoading) => {
+    if (isLoading) {
+      document.querySelector('.add-form').style.display = 'none';
+      document.querySelector('.downloading').style.display = 'flex';
+    }
+    else {
+      document.querySelector('.add-form').style.display = 'flex';
+      document.querySelector('.downloading').style.display = 'none';
+    }
+  };
+
 
   buttonElement.addEventListener('click', () => {
-    comments.push({
-      name: nameInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-      date: getDate(),
-      text: textInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-      likes: 0,
-      isLiked: false,
-      isEdit: false
-    });
-    renderComments();
+    toggleForm(true);
+    const postComments = () => {
+      fetch('https://webdev-hw-api.vercel.app/api/v1/katerina-nosova/comments', {
+        method: 'POST',
+        body: JSON.stringify({
+          text: textInputElement.value,
+          name: nameInputElement.value
+        })
+      }).then((response) => {
+        response.json().then((responseData) => {
+          comments = responseData.comments;
+          getComments();
+          toggleForm(false);
+        });
+      });
+    };
+
+    postComments();
+
+
     nameInputElement.value = '';
     textInputElement.value = '';
-  });
-
-  cancelButtonElement.addEventListener('click', () => {
-    comments.splice(-1, 1);
-    renderComments();
   });
 
 </script>
