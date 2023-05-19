@@ -30,6 +30,25 @@
     background-color: gainsboro;
     color: grey;
   }
+
+  @keyframes rotating {
+    from {
+      transform: rotate(0deg);
+    }
+    25% {
+      transform: rotate(30deg);;
+    }
+    75% {
+      transform: rotate(-30deg);;
+    }
+    to {
+      transform: rotate(0deg);
+    }
+  }
+
+  .-loading-like {
+    animation: rotating 2s linear infinite;
+  }
 </style>
 
 <script>
@@ -40,6 +59,13 @@
 
   let comments = [];
 
+  function delay(interval = 300) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, interval);
+    });
+  };
 
   function getDate(currentDate = new Date()) {
     let day = currentDate.getDate();
@@ -99,19 +125,23 @@
     const likeButtonElements = document.querySelectorAll('.like-button');
     for (const likeButtonElement of likeButtonElements) {
       likeButtonElement.addEventListener('click', (e) => {
+        likeButtonElement.disabled = true;
+        likeButtonElement.classList.add('-loading-like');
         e.stopPropagation();
         const index = likeButtonElement.dataset.index;
 
-        if (comments[index].isLiked === false) {
-          comments[index].likes++;
-          comments[index].isLiked = true;
-        }
+        delay(2000).then(() => {
+          if (comments[index].isLiked === false) {
+            comments[index].likes++;
+            comments[index].isLiked = true;
+          }
 
-        else {
-          comments[index].likes = --comments[index].likes;
-          comments[index].isLiked = false;
-        }
-        renderComments();
+          else {
+            comments[index].likes = --comments[index].likes;
+            comments[index].isLiked = false;
+          }
+          renderComments();
+        });
       });
     };
   };
@@ -152,7 +182,7 @@
     });
   };
 
-  
+
   const renderComments = () => {
     const commentsHtml = comments
       .map((comment, index) => {
@@ -221,7 +251,7 @@
       });
   };
   getComments();
- 
+
 
   const textInputElement = document.getElementById('textInput');
   const nameInputElement = document.getElementById('nameInput');
