@@ -8,11 +8,12 @@
 
   <body>
     <div class="container">
-      <p id="loading-comments">Пожалуйста, подождите, загружаю комментарии...</p>
+      <p id="comments-loader">Пожалуйста, подождите, загружаю комментарии...</p>
       <ul id="list" class="comments">
         <!-- The list is rendering from JS --> 
       </ul>
       <div class="add-form">
+        <p id="new-comment-loader" class="hidden">Комментарий добавляется...</p>
         <input id="name-input" value=""
           type="text"
           class="add-form-name"
@@ -81,10 +82,10 @@
 
 
         const fetchComments = () => {
-          fetch("https://webdev-hw-api.vercel.app/api/v1/mariia-goppa/comments", {
+          return fetch("https://webdev-hw-api.vercel.app/api/v1/mariia-goppa/comments", {
           method: "GET",
         }).then((response) => {
-          const loadingComments = document.getElementById('loading-comments');
+          let loadingComments = document.getElementById('comments-loader');
           loadingComments.style.display = 'none';
         return response.json();
         })
@@ -92,7 +93,7 @@
             userComments = responseData.comments.map((comment) => {
             return {
               name: comment.author.name,
-              date: time(comment.date),
+              date: new Date(comment.date).toLocaleString().slice(0, -3),
               comment: comment.text,
               likeCounter: 0,
               isLiked: false,
@@ -259,21 +260,32 @@
       // Post from API
 
       const postComment = () => {
+
+        let loadingComments = document.getElementById('new-comment-loader');
+        loadingComments.classList.remove('hidden');
+
           fetch("https://webdev-hw-api.vercel.app/api/v1/mariia-goppa/comments", {
             method: "POST",
             body: JSON.stringify({ 
               text: commentInputElement.value, 
               name: nameInputElement.value,
+              dates: time(),
+              likeCounter: 0,
             }),
           })
           .then((response) => {
-            fetchComments();
+            return fetchComments();
+          })
+          .then((response) => {
+            let loadingComments = document.getElementById('new-comment-loader');
+            loadingComments.classList.add('hidden');
           });
         };
 
         postComment();
 //
         renderUserComments();
+        
 //
         nameInputElement.value = "";
         commentInputElement.value = "";
