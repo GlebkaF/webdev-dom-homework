@@ -3,13 +3,21 @@ const commentName = document.querySelector('.add-form-name');
 const commentText = document.querySelector('.add-form-text');
 const commentsList = document.querySelector('.comments');
 const addForm = document.querySelector('.add-form');
+const container = document.querySelector('.container');
+
+const loadingMessage = document.createElement('h3');
+loadingMessage.classList.add('hidden');
+loadingMessage.textContent = 'Список комментариев загружается...';
+container.prepend(loadingMessage);
+
+const postMessage = document.createElement('h3');
+postMessage.classList.add('hidden');
+postMessage.textContent = 'Комментарий публикуется...';
+container.appendChild(postMessage);
 
 let comments = [];
 
 function getData () {
-
-    addButton.disabled = true;
-    addButton.textContent = 'Список обновляется';
 
     fetch("https://webdev-hw-api.vercel.app/api/v1/daria/comments", {
         method: "GET",
@@ -30,13 +38,24 @@ function getData () {
         
             comments = appComments;
             renderComments();  
-            
-            addButton.disabled = false;
-            addButton.textContent = 'Написать';
+
+            loadingMessage.classList.add('hidden');
+            addForm.classList.remove('hidden');
+            postMessage.classList.add('hidden');
         })
 }
 
-getData();
+function startPage() {
+    commentsList.classList.add('hidden');
+    loadingMessage.classList.add('message');
+    loadingMessage.classList.remove('hidden');
+
+    getData();
+
+    commentsList.classList.remove('hidden');
+}
+
+startPage();
 
 const initLikesButton = () => {
     const likesButtons = document.querySelectorAll('.like-button');
@@ -154,9 +173,6 @@ renderComments();
 
 const addToServer = (comment) => {
     
-    addButton.disabled = true;
-    addButton.textContent = 'Публикуется...';
-
     fetch ("https://webdev-hw-api.vercel.app/api/v1/daria/comments", {
         method: "POST",
         body: JSON.stringify(comment)
@@ -167,7 +183,7 @@ const addToServer = (comment) => {
             console.log(responseData);
             return getData();
         })
-    }
+}
 
 const addToList = () => {
 
@@ -193,8 +209,6 @@ const addToList = () => {
         likeStatus: false,
     }
 
-    console.log(newComment);
-
     addToServer(newComment);
 
     commentName.value = '';
@@ -218,8 +232,13 @@ commentText.addEventListener('input', () => {
         return;
 })
 
-addButton.addEventListener('click', () => {
+addButton.addEventListener('click', (e) => {
+
+    addForm.classList.add('hidden');
+    postMessage.classList.remove('hidden');
+    
     addToList();
+
 })
 
 addForm.addEventListener('keyup', (event) => {
