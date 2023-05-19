@@ -265,19 +265,19 @@
 
     // Функция текущей даты и времени
 
-    // function formatDateTime(date) {
-    //   const day = date.getDate().toString().padStart(2, '0');
-    //   const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    //   const year = date.getFullYear().toString().slice(-2);
-    //   const hours = date.getHours().toString().padStart(2, '0');
-    //   const minutes = date.getMinutes().toString().padStart(2, '0');
-    //   const timeString = hours + ':' + minutes;
-    //   const formatedDate = `${day}.${month}.${year} ${timeString}`;
-    //   return formatedDate;
-    // }
+    function formatDateTime(date) {
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear().toString().slice(-2);
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      const timeString = hours + ':' + minutes;
+      const formatedDate = `${day}.${month}.${year} ${timeString}`;
+      return formatedDate;
+    }
 
-    // const currentDate = new Date();
-    // formatDateTime(currentDate);
+    const currentDate = new Date();
+    formatDateTime(currentDate);
 
     // Пуш комментариев пользователя в массив с заменой html символов 
 
@@ -316,8 +316,6 @@
       const jsonPromise = response.json();
       jsonPromise.then((responseData) => {
         console.log(responseData);
-        usersComments = responseData.comments;
-        renderUsersComments();
       });
     });
 
@@ -327,6 +325,34 @@
       {
         method: "GET"
       });
+
+    fetchPromiseNew.then((response) => {
+      const jsonPromise = response.json();
+      jsonPromise.then((responseData) => {
+        usersComments = responseData.comments.map((comment) => {
+          const commentDate = new Date(comment.date);
+          const day = commentDate.getDate();
+          const month = commentDate.getMonth() + 1;
+          const year = commentDate.getFullYear();
+          const formattedDate = `${day < 10 ? "0" : ""}${day}.${month < 10 ? "0" : ""}${month}.${year}`;
+          const hours = commentDate.getHours();
+          const minutes = commentDate.getMinutes();
+          const formattedTime = `${hours < 10 ? "0" : ""}${hours}:${minutes < 10 ? "0" : ""}${minutes}`;
+          const formattedDateTime = `${formattedDate} ${formattedTime}`;
+
+          return {
+            name: comment.author.name,
+            date: formattedDateTime,
+            text: comment.text,
+            likes: comment.likes,
+            isLikes: false,
+          };
+        });
+
+        renderUsersComments();
+      });
+    });
+
 
     checkCommentFields();
     renderUsersComments();
