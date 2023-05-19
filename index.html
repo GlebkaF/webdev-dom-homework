@@ -35,23 +35,41 @@
   let comments = [
   ]
 
-  fetch('https://webdev-hw-api.vercel.app/api/v1/sergey-bondarenko/comments', {
-    method: "GET",
-  }).then((response) => {
-    response.json().then((responseData) => {
-      const appComents = responseData.comments.map((comment) => {
-        return {
-          name: comment.author.name,
-          date: new Date(comment.date),
-          text: comment.text,
-          likes: comment.likes,
-          isLiked: false,
-        }
+  function getApiFunction() {
+    fetch('https://webdev-hw-api.vercel.app/api/v1/sergey-bondarenko/comments', {
+      method: "GET",
+    }).then((response) => {
+      response.json().then((responseData) => {
+        const appComents = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: comment.date,
+            text: comment.text,
+            likes: comment.likes,
+            isLiked: false,
+          }
+        })
+        comments = appComents
+        renderComments()
       })
-      comments = appComents
-      renderComments()
     })
-  })
+  }
+  getApiFunction()
+
+  function postApiFunction() {
+      fetch('https://webdev-hw-api.vercel.app/api/v1/sergey-bondarenko/comments', {
+      method: "POST",
+      body: JSON.stringify({
+        name: addFormName.value,
+        text: addFormText.value,
+      })
+    }).then((response) => {
+      response.json().then((responseData) => {
+        getApiFunction()
+        renderComments()
+      })
+    })
+    }
 
   const editCommentText = () => {
     const commentElements = document.querySelectorAll('.comment')
@@ -94,7 +112,7 @@
           .replaceAll(">", "&gt;")
           .replaceAll('"', "&quot;")}</div>
           <div>
-            ${comment.date}
+            ${getDate(comment.date)}
             </div>
         </div>
         <div class="comment-body">
@@ -148,8 +166,8 @@
   //   comments[index].likes += 1
 
   // }
-  function getDate() {
-    let myDate = new Date()
+  function getDate(date) {
+    let myDate = new Date(date)
 
 
     let hours = myDate.getHours()
@@ -178,36 +196,8 @@
       return addFormText.classList.add('error')
     }
 
-    fetch('https://webdev-hw-api.vercel.app/api/v1/sergey-bondarenko/comments', {
-      method: "POST",
-      body: JSON.stringify({
-        name: addFormName.value,
-        text: addFormText.value,
-      })
-    }).then((response) => {
-      response.json().then((responseData) => {
-        comments = responseData.comments
-        renderComments()
-      })
-    })
+    postApiFunction()
 
-    fetch('https://webdev-hw-api.vercel.app/api/v1/sergey-bondarenko/comments', {
-    method: "GET",
-  }).then((response) => {
-    response.json().then((responseData) => {
-      const appComents = responseData.comments.map((comment) => {
-        return {
-          name: comment.author.name,
-          date: new Date(comment.date),
-          text: comment.text,
-          likes: comment.likes,
-          isLiked: false,
-        }
-      })
-      comments = appComents
-      renderComments()
-    })
-  })
 
     // comments.push(
     //   {
