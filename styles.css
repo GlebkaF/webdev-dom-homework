@@ -1,3 +1,19 @@
+@keyframes rotating {
+  from {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(30deg);;
+  }
+  75% {
+    transform: rotate(-30deg);;
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+
 body {
   margin: 0;
 }
@@ -212,4 +228,13 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   display: none;
+}
+.loading-title {
+padding-bottom: 40px;
+box-sizing: border-box;
+}
+
+
+.-loading-like {
+  animation: rotating 2s linear infinite;
 }
