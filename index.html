@@ -53,6 +53,7 @@
     // },
   ];
 
+  getFromApi();
 
   function getFromApi() {
     fetch("https://webdev-hw-api.vercel.app/api/v1/freddy-krugliy/comments", {
@@ -163,7 +164,6 @@
     likeButtonsListeners();
     editButtonsListeners();
     replyToCommentListeners();
-    getFromApi();
   };
 
   renderComments();
@@ -230,7 +230,7 @@
         }).then((responce) => {
           responce.json().then((responceData) => {
             comments = responceData.comments;
-            renderComments();
+            getFromApi();
           })
         })
       }
