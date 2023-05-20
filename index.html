@@ -9,6 +9,7 @@
 
 <body>
   <div class="container">
+    <div class="loading" style="display: none;">Комментарии загружаются...</div>
     <ul class="comments" id="list-comments">
       <!-- Список комментариев рендерится из JS -->
     </ul>
@@ -52,7 +53,31 @@
     // },
   ];
 
-  getFromApi();
+  getFromApiFirstTime();
+
+
+  function showLoading() {
+    document.querySelector('.loading').style.display = 'block';
+  };
+
+  function hideLoading() {
+    document.querySelector('.loading').style.display = 'none';
+  };
+
+
+  function getFromApiFirstTime() {
+    showLoading();
+
+    return fetch("https://webdev-hw-api.vercel.app/api/v1/freddy-krugliy/comments", {
+      method: "GET",
+    }).then((responce) => {
+      hideLoading();
+      return responce.json();
+    }).then((responceData) => {
+      comments = responceData.comments;
+      renderComments();
+    })
+  };
 
 
   function getFromApi() {
