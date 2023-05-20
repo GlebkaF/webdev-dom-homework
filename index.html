@@ -167,6 +167,8 @@
     renderComments();
 
     const addComment = () => {
+      let shortName = inputName.value;
+      let shortComment = textAreaComment.value;
       const container = document.querySelector('.container')
       formBox.classList.add('hidden');
       let loader = document.createElement('p');
@@ -186,12 +188,21 @@
           .replaceAll('<', '&gt;')}`,
           name: inputName.value
           .replaceAll('<', '&lt;')
-          .replaceAll('<', '&gt;'), 
+          .replaceAll('<', '&gt;'),
+          forceError: true, 
           })
         })
 
         .then((response) => {
-          return response.json();
+          if (response.status === 400) {
+            alert('Введите больше трех символов');
+            inputName.value = shortName;
+            textAreaComment.value = shortComment;
+          } else if (response.status === 500) {
+            throw new Error('Сервер упал');
+          } else {
+            return response.json();
+          }
         })
 
         .then((responseData) => {
@@ -201,6 +212,12 @@
         .then(() => {
           return getApi();
           return renderComments();
+        })
+
+        .catch((error) => {
+          alert('Сервер упал');
+          inputName.value = shortName;
+          textAreaComment.value = shortComment;
         })
 
         .then((data) => {
