@@ -93,17 +93,14 @@
         likeButton.addEventListener('click', () => {
           const index = likeButton.dataset.index;
 
-          if (comments[index].isLiked = '') {
+          if (likeButton.classList.contains('-active-like')) {
+            comments[index].isLiked = '';
+            comments[index].likes = comments[index].likes - 1;
+          } else {
             comments[index].isLiked = '-active-like';
+            comments[index].likes = comments[index].likes + 1;
           }
-
-          console.log(comments[index].isLiked);
-
           renderComments();
-
-          // let likes = likesCounters[index].innerHTML;
-          // likes = Number(likes);
-          // console.log(likes);
 
         });
       }
