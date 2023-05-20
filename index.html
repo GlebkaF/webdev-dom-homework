@@ -38,10 +38,14 @@
     .validation {
       box-shadow: 0 0 10px 4px rgba(255, 0, 0, 1);
     }
-    .active-like-button {
-      background-color: #BCEC30;
+    .replyComment {
+      background-color: #fff;
+      font-size: 14px;
+      color: black;
+      padding: 15px;
+      border-radius: 10px;
+      white-space: pre-line
     }
-
     
   </style>
 
@@ -55,28 +59,56 @@
 
   
    
-    const comments = [
-      {
-        name: "Глеб Фокин",
-        comment: "Это будет первый комментарий на этой странице",
-        date: "12.02.22 12:18",
-        likes: 3,
-        isActive: false,
-      },
-      {
-        name: "Варвара Н",
-        comment: "Мне нравится как оформлена эта страница! ❤",
-        date: '13.02.22 19:22',
-        likes: 75,
-        isActive: true,
-      },
-    ]
+    let comments = [];
+
+    const commentsFetch = fetch("https://webdev-hw-api.vercel.app/api/v1/viktoria-kolosova/comments", {
+      method: "GET",
+    });
 
 
+    // Достаем список из API
+    commentsFetch.then((response) => {
+      const commentsJSON = response.json().then((responseData) => {
+        console.log(responseData);
+
+        comments = responseData.comments.map((comment) => {
+          const date = new Date(comment.date);
+          let minutes = date.getMinutes();
+          if (minutes < 10) {
+            minutes = "0" +  minutes;
+          }
+          let hours = date.getHours();
+            if (hours < 10) {
+              hours = "0" + hours;
+            }
+          const time = hours + ":" + minutes;
+          let day = date.getDate();
+            if (day < 10) {
+              day = "0" + day;
+            }
+          let month = date.getMonth() + 1 ;
+            if (month < 10) {
+              month = "0" + month;
+            }
+          return {
+            name: comment.author.name,
+            date: day + "." + month + "." + date.getFullYear().toString().substr(-2) + " " + time,
+            text: comment.text,
+            likes: comment.likes,
+            isActive: comment.isLiked,
+          }
+        })
+        renderComments();
+      })
+    })
+
+
+   // Обработчик лайков
     const likeCountButtonListener = () => {
       const likeButtonElements = document.querySelectorAll('.like-button');
       for (const likeButtonElement of likeButtonElements) {
         likeButtonElement.addEventListener('click', () => {
+          event.stopPropagation();
           let index = likeButtonElement.dataset.index;
           if (comments[index].isActive == false) {
             comments[index].likes++;
@@ -92,34 +124,53 @@
 
     likeCountButtonListener();
 
+    // Ответ на комментарий
+    const replyCommentsListener = () => {
+      const replyButtonElements = document.querySelectorAll('.comment');
+       for (const replyButtonElement of replyButtonElements) {
+        replyButtonElement.addEventListener('click', () => {
+          let index = replyButtonElement.dataset.index;
+          commentElement.value =`Quote_start${comments[index].name}: New_line ${comments[index].comment} Quote_end`
+          renderComments();
+        })
+      } 
 
+    }
+    replyCommentsListener();
+
+
+    // Рендер комментариев в HTML
     const renderComments = () => {
-      const commentsHtml = comments.map((i, index) => {
-          return `<li class="comment">
+      const commentsHtml = comments.map((comment, index) => {
+          return `<li class="comment" data-index="${index}">
           <div class="comment-header">
-            <div>${i.name}</div>
-            <div>${i.date}</div>
+            <div>${comment.name}
+                </div>
+            <div>${comment.date}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${i.comment}
+              ${comment.text
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">${i.likes}</span>
-              <button data-index="${index}" id="likes-button" class="like-button ${i.isActive ? "-active-like" : ""}"></button>
+              <span class="likes-counter">${comment.likes}</span>
+              <button data-index="${index}" id="likes-button" class="like-button ${comment.isActive ? "-active-like" : ""}"></button>
             </div>
           </div>
         </li>`
       }).join('');
       commentsArea.innerHTML = commentsHtml;
       likeCountButtonListener();
+      replyCommentsListener();
     }
     renderComments();
     
-
-
 
     // Удаляет последний комментарий
     removeCommentElement.addEventListener("click", () => {
@@ -178,20 +229,62 @@
           if (month < 10) {
             month = "0" + month;
           }
+        
+          const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/viktoria-kolosova/comments", {
+            method: "POST",
+            body: JSON.stringify({
+                name: nameElement.value,
+                date: day + "." + month + "." + date.getFullYear().toString().substr(-2) + " " + time,
+                text: commentElement.value,
+                likes: 0,
+                isActive: false,
+            })
+          });
 
-      comments.push({
-        name: nameElement.value,
-        date: day + "." + month + "." + date.getFullYear().toString().substr(-2) + " " + time,
-        comment: commentElement.value,
-        likes: 0,
-        isActive: false,
-      })
+          const fetchPromiseGET = fetch("https://webdev-hw-api.vercel.app/api/v1/viktoria-kolosova/comments", {
+            method: "GET",
+          });
 
-      nameElement.value = "";
-      commentElement.value = "";
-      renderComments();
-      
-    });
+          fetchPromiseGET.then((response) => {
+            const JSONPromise = response.json().then((responseData) => {
+              console.log(responseData);
+              comments = responseData.comments.map((comment) => {
+                const date = new Date(comment.date);
+                let minutes = date.getMinutes();
+                if (minutes < 10) {
+                  minutes = "0" +  minutes;
+                }
+                let hours = date.getHours();
+                  if (hours < 10) {
+                    hours = "0" + hours;
+                  }
+                const time = hours + ":" + minutes;
+                let day = date.getDate();
+                  if (day < 10) {
+                    day = "0" + day;
+                  }
+                let month = date.getMonth() + 1 ;
+                  if (month < 10) {
+                    month = "0" + month;
+                  }
+                return {
+                  name: comment.author.name,
+                  date: day + "." + month + "." + date.getFullYear().toString().substr(-2) + " " + time,
+                  text: comment.text,
+                  likes: comment.likes,
+                  isActive: comment.isLiked,
+                }
+            })
+          })
+        })
+
+          nameElement.value = "";
+          commentElement.value = "";
+          renderComments();
+          
+        });
+
+
 
 
   </script>
