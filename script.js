@@ -172,16 +172,22 @@ const renderComments = () => {
 renderComments();
 
 const addToServer = (comment) => {
-    
+
     fetch ("https://webdev-hw-api.vercel.app/api/v1/daria/comments", {
         method: "POST",
-        body: JSON.stringify(comment)
-    }).then((response) => {
-        return response.json();
-    })
-    .then((responseData) => {
+        body: JSON.stringify({
+            comment,
+            forceError: true,
+        }),
+        }).then((response) => {
+            return response.json();
+        })
+        .then((responseData) => {
             console.log(responseData);
-            return getData();
+                return getData();
+            })
+        .catch((error) => {
+            console.warn(error);
         })
 }
 
