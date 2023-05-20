@@ -50,14 +50,13 @@
     const textInputElement = document.getElementById("text-input");
 
     const getComments = () => {
-      const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/dmitry-buntov/comments", {
+      return fetch("https://webdev-hw-api.vercel.app/api/v1/dmitry-buntov/comments", {
         method: "GET"
-      });
-
-      fetchPromise.then((response) => {
-        const jsonPromise = response.json();
-
-        jsonPromise.then((responseData) => {
+      })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
           const appComments = responseData.comments.map((comment) => {
           return {
             name: comment.author.name,
@@ -70,8 +69,7 @@
 
           comments = appComments;
           renderComments();
-        });
-      });
+        })
     };
     
     getComments();
@@ -81,6 +79,8 @@
 
     const renderComments = () => {
       const commentsHtml = comments.map((comment, index) => {
+        listElement.classList.remove;
+        listElement.textContent = "Пожалуйста подождите, загружаю комментарии...";
         return `<li class="comment" data-comment="< ${comment.text} \n ${comment.name}">
           <div class="comment-header">
             <div>
@@ -104,6 +104,8 @@
         </li>`
       }).join("");
       listElement.innerHTML = commentsHtml;
+
+      listElement.classList.add;
 
       initLikesButtonListeners();
       initQuoteCommentListeners();
@@ -144,12 +146,7 @@
       };
     }
 
-
     renderComments();
-
-    function dateElement(date) {
-      return date = new Date().toLocaleString().slice(0, -3);
-    }
     
 
     buttonElement.addEventListener('click', () => {
@@ -166,6 +163,8 @@
         return;
       }
 
+      buttonElement.disabled = true;
+      buttonElement.textContent = "Комментарий добавляется...";
 
     fetch("https://webdev-hw-api.vercel.app/api/v1/dmitry-buntov/comments", {
       method: "POST",
@@ -173,25 +172,23 @@
         name: nameInputElement.value,
         text: textInputElement.value,
       }),
-    }).then((response) => {
-      response.json().then((responseData) => {
-        fetch("https://webdev-hw-api.vercel.app/api/v1/alexei-rybak/comments").then((response) => { 
-          response.json().then((responseData) => {
-            comments = responseData.comments;
-            getComments();
-            renderComments();
-          });
-        });
-      });
+    })
+    .then((response) => {
+      return response.json();
+    })
+    .then(() => {
+      return getComments();
+    })
+    .then(() => {
+      buttonElement.disabled = false;
+      buttonElement.textContent = "Написать";
     });
 
     renderComments();
 
     nameInputElement.value = "";
     textInputElement.value = "";
-
   });
-
 
     console.log("It works!");
   </script>
