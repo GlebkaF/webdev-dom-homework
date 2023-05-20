@@ -12,7 +12,7 @@
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
+            <div id="data">12.02.22 12:18</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -29,7 +29,7 @@
         <li class="comment">
           <div class="comment-header">
             <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
+            <div id="data">13.02.22 19:22</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -73,7 +73,10 @@
     const blockComment = document.getElementById("li-comment");
     const textInputElement = document.getElementById("add-text");
     const textareaInputElement = document.getElementById("add-textarea");
+    
+
     buttonWritter.addEventListener ('click',() => {
+      
       textInputElement.style.backgroundColor = "";
       textareaInputElement.style.backgroundColor = "";
       if (textInputElement.value === "" || textareaInputElement.value === "") {
@@ -81,12 +84,19 @@
         textareaInputElement.style.backgroundColor = "red"
         return;
       }
+      const date = new Date();
+      const formattedDate =
+      date.getDate().toString().padStart(2, '0') + '.' + 
+      (date.getMonth() + 1).toString().padStart(2, '0') + '.' +
+      date.getFullYear().toString().slice(-2) + ' ' +
+      date.getHours().toString().padStart(2, '0') + ':' +
+      date.getMinutes().toString().padStart(2, '0');
       const oldBlockComment = blockComment.innerHTML
       blockComment.innerHTML = oldBlockComment + `<li class="comment">
           <div class="comment-header">
-            <div>${textInputElement.value}</div>
-            <div> 
-              
+            <div>${textInputElement.value}
+            </div>
+            <div> ${formattedDate}
             </div>
           </div>
           <div class="comment-body">
