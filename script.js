@@ -3,7 +3,10 @@ addFormText = document.querySelector(".add-form-text"),
 addFormButton = document.querySelector(".add-form-button"),
 comments = document.querySelector(".comments"),
 comment = document.getElementsByTagName('li'),
-deleteFormButton = document.querySelector(".delete-form-button");
+deleteFormButton = document.querySelector(".delete-form-button"),
+addForm = document.querySelector(".add-form"),
+adding = document.querySelector(".adding"),
+commentsLoading = document.querySelector(".comments-loading");
 
 
 let commentos = [];
@@ -12,16 +15,14 @@ let commentos = [];
 
 
 fetchGet = () => {
-  const fetchPromise = fetch('https://webdev-hw-api.vercel.app/api/v1/NSchenikov/comments',
-
-     {
+  commentsLoading.style.display = "block";
+  fetch('https://webdev-hw-api.vercel.app/api/v1/NSchenikov/comments', {
       method: "GET"
-    });
-
-
-    fetchPromise.then((response) => {
-
-      response.json().then((responseData) => {
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .then((responseData) => {
         const appComments = responseData.comments
         .map((comment) => {
           return {
@@ -33,13 +34,25 @@ fetchGet = () => {
             id: comment.id,
           };
         });
-        commentos = appComments;
+        return appComments;
+      })
+      .then((data) => {
+        commentsLoading.style.display = "none";
+        commentos = data;
         renderComments();
       });
-    });
+
 };
 
 fetchGet();
+
+function delay(interval = 300) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, interval);
+  });
+};
 
 
 
@@ -63,16 +76,21 @@ initLikeButtonsListeners = () => {
 
       const index = likeButtonElement.dataset.index;
       console.log(index);
-
+      likeButtonElement.classList.add('-loading-like');
+      delay(2000)
+      .then(() => {
         if(commentos[index].isLiked) {
           commentos[index].likes -= 1;
           commentos[index].isLiked = !commentos[index].isLiked;
         } else {
           commentos[index].likes += 1;
           commentos[index].isLiked = !commentos[index].isLiked;
-          
         }
+      })
+      .then(() => {
+        likeButtonElement.classList.remove('-loading-like');
         renderComments();
+      });
     });
   }
   
@@ -134,15 +152,6 @@ initCommentariesListeners = () => {
   }
 };
 
-// commentos.push({
-//   name: "",
-//   text: '',
-//   date: '',
-//   likes: 0,
-//   isLiked: false,
-//   isCorrecting: false,
-// });
-
 
 
 const renderComments = () => {
@@ -151,47 +160,27 @@ const renderComments = () => {
 
     // isLiked[index] = 0;
 
-    if(comment.isCorrecting) {
-      comment.text = comment.text
-      .replaceAll(`<div class='quote'>`, 'QUOTE_BEGIN')
-      .replaceAll('</div>', 'QUOTE_END');
-      return `<li class="comment" data-id='${comment.id}'>
-      <div class="comment-header">
-        <div>${comment.name}</div>
-        <div>${comment.date}
-        </div>
-      </div>
-      <div class="comment-body">
-        <div class="comment-text">
-          <input class='correcting-input' value='${comment.text}'></input>
-        </div>
-      </div>
-      <div class="comment-footer">
-        <button class='correcting-btn'>Сохранить</button>
-      </div>
-    </li>`;
-    }
-    if(commentos[index].isLiked) {
-      return `<li class="comment" data-id='${comment.id}'>
-      <div class="comment-header">
-        <div>${comment.name}</div>
-        <div>${comment.date}
-        </div>
-      </div>
-      <div class="comment-body">
-        <div class="comment-text">
-          ${comment.text}
-        </div>
-      </div>
-      <div class="comment-footer">
-        <div class="likes">
-          <span class="likes-counter" data-id='${comment.id}'>${commentos[index].likes}</span>
-          <button class="like-button -active-like" data-index='${index}'></button>
-        </div>
-      </div>
-      <button class='correct-form-button' data-id='${comment.id}'>Редактировать</button>
-    </li>`;
-    } else {
+    // if(comment.isCorrecting) {
+    //   comment.text = comment.text
+    //   .replaceAll(`<div class='quote'>`, 'QUOTE_BEGIN')
+    //   .replaceAll('</div>', 'QUOTE_END');
+    //   return `<li class="comment" data-id='${comment.id}'>
+    //   <div class="comment-header">
+    //     <div>${comment.name}</div>
+    //     <div>${comment.date}
+    //     </div>
+    //   </div>
+    //   <div class="comment-body">
+    //     <div class="comment-text">
+    //       <input class='correcting-input' value='${comment.text}'></input>
+    //     </div>
+    //   </div>
+    //   <div class="comment-footer">
+    //     <button class='correcting-btn'>Сохранить</button>
+    //   </div>
+    // </li>`;
+    // }
+
       return `<li class="comment" data-id='${comment.id}'>
       <div class="comment-header">
         <div>${comment.name}</div>
@@ -206,12 +195,14 @@ const renderComments = () => {
       <div class="comment-footer">
         <div class="likes">
           <span class="likes-counter" data-id='${comment.id}'>${commentos[index].likes}</span>
-          <button class="like-button" data-index='${index}'></button>
+          <button 
+          class="like-button ${comment.isLiked ? '-active-like' : ''}" 
+          data-index='${index}'>
+          </button>
         </div>
       </div>
       <button class='correct-form-button' data-id='${comment.id}'>Редактировать</button>
     </li>`;
-    }
   }).join('');
 
   let comments = document.querySelector(".comments");
@@ -258,22 +249,30 @@ function clickable() {
         return;
     }
 
+    addForm.style.display = 'none';
+    adding.style.display = 'block';
+    
+
         fetch("https://webdev-hw-api.vercel.app/api/v1/NSchenikov/comments", {
           method: "POST",
           body: JSON.stringify({
             name: addFormName.value,
             text: addFormText.value,
           })
-        }).then((response) => {
-          response.json().then((responseData) => {
-
+        })
+        .then((response) => {
+          return response.json();
+        })
+        .then((responseData) => {
             console.log(responseData);
-
             fetchGet();
             renderComments();
-
-          });
+        })
+        .then((data) => {
+          addForm.style.display = 'flex';
+          adding.style.display = 'none';
         });
+
 
 
         addFormName.value = '';

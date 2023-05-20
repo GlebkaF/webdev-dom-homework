@@ -208,17 +208,31 @@ body {
     padding-top: 5px;
   }
 
-  .loading {
-    width: 596px;
-    height: 50px;
-    box-sizing: border-box;
-    background: radial-gradient(
-      75.42% 75.42% at 50% 42.37%,
-      rgba(53, 53, 53, 0) 22.92%,
-      #7334ea 100%
-    );
-    filter: drop-shadow(0px 20px 67px rgba(0, 0, 0, 0.08));
-    border-radius: 20px;
+.adding {
+  display: none;
+}
+
+.comments-loading {
+  display: none;
+}
+
+@keyframes rotating {
+  from {
+    transform: rotate(0deg);
   }
+  25% {
+    transform: rotate(30deg);;
+  }
+  75% {
+    transform: rotate(-30deg);;
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+.-loading-like {
+  animation: rotating 2s linear infinite;
+}
 
 

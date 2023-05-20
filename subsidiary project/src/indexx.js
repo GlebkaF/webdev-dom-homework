@@ -1,169 +1,248 @@
 const buttonElement = document.getElementById("add-button");
 const listElement = document.getElementById("list");
 const textInputElement = document.getElementById("text-input");
-const taskElements = document.querySelectorAll('.task');
 
 let tasks = [];
 
-// документация https://github.com/GlebkaF/webdev-hw-api/blob/main/pages/api/todos/README.md
-// API - инструкции о том, как разным приложениям друг с другом взаимодействовать (пульт управления сервером)
-
-// fetch - глобальная функция, которая позволяет делать запросы в API
-// запросы в API - асинхронны. Мы не знаем как долго будет выполняться запрос. Может выполняться секунды и даже минуты
-const fetchPromise = fetch(
-  // первый аргумент - адрес API
-  'https://webdev-hw-api.vercel.app/api/todos', 
-  // второй аргумент - параметры запроса
-  {
-    method: "GET" //GET-запрос для браузера к API. Возвращает строку в формате json (javascript object notation. Это формат представления данных в виде текстовых строк. В таком формате приложения обмениваются данными. Точно так же передать данные в API в формате обычного объекта мы не сможем: его нужно преобразовать в json. Внутри json все строчки и ключи заворачиваются в двойные кавычки)
-  }
-
-); 
-
-// console.log(fetchPromise);
-//для того, чтобы работать с асинхронным API существует специальный объект promise. Позволяет подписаться на синхронное выполнение операции и выполнить какой-либо код
-// у promise есть метод then, который позволяет навесить обработчик успешного выполнения асинхронной операции
-fetchPromise.then((response) => {
-  // console.log(response);
-  //сервер возвращает данные в формате JSON
-  const jsonPromise = response.json(); //преобразует API в формат json. Метод работает асинхронно
-
-  jsonPromise.then((responseData) => { //подписываемся на результат выполнения
-    // console.log(responseData);
-
-    tasks = responseData.todos; //кладем объект из API в локальное хранилище tasks. Массив с объектами более не используем (API в данном случае возвращает объект todos. Что возвращает API можно посмотреть по ссылке в первом параметре функции fetch)
-
-    renderTasks();
-
+const fetchAndRenderTasks = () => {
+    return fetch("https://webdev-hw-api.vercel.app/api/todos", {
+      method: "GET",
+    })
+    .then((response) => {
+      return response.json();
+    })
+    .then((responseData) => {
+      tasks = responseData.todos;
+      renderTasks();
   });
-});
+};
 
 
-
-
-//TODO: Получать из хранилища данных
-// const tasks = [
-  // {
-  //   text: 'Купить чай',
-  // }, 
-  // {
-  //   text: 'Заварить чай',
-  // },
-  // {
-  //   text: 'Выпить чай',
-  // },
-// ];
-
-
-const renderTasks = () => { 
-  const tasksHtml = tasks.map((task) => {
-    return `
+const renderTasks = () => {
+  const tasksHtml = tasks
+    .map((task) => {
+      return `
       <li class="task">
         <p class="task-text">
           ${task.text}
+          <button data-id="${task.id}" class="button delete-button">Удалить</button>
         </p>
-        <button data-id="${task.id}" class="delete-button">Удалить</button>
       </li>`;
-  }).join(''); 
+    })
+    .join("");
 
-  listElement.innerHTML = tasksHtml; 
+  listElement.innerHTML = tasksHtml;
+  const deleteButtons = document.querySelectorAll(".delete-button");
 
-  initDeleteButtonsListeners(); 
-};
+  for (const deleteButton of deleteButtons) {
+    deleteButton.addEventListener("click", (event) => {
 
-
-
-const initDeleteButtonsListeners = () => { 
-  const deleteButtonsElements = document.querySelectorAll('.delete-button'); 
-
-  for(const deleteButtonElement of deleteButtonsElements) { 
-    deleteButtonElement.addEventListener('click', (event) => {
       event.stopPropagation();
 
-      const id = deleteButtonElement.dataset.id; 
+      const id = deleteButton.dataset.id;
 
-      //TODO: Удалять из хранилища данных
-      // tasks.splice(index, 1); 
-
-      fetch(
-        "https://webdev-hw-api.vercel.app/api/todos/" + id, 
-        {
-          method: "DELETE",
-        }).then((response) => {
-      
-        response.json().then((responseData) => { 
-      
-          tasks = responseData.todos; 
+      fetch("https://webdev-hw-api.vercel.app/api/todos/" + id, {
+        method: "DELETE",
+      }).then((response) => {
+        response.json().then((responseData) => {
+          tasks = responseData.todos;
           renderTasks();
         });
       });
-      renderTasks();
     });
   }
-
-  // const tasksElements = document.querySelectorAll('.task');
-
 };
 
-renderTasks(); 
+fetchAndRenderTasks();
+renderTasks();
 
-
-
-
-buttonElement.addEventListener("click", () => { 
-  textInputElement.classList.remove("input-error"); 
-
-  if (textInputElement.value === "") { 
-    textInputElement.classList.add("input-error");
+buttonElement.addEventListener("click", () => {
+  if (textInputElement.value === "") {
     return;
   }
 
-  //TODO: Добавлять задачу в хранилище данных
-  // tasks.push({ 
-  //   text: textInputElement.value
-  //     .replaceAll('<', '&lt')
-  //     .replaceAll('>', '&gt'),
+  // fetch("https://webdev-hw-api.vercel.app/api/todos", {
+  //   method: "POST",
+  //   body: JSON.stringify({
+  //     text: textInputElement.value,
+  //   }),
+  // }).then((response) => {
+  //   response.json().then((responseData) => {
+  //     // tasks = responseData.todos;
+
+  //     fetch("https://webdev-hw-api.vercel.app/api/todos", {
+  //       method: "GET",
+  //     }).then((response) => {
+  //       response.json().then((responseData) => {
+  //         tasks = responseData.todos;
+  //         renderTasks();
+  //       });
+  //     });
+  //   });
   // });
 
-  fetch(
-    'https://webdev-hw-api.vercel.app/api/todos', 
-    {
+  //пример (аналогичный код)
+
+  // fetch("https://webdev-hw-api.vercel.app/api/todos", {
+  //   method: "POST",
+  //   body: JSON.stringify({
+  //     text: textInputElement.value,
+  //   }),
+  //  })
+  //   .then((response) => {
+  //     return response.json();
+  //   })
+  //   .then((responseData) => { //работает с responseData от возвращенного в предыдущем промисе response.json();
+  //     return fetch("https://webdev-hw-api.vercel.app/api/todos", {
+  //        method: "GET",
+  //      });
+  //    })
+  //   .then((response) => { //аналогично
+  //     return response.json();
+  //    })
+  //    .then((responseData) => {
+  //       tasks = responseData.todos;
+  //       renderTasks();
+  //       //если вернуть здесь, к примеру, текст, а в следующем then цепочки передать data, то console.log(data) отработает c этим самым текстом
+  //   });
+  //
+
+
+
+
+
+    // const startAt = Date.now();
+    // console.log('Начинаем делать запрос');
+  
+    // fetch("https://webdev-hw-api.vercel.app/api/todos", {
+    //   method: "POST",
+    //   body: JSON.stringify({
+    //     text: textInputElement.value,
+    //   }),
+    //  })
+    //  .then((response) => { 
+    //   console.log('Время: ' + (Date.now() - startAt));//после каждого шага выполнения запроса выводим время выполнения и возвращаем response, чтобы цепочка не сломалась
+    //   return response;
+    //  })
+    //   .then((response) => {
+    //     return response.json();
+    //   })
+    //   .then((response) => {
+    //     console.log('Время: ' + (Date.now() - startAt));//после каждого шага выполнения запроса возвращаем response , чтобы цепочка не сломалась
+    //     return response;
+    //    })
+    //   .then((responseData) => {
+    //     return fetch("https://webdev-hw-api.vercel.app/api/todos", {
+    //        method: "GET",
+    //      });
+    //    })
+    //    .then((response) => {
+    //     console.log('Время: ' + (Date.now() - startAt));//после каждого шага выполнения запроса возвращаем response , чтобы цепочка не сломалась
+    //     return response;
+    //    })
+    //   .then((response) => {
+    //     return response.json();
+    //    })
+    //    .then((response) => {
+    //     console.log('Время: ' + (Date.now() - startAt));//после каждого шага выполнения запроса возвращаем response , чтобы цепочка не сломалась
+    //     return response;
+    //    })
+    //    .then((responseData) => {
+    //       tasks = responseData.todos;
+    //       renderTasks();
+    //   });
+
+
+
+  
+
+
+    // const startAt = Date.now();
+    // console.log('Начинаем делать запрос');
+
+    // buttonElement.disabled = true; //выключаем кнопку перед выполнением запроса
+    // buttonElement.textContent = 'Элемент добавляется...';
+  
+    // fetch("https://webdev-hw-api.vercel.app/api/todos", {
+    //   method: "POST",
+    //   body: JSON.stringify({
+    //     text: textInputElement.value,
+    //   }),
+    //  })
+    //  .then((response) => { 
+    //   console.log('Время: ' + (Date.now() - startAt));
+    //   return response;
+    //  })
+    //   .then((response) => {
+    //     return response.json();
+    //   })
+    //   .then((response) => {
+    //     console.log('Время: ' + (Date.now() - startAt));
+    //     return response;
+    //    })
+    //   .then((responseData) => {
+    //     return fetch("https://webdev-hw-api.vercel.app/api/todos", {
+    //        method: "GET",
+    //      });
+    //    })
+    //    .then((response) => {
+    //     console.log('Время: ' + (Date.now() - startAt));
+    //     return response;
+    //    })
+    //   .then((response) => {
+    //     return response.json();
+    //    })
+    //    .then((response) => {
+    //     console.log('Время: ' + (Date.now() - startAt));
+    //     return response;
+    //    })
+    //    .then((responseData) => {
+    //       tasks = responseData.todos;
+    //       renderTasks();
+    //   })
+    //   .then((data) => {
+    //     buttonElement.disabled = false; //в последнем промисе цепочки снова включаем кнопку и возвращаем ее исходное название "добавить"
+    //     buttonElement.textContent = 'Добавить';
+    //   });
+
+
+
+
+
+
+    const startAt = Date.now();
+    console.log('Начинаем делать запрос');
+
+    buttonElement.disabled = true;
+    buttonElement.textContent = 'Элемент добавляется...';
+  
+    fetch("https://webdev-hw-api.vercel.app/api/todos", {
       method: "POST",
-      body: JSON.stringify({ //чтобы передать данные используем ключ body. Данные переводим в json с помощью метода stringify
-        text: textInputElement.value //параметр text берем из элемента input
+      body: JSON.stringify({
+        text: textInputElement.value,
+      }),
+     })
+     .then((response) => { 
+      console.log('Время: ' + (Date.now() - startAt));
+      return response;
+     })
+      .then((response) => {
+        return response.json();
       })
-    }).then((response) => {
+      .then((response) => {
+        console.log('Время: ' + (Date.now() - startAt));
+        return response;
+       })
+       .then(() => {
+        return fetchAndRenderTasks();
+       })
+       //написали функцию fetchAndRenderTasks() и удалили все промисы отвечающие за преобразование и рендер
+      .then((data) => {
+        buttonElement.disabled = false;
+        buttonElement.textContent = 'Добавить';
+      });
 
-      console.log(response);
-  
-    response.json().then((responseData) => { 
-      console.log(responseData);
-  
-      tasks = responseData.todos; 
-      renderTasks();
-    });
-  });
+  renderTasks();
 
-
-  renderTasks(); 
-
-  textInputElement.value = ""; 
+  textInputElement.value = "";
 });
-
-
-
-//как перевести js-строку в формат json?
-// const obj = {
-//   name: 'asd',
-//   list: [{id: 1}, {id:2}]
-// };
-
-// const jsonObj = JSON.stringify(obj);
-
-// console.log(jsonObj);
-
-//обратный метод
-// const objFromJson = JSON.parse(jsonObj); //спарсить это значит перевести json в формат js-строки
-// console.log(objFromJson);
-
-
