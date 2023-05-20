@@ -33,23 +33,23 @@
   const nameInputElement = document.getElementById('add-form-name');
   const textAreaElement = document.getElementById('add-form-text');
 
-  const comments = [
-    {
-      author: 'Глеб Фокин',
-      date: '12.02.22 12:18',
-      text: 'Это будет первый комментарий на этой странице',
-      likes: 3,
-      isLiked: false,
-      isEdit: false
-    },
-    {
-      author: 'Варвара Н.',
-      date: '13.02.22 19:22',
-      text: 'Мне нравится как оформлена эта страница! ❤',
-      likes: 75,
-      isLiked: false,
-      isEdit: false
-    }
+  let comments = [
+    // {
+    //   author: 'Глеб Фокин',
+    //   date: '12.02.22 12:18',
+    //   text: 'Это будет первый комментарий на этой странице',
+    //   likes: 3,
+    //   isLiked: false,
+    //   isEdit: false
+    // },
+    // {
+    //   author: 'Варвара Н.',
+    //   date: '13.02.22 19:22',
+    //   text: 'Мне нравится как оформлена эта страница! ❤',
+    //   likes: 75,
+    //   isLiked: false,
+    //   isEdit: false
+    // }
   ];
 
   const initCountLikesListeners = () => {
@@ -115,6 +115,7 @@
     };
   };
 
+
   const renderComments = () => {
     const commentsHtml = comments.
       map((comment, index) => {
@@ -159,7 +160,7 @@
 
   renderComments();
 
-  const addComment = () => {
+  const fullDate = () => {
 
     let userDate = new Date();
 
@@ -178,27 +179,47 @@
     let minutes = userDate.getMinutes();
     if (minutes < 10) minutes = '0' + minutes;
 
-    let nowDate = `${date}.${month}.${year} ${hours}:${minutes}`;
-
-    comments.push({
-      author: nameInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-      date: nowDate,
-      text: textAreaElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
-        .replaceAll("QUOTE_END", "</div>"),
-      likes: 0,
-      isLiked: false,
-      isEdit: false
-    });
+    return `${date}.${month}.${year} ${hours}:${minutes}`;
   };
+
+
+  // comments.push({
+  //   author: nameInputElement.value
+  //     .replaceAll("&", "&amp;")
+  //     .replaceAll("<", "&lt;")
+  //     .replaceAll(">", "&gt;")
+  //     .replaceAll('"', "&quot;"),
+  //   date: nowDate,
+  //   text: textAreaElement.value
+  //     .replaceAll("&", "&amp;")
+  //     .replaceAll("<", "&lt;")
+  //     .replaceAll(">", "&gt;")
+  //     .replaceAll('"', "&quot;")
+  //     .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+  //     .replaceAll("QUOTE_END", "</div>"),
+  //   likes: 0,
+  //   isLiked: false,
+  //   isEdit: false
+  // });
+
+  fetch('https://webdev-hw-api.vercel.app/api/v1/anna-shatilova/comments', {
+    method: "GET"
+  }).then((response) => {
+    response.json().then((responseData) => {
+      const appComments = responseData.comments.map((comment) => {
+        return {
+          author: comment.author.name,
+          date: fullDate(comment.date),
+          text: comment.text,
+          likes: comment.likes,
+          isLiked: false,
+        }
+      });
+      comments = appComments;
+      renderComments();
+    });
+  });
+
 
   buttonElement.addEventListener('click', () => {
 
@@ -211,8 +232,46 @@
       return textAreaElement.classList.add('error');
     }
 
-    addComment();
-    renderComments();
+    fetch('https://webdev-hw-api.vercel.app/api/v1/anna-shatilova/comments', {
+      method: "POST",
+      body: JSON.stringify({
+        author: {
+          name: nameInputElement.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+        },
+        date: new Date(),
+        text: textAreaElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+          .replaceAll("QUOTE_END", "</div>"),
+        likes: 0,
+        isLiked: false,
+        // isEdit: false
+      })
+    });
+
+    // .then((response) => {
+    //   response.json().then((responseData) => {
+    //     const appComments = responseData.comments.map((comment) => {
+    //       return {
+    //         author: comment.author.name,
+    //         date: comment.date,
+    //         text: comment.text,
+    //         likes: comment.likes,
+    //         isLiked: false,
+    //       }
+    //     });
+    //     comments = appComments;
+    //     fullDate();
+    //     renderComments();
+    //   });
+    // });
 
     nameInputElement.value = '';
     textAreaElement.value = '';
