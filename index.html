@@ -91,7 +91,7 @@
       initCommentsListeners();
     })
 
-    const comments = [
+    /*let comments = [
       {
         name: "Глеб Фокин",
         date: "12.02.22 12:18",
@@ -106,56 +106,39 @@
         likes: 75,
         isLiked: true,
       },
-    ]
+    ]*/
 
-    const renderComments = () => {
-      const commentsHtml = comments.map((comment, index) => {
-        if(comment.isLiked) {
-          return `<li  class="comment" data-index="${index}">
-          <div class="comment-header">
-            <div>${comment.name}</div>
-            <div>${comment.date}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${comment.comment}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">${comment.likes}</span>
-              <button data-index="${index}"  class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>`;
-        } else {
-          return `<li  class="comment" data-index="${index}">
-          <div class="comment-header">
-            <div>${comment.name}</div>
-            <div>${comment.date}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${comment.comment}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">${comment.likes}</span>
-              <button data-index="${index}" data-likes=${comment.likes} class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
+    let comments = [];
 
-        }
-      }).join("");
-      //console.log(commentsHtml);
+    const fetchGet = () => {
+
+    
+      const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/tanya-koryachkina/comments", {
+      method: "GET",
+      });
+      fetchPromise.then((response) => {
       
-      listElement.innerHTML = commentsHtml;
-      
+
+        const jsonPromise = response.json();
+
+        jsonPromise.then((responseData) => {
+          const appComments = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: new Date(Date.parse(comment.date)).toLocaleDateString() + ' ' + new Date(Date.parse(comment.date)).getHours() + ':' + new Date(Date.parse(comment.date)).getMinutes(),
+              text: comment.text,
+              likes: comment.likes,
+              isLiked: false,
+            };
+          });
+
+          comments = appComments;
+          renderComments();
+        });
+      });
     }
 
-    renderComments();
+    fetchGet();
 
     const initLikeButtonListeners = () => {
       const likesElements = document.querySelectorAll(".like-button");
@@ -173,20 +156,96 @@
             comments[index].isLiked = !comments[index].isLiked;
             comments[index].likes -= 1;
             renderComments();
-            initLikeButtonListeners();
-            initCommentsListeners();
+            //initLikeButtonListeners();
+            //initCommentsListeners();
           } else {
             comments[index].isLiked = !comments[index].isLiked;
             comments[index].likes += 1;
             renderComments();
-            initLikeButtonListeners();
-            initCommentsListeners();
+            //initLikeButtonListeners();
+            //initCommentsListeners();
           }
 
         });
       }
     }
-    initLikeButtonListeners();
+    //initLikeButtonListeners();
+
+    const initCommentsListeners = () => {
+
+    
+      const commentsAnswers = document.querySelectorAll(".comment");
+      for (let commentAnswer of commentsAnswers) {
+        //console.log(commentAnswer);
+        commentAnswer.addEventListener ("click", () => {
+          let index = commentAnswer.dataset.index;
+
+          comments[index].text = comments[index].text
+  
+
+          commentInputElement.value = `>${comments[index].text} \n ${comments[index].name}, `;
+
+  
+          initLikeButtonListeners();
+          initCommentsListeners();
+        })
+      }
+    }
+    
+
+
+    const renderComments = () => {
+      const commentsHtml = comments.map((comment, index) => {
+        if(comment.isLiked) {
+          return `<li  class="comment" data-index="${index}">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.likes}</span>
+              <button data-index="${index}"  class="like-button -active-like"></button>
+            </div>
+          </div>
+        </li>`;
+        } else {
+          return `<li  class="comment" data-index="${index}">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.likes}</span>
+              <button data-index="${index}" data-likes=${comment.likes} class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+
+        }
+      }).join("");
+      //console.log(commentsHtml);
+      
+      listElement.innerHTML = commentsHtml;
+      initLikeButtonListeners();
+      
+      initCommentsListeners();
+    }
+
+    renderComments();
+    
+  
     
     buttonElement.addEventListener("click",() => {
       nameInputElement.classList.remove("error");
@@ -203,22 +262,60 @@
           return;
         };
       const oldListHtml = listElement.innerHTML;
-      let now = new Date();
+      /*let now = new Date();
       const months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
-      let nowDate = now.getDate() + "." + months[now.getMonth()] + "." + now.getFullYear() + " " +  now.getHours() + ":" + now.getMinutes();
+      let nowDate = now.getDate() + "." + months[now.getMonth()] + "." + now.getFullYear() + " " +  now.getHours() + ":" + now.getMinutes();*/
       //console.log(nameInputElement.value);
 
-      comments.push({
+      /*comments.push({
         name: nameInputElement.value
           .replaceAll('<', '&lt')
           .replaceAll('>', '&gt'),
         date: nowDate,
-        comment: commentInputElement.value
+        text: commentInputElement.value
           .replaceAll('<', '&lt')
           .replaceAll('>', '&gt'),
         likes: 0,
         isLiked: false,
+      });*/
+      initLikeButtonListeners();
+      const fetchPromise = fetch('https://webdev-hw-api.vercel.app/api/v1/tanya-koryachkina/comments', {
+        method: "POST",
+        body: JSON.stringify({
+          name: nameInputElement.value,
+          //date: new Date(Date.parse(comment.date)).toLocaleDateString() + ' ' + new Date(Date.parse(comment.date)).getHours() + ':' + new Date(Date.parse(comment.date)).getMinutes(),
+          text: commentInputElement.value,
+          //likes: 0,
+          //isLiked: false,
+        }),
       });
+      //console.log(fetchPromise);
+
+      fetchPromise.then((response) => {
+        //console.log(response);
+
+        const jsonPromise = response.json()
+        jsonPromise.then((responseData) => {
+          //console.log(responseData);
+
+          /*const appComments = responseData.comments.map((comment) => {
+            return{
+              name: comment.author.name,
+              date: new Date(Date.parse(comment.date)).toLocaleDateString() + ' ' + new Date(Date.parse(comment.date)).getHours() + ':' + new Date(Date.parse(comment.date)).getMinutes(),
+              text: comment.text,
+              likes: comment.likes,
+              isLiked: false,
+            };
+          });*/
+          comments = appComments;
+          renderComments();
+          initLikeButtonListeners();
+        });
+        fetchGet();
+        initLikeButtonListeners();
+      });
+      initLikeButtonListeners();
+      //fetchGet();
       /*listElement.innerHTML = oldListHtml + `<li  class="comment">
           <div class="comment-header">
             <div>${nameInputElement.value}</div>
@@ -244,26 +341,25 @@
     });
 
     
-    const initCommentsListeners = () => {
-
     
-      const commentsAnswers = document.querySelectorAll(".comment");
-      for (let commentAnswer of commentsAnswers) {
-        //console.log(commentAnswer);
-        commentAnswer.addEventListener ("click", () => {
-        let index = commentAnswer.dataset.index;
 
-        comments[index].comment = comments[index].comment
-        
+    /*fetch("https://webdev-hw-api.vercel.app/api/v1/tanya-koryachkina/comments", {
+          method: "POST",
+          body: JSON.stringify({
+            name: {name: nameInputElement.value},
+            text: commentInputElement.value,
+            date: new Date().toISOString(),
+          })
+        }).then((response) => {
+          response.json().then((responseData) => {
+            c0omments = responseData.comments;
+            renderComments();
+          });
+        });*/
 
-          commentInputElement.value = `>${comments[index].comment} \n ${comments[index].name}, `;
-      
-        
-      initLikeButtonListeners();
-      initCommentsListeners();
-        })
-      }
-    }
+    renderComments();
+
+    initLikeButtonListeners();
     initCommentsListeners();
     console.log("It works!");
   </script>
