@@ -33,7 +33,6 @@
   const commentElements = document.querySelectorAll('comments');
   const lastCommentDeleteButton = document.getElementById('form-delete-button');
 
-
   let comments = [
     // {
     //   userName: "Глеб Фокин",
@@ -55,16 +54,17 @@
 
   getFromApi();
 
+
   function getFromApi() {
-    fetch("https://webdev-hw-api.vercel.app/api/v1/freddy-krugliy/comments", {
+    return fetch("https://webdev-hw-api.vercel.app/api/v1/freddy-krugliy/comments", {
       method: "GET",
     }).then((responce) => {
-      responce.json().then((responceData) => {
-        comments = responceData.comments;
-        renderComments();
-      })
+      return responce.json();
+    }).then((responceData) => {
+      comments = responceData.comments;
+      renderComments();
     })
-  }
+  };
 
 
   const likeButtonsListeners = () => {
@@ -81,7 +81,8 @@
         renderComments();
       });
     };
-  }
+  };
+
 
   const editButtonsListeners = () => {
     const editButtonElements = document.querySelectorAll('.edit-button');
@@ -104,8 +105,9 @@
 
         renderComments();
       });
-    }
+    };
   };
+
 
   const replyToCommentListeners = () => {
     const commentTextElements = document.querySelectorAll('.comment');
@@ -119,8 +121,8 @@
         addComment.focus();
         renderComments();
       });
-    }
-  }
+    };
+  };
 
 
   const renderComments = () => {
@@ -168,6 +170,7 @@
 
   renderComments();
 
+
   function getActualDate(date) {
     let userDate = new Date(date);
     let month = userDate.getMonth() + 1;
@@ -187,7 +190,8 @@
     };
 
     return `${userDate.getDate()}.${month}.${year} ${userDate.getHours()}:${minutes}`;
-  }
+  };
+
 
   const addNewComment = () => {
     commentBtn.addEventListener("click", () => {
@@ -210,7 +214,6 @@
           .replaceAll("$", "&#36");
       };
 
-
       // comments.push({
       //   userName: escapeHtml(addName.value),
       //   commentDate: nowDate,
@@ -220,20 +223,20 @@
       //   isEdit: false,
       // });
 
+
       function postToApi() {
-        fetch("https://webdev-hw-api.vercel.app/api/v1/freddy-krugliy/comments", {
+        return fetch("https://webdev-hw-api.vercel.app/api/v1/freddy-krugliy/comments", {
           method: "POST",
           body: JSON.stringify({
             text: escapeHtml(addComment.value),
             name: escapeHtml(addName.value),
           })
         }).then((responce) => {
-          responce.json().then((responceData) => {
-            comments = responceData.comments;
-            getFromApi();
-          })
+          responce.json();
+        }).then((responceData) => {
+          getFromApi();
         })
-      }
+      };
 
       renderComments();
       postToApi();
@@ -241,7 +244,7 @@
       addName.value = '';
       addComment.value = '';
     });
-  }
+  };
 
   addNewComment();
 
