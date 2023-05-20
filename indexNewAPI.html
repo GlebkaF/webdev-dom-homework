@@ -28,6 +28,7 @@
           <button class="add-form-button">Написать</button>
         </div>
       </div>
+      <div class="add-comment-tittle">Комментарий добавляется</div>
     </div>
   </body>
 
@@ -42,8 +43,9 @@
     const form = document.querySelectorAll(".form");
     const addForm = document.querySelectorAll(".add-form");
     const container = document.querySelector(".container");
+    const addCommentTitle = document.querySelector(".add-comment-tittle");
     getComments();
-
+    addCommentTitle.classList.add("hidden");
     function dateFormat() {
       const date = new Date();
       date.getDate() < 10 ? (dd = "0" + date.getDate()) : (dd = date.getDate());
@@ -126,7 +128,10 @@
 
         addFormButton.disabled = true;
         addFormButton.textContent = "Комментарий добавляется, подождите";
-        addForm.hidden = true;
+        addForm.forEach((formElement) => {
+          formElement.classList.add("hidden");
+        });
+        addCommentTitle.classList.remove("hidden");
         // form.hiden = true;
         fetch("https://webdev-hw-api.vercel.app/api/v1/eldar/comments", {
           method: "POST",
@@ -163,11 +168,17 @@
           .then((data) => {
             addFormButton.disabled = false;
             addFormButton.textContent = "Написать";
-            addForm.hidden = false;
+            addForm.forEach((formElement) => {
+              formElement.classList.remove("hidden");
+              addCommentTitle.classList.add("hidden");
+            });
             inputName.value = "";
             inputText.value = "";
           })
           .catch((error) => {
+            addForm.forEach((formElement) => {
+              formElement.classList.remove("hidden");
+            });
             addFormButton.disabled = false;
             addFormButton.textContent = "Написать";
             alert("чето не так");
