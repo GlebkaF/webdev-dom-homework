@@ -67,7 +67,8 @@
   const initLikeButtonListener = () => {
     const likeButtonElements = document.querySelectorAll(".like-button");
     for (let likeButtonElement of likeButtonElements) {
-      likeButtonElement.addEventListener("click", () => {
+      likeButtonElement.addEventListener("click", (event) => {
+        event.stopPropagation();
         const index = likeButtonElement.dataset.index;
         let countInLike = Number(comments[index].like);
         if (likeButtonElement.classList.contains("-active-like")) {
@@ -122,8 +123,6 @@
     }
 
   ];
-
-
   const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
       let isLike = '';
@@ -200,9 +199,8 @@
       like: countInLike,
       isLiked: false,
     });
-    initAnswerButton();
+
     renderComments();
-    initLikeButtonListener();
     nameElement.value = "";
   })
 
