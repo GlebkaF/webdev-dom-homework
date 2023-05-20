@@ -137,3 +137,16 @@ const renderComments = () =>{
 }
 
 renderComments();
+
+let smile = document.getElementsByClassName('smile__img');
+let counterClick = document.getElementsByClassName('smile__counter');
+let counter = 0;
+
+console.log(smile);
+console.log(counterClick);
+
+
+smile[x].addEventListener('click', function() {
+    counterClick[x].innerHTML = '';
+    counterClick[x].innerHTML += ++counter;
+});
