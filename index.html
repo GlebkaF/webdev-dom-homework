@@ -33,24 +33,38 @@
   const commentElements = document.querySelectorAll('comments');
   const lastCommentDeleteButton = document.getElementById('form-delete-button');
 
-  const comments = [
-    {
-      userName: "Глеб Фокин",
-      commentDate: "13.02.22 19:22",
-      userComment: "Это будет первый комментарий на этой странице",
-      likes: 3,
-      isLiked: false,
-      isEdit: false,
-    },
-    {
-      userName: "Варвара Н.",
-      commentDate: "13.02.22 19:22",
-      userComment: "Мне нравится как оформлена эта страница! ❤",
-      likes: 75,
-      isLiked: false,
-      isEdit: false,
-    },
+
+  let comments = [
+    // {
+    //   userName: "Глеб Фокин",
+    //   commentDate: "13.02.22 19:22",
+    //   userComment: "Это будет первый комментарий на этой странице",
+    //   likes: 3,
+    //   isLiked: false,
+    //   isEdit: false,
+    // },
+    // {
+    //   userName: "Варвара Н.",
+    //   commentDate: "13.02.22 19:22",
+    //   userComment: "Мне нравится как оформлена эта страница! ❤",
+    //   likes: 75,
+    //   isLiked: false,
+    //   isEdit: false,
+    // },
   ];
+
+  getFromApi();
+
+  function getFromApi() {
+    fetch("https://webdev-hw-api.vercel.app/api/v1/freddy-krugliy/comments", {
+      method: "GET",
+    }).then((responce) => {
+      responce.json().then((responceData) => {
+        comments = responceData.comments;
+        renderComments();
+      })
+    })
+  }
 
 
   const likeButtonsListeners = () => {
@@ -82,7 +96,7 @@
         const textArea = document.querySelectorAll('.comment-text');
 
         if (comment.isEdit && textArea) {
-          comment.userComment = textArea[index].value;
+          comment.text = textArea[index].value;
         }
 
         comment.isEdit = !comment.isEdit;
@@ -97,34 +111,35 @@
     const commentTextElements = document.querySelectorAll('.comment');
     for (const commentText of commentTextElements) {
       commentText.addEventListener('click', () => {
+        event.stopPropagation();
         const index = commentText.dataset.index;
         const comment = comments[index];
         addComment.classList.add('reply-comment');
-        addComment.value = `QUOTE_BEGIN ${comment.userName}:\n${comment.userComment.replaceAll("QUOTE_BEGIN", "").replaceAll("QUOTE_END", "")}QUOTE_END\n `;
+        addComment.value = `QUOTE_BEGIN ${comment.name}:\n${comment.text.replaceAll("QUOTE_BEGIN", "").replaceAll("QUOTE_END", "")}QUOTE_END\n `;
         addComment.focus();
         renderComments();
       });
     }
   }
 
-  
+
   const renderComments = () => {
     const commentsHtml = comments
       .map((comment, index) => {
         return `<li class="comment" data-index="${index}">
           <div class="comment-header">
             <div>
-              ${comment.userName}
+              ${comment.author.name}
             </div>
             <div>
-              ${comment.commentDate}
+              ${getActualDate(comment.date)}
             </div>
           </div>
           <div class="comment-body">
             ${comment.isEdit
-            ? `<textarea type="textarea" class="comment-text" rows="4" onclick="event.stopPropagation()">${comment.userComment}</textarea>`
+            ? `<textarea type="textarea" class="comment-text" rows="4" onclick="event.stopPropagation()">${comment.text}</textarea>`
             : `<div class="comment-text" data-index="${index}">
-              ${comment.userComment.replaceAll("QUOTE_BEGIN", "<div class='quote'>").replaceAll("QUOTE_END", "</div>")}
+              ${comment.text.replaceAll("QUOTE_BEGIN", "<div class='quote'>").replaceAll("QUOTE_END", "</div>")}
             </div>`
           }
           </div>
@@ -153,6 +168,27 @@
 
   renderComments();
 
+  function getActualDate(date) {
+    let userDate = new Date(date);
+    let month = userDate.getMonth() + 1;
+    let minutes = userDate.getMinutes();
+    let year = userDate.getFullYear() % 100;
+
+    if (month < 10) {
+      month = "0" + month;
+    };
+
+    if (minutes < 10) {
+      minutes = "0" + minutes;
+    };
+
+    if (year < 10) {
+      year = "0" + year;
+    };
+
+    return `${userDate.getDate()}.${month}.${year} ${userDate.getHours()}:${minutes}`;
+  }
+
   const addNewComment = () => {
     commentBtn.addEventListener("click", () => {
       addName.classList.remove("error");
@@ -163,25 +199,6 @@
       } else if (addComment.value.trim() === '') {
         return addComment.classList.add("error");
       };
-
-      let userDate = new Date();
-      let month = userDate.getMonth() + 1;
-      let minutes = userDate.getMinutes();
-      let year = userDate.getFullYear() % 100;
-
-      if (month < 10) {
-        month = "0" + month;
-      };
-
-      if (minutes < 10) {
-        minutes = "0" + minutes;
-      };
-
-      if (year < 10) {
-        year = "0" + year;
-      };
-
-      let nowDate = `${userDate.getDate()}.${month}.${year} ${userDate.getHours()}:${minutes}`;
 
 
       function escapeHtml(text) {
@@ -194,16 +211,32 @@
       };
 
 
-      comments.push({
-        userName: escapeHtml(addName.value),
-        commentDate: nowDate,
-        userComment: escapeHtml(addComment.value),
-        likes: 0,
-        isLiked: false,
-        isEdit: false,
-      });
+      // comments.push({
+      //   userName: escapeHtml(addName.value),
+      //   commentDate: nowDate,
+      //   userComment: escapeHtml(addComment.value),
+      //   likes: 0,
+      //   isLiked: false,
+      //   isEdit: false,
+      // });
+
+      function postToApi() {
+        fetch("https://webdev-hw-api.vercel.app/api/v1/freddy-krugliy/comments", {
+          method: "POST",
+          body: JSON.stringify({
+            text: escapeHtml(addComment.value),
+            name: escapeHtml(addName.value),
+          })
+        }).then((responce) => {
+          responce.json().then((responceData) => {
+            comments = responceData.comments;
+            getFromApi();
+          })
+        })
+      }
 
       renderComments();
+      postToApi();
 
       addName.value = '';
       addComment.value = '';
