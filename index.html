@@ -59,24 +59,51 @@
 
   
    
-    const comments = [
-      {
-        name: "Глеб Фокин",
-        comment: "Это будет первый комментарий на этой странице",
-        date: "12.02.22 12:18",
-        likes: 3,
-        isActive: false,
-      },
-      {
-        name: "Варвара Н",
-        comment: "Мне нравится как оформлена эта страница! ❤",
-        date: '13.02.22 19:22',
-        likes: 75,
-        isActive: true,
-      },
-    ]
+    let comments = [];
 
- // Обработчик лайков
+    const commentsFetch = fetch("https://webdev-hw-api.vercel.app/api/v1/viktoria-kolosova/comments", {
+      method: "GET",
+    });
+
+
+    // Достаем список из API
+    commentsFetch.then((response) => {
+      const commentsJSON = response.json().then((responseData) => {
+        console.log(responseData);
+
+        comments = responseData.comments.map((comment) => {
+          const date = new Date(comment.date);
+          let minutes = date.getMinutes();
+          if (minutes < 10) {
+            minutes = "0" +  minutes;
+          }
+          let hours = date.getHours();
+            if (hours < 10) {
+              hours = "0" + hours;
+            }
+          const time = hours + ":" + minutes;
+          let day = date.getDate();
+            if (day < 10) {
+              day = "0" + day;
+            }
+          let month = date.getMonth() + 1 ;
+            if (month < 10) {
+              month = "0" + month;
+            }
+          return {
+            name: comment.author.name,
+            date: day + "." + month + "." + date.getFullYear().toString().substr(-2) + " " + time,
+            text: comment.text,
+            likes: comment.likes,
+            isActive: comment.isLiked,
+          }
+        })
+        renderComments();
+      })
+    })
+
+
+   // Обработчик лайков
     const likeCountButtonListener = () => {
       const likeButtonElements = document.querySelectorAll('.like-button');
       for (const likeButtonElement of likeButtonElements) {
@@ -117,12 +144,17 @@
       const commentsHtml = comments.map((comment, index) => {
           return `<li class="comment" data-index="${index}">
           <div class="comment-header">
-            <div>${comment.name}</div>
+            <div>${comment.name}
+                </div>
             <div>${comment.date}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${comment.comment}
+              ${comment.text
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")}
             </div>
           </div>
           <div class="comment-footer">
@@ -197,27 +229,62 @@
           if (month < 10) {
             month = "0" + month;
           }
+        
+          const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/viktoria-kolosova/comments", {
+            method: "POST",
+            body: JSON.stringify({
+                name: nameElement.value,
+                date: day + "." + month + "." + date.getFullYear().toString().substr(-2) + " " + time,
+                text: commentElement.value,
+                likes: 0,
+                isActive: false,
+            })
+          });
 
-      comments.push({
-        name: nameElement.value,
-        date: day + "." + month + "." + date.getFullYear().toString().substr(-2) + " " + time,
-        comment: commentElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("Quote_start", "<div class='replyComment'>")
-        .replaceAll("Quote_end", "</div>")
-        .replaceAll("New_line", "</br>"),
-        likes: 0,
-        isActive: false,
-      })
+          const fetchPromiseGET = fetch("https://webdev-hw-api.vercel.app/api/v1/viktoria-kolosova/comments", {
+            method: "GET",
+          });
 
-      nameElement.value = "";
-      commentElement.value = "";
-      renderComments();
-      
-    });
+          fetchPromiseGET.then((response) => {
+            const JSONPromise = response.json().then((responseData) => {
+              console.log(responseData);
+              comments = responseData.comments.map((comment) => {
+                const date = new Date(comment.date);
+                let minutes = date.getMinutes();
+                if (minutes < 10) {
+                  minutes = "0" +  minutes;
+                }
+                let hours = date.getHours();
+                  if (hours < 10) {
+                    hours = "0" + hours;
+                  }
+                const time = hours + ":" + minutes;
+                let day = date.getDate();
+                  if (day < 10) {
+                    day = "0" + day;
+                  }
+                let month = date.getMonth() + 1 ;
+                  if (month < 10) {
+                    month = "0" + month;
+                  }
+                return {
+                  name: comment.author.name,
+                  date: day + "." + month + "." + date.getFullYear().toString().substr(-2) + " " + time,
+                  text: comment.text,
+                  likes: comment.likes,
+                  isActive: comment.isLiked,
+                }
+            })
+          })
+        })
+
+          nameElement.value = "";
+          commentElement.value = "";
+          renderComments();
+          
+        });
+
+
 
 
   </script>
