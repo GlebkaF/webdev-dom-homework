@@ -47,12 +47,14 @@
         time: '12.02.22 12:18',
         text: 'Это будет первый комментарий на этой странице',
         likes: 3,
+        isLiked: '',
       },
       {
         name: 'Варвара Н.',
         time: '13.02.22 19:22',
         text: 'Мне нравится как оформлена эта страница',
         likes: 75,
+        isLiked: '-active-like',
       }
     ];
 
@@ -71,7 +73,7 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${comment.likes}</span>
-              <button data-index="${index}" class="like-button"></button>
+              <button data-index="${index}" class="like-button ${comment.isLiked}"></button>
             </div>
           </div>
         </li>`;
@@ -91,19 +93,17 @@
         likeButton.addEventListener('click', () => {
           const index = likeButton.dataset.index;
 
-          let likes = likesCounters[index].innerHTML;
-          likes = Number(likes);
-          console.log(likes);
-
-          if (likeButton.classList.contains('-active-like')) {
-            likeButton.classList.remove('-active-like');
-            likes -= 1;
-          } else {
-            likeButton.classList.add('-active-like');
-            likes += 1;
-            console.log(likes);
-            
+          if (comments[index].isLiked = '') {
+            comments[index].isLiked = '-active-like';
           }
+
+          console.log(comments[index].isLiked);
+
+          renderComments();
+
+          // let likes = likesCounters[index].innerHTML;
+          // likes = Number(likes);
+          // console.log(likes);
 
         });
       }
@@ -123,6 +123,7 @@
         time: `${`${("0" + date.getDate()).slice(-2)}.${("0" + (date.getMonth() + 1)).slice(-2)}.${date.getFullYear().toString().slice(-2)} ${("0" + date.getHours()).slice(-2)}:${("0" + date.getMinutes()).slice(-2)}`}`,
         text: inputComment.value,
         likes: 0,
+        isLiked: '',
       });
 
       renderComments();
