@@ -1,4 +1,6 @@
 import { renderCommentList } from "./render.js";
+import { getComments, postComment } from "./api.js";
+import { addErrors, getDate, addLikeButton } from "./helper.js";
 
     const buttonElement = document.getElementById('add-button');
     const commentsListElement = document.getElementById('comments-list');
