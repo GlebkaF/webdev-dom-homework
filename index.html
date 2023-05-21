@@ -39,8 +39,6 @@
     const buttonForm = document.getElementById('button-form');
     const listElement = document.getElementById('comments');
 
-    const commentsElements = document.querySelectorAll('.comment');
-
     const comments = [
       {
         name: 'Глеб Фокин',
@@ -83,6 +81,7 @@
       listElement.innerHTML = commentsHtml;
 
       likeTheComments();
+      commentReply();
     };
 
     const likeTheComments = () => {
@@ -90,7 +89,9 @@
       const likesCounters = document.querySelectorAll('.likes-counter');
 
       for (const likeButton of likeButtons) {
-        likeButton.addEventListener('click', () => {
+        likeButton.addEventListener('click', (event) => {
+          event.stopPropagation();
+
           const index = likeButton.dataset.index;
 
           if (likeButton.classList.contains('-active-like')) {
@@ -106,6 +107,17 @@
       }
     };
 
+    const commentReply = () => {
+      const comments = document.querySelectorAll('.comment');
+      for (const comment of comments) {
+        comment.addEventListener('click', (event) => {
+          const userName = comment.querySelector('.comment-header div:first-child').textContent;
+          const userAnswer = comment.querySelector('.comment-text').textContent;
+          inputComment.value = `>${userName} \n\n ${userAnswer}`;
+        });
+      }
+    }
+
     renderComments();
   
     buttonForm.addEventListener('click', (event) => {
@@ -116,9 +128,17 @@
       const date = new Date();
 
       comments.push({
-        name: inputName.value,
+        name: inputName.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
         time: `${`${("0" + date.getDate()).slice(-2)}.${("0" + (date.getMonth() + 1)).slice(-2)}.${date.getFullYear().toString().slice(-2)} ${("0" + date.getHours()).slice(-2)}:${("0" + date.getMinutes()).slice(-2)}`}`,
-        text: inputComment.value,
+        text: inputComment.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
         likes: 0,
         isLiked: '',
       });
@@ -129,13 +149,6 @@
       inputComment.value = '';
 
     });
-
-    // Функция лайка
-    // 1. Повесить обработчик событий на кнопку лайка
-    // 2. Сделать так, что при нажатии на кнопку лайка - добавлялся или убирался класс -active-like
-    // 3. Сделать так, что при нажатии на кнопку лайка - прибавлялось или увеличивалосьь количество лайков
-    // Схема: (если на кнопке есть класс -active-like, то этотт класс убирается, а кол-во лайков уменьшается на один)
-    // (в остальных случаях кнопке добавляется класс -active-like, а кол-во лайков увеличивается на один)
 
   </script>
 </html>
