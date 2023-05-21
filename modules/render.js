@@ -1,14 +1,12 @@
-import { getComments, postComment } from "./api.js";
-import { addErrors, getDate, addLikeButton } from "./helper.js";
+// import { getComments, postComment } from "./api.js";
+// import { addErrors, getDate, addLikeButton } from "./helper.js";
 
   const listElement = document.getElementById('list'); 
   const commentsListElement = document.getElementById('comments-list');
+  const nameElement = document.getElementById('name');
+  const commentsElement = document.getElementById('comments');
 
-  getComments();
-  postComment();
-  addErrors();
-  getDate();
-  addLikeButton()
+  
 
 export const renderCommentList = (commentList) => {
     const commentHtml = commentList.map((comment, index) => {
