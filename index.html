@@ -8,42 +8,9 @@
 
   <body>
     <div class="container">
-      <ul class="comments"  id="li-comment">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div id="data">12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div id="data">13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
+    <ul id="list" class="comments"> 
+
+    </ul>
       <div class="add-form">
         <input
           type="text"
@@ -70,10 +37,106 @@
   <script>
     "use strict";
     const buttonWritter = document.getElementById("writter");
-    const blockComment = document.getElementById("li-comment");
     const textInputElement = document.getElementById("add-text");
     const textareaInputElement = document.getElementById("add-textarea");
+    const listElement = document.getElementById("list");
     
+    const comentsOfArr = [
+        {
+            id: 0,
+            name: 'Глеб Фокин',
+            date: '12.02.22 12:18',
+            text: 'Это будет первый комментарий на этой странице',
+            like: '3',
+            isActiveLike: false,
+            isEdit: false
+        },
+        {
+            id: 1,
+            name: 'Варвара Н.',
+            date: '13.02.22 19:22',
+            text: 'Мне нравится как оформлена эта страница! ❤',
+            like: '75',
+            isActiveLike: true,
+            isEdit: false
+        }
+    ]
+    
+    const likes = () => {
+    const likeButtons = document.querySelectorAll('.like-button');
+        for (const likeButton of likeButtons) {
+            likeButton.addEventListener('click', () => {
+            const index = likeButton.dataset.index;
+        if (likeButton.classList.contains('-active-like')) {
+            comentsOfArr[index].like = Number(comentsOfArr[index].like) -1;
+            comentsOfArr[index].isActiveLike = false;
+        } else {
+            comentsOfArr[index].like = Number(comentsOfArr[index].like) +1;
+            comentsOfArr[index].isActiveLike = true;
+        }
+            renderComents();
+            });
+        };
+    };
+
+    const edit = () => {
+    const editButtons = document.querySelectorAll('.edit-button');
+    const commentBody = document.querySelectorAll('.comment-body');
+
+    
+
+    editButtons.forEach((button, index) => {
+      button.addEventListener('click', () => {
+        const commentBodyElem = commentBody[index];
+        const comment = comentsOfArr[index];
+
+        if (comment.isEdit) {
+          const textarea = document.querySelector('.edit-textarea');
+          const newComment = textarea.value;
+          comment.text = newComment;
+        }
+
+        comment.isEdit = !comment.isEdit;
+        renderComents();
+        })
+      });
+
+    }
+
+    const renderComents = () => {
+    const comentsHtml = comentsOfArr.map((item, index) =>{
+      let activeLike = '';
+      if (comentsOfArr[index].isActiveLike) {
+        activeLike ='-active-like'
+      } 
+      return `<li class="comment">
+                <div class="comment-header">
+                  <div>${item.name}</div>
+                  <div>${item.date}</div>
+                </div>
+                <div class="comment-body">
+                  <div class="${item.isEdit ? 'none-visible' : 'comment-text'}">
+                    ${item.text}
+                  </div>
+                </div>
+                <div class="comment-footer">
+                  
+                  <div class="likes">
+                    <span class="likes-counter">${item.like}</span>
+                    <button class="like-button ${activeLike}" data-index='${index}'></button>
+                  </div>
+                </div>
+              </li>`
+            }
+          )
+          .join('') ; 
+        listElement.innerHTML = comentsHtml;
+      likes();
+      edit();
+    };
+    renderComents();
+
+
 
     buttonWritter.addEventListener ('click',() => {
       
@@ -91,8 +154,8 @@
       date.getFullYear().toString().slice(-2) + ' ' +
       date.getHours().toString().padStart(2, '0') + ':' +
       date.getMinutes().toString().padStart(2, '0');
-      const oldBlockComment = blockComment.innerHTML
-      blockComment.innerHTML = oldBlockComment + `<li class="comment">
+      const oldlistElement = listElement.innerHTML
+      listElement.innerHTML = oldlistElement + `<li class="comment">
           <div class="comment-header">
             <div>${textInputElement.value}
             </div>
@@ -111,6 +174,26 @@
             </div>
           </div>
         </li>`;
+        comentsOfArr.push({  
+        name: textInputElement.value
+              .replaceAll("&", "&amp;")
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;")
+              .replaceAll('"', "&quot;"),
+        date: formattedDate,
+        text: textareaInputElement.value
+              .replaceAll("&", "&amp;")
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;")
+              .replaceAll('"', "&quot;"),
+        like: 0,
+        isActiveLike: false,
+      });
+      renderComents();
+
+      textInputElement.value = "";
+      textareaInputElement.value = "";
+      buttonWritter.disabled = true;  
     });
   </script>
 </html>
