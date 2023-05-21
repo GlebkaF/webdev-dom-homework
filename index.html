@@ -9,6 +9,7 @@
 
 <body>
   <div class="container">
+    <div id="loader" class="loader">Пожалуйста, подождите, загружаю комментарии...</div>
     <ul id="list" class="comments">
       <!-- Список рендерится из JS -->
       <!-- <li class="comment">
@@ -46,7 +47,7 @@
         </div>
       </li> -->
     </ul>
-    <div class="add-form">
+    <div id="add-form-block" class="add-form">
       <input id="name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
       <textarea id="comment-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
         rows="4"></textarea>
@@ -64,6 +65,13 @@
   .error-button {
     background-color: grey;
   }
+
+  .loader {
+    display: none;
+    text-align: center;
+    padding: 20px;
+    font-weight: bold;
+  }
 </style>
 <script>
 
@@ -71,46 +79,45 @@
   const listElement = document.getElementById("list");
   const inputNameElement = document.getElementById("name");
   const inputTextElement = document.getElementById("comment-text");
+  const addForm = document.getElementById("add-form-block");
   let currenDate = new Date();
 
 
   // GET-запрос связка данных с сервером с помощью API
-  const fetchPromise = fetch(
-    "https://webdev-hw-api.vercel.app/api/v1/kostasdvor/comments",
-    {
-      method: "GET"
-    });
 
-  fetchPromise.then((response) => {
+  const fetchAndRenderTasks = () => {
+    return fetch(
+      "https://webdev-hw-api.vercel.app/api/v1/kostasdvor/comments",
+      {
+        method: "GET"
+      }
+    )
+      .then((response) => response.json())
+      .then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+          const commentDate = new Date(comment.date);
+          const day = commentDate.getDate();
+          const month = commentDate.getMonth() + 1;
+          const year = commentDate.getFullYear();
+          const formattedDate = `${day < 10 ? "0" : ""}${day}.${month < 10 ? "0" : ""}${month}.${year}`;
+          const hours = commentDate.getHours();
+          const minutes = commentDate.getMinutes();
+          const formattedTime = `${hours < 10 ? "0" : ""}${hours}:${minutes < 10 ? "0" : ""}${minutes}`;
+          const formattedDateTime = `${formattedDate} ${formattedTime}`;
 
-    const jsonPromise = response.json();
-    jsonPromise.then((responseData) => {
+          return {
+            name: comment.author.name,
+            date: formattedDateTime,
+            text: comment.text,
+            likes: comment.likes,
+            isLikes: false,
+          };
+        });
 
-      const appComments = responseData.comments.map((comment) => {
-
-        const commentDate = new Date(comment.date);
-        const day = commentDate.getDate();
-        const month = commentDate.getMonth() + 1;
-        const year = commentDate.getFullYear();
-        const formattedDate = `${day < 10 ? "0" : ""}${day}.${month < 10 ? "0" : ""}${month}.${year}`;
-        const hours = commentDate.getHours();
-        const minutes = commentDate.getMinutes();
-        const formattedTime = `${hours < 10 ? "0" : ""}${hours}:${minutes < 10 ? "0" : ""}${minutes}`;
-        const formattedDateTime = `${formattedDate} ${formattedTime}`;
-
-        return {
-          name: comment.author.name,
-          date: formattedDateTime,
-          text: comment.text,
-          likes: comment.likes,
-          isLikes: false,
-        };
+        usersComments = appComments;
+        renderUsersComments();
       });
-
-      usersComments = appComments;
-      renderUsersComments();
-    });
-  });
+  }
 
   let usersComments = [
     // {
@@ -154,7 +161,11 @@
 
     listElement.innerHTML = usersCommentsHTML;
     toggleLike();
+    checkCommentFields();
+    addCommentReplyHandlers();
   };
+
+  fetchAndRenderTasks();
   renderUsersComments();
 
   // Плохая функция добавления лайка 
@@ -187,6 +198,7 @@
   function toggleLike() {
 
     const likeButtons = document.querySelectorAll('.like-button');
+    addCommentReplyHandlers();
 
     for (const button of likeButtons) {
       button.addEventListener('click', function (event) {
@@ -200,7 +212,6 @@
 
         usersComments[index].isLiked = !usersComments[index].isLiked;
         renderUsersComments();
-        addCommentReplyHandlers();
       })
     }
   };
@@ -237,6 +248,8 @@
     }
   }
   addCommentReplyHandlers();
+
+  listElement.innerHTML = 'Пожалуйста, подождите, загружаю комментарии...';
 
   // Обработчик клика на кнопку "написать"
 
@@ -297,6 +310,7 @@
     //   isLiked: false,
     // });
 
+    addForm.innerHTML = 'Комментарий отправляется...';
 
     // Получение новых комментов на сервер с помощью API
     const fetchPromise = fetch(
@@ -310,52 +324,24 @@
           text: inputTextElement.value,
           name: inputNameElement.value,
         }),
-      });
+      }
+    );
 
-    fetchPromise.then((response) => {
-      const jsonPromise = response.json();
-      jsonPromise.then((responseData) => {
-        console.log(responseData);
-      });
-    });
-
-    // Новый GET-запрос на получение актуального списка
-    const fetchPromiseNew = fetch(
-      "https://webdev-hw-api.vercel.app/api/v1/kostasdvor/comments",
-      {
-        method: "GET"
-      });
-
-    fetchPromiseNew.then((response) => {
-      const jsonPromise = response.json();
-      jsonPromise.then((responseData) => {
-        usersComments = responseData.comments.map((comment) => {
-          const commentDate = new Date(comment.date);
-          const day = commentDate.getDate();
-          const month = commentDate.getMonth() + 1;
-          const year = commentDate.getFullYear();
-          const formattedDate = `${day < 10 ? "0" : ""}${day}.${month < 10 ? "0" : ""}${month}.${year}`;
-          const hours = commentDate.getHours();
-          const minutes = commentDate.getMinutes();
-          const formattedTime = `${hours < 10 ? "0" : ""}${hours}:${minutes < 10 ? "0" : ""}${minutes}`;
-          const formattedDateTime = `${formattedDate} ${formattedTime}`;
-
-          return {
-            name: comment.author.name,
-            date: formattedDateTime,
-            text: comment.text,
-            likes: comment.likes,
-            isLikes: false,
-          };
-        });
-
+    fetchPromise
+      .then((response) => response.json())
+      .then((responseData) => {
+        return fetchAndRenderTasks();
+      }).then(() => {
+        addForm.innerHTML = `<input id="name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+        <textarea id="comment-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+        rows="4"></textarea>
+        <div class="add-form-row">
+        <button id="add-button" class="add-form-button">Написать</button>
+        </div>`;
         renderUsersComments();
       });
-    });
-
 
     checkCommentFields();
-    renderUsersComments();
   });
 
 </script>
