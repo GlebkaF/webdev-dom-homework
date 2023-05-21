@@ -7,13 +7,43 @@ const textCommment = document.querySelector('.add-form-text');
 const button = document.querySelector('.add-form-button');
 const comments = document.querySelectorAll('.comment');
 const loader = document.querySelector('.loader');
-window.addEventListener('load',()=>{
+let answerStatus = '';
+//Найдена на просторах инета
+function sleep(milliseconds) {
+    const date = Date.now();
+    let currentDate = null;
+    do {
+      currentDate = Date.now();
+    } while (currentDate - date < milliseconds);
+  }
+window.addEventListener('load', () => {
     loader.classList.add('loader_visible');
     loader.classList.remove('loader_hidden');
 });
-
+//показывем ошибки
+function errorShow(text_error, code) {
+    const error_popap = document.querySelector('.error_popap');
+    const error_popap__h2 = document.querySelector('.error_popap__h2');
+    const error_popap__p = document.querySelector('.error_popap__p');
+    error_popap__h2.textContent = `Ошибка ${code}`;
+    error_popap__p.textContent = text_error;
+    error_popap.classList.remove('error_popap__hide')
+    loader.classList.remove('loader_visible');
+    loader.classList.add('loader_hidden');
+    addForm.style.visibility = "visible";
+}
+//скрываем ошибки
+function errorHide() {
+    const error_popap = document.querySelector('.error_popap');
+    const error_popap__h2 = document.querySelector('.error_popap__h2');
+    const error_popap__p = document.querySelector('.error_popap__p');
+    error_popap__h2.textContent = '';
+    error_popap__p.textContent = '';
+    error_popap.classList.add('error_popap__hide');
+}
+//функция даты
 function dateFormat(date) {
-   // const date = new Date();
+    // const date = new Date();
     (date.getDate() < 10) ? dd = '0' + date.getDate() : dd = date.getDate();
     (date.getMonth() < 10) ? MM = '0' + (date.getMonth() + 1) : MM = (date.getMonth() + 1);
     (date.getFullYear()) ? YY = date.getFullYear().toString().slice(-2) : YY = date.getFullYear().toString().slice(-2);
@@ -21,12 +51,13 @@ function dateFormat(date) {
     (date.getMinutes() < 10) ? mm = '0' + date.getMinutes() : mm = date.getMinutes();
     return `${dd}.${MM}.${YY} ${hh}:${mm}`;
 }
+//Проверка куда кликнул пользователь
 container.addEventListener('click', (e) => {
     const target = e.target.classList[0];
     const id = e.target.dataset.id;
     switch (target) {
         case 'like-button': initLikeClick(id);
-        e.target.classList.add('-loading-like');
+            e.target.classList.add('-loading-like');
             break;
         case 'del-comment': delClick(id);
             break;
@@ -48,85 +79,111 @@ container.addEventListener('click', (e) => {
     }
 })
 let commentsListArray = [
-   
-];
 
+];
 function delay(interval = 300) {
     return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve();
-      }, interval);
+        setTimeout(() => {
+            resolve();
+        }, interval);
     });
 }
+//все запросы к апи
+function fetchRequest(method, datas = null) {
 
-function fetchRequest(method, data = null) {
-    return fetch("https://webdev-hw-api.vercel.app/api/v1/gleb-fokin/comments",
+    return fetch("https://webdev-hw-api.vercel.app/api/v1/djon198360/comments",
         {
             method: method,
-            body: data,
+            body: datas,
         })
-        .then((response) => response.json())
+        .then((response) => {
+            answerStatus = response.status;
+            return response.json();
+
+        })
+
         .then((data) => {
-            if (data.result === 'ok') {
+            if (answerStatus === 201) {
                 fetchRequest("GET");
                 commentsListArray = data.comments
-                renderComments();
-            } else {
-                commentsListArray = data.comments
+                textCommment.value = "";/// очищаем поле коммента имя не трогаем 
                 renderComments();
             }
+            else if (answerStatus === 400) {
+                
+             return   errorShow(data.error, answerStatus);
+            }
+            else if (answerStatus === 500) {
+                
+                return   fetchRequest(method, datas);
+            }
+            else {
+                commentsListArray = data.comments
+                renderComments();
 
-
-        }).catch((error) => error);
-
+            }
+        })
+        .catch((error) => {
+            if (error.message === 'Failed to fetch') {
+                errorShow('Нет соединения с интернетом, жду соединения', 'соединения');
+                //другого способа я не придумал
+                sleep(5000);
+                fetchRequest(method, datas);
+                
+            }
+            else { error }
+        });
 }
+//устанока лайка
 const addLikes = (id) => {
     delay(2000).then(() => {
-    commentsListArray[id].likes++;
-    commentsListArray[id].isLiked = true;
-    // const data = JSON.stringify({
-    //     id: id,
-    //     likes: likes++,
-    //     isLiked:  true,
-    // });
-    // fetchRequest("POST", data);
-    renderComments();
-});
+        commentsListArray[id].likes++;
+        commentsListArray[id].isLiked = true;
+        // const data = JSON.stringify({
+        //     id: id,
+        //     likes: likes++,
+        //     isLiked:  true,
+        // });
+        // fetchRequest("POST", data);
+        renderComments();
+    });
 }
+//удаление лайка
 const delLikes = (id) => {
     commentsListArray[id].isLikeLoading = true;
     delay(2000).then(() => {
-    commentsListArray[id].likes--;
-    commentsListArray[id].isLiked = false;
-    // const data = JSON.stringify({
-    //     id: id,
-    //     likes: likes--,
-    //     isLiked:  false,
-    // });
-    // fetchRequest("POST", data);
-    renderComments();
-});
+        commentsListArray[id].likes--;
+        commentsListArray[id].isLiked = false;
+        // const data = JSON.stringify({
+        //     id: id,
+        //     likes: likes--,
+        //     isLiked:  false,
+        // });
+        // fetchRequest("POST", data);
+        renderComments();
+    });
 }
+//проверка лайкнуто или нет
 const initLikeClick = (id) => {
     (commentsListArray[id].isLiked) ? delLikes(id) : addLikes(id);
-    
+
 }
+//редактирование 
 const editClick = (id) => {
     commentsListArray[id].isEdit = true;
     renderComments();
     const editFormText = document.querySelector('.edit-form-text');
     editFormText.scrollIntoView({ behavior: "smooth" });
 }
+//сохраняем редактирование
 const saveEditComment = (id) => {
     const date = new Date(); // дата
     const editText = document.querySelector('.edit-form-text');
-    console.dir(commentsListArray);
     if (editText.value.length > 10) {
-
         const data = JSON.stringify({
             id: id,
             name: commentsListArray[id].author.name,
-          //  date: dateFormat(),
+            //  date: dateFormat(),
             text: htmlSpecialChars(editText.value),
             like: 0,
         });
@@ -135,11 +192,12 @@ const saveEditComment = (id) => {
         editText.classList.add('error');
     }
 }
+//валидация при редактирование
 function editValid() {
     const editText = document.querySelector('.edit-form-text');
     const editButton = document.querySelector('.edit-form-button');
     editText.addEventListener('input', () => {
-        if (editText.value.length > 10) {
+        if (editText.value.length > 3) {
             editText.classList.remove('error');
             editButton.removeAttribute('disabled');
         } else {
@@ -148,16 +206,19 @@ function editValid() {
         }
     });
 }
+//удаление
 const delClick = (id) => {
     commentsListArray.splice(id, 1);
     renderComments();
 }
+//цитата 
 function quoteComment(id) {
     const comment_body = document.querySelectorAll('.comment-text');
     textCommment.scrollIntoView({ behavior: "smooth" });
     const quoteText = `[quote=${commentsListArray[id].author.name}]\n${commentsListArray[id].text}[/quote]\n`;
     textCommment.value += quoteText;
 }
+//реплайс б кодов
 function htmlBbDecode(text, id) {
     return text
         .replaceAll(/\[quote=(.*?)\]/g, `<div class="quote_title" data-id="${id}">Цитата: $1</div><div class="quote" data-id="${id}">`)
@@ -168,6 +229,7 @@ function htmlBbDecode(text, id) {
         .replaceAll(/\[(.*?)\]/g, '<$1>')
         .replaceAll(/\[\/(.*?)\]/g, '</$1>')
 }
+//реплайс спец символов
 function htmlSpecialChars(text) {
     return text
         .replaceAll("&", "&amp;")
@@ -175,6 +237,7 @@ function htmlSpecialChars(text) {
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;");
 }
+//рендер
 function renderComments() {
 
     const commentHtmlResult = commentsListArray.map((comment, id) => {
@@ -223,26 +286,30 @@ function renderComments() {
     loader.classList.remove('loader_visible');
     loader.classList.add('loader_hidden');
     addForm.style.visibility = "visible";
+    errorHide();
     commentList.innerHTML = commentHtmlResult;
 
+
 }
+//проверка валидации
 function valiate() { //функция валидации простая
-    if (userName.value.length === 0) { //если имя === 0
+    if (userName.value.length < 3) { //если имя === 0
         userName.classList.add('error'); //ставим класс
         return false; //возвращаем false 
     } else { userName.classList.remove('error'); } // иначе удаляем
-    if (textCommment.value.length < 10) {// если количество символов коммента менше 10 
+    if (textCommment.value.length < 3) {// если количество символов коммента менше 10 
         textCommment.classList.add('error'); //ставим класс 
         return false; //возвращаем false
     } else { textCommment.classList.remove('error'); } //иначе удаляе класс
 
-    if (userName.value.length > 0 && textCommment.value.length >= 10) { //если  оба поля заполнены 
+    if (userName.value.length >= 3 && textCommment.value.length >= 3) { //если  оба поля заполнены 
         return true; //возвращаем true
     }
     else {
         return false; //возвращаем false
     }
 }
+//добавка коммента
 function addComment() { //функция  добавления коммента
     const validate = valiate(); //присваиваем переменной результат валидации
     const date = new Date(); // дата
@@ -251,7 +318,8 @@ function addComment() { //функция  добавления коммента
         const data = JSON.stringify({
 
             name: htmlSpecialChars(userName.value),
-         //   date: dateFormat(),
+            //   date: dateFormat(),
+            forceError: true,
             text: htmlSpecialChars(textCommment.value),
             like: 0,
         });
@@ -259,8 +327,6 @@ function addComment() { //функция  добавления коммента
         loader.classList.add('loader_visible');
         loader.classList.remove('loader_hidden');
         fetchRequest("POST", data);
-        textCommment.value = "";// очищаем поле коммента имя не трогаем 
-        button.setAttribute('disabled', '');
     }
 }
 button.addEventListener('click', (event) => { // если клик по буттон
