@@ -70,10 +70,10 @@
 
         for (const likeButtonElement of likeButtonElements) {
           likeButtonElement.addEventListener("click", (event) => {
+            event.stopPropagation();
             const index = likeButtonElement.dataset.index;
             comments[index].favorite ? comments[index].likes-- : comments[index].likes++;
             comments[index].favorite = !comments[index].favorite;
-            event.stopPropagation();
             renderComments();
           });
         }
@@ -104,11 +104,11 @@
 
       initLikeButtonsListner();
 
-      const CommentElements = document.querySelectorAll(".comment");
+      const сommentElements = document.querySelectorAll(".comment");
 
-      for (const CommentElement of CommentElements) {
-        CommentElement.addEventListener("click", () => {
-        const index = CommentElement.dataset.comment;
+      for (const сommentElement of сommentElements) {
+        сommentElement.addEventListener("click", () => {
+        const index = сommentElement.dataset.comment;
         textInputElement.value = `<${comments[index].text}
 ${comments[index].name},`;
         textInputElement.style.whiteSpace = "pre-line";
