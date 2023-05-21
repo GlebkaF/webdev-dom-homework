@@ -5,7 +5,6 @@
     <meta charset="utf-8" />
     <link rel="stylesheet" href="styles.css" />
   </head>
-
   <body>
     <div class="container">
       <div class="loader">Комментарии загружаются</div>
@@ -31,7 +30,6 @@
       <div class="add-comment-tittle">Комментарий добавляется</div>
     </div>
   </body>
-
   <script src="getComments.js"></script>
   <script src="editComment.js"></script>
   <script src="addLike.js"></script>
@@ -46,8 +44,9 @@
     const addCommentTitle = document.querySelector(".add-comment-tittle");
     getComments();
     addCommentTitle.classList.add("hidden");
-    function dateFormat() {
-      const date = new Date();
+
+    function dateFormat(date) {
+      //  const date = new Date();
       date.getDate() < 10 ? (dd = "0" + date.getDate()) : (dd = date.getDate());
       date.getMonth() < 10
         ? (MM = "0" + (date.getMonth() + 1))
