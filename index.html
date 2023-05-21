@@ -60,11 +60,23 @@
       dateComment.getHours().toString().padStart(2, '0') + ':' +
       dateComment.getMinutes().toString().padStart(2, '0');
 
-    // Добавляем новый комменрарий в массив
+   
+    // Защащаем ввод данных
+
+    const protectionHtml = (string) => {
+      return string
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+    };
+
+     // Добавляем новый комменрарий в массив
+
     comments.push({
-      name: elementName.value,
+      name: protectionHtml(elementName.value),
       date: formatDate,
-      textComment: elementComment.value,
+      textComment: protectionHtml(elementComment.value),
       likes: 0
     });
     renderComments();
@@ -74,6 +86,7 @@
   });
 
   // Отправка коммента с помощью кнопки Enter
+
   document.addEventListener('keyup', (event) => {
     if (event.key === "Enter") {
       buttonElement.click()
@@ -81,29 +94,30 @@
   });
 
   // Активность кнопки
+
   buttonElement.disabled = true;
   elementName.addEventListener('input', () => {
     if (elementName.value.trim() !== "") {
       buttonElement.disabled = false;
-      return;
     } else {
       buttonElement.disabled = true;
-      return
     }
   });
 
   //Удаление последнего комментария
+
   const deleteComment = document.getElementById('delComment');
   deleteComment.addEventListener('click', () => {
     const lastCommentIndex = listElement.innerHTML.lastIndexOf(`<li class="comment">`);
     if (lastCommentIndex !== -1) {
       listElement.innerHTML = listElement.innerHTML.substring(0, lastCommentIndex)
     }
-  })
-
-  console.log("It works!");
+    comments.pop();
+    renderComments();
+  });
 
   // Создаем массив данных комманетариев
+
   const comments = [
     {
       name: "Глеб Фокин",
@@ -115,31 +129,54 @@
     {
       name: "Варвара Н.",
       date: "13.02.22 19:22",
-      textComment: "Это будет первый комментарий на этой странице",
+      textComment: "Мне нравится как оформлена эта страница! ❤",
       likes: 75,
       isActiveLike: false,
     },
   ];
 
   // Добавляем фукцию активности лайка
+
   const like = () => {
     const likeButtons = document.querySelectorAll('.like-button');
     for (const likeButton of likeButtons) {
-      likeButton.addEventListener('click', () => {
+      likeButton.addEventListener('click', (e) => {
+        e.stopPropagation()
         const index = likeButton.dataset.index;
-        if (likeButton.classList.contains('-active-like')) {
-          comments[index].likes = comments[index].likes - 1;
-          comments[index].isActiveLike = false;
+        if (comments[index].isActiveLike) {
+        comments[index].likes --;
+        
         } else {
-          comments[index].likes = Number(comments[index].likes) + 1;
-          comments[index].isActiveLike = true;
+          comments[index].likes ++;
         }
+        comments[index].isActiveLike = !comments[index].isActiveLike;
         renderComments();
       })
     }
   };
+   
+  // Добавляю обработчик клика на комментарий
 
+  const initAnswer = () => {
+    const commentsElements = document.querySelectorAll(".comment");
+  for (const commentElement of commentsElements){
+    commentElement.addEventListener('click', () => {
+      elementComment.value = `> ${commentElement.querySelector('.comment-text').innerHTML
+        .replaceAll("&amp", "&;")
+        .replaceAll("&lt;", "<")
+        .replaceAll("&gt;", ">")
+        .replaceAll("&quot;", '"')}`
+      + `\n\n${commentElement.querySelector('.comment-header').children[0].innerHTML
+        .replaceAll("&amp", "&;")
+        .replaceAll("&lt;", "<")
+        .replaceAll("&gt;", ">")
+        .replaceAll("&quot;", '"')}`
+      })
+    }
+  }
+  
   // создаем рендер фукцию для добавления разметки html из JS
+  
   const renderComments = () => {
 
     const commentsHtml = comments.map((comment, index) => {
@@ -153,9 +190,7 @@
           <div>${comment.date}</div>
         </div>
         <div class="comment-body">
-          <div class="comment-text">
-            ${comment.textComment}
-          </div>
+          <div class="comment-text">${comment.textComment}</div>
         </div>
         <div class="comment-footer">
           <div class="likes">
@@ -168,8 +203,10 @@
       .join("");
     listElement.innerHTML = commentsHtml;
     like();
+    initAnswer();
   };
   renderComments();
-</script>
 
+  console.log("It works!");
+</script>
 </html>
