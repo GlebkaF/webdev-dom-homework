@@ -78,9 +78,9 @@
 
 
     const renderComments = () => {
+      listElement.classList.remove('comments');
+      
       const commentsHtml = comments.map((comment, index) => {
-        listElement.classList.remove;
-        listElement.textContent = "Пожалуйста подождите, загружаю комментарии...";
         return `<li class="comment" data-comment="< ${comment.text} \n ${comment.name}">
           <div class="comment-header">
             <div>
@@ -105,7 +105,7 @@
       }).join("");
       listElement.innerHTML = commentsHtml;
 
-      listElement.classList.add;
+      listElement.classList.add('comments');
 
       initLikesButtonListeners();
       initQuoteCommentListeners();
