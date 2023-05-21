@@ -12,8 +12,8 @@
       <ul id="list" class="comments">
         <!-- The list is rendering from JS --> 
       </ul>
-      <div class="add-form">
-        <p id="new-comment-loader" class="hidden">Комментарий добавляется...</p>
+      <p id="new-comment-loader" class="hidden">Комментарий добавляется...</p>
+      <div id="new-comment-section" class="add-form">
         <input id="name-input" value=""
           type="text"
           class="add-form-name"
@@ -258,12 +258,13 @@
     //  });
 
       // Post from API
+      
 
       const postComment = () => {
-
         let loadingComments = document.getElementById('new-comment-loader');
         loadingComments.classList.remove('hidden');
-
+        let newComment = document.getElementById('new-comment-section');
+        newComment.style.display = 'none';
           fetch("https://webdev-hw-api.vercel.app/api/v1/mariia-goppa/comments", {
             method: "POST",
             body: JSON.stringify({ 
@@ -279,6 +280,8 @@
           .then((response) => {
             let loadingComments = document.getElementById('new-comment-loader');
             loadingComments.classList.add('hidden');
+            let newComment = document.getElementById('new-comment-section');
+            newComment.style.display = '';
           });
         };
 
