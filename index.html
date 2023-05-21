@@ -22,6 +22,7 @@
         <button class="add-form-button" id="form-add-button">Написать</button>
       </div>
     </div>
+    <div class="comment-added" style="display: none;">Комментарий добавляется...</div>
   </div>
 </body>
 
@@ -56,22 +57,14 @@
   getFromApiFirstTime();
 
 
-  function showLoading() {
-    document.querySelector('.loading').style.display = 'block';
-  };
-
-  function hideLoading() {
-    document.querySelector('.loading').style.display = 'none';
-  };
-
-
   function getFromApiFirstTime() {
-    showLoading();
+    document.querySelector('.loading').style.display = 'block';
 
     return fetch("https://webdev-hw-api.vercel.app/api/v1/freddy-krugliy/comments", {
       method: "GET",
     }).then((responce) => {
-      hideLoading();
+      document.querySelector('.loading').style.display = 'none';
+      
       return responce.json();
     }).then((responceData) => {
       comments = responceData.comments;
@@ -250,6 +243,9 @@
 
 
       function postToApi() {
+        document.querySelector('.add-form').style.display = 'none';
+        document.querySelector('.comment-added').style.display = 'block';
+
         return fetch("https://webdev-hw-api.vercel.app/api/v1/freddy-krugliy/comments", {
           method: "POST",
           body: JSON.stringify({
@@ -257,9 +253,12 @@
             name: escapeHtml(addName.value),
           })
         }).then((responce) => {
-          responce.json();
+          return responce.json();
         }).then((responceData) => {
-          getFromApi();
+          return getFromApi();
+        }).then(() => {
+          document.querySelector('.add-form').style.display = 'block';
+          document.querySelector('.comment-added').style.display = 'none';
         })
       };
 
@@ -314,6 +313,7 @@
     });
   };
 
+  lastCommentDeleteButton.disabled = true;
   DeleteLastComment();
 
   addName.addEventListener('input', checkInputs);
