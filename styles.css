@@ -1,3 +1,18 @@
+@keyframes rotating {
+  from {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(30deg);;
+  }
+  75% {
+    transform: rotate(-30deg);;
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
 body {
     margin: 0;
   }
@@ -119,16 +134,17 @@ body {
     margin-top: 12px;
     padding: 22px;
     resize: none;
+    width: -webkit-fill-available;
   }
 
   .add-form-row {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
   }
 
   .add-form-button {
     margin-top: 24px;
-    font-size: 24px;
+    font-size: 20px;
     padding: 10px 20px;
     background-color: #bcec30;
     border: none;
@@ -160,4 +176,12 @@ body {
     margin-bottom: 10px;
     line-height: 1.5;
     font-weight: bold;
+  }
+
+  .comment-added {
+    margin-top: 30px;
+  }
+
+  .-loading-like {
+    animation: rotating 2s linear infinite;
   }
