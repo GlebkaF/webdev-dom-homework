@@ -10,7 +10,7 @@ const removeButton = document.querySelector('.remove-form-button');
 const constWaitingComment = document.querySelector('.add-waiting');
 
 
-// Данные о комментариях
+// Данные о комментариях и маркеры для лоадингов/загрузки
 let comments = [];
 let isLoading = true;
 let isWaitingComment = false;
@@ -31,7 +31,11 @@ const fetchAndRenderTasks = () => {
             isLoading = false;
 
             renderComments();
-        });
+        })
+        .catch((error) => {
+            alert("Что-то пошло не так, попробуйте позднее");
+            console.warn(error);
+        })
 };
 
 // Функция render
@@ -44,6 +48,7 @@ const renderComments = () => {
         return;
     }
 
+    // Рендер
     listOfComments.innerHTML = comments.map((comment, index) => {
         return `<li id="comment" class="comment" data-index="${index}">
         <div class="comment-header">
@@ -84,7 +89,6 @@ const waitingAddComment = () => {
     }
 };
 
-// style - "-loading-like"
 // Добавление клика на лайк
 const initLikeButtons = () => {
     const likeButtonsElements = document.querySelectorAll(".like-button");
@@ -99,6 +103,7 @@ const initLikeButtons = () => {
 
             renderComments();
 
+            // Инициализация задержки при обработке лайка на комментарий
             delay(2000).then(() => {
                 if (comment.isLiked) {
                     comment.likes = comment.likes - 1;
@@ -114,6 +119,7 @@ const initLikeButtons = () => {
     }
 }
 
+// Функция по задержке лайка на комментарий
 function delay(interval = 300) {
     return new Promise((resolve) => {
         setTimeout(() => {
@@ -196,38 +202,60 @@ buttonElement.addEventListener('click', () => {
     isWaitingComment = true;
     renderComments();
 
-
-    // Добавляем новый комментарий в ленту с помощью POST
-    fetch(
-        'https://webdev-hw-api.vercel.app/api/v1/marina-obruch/comments',
-        {
+    // Добавляем новый комментарий в ленту с помощью POST и функции fetchAndRenderTasks()
+    function postComment() {
+        fetch('https://webdev-hw-api.vercel.app/api/v1/marina-obruch/comments', {
             method: "POST",
             body: JSON.stringify({
+                forceError: true,
                 name: replaceValue(nameInputElement.value),
                 text: replaceValue(commentInputElement.value)
                     .replaceAll('START_QUOTE', '<div class="comment-quote">')
                     .replaceAll('END_QUOTE', '</div>')
-            }),
+            })
         })
-        .then((response) => {
-            return response.json()
-        })
-        .then(() => {
-            return fetchAndRenderTasks();
-        })
+            .then((response) => {
+                if (response.status === 201) { // Если всё работает
+                    return response.json();
+                } else if (response.status === 400) { // Если введено меньше 3х символов
+                    throw new Error("Ошибка при вводе имени");
+                }
+                else { // Если падает API
+                    throw new Error("Сервер сломался");
+                }
+            })
+            .then(() => {
+                // отчистка поля для ввода для новых комментариев
+                nameInputElement.value = "";
+                commentInputElement.value = "";
+                return fetchAndRenderTasks();
+            })
+            .catch((error) => {
+                if (error.message === "Ошибка при вводе имени") {
+                    alert("Имя и комментарий должны быть не короче 3 символов");
+                    return fetchAndRenderTasks();
 
-    // отчистка поля для ввода для новых комментариев
-    nameInputElement.value = "";
-    commentInputElement.value = "";
+                } else if (error.message === "Сервер сломался") {
+                    // postComment(); // // Включить для доп.задания (ошибка будет обработана повторно без доп.ввода)
+
+                    // включена, когда отключена функция postComment
+                    alert("Кажется, у вас сломался интернет, попробуйте позже");
+                    return fetchAndRenderTasks();
+                }
+
+                alert("Что-то пошло не так, попробуйте позднее"); // Выводится сообщение, если нет интернета (ключ "error.message" не назначен)
+                console.log(error);
+            })
+    }
+    postComment();
 });
-
-
 
 renderComments();
 initLikeButtons();
 
 renderComments();
 
+// Формат вывода даты в комментарии
 const correctDate = date => {
     let year = (new Date(date)).getFullYear();
     let month = fixNumbers((new Date(date)).getMonth() + 1);
