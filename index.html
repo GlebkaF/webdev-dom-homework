@@ -72,32 +72,27 @@
   };
 
   // Получение комментариев из API https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments
-  fetch('https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments', {
-    method: 'GET',
-  })
-    .then((response) => response.json())
-    // Подписываемся на результат преобразования
-    .then((responseData) => {
-      appComments = responseData.comments.map((comment) => {
-        return {
-          // Имя автора
-          name: comment.author.name,
-          // Преобразуем дату строку в date
-          dates: new Date(comment.date),
-          // Текст комментария
-          text: comment.text,
-          // Количество лайков
-          like: comment.likes,
-          // Лайки
-          Iliked: false,
-        };
+  function getCommentsFromAPI() {
+    fetch('https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments', {
+      method: 'GET',
+    })
+      .then((response) => response.json())
+      .then((responseData) => {
+        appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            dates: new Date(comment.date),
+            text: comment.text,
+            like: comment.likes,
+            Iliked: false,
+          };
+        });
+
+        renderComments();
+        loading.style.display = 'none';
       });
-
-      renderComments();
-
-      // Скрываем тест загрузки
-      loading.style.display = 'none';
-    });
+  }
+  getCommentsFromAPI()
 
   // Рендер комментариев
   function renderComments() {
