@@ -61,188 +61,44 @@ buttonElement.addEventListener("click", () => {
     return;
   }
 
-  // fetch("https://webdev-hw-api.vercel.app/api/todos", {
-  //   method: "POST",
-  //   body: JSON.stringify({
-  //     text: textInputElement.value,
-  //   }),
-  // }).then((response) => {
-  //   response.json().then((responseData) => {
-  //     // tasks = responseData.todos;
-
-  //     fetch("https://webdev-hw-api.vercel.app/api/todos", {
-  //       method: "GET",
-  //     }).then((response) => {
-  //       response.json().then((responseData) => {
-  //         tasks = responseData.todos;
-  //         renderTasks();
-  //       });
-  //     });
-  //   });
-  // });
-
-  //пример (аналогичный код)
-
-  // fetch("https://webdev-hw-api.vercel.app/api/todos", {
-  //   method: "POST",
-  //   body: JSON.stringify({
-  //     text: textInputElement.value,
-  //   }),
-  //  })
-  //   .then((response) => {
-  //     return response.json();
-  //   })
-  //   .then((responseData) => { //работает с responseData от возвращенного в предыдущем промисе response.json();
-  //     return fetch("https://webdev-hw-api.vercel.app/api/todos", {
-  //        method: "GET",
-  //      });
-  //    })
-  //   .then((response) => { //аналогично
-  //     return response.json();
-  //    })
-  //    .then((responseData) => {
-  //       tasks = responseData.todos;
-  //       renderTasks();
-  //       //если вернуть здесь, к примеру, текст, а в следующем then цепочки передать data, то console.log(data) отработает c этим самым текстом
-  //   });
-  //
-
-
-
-
-
-    // const startAt = Date.now();
-    // console.log('Начинаем делать запрос');
-  
-    // fetch("https://webdev-hw-api.vercel.app/api/todos", {
-    //   method: "POST",
-    //   body: JSON.stringify({
-    //     text: textInputElement.value,
-    //   }),
-    //  })
-    //  .then((response) => { 
-    //   console.log('Время: ' + (Date.now() - startAt));//после каждого шага выполнения запроса выводим время выполнения и возвращаем response, чтобы цепочка не сломалась
-    //   return response;
-    //  })
-    //   .then((response) => {
-    //     return response.json();
-    //   })
-    //   .then((response) => {
-    //     console.log('Время: ' + (Date.now() - startAt));//после каждого шага выполнения запроса возвращаем response , чтобы цепочка не сломалась
-    //     return response;
-    //    })
-    //   .then((responseData) => {
-    //     return fetch("https://webdev-hw-api.vercel.app/api/todos", {
-    //        method: "GET",
-    //      });
-    //    })
-    //    .then((response) => {
-    //     console.log('Время: ' + (Date.now() - startAt));//после каждого шага выполнения запроса возвращаем response , чтобы цепочка не сломалась
-    //     return response;
-    //    })
-    //   .then((response) => {
-    //     return response.json();
-    //    })
-    //    .then((response) => {
-    //     console.log('Время: ' + (Date.now() - startAt));//после каждого шага выполнения запроса возвращаем response , чтобы цепочка не сломалась
-    //     return response;
-    //    })
-    //    .then((responseData) => {
-    //       tasks = responseData.todos;
-    //       renderTasks();
-    //   });
-
-
-
-  
-
-
-    // const startAt = Date.now();
-    // console.log('Начинаем делать запрос');
-
-    // buttonElement.disabled = true; //выключаем кнопку перед выполнением запроса
-    // buttonElement.textContent = 'Элемент добавляется...';
-  
-    // fetch("https://webdev-hw-api.vercel.app/api/todos", {
-    //   method: "POST",
-    //   body: JSON.stringify({
-    //     text: textInputElement.value,
-    //   }),
-    //  })
-    //  .then((response) => { 
-    //   console.log('Время: ' + (Date.now() - startAt));
-    //   return response;
-    //  })
-    //   .then((response) => {
-    //     return response.json();
-    //   })
-    //   .then((response) => {
-    //     console.log('Время: ' + (Date.now() - startAt));
-    //     return response;
-    //    })
-    //   .then((responseData) => {
-    //     return fetch("https://webdev-hw-api.vercel.app/api/todos", {
-    //        method: "GET",
-    //      });
-    //    })
-    //    .then((response) => {
-    //     console.log('Время: ' + (Date.now() - startAt));
-    //     return response;
-    //    })
-    //   .then((response) => {
-    //     return response.json();
-    //    })
-    //    .then((response) => {
-    //     console.log('Время: ' + (Date.now() - startAt));
-    //     return response;
-    //    })
-    //    .then((responseData) => {
-    //       tasks = responseData.todos;
-    //       renderTasks();
-    //   })
-    //   .then((data) => {
-    //     buttonElement.disabled = false; //в последнем промисе цепочки снова включаем кнопку и возвращаем ее исходное название "добавить"
-    //     buttonElement.textContent = 'Добавить';
-    //   });
-
-
-
-
-
-
-    const startAt = Date.now();
-    console.log('Начинаем делать запрос');
-
     buttonElement.disabled = true;
     buttonElement.textContent = 'Элемент добавляется...';
   
-    fetch("https://webdev-hw-api.vercel.app/api/todos", {
+    fetch("https://webdev-hw-api.vercel.app/api/todos/with-error", { //в данном конкретном случае адрес с api с параметром with-error может возвращать ошибку с кодом 500. Код 500 говорит о том, что сервер сломался
       method: "POST",
       body: JSON.stringify({
         text: textInputElement.value,
       }),
      })
-     .then((response) => { 
-      console.log('Время: ' + (Date.now() - startAt));
-      return response;
-     })
       .then((response) => {
-        return response.json();
+        console.log(response); //можем в объекете посмотреть статус запроса. Если код 500 - ошибка
+        if(response.status === 500) { //проверяем статус запроса на предмет ошибки с кодом 500. Либо можно вернуть response.json() с условием response.status === 201, а в остальных случаях с else обрабатывать ошибку (например, может быть код 400, когда есть ошибка в отправке данных на сервер);
+          //сюда пишем код, который обработает ошибку
+          // throw new Error('Сервер упал'); //вбрасываем ошибку. Когда кидаем ошибку, то прерываем цепочку промисов и попадаем сразу в catch
+          return Promise.reject('Сервер упал'); //либо создаем отклоненный промис. Работает аналогично вброшенной ошибке. Точно так же идем сразу в catch
+        } else {
+          return response.json();
+        }
       })
-      .then((response) => {
-        console.log('Время: ' + (Date.now() - startAt));
-        return response;
-       })
        .then(() => {
         return fetchAndRenderTasks();
        })
-       //написали функцию fetchAndRenderTasks() и удалили все промисы отвечающие за преобразование и рендер
-      .then((data) => {
+      .then(() => {
         buttonElement.disabled = false;
         buttonElement.textContent = 'Добавить';
-      });
+        textInputElement.value = ""; //инпут обнуляем только тогда, когда отрабатывает промис
+      })
+      .catch((error) => { //если хотя бы один из промисов "ломается", вызываем catch и обрабатываем ошибку. Отрабатывает только когда промис отклоняется. Если сломается хоть один промис, то не отработает вся цепочка. Но сценарий, когда после цепочки промисов есть только один catch, отрабатывает, только, когда идет отклонение от fetch, то есть у пользователя сломался интернет. Catch привязывается только к цепочке промисов, которая расположена выше него. После catch возможна новая цепочка then, которая так же что-то может возвращать
+        buttonElement.disabled = false; //включаем кнопку
+        buttonElement.textContent = 'Добавить';
+        alert("Кажется, что-то пошло не так. Попробуйте позже");
+        //TODO: отправлять в систему сбора ошибок
+        console.warn(error); //выводим ошибку в консоль
+      })
+      // .then(() => { //then отрабатывает после catch
+      //   throw new Error('Some error'); //в любом из промисов можно вбросить сообщение с ошибкой
+      // });
 
   renderTasks();
 
-  textInputElement.value = "";
 });

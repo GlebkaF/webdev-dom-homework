@@ -46,6 +46,14 @@ fetchGet = () => {
 
 fetchGet();
 
+function delay(interval = 300) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, interval);
+  });
+};
+
 
 
 addFormButton.classList.add('add-form-button-inactive');
@@ -68,16 +76,21 @@ initLikeButtonsListeners = () => {
 
       const index = likeButtonElement.dataset.index;
       console.log(index);
-
+      likeButtonElement.classList.add('-loading-like');
+      delay(2000)
+      .then(() => {
         if(commentos[index].isLiked) {
           commentos[index].likes -= 1;
           commentos[index].isLiked = !commentos[index].isLiked;
         } else {
           commentos[index].likes += 1;
           commentos[index].isLiked = !commentos[index].isLiked;
-          
         }
+      })
+      .then(() => {
+        likeButtonElement.classList.remove('-loading-like');
         renderComments();
+      });
     });
   }
   

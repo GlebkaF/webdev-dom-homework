@@ -112,8 +112,6 @@ initCorrectButtonsListeners = () => {
 
       let correctedText = document.querySelector('.correcting-input');
       let correctingBtn = document.querySelector('.correcting-btn');
-
-      //.replaceAll(`<div class='quote'>`, 'QUOTE_BEGIN').replaceAll('</div>', 'QUOTE_END')
     
         correctingBtn.addEventListener('click', (event) => {
 
@@ -158,29 +156,6 @@ const renderComments = () => {
 
   const commentsHtml = commentos.map((comment, index) => {
 
-    // isLiked[index] = 0;
-
-    // if(comment.isCorrecting) {
-    //   comment.text = comment.text
-    //   .replaceAll(`<div class='quote'>`, 'QUOTE_BEGIN')
-    //   .replaceAll('</div>', 'QUOTE_END');
-    //   return `<li class="comment" data-id='${comment.id}'>
-    //   <div class="comment-header">
-    //     <div>${comment.name}</div>
-    //     <div>${comment.date}
-    //     </div>
-    //   </div>
-    //   <div class="comment-body">
-    //     <div class="comment-text">
-    //       <input class='correcting-input' value='${comment.text}'></input>
-    //     </div>
-    //   </div>
-    //   <div class="comment-footer">
-    //     <button class='correcting-btn'>Сохранить</button>
-    //   </div>
-    // </li>`;
-    // }
-
       return `<li class="comment" data-id='${comment.id}'>
       <div class="comment-header">
         <div>${comment.name}</div>
@@ -224,13 +199,16 @@ addFormName.addEventListener('input', () => {
     if(addFormName.value !== 0 && addFormText.value !== 0) {
         addFormButton.classList.remove('add-form-button-inactive');
     }
+    // let nam = addFormName.value;
+    // return nam;
 });
 
 addFormText.addEventListener('input', () => {
     if(addFormName.value !== 0 && addFormText.value !== 0) {
         addFormButton.classList.remove('add-form-button-inactive');
      }
-
+  //  let text = addFormText.value;
+  //  return text;
 });
 
 function clickable() {
@@ -258,10 +236,27 @@ function clickable() {
           body: JSON.stringify({
             name: addFormName.value,
             text: addFormText.value,
+            forceError: true,
           })
         })
         .then((response) => {
-          return response.json();
+          if(response.status === 500) {
+
+              alert('Сервер сломался, попробуй позже');
+              // addFormName.value = nam;
+              // addFormText.value = text;
+              throw new Error("Ошибка сервера");
+
+          } else if(response.status === 400) {
+
+              alert('Имя и комментарий должны быть не короче 3 символов');
+              // addFormName.value = nam;
+              // addFormText.value = text;
+              throw new Error("Неверный запрос");
+            
+          } else {
+              return response.json();
+          } 
         })
         .then((responseData) => {
             console.log(responseData);
@@ -271,13 +266,25 @@ function clickable() {
         .then((data) => {
           addForm.style.display = 'flex';
           adding.style.display = 'none';
+
+          addFormName.value = '';
+          addFormText.value = '';
+          addFormButton.classList.add('add-form-button-inactive');
+        })
+        .catch((error) => {
+
+          if(!navigator.onLine) {
+             alert('Кажется, у вас сломался интернет, попробуйте позже');
+          }
+
+          addForm.style.display = 'flex';
+          adding.style.display = 'none';
+
+          console.warn(error);
         });
 
 
 
-        addFormName.value = '';
-        addFormText.value = '';
-        addFormButton.classList.add('add-form-button-inactive');
 }
 
 addFormButton.addEventListener('click', () => {
