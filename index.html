@@ -185,9 +185,7 @@ ${comments[index].name},`;
           text: textInputElement.value,
           name: nameInputElement.value
         })
-      });
-
-      getComments();
+      }).then(getComments);
 
       nameInputElement.value = "";
       textInputElement.value = "";
