@@ -1,4 +1,5 @@
-im
+import { appComments } from './api.js';
+import { loading, commentList, addForm, userName, textComment, button, initLikeClick, addCommentListener } from './main.js';
 
 
 export function renderComments() {

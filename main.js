@@ -1,4 +1,4 @@
-import { getCommentsFromAPI, sendCommentToServer, } from './api.js';
+import { getCommentsFromAPI, sendCommentToServer, appComments } from './api.js';
 import { renderComments } from './rendering.js';
 
 const loading = document.querySelector('.loading');
@@ -9,7 +9,6 @@ const textComment = document.querySelector('.add-form-text');
 const button = document.querySelector('.add-form-button');
 
 export { loading, commentList, addForm, userName, textComment, button };
-export { };
 
 // Добавляем лайк
 const addLikes = (e) => {
@@ -43,7 +42,7 @@ const initLikeClick = () => {
 };
 
 getCommentsFromAPI()
-import { appComments } from './api.js';
+
 export { initLikeClick };
 
 
