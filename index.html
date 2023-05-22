@@ -70,38 +70,29 @@
       },
     ];
 
-    // const initLike = () => {
-    //   const likeButtons = document.querySelectorAll(".like-button");
+    const copyComment = () => {
+      const commentsElement = document.querySelectorAll(".comment");
 
-    //   for (const likeButton of likeButtons) {
-
-    //     likeButton.addEventListener("click", () => {
-
-    //       const index = likeButton.dataset.index;
-
-    //       if (likeButton.classList.contains('-active-like')) {
-
-    //         comments[index].likeCount = Number(comments[index].likeCount) - 1;
-    //         comments[index].isLiked = false;
-
-    //       } else {
-
-    //         comments[index].likeCount = Number(comments[index].likeCount) + 1;
-    //         comments[index].isLiked = true;
-
-    //       }
-    //       renderComments();
-    //     });
-        
-    //   }
-    // };
-
+      for (const comment of commentsElement) {
+        comment.addEventListener("click", () => {
+          textInputElement.value = `> ${comment.querySelector(".comment-text").innerHTML.replaceAll("&amp;", "&")
+          .replaceAll("&lt;", "<")
+          .replaceAll("&gt;", ">")
+          .replaceAll("&quot;", '"')}`
+          + `\n\n${comment.querySelector(".comment-header").children[0].innerHTML.replaceAll("&amp;", "&")
+          .replaceAll("&lt;", "<")
+          .replaceAll("&gt;", ">")
+          .replaceAll("&quot;", '"')}`
+        })
+      }
+    }
     const initLike = () => {
       const likeButtonElements = document.querySelectorAll(".like-button");
       for (const likeButton of likeButtonElements) {
+        const index = likeButton.dataset.index;
         likeButton.addEventListener("click", (e) => {
           e.stopPropagation();
-          const index = likeButton.dataset.index;
+
           if (comments[index].isLiked) {
             comments[index].likeCount--;
           } else {
@@ -109,26 +100,25 @@
           }
           comments[index].isLiked = !comments[index].isLiked;
           renderComments();
-        })
+        });
       }
-    }
+    };
 
     const renderComments = () => {
       const commentsHtml = comments
         .map((comment, index) => {
-          let activeLike = '';
+          let activeLike = "";
           if (comments[index].isLiked) {
-            activeLike = '-active-like';
+            activeLike = "-active-like";
           }
+          
           return `<li class="comment">
                 <div class="comment-header">
-                <div>${comment.name}</div>
+                <div id="commentName">${comment.name}</div>
                 <div>${comment.date}</div>
                 </div>
                 <div class="comment-body">
-                  <div class="comment-text">
-                     ${comment.text}
-                  </div>
+                  <div class="comment-text"  id="commentText">${comment.text}</div>
                 </div>
                 <div class="comment-footer">
                   <div class="likes">
@@ -138,15 +128,17 @@
                 </div>
               </li>`;
         })
-        .join("");      
+        .join("");
 
       listElement.innerHTML = commentsHtml;
 
       initLike();
+      copyComment();
     };
 
     renderComments();
 
+    
     buttonElement.addEventListener("click", () => {
       buttonElement.classList.remove("add-form-button-error");
       buttonElement.classList.add("add-form-button");
@@ -170,9 +162,17 @@
       }
 
       comments.push({
-        name: nameInputElement.value,
+        name: nameInputElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
         date: formattedDate,
-        text: textInputElement.value,
+        text: textInputElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
         likeCount: "0",
         isLiked: "",
       });
@@ -188,7 +188,6 @@
         listElement.innerHTML = listElement.innerHTML.substring(
           0,
           lastCommentIndex
-          
         );
       }
       comments.pop();
