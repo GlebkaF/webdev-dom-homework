@@ -134,29 +134,6 @@ addForm.addEventListener('keydown', (event) => {
 renderComments();
 
 // Функция добавляет ответ на комментарий
-// function addCommentListener() {
-//   const comments = document.querySelectorAll('.comment');
-
-//   comments.forEach((comment) => {
-//     comment.addEventListener('click', () => {
-//       const answer = comment.querySelector('.comment-body').textContent;
-//       const nameUser = comment.querySelector('.comment-name').textContent;
-
-//       const newAnswer = document.createElement('div');
-//       newAnswer.classList.add('comment-answer');
-//       newAnswer.innerHTML = `
-//         <div class="comment-answer-header">
-//           <div class="comment-answer-name">${nameUser}</div>
-//         </div>
-//         <div class="comment-answer-body">
-//           <div class="comment-answer-text">${answer}</div>
-//         </div>
-//       `;
-
-//       comment.appendChild(newAnswer);
-//     });
-//   });
-// }
 function addCommentListener() {
   const comments = document.querySelectorAll('.comment');
 
