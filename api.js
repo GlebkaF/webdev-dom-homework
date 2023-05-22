@@ -1,7 +1,11 @@
 import { loading, commentList, addForm, userName, textComment, button } from './main.js';
 import { renderComments } from './rendering.js';
 
+
+
 let appComments = [];
+export { appComments };
+
 export function getCommentsFromAPI() {
   return fetch('https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments', {
     method: 'GET',
@@ -21,8 +25,10 @@ export function getCommentsFromAPI() {
       renderComments();
     });
 }
-export { appComments }
+
 getCommentsFromAPI()
+
+
 
 // Отправка комментария
 export function sendCommentToServer(comment, addForm, loading, userName, textComment, button, appComments) {
