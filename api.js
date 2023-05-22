@@ -1,4 +1,4 @@
-import { loading, commentList, addForm, userName, textComment, button } from './main.js';
+import { loading } from './main.js';
 import { renderComments } from './rendering.js';
 
 let appComments = [];
