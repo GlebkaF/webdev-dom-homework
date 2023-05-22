@@ -40,21 +40,21 @@
   const button = document.querySelector('.add-form-button');
   let appComments = [];
 
-  //Добавляем лайк
+  // Добавляем лайк
   const addLikes = (e) => {
     const comment = appComments[e.target.dataset.id];
     comment.like++;
     comment.Iliked = true;
-  }
+  };
 
-  //Удаляем лайк
+  // Удаляем лайк
   const delLikes = (e) => {
     const comment = appComments[e.target.dataset.id];
     comment.like--;
     comment.Iliked = false;
-  }
+  };
 
-  //Функция проверки был ли поставлен лайк
+  // Функция проверки был ли поставлен лайк
   const initLikeClick = () => {
     const likeClickElements = document.querySelectorAll('.likes');
     for (const likeClickElement of likeClickElements) {
@@ -71,95 +71,104 @@
     }
   };
 
-  //Получение комментариев из API https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments
+  // Получение комментариев из API https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments
   fetch('https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments', {
     method: 'GET',
   })
-
     .then((response) => response.json())
-
     // Подписываемся на результат преобразования
     .then((responseData) => {
       appComments = responseData.comments.map((comment) => {
         return {
-          //Имя автора
+          // Имя автора
           name: comment.author.name,
-          //Преобразуем дату строку в date
+          // Преобразуем дату строку в date
           dates: new Date(comment.date),
-          //Текст комментария
+          // Текст комментария
           text: comment.text,
-          //Количество лайков
+          // Количество лайков
           like: comment.likes,
-          //Лайки
+          // Лайки
           Iliked: false,
-        }
-      })
+        };
+      });
 
-      comments = appComments;
       renderComments();
 
-      //Скрываем тест загрузки
+      // Скрываем тест загрузки
       loading.style.display = 'none';
     });
 
-  //Рендер комментариев
+  // Рендер комментариев
   function renderComments() {
-    const commentHtmlResult = appComments.map((comment, id) => {
-      let Iliked = '';
-      let dates = '';
+    const commentHtmlResult = appComments
+      .map((comment, id) => {
+        let Iliked = '';
+        let dates = '';
 
-      if (comment.Iliked) {
-        Iliked = '-active-like';
-      }
+        if (comment.Iliked) {
+          Iliked = '-active-like';
+        }
 
-      if (comment.date) {
-        dates = comment.date;
-      } else {
-        const date = new Date();
-        const day = ("0" + date.getDate()).slice(-2);
-        const month = ("0" + (date.getMonth() + 1)).slice(-2);
-        const year = date.getFullYear().toString().slice(-2);
-        const hours = ("0" + date.getHours()).slice(-2);
-        const minutes = ("0" + date.getMinutes()).slice(-2);
-        dates = `${day}.${month}.${year} ${hours}:${minutes}`;
-      }
+        if (comment.date) {
+          dates = comment.date;
+        } else {
+          const date = new Date();
+          const day = ('0' + date.getDate()).slice(-2);
+          const month = ('0' + (date.getMonth() + 1)).slice(-2);
+          const year = date.getFullYear().toString().slice(-2);
+          const hours = ('0' + date.getHours()).slice(-2);
+          const minutes = ('0' + date.getMinutes()).slice(-2);
+          dates = `${day}.${month}.${year} ${hours}:${minutes}`;
+        }
 
-      return `<li class="comment" data-id="${id}">
-<div class="comment-header">
-<div class="comment-name">${comment.name}</div>
-<div>${dates}</div>
-</div>
-<div class="comment-body">
-<div class="comment-text">${comment.text}</div>
-</div>
-<div class="comment-footer">
-<div class="likes">
-<span class="likes-counter">${comment.like}</span>
-<button class="like-button ${Iliked}" data-id="${id}"></button>
-</div>
-</div>
-</li>`;
-    }).join("");
+        return `<li class="comment" data-id="${id}">
+        <div class="comment-header">
+          <div class="comment-name">${comment.name}</div>
+          <div>${dates}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">${comment.text}</div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${comment.like}</span>
+            <button class="like-button ${Iliked}" data-id="${id}"></button>
+          </div>
+        </div>
+      </li>`;
+      })
+      .join('');
 
     commentList.innerHTML = commentHtmlResult;
     initLikeClick();
     addCommentListener();
   }
 
-  //Функция, которая отправляет новый добавленный комментарий на сервер по указанному API
+  // Функция, которая отправляет новый добавленный комментарий на сервер по указанному API
   const sendCommentToServer = (comment) => {
-
     if (addForm) {
       addForm.style.display = 'none';
       loading.style.display = 'block';
     }
 
+    // Сохраняем значения полей формы
+    const userNameValue = userName.value;
+    const textCommentValue = textComment.value;
+
     fetch('https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments', {
       method: 'POST',
       body: JSON.stringify(comment),
     })
-      .then((response) => response.json())
-
+      .then((response) => {
+        if (!response.ok) {
+          if (response.status === 500) {
+            throw new Error('Server Error');
+          }
+          throw new Error('Ошибка сервера: ' + response.status);
+        }
+        return response.json();
+      })
       .then((responseData) => {
         if (addForm) {
           addForm.style.display = 'block';
@@ -167,45 +176,58 @@
         }
         // Обработка ответа сервера
         console.log('Комментарий успешно отправлен на сервер:', responseData);
+        appComments.push(comment); // Добавляем комментарий в список только после успешной отправки на сервер
+        renderComments(); // Перерисовываем список комментариев
+        textComment.value = '';
+        userName.value = '';
+        button.setAttribute('disabled', '');
       })
-
       .catch((error) => {
         // Обработка ошибок при отправке на сервер
         console.error('Ошибка при отправке комментария на сервер:', error);
+        if (comment.name.length < 3 || comment.text.length < 3) {
+          alert('Введите не менее 3 символов');
+        } else if (error.message === 'Server Error') {
+          alert('Сервер сломался, попробуй позже');
+        } else {
+          alert('Кажется, у вас сломался интернет, попробуйте позже');
+        }
+        // Восстанавливаем значения полей формы
+        userName.value = userNameValue;
+        textComment.value = textCommentValue;
+        addForm.style.display = 'block';
+        loading.style.display = 'none';
       });
   };
 
-  //Добавление комментария
+  // Добавление комментария
   const addComment = () => {
     const date = new Date();
 
     if (validate()) {
-      const day = ("0" + date.getDate()).slice(-2);
-      const month = ("0" + (date.getMonth() + 1)).slice(-2);
+      const day = ('0' + date.getDate()).slice(-2);
+      const month = ('0' + (date.getMonth() + 1)).slice(-2);
       const year = date.getFullYear().toString().slice(-2);
-      const hours = ("0" + date.getHours()).slice(-2);
-      const minutes = ("0" + date.getMinutes()).slice(-2);
+      const hours = ('0' + date.getHours()).slice(-2);
+      const minutes = ('0' + date.getMinutes()).slice(-2);
       const formattedDate = `${day}.${month}.${year} ${hours}:${minutes}`;
 
       const newComment = {
-        name: userName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+        name: userName.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
         date: formattedDate,
-        text: textComment.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+        text: textComment.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
         like: 0,
       };
 
-      appComments.push(newComment);
       sendCommentToServer(newComment); // Отправка комментария на сервер
-
-
       renderComments();
-      textComment.value = "";
-      userName.value = "";
+      textComment.value = '';
+      userName.value = '';
       button.setAttribute('disabled', '');
     }
   };
 
-  //Проверка форм на введенные данные
+  // Проверка форм на введенные данные
   const validate = () => {
     const userNameValue = userName.value.trim();
     const textCommentValue = textComment.value.trim();
@@ -217,34 +239,37 @@
     textComment.classList.toggle('error', !isTextCommentValid);
 
     if (!isUserNameValid) {
-      if (userNameValue === "Напишите не менее 3 символов") {
-        userName.placeholder = "Напишите не менее 3 символов";
+      if (userNameValue === 'Напишите не менее 3 символов') {
+        userName.placeholder = 'Напишите не менее 3 символов';
       } else {
-        userName.value = "";
-        userName.placeholder = "Напишите не менее 3 символов";
-        console.log("Напишите не менее 3 символов (Имя)");
+        userName.placeholder = 'Напишите не менее 3 символов';
+        console.log('Напишите не менее 3 символов (Имя)');
       }
     }
 
     if (!isTextCommentValid) {
-      if (textCommentValue === "Напишите не менее 3 символов") {
-        textComment.placeholder = "Напишите не менее 3 символов";
+      if (textCommentValue === 'Напишите не менее 3 символов') {
+        textComment.placeholder = 'Напишите не менее 3 символов';
       } else {
-        textComment.value = "";
-        textComment.placeholder = "Напишите не менее 3 символов";
-        console.log("Напишите не менее 3 символов (Текст комментария)");
+        textComment.placeholder = 'Напишите не менее 3 символов';
+        console.log('Напишите не менее 3 символов (Текст комментария)');
       }
     }
 
-    return isUserNameValid && isTextCommentValid;
+    if (!isUserNameValid || !isTextCommentValid) {
+      alert('Введите не менее 3 символов');
+      return false; // Добавляем эту строку, чтобы прервать выполнение функции
+    }
+
+    return true;
   };
 
-  //Слушаем кнопку и добавляем комментарий
+  // Слушаем кнопку и добавляем комментарий
   button.addEventListener('click', (event) => {
     addComment();
   });
 
-  //Слушаем ввод в поле и добавляем комментарий
+  // Слушаем ввод в поле и добавляем комментарий
   addForm.addEventListener('input', (event) => {
     if (validate) {
       button.removeAttribute('disabled');
@@ -252,13 +277,14 @@
     }
   });
 
-  //Слушаем нажатие Enter
+  // Слушаем нажатие Enter
   addForm.addEventListener('keydown', (event) => {
-    if (event.ctrlKey && event.key === "Enter") {
+    if (event.ctrlKey && event.key === 'Enter') {
       event.preventDefault();
       addComment();
     }
   });
+
   renderComments();
 
   // Функция добавляет ответ на комментарий
@@ -269,11 +295,23 @@
       comment.addEventListener('click', () => {
         const answer = comment.querySelector('.comment-body').textContent;
         const nameUser = comment.querySelector('.comment-name').textContent;
-        textComment.value = `>${answer}${nameUser}.,`;
+
+        const newAnswer = document.createElement('div');
+        newAnswer.classList.add('comment-answer');
+        newAnswer.innerHTML = `
+        <div class="comment-answer-header">
+          <div class="comment-answer-name">${nameUser}</div>
+        </div>
+        <div class="comment-answer-body">
+          <div class="comment-answer-text">${answer}</div>
+        </div>
+      `;
+
+        comment.appendChild(newAnswer);
       });
     });
   }
-  addCommentListener();
+
 </script>
 
 </html>
