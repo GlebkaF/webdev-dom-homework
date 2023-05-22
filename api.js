@@ -1,12 +1,12 @@
+import { renderComments, loading } from './main.js';
 let appComments = [];
-
 export function getCommentsFromAPI() {
   return fetch('https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments', {
     method: 'GET',
   })
     .then((response) => response.json())
     .then((responseData) => {
-      const appComments = responseData.comments.map((comment) => {
+       appComments = responseData.comments.map((comment) => {
         return {
           name: comment.author.name,
           dates: new Date(comment.date),
@@ -15,11 +15,13 @@ export function getCommentsFromAPI() {
           Iliked: false,
         };
       });
-
-      return appComments; // Возвращаем полученные комментарии
+      loading.style.display = 'none'
+      renderComments();
     });
 }
 
+export{appComments}
+getCommentsFromAPI()
 
 export function sendCommentToServer(comment, addForm, loading, userName, textComment, button, appComments) {
   if (addForm) {
@@ -29,7 +31,7 @@ export function sendCommentToServer(comment, addForm, loading, userName, textCom
 
   const userNameValue = userName.value;
   const textCommentValue = textComment.value;
-
+  
   return fetch('https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments', {
     method: 'POST',
     body: JSON.stringify(comment),
@@ -51,6 +53,7 @@ export function sendCommentToServer(comment, addForm, loading, userName, textCom
 
       console.log('Комментарий успешно отправлен на сервер:', responseData);
       appComments.push(responseData);
+      getCommentsFromAPI();
       renderComments();
       textComment.value = '';
       userName.value = '';

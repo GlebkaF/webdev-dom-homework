@@ -1,4 +1,4 @@
-import { getCommentsFromAPI, sendCommentToServer } from './api.js';
+import { getCommentsFromAPI, sendCommentToServer, } from './api.js';
 
 const loading = document.querySelector('.loading');
 const commentList = document.querySelector('.comments');
@@ -6,8 +6,8 @@ const addForm = document.querySelector('.add-form');
 const userName = document.querySelector('.add-form-name');
 const textComment = document.querySelector('.add-form-text');
 const button = document.querySelector('.add-form-button');
-let appComments = [];
 
+export{loading}
 // Добавляем лайк
 const addLikes = (e) => {
   const comment = appComments[e.target.dataset.id];
@@ -39,16 +39,18 @@ const initLikeClick = () => {
   }
 };
 
-// Получение комментариев из API https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments
-getCommentsFromAPI().then((comments) => {
-  appComments = comments; // Присваиваем полученные комментарии переменной appComments
-  renderComments();
-  loading.style.display = 'none';
-});
+// // Получение комментариев из API https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments
+// getCommentsFromAPI().then((comments) => {
+//   appComments = comments; // Присваиваем полученные комментарии переменной appComments
+//   renderComments();
+//   loading.style.display = 'none';
+// });
 
+getCommentsFromAPI()
+import { appComments } from './api.js';
 
 // Рендер комментариев
-function renderComments() {
+export function renderComments() {
   const commentHtmlResult = appComments
     .map((comment, id) => {
       let Iliked = '';
