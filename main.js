@@ -1,7 +1,6 @@
 import { getCommentsFromAPI, sendCommentToServer, appComments } from './api.js';
 import { renderComments } from './rendering.js';
 
-
 const loading = document.querySelector('.loading');
 const commentList = document.querySelector('.comments');
 const addForm = document.querySelector('.add-form');

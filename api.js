@@ -2,7 +2,7 @@ import { loading } from './main.js';
 import { renderComments } from './rendering.js';
 
 let appComments = [];
-export { appComments };
+export { appComments }
 
 export function getCommentsFromAPI() {
   return fetch('https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments', {
@@ -28,6 +28,7 @@ getCommentsFromAPI()
 
 // Отправка комментария
 export function sendCommentToServer(comment, addForm, loading, userName, textComment, button, appComments) {
+
   if (addForm) {
     addForm.style.display = 'none';
     loading.style.display = 'block';
@@ -49,6 +50,7 @@ export function sendCommentToServer(comment, addForm, loading, userName, textCom
       }
       return response.json();
     })
+
     .then((responseData) => {
       if (addForm) {
         addForm.style.display = 'block';
@@ -57,6 +59,7 @@ export function sendCommentToServer(comment, addForm, loading, userName, textCom
 
       console.log('Комментарий успешно отправлен на сервер:', responseData);
       appComments.push(responseData);
+
       getCommentsFromAPI();
       renderComments();
 
