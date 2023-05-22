@@ -1,4 +1,6 @@
-import { renderComments, loading } from './main.js';
+import { loading } from './main.js';
+import { renderComments } from './rendering.js';
+
 let appComments = [];
 export function getCommentsFromAPI() {
   return fetch('https://webdev-hw-api.vercel.app/api/v1/andrey-zibin/comments', {
@@ -23,9 +25,7 @@ export function getCommentsFromAPI() {
 export { appComments }
 getCommentsFromAPI()
 
-
-
-
+// Отправка комментария
 export function sendCommentToServer(comment, addForm, loading, userName, textComment, button, appComments) {
   if (addForm) {
     addForm.style.display = 'none';

@@ -1,4 +1,5 @@
 import { getCommentsFromAPI, sendCommentToServer, } from './api.js';
+import { renderComments } from './rendering.js';
 
 const loading = document.querySelector('.loading');
 const commentList = document.querySelector('.comments');
@@ -7,7 +8,9 @@ const userName = document.querySelector('.add-form-name');
 const textComment = document.querySelector('.add-form-text');
 const button = document.querySelector('.add-form-button');
 
-export { loading }
+export { commentList, addForm, userName, textComment, button };
+export { loading };
+
 // Добавляем лайк
 const addLikes = (e) => {
   const comment = appComments[e.target.dataset.id];
@@ -41,52 +44,8 @@ const initLikeClick = () => {
 
 getCommentsFromAPI()
 import { appComments } from './api.js';
+export { initLikeClick };
 
-// Рендер комментариев
-export function renderComments() {
-  const commentHtmlResult = appComments
-    .map((comment, id) => {
-      let Iliked = '';
-      let dates = '';
-
-      if (comment.Iliked) {
-        Iliked = '-active-like';
-      }
-
-      if (comment.date) {
-        dates = comment.date;
-      } else {
-        const date = new Date();
-        const day = ('0' + date.getDate()).slice(-2);
-        const month = ('0' + (date.getMonth() + 1)).slice(-2);
-        const year = date.getFullYear().toString().slice(-2);
-        const hours = ('0' + date.getHours()).slice(-2);
-        const minutes = ('0' + date.getMinutes()).slice(-2);
-        dates = `${day}.${month}.${year} ${hours}:${minutes}`;
-      }
-
-      return `<li class="comment" data-id="${id}">
-        <div class="comment-header">
-          <div class="comment-name">${comment.name}</div>
-          <div>${dates}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">${comment.text}</div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">${comment.like}</span>
-            <button class="like-button ${Iliked}" data-id="${id}"></button>
-          </div>
-        </div>
-      </li>`;
-    })
-    .join('');
-
-  commentList.innerHTML = commentHtmlResult;
-  initLikeClick();
-  addCommentListener();
-}
 
 // Добавление комментария
 const addComment = (userName, textComment) => {
@@ -114,7 +73,6 @@ const addComment = (userName, textComment) => {
     button.setAttribute('disabled', '');
   }
 };
-
 
 // Проверка форм на введенные данные
 const validate = () => {
@@ -200,3 +158,4 @@ function addCommentListener() {
     });
   });
 }
+export { addCommentListener };
