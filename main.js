@@ -136,14 +136,11 @@ renderComments();
 // Функция добавляет ответ на комментарий
 function addCommentListener() {
   const comments = document.querySelectorAll('.comment');
-
   comments.forEach((comment) => {
     comment.addEventListener('click', () => {
       const answer = comment.querySelector('.comment-body').textContent;
       const nameUser = comment.querySelector('.comment-name').textContent;
-      textComment.value =
-        `>${answer}
-${nameUser}.,`;
+      textComment.value = `>${answer}${nameUser}.,`;
     });
   });
 }
