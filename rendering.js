@@ -1,6 +1,5 @@
-import { appComments } from './api.js';
-import { commentList } from './main.js';
-import { initLikeClick, addCommentListener } from './main.js';
+im
+
 
 export function renderComments() {
   const commentHtmlResult = appComments

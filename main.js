@@ -8,8 +8,8 @@ const userName = document.querySelector('.add-form-name');
 const textComment = document.querySelector('.add-form-text');
 const button = document.querySelector('.add-form-button');
 
-export { commentList, addForm, userName, textComment, button };
-export { loading };
+export { loading, commentList, addForm, userName, textComment, button };
+export { };
 
 // Добавляем лайк
 const addLikes = (e) => {

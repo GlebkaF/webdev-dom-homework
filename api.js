@@ -1,4 +1,4 @@
-import { loading } from './main.js';
+import { loading, commentList, addForm, userName, textComment, button } from './main.js';
 import { renderComments } from './rendering.js';
 
 let appComments = [];
@@ -20,7 +20,6 @@ export function getCommentsFromAPI() {
       loading.style.display = 'none'
       renderComments();
     });
-
 }
 export { appComments }
 getCommentsFromAPI()
