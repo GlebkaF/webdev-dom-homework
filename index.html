@@ -47,6 +47,9 @@
         </div>
       </li> -->
     </ul>
+    <div class="form-loading" style="display: none; margin-top: 20px">
+      Комментарий добавляется...
+    </div>
     <div id="add-form-block" class="add-form">
       <input id="name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
       <textarea id="comment-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
@@ -310,7 +313,9 @@
     //   isLiked: false,
     // });
 
-    addForm.innerHTML = 'Комментарий отправляется...';
+    let loadingForm = document.querySelector('.form-loading');
+    loadingForm.style.display = 'block';
+    addForm.style.display = 'none';
 
     // Получение новых комментов на сервер с помощью API
     const fetchPromise = fetch(
@@ -318,9 +323,9 @@
       {
         method: "POST",
         body: JSON.stringify({
-          date: formatDateTime(currentDate),
-          likes: 0,
-          isLiked: false,
+          // date: formatDateTime(currentDate),
+          // likes: 0,
+          // isLiked: false,
           text: inputTextElement.value,
           name: inputNameElement.value,
         }),
@@ -332,13 +337,16 @@
       .then((responseData) => {
         return fetchAndRenderTasks();
       }).then(() => {
-        addForm.innerHTML = `<input id="name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
-        <textarea id="comment-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
-        rows="4"></textarea>
-        <div class="add-form-row">
-        <button id="add-button" class="add-form-button">Написать</button>
-        </div>`;
+        // addForm.innerHTML = `<input id="name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+        // <textarea id="comment-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+        // rows="4"></textarea>
+        // <div class="add-form-row">
+        // <button id="add-button" class="add-form-button">Написать</button>
+        // </div>`;
+        loadingForm.style.display = 'none';
+        addForm.style.display = 'block';
         renderUsersComments();
+
       });
 
     checkCommentFields();
