@@ -8,42 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments" id="comments-list">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
+      <ul class="comments" id="comments-list"></ul>
       <div class="add-form" id="form">
         <input
           type="text"
@@ -76,14 +41,111 @@
     const textInputElement = document.getElementById("user-text");
     const formElement = document.getElementById("form");
     const deleteButtonElement = document.getElementById("delete-button");
-
     let date = new Date();
     const formattedDate =
-      date.getDate().toString().padStart(2, '0') + '.' +
-      (date.getMonth() + 1).toString().padStart(2, '0') + '.' +
-      date.getFullYear().toString().slice(-2) + ' ' +
-      date.getHours().toString().padStart(2, '0') + ':' +
-      date.getMinutes().toString().padStart(2, '0');
+      date.getDate().toString().padStart(2, "0") +
+      "." +
+      (date.getMonth() + 1).toString().padStart(2, "0") +
+      "." +
+      date.getFullYear().toString().slice(-2) +
+      " " +
+      date.getHours().toString().padStart(2, "0") +
+      ":" +
+      date.getMinutes().toString().padStart(2, "0");
+
+    const comments = [
+      {
+        name: "Глеб Фокин",
+        date: "12.02.22 12:18",
+        text: "Это будет комментарий на этой странице",
+        likeCount: "3",
+        isLiked: false,
+      },
+      {
+        name: "Варвара Н.",
+        date: "13.02.22 19:22",
+        text: "Мне нравится как оформлена эта страница! ❤",
+        likeCount: "75",
+        isLiked: false,
+      },
+    ];
+
+    // const initLike = () => {
+    //   const likeButtons = document.querySelectorAll(".like-button");
+
+    //   for (const likeButton of likeButtons) {
+
+    //     likeButton.addEventListener("click", () => {
+
+    //       const index = likeButton.dataset.index;
+
+    //       if (likeButton.classList.contains('-active-like')) {
+
+    //         comments[index].likeCount = Number(comments[index].likeCount) - 1;
+    //         comments[index].isLiked = false;
+
+    //       } else {
+
+    //         comments[index].likeCount = Number(comments[index].likeCount) + 1;
+    //         comments[index].isLiked = true;
+
+    //       }
+    //       renderComments();
+    //     });
+        
+    //   }
+    // };
+
+    const initLike = () => {
+      const likeButtonElements = document.querySelectorAll(".like-button");
+      for (const likeButton of likeButtonElements) {
+        likeButton.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const index = likeButton.dataset.index;
+          if (comments[index].isLiked) {
+            comments[index].likeCount--;
+          } else {
+            comments[index].likeCount++;
+          }
+          comments[index].isLiked = !comments[index].isLiked;
+          renderComments();
+        })
+      }
+    }
+
+    const renderComments = () => {
+      const commentsHtml = comments
+        .map((comment, index) => {
+          let activeLike = '';
+          if (comments[index].isLiked) {
+            activeLike = '-active-like';
+          }
+          return `<li class="comment">
+                <div class="comment-header">
+                <div>${comment.name}</div>
+                <div>${comment.date}</div>
+                </div>
+                <div class="comment-body">
+                  <div class="comment-text">
+                     ${comment.text}
+                  </div>
+                </div>
+                <div class="comment-footer">
+                  <div class="likes">
+                    <span class="likes-counter" >${comment.likeCount}</span>
+                    <button class="like-button ${activeLike}" data-index='${index}'></button>
+                  </div>
+                </div>
+              </li>`;
+        })
+        .join("");      
+
+      listElement.innerHTML = commentsHtml;
+
+      initLike();
+    };
+
+    renderComments();
 
     buttonElement.addEventListener("click", () => {
       buttonElement.classList.remove("add-form-button-error");
@@ -106,39 +168,38 @@
 
         return;
       }
-      const oldListElement = listElement.innerHTML;
-      listElement.innerHTML =
-        oldListElement +
-        `<li class="comment">
-            <div class="comment-header">
-            <div>${nameInputElement.value}</div>
-            <div>${formattedDate}</div>
-            </div>
-            <div class="comment-body">
-              <div class="comment-text">
-                 ${textInputElement.value}
-              </div>
-            </div>
-            <div class="comment-footer">
-              <div class="likes">
-                <span class="likes-counter">0</span>
-                <button class="like-button"></button>
-              </div>
-            </div>
-          </li>`;
+
+      comments.push({
+        name: nameInputElement.value,
+        date: formattedDate,
+        text: textInputElement.value,
+        likeCount: "0",
+        isLiked: "",
+      });
+
+      renderComments();
     });
 
-    deleteButtonElement.addEventListener("click", () => { 
-      const lastCommentIndex = listElement.innerHTML.lastIndexOf( '<li class="comment">' ); 
-        if (lastCommentIndex !== -1) { 
-          listElement.innerHTML = listElement.innerHTML.substring( 0, lastCommentIndex ); 
-        } });
+    deleteButtonElement.addEventListener("click", () => {
+      const lastCommentIndex = listElement.innerHTML.lastIndexOf(
+        '<li class="comment">'
+      );
+      if (lastCommentIndex !== -1) {
+        listElement.innerHTML = listElement.innerHTML.substring(
+          0,
+          lastCommentIndex
+          
+        );
+      }
+      comments.pop();
+      renderComments();
+    });
 
-        document.addEventListener("keyup", (event) => {
-           if (event.key === "Enter") { 
-            buttonElement.click(); 
-          } 
-        });
+    document.addEventListener("keyup", (event) => {
+      if (event.key === "Enter") {
+        buttonElement.click();
+      }
+    });
 
     console.log("It works!");
   </script>
