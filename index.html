@@ -8,27 +8,31 @@
 
   <body>
     <div class="container">
+      <span class="list-loader">Комментарии загружаются, пожалуйста, подождите</span>
       <ul class="comments" id = "list">
       </ul>
-      <div class="add-form">
-        <input
-          id="name-input"
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          id="text-input"
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button disabled class="add-form-button" id="add-button">Написать</button>
+      <span class="input-loader">Комментарий загружается...</span>
+      <div class="comment-form">
+        <div class="add-form">
+          <input
+            id="name-input"
+            type="text"
+            class="add-form-name"
+            placeholder="Введите ваше имя"
+          />
+          <textarea
+            id="text-input"
+            type="textarea"
+            class="add-form-text"
+            placeholder="Введите ваш коментарий"
+            rows="4"
+          ></textarea>
+          <div class="add-form-row">
+            <button disabled class="add-form-button" id="add-button">Написать</button>
+          </div>
         </div>
+        <button class="add-form-button" id="delete-button">Удалить последний комментарий</button>
       </div>
-      <button class="add-form-button" id="delete-button">Удалить последний комментарий</button>
     </div>
   </body>
 
@@ -39,26 +43,34 @@
     const textInputElement = document.getElementById("text-input");
     const listElement = document.getElementById("list");
     const deleteButtonElement = document.getElementById("delete-button");
+    const listLoaderElement = document.querySelector(".list-loader");
+    const inputLoaderElement = document.querySelector(".input-loader");
+    const formElement = document.querySelector(".comment-form");
 
     let comments = [];
 
+    inputLoaderElement.style.display = "none";
+
     function getComments() {
-      fetch("https://webdev-hw-api.vercel.app/api/v1/olesia-koneva/comments", {
+      return fetch("https://webdev-hw-api.vercel.app/api/v1/olesia-koneva/comments", {
         method: "GET"
-      }).then((response) => {
-        response.json().then((responseData) => {
-          const appComments = responseData.comments.map((comment) => {
-            return {
-              name: comment.author.name,
-              date: normalDate(new Date(comment.date)),
-              text: comment.text,
-              likes: comment.likes,
-              favorite: false,
-            };
-          });
-          comments = appComments;
-          renderComments();
+      })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: normalDate(new Date(comment.date)),
+            text: comment.text,
+            likes: comment.likes,
+            favorite: false,
+          };
         });
+        comments = appComments;
+        listLoaderElement.style.display = "none";
+        renderComments();
       });
     }
 
@@ -153,6 +165,11 @@ ${comments[index].name},`;
     }
 
     function postComment() {
+
+      formElement.style.display = "none";
+      inputLoaderElement.style.display = "block";
+
+
       if (nameInputElement.value === "") {
         nameInputElement.classList.add("error");
         return;
@@ -185,7 +202,11 @@ ${comments[index].name},`;
           text: textInputElement.value,
           name: nameInputElement.value
         })
-      }).then(getComments);
+      }).then(() => {
+          getComments()
+          inputLoaderElement.style.display = "none";
+          formElement.style.display = "flex";
+        });
 
       nameInputElement.value = "";
       textInputElement.value = "";
