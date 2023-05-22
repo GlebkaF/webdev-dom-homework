@@ -1,13 +1,13 @@
 import { getCommentsFromAPI, sendCommentToServer, appComments } from './api.js';
 import { renderComments } from './rendering.js';
 
+
 const loading = document.querySelector('.loading');
 const commentList = document.querySelector('.comments');
 const addForm = document.querySelector('.add-form');
 const userName = document.querySelector('.add-form-name');
 const textComment = document.querySelector('.add-form-text');
 const button = document.querySelector('.add-form-button');
-
 export { loading, commentList, addForm, userName, textComment, button };
 
 // Добавляем лайк

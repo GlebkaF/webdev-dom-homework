@@ -1,8 +1,6 @@
 import { loading, commentList, addForm, userName, textComment, button } from './main.js';
 import { renderComments } from './rendering.js';
 
-
-
 let appComments = [];
 export { appComments };
 
@@ -27,8 +25,6 @@ export function getCommentsFromAPI() {
 }
 
 getCommentsFromAPI()
-
-
 
 // Отправка комментария
 export function sendCommentToServer(comment, addForm, loading, userName, textComment, button, appComments) {
