@@ -142,7 +142,8 @@ function addCommentListener() {
       const answer = comment.querySelector('.comment-body').textContent;
       const nameUser = comment.querySelector('.comment-name').textContent;
       textComment.value =
-        `>${answer}${nameUser}.,`;
+        `>${answer}
+${nameUser}.,`;
     });
   });
 }
