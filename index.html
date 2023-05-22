@@ -1,77 +1,85 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <div class="container">
-      <ul class="comments" id="list">
-      
-      </ul>
-      <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-          value=""
-          id="name-input"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-          id="text-input"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button" id="add-button">Написать</button>
-        </div>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <ul class="comments" id="list">
+
+    </ul>
+    <p class="comments-list-loading">Подождите пожалуйста, комментарии загружаются...</p>
+    <div class="add-form" id="add-form">
+      <input type="text" class="add-form-name" placeholder="Введите ваше имя" value="" id="name-input" />
+      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
+        id="text-input"></textarea>
+      <div class="add-form-row">
+        <button class="add-form-button" id="add-button">Написать</button>
       </div>
-    </body>
-  <style>
-    .error {
-      background-color: gray;
-      color: black;
-    }
-    .form-error {
-      background-color: rgb(248, 204, 204);
-      opacity: 0.9;
-    }
-    .quote {
-      margin-bottom: 32px;
-      padding: 15px 20px;
-      white-space: pre-line;
-      background: #d5d2d2;
-      font-size: 16px;
-      color: #000000;
-      border-radius: 5px;
-    }
-  </style>
-  <script>
-    "use strict";
-    
-    const addButton = document.getElementById('add-button');
-    const nameInputElement = document.getElementById('name-input');
-    const textInputElement = document.getElementById('text-input');
-    const listElement = document.getElementById('list');
-    const addForm = document.querySelectorAll('add-form');
-    const isLoadingEl = document.querySelectorAll('loading');
+    </div>
+    <p class="comment-loading">Комментарий добавляется...</p>
+</body>
+<style>
+  .error {
+    background-color: gray;
+    color: black;
+  }
 
-    let comments = [];
-    
-    fetch('https://webdev-hw-api.vercel.app/api/v1/denis-sharin/comments', {
-      method: 'GET',
-    }).then((response) => {
-      response.json().then((responseData) => {
-        comments = responseData.comments;
-        renderComments()
+  .form-error {
+    background-color: rgb(248, 204, 204);
+    opacity: 0.9;
+  }
+
+  .quote {
+    margin-bottom: 32px;
+    padding: 15px 20px;
+    white-space: pre-line;
+    background: #d5d2d2;
+    font-size: 16px;
+    color: #000000;
+    border-radius: 5px;
+  }
+
+  .hidden {
+    display: none;
+  }
+</style>
+<script>
+  "use strict";
+
+  const addButton = document.getElementById('add-button');
+  const nameInputElement = document.getElementById('name-input');
+  const textInputElement = document.getElementById('text-input');
+  const listElement = document.getElementById('list');
+  const addForm = document.querySelector('.add-form');
+  const commentLoading = document.querySelector('.comment-loading');
+  const commentsListElements = document.querySelector('.comments-list-loading');
+
+  let comments = [];
+
+  commentsListElements.classList.remove('hidden');
+  commentLoading.classList.add('hidden');
+
+  const fetchGetRender = () => {
+    return fetch('https://webdev-hw-api.vercel.app/api/v1/dennis-sharin/comments', {
+        method: 'GET',
       })
-    });
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
+        comments = responseData.comments;
+        renderComments();
+      })
+      .then(() => {
+        commentsListElements.classList.add('hidden');
+      })
+  };
 
-  
-    const renderComments = () => {
+
+  const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
       return `<li data-index=${index} class="comment">
           <div class="comment-header">
@@ -99,7 +107,7 @@
 
 
   const getTime = (commentDate) => {
-    let date = new Date (commentDate);
+    let date = new Date(commentDate);
     let time = date.toTimeString().slice(0, 5);
     let day = (date.getDate() < 10) ? '0' + date.getDate() : date.getDate();
     let month = ((date.getMonth() + 1) < 10) ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
@@ -109,37 +117,33 @@
 
 
   const addComment = () => {
-      
-      if (nameInputElement.value === '') {
-        nameInputElement.classList.add('form-error');
-        return
-      } else if (textInputElement.value === '') {
-        textInputElement.classList.add('form-error')
-        return
-      } else {
 
-    fetch('https://webdev-hw-api.vercel.app/api/v1/denis-sharin/comments', {
-      method: 'POST',
-      body: JSON.stringify({
-        name: replaceValue(nameInputElement.value),
-        text: replaceValue(textInputElement.value)
+    if (nameInputElement.value === '') {
+      nameInputElement.classList.add('form-error');
+      return
+    } else if (textInputElement.value === '') {
+      textInputElement.classList.add('form-error')
+      return
+    } else {
+      addForm.classList.add('hidden');
+      commentLoading.classList.remove('hidden');
+      fetch('https://webdev-hw-api.vercel.app/api/v1/dennis-sharin/comments', {
+          method: 'POST',
+          body: JSON.stringify({
+            name: replaceValue(nameInputElement.value),
+            text: replaceValue(textInputElement.value)
               .replaceAll('QUOTE_BEGIN', '<div class="quote">')
               .replaceAll('QUOTE_END', '</div>')
-      })
-    }).then((response) => {
-      response.json().then(() => {
-        fetch('https://webdev-hw-api.vercel.app/api/v1/denis-sharin/comments', {
-          method: 'GET',
-        }).then((addResponse) => {
-          addResponse.json().then((addJson) => {
-            comments = addJson.comments;
-            renderComments()
-          });
-        });
-      });
-    });
-  }
-  renderComments();
+          })
+        })
+        .then(response => response.json())
+        .then(() => fetchGetRender())
+        .then(() => {
+          addForm.classList.remove('hidden');
+          commentLoading.classList.add('hidden');
+        })
+    }
+    renderComments();
 
     textInputElement.value = '';
     nameInputElement.value = '';
@@ -149,19 +153,19 @@
 
   const likeComment = () => {
     const likeButtons = document.querySelectorAll('.like-button');
-      
+
     for (const likeButton of likeButtons) {
       likeButton.addEventListener('click', (event) => {
-        
+
         event.stopPropagation();
 
         let index = likeButton.dataset.index;
         let counter = comments[index].likes;
         console.log(counter)
         if (!comments[index].isLiked) {
-          counter +=1;
+          counter += 1;
         } else {
-          counter -=1;
+          counter -= 1;
         }
         comments[index].isLiked = !comments[index].isLiked;
         comments[index].likes = counter;
@@ -169,17 +173,18 @@
       });
     };
   };
-  
+
 
   const newReply = () => {
     const commentElements = document.querySelectorAll('.comment');
 
     for (const commentElement of commentElements) {
       commentElement.addEventListener('click', () => {
-        
+
         let index = commentElement.dataset.index;
 
-        textInputElement.value = `QUOTE_BEGIN${comments[index].author.name} : ${comments[index].text.replaceAll('<div class="quote">', '').replaceAll('</div>', '')}QUOTE_END`;
+        textInputElement.value =
+          `QUOTE_BEGIN${comments[index].author.name} : ${comments[index].text.replaceAll('<div class="quote">', '').replaceAll('</div>', '')}QUOTE_END`;
       });
     };
   };
@@ -193,6 +198,7 @@
       .replaceAll('"', "&quot;");
   };
 
+  fetchGetRender()
   renderComments()
 
   addButton.addEventListener('click', addComment);
@@ -209,5 +215,6 @@
     }
   });
   console.log("It works!");
-  </script>
+</script>
+
 </html>
