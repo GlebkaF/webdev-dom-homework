@@ -207,7 +207,7 @@ buttonElement.addEventListener('click', () => {
         fetch('https://webdev-hw-api.vercel.app/api/v1/marina-obruch/comments', {
             method: "POST",
             body: JSON.stringify({
-                forceError: true,
+                forceError: false,
                 name: replaceValue(nameInputElement.value),
                 text: replaceValue(commentInputElement.value)
                     .replaceAll('START_QUOTE', '<div class="comment-quote">')
@@ -217,8 +217,12 @@ buttonElement.addEventListener('click', () => {
             .then((response) => {
                 if (response.status === 201) { // Если всё работает
                     return response.json();
-                } else if (response.status === 400) { // Если введено меньше 3х символов
-                    throw new Error("Ошибка при вводе имени");
+                }
+                else if (response.status === 400) { // Если введено меньше 3х символов
+                    throw new Error("Ошибка 400");
+                }
+                else if (response.status === 500) {
+                    throw new Error("Ошибка 500");
                 }
                 else { // Если падает API
                     throw new Error("Сервер сломался");
@@ -231,20 +235,23 @@ buttonElement.addEventListener('click', () => {
                 return fetchAndRenderTasks();
             })
             .catch((error) => {
-                if (error.message === "Ошибка при вводе имени") {
+                if (error.message === "Ошибка 400") {
                     alert("Имя и комментарий должны быть не короче 3 символов");
                     return fetchAndRenderTasks();
+                }
+                else if (error.message === "Ошибка 500") {
+                    // postComment(); // // Функция отключена, нужна для доп.ДЗ, чтобы JS сам инициировал повторную отправку комментария при возникновении ошибки сервереа
 
-                } else if (error.message === "Сервер сломался") {
-                    // postComment(); // // Включить для доп.задания (ошибка будет обработана повторно без доп.ввода)
-
-                    // включена, когда отключена функция postComment
-                    alert("Кажется, у вас сломался интернет, попробуйте позже");
+                    // Включена, когда при ошибке 500 нужно вывести alert
+                    alert("Сервер сломался, попробуй позже");
                     return fetchAndRenderTasks();
                 }
-
-                alert("Что-то пошло не так, попробуйте позднее"); // Выводится сообщение, если нет интернета (ключ "error.message" не назначен)
-                console.log(error);
+                else {
+                    isWaitingComment = false;
+                    renderComments();
+                    console.log(Error);
+                    alert("Кажется, у вас сломался интернет, попробуйте позже");
+                }
             })
     }
     postComment();
