@@ -10,7 +10,7 @@ const removeButton = document.querySelector('.remove-form-button');
 const constWaitingComment = document.querySelector('.add-waiting');
 
 
-// Данные о комментариях
+// Данные о комментариях и маркеры для лоадингов/загрузки
 let comments = [];
 let isLoading = true;
 let isWaitingComment = false;
@@ -31,7 +31,11 @@ const fetchAndRenderTasks = () => {
             isLoading = false;
 
             renderComments();
-        });
+        })
+        .catch((error) => {
+            alert("Что-то пошло не так, попробуйте позднее");
+            console.warn(error);
+        })
 };
 
 // Функция render
@@ -44,6 +48,7 @@ const renderComments = () => {
         return;
     }
 
+    // Рендер
     listOfComments.innerHTML = comments.map((comment, index) => {
         return `<li id="comment" class="comment" data-index="${index}">
         <div class="comment-header">
@@ -58,7 +63,7 @@ const renderComments = () => {
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${comment.likes}</span>
-            <button data-index="${index}" id="like-button" class="like-button ${comment.isLiked ? '-active-like' : ''}"></button>
+            <button data-index="${index}" id="like-button" class="like-button ${comment.isLiked ? '-active-like' : ''} ${comment.isLikeLoading ? '-loading-like' : ''}"></button>
           </div>
         </div>
       </li>`
@@ -93,16 +98,34 @@ const initLikeButtons = () => {
         likeButtonsElement.addEventListener('click', (event) => {
             event.stopPropagation();
 
-            const comment = comments[likeButtonsElement.dataset.index];
-            if (comment.isLiked) {
-                comment.likes = comment.likes - 1;
-            } else {
-                comment.likes = comment.likes + 1;
-            }
-            comment.isLiked = !comment.isLiked;
+            let comment = comments[likeButtonsElement.dataset.index];
+            comment.isLikeLoading = true;
+
             renderComments();
+
+            // Инициализация задержки при обработке лайка на комментарий
+            delay(2000).then(() => {
+                if (comment.isLiked) {
+                    comment.likes = comment.likes - 1;
+                } else {
+                    comment.likes = comment.likes + 1;
+                }
+
+                comment.isLiked = !comment.isLiked;
+                comment.isLikeLoading = false;
+                renderComments();
+            });
         });
     }
+}
+
+// Функция по задержке лайка на комментарий
+function delay(interval = 300) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve();
+        }, interval);
+    });
 }
 
 // Добавление ответа на комментарии
@@ -179,38 +202,67 @@ buttonElement.addEventListener('click', () => {
     isWaitingComment = true;
     renderComments();
 
-
-    // Добавляем новый комментарий в ленту с помощью POST
-    fetch(
-        'https://webdev-hw-api.vercel.app/api/v1/marina-obruch/comments',
-        {
+    // Добавляем новый комментарий в ленту с помощью POST и функции fetchAndRenderTasks()
+    function postComment() {
+        fetch('https://webdev-hw-api.vercel.app/api/v1/marina-obruch/comments', {
             method: "POST",
             body: JSON.stringify({
+                forceError: false,
                 name: replaceValue(nameInputElement.value),
                 text: replaceValue(commentInputElement.value)
                     .replaceAll('START_QUOTE', '<div class="comment-quote">')
                     .replaceAll('END_QUOTE', '</div>')
-            }),
+            })
         })
-        .then((response) => {
-            return response.json()
-        })
-        .then(() => {
-            return fetchAndRenderTasks();
-        })
+            .then((response) => {
+                if (response.status === 201) { // Если всё работает
+                    return response.json();
+                }
+                else if (response.status === 400) { // Если введено меньше 3х символов
+                    throw new Error("Ошибка 400");
+                }
+                else if (response.status === 500) {
+                    throw new Error("Ошибка 500");
+                }
+                else { // Если падает API
+                    throw new Error("Сервер сломался");
+                }
+            })
+            .then(() => {
+                // отчистка поля для ввода для новых комментариев
+                nameInputElement.value = "";
+                commentInputElement.value = "";
+                return fetchAndRenderTasks();
+            })
+            .catch((error) => {
+                if (error.message === "Ошибка 400") {
+                    alert("Имя и комментарий должны быть не короче 3 символов");
+                    return fetchAndRenderTasks();
+                }
+                else if (error.message === "Ошибка 500") {
+                    // postComment(); // // Функция отключена, нужна для доп.ДЗ, чтобы JS сам инициировал повторную отправку комментария при возникновении ошибки сервереа
 
-    // отчистка поля для ввода для новых комментариев
-    nameInputElement.value = "";
-    commentInputElement.value = "";
+                    // Включена, когда при ошибке 500 нужно вывести alert
+                    alert("Сервер сломался, попробуй позже");
+                    return fetchAndRenderTasks();
+                }
+                else {
+                    isWaitingComment = false;
+                    renderComments();
+                    console.log(Error);
+                    alert("Кажется, у вас сломался интернет, попробуйте позже");
+                }
+            })
+    }
+    postComment();
 });
-
-
 
 renderComments();
 initLikeButtons();
 
 renderComments();
 
+// Формат вывода даты в комментарии
 const correctDate = date => {
     let year = (new Date(date)).getFullYear();
     let month = fixNumbers((new Date(date)).getMonth() + 1);
