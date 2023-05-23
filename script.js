@@ -61,7 +61,8 @@ function addNewComment() {
         isEdit: false
     })
     cleareInputs()
-    renderComments()
+      renderComments()
+      commentClickListener()
 }
 
 function formatDate(date) {
