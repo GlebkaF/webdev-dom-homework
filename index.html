@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="comments" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -46,26 +46,64 @@
       </ul>
       <div class="add-form">
         <input
+          id="name-input"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
+          id="comment-input"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="add-button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
 
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const comments = document.getElementById('comments');
+   const nameInput = document.getElementById('name-input');
+    const commentInput = document.getElementById('comment-input');
+    const addButton = document.getElementById('add-button');
+    let time = new Date().toLocaleString().slice(0, -3);
+    
+    
+    addButton.addEventListener('keydown', 'click' () => {
+      nameInput.classList.remove('error');
+      commentInput.classList.remove('error');
+      if (nameInput.value === '' || commentInput.value === '') {
+        nameInput.classList.add('error');
+        commentInput.classList.add('error');
+        return;
+      }
+
+      const oldComments = comments.innerHTML;
+      comments.innerHTML = oldComments +
+       `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInput.value}</div>
+            <div>${time}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${commentInput.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter"></span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+
+        nameInput.value = '';
+        commentInput.value = '';
+    });
   </script>
 </html>
