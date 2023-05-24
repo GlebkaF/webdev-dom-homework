@@ -35,6 +35,8 @@
   const commentElements = document.querySelectorAll('comments');
   const lastCommentDeleteButton = document.getElementById('form-delete-button');
   const loadingComments = document.querySelector('.loading');
+  const commentAddedElem = document.querySelector('.comment-added');
+  const addFormElem = document.querySelector('.add-form');
 
   let comments = [
     // {
@@ -254,11 +256,13 @@
       //   isEdit: false,
       // });
 
+      function changeMessageToAddForm() {
+        addFormElem.style.display = 'block';
+        commentAddedElem.style.display = 'none';
+      };
+
 
       function postToApi() {
-        const commentAddedElem = document.querySelector('.comment-added');
-        const addFormElem = document.querySelector('.add-form');
-        
         addFormElem.style.display = 'none';
         commentAddedElem.style.display = 'block';
 
@@ -267,22 +271,38 @@
           body: JSON.stringify({
             text: escapeHtml(addComment.value),
             name: escapeHtml(addName.value),
+            forceError: true,
           })
         }).then((responce) => {
-          return responce.json();
+          if (responce.status === 400) {
+            throw new Error("Ошибка 400");
+          } else if (responce.status === 500) {
+            throw new Error("Ошибка 500");
+          } else {
+            return responce.json();
+          }
         }).then((responceData) => {
           return getFromApi();
         }).then(() => {
           addFormElem.style.display = 'block';
           commentAddedElem.style.display = 'none';
+          addName.value = '';
+          addComment.value = '';
+        }).catch((error) => {
+          if (error.message === "Ошибка 400") {
+            console.log(error);
+            changeMessageToAddForm();
+            alert("Имя и комментарий должны быть не короче 3 символов");
+          } else if (error.message === "Ошибка 500") {
+            console.log(error);
+            changeMessageToAddForm();
+            alert("Сервер сломался, попробуй позже");
+          }
         })
       };
 
       renderComments();
       postToApi();
-
-      addName.value = '';
-      addComment.value = '';
     });
   };
 
