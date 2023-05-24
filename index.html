@@ -89,10 +89,19 @@
     return fetch("https://webdev-hw-api.vercel.app/api/v1/freddy-krugliy/comments", {
       method: "GET",
     }).then((responce) => {
-      return responce.json();
+      if (responce.status === 500) {
+        throw new Error("Ошибка 500");
+      } else {
+        return responce.json();
+      }
     }).then((responceData) => {
       comments = responceData.comments;
       renderComments();
+    }).catch((error) => {
+      if (error.message === "Ошибка 500") {
+        console.log(error);
+        alert("Сервер сломался, попробуй позже");
+      }
     })
   };
 
