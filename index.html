@@ -135,8 +135,9 @@
             messages[index].likesCount -= 1;
           }
           delay(2000).then(renderMessages);
-      })
-    };};
+        })
+      };
+    };
     initLikeButtonsListeners();
 
     const initCorrectButtonsListeners = () => {
@@ -219,9 +220,6 @@
       addComments();
     });
     function addComments() {
-
-      nameInputElement.classList.remove("input-error");
-      commentInputElement.classList.remove("input-error");
       if (nameInputElement.value.trim() === "") {
         nameInputElement.classList.add("input-error");
         return;
@@ -230,11 +228,15 @@
         commentInputElement.classList.add("input-error");
         return;
       }
+      // deleteButtonElement.classList.add('delete-active');
+      // buttonElement.setAttribute('disabled', '');
+      // addFormElement.style.display = 'none';
+      // loadingElement.style.display = 'block';
       fetchPost();
-      deleteButtonElement.classList.add('delete-active');
-      buttonElement.setAttribute('disabled', '');
-      nameInputElement.value = "";
-      commentInputElement.value = "";
+      // loadingElement.style.display = 'none';
+      // addFormElement.style.display = "flex";
+      // nameInputElement.value = "";
+      // commentInputElement.value = "";
     };
     // messages.push({
     //   name: nameInputElement.value
@@ -271,29 +273,40 @@
             .replaceAll("<", "&lt;")
             .replaceAll(">", "&gt;")
             .replaceAll('"', "&quot;"),
+          forceError: true,
         }),
       })
         .then((response) => {
-          return response.json();
-        })
-        .then((responseData) => {
-          if (responseData.result == "ok") {
-            getAPI();
-            loadingElement.style.display = 'none';
-            addFormElement.style.display = "flex";
+          if (response.status === 500) {
+            throw new Error("Сервер сломался");
           }
-          else {
-            alert('Что-то пошло не так');
-            return
+          if (response.status === 400) {
+            throw new Error("Плохой запрос");
           }
-          // const appComments = responseData.comments.map((comment) => {
-          //   return {
-          //     name: comment.author.name,
-          //     time: getCurrentDate(new Date(comment.date)),
-          //     comment: comment.text,
-          //     likesCount: comment.likes,
-          //     liked: comment.isLiked,
-          //     isEdit: false,
+          getAPI();
+          loadingElement.style.display = 'none';
+          addFormElement.style.display = "flex";
+          deleteButtonElement.classList.add('delete-active');
+          buttonElement.setAttribute('disabled', '');
+          nameInputElement.value = "";
+          commentInputElement.value = "";
+          })
+        .catch((error) => {
+          loadingElement.style.display = 'none';
+          addFormElement.style.display = "flex";
+          if (error.message === "Сервер сломался") {
+            alert("Сервер сломался, попробуйте позже");
+            fetchPost();
+            return;
+          }
+          if (error.message === "Плохой запрос") {
+            alert("Имя и комментарий должны быть не короче трех символов");
+            nameInputElement.classList.add("input-error");
+            commentInputElement.classList.add("input-error");
+            return;
+          }
+          alert('Кажется что-то пошло не так, возможно отсутствует подключение к интернету');
+          console.warn(error);
         });
     };
 
@@ -308,6 +321,8 @@
       inputElement.addEventListener('input', () => {
         event.stopPropagation();
         buttonElement.removeAttribute('disabled', '');
+        nameInputElement.classList.remove("input-error");
+        commentInputElement.classList.remove("input-error");
       }
       )
     };
