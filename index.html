@@ -301,6 +301,7 @@
           } else if (responce.status === 500) {
             throw new Error("Ошибка 500");
           } else {
+            console.log(responce.status);
             return responce.json();
           }
         }).then((responceData) => {
@@ -318,7 +319,8 @@
           } else if (error.message === "Ошибка 500") {
             console.log(error);
             changeMessageToAddForm();
-            alert("Сервер сломался, попробуй позже");
+            // alert("Сервер сломался, попробуй позже");
+            postToApi();
           } else {
             alert("Кажется, у вас сломался интернет, попробуйте позже");
           };
