@@ -54,16 +54,16 @@ function addNewComment() {
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
-        .replace("|", "<div class='quote'>")
-        .replace("|", "</div>"),
+        .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+        .replaceAll("QUOTE_END", "</div>"),
         likes: "0",
         Iliked: false,
         isEdit: false
     })
     cleareInputs()
-      renderComments()
-      commentClickListener()
-}
+    renderComments()
+    commentClickListener()
+  }
 
 function formatDate(date) {
 
@@ -104,10 +104,9 @@ const commentClickListener = () => {
       comment.addEventListener('click', () => {
         newComment.setAttribute('style', 'white-space: pre-line;');
         const replace = `${usersComments[comment.dataset.id].comment} \r\n \r\n ${usersComments[comment.dataset.id].name}`
-        newComment.value = `| ${replace} \r\n\|`
+        newComment.value = `QUOTE_BEGIN ${replace} QUOTE_END \r\n\r\n`
       })
     }
-    commentClickListener()
 }
 
 const initEventListeners = () => {
@@ -117,7 +116,8 @@ const likeButtons = document.querySelectorAll('.likes');
   for (const likeButton of likeButtons) {
     likeButton.addEventListener('click', (e) => {
       (usersComments[e.target.dataset.id].Iliked) ? delLikes(e) : addLikes(e);
-    renderComments();
+      renderComments();
+      e.stopPropagation()
     })
 
   }
@@ -164,42 +164,48 @@ delButton.addEventListener('click', function () {
 
 //Оставлять комментарии
 const renderComments = () => {
-    const commentsHtml = usersComments.map((user, index) => {
-        (user.Iliked) ? Iliked = '-active-like' : Iliked = '';
-        return `<li class="comment" data-id="${index}">
-        <div class="comment-header">
-          <div>${user.name}</div>
-          <div>${user.date}</div>
+  const commentsHtml = usersComments
+    .map((user, index) => {
+      (user.Iliked) ? Iliked = '-active-like' : Iliked = '';
+      return `<li class="comment" data-id="${index}">
+      <div class="comment-header">
+        <div>${user.name}</div>
+        <div>${user.date}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">
+          ${user.comment}
         </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${user.comment}
-          </div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">${user.likes}</span>
+          <button class="like-button ${Iliked}" data-id="${index}"></button>
         </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">${user.likes}</span>
-            <button class="like-button ${Iliked}" data-id="${index}"></button>
-          </div>
-        </div>
-      </li>`;
-      })
-      .join("");
-      boxOfComments.innerHTML = commentsHtml;
-      initEventListeners();
-    };
-    renderComments()
+      </div>
+    </li>`;
+    })
+    .join("");
+
+  boxOfComments.innerHTML = commentsHtml;
+  initEventListeners();
+  commentClickListener()
+};
+
+renderComments()
+
+
 
 
 
 
 //Лайки
 const addLikes = (e) => {
-    usersComments[e.target.dataset.id].likes = Number(usersComments[e.target.dataset.id].likes) + 1;
-    usersComments[e.target.dataset.id].Iliked = true;
+  usersComments[e.target.dataset.id].likes = Number(usersComments[e.target.dataset.id].likes) + 1;
+  usersComments[e.target.dataset.id].Iliked = true;
 }
 
 const delLikes = (e) => {
-    usersComments[e.target.dataset.id].likes = Number(usersComments[e.target.dataset.id].likes) - 1;
-    usersComments[e.target.dataset.id].Iliked = false;
+  usersComments[e.target.dataset.id].likes = Number(usersComments[e.target.dataset.id].likes) - 1;
+  usersComments[e.target.dataset.id].Iliked = false;
 }
