@@ -5,11 +5,18 @@
     <meta charset="utf-8" />
     <link rel="stylesheet" href="styles.css" />
   </head>
-
+   <style>
+    .color{
+      background-color: red;
+    }
+    .color-comment{
+      background-color: brown;
+    }
+   </style>
   <body>
     <div class="container">
-      <ul class="comments">
-        <li class="comment">
+      <ul id="sheet" class="comments">
+        <li id="" class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -26,7 +33,7 @@
             </div>
           </div>
         </li>
-        <li class="comment">
+        <li id="" class="comment">
           <div class="comment-header">
             <div>Варвара Н.</div>
             <div>13.02.22 19:22</div>
@@ -45,27 +52,63 @@
         </li>
       </ul>
       <div class="add-form">
-        <input
+        <input id="input"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
-        <textarea
+        <textarea id="comment"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
 
+  <script src="js-1.js"></script>
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+      const sheet = document.getElementById('sheet')
+      const button = document.getElementById('button')
+      const input = document.getElementById('input')
+      const comment = document.getElementById('comment')
+
+      button.addEventListener('click', ()=>{
+        input.classList.remove('color')
+        if (input.value === '') {
+          input.classList.add('color')
+          return
+        }
+
+        comment.classList.remove('color-comment')
+        if (comment.value === '') {
+          comment.classList.add('color-comment')
+          return
+        }
+       const oldListHtml  = sheet.innerHTML
+       sheet.innerHTML = oldListHtml + ` <li  class="comment">
+          <div class="comment-header">
+            <div>${input.value} </div>
+            <div>${todayDate(NowDate )} </div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+      })
+      console.log(sheet);
+
   </script>
 </html>
