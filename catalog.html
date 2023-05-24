@@ -2,31 +2,27 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Урок "Динамические обработчики событий и всплытие"</title>
-    <link rel="stylesheet" href="styles.css" />
+    <title>Урок "Асинхронность"</title>
   </head>
 
   <body>
-    <h1>Любимые цвета студентов</h1>
-    <ul class="students" id="list">
+    <h1>Список задач</h1>
+    <ul class="tasks" id="list">
       <!-- Список рендерится из JS -->
     </ul>
-
+    <br />
     <div class="form">
       <h3 class="form-title">Форма добавления</h3>
       <div class="form-row">
-        Имя:&nbsp;&nbsp;
+        Что нужно сделать:
         <input
           type="text"
-          id="name-input"
+          id="text-input"
           class="input"
-          placeholder="Василий"/>
+          placeholder="Выпить кофе"
+        />
       </div>
-      <div class="form-row">
-        Цвет:&nbsp;
-        <input type="color" id="color-input" class="color-input input" />
-        <br /><br />
-      </div>
+      <br />
       <button class="button" id="add-button">Добавить</button>
     </div>
   </body>
@@ -34,78 +30,94 @@
   <script>
     const buttonElement = document.getElementById("add-button");
     const listElement = document.getElementById("list");
-    const nameInputElement = document.getElementById("name-input");
-    const colorInputElement = document.getElementById("color-input");
+    const textInputElement = document.getElementById("text-input");
 
-    const students = [
-      {
-        name: "Глеб",
-        color: "#ff2600"
-      },
-      {
-        name: "Иван",
-        color: "#00f900"
-      },
-      {
-        name: "Люси",
-        color: "#0432ff"
-      }
-    ];
+    // TODO: Получать из хранилища данных
+    let tasks = [];
 
-    const renderStudents = () => {
-      const studentsHtml = students.map((student, index) => {
-          return `<li class="student" data-color="${student.color}">
-            <p class ="student-name">${student.name}</p>
-            <button data-index="${index}" class="button delete-button">Удалить</button>
+    // Запросы в API - асинхронные, мы не знаем как долго будет выполняться запрос
+    // Запрос может выполняться секунды и даже минуты
+    // fetch - запускает запрос в api
+    const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/todos", {
+      method: "GET"
+    });
+
+    // подписываемся на успешное завершение запроса с помощью then
+    fetchPromise.then((response) => {
+      // Запускаем преобразовываем "сырые" данные от API в json формат
+      const jsonPromise = response.json();
+
+      // Подписываемся на результат преобразования
+      jsonPromise.then((responseData) => {
+        // получили данные и рендерим их в приложении
+        tasks = responseData.todos;
+        renderTasks();
+      });
+    });
+
+    const renderTasks = () => {
+      const tasksHtml = tasks
+        .map((task) => {
+          return `
+          <li class="task">
+            <p class="task-text">
+              ${task.text}
+              <button data-id="${task.id}" class="button delete-button">Удалить</button>
+            </p>
           </li>`;
-        }).join("");
+        })
+        .join("");
 
-      listElement.innerHTML = studentsHtml;
-
+      listElement.innerHTML = tasksHtml;
       const deleteButtons = document.querySelectorAll(".delete-button");
 
       for (const deleteButton of deleteButtons) {
-        deleteButton.addEventListener("click", () => {
+        deleteButton.addEventListener("click", (event) => {
           event.stopPropagation();
-          const index = deleteButton.dataset.index;
-          students.splice(index, 1);
-          renderStudents();
-        });
-      }
-    
 
-    const studentElements = document.querySelectorAll(".student");
+          const id = deleteButton.dataset.id;
 
-      for (const student of studentElements) {
-        student.addEventListener("click", () => {
-          event.stopPropagation();
-        const color = student.dataset.color;
-        alert(`Любимый цвет: ${color}`);
+          // подписываемся на успешное завершение запроса с помощью then
+          fetch("https://webdev-hw-api.vercel.app/api/todos/" + id, {
+            method: "DELETE"
+          }).then((response) => {
+            response.json().then((responseData) => {
+              // получили данные и рендерим их в приложении
+              tasks = responseData.todos;
+              renderTasks();
+            });
+          });
+
+          renderTasks();
         });
       }
     };
 
-    document.querySelector("html").addEventListener("click", () => {
-      alert("Клик по html");
-});
-    renderStudents();
+    renderTasks();
 
     buttonElement.addEventListener("click", () => {
-      nameInputElement.classList.remove("input-error");
-
-      if (nameInputElement.value === "") {
-        nameInputElement.classList.add("input-error");
+      if (textInputElement.value === "") {
         return;
       }
 
-      students.push({
-        name: nameInputElement.value,
-        color: colorInputElement.value
+      // подписываемся на успешное завершение запроса с помощью then
+      fetch("https://webdev-hw-api.vercel.app/api/todos", {
+        method: "POST",
+        body: JSON.stringify({
+          text: textInputElement.value
+        })
+      }).then((response) => {
+        response.json().then((responseData) => {
+          // получили данные и рендерим их в приложении
+          tasks = responseData.todos;
+          renderTasks();
+        });
       });
 
-      renderStudents();
+      renderTasks();
 
-      nameInputElement.value = "";
+      textInputElement.value = "";
     });
   </script>
 </html>
+

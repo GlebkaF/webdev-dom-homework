@@ -70,20 +70,27 @@
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
 
-  const comments = [{
-    name: "Глеб Фокин",
-    date: "12.02.22 12:18",
-    text: "Это будет первый комментарий на этой странице",
-    active: false,
-    like: "3",
-  },
-  {
-    name: "Варвара Н.",
-    date: "13.02.22 19:22",
-    text: "Мне нравится как оформлена эта страница! ❤",
-    active: true,
-    like: "75",
-  }
+  const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/olya-myalo/comments", {
+      method: "GET"
+    });
+    fetchPromise.then((response) => { 
+    const jsonPromise = response.json(); 
+    jsonPromise.then((responseData) => { 
+    const appComments = responseData.comments.map((comment) => { 
+      return { 
+        name: comment.author.name,  
+        date: comment.date,  
+        text: comment.text, 
+        active: false,
+        like: comment.likes, 
+        }; 
+      }); 
+      comments = appComments; 
+      renderComments();
+      console.log(comments);
+      }); 
+});
+  let comments = [
 ];
 const onCommentLikeClick = () => {
   const likeButtonsElements = document.querySelectorAll(".like-button");
@@ -144,8 +151,7 @@ const onCommentFeedbackClick = () => {
   for (const feedbackButtonsElement of feedbackButtonsElements) {   
     feedbackButtonsElement.addEventListener("click", () => {  
       currentCommentFeedback = feedbackButtonsElement.dataset.index;
-      const commentText = comments[currentCommentFeedback].text;
-      commentInputElement.value = `>${commentText} ${comments[currentCommentFeedback].name}`;
+      commentInputElement.value = `>${comments[currentCommentFeedback].text} ${comments[currentCommentFeedback].name}`;
     });  
   }  
 };
@@ -166,7 +172,7 @@ const renderComments = () => {
           <div class="comment-footer">
             <button data-index="${index}" class="edited-button">Редактировать</button>
             <div class="likes">
-              <span class="likes-counter">${comment.like}</span>
+              <span class="likes-counter">${comment.like}</span> ${comment.like === 1 ? 'лайк' : 'лайков'}
               <button data-index="${index}" class="like-button ${likeClass}"></button> 
             </div>
           </div>
@@ -206,8 +212,21 @@ const renderComments = () => {
       text: commentInputElement.value
       .replaceAll("<", "&lt;")
       .replaceAll(">","&gt;"), 
+      active: false,
       like: likes, 
 });
+      fetch("https://webdev-hw-api.vercel.app/api/v1/olya-myalo/comments", {
+        method: "POST",
+        body: JSON.stringify({
+          name: nameInputElement.value,  
+          text: commentInputElement.value
+        })
+      }).then((response) => {
+        response.json().then((responseData) => {
+          fetchPromise();
+          renderComments();
+        });
+      });
       renderComments();
          });
 </script>
