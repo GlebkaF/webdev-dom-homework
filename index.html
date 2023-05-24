@@ -40,6 +40,7 @@
     const textInputElement = document.getElementById("add-text");
     const textareaInputElement = document.getElementById("add-textarea");
     const listElement = document.getElementById("list");
+    const deletElement = document.getElementById("comentsOfArr.text");
     
     const comentsOfArr = [
         {
@@ -103,6 +104,24 @@
 
     }
 
+    const answerComment = () => {
+      const comentsElement = document.querySelectorAll(".comment")
+      for (const comentElement of comentsElement) {
+        comentElement.addEventListener("click", () => {
+          textareaInputElement.value = `>${comentElement.querySelector('.comment-text').innerHTML
+              .replaceAll("&amp;", "&")
+              .replaceAll("&lt;", "<")
+              .replaceAll("&gt;", ">")
+              .replaceAll("&quot;", '"')}`
+        + `\n\n${comentElement.querySelector('.comment-header').children[0].innerHTML
+              .replaceAll("&amp;", "&")
+              .replaceAll("&lt;", "<")
+              .replaceAll("&gt;", ">")
+              .replaceAll("&quot;", '"')},`
+      })
+    }
+  }
+
     const renderComents = () => {
     const comentsHtml = comentsOfArr.map((item, index) =>{
       let activeLike = '';
@@ -133,6 +152,7 @@
         listElement.innerHTML = comentsHtml;
       likes();
       edit();
+      answerComment();
     };
     renderComents();
 
@@ -189,11 +209,13 @@
         like: 0,
         isActiveLike: false,
       });
+
+      
       renderComents();
 
       textInputElement.value = "";
       textareaInputElement.value = "";
-      buttonWritter.disabled = true;  
+      
     });
   </script>
 </html>
