@@ -180,7 +180,7 @@ ${comments[index].name},`;
         return;
       }
 
-      comments.push({
+      const comment = {
         name: nameInputElement.value
           .replaceAll("&", "&amp;")
           .replaceAll("<", "&lt;")
@@ -194,13 +194,15 @@ ${comments[index].name},`;
         date: normalDate(new Date()),
         likes: 0,
         favorite: false
-      });
+      }
+
+      comments.push(comment);
 
       fetch("https://webdev-hw-api.vercel.app/api/v1/olesia-koneva/comments", {
         method: "POST",
         body: JSON.stringify({
-          text: textInputElement.value,
-          name: nameInputElement.value
+          text: comment.text,
+          name: comment.name
         })
       }).then(() => {
           getComments()
