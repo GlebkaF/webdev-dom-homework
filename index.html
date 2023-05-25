@@ -117,39 +117,86 @@
 
 
   const addComment = () => {
+    let inputUserText = textInputElement.value;
+    let inputUserName = nameInputElement.value;
 
     if (nameInputElement.value === '') {
       nameInputElement.classList.add('form-error');
       return
     } else if (textInputElement.value === '') {
-      textInputElement.classList.add('form-error')
+      textInputElement.classList.add('form-error');
       return
     } else {
       addForm.classList.add('hidden');
       commentLoading.classList.remove('hidden');
       fetch('https://webdev-hw-api.vercel.app/api/v1/dennis-sharin/comments', {
-          method: 'POST',
-          body: JSON.stringify({
-            name: replaceValue(nameInputElement.value),
-            text: replaceValue(textInputElement.value)
-              .replaceAll('QUOTE_BEGIN', '<div class="quote">')
-              .replaceAll('QUOTE_END', '</div>')
-          })
-        })
-        .then(response => response.json())
-        .then(() => fetchGetRender())
-        .then(() => {
+        method: 'POST',
+        body: JSON.stringify({
+        name: replaceValue(nameInputElement.value),
+        text: replaceValue(textInputElement.value)
+          .replaceAll('QUOTE_BEGIN', '<div class="quote">')
+          .replaceAll('QUOTE_END', '</div>'),
+        forceError: true,
+      })
+    })
+    .then((response) => {
+
+      if (response.status === 500) {
+        console.log('Ошибка 500');
+        throw new Error('error500');
+      }
+      if (response.status === 400) {
+        console.log('Ошибка 400');
+        throw new Error('error400')
+      }
+      console.log('test ok');
+      response.json();
+    })
+    .then(() => {
+      return fetchGetRender();
+    })
+    .then(() => {
+      addForm.classList.remove('hidden');
+      commentLoading.classList.add('hidden');
+    })
+    .catch((error) => {
+      console.log('catch is working here');
+      switch (error.message) {
+        case 'error500':
+          textInputElement.value = inputUserName;
+          nameInputElement.value = inputUserText;
+          return addComment()
+            break;
+        case 'error400':
+          alert('Минимальное количество введённых символов не должно быть меньше 3')
+          textInputElement.value = inputUserName;
+          nameInputElement.value = inputUserText;
           addForm.classList.remove('hidden');
           commentLoading.classList.add('hidden');
-        })
-    }
-    renderComments();
+            break;
+        default:
+          console.log('Кажется сломался интернет')
+          textInputElement.value = inputUserName;
+          nameInputElement.value = inputUserText;
+          addForm.classList.remove('hidden');
+          commentLoading.classList.add('hidden');
+            break;
+      }
 
+      return error
+
+      addForm.classList.remove('hidden');
+      commentLoading.classList.add('hidden');
+      textInputElement.value = inputUserName;
+      nameInputElement.value = inputUserText;
+    })
+  };
+    nameInputElement.classList.remove('form-error');
+    textInputElement.classList.remove('form-error');
     textInputElement.value = '';
     nameInputElement.value = '';
-    textInputElement.classList.remove('form-error');
-    nameInputElement.classList.remove('form-error');
-  };
+};
+
 
   const likeComment = () => {
     const likeButtons = document.querySelectorAll('.like-button');
@@ -199,9 +246,8 @@
   };
 
   fetchGetRender()
-  renderComments()
 
-  addButton.addEventListener('click', addComment);
+  addButton.addEventListener('click', addComment)
 
   textInputElement.addEventListener('keyup', event => {
     if (event.key === 'Enter') {
