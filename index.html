@@ -42,7 +42,12 @@
       method: "GET",
     })
       .then((response) => {
-        return response.json()
+        if (response.status === 200) {
+          return response.json()
+        }
+        else {
+          throw new Error()
+        }
       })
       .then((responseData) => {
         const appComents = responseData.comments.map((comment) => {
@@ -57,11 +62,15 @@
         comments = appComents
         renderComments()
       })
+      .then(() => {
+        commentsLoader.innerHTML = ""
+      })
+      .catch(() => {
+        commentsLoader.innerHTML = 'Проблемы с сервером или отсутствует интернет соединение, попробуйте перезагрузить страницу'
+      })
   }
   commentsLoader.innerHTML = "Комментарии загружаются"
-  getApiFunction().then(() => {
-    commentsLoader.innerHTML = ""
-  })
+  getApiFunction()
 
   function postApiFunction() {
     return fetch('https://webdev-hw-api.vercel.app/api/v1/sergey-bondarenko/comments', {
@@ -69,13 +78,44 @@
       body: JSON.stringify({
         name: addFormName.value,
         text: addFormText.value,
+        forceError: true,
       })
     })
       .then((response) => {
-        return response.json()
+        // console.log(response);
+        if (response.status === 201) {
+          return response.json()
+        }
+        else if (response.status === 400) {
+          throw new Error("Ошибка ввода")
+        }
+        else if (response.status === 500) {
+          throw new Error("Ошибка сервера")
+        }
+        else {
+          throw new Error("Ошибка")
+        }
       })
       .then((responseData) => {
         return getApiFunction()
+      })
+      .then(() => {
+        addFormButton.disabled = false
+        addFormButton.textContent = "Написать"
+        addFormName.value = ''
+        addFormText.value = ''
+      })
+      .catch((error) => {
+        addFormButton.disabled = false
+        if (error.message = "Ошибка ввода") {
+          alert('Поле ввода имени должно содержать минимум 3 символа')
+        }
+        else if (error.message = "Ошибка сервера") {
+          alert('Сервер временно недоступен, попробуйте позже')
+        }
+        else {
+          alert('Что-то пошло не так, попробуйте перезагрузить страницу')
+        }
       })
   }
 
@@ -179,17 +219,8 @@
 
     addFormButton.disabled = true
     addFormButton.textContent = "Отправка"
-    postApiFunction().then(() => {
-      addFormButton.disabled = false
-      addFormButton.textContent = "Написать"
+    postApiFunction()
 
-      // commentForm.textContent = `<input type="text" id="add-form-name" class="add-form-name" placeholder="Введите ваше имя" />
-      // <textarea type="textarea" id="add-form-text" class="add-form-text" placeholder="Введите ваш коментарий"
-      //   rows="4"></textarea>
-      // <div class="add-form-row">
-      //   <button id="add-form-button" class="add-form-button">Написать</button>
-      // </div>`
-    })
 
 
 
@@ -211,8 +242,7 @@
     renderComments()
     // initLikeColor()
     // initLikeButtons()
-    addFormName.value = ''
-    addFormText.value = ''
+
 
   })
 
