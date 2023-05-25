@@ -78,50 +78,49 @@
 
 
 
-  const allComments = () => {
-    const fetchComment = fetch("https://wedev-api.sky.pro/api/v1/max-kyrtimov/comments", {
-      method: "GET",
-    });
-    fetchComment.then((response) => {
-      const jsonComment = response.json();
-      jsonComment.then((responseData) => {
+  // const allComments = () => {
+  const fetchComment = fetch("https://wedev-api.sky.pro/api/v1/max-kyrtimov/comments", {
+    method: "GET",
+  });
+  fetchComment.then((response) => {
+    const jsonComment = response.json();
+    jsonComment.then((responseData) => {
 
-        let appComments = responseData.comments.map((comment) => {
-          return {
-            name: comment.author.name,
-            date: new Date(comment.date),
-            text: comment.text,
-            likes: comment.likes,
-            isLiked: false,
-          };
-        });
-        let comments = appComments.todos;
-        renderComments();
-        console.log(comments);
+      const appComments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: new Date(comment.date),
+          text: comment.text,
+          likes: comment.likes,
+          isLiked: false,
+        };
       });
+      comments = appComments;
+      renderComments();
     });
+  });
 
-  }
+  // }
 
-  allComments();
+  // allComments();
 
 
 
- let comments = [
-    {
-      name: "Глеб Фокин",
-      date: "12.02.22 12:18",
-      text: "Это будет первый комментарий на этой странице",
-      like: 3,
-      isLiked: false,
-    },
-    {
-      name: "Варвара Н",
-      date: "13.02.22 19:22",
-      text: "Мне нравится как оформлена эта страница! ❤",
-      like: 75,
-      isLiked: false,
-    },
+  let comments = [
+    // {
+    //   name: "Глеб Фокин",
+    //   date: "12.02.22 12:18",
+    //   text: "Это будет первый комментарий на этой странице",
+    //   like: 3,
+    //   isLiked: false,
+    // },
+    // {
+    //   name: "Варвара Н",
+    //   date: "13.02.22 19:22",
+    //   text: "Мне нравится как оформлена эта страница! ❤",
+    //   like: 75,
+    //   isLiked: false,
+    // },
   ];
 
   //Функция для обработчика клика для лайка
@@ -274,6 +273,19 @@
         .replaceAll('"', "&quot;"),
       like: countInLike,
       isLiked: false,
+    });
+
+    fetch("https://wedev-api.sky.pro/api/v1/max-kyrtimov/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        name: nameInputElement.value,
+        text: commentInputElement.value
+      })
+    }).then((response) => {
+      response.json().then((responseData) => {
+        fetchPromise;
+        renderComments();
+      });
     });
 
     renderComments();
