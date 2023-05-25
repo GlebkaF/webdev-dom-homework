@@ -77,7 +77,37 @@
   const likeButtonElements = document.querySelectorAll('.like-button');
 
 
-  const comments = [
+
+  const allComments = () => {
+    const fetchComment = fetch("https://wedev-api.sky.pro/api/v1/max-kyrtimov/comments", {
+      method: "GET",
+    });
+    fetchComment.then((response) => {
+      const jsonComment = response.json();
+      jsonComment.then((responseData) => {
+
+        let appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: new Date(comment.date),
+            text: comment.text,
+            likes: comment.likes,
+            isLiked: false,
+          };
+        });
+        let comments = appComments.todos;
+        renderComments();
+        console.log(comments);
+      });
+    });
+
+  }
+
+  allComments();
+
+
+
+ let comments = [
     {
       name: "Глеб Фокин",
       date: "12.02.22 12:18",
@@ -166,6 +196,8 @@
 
     initlikeButtonListeners();
     initAnswerComment();
+    // allComments();
+    // fetchPromise();
   };
 
   renderComments();
