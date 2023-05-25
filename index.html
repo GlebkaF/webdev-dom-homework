@@ -46,6 +46,8 @@
     let comments = [];
     let isStarting = true;
     let isWaiting = false;
+    let name;
+    let text;
 
     const startFetch = () => {
       fetch("https://webdev-hw-api.vercel.app/api/v1/dmitry-teleganov/comments", {
@@ -160,6 +162,43 @@
         });
       }
     }
+    const handlePostClick = () => {
+      return fetch("https://webdev-hw-api.vercel.app/api/v1/dmitry-teleganov/comments", {
+        method: "POST",
+        body: JSON.stringify({
+          name: replaceValue(nameElement.value),
+          text: replaceValue(textElement.value)
+            .replaceAll('START_QUOTE', '<div class="comment-quote">')
+            .replaceAll('END_QUOTE', '</div>'),
+          forceError: true
+        })
+      })
+      .then(response => {
+        if (response.status === 400) throw new Error('Ошибка 400');
+        if (response.status === 500) throw new Error('Ошибка 500');
+
+        response.json();
+      })
+      .then(() => {
+        nameElement.value = '';
+        textElement.value = '';
+
+        return startFetch();
+      })
+      .catch(error => {
+        if (error.message === 'Ошибка 400') {
+          alert('Имя и комментарий должны быть не короче 3 символов');
+        } else if (error.message === 'Ошибка 500') {
+          alert('Сервер сломался, попробуй позже');
+        } else {
+          alert('Кажется, у вас сломался интернет, попробуйте позже');
+        }
+
+        isWaiting = false;
+
+        renderComments();
+      });
+    }
 
     const addComment = () => {
       if (!nameElement.value.trim()) {
@@ -181,17 +220,41 @@
             name: replaceValue(nameElement.value),
             text: replaceValue(textElement.value)
               .replaceAll('START_QUOTE', '<div class="comment-quote">')
-              .replaceAll('END_QUOTE', '</div>')
+              .replaceAll('END_QUOTE', '</div>'),
+            forceError: true
           })
         })
-        .then(response => response.json())
-        .then(() => startFetch());
+        .then(response => {
+          if (response.status === 400) throw new Error('Ошибка 400');
+          if (response.status === 500) throw new Error('Ошибка 500');
+
+          response.json();
+        })
+        .then(() => {
+          nameElement.value = '';
+          textElement.value = '';
+
+          return startFetch();
+        })
+        .catch(error => {
+          if (error.message === 'Ошибка 400') {
+            alert('Имя и комментарий должны быть не короче 3 символов');
+          } else if (error.message === 'Ошибка 500') {
+            alert('Сервер сломался, попробуй позже');
+
+            handlePostClick();
+          } else {
+            alert('Кажется, у вас сломался интернет, попробуйте позже');
+          }
+
+          isWaiting = false;
+
+          renderComments();
+        });
       }
 
       nameElement.classList.remove('form-error');
       textElement.classList.remove('form-error');
-      nameElement.value = '';
-      textElement.value = '';
     }
     const deleteLastComment = () => {
       comments.pop();
