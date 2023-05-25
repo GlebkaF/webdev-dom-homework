@@ -66,23 +66,8 @@
   const commentElement = document.querySelectorAll(".comment");
   const likeButtonElements = document.querySelectorAll(".like-button");
   const deleteButtonElement = document.querySelector(".delete-button");
-  const comments = [
-    {
-      name: "Глеб Фокин",
-      date: "12.02.22 12:18",
-      text: "Это будет первый комментарий на этой странице",
-      like: 3,
-      isLiked: false
-    },
-    {
-      name: "Варвара Н.",
-      date: "13.02.22 19:12",
-      text: "Мне нравится как оформлена эта страница! ❤",
-      like: 75,
-      isLiked: false
-    }
 
-  ];
+
   const getAllComments = () => {
     const fetchComment = fetch("https://webdev-hw-api.vercel.app/api/v1/ramzil-khalimov/comments", {
       method: "GET",
@@ -105,6 +90,24 @@
     });
   };
   getAllComments();
+
+  let comments = [
+    {
+      name: "Глеб Фокин",
+      date: "12.02.22 12:18",
+      text: "Это будет первый комментарий на этой странице",
+      like: 3,
+      isLiked: false
+    },
+    {
+      name: "Варвара Н.",
+      date: "13.02.22 19:12",
+      text: "Мне нравится как оформлена эта страница! ❤",
+      like: 75,
+      isLiked: false
+    }
+
+  ];
   deleteButtonElement.addEventListener("click", () => {
     comments.pop();
     renderComments();
@@ -182,6 +185,7 @@
     let countInLike;
     const date = new Date();
     const now = date.getDate().toString().padStart(2, '0') + '.' + (date.getMonth() + 1).toString().padStart(2, '0') + '.' + date.getFullYear().toString().slice(-2) + ' ' + date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
+
     if (nameElement.value === "") {
       nameElement.classList.add("error");
       if (textElement.value === "") {
@@ -213,6 +217,17 @@
     </div>
   </div>
 </li>`;
+    fetch("https://webdev-hw-api.vercel.app/api/v1/ramzil-khalimov/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        name: nameElement.value,
+        text: textElement.value
+      })
+    }).then((response) => {
+      response.json().then((responseData) => {
+        getAllComments();
+      });
+    });
     countInLike = 0;
 
     comments.push({
@@ -233,18 +248,7 @@
     renderComments();
     nameElement.value = "";
   })
-  fetch("https://webdev-hw-api.vercel.app/api/v1/ramzil-khalimov/comments", {
-    method: "POST",
-    body: JSON.stringify({
-      name: nameElement.value,
-      text: textElement.value
-    })
-  }).then((response) => {
-    response.json().then((responseData) => {
-      getAllComments();
-      renderComments();
-    });
-  });
+
 </script>
 
 </html>
