@@ -64,7 +64,11 @@
      return fetch("https://webdev-hw-api.vercel.app/api/v1/maxim/comments", {
   method: "GET",
 }).then((response) => {
-  return response.json()
+  if (response.status === 200) {
+    return response.json()
+  } else {
+    throw new Error("Нет соединения с сервером, попробуйте позже")
+  } 
 }).then((responseData) => {
     const appComments = responseData.comments.map((comment) => {
       return {
@@ -77,9 +81,14 @@
     });
     arrComments = appComments;
     renderComments();
-  });
+  }).catch((error) => {
+    if (error.message === "Failed to fetch") {
+            alert("Кажется, у вас сломался интернет, попробуйте позже");
+          } else { alert(error)}
+        });
 }
 
+ 
     getComments().then((response) => {
       timeLoadElement.style.display = "none"
     });
@@ -120,7 +129,6 @@
     }
 
     const renderComments = () => {
-      console.log(arrComments);
       let commentsHtml = arrComments.map((comment,index) => {
       return     `<li class="comment" data-index="${index}">
           <div class="comment-header">
@@ -166,22 +174,38 @@
      setTimeout(() => addCommentElement.disabled = false, 1000);
      return;}
      let oldForm = formElement.innerHTML;
-     formElement.innerHTML = `<span style='text-align:center'>Коментарий добавляется...</span>`;
     fetch("https://webdev-hw-api.vercel.app/api/v1/maxim/comments", {
         method: "POST",
         body: JSON.stringify({
+          forceError: true,
           name: userNameElement.value,
           text: userCommentElement.value,})
       }).then((response) => {
-        return response.json()
+        if (response.status === 201) {
+          formElement.innerHTML = `<span style='text-align:center'>Коментарий добавляется...</span>`;
+          return response.json()
+        }
+        if (response.status === 400) {
+          throw new Error("Имя и коментарий должен содержать хотя бы 3 символа")
+        } 
+        if (response.status === 500) {
+          throw new Error("500");
+        }
       }).then((responseData) => {
           arrComments = responseData.comments;
           return getComments();
         }).then(()=>{
           formElement.innerHTML = oldForm;
+        }).catch((error) => {
+          if (error.message === "Failed to fetch") {
+            alert("Кажется, у вас сломался интернет, попробуйте позже");
+            return
+          }
+          if (error.message === "500") {
+            checkAndAdd();
+          } else { alert(error)}
         });
-        userNameElement.value = "";
-        userCommentElement.value = "";
+
 }
 
 
