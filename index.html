@@ -50,8 +50,10 @@
         id="add-text"></textarea>
       <div class="add-form-row">
         <button id="add-button" class="add-form-button">Написать</button>
+        <button class="delete-button">Удалить</button>
       </div>
     </div>
+
   </div>
 </body>
 
@@ -63,7 +65,50 @@
   const textElement = document.getElementById("add-text");
   const commentElement = document.querySelectorAll(".comment");
   const likeButtonElements = document.querySelectorAll(".like-button");
+  const deleteButtonElement = document.querySelector(".delete-button");
+  const comments = [
+    {
+      name: "Глеб Фокин",
+      date: "12.02.22 12:18",
+      text: "Это будет первый комментарий на этой странице",
+      like: 3,
+      isLiked: false
+    },
+    {
+      name: "Варвара Н.",
+      date: "13.02.22 19:12",
+      text: "Мне нравится как оформлена эта страница! ❤",
+      like: 75,
+      isLiked: false
+    }
 
+  ];
+  const getAllComments = () => {
+    const fetchComment = fetch("https://webdev-hw-api.vercel.app/api/v1/ramzil-khalimov/comments", {
+      method: "GET",
+    });
+    fetchComment.then((response) => {
+      const jsonComment = response.json();
+      jsonComment.then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: new Date(comment.date),
+            text: comment.text,
+            like: comment.likes,
+            isLiked: false,
+          };
+        });
+        let comments = appComments;
+        renderComments();
+      });
+    });
+  };
+  getAllComments();
+  deleteButtonElement.addEventListener("click", () => {
+    comments.pop();
+    renderComments();
+  })
   const initLikeButtonListener = () => {
     const likeButtonElements = document.querySelectorAll(".like-button");
     for (let likeButtonElement of likeButtonElements) {
@@ -103,26 +148,6 @@
   }
 
 
-
-  const comments = [
-    {
-      name: "Глеб Фокин",
-      time: "12.02.22",
-      hour: "12:18",
-      text: "Это будет первый комментарий на этой странице",
-      like: 3,
-      isLiked: false
-    },
-    {
-      name: "Варвара Н.",
-      time: "13.02.22",
-      hour: "19:12",
-      text: "Мне нравится как оформлена эта страница! ❤",
-      like: 75,
-      isLiked: false
-    }
-
-  ];
   const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
       let isLike = '';
@@ -132,7 +157,7 @@
       return `<li class="comment">
         <div class="comment-header">
           <div>${comment.name}</div>
-          <div>${comment.time}   ${comment.hour}</div>
+          <div>${comment.date}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
@@ -155,13 +180,20 @@
 
   buttonElement.addEventListener("click", () => {
     let countInLike;
-    let now = new Date().toLocaleDateString();
-    let timeNow = new Date().toLocaleTimeString().slice(0, -3);
-    if (nameElement === "") {
-      nameElement.classList.add("add-form-name");
+    const date = new Date();
+    const now = date.getDate().toString().padStart(2, '0') + '.' + (date.getMonth() + 1).toString().padStart(2, '0') + '.' + date.getFullYear().toString().slice(-2) + ' ' + date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
+    if (nameElement.value === "") {
+      nameElement.classList.add("error");
+      if (textElement.value === "") {
+        textElement.classList.add("error");
+      }
       return;
-    } else if (textElement === "") {
-      textElement.classList.add("add-form-text");
+
+    } else if (textElement.value === "") {
+      textElement.classList.add("error");
+      if (nameElement.value === "") {
+        nameElement.classList.add("error");
+      }
       return;
     }
     listElement.innerHTML += `<li class="comment">
@@ -189,8 +221,7 @@
         .replaceAll('>', '&gt;')
         .replaceAll('&', '&amp;')
         .replaceAll('"', '&quot;'),
-      time: now,
-      hour: timeNow,
+      date: now,
       text: textElement.value
         .replaceAll('<', '&lt;')
         .replaceAll('>', '&gt;')
@@ -203,7 +234,18 @@
     renderComments();
     nameElement.value = "";
   })
-
+  fetch("https://webdev-hw-api.vercel.app/api/v1/ramzil-khalimov/comments", {
+    method: "POST",
+    body: JSON.stringify({
+      name: nameElement.value,
+      text: textElement.value
+    })
+  }).then((response) => {
+    response.json().then((responseData) => {
+      getAllComments();
+      renderComments();
+    });
+  });
 </script>
 
 </html>
