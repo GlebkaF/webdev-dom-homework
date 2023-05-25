@@ -1,11 +1,12 @@
-  import { getDate } from "./helper.js";
-  import { addErrors } from "./helper.js";
+  import { getDate, addErrors } from "./helper.js";
+import { renderCommentList } from "./render.js";
   
   
     const addingAComment = document.getElementById('adding');
     const commentsLoader = document.getElementById('loader');
     const nameElement = document.getElementById('name');
     const commentsElement = document.getElementById('comments');
+
     
 export const getComments = () => {
     const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/valeriy-poletaev/comments",
@@ -17,9 +18,7 @@ export const getComments = () => {
         const jsonPromise = response.json();
 
       jsonPromise.then((responseData) => {
-        
-        console.log(responseData); 
-          const commentList = responseData.comments.map((comment) => {
+         const commentList = responseData.comments.map((comment) => {
           let activeClass = ""
           if(comments.isLiked === true){
             activeClass = "-active-like"
@@ -34,10 +33,10 @@ export const getComments = () => {
               isEdit: false,
           }
         });
-        return commentList;
+        renderCommentList(commentList);
       });
       });
-    };
+      };
     
 
     export const postComment = (data) => {
@@ -72,4 +71,6 @@ export const getComments = () => {
             nameElement.value = "";  
           }
         });
+        getComments();
       };
+

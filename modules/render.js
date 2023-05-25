@@ -1,11 +1,7 @@
-// import { getComments, postComment } from "./api.js";
-// import { addErrors, getDate, addLikeButton } from "./helper.js";
+
+import { addLikeButton, replyComment } from "./helper.js";
 
   const listElement = document.getElementById('list'); 
-  const commentsListElement = document.getElementById('comments-list');
-  const nameElement = document.getElementById('name');
-  const commentsElement = document.getElementById('comments');
-
   
 
 export const renderCommentList = (commentList) => {
@@ -29,4 +25,9 @@ export const renderCommentList = (commentList) => {
             </li>`
       }).join('');
       listElement.innerHTML = commentHtml;
+      addLikeButton(commentList);
+      replyComment();
     };
+
+
+

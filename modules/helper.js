@@ -1,5 +1,9 @@
+import { renderCommentList } from "./render.js";
+
+
 const nameElement = document.getElementById('name');
 const commentsElement = document.getElementById('comments');
+
 
 export function addErrors(){
     nameElement.classList.add("_error");
@@ -22,12 +26,12 @@ export const getDate = (startDate) => {
     return `${day}.${month}.${year} ${hours}:${minutes}`;
   };
 
-  export function addLikeButton(){
+  export function addLikeButton(commentList){
     const likeButtonElement = document.querySelectorAll('.like-button');
 for (const buttonLike of likeButtonElement) {
   buttonLike.addEventListener("click", (event) => {
     event.stopPropagation();
-    index = buttonLike.dataset.buttonLike;
+    let index = buttonLike.dataset.buttonLike;
     if (commentList[index].activeLike === false) {
       commentList[index].activeLike = true
       commentList[index].likes += 1
@@ -37,7 +41,7 @@ for (const buttonLike of likeButtonElement) {
       commentList[index].likes -= 1
       commentList[index].activeClass = ""
     }
-   
+   renderCommentList(commentList);
   })
 }
 };
@@ -52,9 +56,9 @@ contentsReplyComments.forEach((replyComment, index) => {
   const commentText = replyComment.querySelector(".comment-text").innerText
   const commentAuthor = replyComment.querySelector(".comment-header div").innerText
   const textarea = document.querySelector("#comments")
-  // textarea.value = '&gt ' + commentText + "\n" + commentAuthor + "," ;
   textarea.value = `> ${commentText} \n ${commentAuthor} ,`;
-
   })
 })
+// getComments();
 };
+
