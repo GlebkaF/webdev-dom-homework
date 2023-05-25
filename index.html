@@ -20,9 +20,11 @@
             </div>
           </div>
           <div class="comment-footer">
+            <button class="add-form-button-red">Редактировать</button>
             <div class="likes">
               <span class="likes-counter">3</span>
               <button class="like-button"></button>
+              
             </div>
           </div>
         </li>
@@ -37,6 +39,7 @@
             </div>
           </div>
           <div class="comment-footer">
+            <button class="add-form-button-red">Редактировать</button>
             <div class="likes">
               <span class="likes-counter">75</span>
               <button class="like-button -active-like"></button>
@@ -58,6 +61,8 @@
         ></textarea>
         <div class="add-form-row">
           <button class="add-form-button">Написать</button>
+          
+
         </div>
       </div>
     </div>
@@ -66,11 +71,13 @@
   <script>
     "use strict";
   // 1. нужно найти элементы формы DOM с помощью метода document.querySelector(), используя добавленные id:
+  // Получаем элементы формы и список комментариев из DOM
 const nameInput = document.querySelector('#name-input');
 const commentInput = document.querySelector('#comment-input');
 const addButton = document.querySelector('.add-form-button');
 const commentsList = document.querySelector('.comments');
 
+// Добавляем обработчик события клика на кнопку "Добавить"
 addButton.addEventListener('click', function() {
   // проверяем, заполнены ли поля ввода
   if (nameInput.value.trim() === '' || commentInput.value.trim() === '') {
@@ -85,6 +92,53 @@ addButton.addEventListener('click', function() {
   const now = new Date();
   const dateString = `${now.getDate()}.${now.getMonth() + 1}.${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`;
 
+
+ //«оживляем» кнопку и счетчик лайков у каждого комментария
+  const likeButtons = document.querySelectorAll('.like-button');  
+  
+  // Добавляем обработчик события клика на кнопку лайка
+  likeButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    const likesCounter = button.previousElementSibling; // Получаем счетчик лайков
+    const currentLikes = parseInt(likesCounter.textContent); // Получаем текущее количество лайков
+
+    if (button.classList.contains('-active-like')) {
+      // Если кнопка уже активна (уже поставлен лайк), уменьшаем счетчик и удаляем класс активности
+      likesCounter.textContent = currentLikes - 1;
+      button.classList.remove('-active-like');
+    } else {
+      // Если кнопка неактивна (лайк не поставлен), увеличиваем счетчик и добавляем класс активности
+      likesCounter.textContent = currentLikes + 1;
+      button.classList.add('-active-like');
+    }
+  });
+});
+
+  // Создаем кнопку "Редактировать"
+  const editButton = document.createElement('button');
+  editButton.textContent = 'Редактировать';
+  editButton.classList.add('edit-button');
+
+  // Добавляем обработчик события клика на кнопку "Редактировать"
+    editButton.addEventListener('click',() => {
+  // Проверяем текущий текст кнопки
+    if (editButton.textContent === 'Редактировать') {
+  // Если текст кнопки "Редактировать", меняем текст комментария на поле ввода textarea
+    commentText.innerHTML = '';
+    const textarea = document.createElement('textarea');
+    textarea.value = commentInput.value;
+    commentText.appendChild(textarea);
+    editButton.textContent = 'Сохранить';
+    } else {
+  // Если текст кнопки "Сохранить", сохраняем измененный текст комментария и возвращаем текстовый вид
+    const textarea = commentText.querySelector('textarea');
+    commentInput.value = textarea.value;
+    commentText.innerHTML = commentInput.value;
+    editButton.textContent = 'Редактировать';
+    }
+  });
+
+
   newComment.innerHTML = `
     <div class="comment-header">
       <div>${nameInput.value}</div>
@@ -96,14 +150,36 @@ addButton.addEventListener('click', function() {
       </div>
     </div>
     <div class="comment-footer">
+      <button class="add-form-button-red">Редактировать</button>
       <div class="likes">
         <span class="likes-counter">0</span>
         <button class="like-button"></button>
       </div>
     </div>
   `;
-
+  
+  
   commentsList.appendChild(newComment);
+
+  
+// Обработчик клика на кнопке лайка
+const likeButton = newComment.querySelector('.like-button');
+const likesCounter = newComment.querySelector('.likes-counter');
+
+likeButton.addEventListener('click', () => {
+  const currentLikes = parseInt(likesCounter.textContent);
+
+  if (likeButton.classList.contains('-active-like')) {
+    likesCounter.textContent = currentLikes - 1;
+    likeButton.classList.remove('-active-like');
+  } else {
+    likesCounter.textContent = currentLikes + 1;
+    likeButton.classList.add('-active-like');
+  }
+});
+  
+  
+
 
   // очищаем поля ввода
   nameInput.value = '';
@@ -114,3 +190,5 @@ addButton.addEventListener('click', function() {
     //console.log("It works!");
   </script>
 </html>
+
+
