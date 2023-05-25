@@ -11,40 +11,6 @@
   <div class="container">
     <div class="loading-title">Пожалуйста подождите, загружаю комментарии...</div>
     <ul id="list" class="comments">
-      <!-- <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li> -->
     </ul>
     <div class="add-form" id="addForm">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input" />
@@ -84,7 +50,6 @@
               isLoading: false
             };
           });
-          // messages = appComments;
           renderMessages();
         });
     };
@@ -95,24 +60,6 @@
 
     let messages = [];
 
-    //  messages = [
-    //   {
-    //     name: "Глеб Фокин",
-    //     time: "12.02.22 12:18",
-    //     comment: "Это будет первый комментарий на этой странице",
-    //     likesCount: 3,
-    //     liked: false,
-    //     isEdit: false,
-    //   },
-    //   {
-    //     name: "Варвара Н.",
-    //     time: "13.02.22 19:22",
-    //     comment: "Мне нравится как оформлена эта страница! ❤",
-    //     likesCount: 75,
-    //     liked: true,
-    //     isEdit: false,
-    //   }
-    // ];
     function delay(interval = 300) {
       return new Promise((resolve) => {
         setTimeout(() => {
@@ -172,7 +119,6 @@
       const answersElements = document.querySelectorAll(".comment");
       for (const answerElement of answersElements) {
         answerElement.addEventListener("click", (event) => {
-          // event.stopPropagation();
           const index = answerElement.dataset.index;
           const quote = answerElement.querySelector(".comment-text");
           commentInputElement.value = `QUOTE_BEGIN ${messages[index].name}: \n ${quote.innerText}, QUOTE_END \n`;
@@ -228,32 +174,8 @@
         commentInputElement.classList.add("input-error");
         return;
       }
-      // deleteButtonElement.classList.add('delete-active');
-      // buttonElement.setAttribute('disabled', '');
-      // addFormElement.style.display = 'none';
-      // loadingElement.style.display = 'block';
       fetchPost();
-      // loadingElement.style.display = 'none';
-      // addFormElement.style.display = "flex";
-      // nameInputElement.value = "";
-      // commentInputElement.value = "";
     };
-    // messages.push({
-    //   name: nameInputElement.value
-    //     .replaceAll("&", "&amp;")
-    //     .replaceAll("<", "&lt;")
-    //     .replaceAll(">", "&gt;")
-    //     .replaceAll('"', "&quot;"),
-    //   time: getCurrentDate(new Date()),
-    //   comment: commentInputElement.value
-    //     .replaceAll("&", "&amp;")
-    //     .replaceAll("<", "&lt;")
-    //     .replaceAll(">", "&gt;")
-    //     .replaceAll('"', "&quot;"),
-    //   likesCount: 0,
-    //   liked: false,
-    //   isEdit: false,
-    // });
     const fetchPost = () => {
       addFormElement.style.display = 'none';
       loadingElement.style.display = 'block';
@@ -290,7 +212,7 @@
           buttonElement.setAttribute('disabled', '');
           nameInputElement.value = "";
           commentInputElement.value = "";
-          })
+        })
         .catch((error) => {
           loadingElement.style.display = 'none';
           addFormElement.style.display = "flex";
@@ -328,7 +250,6 @@
     };
 
     deleteButtonElement.addEventListener('click', () => {
-      // event.stopPropagation();
       messages.pop();
       deleteButtonElement.classList.remove('delete-active');
       renderMessages();
@@ -345,25 +266,6 @@
       if (minute < 10) minute = "0" + minute;
       return day + '.' + month + '.' + date.getFullYear() % 100 + ' ' + hour + ':' + minute;
     }
-    //   const oldListHtml = listElement.innerHTML;
-    //   listElement.innerHTML = oldListHtml + `<li class="comment">
-    //   <div class="comment-header">
-    //     <div>${nameInputElement.value}</div>
-    //     <div>${getCurrentDate(currentDate)}</div>
-    //   </div>
-    //   <div class="comment-body">
-    //     <div class="comment-text">
-    //     ${commentInputElement.value}
-    //     </div>
-    //   </div>
-    //   <div class="comment-footer">
-    //     <div class="likes">
-    //       <span class="likes-counter">0</span>
-    //       <button class="like-button"></button>
-    //     </div>
-    //   </div>
-    // </li>`
-    // });
   </script>
 </body>
 
