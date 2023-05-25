@@ -120,7 +120,7 @@
     }
 
     const answerComment = () => {
-      const comentsElement = document.querySelectorAll(".comment")
+      const comentsElement = document.querySelectorAll('.comment-all')
       for (const comentElement of comentsElement) {
         comentElement.addEventListener("click", () => {
           textareaInputElement.value = `>${comentElement.querySelector('.comment-text').innerHTML
@@ -144,6 +144,7 @@
         activeLike ='-active-like'
       } 
       return `<li class="comment">
+                <div class="comment-all">
                 <div class="comment-header">
                   <div>${item.name}</div>
                   <div>${item.date}</div>
@@ -152,6 +153,7 @@
                   <div class="${item.isEdit ? 'none-visible' : 'comment-text'}">
                     ${item.text}
                   </div>
+                </div>
                 </div>
                 <div class="comment-footer">
                   
@@ -191,6 +193,7 @@
       date.getMinutes().toString().padStart(2, '0');
       const oldlistElement = listElement.innerHTML
       listElement.innerHTML = oldlistElement + `<li class="comment">
+          <div class="comment-all">
           <div class="comment-header">
             <div>${textInputElement.value}
             </div>
@@ -201,6 +204,7 @@
             <div class="comment-text">
               ${textareaInputElement.value}
             </div>
+          </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
