@@ -77,22 +77,19 @@
   const likeButtonElements = document.querySelectorAll('.like-button');
 
 
-
-  // const allComments = () => {
-  const fetchComment = fetch("https://wedev-api.sky.pro/api/v1/max-kyrtimov/comments", {
-    method: "GET",
+  const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/1maxxxx/comments", {
+    method: "GET"
   });
-  fetchComment.then((response) => {
-    const jsonComment = response.json();
-    jsonComment.then((responseData) => {
-
+  fetchPromise.then((response) => {
+    const jsonPromise = response.json();
+    jsonPromise.then((responseData) => {
       const appComments = responseData.comments.map((comment) => {
         return {
           name: comment.author.name,
-          date: new Date(comment.date),
+          date: formatDate(comment.date),
           text: comment.text,
-          likes: comment.likes,
-          isLiked: false,
+          active: false,
+          like: comment.likes,
         };
       });
       comments = appComments;
@@ -100,11 +97,16 @@
     });
   });
 
-  // }
-
-  // allComments();
-
-
+  const formatDate = (commentDate) => {
+    let date = new Date();
+    let month = (date.getMonth() + 1).toString().padStart(2, '0');
+    let day = date.getDate().toString().padStart(2, '0');
+    let year = date.getFullYear().toString().substr(-2);
+    let hours = date.getHours().toString().padStart(2, '0');
+    let minutes = date.getMinutes().toString().padStart(2, '0');
+    const resultDate = `${day}.${month}.${year} ${hours}:${minutes}`;
+    return resultDate;
+  }
 
   let comments = [
     // {
@@ -195,8 +197,6 @@
 
     initlikeButtonListeners();
     initAnswerComment();
-    // allComments();
-    // fetchPromise();
   };
 
   renderComments();
@@ -226,8 +226,8 @@
       return;
     }
 
-    const date = new Date();
-    const formatteDate = date.getDate().toString().padStart(2, '0') + '.' + (date.getMonth() + 1).toString().padStart(2, '0') + '.' + date.getFullYear().toString().slice(-2) + ' ' + date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
+    // const date = new Date();
+    // const formatteDate = date.getDate().toString().padStart(2, '0') + '.' + (date.getMonth() + 1).toString().padStart(2, '0') + '.' + date.getFullYear().toString().slice(-2) + ' ' + date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
 
 
     renderComments();
@@ -265,7 +265,7 @@
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt")
         .replaceAll('"', "&quot;"),
-      date: formatteDate,
+      date: formatDate,
       text: commentInputElement.value
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
@@ -275,7 +275,7 @@
       isLiked: false,
     });
 
-    fetch("https://wedev-api.sky.pro/api/v1/max-kyrtimov/comments", {
+    fetch("https://webdev-hw-api.vercel.app/api/v1/1maxxxx/comments", {
       method: "POST",
       body: JSON.stringify({
         name: nameInputElement.value,
