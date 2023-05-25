@@ -291,8 +291,8 @@
         return fetch("https://webdev-hw-api.vercel.app/api/v1/freddy-krugliy/comments", {
           method: "POST",
           body: JSON.stringify({
-            text: escapeHtml(addComment.value),
-            name: escapeHtml(addName.value),
+            text: escapeHtml(addComment.value.trim()),
+            name: escapeHtml(addName.value.trim()),
             forceError: true,
           })
         }).then((responce) => {
@@ -307,8 +307,7 @@
         }).then((responceData) => {
           return getFromApi();
         }).then(() => {
-          addFormElem.style.display = 'block';
-          commentAddedElem.style.display = 'none';
+          changeMessageToAddForm();
           addName.value = '';
           addComment.value = '';
         }).catch((error) => {
