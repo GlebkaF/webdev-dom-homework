@@ -11,40 +11,6 @@
   <div class="container">
     <div class="loading-title">Пожалуйста подождите, загружаю комментарии...</div>
     <ul id="list" class="comments">
-      <!-- <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li> -->
     </ul>
     <div class="add-form" id="addForm">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input" />
@@ -84,7 +50,6 @@
               isLoading: false
             };
           });
-          // messages = appComments;
           renderMessages();
         });
     };
@@ -95,24 +60,6 @@
 
     let messages = [];
 
-    //  messages = [
-    //   {
-    //     name: "Глеб Фокин",
-    //     time: "12.02.22 12:18",
-    //     comment: "Это будет первый комментарий на этой странице",
-    //     likesCount: 3,
-    //     liked: false,
-    //     isEdit: false,
-    //   },
-    //   {
-    //     name: "Варвара Н.",
-    //     time: "13.02.22 19:22",
-    //     comment: "Мне нравится как оформлена эта страница! ❤",
-    //     likesCount: 75,
-    //     liked: true,
-    //     isEdit: false,
-    //   }
-    // ];
     function delay(interval = 300) {
       return new Promise((resolve) => {
         setTimeout(() => {
@@ -135,8 +82,9 @@
             messages[index].likesCount -= 1;
           }
           delay(2000).then(renderMessages);
-      })
-    };};
+        })
+      };
+    };
     initLikeButtonsListeners();
 
     const initCorrectButtonsListeners = () => {
@@ -171,7 +119,6 @@
       const answersElements = document.querySelectorAll(".comment");
       for (const answerElement of answersElements) {
         answerElement.addEventListener("click", (event) => {
-          // event.stopPropagation();
           const index = answerElement.dataset.index;
           const quote = answerElement.querySelector(".comment-text");
           commentInputElement.value = `QUOTE_BEGIN ${messages[index].name}: \n ${quote.innerText}, QUOTE_END \n`;
@@ -219,9 +166,6 @@
       addComments();
     });
     function addComments() {
-
-      nameInputElement.classList.remove("input-error");
-      commentInputElement.classList.remove("input-error");
       if (nameInputElement.value.trim() === "") {
         nameInputElement.classList.add("input-error");
         return;
@@ -231,27 +175,7 @@
         return;
       }
       fetchPost();
-      deleteButtonElement.classList.add('delete-active');
-      buttonElement.setAttribute('disabled', '');
-      nameInputElement.value = "";
-      commentInputElement.value = "";
     };
-    // messages.push({
-    //   name: nameInputElement.value
-    //     .replaceAll("&", "&amp;")
-    //     .replaceAll("<", "&lt;")
-    //     .replaceAll(">", "&gt;")
-    //     .replaceAll('"', "&quot;"),
-    //   time: getCurrentDate(new Date()),
-    //   comment: commentInputElement.value
-    //     .replaceAll("&", "&amp;")
-    //     .replaceAll("<", "&lt;")
-    //     .replaceAll(">", "&gt;")
-    //     .replaceAll('"', "&quot;"),
-    //   likesCount: 0,
-    //   liked: false,
-    //   isEdit: false,
-    // });
     const fetchPost = () => {
       addFormElement.style.display = 'none';
       loadingElement.style.display = 'block';
@@ -271,29 +195,40 @@
             .replaceAll("<", "&lt;")
             .replaceAll(">", "&gt;")
             .replaceAll('"', "&quot;"),
+          forceError: true,
         }),
       })
         .then((response) => {
-          return response.json();
+          if (response.status === 500) {
+            throw new Error("Сервер сломался");
+          }
+          if (response.status === 400) {
+            throw new Error("Плохой запрос");
+          }
+          getAPI();
+          loadingElement.style.display = 'none';
+          addFormElement.style.display = "flex";
+          deleteButtonElement.classList.add('delete-active');
+          buttonElement.setAttribute('disabled', '');
+          nameInputElement.value = "";
+          commentInputElement.value = "";
         })
-        .then((responseData) => {
-          if (responseData.result == "ok") {
-            getAPI();
-            loadingElement.style.display = 'none';
-            addFormElement.style.display = "flex";
+        .catch((error) => {
+          loadingElement.style.display = 'none';
+          addFormElement.style.display = "flex";
+          if (error.message === "Сервер сломался") {
+            alert("Сервер сломался, попробуйте позже");
+            fetchPost();
+            return;
           }
-          else {
-            alert('Что-то пошло не так');
-            return
+          if (error.message === "Плохой запрос") {
+            alert("Имя и комментарий должны быть не короче трех символов");
+            nameInputElement.classList.add("input-error");
+            commentInputElement.classList.add("input-error");
+            return;
           }
-          // const appComments = responseData.comments.map((comment) => {
-          //   return {
-          //     name: comment.author.name,
-          //     time: getCurrentDate(new Date(comment.date)),
-          //     comment: comment.text,
-          //     likesCount: comment.likes,
-          //     liked: comment.isLiked,
-          //     isEdit: false,
+          alert('Кажется что-то пошло не так, возможно отсутствует подключение к интернету');
+          console.warn(error);
         });
     };
 
@@ -308,12 +243,13 @@
       inputElement.addEventListener('input', () => {
         event.stopPropagation();
         buttonElement.removeAttribute('disabled', '');
+        nameInputElement.classList.remove("input-error");
+        commentInputElement.classList.remove("input-error");
       }
       )
     };
 
     deleteButtonElement.addEventListener('click', () => {
-      // event.stopPropagation();
       messages.pop();
       deleteButtonElement.classList.remove('delete-active');
       renderMessages();
@@ -330,25 +266,6 @@
       if (minute < 10) minute = "0" + minute;
       return day + '.' + month + '.' + date.getFullYear() % 100 + ' ' + hour + ':' + minute;
     }
-    //   const oldListHtml = listElement.innerHTML;
-    //   listElement.innerHTML = oldListHtml + `<li class="comment">
-    //   <div class="comment-header">
-    //     <div>${nameInputElement.value}</div>
-    //     <div>${getCurrentDate(currentDate)}</div>
-    //   </div>
-    //   <div class="comment-body">
-    //     <div class="comment-text">
-    //     ${commentInputElement.value}
-    //     </div>
-    //   </div>
-    //   <div class="comment-footer">
-    //     <div class="likes">
-    //       <span class="likes-counter">0</span>
-    //       <button class="like-button"></button>
-    //     </div>
-    //   </div>
-    // </li>`
-    // });
   </script>
 </body>
 
