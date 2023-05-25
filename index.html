@@ -93,17 +93,7 @@
         </li>`
        }).join(''); 
        listElement.innerHTML = usersHtml; 
-       
-       
-       
-       
-    }; 
-    
-    renderUsers(); 
-   
-    
-
-    const likeElements = document.querySelectorAll(".like-button");
+       const likeElements = document.querySelectorAll(".like-button");
     const likeFunctions = () => {
     for (const likeElement of likeElements) {
       const index = likeElement.dataset.index;
@@ -120,6 +110,17 @@
         })
       };  
     }; likeFunctions();
+    
+       
+       
+       
+       
+    }; 
+    
+    renderUsers(); 
+   
+    
+
     
      
    
