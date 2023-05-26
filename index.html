@@ -30,6 +30,25 @@
     background-color: gainsboro;
     color: grey;
   }
+
+  @keyframes rotating {
+    from {
+      transform: rotate(0deg);
+    }
+    25% {
+      transform: rotate(30deg);;
+    }
+    75% {
+      transform: rotate(-30deg);;
+    }
+    to {
+      transform: rotate(0deg);
+    }
+  }
+
+  .-loading-like {
+    animation: rotating 2s linear infinite;
+  }
 </style>
 
 <script>
@@ -40,6 +59,13 @@
 
   let comments = [];
 
+  function delay(interval = 300) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, interval);
+    });
+  };
 
   function getDate(currentDate = new Date()) {
     let day = currentDate.getDate();
@@ -72,7 +98,7 @@
         const index = replyButtonElement.dataset.index;
         comments[index].isEdit ? '' : textInputElement.value = `QUOTE_BEGIN ${comments[index].text} 
         ${comments[index].name} QUOTE_END`;
-        renderComments();
+        // renderComments();
       });
     };
   };
@@ -99,19 +125,23 @@
     const likeButtonElements = document.querySelectorAll('.like-button');
     for (const likeButtonElement of likeButtonElements) {
       likeButtonElement.addEventListener('click', (e) => {
+        likeButtonElement.disabled = true;
+        likeButtonElement.classList.add('-loading-like');
         e.stopPropagation();
         const index = likeButtonElement.dataset.index;
 
-        if (comments[index].isLiked === false) {
-          comments[index].likes++;
-          comments[index].isLiked = true;
-        }
+        delay(2000).then(() => {
+          if (comments[index].isLiked === false) {
+            comments[index].likes++;
+            comments[index].isLiked = true;
+          }
 
-        else {
-          comments[index].likes = --comments[index].likes;
-          comments[index].isLiked = false;
-        }
-        renderComments();
+          else {
+            comments[index].likes = --comments[index].likes;
+            comments[index].isLiked = false;
+          }
+          renderComments();
+        });
       });
     };
   };
@@ -151,25 +181,6 @@
       }
     });
   };
-
-  // const renderForm = () => {
-  //   formElement.innerHTML = `
-  //   <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="nameInput" />
-  //     <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
-  //       id="textInput"></textarea>
-  //     <div class="add-form-row">
-  //       <button class="add-form-button" id="add-button">Написать</button>
-  //       <button class="add-form-button" id="cancel-button">Удалить коментарий</button>`;
-
-  //   initDisabledButton();
-
-  //   const cancelButtonElement = document.getElementById('cancel-button');
-  //   cancelButtonElement.addEventListener('click', () => {
-  //     comments.splice(-1, 1);
-  //     renderComments();
-  //   });
-  // };
-
 
 
   const renderComments = () => {
@@ -217,12 +228,15 @@
 
   };
 
-
+  commentsListElement.textContent = 'Загружаю комментарии... еще чуть-чуть';
   const getComments = () => {
-    fetch('https://webdev-hw-api.vercel.app/api/v1/katerina-nosova/comments', {
+    return fetch('https://webdev-hw-api.vercel.app/api/v1/katerina-nosova/comments', {
       method: 'GET'
-    }).then((response) => {
-      response.json().then((responseData) => {
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
         //преобразование данных формата api в наш формат
         comments = responseData.comments.map((comment) => {
           return {
@@ -235,10 +249,9 @@
         });
         renderComments();
       });
-    });
   };
   getComments();
-  // renderForm();
+
 
   const textInputElement = document.getElementById('textInput');
   const nameInputElement = document.getElementById('nameInput');
@@ -265,17 +278,20 @@
           text: textInputElement.value,
           name: nameInputElement.value
         })
-      }).then((response) => {
-        response.json().then((responseData) => {
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((responseData) => {
           comments = responseData.comments;
-          getComments();
+          return getComments();
+        })
+        .then(() => {
           toggleForm(false);
         });
-      });
     };
 
     postComments();
-
 
     nameInputElement.value = '';
     textInputElement.value = '';
