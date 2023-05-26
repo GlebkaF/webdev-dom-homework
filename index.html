@@ -33,11 +33,43 @@
 
   const elementName = document.getElementById('nameInput');
   const elementComment = document.getElementById('commentInput');
-
   const listElement = document.getElementById('listComments');
   const buttonElement = document.getElementById('buttonComment');
 
-  // Добавляем обработчик клика на кнопку Написать
+
+  //  Получаем данные из API(Сервера)
+
+  let comments = [];
+
+  const fetchPromise = fetch(
+    'https://wedev-api.sky.pro/api/v1/alexey-tsukanov/comments',
+    {
+      method: 'GET'
+    }
+  );
+  fetchPromise.then((response) => {
+    const jsonPromise = response.json();
+    jsonPromise.then((responseData) => {
+      const appComments = responseData.comments.map((comment) => {
+        const dateComment = new Date(comment.date);
+        return {
+          name: comment.author.name,
+          date: dateComment.getDate().toString().padStart(2, '0') + '.' +
+            (dateComment.getMonth() + 1).toString().padStart(2, '0') + '.' +
+            dateComment.getFullYear().toString().slice(-2) + ' ' +
+            dateComment.getHours().toString().padStart(2, '0') + ':' +
+            dateComment.getMinutes().toString().padStart(2, '0'),
+          textComment: comment.text,
+          likes: comment.likes,
+          isActiveLike: false,
+        }
+      })
+      comments = appComments;
+      renderComments();
+    })
+  });
+
+  // Добавляем обработчик клика на кнопку "Написать"
 
   buttonElement.addEventListener('click', () => {
     elementName.classList.remove('error');
@@ -60,7 +92,8 @@
       dateComment.getHours().toString().padStart(2, '0') + ':' +
       dateComment.getMinutes().toString().padStart(2, '0');
 
-   
+
+
     // Защащаем ввод данных
 
     const protectionHtml = (string) => {
@@ -71,19 +104,30 @@
         .replaceAll('"', "&quot;")
     };
 
-     // Добавляем новый комменрарий в массив
+    // Добавляем новый комменрарий в API
+    fetch(
+      'https://wedev-api.sky.pro/api/v1/alexey-tsukanov/comments',
+      {
+        method: 'POST',
+        body: JSON.stringify(
+          {
+            text: protectionHtml(elementComment.value), name: protectionHtml(elementName.value),
+          }
+        )
+      }
+    ).then((response) => {
+      response.json().then((responseData) => {
 
-    comments.push({
-      name: protectionHtml(elementName.value),
-      date: formatDate,
-      textComment: protectionHtml(elementComment.value),
-      likes: 0
-    });
+        comments = responseData.comments;
+
+      })
+      renderComments()
+    })
     renderComments();
     elementName.value = '';
     elementComment.value = '';
     buttonElement.disabled = true;
-  });
+  })
 
   // Отправка коммента с помощью кнопки Enter
 
@@ -93,7 +137,7 @@
     }
   });
 
-  // Активность кнопки
+  // Активность кнопки "Написать"
 
   buttonElement.disabled = true;
   elementName.addEventListener('input', () => {
@@ -118,22 +162,22 @@
 
   // Создаем массив данных комманетариев
 
-  const comments = [
-    {
-      name: "Глеб Фокин",
-      date: "12.02.22 12:18",
-      textComment: "Это будет первый комментарий на этой странице",
-      likes: 3,
-      isActiveLike: false,
-    },
-    {
-      name: "Варвара Н.",
-      date: "13.02.22 19:22",
-      textComment: "Мне нравится как оформлена эта страница! ❤",
-      likes: 75,
-      isActiveLike: false,
-    },
-  ];
+  // const comments = [
+  //   // {
+  //   //   name: "Глеб Фокин",
+  //   //   date: "12.02.22 12:18",
+  //   //   textComment: "Это будет первый комментарий на этой странице",
+  //   //   likes: 3,
+  //   //   isActiveLike: false,
+  //   // },
+  //   // {
+  //   //   name: "Варвара Н.",
+  //   //   date: "13.02.22 19:22",
+  //   //   textComment: "Мне нравится как оформлена эта страница! ❤",
+  //   //   likes: 75,
+  //   //   isActiveLike: false,
+  //   // },
+  // ];
 
   // Добавляем фукцию активности лайка
 
@@ -144,39 +188,39 @@
         e.stopPropagation()
         const index = likeButton.dataset.index;
         if (comments[index].isActiveLike) {
-        comments[index].likes --;
-        
+          comments[index].likes--;
+
         } else {
-          comments[index].likes ++;
+          comments[index].likes++;
         }
         comments[index].isActiveLike = !comments[index].isActiveLike;
         renderComments();
       })
     }
   };
-   
-  // Добавляю обработчик клика на комментарий
+
+  // Добавляю обработчик клика на комментарий (ответ на комментарий)
 
   const initAnswer = () => {
     const commentsElements = document.querySelectorAll(".comment");
-  for (const commentElement of commentsElements){
-    commentElement.addEventListener('click', () => {
-      elementComment.value = `> ${commentElement.querySelector('.comment-text').innerHTML
-        .replaceAll("&amp", "&;")
-        .replaceAll("&lt;", "<")
-        .replaceAll("&gt;", ">")
-        .replaceAll("&quot;", '"')}`
-      + `\n\n${commentElement.querySelector('.comment-header').children[0].innerHTML
-        .replaceAll("&amp", "&;")
-        .replaceAll("&lt;", "<")
-        .replaceAll("&gt;", ">")
-        .replaceAll("&quot;", '"')}`
+    for (const commentElement of commentsElements) {
+      commentElement.addEventListener('click', () => {
+        elementComment.value = `> ${commentElement.querySelector('.comment-text').innerHTML
+          .replaceAll("&amp", "&;")
+          .replaceAll("&lt;", "<")
+          .replaceAll("&gt;", ">")
+          .replaceAll("&quot;", '"')}`
+          + `\n\n${commentElement.querySelector('.comment-header').children[0].innerHTML
+            .replaceAll("&amp", "&;")
+            .replaceAll("&lt;", "<")
+            .replaceAll("&gt;", ">")
+            .replaceAll("&quot;", '"')}`
       })
     }
   }
-  
+
   // создаем рендер фукцию для добавления разметки html из JS
-  
+
   const renderComments = () => {
 
     const commentsHtml = comments.map((comment, index) => {
@@ -190,7 +234,7 @@
           <div>${comment.date}</div>
         </div>
         <div class="comment-body">
-          <div class="comment-text">${comment.textComment}</div>
+          <div class="comment-text preline">${comment.textComment}</div>
         </div>
         <div class="comment-footer">
           <div class="likes">
@@ -208,5 +252,7 @@
   renderComments();
 
   console.log("It works!");
+
 </script>
+
 </html>
