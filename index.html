@@ -76,26 +76,28 @@
   const deletElement = document.getElementById("delet-button");
   const likeButtonElements = document.querySelectorAll('.like-button');
 
-
-  const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov/comments", {
-    method: "GET"
-  });
-  fetchPromise.then((response) => {
-    const jsonPromise = response.json();
-    jsonPromise.then((responseData) => {
-      const appComments = responseData.comments.map((comment) => {
-        return {
-          name: comment.author.name,
-          date: formatDate(comment.date),
-          text: comment.text,
-          active: false,
-          like: comment.likes,
-        };
-      });
-      comments = appComments;
-      renderComments();
+  const getAllComments = () => {
+    const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov/comments", {
+      method: "GET"
     });
-  });
+    fetchPromise.then((response) => {
+      const jsonPromise = response.json();
+      jsonPromise.then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: formatDate(comment.date),
+            text: comment.text,
+            active: false,
+            like: comment.likes,
+          };
+        });
+        comments = appComments;
+        renderComments();
+      });
+    });
+  };
+  getAllComments();
 
   const formatDate = (commentDate) => {
     let date = new Date();
@@ -228,7 +230,17 @@
 
     // const date = new Date();
     // const formatteDate = date.getDate().toString().padStart(2, '0') + '.' + (date.getMonth() + 1).toString().padStart(2, '0') + '.' + date.getFullYear().toString().slice(-2) + ' ' + date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
-
+    fetch("https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        name: nameInputElement.value,
+        text: commentInputElement.value
+      })
+    }).then((response) => {
+      response.json().then((responseData) => {
+        getAllComments();
+      });
+    });
 
     renderComments();
 
@@ -275,18 +287,7 @@
       isLiked: false,
     });
 
-    fetch("https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov/comments", {
-      method: "POST",
-      body: JSON.stringify({
-        name: nameInputElement.value,
-        text: commentInputElement.value
-      })
-    }).then((response) => {
-      response.json().then((responseData) => {
-        fetchPromise;
-        renderComments();
-      });
-    });
+
 
     renderComments();
     nameInputElement.value = "";
