@@ -17,7 +17,7 @@ container.appendChild(postMessage);
 
 let comments = [];
 
-function getData () {
+function getData() {
 
     fetch("https://webdev-hw-api.vercel.app/api/v1/daria/comments", {
         method: "GET",
@@ -25,19 +25,21 @@ function getData () {
         .then((response) => {
             return response.json();
         })
-            .then((responseData) => {
-                const appComments = responseData.comments.map((comment) => {
+        .then((responseData) => {
+            const appComments = responseData.comments.map((comment) => {
                 return {
-                        name: comment.author.name,
-                        date: new Date(comment.date).toLocaleString().slice(0,-3),
-                        text: comment.text,
-                        likes: comment.likes,
-                        likeStatus: false,
+                    name: comment.author.name,
+                    date: new Date(comment.date).toLocaleString().slice(0, -3),
+                    text: comment.text,
+                    likes: comment.likes,
+                    likeStatus: false,
                 }
             })
         
+
+
             comments = appComments;
-            renderComments();  
+            renderComments();
 
             loadingMessage.classList.add('hidden');
             addForm.classList.remove('hidden');
@@ -173,22 +175,52 @@ renderComments();
 
 const addToServer = (comment) => {
 
-    fetch ("https://webdev-hw-api.vercel.app/api/v1/daria/comments", {
+    const savedName = commentName.value;
+    const savedText = commentText.value;
+
+    fetch("https://webdev-hw-api.vercel.app/api/v1/daria/comments", {
         method: "POST",
         body: JSON.stringify({
-            comment,
+            name: commentName.value
+                .replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+            text: commentText.value
+                .replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
             forceError: true,
         }),
-        }).then((response) => {
+    })
+        .then((response) => {
+            if (!response.ok) {
+                if (response.status === 500) {
+                    throw new Error('Сервер упал');
+                }
+                if (response.status === 400) {
+                    throw new Error('Ошибка ввода');
+                }  
+            }
+
             return response.json();
         })
         .then((responseData) => {
             console.log(responseData);
-                return getData();
-            })
-        .catch((error) => {
-            console.warn(error);
+            return getData();
         })
+        .catch((error) => {
+            console.log('Ошибка при отправке комментария на сервер:', error);
+
+            if (error.message === 'Ошибка ввода') {
+                alert('Имя и сообщение должны быть не короче 3 символов');
+            } else if (error.message === 'Сервер упал') {
+                alert('Сервер сломался, попробуйте позже');
+            } else {
+                alert('Кажется, у вас сломался интернет, попробуйте позже');
+            }
+
+            commentName.value = savedName;
+            commentText.value = savedText;
+            addForm.classList.remove('hidden');
+            addButton.removeAttribute('disabled')
+            loadingMessage.classList.add('hidden');
+        });
 }
 
 const addToList = () => {
@@ -207,10 +239,10 @@ const addToList = () => {
 
     const newComment = {
         name: commentName.value
-        .replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+            .replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
         text: commentText.value
-        .replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-        date:     formatDate(),
+            .replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+        date: formatDate(),
         like: 0,
         likeStatus: false,
     }
@@ -242,7 +274,7 @@ addButton.addEventListener('click', (e) => {
 
     addForm.classList.add('hidden');
     postMessage.classList.remove('hidden');
-    
+
     addToList();
 
 })
