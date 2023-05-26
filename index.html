@@ -279,7 +279,7 @@
             if (response.status === 500) {
             throw new Error("Сервер сломался, попробуй позже");  
             } 
-            if (response.status === 400) {
+            else if (response.status === 400) {
             throw new Error("Имя и комментарий должны быть не короче 3 символов");  
             } else {
               return fetchComments();
