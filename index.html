@@ -70,6 +70,8 @@
       })
   }
   commentsLoader.innerHTML = "Комментарии загружаются"
+
+
   getApiFunction()
 
   function postApiFunction() {
@@ -107,14 +109,14 @@
       })
       .catch((error) => {
         addFormButton.disabled = false
-        if (error.message = "Ошибка ввода") {
+        if (error.message === "Ошибка ввода") {
           alert('Поле ввода имени должно содержать минимум 3 символа')
         }
-        else if (error.message = "Ошибка сервера") {
+        else if (error.message === "Ошибка сервера") {
           alert('Сервер временно недоступен, попробуйте позже')
         }
         else {
-          alert('Что-то пошло не так, попробуйте перезагрузить страницу')
+          alert('Отсутствует подключение к интернету')
         }
       })
   }
@@ -216,7 +218,6 @@
     if (addFormText.value === "") {
       return addFormText.classList.add('error')
     }
-
     addFormButton.disabled = true
     addFormButton.textContent = "Отправка"
     postApiFunction()
