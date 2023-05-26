@@ -51,6 +51,28 @@
     const textInputElement = document.getElementById("text-input");
     const deleteButtonElement = document.getElementById("delete-button");
 
+
+
+
+
+// объявляем массив содержащий объекты - ключи комментариев
+let comentsOfArr = [
+  // {
+  //   name: 'Глеб Фокин',
+  //   date: '12.02.22 12:18',
+  //   text: 'Это будет первый комментарий на этой странице',
+  //   like: '3',
+  //   isActiveLike: false,
+  // },
+  // {
+  //   name: 'Варвара Н.',
+  //   date: '13.02.22 19:22',
+  //   text: 'Мне нравится, как оформлена эта страница! ❤',
+  //   like: '75',
+  //   isActiveLike: false,
+  // }
+];
+
 // добовляем данные из API.
     const fetchPromise = fetch(
     'https://wedev-api.sky.pro/api/v1/Mikhail-Kovalenko/comments',
@@ -83,25 +105,34 @@
     })
   });
 
+// ДОПОЛГИТЕЛЬНОЕ ЗАДАНИЕ НЕ МОГУ РАЗОБРАТЬСЯ!!!!!!!
 
 
-// объявляем массив содержащий объекты - ключи комментариев
-let comentsOfArr = [
-  // {
-  //   name: 'Глеб Фокин',
-  //   date: '12.02.22 12:18',
-  //   text: 'Это будет первый комментарий на этой странице',
-  //   like: '3',
-  //   isActiveLike: false,
-  // },
-  // {
-  //   name: 'Варвара Н.',
-  //   date: '13.02.22 19:22',
-  //   text: 'Мне нравится, как оформлена эта страница! ❤',
-  //   like: '75',
-  //   isActiveLike: false,
-  // }
-];
+// const form = document.querySelector('.add-form');
+// const loadingMessage = document.querySelector('.loading-message'); 
+
+// let isLoading = false;
+
+// const renderLoading = () => { 
+//     if (isLoading) { 
+//       form.style.display = 'none'; 
+//       loadingMessage.text = 'Комментарий добавляется...';
+//       loadingMessage.style.display = 'block'; 
+//     } else { 
+//       form.style.display = 'block'; 
+//       loadingMessage.style.display = 'none';
+// } };
+// function addComment() { 
+//   isLoading = true; 
+
+//   renderLoading(); 
+
+//   setTimeout(() => { 
+//     isLoading = false; 
+
+//     renderComments(); 
+//   }, 500); 
+//  }
 
 
 //Обработчик щетчиков лайков
@@ -141,34 +172,7 @@ const initAnswer = () => {
 };;
 
 
-// ДОПОЛГИТЕЛЬНОЕ ЗАДАНИЕ НЕ МОГУ РАЗОБРАТЬСЯ!!!!!!!
 
-
-// const form = document.querySelector('.add-form');
-// const loadingMessage = document.querySelector('.loading-message'); 
-
-// let isLoading = false;
-
-// const renderLoading = () => { 
-//     if (isLoading) { 
-//       form.style.display = 'none'; 
-//       loadingMessage.text = 'Комментарий добавляется...';
-//       loadingMessage.style.display = 'block'; 
-//     } else { 
-//       form.style.display = 'block'; 
-//       loadingMessage.style.display = 'none';
-// } };
-// function addComment() { 
-//   isLoading = true; 
-
-//   renderLoading(); 
-
-//   setTimeout(() => { 
-//     isLoading = false; 
-
-//     renderComments(); 
-//   }, 500); 
-//  }
 
 
 // Рендорим код
@@ -249,7 +253,6 @@ const sainzHtml = (htmlString) => {
 };
 
 // сохраняем данные комментариев
-
 fetch(
       'https://wedev-api.sky.pro/api/v1/Mikhail-Kovalenko/comments',
       {
@@ -267,6 +270,7 @@ fetch(
       })
   renderComents();
 })
+
 
 
 renderComents();
