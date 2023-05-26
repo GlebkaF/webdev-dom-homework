@@ -30,8 +30,7 @@
           <button id="add-button" class="add-form-button">Написать</button>
           <buttton id="delete-button" class="add-form-delete">Удалить комментарий</buttton>
         </div>
-
-      </div>
+        <div class="loading-message"></div>  
     </div>
   </body>
 
@@ -52,24 +51,57 @@
     const textInputElement = document.getElementById("text-input");
     const deleteButtonElement = document.getElementById("delete-button");
 
+// добовляем данные из API.
+    const fetchPromise = fetch(
+    'https://wedev-api.sky.pro/api/v1/Mikhail-Kovalenko/comments',
+    {
+      method: 'GET'
+    }
+  );
+
+  fetchPromise.then((response) => {
+    const jsonPromise = response.json();
+
+    jsonPromise.then((responseData) => {
+      const appComments = responseData.comments.map((comment) => {
+        const dateComment = new Date(comment.date)
+        return {
+          name: comment.author.name,
+          date: dateComment.getDate().toString().padStart(2, '0') + '.' +
+                (dateComment.getMonth() + 1).toString().padStart(2, '0') + '.' +
+                dateComment.getFullYear().toString().slice(-2) + ' ' +
+                dateComment.getHours().toString().padStart(2, '0') + ':' +
+                dateComment.getMinutes().toString().padStart(2, '0'),
+          text: comment.text,
+          like: comment.likes,
+          isActiveLike: false,
+        }
+      })
+
+      comentsOfArr = appComments;
+      renderComents();
+    })
+  });
+
+
 
 // объявляем массив содержащий объекты - ключи комментариев
-const comentsOfArr = [
-  {
-    name: 'Глеб Фокин',
-    date: '12.02.22 12:18',
-    text: 'Это будет первый комментарий на этой странице',
-    like: '3',
-    isActiveLike: false,
-  },
-  {
-    name: 'Варвара Н.',
-    date: '13.02.22 19:22',
-    text: 'Мне нравится как оформлена эта страница! ❤',
-    like: '75',
-    isActiveLike: false,
-  }
-]
+let comentsOfArr = [
+  // {
+  //   name: 'Глеб Фокин',
+  //   date: '12.02.22 12:18',
+  //   text: 'Это будет первый комментарий на этой странице',
+  //   like: '3',
+  //   isActiveLike: false,
+  // },
+  // {
+  //   name: 'Варвара Н.',
+  //   date: '13.02.22 19:22',
+  //   text: 'Мне нравится, как оформлена эта страница! ❤',
+  //   like: '75',
+  //   isActiveLike: false,
+  // }
+];
 
 
 //Обработчик щетчиков лайков
@@ -108,25 +140,55 @@ const initAnswer = () => {
   };
 };;
 
+
+// ДОПОЛГИТЕЛЬНОЕ ЗАДАНИЕ НЕ МОГУ РАЗОБРАТЬСЯ!!!!!!!
+
+// const form = document.querySelector('.add-form');
+// const loadingMessage = document.querySelector('.loading-message'); 
+
+// let isLoading = false;
+
+// const renderLoading = () => { 
+//     if (isLoading) { 
+//       form.style.display = 'none'; 
+//       loadingMessage.text = 'Комментарий добавляется...';
+//       loadingMessage.style.display = 'block'; 
+//     } else { 
+//       form.style.display = 'block'; 
+//       loadingMessage.style.display = 'none';
+// } };
+// function addComment() { 
+//   isLoading = true; 
+
+//   renderLoading(); 
+
+//   setTimeout(() => { 
+//     isLoading = false; 
+
+//     renderComments(); 
+//   }, 500); 
+//  }
+
+
 // Рендорим код
 
 const renderComents = () => {
-  const comentsHtml = comentsOfArr.map((item, index) =>{
+  const comentsHtml = comentsOfArr.map((comment, index) =>{
     let activeLike = '';
     if (comentsOfArr[index].isActiveLike) {
       activeLike ='-active-like';
     } 
     return `<li class="comment">
               <div class="comment-header">
-                <div>${item.name}</div>
-                <div>${item.date}</div>
+                <div>${comment.name}</div>
+                <div>${comment.date}</div>
               </div>
               <div class="comment-body">
-                <div class="comment-text"> ${item.text}</div>
+                <div class="comment-text preline"> ${comment.text}</div>
               </div>
               <div class="comment-footer">
                 <div class="likes">
-                  <span class="likes-counter">${item.like}</span>
+                  <span class="likes-counter">${comment.like}</span>
                   <button class="like-button ${activeLike}" data-index='${index}'></button>
                 </div>
               </div>
@@ -137,7 +199,10 @@ const renderComents = () => {
     listElement.innerHTML = comentsHtml;
   likes();
   initAnswer();
+  
 };
+
+
 renderComents();
 
 
@@ -145,11 +210,9 @@ renderComents();
 buttonElement.disabled = true;
 nameInputElement.addEventListener("input", () => {
   if (nameInputElement.value.trim() !== "") {
-    buttonElement.disabled = false;
-    return; 
+    buttonElement.disabled = false; 
   } else {
     buttonElement.disabled = true; 
-    return;
   };
 });
 
@@ -180,21 +243,31 @@ date.getFullYear().toString().slice(-2) + ' ' +
 date.getHours().toString().padStart(2, '0') + ':' +
 date.getMinutes().toString().padStart(2, '0');
 
-comentsOfArr.push({  
-  name: nameInputElement.value
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;"),
-  date: formattedDate,
-  text: textInputElement.value
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;"),
-  like: 0,
-  isActiveLike: false,
-});
+const sainzHtml = (htmlString) => {
+  return htmlString.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;")                 
+};
+
+// сохраняем данные комментариев
+
+fetch(
+      'https://wedev-api.sky.pro/api/v1/Mikhail-Kovalenko/comments',
+      {
+        method: 'POST',
+        body: JSON.stringify(
+            {
+              text: sainzHtml(textInputElement.value), 
+              name: sainzHtml(nameInputElement.value),
+            }
+        )
+      }
+  ).then((response) => {
+      response.json().then((responseData) => {
+        comentsOfArr = responseData.comentsOfArr;
+      })
+  renderComents();
+})
+
+
 renderComents();
 
 // очещаем поля 
