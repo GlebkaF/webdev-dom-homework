@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Урок "Асинхронность"</title>
+    <title>Урок «Асинхронность»</title>
   </head>
 
   <body>
@@ -32,24 +32,13 @@
     const listElement = document.getElementById("list");
     const textInputElement = document.getElementById("text-input");
 
-    // TODO: Получать из хранилища данных
     let tasks = [];
 
-    // Запросы в API - асинхронные, мы не знаем как долго будет выполняться запрос
-    // Запрос может выполняться секунды и даже минуты
-    // fetch - запускает запрос в api
-    const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/todos", {
-      method: "GET"
-    });
-
-    // подписываемся на успешное завершение запроса с помощью then
-    fetchPromise.then((response) => {
-      // Запускаем преобразовываем "сырые" данные от API в json формат
-      const jsonPromise = response.json();
-
-      // Подписываемся на результат преобразования
-      jsonPromise.then((responseData) => {
-        // получили данные и рендерим их в приложении
+    // TODO: Опишите в комментариях в коде, что происходит в следующих 8 строчках кода
+    fetch("https://webdev-hw-api.vercel.app/api/todos", {
+      method: "GET",
+    }).then((response) => {
+      response.json().then((responseData) => {
         tasks = responseData.todos;
         renderTasks();
       });
@@ -73,51 +62,45 @@
 
       for (const deleteButton of deleteButtons) {
         deleteButton.addEventListener("click", (event) => {
+		      // TODO: Опишите в комментарии, что делает код на следующей строчке
           event.stopPropagation();
 
           const id = deleteButton.dataset.id;
 
-          // подписываемся на успешное завершение запроса с помощью then
           fetch("https://webdev-hw-api.vercel.app/api/todos/" + id, {
-            method: "DELETE"
+            method: "DELETE",
           }).then((response) => {
             response.json().then((responseData) => {
-              // получили данные и рендерим их в приложении
               tasks = responseData.todos;
               renderTasks();
             });
           });
-
-          renderTasks();
         });
       }
     };
 
     renderTasks();
 
+    // TODO: Опишите в этом комментарии, что делает код ниже до конца файла,
+    // настолько подробно, насколько сможете
     buttonElement.addEventListener("click", () => {
       if (textInputElement.value === "") {
         return;
       }
 
-      // подписываемся на успешное завершение запроса с помощью then
       fetch("https://webdev-hw-api.vercel.app/api/todos", {
         method: "POST",
         body: JSON.stringify({
-          text: textInputElement.value
-        })
+          text: textInputElement.value,
+        }),
       }).then((response) => {
         response.json().then((responseData) => {
-          // получили данные и рендерим их в приложении
           tasks = responseData.todos;
           renderTasks();
         });
       });
 
-      renderTasks();
-
       textInputElement.value = "";
     });
   </script>
 </html>
-
