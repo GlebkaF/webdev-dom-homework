@@ -277,14 +277,18 @@
           })
           .then((response) => {
             if (response.status === 500) {
-            throw new Error("Сервер сломался, попробуй позже");  
+            throw new Error("Сервер сломался, попробуй позже");
+            alert("Сервер сломался, попробуй позже");
             } 
             else if (response.status === 400) {
-            throw new Error("Имя и комментарий должны быть не короче 3 символов");  
+            throw new Error("Имя и комментарий должны быть не короче 3 символов"); 
+            alert("Имя и комментарий должны быть не короче 3 символов"); 
             } else {
-              return fetchComments();
+              return response.json();
             };
-            
+          })
+          .then((response) => {
+            return fetchComments();
           })
           .then((response) => {
             let loadingComments = document.getElementById('new-comment-loader');
