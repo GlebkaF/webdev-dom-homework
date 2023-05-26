@@ -35,12 +35,17 @@
     from {
       transform: rotate(0deg);
     }
+
     25% {
-      transform: rotate(30deg);;
+      transform: rotate(30deg);
+      ;
     }
+
     75% {
-      transform: rotate(-30deg);;
+      transform: rotate(-30deg);
+      ;
     }
+
     to {
       transform: rotate(0deg);
     }
@@ -234,7 +239,12 @@
       method: 'GET'
     })
       .then((response) => {
-        return response.json();
+        if (response.message === 500) {
+          throw new Error('Сервер упал');
+        }
+        else {
+          return response.json();
+        }
       })
       .then((responseData) => {
         //преобразование данных формата api в наш формат
@@ -248,6 +258,13 @@
           };
         });
         renderComments();
+      })
+      .catch((error) => {
+        if (error.message === 'Сервер упал') {
+          alert('Упс, сервер упал');
+        } else {
+          alert('Кажется, у вас сломался интернет, попробуйте позже');
+        }
       });
   };
   getComments();
@@ -276,11 +293,20 @@
         method: 'POST',
         body: JSON.stringify({
           text: textInputElement.value,
-          name: nameInputElement.value
+          name: nameInputElement.value,
+          forceError: true
         })
       })
         .then((response) => {
-          return response.json();
+          if (response.status === 500) {
+            throw new Error('Сервер упал');
+          }
+          if (response.status === 400) {
+            throw new Error("Плохой запрос");
+          }
+          else {
+            return response.json();
+          }
         })
         .then((responseData) => {
           comments = responseData.comments;
@@ -288,13 +314,27 @@
         })
         .then(() => {
           toggleForm(false);
+          nameInputElement.value = '';
+          textInputElement.value = '';
+        })
+        .catch((error) => {
+          if (error.message === 'Сервер упал') {
+            //alert('Сервер прилёг отдохнуть, попробуй позже');
+            buttonElement.click();
+          }
+          else if (error.message === 'Плохой запрос') {
+            alert('Имя и комментарий должны быть длиннее трёх символов');
+          }
+          else {
+            alert('Кажется, у вас сломался интернет, попробуйте позже');
+            console.log(error);
+          }
+          toggleForm(false);
         });
     };
 
     postComments();
 
-    nameInputElement.value = '';
-    textInputElement.value = '';
   });
 
 </script>
