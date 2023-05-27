@@ -71,9 +71,8 @@
     const commentInput = document.getElementById('comment-input');
     const addButton = document.getElementById('add-button');
     let time = new Date().toLocaleString().slice(0, -3);
-    
-    
-    addButton.addEventListener('click' () => {
+
+    const addComment = () => {
       nameInput.classList.remove('error');
       commentInput.classList.remove('error');
       if (nameInput.value === '' || commentInput.value === '') {
@@ -82,9 +81,10 @@
         return;
       }
 
+
       const oldComments = comments.innerHTML;
-      comments.innerHTML = oldComments +
-       `<li class="comment">
+      comments.innerHTML = oldComments + 
+        `<li class="comment">
           <div class="comment-header">
             <div>${nameInput.value}</div>
             <div>${time}</div>
@@ -104,6 +104,10 @@
 
         nameInput.value = '';
         commentInput.value = '';
-    });
+    }
+
+    addButton.addEventListener('click', addComment);
+
+
   </script>
 </html>
