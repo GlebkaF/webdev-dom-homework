@@ -62,8 +62,13 @@ body {
 
   .comment-text {
     font-size: 32px;
+    white-space: pre-line;
   }
-
+  .comment-text:hover:after{
+    cursor: pointer;
+    content:'Ответить';
+    color: #bcec30;  
+  }
   .likes {
     display: flex;
     align-items: center;
@@ -131,7 +136,19 @@ body {
     border-radius: 18px;
     cursor: pointer;
   }
-
+  .edited-button {
+    margin-top: 24px;
+    font-size: 22px;
+    padding: 8px 15px;
+    background-color: #bcec30;
+    border: none;
+    border-radius: 18px;
+    cursor: pointer;
+    margin-right: 15px;
+  }
   .add-form-button:hover {
     opacity: 0.9;
+  }
+  .error {
+    background-color: red;
   }
