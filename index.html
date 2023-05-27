@@ -44,7 +44,7 @@
           </div>
         </li>
       </ul>
-      <div class="add-form">
+      <div id="add-form" class="add-form">
         <input
           id="name-input"
           type="text"
@@ -70,6 +70,7 @@
   </body>
 
   <script>
+    const addForm = document.getElementById('add-form');
     const comments = document.getElementById('comments');
    const nameInput = document.getElementById('name-input');
     const commentInput = document.getElementById('comment-input');
@@ -80,6 +81,11 @@
     const addComment = () => {
       nameInput.classList.remove('error');
       commentInput.classList.remove('error');
+
+      if (event.code !== 'Enter') {
+        return;
+      }
+
       if (nameInput.value === '' || commentInput.value === '') {
         nameInput.classList.add('error');
         commentInput.classList.add('error');
@@ -118,6 +124,7 @@
 
 
     addButton.addEventListener('click', addComment);
+    addForm.addEventListener('keydown', addComment);
     removeButton.addEventListener('click', removeComment);
 
 
