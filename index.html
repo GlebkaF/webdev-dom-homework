@@ -61,6 +61,10 @@
         <div class="add-form-row">
           <button id="add-button" class="add-form-button">Написать</button>
         </div>
+
+        <div class="add-form-row">
+          <button id="remove-button" class="add-form-button">Удалить последний комментарий</button>
+        </div>
       </div>
     </div>
   </body>
@@ -70,6 +74,7 @@
    const nameInput = document.getElementById('name-input');
     const commentInput = document.getElementById('comment-input');
     const addButton = document.getElementById('add-button');
+    const removeButton = document.getElementById('remove-button');
     let time = new Date().toLocaleString().slice(0, -3);
 
     const addComment = () => {
@@ -80,7 +85,6 @@
         commentInput.classList.add('error');
         return;
       }
-
 
       const oldComments = comments.innerHTML;
       comments.innerHTML = oldComments + 
@@ -102,11 +106,19 @@
           </div>
         </li>`
 
+        
+
         nameInput.value = '';
         commentInput.value = '';
     }
 
+    const removeComment = () => {
+      comments.removeChild(comments.lastElementChild);
+    }
+
+
     addButton.addEventListener('click', addComment);
+    removeButton.addEventListener('click', removeComment);
 
 
   </script>
