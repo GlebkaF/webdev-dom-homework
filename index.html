@@ -70,21 +70,22 @@
   </body>
 
   <script>
-    const addForm = document.getElementById('add-form');
     const comments = document.getElementById('comments');
-   const nameInput = document.getElementById('name-input');
+    const nameInput = document.getElementById('name-input');
+    const addForm = document.getElementById('add-form');
     const commentInput = document.getElementById('comment-input');
     const addButton = document.getElementById('add-button');
     const removeButton = document.getElementById('remove-button');
     let time = new Date().toLocaleString().slice(0, -3);
 
-    const addComment = () => {
+    const removeComment = () => {
+      comments.removeChild(comments.lastElementChild);
+    }
+
+
+    addButton.addEventListener('click', () => {
       nameInput.classList.remove('error');
       commentInput.classList.remove('error');
-
-      if (event.code !== 'Enter') {
-        return;
-      }
 
       if (nameInput.value === '' || commentInput.value === '') {
         nameInput.classList.add('error');
@@ -110,21 +111,51 @@
               <button class="like-button"></button>
             </div>
           </div>
-        </li>`
-
-        
+        </li>`;
 
         nameInput.value = '';
         commentInput.value = '';
-    }
-
-    const removeComment = () => {
-      comments.removeChild(comments.lastElementChild);
-    }
+    });
 
 
-    addButton.addEventListener('click', addComment);
-    addForm.addEventListener('keydown', addComment);
+    addForm.addEventListener('keydown', () => {
+      nameInput.classList.remove('error');
+      commentInput.classList.remove('error');
+      
+      if (nameInput.value === '' || commentInput.value === '') {
+        nameInput.classList.add('error');
+        commentInput.classList.add('error');
+        return;
+      }
+
+      if (event.code !== 'Enter') {
+        return;
+      }
+
+      const oldComments = comments.innerHTML;
+      comments.innerHTML = oldComments + 
+        `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInput.value}</div>
+            <div>${time}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${commentInput.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter"></span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+    
+        nameInput.value = '';
+        commentInput.value = '';
+    });
+
     removeButton.addEventListener('click', removeComment);
 
 
