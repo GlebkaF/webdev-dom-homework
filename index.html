@@ -117,6 +117,7 @@
     const fetchGet = () => {
 
       commentsLoad.style.display = "block";
+      listElement.style.display = "none";
       const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/tanya-koryachkina/comments", {
         method: "GET",
       })
@@ -134,6 +135,7 @@
             };
           });
           commentsLoad.style.display = "none";
+          listElement.style.display = "flex";
           comments = appComments;
           renderComments();
         });
@@ -190,6 +192,7 @@
   
           initLikeButtonListeners();
           initCommentsListeners();
+          //fetchGet();
         })
       }
     }
@@ -292,19 +295,21 @@
           text: commentInputElement.value,
         })
       })
-        .then((response) => {
+      .then((response) => {
         return response.json();
       })
-        .then((responseData) => {
+      .then((responseData) => {
         //comments = appComments;
-        fetchGet();
-        renderComments();
+        //fetchGet();
+        
         //initLikeButtonListeners();
       })
-        .then((data) => {
+      .then((data) => {
           buttonElement.disabled = false;
           buttonElement.textContent = "Написать";
-        })
+          fetchGet();
+          renderComments();
+      })
       
 
   
