@@ -119,6 +119,9 @@
 
         usersComments = appComments;
         renderUsersComments();
+      }).catch((error) => {
+        alert("Что-то пошло не так, повторите попытку позже.");
+        console.warn(error);
       });
   }
 
@@ -333,7 +336,16 @@
     );
 
     fetchPromise
-      .then((response) => response.json())
+      .then((response) => {
+        if (response.status === 500) {
+          throw new Error("Сервер упал");
+        } else if (response.status === 400) {
+          throw new Error("Плохой запрос");
+        }
+        else {
+          return response.json();
+        }
+      })
       .then((responseData) => {
         return fetchAndRenderTasks();
       }).then(() => {
@@ -346,6 +358,19 @@
         loadingForm.style.display = 'none';
         addForm.style.display = 'block';
         renderUsersComments();
+
+      })
+      .catch((error) => {
+        if (error.message === "Сервер упал") {
+          alert("Сервер упал, повторите попытку позже");
+        } else if (error.message === "Плохой запрос") {
+          alert("Поля ввода должны содержать минимум 3 символа");
+        } else {
+          alert("Что-то пошло не так, повторите попытку позже.");
+        };
+        console.warn(error);
+        loadingForm.style.display = 'none';
+        addForm.style.display = 'block';
 
       });
 
