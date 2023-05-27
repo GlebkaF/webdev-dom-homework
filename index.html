@@ -76,22 +76,55 @@
   const deletElement = document.getElementById("delet-button");
   const likeButtonElements = document.querySelectorAll('.like-button');
 
+  const getAllComments = () => {
+    const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov/comments", {
+      method: "GET"
+    });
+    fetchPromise.then((response) => {
+      const jsonPromise = response.json();
+      jsonPromise.then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: formatDate(comment.date),
+            text: comment.text,
+            active: false,
+            like: comment.likes,
+          };
+        });
+        comments = appComments;
+        renderComments();
+      });
+    });
+  };
+  getAllComments();
 
-  const comments = [
-    {
-      name: "Глеб Фокин",
-      date: "12.02.22 12:18",
-      text: "Это будет первый комментарий на этой странице",
-      like: 3,
-      isLiked: false,
-    },
-    {
-      name: "Варвара Н",
-      date: "13.02.22 19:22",
-      text: "Мне нравится как оформлена эта страница! ❤",
-      like: 75,
-      isLiked: false,
-    },
+  const formatDate = (commentDate) => {
+    let date = new Date();
+    let month = (date.getMonth() + 1).toString().padStart(2, '0');
+    let day = date.getDate().toString().padStart(2, '0');
+    let year = date.getFullYear().toString().substr(-2);
+    let hours = date.getHours().toString().padStart(2, '0');
+    let minutes = date.getMinutes().toString().padStart(2, '0');
+    const resultDate = `${day}.${month}.${year} ${hours}:${minutes}`;
+    return resultDate;
+  }
+
+  let comments = [
+    // {
+    //   name: "Глеб Фокин",
+    //   date: "12.02.22 12:18",
+    //   text: "Это будет первый комментарий на этой странице",
+    //   like: 3,
+    //   isLiked: false,
+    // },
+    // {
+    //   name: "Варвара Н",
+    //   date: "13.02.22 19:22",
+    //   text: "Мне нравится как оформлена эта страница! ❤",
+    //   like: 75,
+    //   isLiked: false,
+    // },
   ];
 
   //Функция для обработчика клика для лайка
@@ -195,9 +228,19 @@
       return;
     }
 
-    const date = new Date();
-    const formatteDate = date.getDate().toString().padStart(2, '0') + '.' + (date.getMonth() + 1).toString().padStart(2, '0') + '.' + date.getFullYear().toString().slice(-2) + ' ' + date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
-
+    // const date = new Date();
+    // const formatteDate = date.getDate().toString().padStart(2, '0') + '.' + (date.getMonth() + 1).toString().padStart(2, '0') + '.' + date.getFullYear().toString().slice(-2) + ' ' + date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
+    fetch("https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        name: nameInputElement.value,
+        text: commentInputElement.value
+      })
+    }).then((response) => {
+      response.json().then((responseData) => {
+        getAllComments();
+      });
+    });
 
     renderComments();
 
@@ -228,21 +271,23 @@
 
 
     //приклеиваем новый HTML елемент
-    comments.push({
-      name: nameInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt")
-        .replaceAll('"', "&quot;"),
-      date: formatteDate,
-      text: commentInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt")
-        .replaceAll('"', "&quot;"),
-      like: countInLike,
-      isLiked: false,
-    });
+    // comments.push({
+    //   name: nameInputElement.value
+    //     .replaceAll("&", "&amp;")
+    //     .replaceAll("<", "&lt;")
+    //     .replaceAll(">", "&gt")
+    //     .replaceAll('"', "&quot;"),
+    //   date: formatDate,
+    //   text: commentInputElement.value
+    //     .replaceAll("&", "&amp;")
+    //     .replaceAll("<", "&lt;")
+    //     .replaceAll(">", "&gt")
+    //     .replaceAll('"', "&quot;"),
+    //   like: countInLike,
+    //   isLiked: false,
+    // });
+
+
 
     renderComments();
     nameInputElement.value = "";
