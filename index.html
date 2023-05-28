@@ -9,6 +9,9 @@
 
 <body>
   <div class="container">
+    <div>
+      <h3 id="invizDivHeader">Идет загрука комментариев...</h3>
+    </div>
     <ul id="list" class="comments">
       <!-- <li class="comment">
         <div class="comment-header">
@@ -45,6 +48,9 @@
         </div>
       </li> -->
     </ul>
+    <div>
+      <h3 id="invizDiv">Загружаю комментарий...</h3>
+    </div>
     <div id="block-form" class="add-form">
       <input id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
       <textarea id="comment-input" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
@@ -63,6 +69,10 @@
   .error {
     border: 2px solid red;
   }
+
+  .hidden {
+    display: none;
+  }
 </style>
 
 <script>
@@ -76,12 +86,13 @@
   const deletElement = document.getElementById("delet-button");
   const likeButtonElements = document.querySelectorAll('.like-button');
   const addFormLoad = document.getElementById('block-form');
+  const invisibleDiv = document.getElementById('invizDiv');
+  const invisibleDivHead = document.getElementById('invizDivHeader');
 
-
-  listElement.disabled = true;
-  listElement.textContent = 'Загружаю комментарии';
+  // invisibleDivHead.classList.add('hidden');
+  invisibleDiv.classList.add('hidden');
   const getAllComments = () => {
-    return fetch("https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov/comments", {
+    return fetch("https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov1/comments", {
       method: "GET",
     })
       .then((response) => {
@@ -99,6 +110,7 @@
         });
         comments = appComments;
         renderComments();
+        invisibleDivHead.classList.add('hidden');
       });
   };
 
@@ -212,7 +224,7 @@
   renderComments();
 
 
-  buttonElemtnt.disabled = true;
+
   nameInputElement.addEventListener('input', () => {
     if (nameInputElement.value.trim() !== '') {
       buttonElemtnt.disabled = false;
@@ -222,8 +234,6 @@
   });
 
   buttonElemtnt.addEventListener('click', () => {
-    addFormLoad.disabled = true;
-    addFormLoad.textContent = 'Комментарий добавляется';
     let countInLike;
     nameInputElement.classList.remove('error');
     if (nameInputElement.value === '') {
@@ -241,12 +251,10 @@
     // const formatteDate = date.getDate().toString().padStart(2, '0') + '.' + (date.getMonth() + 1).toString().padStart(2, '0') + '.' + date.getFullYear().toString().slice(-2) + ' ' + date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
 
 
+    addFormLoad.classList.add('hidden');
+    invisibleDiv.classList.remove('hidden');
 
-
-    // addFormLoad.disabled = true;
-    // buttonElemtnt.disabled = true;
-    // buttonElemtnt.textContent = 'Добавляю';
-    fetch("https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov/comments", {
+    fetch("https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov1/comments", {
       method: "POST",
       body: JSON.stringify({
         name: nameInputElement.value,
@@ -260,11 +268,9 @@
         return getAllComments();
       })
       .then((data) => {
-        // buttonElemtnt.disabled = false;
-        // buttonElemtnt.textContent = 'Написать';
-        addFormLoad.disabled = false;
+        addFormLoad.classList.remove('hidden');
+        invisibleDiv.classList.add('hidden');
       })
-
 
 
     renderComments();
