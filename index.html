@@ -39,6 +39,7 @@
     .add-form-text {
       white-space: pre-line
     }
+
   </style>
 
   <script>
@@ -174,7 +175,13 @@
       }),
     })
     .then((response) => {
-      return response.json();
+      if (response.status === 201) {
+        return response.json();
+      } else if (response.status === 400) {
+        alert("Имя и комментарий не должны быть меньше 3х символов");
+      } else {
+        throw new Error("Сервер упал");
+      }
     })
     .then(() => {
       return getComments();
@@ -182,12 +189,18 @@
     .then(() => {
       buttonElement.disabled = false;
       buttonElement.textContent = "Написать";
+      nameInputElement.value = "";
+      textInputElement.value = "";
+    })
+    .catch((error) => {
+      buttonElement.disabled = false;
+      buttonElement.textContent = "Написать";
+      alert("Кажется что-то пошло не так, попробуй позже");
+      console.warn(error);
     });
 
     renderComments();
 
-    nameInputElement.value = "";
-    textInputElement.value = "";
   });
 
     console.log("It works!");
