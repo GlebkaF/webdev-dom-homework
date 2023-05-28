@@ -118,17 +118,18 @@
     });
 
 
-    addForm.addEventListener('keydown', () => {
+    addForm.addEventListener('keydown', (event) => {
+
+      if (event.code !== 'Enter') {
+        return;
+      }
+
       nameInput.classList.remove('error');
       commentInput.classList.remove('error');
       
       if (nameInput.value === '' || commentInput.value === '') {
         nameInput.classList.add('error');
         commentInput.classList.add('error');
-        return;
-      }
-
-      if (event.code !== 'Enter') {
         return;
       }
 
