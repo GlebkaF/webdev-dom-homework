@@ -182,10 +182,10 @@ ${comments[index].name},`;
 
       const comment = {
         name: nameInputElement.value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;"),
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;"),
         text: textInputElement.value
           .replaceAll("&", "&amp;")
           .replaceAll("<", "&lt;")
@@ -202,16 +202,33 @@ ${comments[index].name},`;
         method: "POST",
         body: JSON.stringify({
           text: comment.text,
-          name: comment.name
+          name: comment.name,
+          forceError: true
         })
-      }).then(() => {
-          getComments()
+      })
+        .then((response) => {
+          if (response.status === 201) {
+            getComments()
+            inputLoaderElement.style.display = "none";
+            formElement.style.display = "flex";
+            nameInputElement.value = "";
+            textInputElement.value = "";
+          } else if (response.status === 500) {
+            throw new Error("Сервер сломался, попробуй позже");
+          } else {
+            throw new Error("Имя и комментарий должны быть не короче 3 символов");
+          }
+        })
+        .catch((error) => {
           inputLoaderElement.style.display = "none";
-          formElement.style.display = "flex";
-        });
+          formElement.style.display = "flex";      
 
-      nameInputElement.value = "";
-      textInputElement.value = "";
+          if (error.message === 'Сервер сломался, попробуй позже' || 'Имя и комментарий должны быть не короче 3 символов') {
+          alert(`${error.message}`);            
+          } else {
+          alert("Кажется, у вас сломался интернет, попробуйте позже"); 
+          }
+        });
     }
 
     nameInputElement.addEventListener("input", () => {
