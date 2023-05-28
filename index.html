@@ -214,7 +214,8 @@ ${comments[index].name},`;
             nameInputElement.value = "";
             textInputElement.value = "";
           } else if (response.status === 500) {
-            throw new Error("Сервер сломался, попробуй позже");
+            postComment(); // доп. часть
+            //throw new Error("Сервер сломался, попробуй позже"); 
           } else {
             throw new Error("Имя и комментарий должны быть не короче 3 символов");
           }
