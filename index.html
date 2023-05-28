@@ -66,46 +66,65 @@
   const commentElement = document.querySelectorAll(".comment");
   const likeButtonElements = document.querySelectorAll(".like-button");
   const deleteButtonElement = document.querySelector(".delete-button");
+  const commentsContainer = document.querySelector(".container");
 
-
+  commentsContainer.style.display = 'none';
+  const commentAdd = document.createElement('div');
+  commentAdd.innerText = "Данные загружаются...";
+  commentsContainer.parentNode.insertBefore(commentAdd, commentsContainer);
   const getAllComments = () => {
-    const fetchComment = fetch("https://webdev-hw-api.vercel.app/api/v1/ramzil-khalimov/comments", {
+    return fetch("https://webdev-hw-api.vercel.app/api/v1/ramzil-khalimov/comments", {
       method: "GET",
-    });
-    fetchComment.then((response) => {
-      const jsonComment = response.json();
-      jsonComment.then((responseData) => {
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
         const appComments = responseData.comments.map((comment) => {
           return {
             name: comment.author.name,
-            date: new Date(comment.date),
+            date: now(comment.date),
             text: comment.text,
             like: comment.likes,
             isLiked: false,
           };
-        });
-        let comments = appComments;
+        })
+        comments = appComments;
         renderComments();
-      });
-    });
+      })
+      .then(() => {
+        commentAdd.style.display = 'none';
+        commentsContainer.style.display = 'block';
+      })
   };
   getAllComments();
 
+  const now = (commentDate) => {
+    let date = new Date();
+    let month = (date.getMonth() + 1).toString().padStart(2, '0');
+    let day = date.getDate().toString().padStart(2, '0');
+    let year = date.getFullYear().toString().substr(-2);
+    let hours = date.getHours().toString().padStart(2, '0');
+    let minutes = date.getMinutes().toString().padStart(2, '0');
+    const resultDate = `${day}.${month}.${year} ${hours}:${minutes}`;
+    return resultDate;
+  }
+
   let comments = [
-    {
-      name: "Глеб Фокин",
-      date: "12.02.22 12:18",
-      text: "Это будет первый комментарий на этой странице",
-      like: 3,
-      isLiked: false
-    },
-    {
-      name: "Варвара Н.",
-      date: "13.02.22 19:12",
-      text: "Мне нравится как оформлена эта страница! ❤",
-      like: 75,
-      isLiked: false
-    }
+    // {
+    //   name: "Глеб Фокин",
+    //   date: "12.02.22 12:18",
+    //   text: "Это будет первый комментарий на этой странице",
+    //   like: 3,
+    //   isLiked: false
+    // },
+    // {
+    //   name: "Варвара Н.",
+    //   date: "13.02.22 19:12",
+    //   text: "Мне нравится как оформлена эта страница! ❤",
+    //   like: 75,
+    //   isLiked: false
+    // }
 
   ];
   deleteButtonElement.addEventListener("click", () => {
@@ -149,7 +168,8 @@
       })
     }
   }
-
+  initAnswerButton();
+  initLikeButtonListener();
 
   const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
@@ -179,12 +199,22 @@
     initAnswerButton();
     initLikeButtonListener();
   };
+  getAllComments();
   renderComments();
 
+  buttonElement.disabled = true;
+  nameElement.addEventListener('input', () => {
+    if (nameElement.value.trim() !== '') {
+      buttonElement.disabled = false;
+      return;
+    } else (buttonElement.disabled = true);
+    return;
+  });
+
   buttonElement.addEventListener("click", () => {
-    let countInLike;
-    const date = new Date();
-    const now = date.getDate().toString().padStart(2, '0') + '.' + (date.getMonth() + 1).toString().padStart(2, '0') + '.' + date.getFullYear().toString().slice(-2) + ' ' + date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
+    // let countInLike;
+    // const date = new Date();
+    // const now = date.getDate().toString().padStart(2, '0') + '.' + (date.getMonth() + 1).toString().padStart(2, '0') + '.' + date.getFullYear().toString().slice(-2) + ' ' + date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
 
     if (nameElement.value === "") {
       nameElement.classList.add("error");
@@ -200,53 +230,70 @@
       }
       return;
     }
-    listElement.innerHTML += `<li class="comment">
-  <div class="comment-header">
-    <div>${nameElement.value}</div>
-    <div>${now}</div>
-  </div>
-  <div class="comment-body">
-    <div class="comment-text">
-      ${textElement.value}
-    </div>
-  </div>
-  <div class="comment-footer">
-    <div class="likes">
-      <span class="likes-counter">${countInLike}</span>
-      <button class="like-button"></button>
-    </div>
-  </div>
-</li>`;
+    buttonElement.disabled = true;
+    buttonElement.textContent = "Комментарий добавляется";
+
     fetch("https://webdev-hw-api.vercel.app/api/v1/ramzil-khalimov/comments", {
       method: "POST",
       body: JSON.stringify({
         name: nameElement.value,
         text: textElement.value
       })
-    }).then((response) => {
-      response.json().then((responseData) => {
-        getAllComments();
-      });
-    });
+    })
+      .then((response) => {
+        response.json();
+      })
+      .then((responseData) => {
+        return getAllComments();
+      })
+      .then(() => {
+        buttonElement.disabled = false;
+        buttonElement.textContent = "Написать";
+      })
+
+
+    renderComments();
+
+    //     listElement.innerHTML += `<li class="comment">
+    //   <div class="comment-header">
+    //     <div>${nameElement.value}</div>
+    //     <div>${now}</div>
+    //   </div>
+    //   <div class="comment-body">
+    //     <div class="comment-text">
+    //       ${textElement.value}
+    //     </div>
+    //   </div>
+    //   <div class="comment-footer">
+    //     <div class="likes">
+    //       <span class="likes-counter">${countInLike}</span>
+    //       <button class="like-button"></button>
+    //     </div>
+    //   </div>
+    // </li>`;
+
     countInLike = 0;
 
-    comments.push({
-      name: nameElement.value
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('&', '&amp;')
-        .replaceAll('"', '&quot;'),
-      date: now,
-      text: textElement.value
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('&', '&amp;')
-        .replaceAll('"', '&quot;'),
-      like: countInLike,
-      isLiked: false,
-    });
+    // comments.push({
+    //   name: nameElement.value
+    //     .replaceAll('<', '&lt;')
+    //     .replaceAll('>', '&gt;')
+    //     .replaceAll('&', '&amp;')
+    //     .replaceAll('"', '&quot;'),
+    //   date: now,
+    //   text: textElement.value
+    //     .replaceAll('<', '&lt;')
+    //     .replaceAll('>', '&gt;')
+    //     .replaceAll('&', '&amp;')
+    //     .replaceAll('"', '&quot;'),
+    //   like: countInLike,
+    //   isLiked: false,
+    // });
     renderComments();
     nameElement.value = "";
+    textElement.value = "";
+    buttonElement.disabled = true;
+
   })
 
 </script>
