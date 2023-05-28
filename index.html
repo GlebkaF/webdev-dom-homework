@@ -13,7 +13,13 @@
       <!-- список редерится из JS -->
     </ul>
 
-    <div class="add-form">
+
+    <div id="loadingList">
+      <p class="loading-text">
+        Подождите пожалуйста, комментарии загружаются...
+      </p>
+    </div>
+    <div class="add-form" id="addForm">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="nameInput" value="" />
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
         id="commentInput"></textarea>
@@ -21,6 +27,9 @@
         <button class="add-form-button" id="buttonComment">Написать</button>
         <button class="add-form-button" id="delComment">Удалить комментарий</button>
       </div>
+    </div>
+    <div id="loadingComment">
+      <p class="loading-text">Комментарий загружается... </p>
     </div>
   </div>
 </body>
@@ -35,44 +44,53 @@
   const elementComment = document.getElementById('commentInput');
   const listElement = document.getElementById('listComments');
   const buttonElement = document.getElementById('buttonComment');
+  const loadingListElement = document.getElementById('loadingList');
+  const loadingCommentElement = document.getElementById('loadingComment');
+  const addFormElement = document.getElementById('addForm')
 
+  loadingCommentElement.style.display = 'none';
 
   //  Получаем данные из API(Сервера)
 
+
   let comments = [];
 
-  const fetchPromise = fetch(
-    'https://wedev-api.sky.pro/api/v1/alexey-tsukanov/comments',
-    {
-      method: 'GET'
-    }
-  );
-  fetchPromise.then((response) => {
-    const jsonPromise = response.json();
-    jsonPromise.then((responseData) => {
-      const appComments = responseData.comments.map((comment) => {
-        const dateComment = new Date(comment.date);
-        return {
-          name: comment.author.name,
-          date: dateComment.getDate().toString().padStart(2, '0') + '.' +
-            (dateComment.getMonth() + 1).toString().padStart(2, '0') + '.' +
-            dateComment.getFullYear().toString().slice(-2) + ' ' +
-            dateComment.getHours().toString().padStart(2, '0') + ':' +
-            dateComment.getMinutes().toString().padStart(2, '0'),
-          textComment: comment.text,
-          likes: comment.likes,
-          isActiveLike: false,
-        }
+  const fetchAndRenderComments = () => {
+    return fetch(
+      'https://wedev-api.sky.pro/api/v1/alexey-tsukanov/comments',
+      {
+        method: 'GET'
       })
-      comments = appComments;
-      renderComments();
-      return
-    })
-  });
-  
+      .then((response) => {
+        return response.json()
+      })
+      .then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+          const dateComment = new Date(comment.date);
+          return {
+            name: comment.author.name,
+            date: dateComment.getDate().toString().padStart(2, '0') + '.' +
+              (dateComment.getMonth() + 1).toString().padStart(2, '0') + '.' +
+              dateComment.getFullYear().toString().slice(-2) + ' ' +
+              dateComment.getHours().toString().padStart(2, '0') + ':' +
+              dateComment.getMinutes().toString().padStart(2, '0'),
+            textComment: comment.text,
+            likes: comment.likes,
+            isActiveLike: false,
+          }
+        })
+        comments = appComments;
+        renderComments();
+      })
+  };
+
   // Добавляем обработчик клика на кнопку "Написать"
 
   buttonElement.addEventListener('click', () => {
+
+    loadingCommentElement.style.display = 'block';
+    addFormElement.style.display = 'none';
+
     elementName.classList.remove('error');
     elementComment.classList.remove('error');
     if (elementName.value === '') {
@@ -93,8 +111,6 @@
       dateComment.getHours().toString().padStart(2, '0') + ':' +
       dateComment.getMinutes().toString().padStart(2, '0');
 
-
-
     // Защащаем ввод данных
 
     const protectionHtml = (string) => {
@@ -106,57 +122,30 @@
     };
 
     // Добавляем новый комменрарий в API
-    fetch(
+    return fetch(
       'https://wedev-api.sky.pro/api/v1/alexey-tsukanov/comments',
       {
         method: 'POST',
         body: JSON.stringify(
           {
             text: protectionHtml(elementComment.value), name: protectionHtml(elementName.value),
-          }
-        )
-      }
-    ).then((response) => {
-      response.json().then((responseData) => {
+          })
+      })
+      .then((response) => {
+        return response.json()
+      })
+
+      .then((responseData) => {
         comments = responseData.comments;
+        fetchAndRenderComments()
       })
-      renderComments()
 
-      const fetchPromise = fetch(
-    'https://wedev-api.sky.pro/api/v1/alexey-tsukanov/comments',
-    {
-      method: 'GET'
-    }
-  );
-  fetchPromise.then((response) => {
-    const jsonPromise = response.json();
-    jsonPromise.then((responseData) => {
-      const appComments = responseData.comments.map((comment) => {
-        const dateComment = new Date(comment.date);
-        return {
-          name: comment.author.name,
-          date: dateComment.getDate().toString().padStart(2, '0') + '.' +
-            (dateComment.getMonth() + 1).toString().padStart(2, '0') + '.' +
-            dateComment.getFullYear().toString().slice(-2) + ' ' +
-            dateComment.getHours().toString().padStart(2, '0') + ':' +
-            dateComment.getMinutes().toString().padStart(2, '0'),
-          textComment: comment.text,
-          likes: comment.likes,
-          isActiveLike: false,
-        }
-      })
-      comments = appComments;
-      renderComments();
-
-    })
-  });
-  
-    })
-    renderComments();
-    elementName.value = '';
-    elementComment.value = '';
     buttonElement.disabled = true;
-  })
+
+    renderComments();
+    fetchAndRenderComments();
+  });
+
 
   // Отправка коммента с помощью кнопки Enter
 
@@ -169,6 +158,7 @@
   // Активность кнопки "Написать"
 
   buttonElement.disabled = true;
+
   elementName.addEventListener('input', () => {
     if (elementName.value.trim() !== "") {
       buttonElement.disabled = false;
@@ -188,25 +178,6 @@
     comments.pop();
     renderComments();
   });
-
-  // Создаем массив данных комманетариев
-
-  // const comments = [
-  //   // {
-  //   //   name: "Глеб Фокин",
-  //   //   date: "12.02.22 12:18",
-  //   //   textComment: "Это будет первый комментарий на этой странице",
-  //   //   likes: 3,
-  //   //   isActiveLike: false,
-  //   // },
-  //   // {
-  //   //   name: "Варвара Н.",
-  //   //   date: "13.02.22 19:22",
-  //   //   textComment: "Мне нравится как оформлена эта страница! ❤",
-  //   //   likes: 75,
-  //   //   isActiveLike: false,
-  //   // },
-  // ];
 
   // Добавляем фукцию активности лайка
 
@@ -258,28 +229,36 @@
         likeActive = '-active-like';
       }
       return `<li class="comment">
-        <div class="comment-header">
-          <div>${comment.name}</div>
-          <div>${comment.date}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text preline">${comment.textComment}</div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">${comment.likes}</span>
-            <button class="like-button ${likeActive}" data-index="${index}"></button>
-          </div>
-        </div>
-      </li>`;
-    })
-      .join("");
+<div class="comment-header">
+  <div>${comment.name}</div>
+  <div>${comment.date}</div>
+</div>
+<div class="comment-body">
+  <div class="comment-text preline">${comment.textComment}</div>
+</div>
+<div class="comment-footer">
+  <div class="likes">
+    <span class="likes-counter">${comment.likes}</span>
+    <button class="like-button ${likeActive}" data-index="${index}"></button>
+  </div>
+</div>
+</li>`;
+    }).join("");
     listElement.innerHTML = commentsHtml;
+
+    loadingListElement.style.display = 'none';
+
+    elementName.value = '';
+    elementComment.value = '';
+
+    loadingCommentElement.style.display = 'none';
+    addFormElement.style.display = 'flex';
+
     like();
     initAnswer();
-    
   };
-  renderComments();
+
+  fetchAndRenderComments();
 
   console.log("It works!");
 
