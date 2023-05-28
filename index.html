@@ -9,6 +9,10 @@
 
 <body>
   <div class="container">
+    <div>
+      <h3 id="invizDivHeader">Идет загрука комментариев...</h3>
+    </div>
+
     <ul id="list" class="comments">
       <!-- <li class="comment">
         <div class="comment-header">
@@ -44,6 +48,9 @@
           </div>
       </li> -->
     </ul>
+    <div>
+      <h3 id="invizDiv">Загружаю комментарий...</h3>
+    </div>
     <div class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="add-name" />
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
@@ -67,11 +74,10 @@
   const likeButtonElements = document.querySelectorAll(".like-button");
   const deleteButtonElement = document.querySelector(".delete-button");
   const commentsContainer = document.querySelector(".container");
+  const invisibleDiv = document.getElementById('invizDiv');
+  const invisibleDivHead = document.getElementById('invizDivHeader');
 
-  commentsContainer.style.display = 'none';
-  const commentAdd = document.createElement('div');
-  commentAdd.innerText = "Данные загружаются...";
-  commentsContainer.parentNode.insertBefore(commentAdd, commentsContainer);
+  invisibleDiv.classList.add('hidden');
   const getAllComments = () => {
     return fetch("https://webdev-hw-api.vercel.app/api/v1/ramzil-khalimov/comments", {
       method: "GET",
@@ -91,11 +97,8 @@
         })
         comments = appComments;
         renderComments();
-      })
-      .then(() => {
-        commentAdd.style.display = 'none';
-        commentsContainer.style.display = 'block';
-      })
+        invisibleDivHead.classList.add('hidden');
+      });
   };
   getAllComments();
 
