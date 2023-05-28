@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <a href='./not-editable.html'>К просмотру</a> // добавлена ссылка
+        <h1>Любимые цвета студентов</h1>
+    <ul class="students" id="list">
+      <!-- Список рендерится из JS -->
+    </ul>
+
+    <div class="form">
+      <h3 class="form-title">Форма добавления</h3>
+      <div class="form-row">
+        Имя:  
+        <input
+          type="text"
+          id="name-input"
+          class="input"
+          placeholder="Василий"
+        />
+      </div>
+      <div class="form-row">
+        Цвет: 
+        <input type="color" id="color-input" class="color-input input" />
+        <br /><br />
+      </div>
+      <button class="button" id="add-button">Добавить</button>
+    </div>
+    <!-- указываем, что данный скрипт является модулем -->
+    <script type="module" src="./main.js"></script> 
+</body>
+</html>
