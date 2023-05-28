@@ -1,39 +1,12 @@
 'use strict';
 
-import { getComments, postFetch, comments } from "./api.js";
+import { getComments, postFetch, comments, buttonElement, textInputElement, nameInputElement } from "./api.js";
 
-const listComments = document.getElementById('comments-users');
+import { renderComments } from "./render.js";
+
+export const listComments = document.getElementById('comments-users');
 
 getComments();
-
-export const renderComments = () => {
-  const commentsHTML = comments
-    .map((comment, index) => {
-      const formattedDate = formatDate(new Date(comment.date));
-      return `<li data-index="${index}" class="comment">
-        <div class="comment-header">
-          <div>${comment.name}</div>
-            <div>${formattedDate}</div>
-          </div>
-        <div class="comment-body">
-          <div class="comment-text">${comment.text}</div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">${comment.likes}</span>
-            <button data-index="${index}" class="like-button ${
-        comment.isLiked ? '-active-like' : ''
-      }"></button>
-          </div>
-        </div>
-      </li>`;
-    })
-    .join('');
-
-  listComments.innerHTML = commentsHTML;
-  counterLikes();
-  answerComment();
-};
 
 renderComments();
 
@@ -70,7 +43,7 @@ export function counterLikes() {
   });
 }
 
-function answerComment() {
+export function answerComment() {
   const oldComments = document.querySelectorAll('.comment');
 
   for (let oldComment of oldComments) {
@@ -85,19 +58,13 @@ function answerComment() {
   }
 }
 
-const buttonElement = document.getElementById('button-add');
-const listElement = document.getElementById('comments-users');
-export const nameInputElement = document.getElementById('name-input');
-export const textInputElement = document.getElementById('text-input');
-
-const addComment = () => {
+export const addComment = () => {
   buttonElement.disabled = true;
   buttonElement.textContent = 'Комментарий добавляется...';
   document.getElementById('name-input').disabled = false;
   document.getElementById('text-input').disabled = false;
 
   postFetch();
-
 }
 
 buttonElement.addEventListener('click', addComment);
