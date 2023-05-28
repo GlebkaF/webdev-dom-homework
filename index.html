@@ -70,6 +70,14 @@
     const addButton = form.querySelector('.add-form-button');
     const comments = document.querySelector('.comments');
 
+function prov() {
+    addButton.disabled = true;
+  if (newName.lenght===0 && newComment.lenght===0) {
+    addButton.disabled = true;
+}
+}
+prov();
+
     newName.addEventListener('input', function () {
     if (newName.value==='' || newComment.value==='') {
         addButton.setAttribute('disabled', 'disabled')
@@ -86,6 +94,8 @@ newComment.addEventListener('input', function () {
         addButton.removeAttribute('disabled')
     }
 });
+
+
 
     addButton.addEventListener('click', () => {
 
