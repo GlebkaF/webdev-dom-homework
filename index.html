@@ -293,10 +293,25 @@
         body: JSON.stringify({
           name: nameInputElement.value,
           text: commentInputElement.value,
+          forceError: true,
         })
       })
       .then((response) => {
-        return response.json();
+        if(response.status === 500) {
+
+              alert('Сервер сломался, попробуй позже');
+              
+              throw new Error("Сервер упал");
+
+          } else if(response.status === 400) {
+
+              alert('Имя и комментарий должны содержать хотя бы 3 символа');
+              
+              throw new Error("Неверный запрос");
+
+          } else {
+              return response.json();
+          } 
       })
       .then((responseData) => {
         //comments = appComments;
@@ -307,8 +322,19 @@
       .then((data) => {
           buttonElement.disabled = false;
           buttonElement.textContent = "Написать";
+          nameInputElement.value = "";  
+          commentInputElement.value = ""; 
           fetchGet();
           renderComments();
+      })
+      .catch((error) => {
+        buttonElement.disabled = false;
+        buttonElement.textContent = "Написать";
+        if(!navigator.onLine) {
+          alert("Кажется что-то пошло не так, попробуй позже");
+        }
+        
+        console.warn(error);
       })
       
 
@@ -334,8 +360,7 @@
       renderComments();
       //initLikeButtonListeners();
       initCommentsListeners();
-      nameInputElement.value = "";  
-      commentInputElement.value = ""; 
+      
     });  
     
 
