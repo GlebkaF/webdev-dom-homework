@@ -70,7 +70,7 @@
               name: comment.author.name,
               date: new Date(comment.date),
               text: comment.text,
-              likes: comment.likes,
+              likes: "0",
               isLiked: false,
             };
           });
@@ -136,7 +136,7 @@
                 </div>
                 <div class="comment-footer">
                   <div class="likes">
-                    <span class="likes-counter" ></span>
+                    <span class="likes-counter" >${comment.likes}</span>
                     <button class="like-button" data-id='${comment.id}'></button>
                   </div>
                 </div>
@@ -171,26 +171,32 @@
 
         return;
       }
-    });
 
-    const getPostPromise = fetch("https://wedev-api.sky.pro/api/v1/qwitchers/comments", {
+      fetch("https://wedev-api.sky.pro/api/v1/qwitchers/comments", {
         method: "POST",
         body: JSON.stringify({
-          id: "",
-          text: textInputElement.value,
           name: nameInputElement.value,
-          data: formattedDate,
+          date: formattedDate,
+          text: textInputElement.value,
+          likes: "0",
           isLiked: false,
         }),
       }).then((response) => {
         response.json().then((responseData) => {
-          comments = responseData.todos;
+          fetch("https://wedev-api.sky.pro/api/v1/qwitchers/comments", {
+            method: "GET",
+          }).then((response) => {
+            response.json().then((responseData) => {
+              comments = responseData.todos;
 
-          renderComments();
+              getPromise();
+              renderComments();
+              
+            });
+          });
         });
       });
-    getPromise();
-    renderComments();
+    });   
 
     // deleteButtonElement.addEventListener("click", () => {
     //   const lastCommentIndex = listElement.innerHTML.lastIndexOf(
