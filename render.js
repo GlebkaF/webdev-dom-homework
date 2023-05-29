@@ -29,15 +29,16 @@ export const renderBlank = (user, index) => {
 export const renderUsers = (listComments, renderBlank) => {
     const usersHtml = allUsersAndComments.map((user, index) => renderBlank(user, index)).join("");
     listComments.innerHTML = usersHtml;
-    likesChange();
+    likesChange()
 };
 
 
 
-function likesChange() {
+export function likesChange() {
 
     const likesUp = document.querySelectorAll(".like-button");
     for (const likeUp of likesUp) {
+      // console.log(likeUp);
         likeUp.addEventListener('click', (event) => {
             event.stopPropagation();
             let found = allUsersAndComments[likeUp.dataset.index];
@@ -52,7 +53,8 @@ function likesChange() {
                 found.isLiked = true;
 
             };
-            renderUsers();
+            renderUsers(listComments, renderBlank);
+
         });
 
     };
