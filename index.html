@@ -55,28 +55,32 @@
 
     let comments = [];
 
-    const fetchPromise = fetch(
-      "https://wedev-api.sky.pro/api/v1/qwitchers/comments",
-      {
-        method: "GET",
-      }
-    );
+    const getPromise = () => {
+      const fetchPromise = fetch(
+        "https://wedev-api.sky.pro/api/v1/qwitchers/comments",
+        {
+          method: "GET",
+        }
+      );
 
-    fetchPromise.then((responce) => {
-      responce.json().then((responceData) => {
-        const appComments = responceData.comments.map((comment) => {
-          return {
-            name: comment.author.name,
-            date: new Date(comment.date),
-            text: comment.text,
-            likes: comment.likes,
-            isLiked: false,
-          };
+      fetchPromise.then((responce) => {
+        responce.json().then((responceData) => {
+          const appComments = responceData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: new Date(comment.date),
+              text: comment.text,
+              likes: comment.likes,
+              isLiked: false,
+            };
+          });
+          comments = appComments;
+          renderComments();
         });
-        comments = appComments;
-        renderComments();
       });
-    });
+    };
+
+    getPromise();
 
     const copyComment = () => {
       const commentsElement = document.querySelectorAll(".comment");
@@ -132,7 +136,7 @@
                 </div>
                 <div class="comment-footer">
                   <div class="likes">
-                    <span class="likes-counter" >${comment.likeCount}</span>
+                    <span class="likes-counter" ></span>
                     <button class="like-button" data-id='${comment.id}'></button>
                   </div>
                 </div>
@@ -164,50 +168,28 @@
         if (textInputElement.value === "") {
           textInputElement.classList.add("error");
         }
-        const postPromise = fetch(
-          "https://wedev-api.sky.pro/api/v1/qwitchers/comments",
-          {
-            method: "POST",
-            body: JSON.stringify({
-              id: "",
-              text: textInputElement.value,
-              name: nameInputElement.value,
-              data: formattedDate,
-              likeCount: "0",
-              isLiked: false,
-            }),
-          }
-        ).then((response) => {
-          response.json().then((responseData) => {
-            comments = responseData.todos;
-            renderComments();
-          });
-        });
+
         return;
       }
     });
 
-    const postPromise = fetch(
-      "https://wedev-api.sky.pro/api/v1/qwitchers/comments",
-      {
-        method: "GET",
-      }
-    );
-    postPromise.then((responce) => {
-      responce.json().then((responceData) => {
-        const appComments = responceData.comments.map((comment) => {
-          return {
-            name: comment.author.name,
-            date: new Date(comment.date),
-            text: comment.text,
-            likes: comment.likes,
-            isLiked: false,
-          };
+    const getPostPromise = fetch("https://wedev-api.sky.pro/api/v1/qwitchers/comments", {
+        method: "POST",
+        body: JSON.stringify({
+          id: "",
+          text: textInputElement.value,
+          name: nameInputElement.value,
+          data: formattedDate,
+          isLiked: false,
+        }),
+      }).then((response) => {
+        response.json().then((responseData) => {
+          comments = responseData.todos;
+
+          renderComments();
         });
-        comments = appComments;
-        renderComments();
       });
-    });
+    getPromise();
     renderComments();
 
     // deleteButtonElement.addEventListener("click", () => {
