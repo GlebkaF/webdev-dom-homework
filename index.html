@@ -31,37 +31,31 @@
   </body>
 
   <script>
-    "use strict";
-    // Код писать здесь
-
     const inputName = document.getElementById('input-name');
     const inputComment = document.getElementById('input-comment');
     const buttonForm = document.getElementById('button-form');
     const listElement = document.getElementById('comments');
 
-    const comments = [
+    fetch(
+      'https://wedev-api.sky.pro/api/v1/maksim-balyaev/comments',
       {
-        name: 'Глеб Фокин',
-        time: '12.02.22 12:18',
-        text: 'Это будет первый комментарий на этой странице',
-        likes: 3,
-        isLiked: '',
-      },
-      {
-        name: 'Варвара Н.',
-        time: '13.02.22 19:22',
-        text: 'Мне нравится как оформлена эта страница',
-        likes: 75,
-        isLiked: '-active-like',
+        method: 'GET'
       }
-    ];
+    ).then((response) => {
+      response.json().then((responseData) => {
+        comments = responseData.comments;
+        renderComments();
+      });
+    });
+
+    let comments = [];
 
     const renderComments = () => {
       const commentsHtml = comments.map((comment, index) => {
         return `<li class="comment">
           <div class="comment-header">
-            <div>${comment.name}</div>
-            <div>${comment.time}</div>
+            <div>${comment.author.name}</div>
+            <div>${comment.date}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -127,21 +121,44 @@
 
       const date = new Date();
 
-      comments.push({
-        name: inputName.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-        time: `${`${("0" + date.getDate()).slice(-2)}.${("0" + (date.getMonth() + 1)).slice(-2)}.${date.getFullYear().toString().slice(-2)} ${("0" + date.getHours()).slice(-2)}:${("0" + date.getMinutes()).slice(-2)}`}`,
-        text: inputComment.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-        likes: 0,
-        isLiked: '',
+      fetch(
+      'https://wedev-api.sky.pro/api/v1/maksim-balyaev/comments',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          text: inputComment.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
+          name: inputName.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
+        }),
+      }).then((response) => {
+        response.json().then((responseData) => {
+          comments = responseData.comments;
+          renderComments();
+        });
       });
+
+      // comments.push({
+      //   name: inputName.value
+      //   .replaceAll("&", "&amp;")
+      //   .replaceAll("<", "&lt;")
+      //   .replaceAll(">", "&gt;")
+      //   .replaceAll('"', "&quot;"),
+      //   time: `${`${("0" + date.getDate()).slice(-2)}.${("0" + (date.getMonth() + 1)).slice(-2)}.${date.getFullYear().toString().slice(-2)} ${("0" + date.getHours()).slice(-2)}:${("0" + date.getMinutes()).slice(-2)}`}`,
+      //   text: inputComment.value
+      //   .replaceAll("&", "&amp;")
+      //   .replaceAll("<", "&lt;")
+      //   .replaceAll(">", "&gt;")
+      //   .replaceAll('"', "&quot;"),
+      //   likes: 0,
+      //   isLiked: '',
+      // });
 
       renderComments();
 
