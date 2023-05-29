@@ -196,8 +196,6 @@ ${comments[index].name},`;
         favorite: false
       }
 
-      comments.push(comment);
-
       fetch("https://webdev-hw-api.vercel.app/api/v1/olesia-koneva/comments", {
         method: "POST",
         body: JSON.stringify({
@@ -223,11 +221,11 @@ ${comments[index].name},`;
         .catch((error) => {
           inputLoaderElement.style.display = "none";
           formElement.style.display = "flex";      
-
-          if (error.message === 'Сервер сломался, попробуй позже' || 'Имя и комментарий должны быть не короче 3 символов') {
-          alert(`${error.message}`);            
+          console.log(error.message);
+          if (error.message === 'Сервер сломался, попробуй позже' || error.message === 'Имя и комментарий должны быть не короче 3 символов') {
+            alert(`${error.message}`);            
           } else {
-          alert("Кажется, у вас сломался интернет, попробуйте позже"); 
+            alert("Кажется, у вас сломался интернет, попробуйте позже"); 
           }
         });
     }
