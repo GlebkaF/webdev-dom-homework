@@ -64,8 +64,27 @@
   </body>
 
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const Name = document.querySelector('.add-form-name');
+const Text = document.querySelector('.add-form-text');
+const addButton = document.querySelector('.add-form-button');
+const Comments = document.querySelector('.comments');
+
+// Добавить коммент
+function addComment() {
+// Поля заполнены
+if (Name.value && Text.value) {
+const date = new Date(); // Для даты и времени
+const comment = document.createElement('li'); // Создаем элемент списка
+comment.classList.add('comment'); // Добавляем класс
+// Создаём новуюю html-структуру и добавляем в неё введённые пользователем значения
+comment.innerHTML =`<div class="comment-header"><div>${Name.value}</div><div>${date.toLocaleString()}</div></div><div class="comment-body"><div class="comment-text">${Text.value}</div></div><div class="comment-footer"><div class="likes"><span class="likes-counter">0</span><button class="like-button"></button></div></div>`;
+Comments.appendChild(comment); // Добавить 
+// Очистить поля
+Name.value = '';
+Text.value = '';
+}
+}
+// Активировать кнопку "Написать"
+addButton.addEventListener('click', addComment);
   </script>
 </html>
