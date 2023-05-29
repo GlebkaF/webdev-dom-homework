@@ -52,7 +52,6 @@
 
   //  Получаем данные из API(Сервера)
 
-
   let comments = [];
 
   const fetchAndRenderComments = () => {
@@ -122,6 +121,7 @@
     };
 
     // Добавляем новый комменрарий в API
+
     return fetch(
       'https://wedev-api.sky.pro/api/v1/alexey-tsukanov/comments',
       {
@@ -134,7 +134,6 @@
       .then((response) => {
         return response.json()
       })
-
       .then((responseData) => {
         comments = responseData.comments;
         fetchAndRenderComments()
@@ -145,7 +144,6 @@
     renderComments();
     fetchAndRenderComments();
   });
-
 
   // Отправка коммента с помощью кнопки Enter
 
@@ -186,7 +184,7 @@
     for (const likeButton of likeButtons) {
       likeButton.addEventListener('click', (e) => {
         e.stopPropagation()
-        
+
         const index = likeButton.dataset.index;
         if (comments[index].isActiveLike) {
           comments[index].likes--;
@@ -199,7 +197,6 @@
       })
     }
   };
-  
 
   // Добавляю обработчик клика на комментарий (ответ на комментарий)
 
@@ -260,10 +257,8 @@
     like();
     initAnswer();
   };
-  
 
   fetchAndRenderComments();
-
 
   console.log("It works!");
 
