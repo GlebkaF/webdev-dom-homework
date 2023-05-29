@@ -45,7 +45,7 @@ export const addToServer = (comment) => {
         })
         .then((responseData) => {
             console.log(responseData);
-            return getData();
+            return getData().then((comments => renderComments(comments)));
         })
         .catch((error) => {
             console.log('Ошибка при отправке комментария на сервер:', error);
