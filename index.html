@@ -175,11 +175,21 @@ const comments = [
     });
 
     commentsList.appendChild(newComment);
+
+    newComment.addEventListener("click", () => {
+    // При клике на комментарий, заполняем поля формы добавления комментария данными комментария
+    nameInput.value = '';
+    commentInput.value = `@${comment.author}, ${comment.text}:`;
+    commentInput.focus();
+    });
+
+
   });
 
     const likeButtons = document.querySelectorAll('.like-button');
     likeButtons.forEach((button) => {
-    button.addEventListener('click', () => {
+    button.addEventListener('click', (event) => {
+      event.stopPropagation();
     // Получаем идентификатор комментария из атрибута data-comment-id кнопки лайка
     const commentId = parseInt(button.dataset.commentId);
     // Находим комментарий в массиве comments по идентификатору
@@ -214,9 +224,9 @@ addButton.addEventListener('click', function() {
 
   const newComment = {
     id: comments.length + 1,
-    author: nameInput.value,
+    author: nameInput.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
     date: dateString,
-    text: commentInput.value,
+    text: commentInput.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
     likes: 0,
     liked: false
   };
