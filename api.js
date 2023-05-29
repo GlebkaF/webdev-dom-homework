@@ -1,8 +1,11 @@
+import { commentsLoading, comments, addFormName, addFormText, addForm, adding, addFormButton } from "./script.js";
+import renderComments from "./renderComments.js";
+import { getListComments } from "./listComments.js";
 
-let commentos = [];
+export let commentos = [];
 
-const fetchGet = () => {
-    // commentsLoading.style.display = "block";
+export const fetchGet = () => {
+    commentsLoading.style.display = "block";
     fetch('https://webdev-hw-api.vercel.app/api/v1/NSchenikov/comments', {
         method: "GET"
     })
@@ -24,16 +27,14 @@ const fetchGet = () => {
           return appComments;
         })
         .then((data) => {
-        //   commentsLoading.style.display = "none";
+          commentsLoading.style.display = "none";
           commentos = data;
-          renderComments();
+          renderComments(comments, getListComments);
         });
   
   };
 
-
-
-export const fetchPost = () => {
+  export const fetchPost = () => {
     fetch("https://webdev-hw-api.vercel.app/api/v1/NSchenikov/comments", {
         method: "POST",
         body: JSON.stringify({
@@ -64,7 +65,7 @@ export const fetchPost = () => {
       .then((responseData) => {
           console.log(responseData);
           fetchGet();
-          renderComments();
+          renderComments(comments, getListComments);
       })
       .then((data) => {
         addForm.style.display = 'flex';
@@ -85,6 +86,4 @@ export const fetchPost = () => {
 
         console.warn(error);
       });
- };
-
-  export default fetchGet;
+  }
