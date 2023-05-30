@@ -39,6 +39,7 @@
   const commentInputElement = document.getElementById("comment-input");
   const commentForm = document.getElementById("form-comment");
   const commentsContainer = document.getElementById("commentsContainer");
+  const newContainerComments = document.getElementById("container")
 
   commentsContainer.style.display = 'none';
   const commentAdding = document.createElement('div'); 
@@ -180,7 +181,7 @@ const renderComments = () => {
       const commentAddingMessage = document.createElement('div'); 
       commentAddingMessage.innerText = 'Комментарий добавляется...';
       commentForm.parentNode.insertBefore(commentAddingMessage, commentForm); 
-
+      
       let date = new Date();
       let likes = 0;
       nameInputElement.classList.remove("error");
@@ -208,18 +209,37 @@ const renderComments = () => {
         method: "POST",
         body: JSON.stringify({
           name: nameInputElement.value,  
-          text: commentInputElement.value
+          text: commentInputElement.value,
+          forceError: false,
         })
       })
-      .then((response) => (response.json()))
+      .then((response) => {
+        if (response.status === 500) {
+          throw new Error("Извините сервер упал, попробуйте позже");
+        }
+        if (response.status === 400) {
+          alert("Имя и комментарий должны быть не короче 3-х символов");
+        }
+        else {
+          return response.json();
+        }
+      })
       .then(() => {
           fetchPromise();
         })
       .then((data) => {
         commentAddingMessage.style.display = 'none';
         commentForm.style.display = 'block';
-        });
+        nameInputElement.value = "";
+        commentInputElement.value = "";
+        })
+        .catch ((error) => {
+          commentAddingMessage.style.display = 'none';
+          alert("Отсутствует подключение к сети, попробуйте позже!")
+          console.warn(error);
+        })
+        renderComments();
       });
-      renderComments();
+      
 </script>
 </html>
