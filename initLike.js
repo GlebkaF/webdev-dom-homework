@@ -1,6 +1,7 @@
 import renderComments from "./renderComments.js";
 import { getListComments } from "./listComments.js";
 import { commentos } from "./api.js";
+import { comments } from "./script.js";
 
 
 
@@ -39,7 +40,7 @@ const initLikeButtonsListeners = () => {
         })
         .then(() => {
           likeButtonElement.classList.remove('-loading-like');
-          renderComments(commentos, getListComments);
+          renderComments(comments, getListComments);
         });
       });
     }
