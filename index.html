@@ -266,9 +266,15 @@
         console.log(response);
         if (response.status === 201) {
           return response.json();
-        } else {
-          return Promise.reject("Сервер упал");
+        } else if (response.status === 400) {
+          addFormLoad.classList.add('hidden');
+          alert("Имя и комментарий должны быть не короче 3 символов");
+          // addFormLoad.classList.add('hidden');
+          // return Promise.reject("Имя и комментарий должны быть не короче 3 символов");
           // throw new Error("Сервер совсем упал");
+        } else if (response.status === 500) {
+          addFormLoad.classList.add('hidden');
+          alert("Сервер сломался, попробуй позже");
         }
       })
       .then((responseData) => {
@@ -282,7 +288,7 @@
         buttonElemtnt.disabled = true;
       })
       .catch((error) => {
-        alert("Кажется что-то сломалось, попробуй позже");
+        alert("Кажется, у вас сломался интернет, попробуйте позже");
         addFormLoad.classList.add('hidden');
         //TODO: Отправлять с систему сбора ошибок
         console.warn(error);
