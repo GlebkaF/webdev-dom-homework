@@ -1,6 +1,11 @@
 # Проект "Комментарии"
 
-https://glebkaf.github.io/webdev-dom-homework/
+# Ссылка на приложение
+https://andreytsibin.github.io/webdev-dom-homework/
+
+# Параметры для тестирования
+Логин: admin
+Пароль: admin
 
 Верстка для учебного проекта студентов Skypro
 
