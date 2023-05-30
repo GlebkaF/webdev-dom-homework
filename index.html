@@ -81,7 +81,8 @@
     const likes = () => {
     const likeButtons = document.querySelectorAll('.like-button');
         for (const likeButton of likeButtons) {
-            likeButton.addEventListener('click', () => {
+            likeButton.addEventListener('click', (e) => {
+            e.stopPropagation()
             const index = likeButton.dataset.index;
         if (likeButton.classList.contains('-active-like')) {
             comentsOfArr[index].like = Number(comentsOfArr[index].like) -1;
@@ -120,7 +121,7 @@
     }
 
     const answerComment = () => {
-      const comentsElement = document.querySelectorAll('.comment-all')
+      const comentsElement = document.querySelectorAll('.comment')
       for (const comentElement of comentsElement) {
         comentElement.addEventListener("click", () => {
           textareaInputElement.value = `>${comentElement.querySelector('.comment-text').innerHTML
