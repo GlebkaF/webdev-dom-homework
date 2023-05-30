@@ -9,6 +9,9 @@
 
 <body>
   <div class="container">
+    <div>
+      <h3 id="invizDivHeader">Идет загрука комментариев...</h3>
+    </div>
     <ul id="list" class="comments">
       <!-- <li class="comment">
         <div class="comment-header">
@@ -45,7 +48,10 @@
         </div>
       </li> -->
     </ul>
-    <div class="add-form">
+    <div>
+      <h3 id="invizDiv">Загружаю комментарий...</h3>
+    </div>
+    <div id="block-form" class="add-form">
       <input id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
       <textarea id="comment-input" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
         rows="4"></textarea>
@@ -63,6 +69,10 @@
   .error {
     border: 2px solid red;
   }
+
+  .hidden {
+    display: none;
+  }
 </style>
 
 <script>
@@ -75,14 +85,20 @@
   const commentInputElement = document.getElementById("comment-input");
   const deletElement = document.getElementById("delet-button");
   const likeButtonElements = document.querySelectorAll('.like-button');
+  const addFormLoad = document.getElementById('block-form');
+  const invisibleDiv = document.getElementById('invizDiv');
+  const invisibleDivHead = document.getElementById('invizDivHeader');
 
+  // invisibleDivHead.classList.add('hidden');
+  invisibleDiv.classList.add('hidden');
   const getAllComments = () => {
-    const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov/comments", {
-      method: "GET"
-    });
-    fetchPromise.then((response) => {
-      const jsonPromise = response.json();
-      jsonPromise.then((responseData) => {
+    return fetch("https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov1/comments", {
+      method: "GET",
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
         const appComments = responseData.comments.map((comment) => {
           return {
             name: comment.author.name,
@@ -90,13 +106,17 @@
             text: comment.text,
             active: false,
             like: comment.likes,
-          };
+          }
         });
         comments = appComments;
         renderComments();
+        invisibleDivHead.classList.add('hidden');
       });
-    });
   };
+
+
+
+
   getAllComments();
 
   const formatDate = (commentDate) => {
@@ -203,9 +223,8 @@
 
   renderComments();
 
-  ////ниже старый код
 
-  buttonElemtnt.disabled = true;
+
   nameInputElement.addEventListener('input', () => {
     if (nameInputElement.value.trim() !== '') {
       buttonElemtnt.disabled = false;
@@ -230,63 +249,34 @@
 
     // const date = new Date();
     // const formatteDate = date.getDate().toString().padStart(2, '0') + '.' + (date.getMonth() + 1).toString().padStart(2, '0') + '.' + date.getFullYear().toString().slice(-2) + ' ' + date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
-    fetch("https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov/comments", {
+
+
+    addFormLoad.classList.add('hidden');
+    invisibleDiv.classList.remove('hidden');
+
+    fetch("https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov1/comments", {
       method: "POST",
       body: JSON.stringify({
         name: nameInputElement.value,
         text: commentInputElement.value
+      }),
+    })
+      .then((response) => {
+        return response.json();
       })
-    }).then((response) => {
-      response.json().then((responseData) => {
-        getAllComments();
-      });
-    });
+      .then((responseData) => {
+        return getAllComments();
+      })
+      .then((data) => {
+        addFormLoad.classList.remove('hidden');
+        invisibleDiv.classList.add('hidden');
+      })
+
 
     renderComments();
 
 
-    // listElement.innerHTML =
-    //   listElement.innerHTML +
-    //   `<li class="comment">
-    //       <div class="comment-header">
-    //         <div>${nameInputElement.value}</div>
-    //         <div>${formatteDate}</div>
-    //       </div>
-    //       <div class="comment-body">
-    //         <div class="comment-text">
-    //           ${commentInputElement.value}
-    //         </div>
-    //       </div>
-    //       <div class="comment-footer">
-    //         <div class="likes">
-    //           <span class="likes-counter ">0</span>
-    //           <button class="like-button"></button>
-    //         </div>
-    //       </div>
-    //     </li>`
-    //обработчик клика для лайка
-    // initEventListeners();
     countInLike = 0;
-
-
-
-    //приклеиваем новый HTML елемент
-    // comments.push({
-    //   name: nameInputElement.value
-    //     .replaceAll("&", "&amp;")
-    //     .replaceAll("<", "&lt;")
-    //     .replaceAll(">", "&gt")
-    //     .replaceAll('"', "&quot;"),
-    //   date: formatDate,
-    //   text: commentInputElement.value
-    //     .replaceAll("&", "&amp;")
-    //     .replaceAll("<", "&lt;")
-    //     .replaceAll(">", "&gt")
-    //     .replaceAll('"', "&quot;"),
-    //   like: countInLike,
-    //   isLiked: false,
-    // });
-
 
 
     renderComments();
