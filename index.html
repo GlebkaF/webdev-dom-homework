@@ -92,7 +92,7 @@
   // invisibleDivHead.classList.add('hidden');
   invisibleDiv.classList.add('hidden');
   const getAllComments = () => {
-    return fetch("https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov1/comments", {
+    return fetch("https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov/comments", {
       method: "GET",
     })
       .then((response) => {
@@ -254,15 +254,22 @@
     addFormLoad.classList.add('hidden');
     invisibleDiv.classList.remove('hidden');
 
-    fetch("https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov1/comments", {
+    fetch("https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov/comments", {
       method: "POST",
       body: JSON.stringify({
         name: nameInputElement.value,
         text: commentInputElement.value
+        // forceError: true,
       }),
     })
       .then((response) => {
-        return response.json();
+        console.log(response);
+        if (response.status === 201) {
+          return response.json();
+        } else {
+          return Promise.reject("Сервер упал");
+          // throw new Error("Сервер совсем упал");
+        }
       })
       .then((responseData) => {
         return getAllComments();
@@ -270,7 +277,23 @@
       .then((data) => {
         addFormLoad.classList.remove('hidden');
         invisibleDiv.classList.add('hidden');
+        nameInputElement.value = "";
+        commentInputElement.value = "";
+        buttonElemtnt.disabled = true;
       })
+      .catch((error) => {
+        alert("Кажется что-то сломалось, попробуй позже");
+        addFormLoad.classList.add('hidden');
+        //TODO: Отправлять с систему сбора ошибок
+        console.warn(error);
+      })
+      .then((data) => {
+        addFormLoad.classList.remove('hidden');
+        invisibleDiv.classList.add('hidden');
+      })
+
+
+
 
 
     renderComments();
@@ -280,9 +303,9 @@
 
 
     renderComments();
-    nameInputElement.value = "";
-    commentInputElement.value = "";
-    buttonElemtnt.disabled = true;
+    // nameInputElement.value = "";
+    // commentInputElement.value = "";
+    // buttonElemtnt.disabled = true;
     deletElement.value;
 
   });
