@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id = "list" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -47,25 +47,82 @@
       <div class="add-form">
         <input
           type="text"
+          id ="input-name"
+          value=""
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
           type="textarea"
+          id ="textarea-text"
+          value=""
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id = "add-button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
-
+  <style>
+    .error {
+      background-color: red;
+    }
+  </style>
   <script>
     "use strict";
     // Код писать здесь
+
+    const buttonElement = document.getElementById('add-button');
+    const listElement = document.getElementById("list");
+    const nameElement = document.getElementById("input-name");
+    const textElement = document.getElementById("textarea-text");
+    const myDate = new Date().toString('dd.MM.yyyy'); //12.02.22 12:18
+    
+
+
+    buttonElement.addEventListener("click", () => {
+      const oldListHtml = listElement.innerHTML;
+
+      nameElement.classList.remove('error');
+      if (nameElement.value === "") {
+        nameElement.classList.add('error');
+        return;
+      }
+
+      textElement.style.backgroundColor = '';
+      if (textElement.value === "") {
+        textElement.style.backgroundColor = 'red';
+        return;
+      }
+
+      listElement.innerHTML = oldListHtml + 
+      `<li class="comment">
+          <div class="comment-header">
+            <div>${nameElement.value}</div>
+            <div>${myDate}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+
+      nameElement.value = '';
+      textElement.value = '';
+    });
+
+
+
     console.log("It works!");
   </script>
 </html>
