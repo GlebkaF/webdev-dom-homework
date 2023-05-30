@@ -1,10 +1,10 @@
-import { comments } from "./script.js";
+
 import { commentsList } from "./script.js";
 import { initLikesButton } from "./like-button.js";
 import { addReply } from "./add-reply.js";
 
-export const renderComments = () => {
-    const commentsHtml = comments.map((comment, index) => {
+export const renderComments = (comm) => {
+    const commentsHtml = comm.map((comment, index) => {
 
         return `<li class="comment" data-index="${index}">
         <div class="comment-header">

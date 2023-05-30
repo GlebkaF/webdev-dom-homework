@@ -1,6 +1,7 @@
 import { renderComments } from "./render.js";
 import { getData } from "./api.js";
 import { addToList } from "./api.js";
+import { appComments } from "./api.js";
 
 export const addButton = document.querySelector('.add-form-button');
 export const commentName = document.querySelector('.add-form-name');
@@ -19,7 +20,7 @@ postMessage.classList.add('hidden');
 postMessage.textContent = 'Комментарий публикуется...';
 container.appendChild(postMessage);
 
-export let comments = [];
+// let comments = [];
 
 // function getData() {
 
@@ -29,36 +30,49 @@ export let comments = [];
 //         .then((response) => {
 //             return response.json();
 //         })
-getData().then((responseData) => {
-    const appComments = responseData.comments.map((comment) => {
-        return {
-            name: comment.author.name,
-            date: new Date(comment.date).toLocaleString().slice(0, -3),
-            text: comment.text,
-            likes: comment.likes,
-            likeStatus: false,
-        }
-    })
+// getData().then((responseData) => {
+//     const appComments = responseData.comments.map((comment) => {
+//         return {
+//             name: comment.author.name,
+//             date: new Date(comment.date).toLocaleString().slice(0, -3),
+//             text: comment.text,
+//             likes: comment.likes,
+//             likeStatus: false,
+//         }
+//     })
+    // getData();
+    // renderComments(comments);
+    // comments = appComments;
+    // console.log('comments');
+    // console.log(comments);
+    // renderComments(comments);
 
-    comments = appComments;
-    renderComments();
+    // loadingMessage.classList.add('hidden');
+    // addForm.classList.remove('hidden');
+    // postMessage.classList.add('hidden');
 
-    loadingMessage.classList.add('hidden');
-    addForm.classList.remove('hidden');
-    postMessage.classList.add('hidden');
-})
+startPage();
 
 function startPage() {
     commentsList.classList.add('hidden');
     loadingMessage.classList.add('message');
     loadingMessage.classList.remove('hidden');
 
-    getData();
+    getData().then((comments => renderComments(comments)));
+    
+    // comments = appComments;
+    // console.log('comments');
+    // console.log(comments);
+
+    loadingMessage.classList.add('hidden');
+    addForm.classList.remove('hidden');
+    postMessage.classList.add('hidden');
 
     commentsList.classList.remove('hidden');
+
 }
 
-startPage();
+
 
 // const initLikesButton = () => {
 //     const likesButtons = document.querySelectorAll('.like-button');
@@ -172,7 +186,7 @@ startPage();
 //     addReply();
 // }
 
-renderComments();
+renderComments(appComments);
 
 // const addToServer = (comment) => {
 
@@ -277,17 +291,28 @@ addButton.addEventListener('click', (e) => {
     postMessage.classList.remove('hidden');
 
     addToList();
+        addForm.classList.remove('hidden');
+        addButton.removeAttribute('disabled')
+        postMessage.classList.add('hidden');
 })
 
 addForm.addEventListener('keyup', (event) => {
     if (event.keyCode === 13) {
         addToList();
+        addForm.classList.remove('hidden');
+        addButton.removeAttribute('disabled')
+        postMessage.classList.add('hidden');
+
+        // console.log(appComments);
+        // comments = appComments;
+        // console.log('comments');
+        // console.log(comments);
     }
 })
 
 const removeButton = document.querySelector('.remove-form-button');
 
 removeButton.addEventListener('click', () => {
-    comments.pop();
-    renderComments();
+    appComments.pop();
+    renderComments(appComments);
 });

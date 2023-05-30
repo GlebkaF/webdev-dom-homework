@@ -1,5 +1,6 @@
-import { comments } from "./script.js";
+
 import { renderComments } from "./render.js";
+import { appComments } from "./api.js";
 
 export const initLikesButton = () => {
     const likesButtons = document.querySelectorAll('.like-button');
@@ -9,22 +10,22 @@ export const initLikesButton = () => {
             event.stopPropagation();
 
             const index = likesButton.dataset.index;
-            const status = comments[index].likeStatus;
-            const value = +comments[index].likes;
+            const status = appComments[index].likeStatus;
+            const value = +appComments[index].likes;
 
             if (status === '-active-like') {
-                comments[index].likes = value - 1;
-                comments[index].likes
-                comments[index].likeStatus = '';
+                appComments[index].likes = value - 1;
+                appComments[index].likes
+                appComments[index].likeStatus = '';
                 likesButton.classList.remove('-active-like');
             } else {
-                comments[index].likes = value + 1;
-                console.log(comments[index].likes)
-                comments[index].likeStatus = '-active-like';
+                appComments[index].likes = value + 1;
+                console.log(appComments[index].likes)
+                appComments[index].likeStatus = '-active-like';
                 likesButton.classList.add('-active-like');
             }
 
-            renderComments();
+            renderComments(appComments);
         })
     }
 }

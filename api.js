@@ -6,6 +6,8 @@ import { loadingMessage } from "./script.js";
 import { formatDate } from "./format-date.js";
 import { renderComments } from "./render.js";
 
+export let appComments = [];
+
 export function getData() {
 
     return fetch("https://webdev-hw-api.vercel.app/api/v1/daria/comments", {
@@ -14,6 +16,21 @@ export function getData() {
         .then((response) => {
             return response.json();
         })
+        .then((responseData) => {
+            appComments = responseData.comments.map((comment) => {
+
+                return {
+                    name: comment.author.name,
+                    date: new Date(comment.date).toLocaleString().slice(0, -3),
+                    text: comment.text,
+                    likes: comment.likes,
+                    likeStatus: false,
+                }
+            })
+            console.log(appComments);
+            return appComments;
+        })
+
 }
 
 export const addToServer = (comment) => {
