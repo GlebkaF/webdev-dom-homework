@@ -183,12 +183,12 @@ const renderComments = () => {
       commentForm.parentNode.insertBefore(commentAddingMessage, commentForm); 
       
       nameInputElement.classList.remove("error");
-      if (nameInputElement.value === "" & nameInputElement.value.length < 3) {
+      if (nameInputElement.value === "" && nameInputElement.value.length < 3) {
         nameInputElement.classList.add("error");
         return;
       }
       commentInputElement.classList.remove("error");
-      if (commentInputElement.value === "" & commentInputElement.value.length < 3) {
+      if (commentInputElement.value === "" && commentInputElement.value.length < 3) {
         commentInputElement.classList.add("error");
         return;
       }
