@@ -1,6 +1,6 @@
 import { comments } from "./comments.js";
 import { renderComments } from "./renderComments.js";
-import getCommentsList from "./CommentsList.js"
+import { getCommentsList } from "./CommentsList.js";
 
 
 function getFromApiFirstTime(data, loadingElem, render) {
@@ -18,8 +18,7 @@ function getFromApiFirstTime(data, loadingElem, render) {
         }
     }).then((responceData) => {
         data = responceData.comments;
-        console.log(data);
-        render();
+        render;
     }).catch((error) => {
         if (error.message === "Ошибка 500") {
             console.log(error);

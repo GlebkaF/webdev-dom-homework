@@ -55,4 +55,4 @@ function getActualDate(date) {
 };
 
 
-export default getCommentsList;
+export { getCommentsList };
