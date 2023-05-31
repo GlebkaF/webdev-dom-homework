@@ -1,11 +1,12 @@
 "use strict";
 // Код писать здесь
 let messages = [];
+const appElement = document.getElementById("app")
 const listElement = document.getElementById("list");
 const addFormElement = document.getElementById("addForm");
 const loadingElement = document.querySelector(".loading");
 import { getAPI } from "./api.js";
-import renderMessages from "./render.js";
+import renderMain from "./render.js";
 
 const getCommentDataMain = (comment) => {
   return {
@@ -19,7 +20,7 @@ const getCommentDataMain = (comment) => {
   };
 };
 const renderMainList = () => {
-  renderMessages(messages, getCommentListMain, listElement);
+  renderMain(messages, getCommentListMain, appElement);
   initLikeButtonsListeners();
   initCorrectButtonsListeners();
   initAnswersListeners();
