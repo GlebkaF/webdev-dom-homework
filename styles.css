@@ -53,6 +53,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 24px;
+    margin-bottom: 20px;
   }
 
   .comment {
@@ -120,7 +121,11 @@ body {
   }
 
   .add-form-name,
-  .add-form-text {
+  .add-form-text,
+  .add-form-login,
+  .add-form-password,
+  .add-form-name,
+  .add-form-nameReg {
     font-size: 16px;
     font-family: Helvetica;
     border-radius: 8px;
@@ -131,8 +136,10 @@ body {
     width: 300px;
     padding: 11px 22px;
   }
-
-  .add-form-text {
+  .add-form-password,
+  .add-form-login,
+  .add-form-text,
+  .add-form-nameReg {
     margin-top: 12px;
     padding: 22px;
     resize: none;
@@ -143,9 +150,11 @@ body {
     justify-content: space-between;
   }
  
-  .edit-button,
-  .del-form-button,
-  .add-form-button {
+  .delete-button,
+  .enter-form-button,
+  .reg-form-button,
+  .add-form-button,
+  .exit-button {
     margin-top: 24px;
     font-size: 24px;
     padding: 10px 20px;
@@ -153,6 +162,17 @@ body {
     border: none;
     border-radius: 18px;
     cursor: pointer;
+  }
+
+  .reg-form-button,
+  .enter-form-button {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  .enter-form-authorization,
+  .switch-to-reg-form {
+    text-align: center;
+    text-decoration: underline;
   }
   .edit-button{
     margin-top: 0;
@@ -163,9 +183,7 @@ body {
     border: none;
     resize: none;
   }
-  .del-form-button{
-    width: 300px;
-  }
+
   .add-form-button:hover {
     opacity: 0.9;
   }
