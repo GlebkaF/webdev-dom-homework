@@ -258,8 +258,8 @@
       method: "POST",
       body: JSON.stringify({
         name: nameInputElement.value,
-        text: commentInputElement.value
-        // forceError: true,
+        text: commentInputElement.value,
+        forceError: true,
       }),
     })
       .then((response) => {
@@ -267,14 +267,17 @@
         if (response.status === 201) {
           return response.json();
         } else if (response.status === 400) {
-          addFormLoad.classList.add('hidden');
-          alert("Имя и комментарий должны быть не короче 3 символов");
+          // alert("Имя и комментарий должны быть не короче 3 символов");
+          throw new Error("Неверный запрос")
           // addFormLoad.classList.add('hidden');
           // return Promise.reject("Имя и комментарий должны быть не короче 3 символов");
-          // throw new Error("Сервер совсем упал");
+
         } else if (response.status === 500) {
-          addFormLoad.classList.add('hidden');
-          alert("Сервер сломался, попробуй позже");
+          // alert('Сервер не доступен, попробуй позже...');
+          throw new Error("Ошибка сервера")
+          // throw new Error("Сервер совсем упал");
+        } else {
+          alert("отсутствует интернет")
         }
       })
       .then((responseData) => {
@@ -288,9 +291,20 @@
         buttonElemtnt.disabled = true;
       })
       .catch((error) => {
-        alert("Кажется, у вас сломался интернет, попробуйте позже");
+        // alert("Кажется, у вас сломался интернет, попробуйте позже");
         addFormLoad.classList.add('hidden');
         //TODO: Отправлять с систему сбора ошибок
+        if (error.message === "Ошибка сервера") {
+          alert('Сервер не доступен, попробуй позже...');
+          return;
+        };
+        if (error.message === "Неверный запрос") {
+          alert("Имя и комментарий должны быть не короче 3 символов");
+          return;
+        } else {
+          alert("Кажется, у вас сломался интернет, попробуйте позже")
+        }
+
         console.warn(error);
       })
       .then((data) => {
