@@ -9,7 +9,7 @@ import { renderCommentList } from "./render.js";
 
     
 export const getComments = () => {
-    const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/valeriy-poletaev/comments",
+    const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v2/valeriy-poletaev/comments",
       {
         method: "GET"
       });
@@ -40,7 +40,7 @@ export const getComments = () => {
     
 
     export const postComment = (data) => {
-      const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/valeriy-poletaev/comments",
+      const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v2/valeriy-poletaev/comments",
         {
           method: "POST",
           body: JSON.stringify({
@@ -73,4 +73,65 @@ export const getComments = () => {
         });
         getComments();
       };
+
+
+      export const getUsers = () => {
+        const fetchPromise = fetch("https://wedev-api.sky.pro/api/user",
+          {
+            method: "GET"
+          });
+
+          fetchPromise.then((response) => {
+            const jsonPromise = response.json();
+    
+          jsonPromise.then((responseData) => {
+            console.log(responseData);
+              
+            });
+          });
+          };
+          
+
+          export const postRegistration = (data) => {
+            const fetchPromise = fetch(" https://wedev-api.sky.pro/api/user",
+              {
+                method: "POST",
+                body: JSON.stringify({
+                login: login.value,
+                name: registrationName.value,
+                password: password.value
+              })
+            });
+            fetchPromise.then((response) => {
+              const jsonPromise = response.json();
+      
+            jsonPromise.then((responseData) => {
+              console.log(responseData);
+                
+              });
+            });
+          };
+
+          export const postLogIn = (login, password) => {
+            const fetchPromise = fetch("  https://wedev-api.sky.pro/api/user/login",
+              {
+                method: "POST",
+                body: JSON.stringify({
+                login,
+                password
+              })
+            });
+            fetchPromise.then((response) => {
+              const jsonPromise = response.json();
+            });
+              getUsers();
+            };
+          
+          
+
+          
+    
+        
+
+
 
