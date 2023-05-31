@@ -39,6 +39,7 @@
   const commentInputElement = document.getElementById("comment-input");
   const commentForm = document.getElementById("form-comment");
   const commentsContainer = document.getElementById("commentsContainer");
+  const newContainerComments = document.getElementById("container")
 
   commentsContainer.style.display = 'none';
   const commentAdding = document.createElement('div'); 
@@ -180,19 +181,19 @@ const renderComments = () => {
       const commentAddingMessage = document.createElement('div'); 
       commentAddingMessage.innerText = 'Комментарий добавляется...';
       commentForm.parentNode.insertBefore(commentAddingMessage, commentForm); 
-
-      let date = new Date();
-      let likes = 0;
+      
       nameInputElement.classList.remove("error");
-      if (nameInputElement.value === "") {
+      if (nameInputElement.value === "" && nameInputElement.value.length < 3) {
         nameInputElement.classList.add("error");
         return;
       }
       commentInputElement.classList.remove("error");
-      if (commentInputElement.value === "") {
+      if (commentInputElement.value === "" && commentInputElement.value.length < 3) {
         commentInputElement.classList.add("error");
         return;
       }
+      let date = new Date();
+      let likes = 0;
       comments.push({ 
       name: nameInputElement.value
       .replaceAll("<", "&lt;")
@@ -208,18 +209,46 @@ const renderComments = () => {
         method: "POST",
         body: JSON.stringify({
           name: nameInputElement.value,  
-          text: commentInputElement.value
+          text: commentInputElement.value,
+          forceError: false,
         })
       })
-      .then((response) => (response.json()))
+      .then((response) => {
+        if (response.status === 500) {
+          throw new Error("Сервер упал");
+        }
+        if (response.status === 400) {
+          throw new Error("Неверный запрос");
+        }
+        else {
+          return response.json();
+        }
+      })
       .then(() => {
           fetchPromise();
         })
       .then((data) => {
         commentAddingMessage.style.display = 'none';
         commentForm.style.display = 'block';
+        nameInputElement.value = "";
+        commentInputElement.value = "";
+        renderComments();
+        })
+        .catch((error) => {
+        commentAddingMessage.style.display = "none";
+        commentForm.style.display = "block";
+        if (error.message === "Неверный запрос") {
+        alert("Имя и комментарий должны быть не короче 3-х символов");
+        } 
+        if (error.message === "Сервер упал") {
+        alert("Извините сервер сломался, попробуйте позже");
+        }
+        else {
+        alert("Отсутствует подключение к сети, попробуйте позже!");
+        }
+        console.warn(error);
         });
       });
-      renderComments();
+       
 </script>
 </html>
