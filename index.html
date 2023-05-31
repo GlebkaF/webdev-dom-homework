@@ -182,18 +182,18 @@ const renderComments = () => {
       commentAddingMessage.innerText = 'Комментарий добавляется...';
       commentForm.parentNode.insertBefore(commentAddingMessage, commentForm); 
       
-      let date = new Date();
-      let likes = 0;
       nameInputElement.classList.remove("error");
-      if (nameInputElement.value === "") {
+      if (nameInputElement.value === "" & nameInputElement.value.length < 3) {
         nameInputElement.classList.add("error");
         return;
       }
       commentInputElement.classList.remove("error");
-      if (commentInputElement.value === "") {
+      if (commentInputElement.value === "" & commentInputElement.value.length < 3) {
         commentInputElement.classList.add("error");
         return;
       }
+      let date = new Date();
+      let likes = 0;
       comments.push({ 
       name: nameInputElement.value
       .replaceAll("<", "&lt;")
@@ -218,7 +218,7 @@ const renderComments = () => {
           throw new Error("Извините сервер упал, попробуйте позже");
         }
         if (response.status === 400) {
-          alert("Имя и комментарий должны быть не короче 3-х символов");
+          throw new Error("Неверный запрос");
         }
         else {
           return response.json();
@@ -232,14 +232,19 @@ const renderComments = () => {
         commentForm.style.display = 'block';
         nameInputElement.value = "";
         commentInputElement.value = "";
-        })
-        .catch ((error) => {
-          commentAddingMessage.style.display = 'none';
-          alert("Отсутствует подключение к сети, попробуйте позже!")
-          console.warn(error);
-        })
         renderComments();
+        })
+        .catch((error) => {
+        commentAddingMessage.style.display = "none";
+        commentForm.style.display = "block";
+        if (error.message === "Неверный запрос") {
+        alert("Имя и комментарий должны быть не короче 3-х символов");
+        } else {
+        alert("Отсутствует подключение к сети, попробуйте позже!");
+        }
+        console.warn(error);
+        });
       });
-      
+       
 </script>
 </html>
