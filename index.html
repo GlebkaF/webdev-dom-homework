@@ -50,7 +50,9 @@
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
       <div class="add-form-row">
         <button class="add-form-button">Написать</button>
+        <button class="delete-form-button">Удалить последний комментарий</button>
       </div>
+
     </div>
   </div>
 </body>
@@ -62,11 +64,15 @@
   const inputTextElement = document.querySelector('.add-form-text');
   const buttonElement = document.querySelector('.add-form-button');
   const commentElement = document.querySelector('.comments');
+  const buttonElementDel = document.querySelector('.delete-form-button');
 
   const currentDate = new Date().getDate().toString().padStart(2, '0') + '.' +
-    new Date().getMonth().toString().padStart(2, '0') + '.' +
+    (new Date().getMonth() + 1).toString().padStart(2, '0') + '.' +
     new Date().getFullYear().toString().slice(-2) + " " +
     new Date().toLocaleTimeString().slice(0, -3);
+
+  // const currentDate = new Date().toLocaleDateString('default', {day: '2-digit', month: '2-digit', year: '2-digit'}) +
+  // " "+ new Date().toLocaleTimeString().slice(0,-3);
 
 
 
@@ -85,6 +91,14 @@
       inputTextElement.style.backgroundColor = 'red';
       return;
     }
+
+    // //dop
+    // inputNameElement.addEventListener("input", checkInputs);
+    //     inputTextElement.addEventListener("input", checkInputs);
+    //     buttonElement.addEventListener("click", () => {
+    //       if (inputNameElement.value === "" || inputTextElement.value === "") {
+    //         return;
+    //       });
 
 
     commentElement.innerHTML =
@@ -109,7 +123,14 @@
     inputNameElement.value = "";
     inputTextElement.value = "";
 
+    //удаление последнего комментари
+    // buttonElementDel.addEventListener("click", () => {
+    //   /////const deleteLastElement =  lastIndexOf.commentElement.innerHTML.remove();
+    //    const lastElement = commentElement.innerHTML.lastIndexOf(commentElement);
+    //    lastElement.remove();
+    // });
   });
+
 
    //console.log("It works!");
 </script>
