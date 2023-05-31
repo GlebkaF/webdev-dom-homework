@@ -215,7 +215,7 @@ const renderComments = () => {
       })
       .then((response) => {
         if (response.status === 500) {
-          throw new Error("Извините сервер упал, попробуйте позже");
+          throw new Error("Сервер упал");
         }
         if (response.status === 400) {
           throw new Error("Неверный запрос");
@@ -239,7 +239,11 @@ const renderComments = () => {
         commentForm.style.display = "block";
         if (error.message === "Неверный запрос") {
         alert("Имя и комментарий должны быть не короче 3-х символов");
-        } else {
+        } 
+        if (error.message === "Сервер упал") {
+        alert("Извините сервер сломался, попробуйте позже");
+        }
+        else {
         alert("Отсутствует подключение к сети, попробуйте позже!");
         }
         console.warn(error);
