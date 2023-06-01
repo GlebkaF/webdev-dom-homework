@@ -178,7 +178,7 @@
       if (response.status === 201) {
         return response.json();
       } else if (response.status === 400) {
-        alert("Имя и комментарий не должны быть меньше 3х символов");
+        throw new Error("Имя и комментарий не должны быть меньше 3х символов");
       } else {
         throw new Error("Сервер упал");
       }
@@ -195,7 +195,7 @@
     .catch((error) => {
       buttonElement.disabled = false;
       buttonElement.textContent = "Написать";
-      alert("Кажется что-то пошло не так, попробуй позже");
+      alert(Error);
       console.warn(error);
     });
 
