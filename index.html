@@ -43,7 +43,18 @@
       }
     ).then((response) => {
       response.json().then((responseData) => {
-        comments = responseData.comments;
+        // const date = new Date();
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: new Date(comment.date),
+            text: comment.text,
+            likes: comment.likes,
+            isLiked: false,
+          };
+        });
+
+        comments = appComments;
         renderComments();
       });
     });
@@ -54,7 +65,7 @@
       const commentsHtml = comments.map((comment, index) => {
         return `<li class="comment">
           <div class="comment-header">
-            <div>${comment.author.name}</div>
+            <div>${comment.name}</div>
             <div>${comment.date}</div>
           </div>
           <div class="comment-body">
@@ -119,8 +130,6 @@
         return;
       }
 
-      const date = new Date();
-
       fetch(
       'https://wedev-api.sky.pro/api/v1/maksim-balyaev/comments',
       {
@@ -144,6 +153,29 @@
         });
       });
 
+      // fetch(
+      //   'https://wedev-api.sky.pro/api/v1/maksim-balyaev/comments',
+      //   {
+      //     method: 'GET'
+      //   }
+      // ).then((response) => {
+      //   response.json().then((responseData) => {
+      //     const date = new Date();
+      //     const appComments = responseData.comments.map((comment) => {
+      //       return {
+      //         name: comment.author.name,
+      //         date: new Date(comment.date),
+      //         text: comment.text,
+      //         likes: comment.likes,
+      //         isLiked: false,
+      //       };
+      //     });
+      
+      //     comments = appComments;
+      //     renderComments();
+      //   });
+      // });
+
       // comments.push({
       //   name: inputName.value
       //   .replaceAll("&", "&amp;")
@@ -165,6 +197,29 @@
       inputName.value = '';
       inputComment.value = '';
 
+    });
+
+    fetch(
+        'https://wedev-api.sky.pro/api/v1/maksim-balyaev/comments',
+        {
+          method: 'GET'
+        }
+    ).then((response) => {
+        response.json().then((responseData) => {
+          const date = new Date();
+          const appComments = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: new Date(comment.date),
+              text: comment.text,
+              likes: comment.likes,
+              isLiked: false,
+            };
+          });
+      
+          comments = appComments;
+          renderComments();
+        });
     });
 
   </script>
