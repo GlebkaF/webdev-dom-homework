@@ -8,62 +8,68 @@ const comments = document.querySelector('.comments');
 const delButton = form.querySelector('.del-form-button');
 const boxOfComments = document.querySelector('.comments');
 const boxOfCommentsTexts = boxOfComments.querySelectorAll('.comment')
+const addForm = document.querySelector('.add-form')
+const loader = document.querySelector('.loader');
 
 
-const usersComments = [
-  {
-    name: "Глеб Фокин",
-    date: "12.02.22 12:18",
-    comment: "Это будет первый комментарий на этой странице",
-    likes: "3",
-    Iliked: false,
-    isEdit: false
-  },
-  {
-    name: "Варвара Н.",
-    date: "13.02.22 19:22",
-    comment: "Мне нравится как оформлена эта страница! ❤",
-    likes: "75",
-    Iliked: false,
-    isEdit: false
-  },
-  {
-    name: "Анна",
-    date: "20.05.23 21:18",
-    comment: "Супер!",
-    likes: "1",
-    Iliked: true,
-}
-
-]
-
+usersComments = []
 
 
 
 //Редактирование и добавление комментария
+function getComments () {
+  const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/anna-makhortova/comments", {
+    method: "GET"
+  });
+  fetchPromise.then((response) => {
+    const jsonPromise = response.json();
+    jsonPromise.then((responseData) => {
+      usersComments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: new Date(comment.date),
+          text: comment.text,
+          likes: comment.likes,
+          isLiked: comment.isLiked
+        }
+      });
+      loadedComment = false
+      renderForm(loadedComment)
+      renderComments();
+    });
+  });
+}
+
 function addNewComment() {
-    const dateNow = new Date();
-    usersComments.push({
-        name: `${newName.value}`.replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-        date: `${formatDate(dateNow)}`,
-        comment: `${newComment.value}`
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replace("|", "<div class='quote'>")
-        .replace("|", "</div>"),
-        likes: "0",
-        Iliked: false,
-        isEdit: false
-    })
+  const dateNow = new Date();
+let loadedComment = true
+renderForm(loadedComment)
+fetch("https://webdev-hw-api.vercel.app/api/v1/anna-makhortova/comments", {
+method: "POST",
+body: JSON.stringify({
+"text": newComment.value.replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replace("|", "<div class='quote'>")
+      .replace("|", "</div>"),
+"name": newName.value.replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;"),
+})}).then((response) => {
+  response.json().then((responseData) => {
+    getComments()
+      renderComments();
+
+  })
+})
     cleareInputs()
       renderComments()
       commentClickListener()
 }
+
+getComments()
 
 function formatDate(date) {
 
@@ -103,7 +109,7 @@ const commentClickListener = () => {
     for (const comment of boxOfCommentsTexts) {
       comment.addEventListener('click', () => {
         newComment.setAttribute('style', 'white-space: pre-line;');
-        const replace = `${usersComments[comment.dataset.id].comment} \r\n \r\n ${usersComments[comment.dataset.id].name}`
+        const replace = `${usersComments[comment.dataset.id].text} \r\n \r\n ${usersComments[comment.dataset.id].name}`
         newComment.value = `| ${replace} \r\n\|`
       })
     }
@@ -116,13 +122,18 @@ const likeButtons = document.querySelectorAll('.likes');
 
   for (const likeButton of likeButtons) {
     likeButton.addEventListener('click', (e) => {
-      (usersComments[e.target.dataset.id].Iliked) ? delLikes(e) : addLikes(e);
-    renderComments();
-    })
+      e.stopPropagation()
+      const comment = usersComments[e.target.dataset.id];
+        if (comment.isLiked) {
+          delLikes(e);
+        } else {
+          addLikes(e);
+        }
 
-  }
+       renderComments();
+})
+
 }
-
 newName.addEventListener('input', function () {
     if (newName.value.length < 2 || newComment.value.length < 5) {
         addButton.setAttribute('disabled', 'disabled')
@@ -164,22 +175,28 @@ delButton.addEventListener('click', function () {
 
 //Оставлять комментарии
 const renderComments = () => {
-    const commentsHtml = usersComments.map((user, index) => {
-        (user.Iliked) ? Iliked = '-active-like' : Iliked = '';
-        return `<li class="comment" data-id="${index}">
+    const commentsHtml = usersComments
+    .map((comment, id) => {
+      let isLiked = ''
+      if (comment.isLiked) {
+        isLiked = '-active-like';
+      }
+
+      date = formatDate(comment.date)
+      return `<li class="comment" data-id="${id}">
         <div class="comment-header">
-          <div>${user.name}</div>
-          <div>${user.date}</div>
+          <div>${comment.name}</div>
+          <div>${date}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
-            ${user.comment}
+            ${comment.text}
           </div>
         </div>
         <div class="comment-footer">
           <div class="likes">
-            <span class="likes-counter">${user.likes}</span>
-            <button class="like-button ${Iliked}" data-id="${index}"></button>
+            <span class="likes-counter">${comment.likes}</span>
+            <button class="like-button ${isLiked}" data-id="${id}"></button>
           </div>
         </div>
       </li>`;
@@ -190,16 +207,26 @@ const renderComments = () => {
     };
     renderComments()
 
+    function renderForm(loadedComment) {
+      if (loadedComment == true){
+        addForm.classList.add('hide')
+        loader.classList.remove('hide')
+      } if(loadedComment == false){
+        loader.classList.add('hide')
+        addForm.classList.remove('hide')
+      }
+    }
+
 
 
 
 //Лайки
 const addLikes = (e) => {
     usersComments[e.target.dataset.id].likes = Number(usersComments[e.target.dataset.id].likes) + 1;
-    usersComments[e.target.dataset.id].Iliked = true;
+    usersComments[e.target.dataset.id].isLiked  = true;
 }
 
 const delLikes = (e) => {
     usersComments[e.target.dataset.id].likes = Number(usersComments[e.target.dataset.id].likes) - 1;
-    usersComments[e.target.dataset.id].Iliked = false;
-}
+    usersComments[e.target.dataset.id].isLiked = false;
+  }
