@@ -48,12 +48,24 @@
   const loadingCommentElement = document.getElementById('loadingComment');
   const addFormElement = document.getElementById('addForm')
 
-  loadingCommentElement.style.display = 'none';
-
-  //  Получаем данные из API(Сервера)
-
+//  Массив в который будем рендерить полученные данные
   let comments = [];
 
+// Убираем обработчик загрузки с экрана
+  loadingCommentElement.style.display = 'none';
+
+  // Функция обработчика даты
+  const DateFormatComment = (commentDate) => {
+    const dateComment = new Date(commentDate);
+      const formatDate = dateComment.getDate().toString().padStart(2, '0') + '.' +
+        (dateComment.getMonth() + 1).toString().padStart(2, '0') + '.' +
+        dateComment.getFullYear().toString().slice(-2) + ' ' +
+        dateComment.getHours().toString().padStart(2, '0') + ':' +
+        dateComment.getMinutes().toString().padStart(2, '0');
+        return formatDate
+  }
+  
+  //  Получаем данные из API(Сервера)
   const fetchAndRenderComments = () => {
     return fetch(
       'https://wedev-api.sky.pro/api/v1/alexey-tsukanov/comments',
@@ -68,11 +80,7 @@
           const dateComment = new Date(comment.date);
           return {
             name: comment.author.name,
-            date: dateComment.getDate().toString().padStart(2, '0') + '.' +
-              (dateComment.getMonth() + 1).toString().padStart(2, '0') + '.' +
-              dateComment.getFullYear().toString().slice(-2) + ' ' +
-              dateComment.getHours().toString().padStart(2, '0') + ':' +
-              dateComment.getMinutes().toString().padStart(2, '0'),
+            date: DateFormatComment(comment.date),
             textComment: comment.text,
             likes: comment.likes,
             isActiveLike: false,
@@ -92,14 +100,6 @@
     // Добвляю фукнцию для поторного вызова в случае ошибки от сервера
     const postComment = () => {
 
-      // Добавляем дату нового комментария
-      const dateComment = new Date();
-      const formatDate = dateComment.getDate().toString().padStart(2, '0') + '.' +
-        (dateComment.getMonth() + 1).toString().padStart(2, '0') + '.' +
-        dateComment.getFullYear().toString().slice(-2) + ' ' +
-        dateComment.getHours().toString().padStart(2, '0') + ':' +
-        dateComment.getMinutes().toString().padStart(2, '0');
-
       // Защащаем ввод данных
       const protectionHtml = (string) => {
         return string
@@ -108,8 +108,8 @@
           .replaceAll(">", "&gt;")
           .replaceAll('"', "&quot;")
       };
-      // Добавляем новый комменрарий в API
 
+      // Добавляем новый комменрарий в API
       return fetch(
         'https://wedev-api.sky.pro/api/v1/alexey-tsukanov/comments',
         {
@@ -164,7 +164,6 @@
   });
 
   // Активность кнопки "Написать"
-
   buttonElement.disabled = true;
 
   elementName.addEventListener('input', () => {
@@ -176,7 +175,6 @@
   });
 
   //Удаление последнего комментария
-
   const deleteComment = document.getElementById('delComment');
   deleteComment.addEventListener('click', () => {
     const lastCommentIndex = listElement.innerHTML.lastIndexOf(`<li class="comment">`);
@@ -188,7 +186,6 @@
   });
 
   // Добавляем фукцию активности лайка
-
   const like = () => {
     const likeButtons = document.querySelectorAll('.like-button');
     for (const likeButton of likeButtons) {
@@ -209,7 +206,6 @@
   };
 
   // Добавляю обработчик клика на комментарий (ответ на комментарий)
-
   const initAnswer = () => {
     const commentsElements = document.querySelectorAll(".comment");
     for (const commentElement of commentsElements) {
@@ -229,7 +225,6 @@
   }
 
   // создаем рендер фукцию для добавления разметки html из JS
-
   const renderComments = () => {
 
     const commentsHtml = comments.map((comment, index) => {
@@ -256,15 +251,11 @@
     listElement.innerHTML = commentsHtml;
 
     loadingListElement.style.display = 'none';
-
     loadingCommentElement.style.display = 'none';
     addFormElement.style.display = 'flex';
 
-
     elementName.value = '';
     elementComment.value = '';
-
-
 
     like();
     initAnswer();
@@ -273,9 +264,6 @@
   fetchAndRenderComments();
 
   console.log("It works!");
-  // _______________________________________________
-
-
 
 </script>
 
