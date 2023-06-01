@@ -86,64 +86,74 @@
   // Добавляем обработчик клика на кнопку "Написать"
 
   buttonElement.addEventListener('click', () => {
-
     loadingCommentElement.style.display = 'block';
     addFormElement.style.display = 'none';
 
-    elementName.classList.remove('error');
-    elementComment.classList.remove('error');
-    if (elementName.value === '') {
-      elementName.classList.add('error')
-      return
-    }
-    if (elementComment.value === '') {
-      elementComment.classList.add('error')
-      return
+    // Добвляю фукнцию для поторного вызова в случае ошибки от сервера
+    const postComment = () => {
+
+      // Добавляем дату нового комментария
+      const dateComment = new Date();
+      const formatDate = dateComment.getDate().toString().padStart(2, '0') + '.' +
+        (dateComment.getMonth() + 1).toString().padStart(2, '0') + '.' +
+        dateComment.getFullYear().toString().slice(-2) + ' ' +
+        dateComment.getHours().toString().padStart(2, '0') + ':' +
+        dateComment.getMinutes().toString().padStart(2, '0');
+
+      // Защащаем ввод данных
+      const protectionHtml = (string) => {
+        return string
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+      };
+      // Добавляем новый комменрарий в API
+
+      return fetch(
+        'https://wedev-api.sky.pro/api/v1/alexey-tsukanov/comments',
+        {
+          method: 'POST',
+          body: JSON.stringify(
+            {
+              text: protectionHtml(elementComment.value),
+              name: protectionHtml(elementName.value),
+              forceError: true,
+            })
+        })
+        .then((response) => {
+          if (response.status === 201) {
+            elementName.classList.remove('error');
+            elementComment.classList.remove('error');
+            return response.json()
+          } if (response.status === 400) {
+            throw new Error("Плохой запрос")
+            alert("Вы ввели слишком короткое имя или текст комментария");
+          } else {
+            throw new Error('Сервер не отвечает')
+          }
+        })
+        .then((responseData) => {
+          comments = responseData.comments;
+          fetchAndRenderComments();
+          elementName.value = '';
+          elementComment.value = '';
+        })
+        .catch((error) => {
+          loadingCommentElement.style.display = 'none';
+          addFormElement.style.display = 'flex';
+          if (error.message === "Плохой запрос") {
+            elementComment.classList.add('error');
+            elementName.classList.add('error');
+            alert('Вы ввели слишком короткое имя или текст комментария')
+          } if (error.message === "Сервер не отвечает") {
+            postComment();
+          }
+        })
+      buttonElement.disabled = true;
     };
-
-    // Добавляем дату нового комментария
-
-    const dateComment = new Date();
-    const formatDate = dateComment.getDate().toString().padStart(2, '0') + '.' +
-      (dateComment.getMonth() + 1).toString().padStart(2, '0') + '.' +
-      dateComment.getFullYear().toString().slice(-2) + ' ' +
-      dateComment.getHours().toString().padStart(2, '0') + ':' +
-      dateComment.getMinutes().toString().padStart(2, '0');
-
-    // Защащаем ввод данных
-
-    const protectionHtml = (string) => {
-      return string
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-    };
-
-    // Добавляем новый комменрарий в API
-
-    return fetch(
-      'https://wedev-api.sky.pro/api/v1/alexey-tsukanov/comments',
-      {
-        method: 'POST',
-        body: JSON.stringify(
-          {
-            text: protectionHtml(elementComment.value), name: protectionHtml(elementName.value),
-          })
-      })
-      .then((response) => {
-        return response.json()
-      })
-      .then((responseData) => {
-        comments = responseData.comments;
-        fetchAndRenderComments()
-      })
-
-    buttonElement.disabled = true;
-
-    renderComments();
-    fetchAndRenderComments();
-  });
+    postComment()
+  })
 
   // Отправка коммента с помощью кнопки Enter
 
@@ -227,7 +237,6 @@
       if (comments[index].isActiveLike) {
         likeActive = '-active-like';
       }
-
       return `<li class="comment">
 <div class="comment-header">
   <div>${comment.name}</div>
@@ -248,11 +257,14 @@
 
     loadingListElement.style.display = 'none';
 
+    loadingCommentElement.style.display = 'none';
+    addFormElement.style.display = 'flex';
+
+
     elementName.value = '';
     elementComment.value = '';
 
-    loadingCommentElement.style.display = 'none';
-    addFormElement.style.display = 'flex';
+
 
     like();
     initAnswer();
@@ -261,6 +273,9 @@
   fetchAndRenderComments();
 
   console.log("It works!");
+  // _______________________________________________
+
+
 
 </script>
 
