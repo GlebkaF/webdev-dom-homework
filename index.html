@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="list" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -47,25 +47,106 @@
       <div class="add-form">
         <input
           type="text"
+          id="name-input"
+          value=""
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
           type="textarea"
+          id="comment-input"
+          value=""
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="add-button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
+  <style>
+    .error {
+      background-color: darkred;
+    }
+  </style>
 
   <script>
     "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const buttonElement = document.getElementById("add-button");
+    const listElement = document.getElementById("list");
+    const inputNameElement = document.getElementById("name-input");
+    const inputTextElement = document.getElementById("comment-input");
+
+    function toggleButton() {
+      if (inputNameElement.value && inputTextElement.value) {
+        buttonElement.disabled = false;
+        buttonElement.classList.remove("disabled");
+      } else {
+        buttonElement.disabled = true;
+        buttonElement.classList.add("disabled");
+      }
+    }
+
+    inputNameElement.addEventListener("input", toggleButton);
+    inputTextElement.addEventListener("input", toggleButton);
+
+    buttonElement.addEventListener("click", () => {
+      inputNameElement.classList.remove("error");
+      inputTextElement.classList.remove("error");
+
+      if (inputNameElement.value === "") {
+        inputNameElement.classList.add("error");
+        return;
+      }
+
+      if (inputTextElement.value === "") {
+        inputTextElement.classList.add("error");
+        return;
+      }
+
+      const currentDate = new Date().toLocaleString("ru-RU", {
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        day: "2-digit",
+        month: "2-digit",
+        year: "2-digit",
+      });
+
+      listElement.innerHTML += `
+    <li class="comment">
+      <div class="comment-header">
+        <div>${inputNameElement.value}</div>
+        <div>${currentDate}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">
+          ${inputTextElement.value}
+        </div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">0</span>
+          <button class="like-button -active-like"></button>
+        </div>
+      </div>
+    </li>
+  `;
+
+      inputNameElement.value = "";
+      inputTextElement.value = "";
+      buttonElement.disabled = true;
+      buttonElement.classList.add("disabled");
+    });
+    inputTextElement.addEventListener("keyup", (event) => {
+      if (event.keyCode === 13 && !buttonElement.disabled) {
+        event.preventDefault();
+        buttonElement.click();
+      }
+    });
   </script>
 </html>
+<!-- 
