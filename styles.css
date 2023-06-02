@@ -22,7 +22,8 @@ body {
   }
 
   .comment,
-  .add-form {
+  .add-form,
+  .login-form {
     width: 596px;
     box-sizing: border-box;
     background: radial-gradient(
@@ -92,7 +93,8 @@ body {
     background-image: url("data:image/svg+xml,%3Csvg width='22' height='20' viewBox='0 0 22 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15.95 0C14.036 0 12.199 0.882834 11 2.26703C9.801 0.882834 7.964 0 6.05 0C2.662 0 0 2.6267 0 5.99455C0 10.1035 3.74 13.4714 9.405 18.5613L11 20L12.595 18.5613C18.26 13.4714 22 10.1035 22 5.99455C22 2.6267 19.338 0 15.95 0Z' fill='%23BCEC30'/%3E%3C/svg%3E");
   }
 
-  .add-form {
+  .add-form,
+  .login-form {
     padding: 20px;
     margin-top: 48px;
     display: flex;
@@ -100,16 +102,27 @@ body {
   }
 
   .add-form-name,
-  .add-form-text {
+  .add-form-text,
+  .login-input,
+  .password-input {
     font-size: 16px;
     font-family: Helvetica;
     border-radius: 8px;
     border: none;
   }
 
-  .add-form-name {
+  .add-form-name,
+  .login-input,
+  .password-input {
     width: 300px;
     padding: 11px 22px;
+  }
+
+  .login-form {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 40px;
   }
 
   .add-form-text {
@@ -123,7 +136,8 @@ body {
     justify-content: space-between;
   }
 
-  .add-form-button {
+  .add-form-button,
+  .login-button {
     margin-top: 24px;
     font-size: 24px;
     padding: 10px 20px;
@@ -133,7 +147,8 @@ body {
     cursor: pointer;
   }
 
-  .add-form-button:hover {
+  .add-form-button:hover,
+  .login-button:hover {
     opacity: 0.9;
   }
 
