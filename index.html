@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id = "comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -46,26 +46,113 @@
       </ul>
       <div class="add-form">
         <input
+          id="add-name"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
+          id="add-text"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="message-button">Написать</button>
         </div>
+      </div>
+      <div class="delete-button-area">
+        <button class="add-form-button" id="delete-last-comment">Удалить последний комментарий</button>
       </div>
     </div>
   </body>
-
+  <style>
+    .error {
+      background-color: #f1cfc8;
+      color: black;
+    }
+  </style>
   <script>
     "use strict";
-    // Код писать здесь
+    const commentsList = document.getElementById("comments");
+    const messageButtonElement = document.getElementById("message-button");
+    const addNameElement = document.getElementById("add-name");
+    const addTextElement = document.getElementById("add-text");
+    const currentDate = new Date();
+
+    function getLastTwoDigitsOfYear(date) {
+      return date.getFullYear().toString().slice(-2);
+    }
+
+    function formatDate(date) {
+      let day = date.getDate();
+      let month = date.getMonth();
+      let year = getLastTwoDigitsOfYear(currentDate);
+      let hours = date.getHours();
+      let minutes = date.getMinutes();
+
+      day >= 10 ? day = day : day = `0` + day;
+      month >= 10 ? month = month : month = `0` + month;
+      year >= 10 ? year = year : year = `0` + year;
+      hours >= 10 ? hours = hours : hours = `0` + hours;
+      minutes >= 10 ? minutes = minutes : minutes = `0` + minutes;
+
+      const dateString = `${day}.${month}.${year}`;
+      const timeString = `${hours}:${minutes}`;
+      return `${dateString} ${timeString}`;
+    }
+
+    const newCurrentDate = formatDate(currentDate);
+
+    messageButtonElement.addEventListener('click', () => {
+      addNameElement.classList.remove("error");
+      addTextElement.classList.remove("error");
+
+      if (addNameElement.value === "") {
+            addNameElement.classList.add("error");
+            return;
+      }
+      if (addTextElement.value === "") {
+            addTextElement.classList.add("error");
+            return;
+      }
+
+      const oldListHtml = commentsList.innerHTML;
+
+      commentsList.innerHTML = oldListHtml +           
+      `<li class="comment">
+        <div class="comment-header">
+              <div>${addNameElement.value}</div>
+              <div>${newCurrentDate}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+                ${addTextElement.value}
+          </div>
+        </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+          </div>
+        </div>
+      </li>`;
+    }
+    )
+
+    const deleteLastCommentButton = document.getElementById("delete-last-comment");
+    deleteLastCommentButton.addEventListener("click", () => {
+      const commentsList = document.getElementById("comments");
+      const lastComment = commentsList.querySelector(".comment:last-of-type");
+
+      if (lastComment) {
+        commentsList.removeChild(lastComment);
+      }
+    });
+
+
+
     console.log("It works!");
   </script>
-</html>
+</html> 
