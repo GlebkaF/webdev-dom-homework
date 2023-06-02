@@ -1,14 +1,11 @@
-// Импорты
-import {
-    addCommentForm,
-    buttonElement,
-    listOfComments,
-    nameInputElement,
-    commentInputElement,
-    removeButton,
-    constWaitingComment,
-    startingElement
-} from "./data.js";
+const addCommentForm = document.querySelector(".add-form");
+const buttonElement = document.querySelector(".add-form-button");
+const listOfComments = document.querySelector(".comments");
+const nameInputElement = document.querySelector(".add-form-name");
+const commentInputElement = document.querySelector(".add-form-text");
+const removeButton = document.querySelector('.remove-form-button');
+const constWaitingComment = document.querySelector('.add-waiting');
+const startingElement = document.querySelector('.starting');
 
 import { fetchAndRenderTasks, postComment } from "./api.js";
 
