@@ -8,12 +8,22 @@ import { renderComments } from "./render.js";
 
 export let appComments = [];
 
+let token = 'Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k';
+
 export function getData() {
 
-    return fetch("https://webdev-hw-api.vercel.app/api/v1/daria/comments", {
+    return fetch("https://wedev-api.sky.pro/api/v2/daria-s/comments", {
         method: "GET",
+        headers: {
+            Authorization: token,
+        },
     })
         .then((response) => {
+            if (response.status ===401) {
+                token = prompt('Введите верный пароль');
+                getData();
+                throw new Error ("Нет авторизации");
+            }
             return response.json();
         })
         .then((responseData) => {
@@ -38,7 +48,7 @@ export const addToServer = (comment) => {
     const savedName = commentName.value;
     const savedText = commentText.value;
 
-    fetch("https://webdev-hw-api.vercel.app/api/v1/daria/comments", {
+    fetch("https://wedev-api.sky.pro/api/v2/daria-s/comments", {
         method: "POST",
         body: JSON.stringify({
             name: commentName.value
@@ -47,6 +57,9 @@ export const addToServer = (comment) => {
                 .replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
             forceError: true,
         }),
+        headers: {
+            Authorization: token,
+        },
     })
         .then((response) => {
             if (!response.ok) {
