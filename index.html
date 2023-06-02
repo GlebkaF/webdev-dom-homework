@@ -270,9 +270,20 @@
             body: JSON.stringify({ 
               text: commentInputElement.value, 
               name: nameInputElement.value,
-              dates: time(),
-              likeCounter: 0,
+              forceError: true,
             }),
+          })
+          .then((response) => {
+            if (response.status === 500) {
+              alert("Сервер сломался, попробуй позже");
+              throw new Error("Сервер сломался, попробуй позже");
+            } 
+            else if (response.status === 400) {
+              alert("Имя и комментарий должны быть не короче 3 символов"); 
+              throw new Error("Имя и комментарий должны быть не короче 3 символов"); 
+            } else {
+              return response.json();
+            };
           })
           .then((response) => {
             return fetchComments();
@@ -282,16 +293,25 @@
             loadingComments.classList.add('hidden');
             let newComment = document.getElementById('new-comment-section');
             newComment.style.display = '';
+            nameInputElement.value = "";
+            commentInputElement.value = "";
+          })
+          .catch((error) => {
+            if (error.message !== "Сервер сломался, попробуй позже" && error.message !== "Имя и комментарий должны быть не короче 3 символов") 
+            {
+              alert("Кажется, у вас сломался интернет, попробуйте позже");
+            }
+            let loadingComments = document.getElementById('new-comment-loader');
+            loadingComments.classList.add('hidden');
+            let newComment = document.getElementById('new-comment-section');
+            newComment.style.display = '';
           });
         };
 
         postComment();
-//
+
         renderUserComments();
         
-//
-        nameInputElement.value = "";
-        commentInputElement.value = "";
      };
 
 
