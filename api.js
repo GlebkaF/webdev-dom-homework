@@ -1,19 +1,19 @@
-import {
-    addCommentForm,
-    buttonElement,
-    listOfComments,
-    nameInputElement,
-    commentInputElement,
-    removeButton,
-    constWaitingComment,
-    startingElement
-} from "./data.js";
+// Переменные
+const addCommentForm = document.querySelector(".add-form");
+const buttonElement = document.querySelector(".add-form-button");
+const listOfComments = document.querySelector(".comments");
+const nameInputElement = document.querySelector(".add-form-name");
+const commentInputElement = document.querySelector(".add-form-text");
+const removeButton = document.querySelector('.remove-form-button');
+const constWaitingComment = document.querySelector('.add-waiting');
+const startingElement = document.querySelector('.starting');
 
+// Импорты
 import { delay, replaceValue, correctDate } from "./supportFunc.js";
 import renderComments from "./renderComments.js";
 
 
-// Создаем функцию fetch для получения списка // в api.js
+// Создаем функцию fetch для получения списка
 const fetchAndRenderTasks = (element) => {
     return fetch("https://webdev-hw-api.vercel.app/api/v1/marina-obruch/comments", {
         method: "GET"
@@ -35,7 +35,7 @@ const fetchAndRenderTasks = (element) => {
 };
 
 
-// Добавляем новый комментарий в ленту // в api.js
+// Добавляем новый комментарий в ленту
 const postComment = (element) => {
     fetch('https://webdev-hw-api.vercel.app/api/v1/marina-obruch/comments', {
         method: "POST",

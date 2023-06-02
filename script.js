@@ -1,3 +1,4 @@
+// Переменные
 const addCommentForm = document.querySelector(".add-form");
 const buttonElement = document.querySelector(".add-form-button");
 const listOfComments = document.querySelector(".comments");
@@ -7,6 +8,7 @@ const removeButton = document.querySelector('.remove-form-button');
 const constWaitingComment = document.querySelector('.add-waiting');
 const startingElement = document.querySelector('.starting');
 
+// Импорты
 import { fetchAndRenderTasks, postComment } from "./api.js";
 
 

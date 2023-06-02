@@ -1,14 +1,4 @@
-const addCommentForm = document.querySelector(".add-form");
-const buttonElement = document.querySelector(".add-form-button");
-const listOfComments = document.querySelector(".comments");
-const nameInputElement = document.querySelector(".add-form-name");
-const commentInputElement = document.querySelector(".add-form-text");
-const removeButton = document.querySelector('.remove-form-button');
-const constWaitingComment = document.querySelector('.add-waiting');
-const startingElement = document.querySelector('.starting');
-
-
-// Функция по задержке лайка на комментарий // support.js
+// Функция по задержке лайка на комментарий
 function delay(interval = 300) {
     return new Promise((resolve) => {
         setTimeout(() => {
@@ -17,7 +7,7 @@ function delay(interval = 300) {
     });
 }
 
-// Замена символов // support.js
+// Замена символов
 const replaceValue = (value) => {
     return value
         .replaceAll("&", "&amp;")
@@ -26,7 +16,7 @@ const replaceValue = (value) => {
         .replaceAll('"', "&quot;");
 }
 
-// Формат вывода даты в комментарии // support.js
+// Формат вывода даты в комментарии
 const fixNumbers = number => String(number).length < 2 ? '0' + number : number;
 
 const correctDate = date => {

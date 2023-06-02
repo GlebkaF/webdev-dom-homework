@@ -1,3 +1,4 @@
+// Переменные
 const addCommentForm = document.querySelector(".add-form");
 const buttonElement = document.querySelector(".add-form-button");
 const listOfComments = document.querySelector(".comments");
@@ -7,10 +8,11 @@ const removeButton = document.querySelector('.remove-form-button');
 const constWaitingComment = document.querySelector('.add-waiting');
 const startingElement = document.querySelector('.starting');
 
+// Импорты
 import { delay, replaceValue, correctDate } from "./supportFunc.js";
 
 
-// Функция render // в render.js
+// Функция render
 const renderComments = (element, comments) => {
   // Рендер
   element.innerHTML = comments.map(comment => {
@@ -32,7 +34,7 @@ const renderComments = (element, comments) => {
       </li>`
   }).join("");
 
-  // Добавление клика на лайк // в render.js
+  // Добавление клика на лайк
   [...document.querySelectorAll(".like-button")]
     .forEach((like, index) => {
       like.addEventListener('click', event => {
@@ -55,7 +57,7 @@ const renderComments = (element, comments) => {
       });
     });
 
-  // Добавление ответа на комментарии // в render.js
+  // Добавление ответа на комментарии
   [...document.querySelectorAll('.comment')]
     .forEach((comment, index) => {
       comment.addEventListener('click', () => {
