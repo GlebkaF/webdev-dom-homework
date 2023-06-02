@@ -64,18 +64,6 @@ let loginRegMode = true;
 
 function loginOrReg() {
 
-
-
-
-
-
-
-
-
-
-
-
-
     formAddComments.innerHTML =     `<h2 class="form-enter">Форма ${loginRegMode ? 'входа' : 'регистрации'}</h2>
 
     <div class="add-form-top">
