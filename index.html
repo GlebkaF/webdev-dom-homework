@@ -68,7 +68,7 @@
 
 
 
-
+//доп.задание1  кнопка «Написать» не кликабельна, если имя или текст в форме незаполненные.
   buttonElement.setAttribute('disabled', true);
 
   inputNameElement.addEventListener("input", () => {
@@ -76,6 +76,8 @@
     buttonElement.setAttribute('disabled', true);
 
     if ((inputNameElement.value.length > 0) && (inputTextElement.value.length > 0)) {
+
+      buttonElement.focus();
       buttonElement.removeAttribute('disabled');
     }
   });
@@ -85,6 +87,8 @@
     buttonElement.setAttribute('disabled', true);
 
     if ((inputNameElement.value.length > 0) && (inputTextElement.value.length > 0)) {
+
+      buttonElement.focus();
       buttonElement.removeAttribute('disabled');
     }
   });
@@ -97,6 +101,8 @@
 
   // const currentDate = new Date().toLocaleDateString('default', {day: '2-digit', month: '2-digit', year: '2-digit'}) +
   // " "+ new Date().toLocaleTimeString().slice(0,-3);
+
+//основное дз
 
 
 
@@ -142,6 +148,16 @@
     inputNameElement.value = "";
     inputTextElement.value = "";
   });
+
+
+  ///Доп.задание2 нажатие клавиши Enter должно вызывать ту же логику, которая срабатывает при клике на кнопку «Добавить».
+ document.addEventListener("keydown", function(enter) {
+  if (enter.keyCode == 13) {
+    buttonElement.click();
+  }
+});
+
+  
 //удаление последнего комментари
 // buttonElementDel.addEventListener("click", () => {
 //      //const deleteLastElement =  lastIndexOf.commentElement.innerHTML.remove();
