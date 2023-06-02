@@ -63,7 +63,7 @@
   const inputNameElement = document.querySelector('.add-form-name');
   const inputTextElement = document.querySelector('.add-form-text');
   const buttonElement = document.querySelector('.add-form-button');
-  const commentElement = document.querySelector('.comments');
+  const commentsElement = document.querySelector('.comments');
   const buttonElementDel = document.querySelector('.delete-form-button');
 
 
@@ -77,7 +77,6 @@
 
     if ((inputNameElement.value.length > 0) && (inputTextElement.value.length > 0)) {
 
-      buttonElement.focus();
       buttonElement.removeAttribute('disabled');
     }
   });
@@ -88,8 +87,7 @@
 
     if ((inputNameElement.value.length > 0) && (inputTextElement.value.length > 0)) {
 
-      buttonElement.focus();
-      buttonElement.removeAttribute('disabled');
+       buttonElement.removeAttribute('disabled');
     }
   });
 
@@ -126,8 +124,8 @@
     //   return;
     // }
 
-        commentElement.innerHTML =
-      commentElement.innerHTML + `<li class="comment">
+      commentsElement.innerHTML =
+      commentsElement.innerHTML + `<li class="comment">
           <div class="comment-header">
             <div>${inputNameElement.value}</div>
             <div>${currentDate}</div>
@@ -151,23 +149,23 @@
 
 
   ///Доп.задание2 нажатие клавиши Enter должно вызывать ту же логику, которая срабатывает при клике на кнопку «Добавить».
- document.addEventListener("keydown", function(enter) {
+ document.addEventListener("keyup", function(enter) {
   if (enter.keyCode == 13) {
     buttonElement.click();
   }
 });
 
+
+
   
 //удаление последнего комментари
-// buttonElementDel.addEventListener("click", () => {
-//      //const deleteLastElement =  lastIndexOf.commentElement.innerHTML.remove();
-//       const commentElement2 = commentElement.innerHTML;
-//       const lastElement = commentElement.lastIndexOf(commentElement.innerHTML);
-//       console.log(commentElement.innerHTML);
-//       console.log(lastElement);
+ buttonElementDel.addEventListener("click", () => {
 
-//        //lastElement.remove();
-//      });
+       //const lastElement = commentsElement.lastIndexOf(commentElement);
+      
+      const lastElement=commentsElement.lastElementChild;
+      lastElement.remove();
+     });
 
    //console.log("It works!");
 </script>
