@@ -41,19 +41,20 @@
               <span class="likes-counter">75</span>
               <button class="like-button -active-like"></button>
             </div>
+           
           </div>
         </li>
       </ul>
       <div class="add-form">
-        <input
+        <input 
           type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
+          class ="add-form-name"
+          placeholder ="Введите ваше имя"
         />
         <textarea
           type="textarea"
           class="add-form-text"
-          placeholder="Введите ваш коментарий"
+          placeholder ="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
@@ -64,8 +65,73 @@
   </body>
 
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+  "use strict";
+    const inputNameElement = document.querySelector ('.add-form-name');
+    const inputTextElement = document.querySelector ('.add-form-text');
+    const buttonElement = document.querySelector ('.add-form-button');
+    const commentElement = document.querySelector ('.comments');
+    const currentDate = new Date().toLocaleDateString('default', {day: '2-digit', month: '2-digit', year: '2-digit'}) + " "+ new Date().toLocaleTimeString().slice(0,-3);
+    
+    
+
+    buttonElement.addEventListener("click", () => {
+      inputNameElement.style.backgroundColor = '';
+          inputTextElement.style.backgroundColor = '';
+    if (inputNameElement.value === '' && inputTextElement.value === '') {
+      
+        inputNameElement.style.backgroundColor = 'red';
+          inputTextElement.style.backgroundColor = 'red';
+          return;
+        } else if (inputNameElement.value === '') {
+        inputNameElement.style.backgroundColor = 'red';
+          return;
+        } else if (inputTextElement.value === '') {
+       
+          inputTextElement.style.backgroundColor = 'red';
+          return;
+        };
+     
+      
+    
+    //   //Первое доп задание
+    
+    // buttonElement.addEventListener("click", () => {
+   
+    // if (inputNameElement.value ==='' && inputTextElement.value === '') {
+    //     buttonElement.disabled = true;
+    //     return;
+    // } else if (inputNameElement.value!=='' && inputTextElement.value!=='') {
+    //   buttonElement.disabled.false;
+    //   return;
+    // };
+  
+
+      const commentElementOld = commentElement.innerHTML;
+      commentElement.innerHTML =
+      commentElementOld + `<li class="comment">
+          <div class="comment-header">
+            <div>${inputNameElement.value}</div>
+            <div>${currentDate}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${inputTextElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button -active-like"></button>
+            </div>
+          </div>
+        </li>`;
+        inputNameElement.value="";
+        inputTextElement.value="";
+     
+    });
+    
+
+
+ 
   </script>
 </html>
