@@ -31,17 +31,20 @@ let commentDate = day + '.' + month + '.' + year + ' ' + hour + ':' + minute;
 
 WriteButtonEl.addEventListener("click", () => {
     nameInputEl.classList.remove("error");
-    commentTextEl.classList.remove("error");
+    commentTextEl.classList.remove("error-btn");
 
     if (nameInputEl.value === "" && commentTextEl.value === "") {
         nameInputEl.classList.add("error");
         commentTextEl.classList.add("error");
+        WriteButtonEl.classList.add("error-btn").disabled;
         return;
       } else if (nameInputEl.value === "" && commentTextEl.value !== "") {
         nameInputEl.classList.add("error");
+        WriteButtonEl.classList.add("error-btn").disabled;
         return;
       } else if (nameInputEl.value !== "" && commentTextEl.value === "") {
         commentTextEl.classList.add("error");
+        WriteButtonEl.classList.add("error-btn").disabled;
         return;
       } else {
         const oldListHtml = listEl.innerHTML;
