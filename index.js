@@ -1,20 +1,29 @@
 "use strict";
 
+import { getComments } from "./api.js";
+import { renderUsers } from "./render.js";
+import { token } from "./render.js"
 
 
-const buttonEnter = document.getElementById("button-enter");
-let listComments = document.getElementById("list-comments");
-
-import {renderUsers} from "./render.js";
-import {addComment} from "./data.js";
+    let currentDate = new Date();
 
 
-buttonEnter.addEventListener("click", () => {
-    addComment()
-});
+    const textAreaText = document.getElementById('input-text');
+    let quoteText = '';
+
+
+    export let allUsersAndComments = [];
+
+
+    export function getUsers({ token }) {
+        return getComments({ token }).then((responseData) => {
+                        allUsersAndComments = responseData.comments;
+                        renderUsers();
+                    });
+            };
 
 
 
 
-
+    getUsers({ token });
 
