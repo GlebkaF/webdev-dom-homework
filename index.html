@@ -66,6 +66,30 @@
   const commentElement = document.querySelector('.comments');
   const buttonElementDel = document.querySelector('.delete-form-button');
 
+
+
+
+  buttonElement.setAttribute('disabled', true);
+
+  inputNameElement.addEventListener("input", () => {
+
+    buttonElement.setAttribute('disabled', true);
+
+    if ((inputNameElement.value.length > 0) && (inputTextElement.value.length > 0)) {
+      buttonElement.removeAttribute('disabled');
+    }
+  });
+
+  inputTextElement.addEventListener("input", () => {
+
+    buttonElement.setAttribute('disabled', true);
+
+    if ((inputNameElement.value.length > 0) && (inputTextElement.value.length > 0)) {
+      buttonElement.removeAttribute('disabled');
+    }
+  });
+
+
   const currentDate = new Date().getDate().toString().padStart(2, '0') + '.' +
     (new Date().getMonth() + 1).toString().padStart(2, '0') + '.' +
     new Date().getFullYear().toString().slice(-2) + " " +
@@ -77,31 +101,26 @@
 
 
   buttonElement.addEventListener("click", () => {
-    inputNameElement.style.backgroundColor = '';
-    inputTextElement.style.backgroundColor = '';
-
-    if (inputNameElement.value === '' && inputTextElement.value === '') {
-      inputNameElement.style.backgroundColor = 'red';
-      inputTextElement.style.backgroundColor = 'red';
-      return;
-    } else if (inputNameElement.value === '') {
-      inputNameElement.style.backgroundColor = 'red';
-      return;
-    } else if (inputTextElement.value === '') {
-      inputTextElement.style.backgroundColor = 'red';
-      return;
-    }
-
-    // //dop
-    // inputNameElement.addEventListener("input", checkInputs);
-    //     inputTextElement.addEventListener("input", checkInputs);
-    //     buttonElement.addEventListener("click", () => {
-    //       if (inputNameElement.value === "" || inputTextElement.value === "") {
-    //         return;
-    //       });
+    
+    buttonElement.setAttribute('disabled', true);
 
 
-    commentElement.innerHTML =
+    // inputNameElement.style.backgroundColor = '';
+    // inputTextElement.style.backgroundColor = '';
+
+    // if (inputNameElement.value === '' && inputTextElement.value === '') {
+    //   inputNameElement.style.backgroundColor = 'red';
+    //   inputTextElement.style.backgroundColor = 'red';
+    //   return;
+    // } else if (inputNameElement.value === '') {
+    //   inputNameElement.style.backgroundColor = 'red';
+    //   return;
+    // } else if (inputTextElement.value === '') {
+    //   inputTextElement.style.backgroundColor = 'red';
+    //   return;
+    // }
+
+        commentElement.innerHTML =
       commentElement.innerHTML + `<li class="comment">
           <div class="comment-header">
             <div>${inputNameElement.value}</div>
@@ -122,15 +141,17 @@
 
     inputNameElement.value = "";
     inputTextElement.value = "";
-
-    //удаление последнего комментари
-    // buttonElementDel.addEventListener("click", () => {
-    //   /////const deleteLastElement =  lastIndexOf.commentElement.innerHTML.remove();
-    //    const lastElement = commentElement.innerHTML.lastIndexOf(commentElement);
-    //    lastElement.remove();
-    // });
   });
+//удаление последнего комментари
+// buttonElementDel.addEventListener("click", () => {
+//      //const deleteLastElement =  lastIndexOf.commentElement.innerHTML.remove();
+//       const commentElement2 = commentElement.innerHTML;
+//       const lastElement = commentElement.lastIndexOf(commentElement.innerHTML);
+//       console.log(commentElement.innerHTML);
+//       console.log(lastElement);
 
+//        //lastElement.remove();
+//      });
 
    //console.log("It works!");
 </script>
