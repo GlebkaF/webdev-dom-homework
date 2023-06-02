@@ -68,27 +68,40 @@
   </body>
   <style>
     .error {
-      background-color: red;
+      background-color: rgb(89, 85, 85);
     }
   </style>
   <script>
     "use strict";
     // Код писать здесь
+    
 
     const buttonElement = document.getElementById('add-button');
     const listElement = document.getElementById("list");
     const nameElement = document.getElementById("input-name");
     const textElement = document.getElementById("textarea-text");
-    const myDate = new Date().toString('dd.MM.yyyy'); //12.02.22 12:18
     
 
+    const newDate = new Date(); //12.02.22 12:18
+    let fullDate = (newDate.getDate() < 10 ? '0' : '') + newDate.getDate() + '.' 
+                + (newDate.getMonth() < 10 ? '0' : '') + newDate.getMonth() + '.' 
+                + `${newDate.getFullYear() - 2000} ${newDate.getHours()}:${newDate.getMinutes()}`;
 
-    buttonElement.addEventListener("click", () => {
+  nameElement.oninput = function input() {
+    if ((nameElement.value == "") && (textElement.value == "")) {
+        buttonElement.setAttribute('disabled', true);
+    } else{
+        buttonElement.removeAttribute('disabled');
+    }
+  } // не получилось
+
+  buttonElement.addEventListener("click", () => {
+      
       const oldListHtml = listElement.innerHTML;
 
-      nameElement.classList.remove('error');
+      nameElement.style.backgroundColor = '';
       if (nameElement.value === "") {
-        nameElement.classList.add('error');
+        nameElement.style.backgroundColor = 'red';
         return;
       }
 
@@ -102,7 +115,7 @@
       `<li class="comment">
           <div class="comment-header">
             <div>${nameElement.value}</div>
-            <div>${myDate}</div>
+            <div>${fullDate}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
