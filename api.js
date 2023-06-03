@@ -1,58 +1,34 @@
-import { buttonElement, listElement, nameInputElement, commentInputElement, commentsLoad } from "./main.js";
-import renderComments from "./render.js";
-import { getComments } from "./comments.js";
+const host = 'https://wedev-api.sky.pro/api/v2/tanya-koryachkina/comments';
 
-export let commentaries = [];
-export let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
-export const host = 'https://wedev-api.sky.pro/api/v2/tanya-koryachkina/comments';
-
-export const fetchGet = () => {
-
-    commentsLoad.style.display = "block";
-    listElement.style.display = "none";
-    fetch(host, {
+export function getFetchComments({ token }) {
+    return fetch(host, {
         method: "GET",
         headers: {
-            Authorization: token
+            Authorization: token,
         }
     })
     .then((response) => {
+        if(response.status ===401) {
+
+            alert("Не авторизованы");
+            throw new Error ("Не авторизованы");
+            
+        }
         return response.json();
     })
-    .then((responseData) => {
-        const appComments = responseData.comments
-        .map((comment) => {
-            return {
-                name: comment.author.name,
-                date: new Date(Date.parse(comment.date)).toLocaleDateString() + ' ' + new Date(Date.parse(comment.date)).getHours() + ':' + new Date(Date.parse(comment.date)).getMinutes(),
-                text: comment.text,
-                likes: comment.likes,
-                isLiked: false,
-                id: comment.id,
-            };
-        
-        });
-        return appComments;
-    })
-    .then((data) => {
-        commentsLoad.style.display = "none";
-        listElement.style.display = "flex";
-        commentaries = data;
-        renderComments(listElement, getComments);
-    });
-        
-
-      
 };
 
-export const fetchPost = () => {
-    fetch(host, {
+export function addComment({ text, token }) {
+    return fetch(host, {
         method: "POST",
         body: JSON.stringify({
           name: nameInputElement.value,
-          text: commentInputElement.value,
+          text,
           //forceError: true,
-        })
+        }), 
+        headers: {
+            Authorization: token,
+        }
     })
     .then((response) => {
         if(response.status === 500) {
@@ -71,32 +47,4 @@ export const fetchPost = () => {
             return response.json();
         } 
     })
-    .then((responseData) => {
-        //comments = appComments;
-        console.log(responseData);
-        //fetchGet();
-        renderComments(listElement, getComments);
-        //initLikeButtonListeners();
-    })
-    .then((data) => {
-        buttonElement.disabled = false;
-        buttonElement.textContent = "Написать";
-        nameInputElement.value = "";  
-        commentInputElement.value = ""; 
-        fetchGet();
-        renderComments(listElement, getComments);
-        console.log(data);
-    })
-    .catch((error) => {
-        buttonElement.disabled = false;
-        buttonElement.textContent = "Написать";
-        if(!navigator.onLine) {
-          alert("Кажется что-то пошло не так, попробуй позже");
-        }
-        
-        console.warn(error);
-    });
-};
-
-
-
+}
