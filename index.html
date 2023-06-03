@@ -40,43 +40,41 @@
     const textInputElement = document.getElementById("add-text");
     const textareaInputElement = document.getElementById("add-textarea");
     const listElement = document.getElementById("list");
-    const deletElement = document.getElementById("comentsOfArr.text");
+    const deletElement = document.getElementById("comments.text");
 
-    const fetchPromise = fetch (
-      'https://webdev-hw-api.vercel.app/api/v1/:ruslankrivilin/comments',
+  
+    let comments = [];
+    
+    const fetchPromise = () => {
+      return fetch ('https://webdev-hw-api.vercel.app/api/v1/ruslankrivilin/comments',
       {
         method: "GET"
-      });
-     
-      fetchPromise.then ((response) => {
-        const jsonPromise = response.json ();
-        jsonPromise.then ((responseData) => {
-        
-          comentsOfArr = responseData.comments;
-          renderComents();
-        })
       })
-    
-    const comentsOfArr = [
-        {
-            id: 0,
-            name: 'Глеб Фокин',
-            date: '12.02.22 12:18',
-            text: 'Это будет первый комментарий на этой странице',
-            like: '3',
-            isActiveLike: false,
-            isEdit: false
-        },
-        {
-            id: 1,
-            name: 'Варвара Н.',
-            date: '13.02.22 19:22',
-            text: 'Мне нравится как оформлена эта страница! ❤',
-            like: '75',
-            isActiveLike: true,
-            isEdit: false
-        }
-    ]
+      .then ((response) => {
+        return response.json();
+      })
+      .then ((responseData) => {
+            const appComments = responseData.comments.map((comment) => {
+            const dateComment = new Date(comment.date);
+            return {
+              name: comment.author.name,
+              date: dateComment.getDate().toString().padStart(2, '0') + '.' + 
+                (dateComment.getMonth() + 1).toString().padStart(2, '0') + '.' +
+                dateComment.getFullYear().toString().slice(-2) + ' ' +
+                dateComment.getHours().toString().padStart(2, '0') + ':' +
+                dateComment.getMinutes().toString().padStart(2, '0'),
+            text: comment.text,
+            like: comment.likes,
+            isActiveLikes: false,
+
+            }
+          })
+          comments = appComments;
+          renderComents();
+      })
+    }
+    fetchPromise()
+      
     
     const likes = () => {
     const likeButtons = document.querySelectorAll('.like-button');
@@ -85,11 +83,11 @@
             e.stopPropagation()
             const index = likeButton.dataset.index;
         if (likeButton.classList.contains('-active-like')) {
-            comentsOfArr[index].like = Number(comentsOfArr[index].like) -1;
-            comentsOfArr[index].isActiveLike = false;
+          comments[index].like = Number(comments[index].like) -1;
+          comments[index].isActiveLike = false;
         } else {
-            comentsOfArr[index].like = Number(comentsOfArr[index].like) +1;
-            comentsOfArr[index].isActiveLike = true;
+          comments[index].like = Number(comments[index].like) +1;
+          comments[index].isActiveLike = true;
         }
             renderComents();
             });
@@ -105,7 +103,7 @@
     editButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
         const commentBodyElem = commentBody[index];
-        const comment = comentsOfArr[index];
+        const comment = comments[index];
 
         if (comment.isEdit) {
           const textarea = document.querySelector('.edit-textarea');
@@ -139,9 +137,9 @@
   }
 
     const renderComents = () => {
-    const comentsHtml = comentsOfArr.map((item, index) =>{
+    const comentsHtml = comments.map((item, index) =>{
       let activeLike = '';
-      if (comentsOfArr[index].isActiveLike) {
+      if (comments[index].isActiveLike) {
         activeLike ='-active-like'
       } 
       return `<li class="comment">
@@ -214,34 +212,47 @@
             </div>
           </div>
         </li>`;
-        comentsOfArr.push({  
-        name: textInputElement.value
-              .replaceAll("&", "&amp;")
-              .replaceAll("<", "&lt;")
-              .replaceAll(">", "&gt;")
-              .replaceAll('"', "&quot;"),
-        date: formattedDate,
-        text: textareaInputElement.value
-              .replaceAll("&", "&amp;")
-              .replaceAll("<", "&lt;")
-              .replaceAll(">", "&gt;")
-              .replaceAll('"', "&quot;"),
-        like: 0,
-        isActiveLike: false,
-      });
-
-      fetch('https://webdev-hw-api.vercel.app/api/v1/:ruslankrivilin/comments', {
+      
+      fetch('https://webdev-hw-api.vercel.app/api/v1/ruslankrivilin/comments', {
         method: "POST",
         body: JSON.stringify({
-          text: textareaInputElement.value,
+          text: textareaInputElement.value, name: textInputElement.value, 
         }),
       }).then ((response) => {
           response.json().then ((responseData) => {
-          comentsOfArr = responseData.comments;
-          renderComents();
-        })
-      })
+            comments = responseData.comments;
+          })
       
+      renderComents();
+
+      const fetchPromise = () => {
+      return fetch ('https://webdev-hw-api.vercel.app/api/v1/ruslankrivilin/comments',
+      {
+        method: "GET"
+      })
+      .then ((response) => {
+        const jsonPromise = response.json();
+      jsonPromise.then ((responseData) => {
+            const appComments = responseData.comments.map((comment) => {
+            const dateComment = new Date(comment.date);
+            return {
+              name: comment.author.name,
+              date: dateComment.getDate().toString().padStart(2, '0') + '.' + 
+                (dateComment.getMonth() + 1).toString().padStart(2, '0') + '.' +
+                dateComment.getFullYear().toString().slice(-2) + ' ' +
+                dateComment.getHours().toString().padStart(2, '0') + ':' +
+                dateComment.getMinutes().toString().padStart(2, '0'),
+            text: comment.text,
+            like: comment.likes,
+            isActiveLikes: false,
+            }
+          })
+          comments = appComments;
+          renderComents();
+      })
+  });
+}
+      })
       renderComents();
 
       textInputElement.value = "";
