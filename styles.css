@@ -2,16 +2,16 @@ body {
     margin: 0;
   }
 
-  .container {
+  .container,
+  .registration {
     font-family: Helvetica;
     color: #ffffff;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding-top: 80px;
-    padding-bottom: 200px;
+    padding-bottom: 20px;
     background: #202020;
-    min-height: 100vh;
   }
 
   .comments,
@@ -22,7 +22,8 @@ body {
   }
 
   .comment,
-  .add-form {
+  .add-form,
+  .registration-form {
     width: 596px;
     box-sizing: border-box;
     background: radial-gradient(
@@ -108,15 +109,18 @@ body {
   }
 
   .add-form-name,
-  .add-form-text {
+  .add-form-text,
+  .add-login,
+  .add-password {
     font-size: 16px;
     font-family: Helvetica;
     border-radius: 8px;
     border: none;
   }
 
-  .add-form-name {
-    width: 300px;
+  .add-form-name,
+  .add-login,
+  .add-password {
     padding: 11px 22px;
   }
 
@@ -168,4 +172,49 @@ body {
 
   .-loading-like {
     animation: rotating 2s linear infinite;
+  }
+
+  .add-login,
+  .add-password {
+  height: 24px;
+  }
+
+  .reg-input {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+
+  .add-reg-form {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-direction: column;
+  }
+
+  .in-button {
+    margin-top: 24px;
+    font-size: 24px;
+    padding: 10px 20px;
+    background-color: #bcec30;
+    border: none;
+    border-radius: 18px;
+    cursor: pointer;
+  }
+
+  .reg-button {
+    margin-top: 8px;
+    font-size: 24px;
+    padding: 10px 20px;
+    color: #ffffff;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
+
+  .registration {
+    padding-top: 0px;
   }
