@@ -10,7 +10,8 @@
 <body>
   <div class="container">
     <ul class="comments" id="list">
-      <li class="comment">
+      <!-- Список рендерится из JS -->
+      <!-- <li class="comment">
         <div class="comment-header">
           <div>Глеб Фокин</div>
           <div>12.02.22 12:18</div>
@@ -45,17 +46,17 @@
             <button class="like-button -active-like"></button>
           </div>
         </div>
-      </li>
+      </li> -->
     </ul>
     <div class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input" />
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
         id="coment-input"></textarea>
       <div class="add-form-row">
-       <button class="add-form-button" id="end-delete-button">Удалить</button>
-       <button class="add-form-button" id="add-button">Написать</button>
+        <button class="add-form-button" id="end-delete-button">Удалить</button>
+        <button class="add-form-button" id="add-button">Написать</button>
       </div>
-      
+
     </div>
   </div>
 </body>
@@ -66,13 +67,52 @@
 </style>
 <script>
   "use strict";
-  
+
   //  Поиск элментов
   const nameInputElement = document.getElementById("name-input");
   const comentInputElement = document.getElementById("coment-input");
   const addButtonElement = document.getElementById("add-button");
   const listElement = document.getElementById("list");
   const endDeleteButtonElement = document.getElementById("end-delete-button")
+
+  const comments = [
+    {
+      name: "Глеб Фокин",
+      text: "Это будет первый комментарий на этой странице",
+      eachDate: "12.02.22 12:18",
+      like: 3
+    },
+    {
+      name: "Варвара Н.",
+      text: "Мне нравится как оформлена эта страница! ❤",
+      eachDate: "13.02.22 19:22",
+      like: 75
+    }
+  ]
+
+  const renderComments = () => {
+    const commentsHTML = comments.map((comment) => {
+      return `<li class="comment">
+        <div class="comment-header">
+          <div>${comment.name}</div>
+          <div>${comment.eachDate}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${comment.text}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${comment.like}</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>`;
+    }).join('');
+    listElement.innerHTML = commentsHTML;
+  }
+  renderComments();
 
   //Добавить обработчик клика
   addButtonElement.addEventListener("click", () => {
@@ -83,7 +123,6 @@
     }
 
     // Извлекаем параметы текущей даты
-    const oldListHtml = listElement.innerHTML;
     let currentDate = new Date();
     let day = currentDate.getDate();
     if (day < 10) {
@@ -105,26 +144,14 @@
       minute = '0' + minute;
     }
 
-    // Сохраняем новый комент в список
-    listElement.innerHTML =
-      oldListHtml +
-      `<li class="comment">
-        <div class="comment-header">
-          <div>${nameInputElement.value}</div>
-          <div>${day}.${month}.${year} ${hour}:${minute}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${comentInputElement.value}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>`
+    //Добавляем данные для нового комента
+    comments.push({
+      name: nameInputElement.value,
+      text: comentInputElement.value,
+      eachDate: `${day}.${month}.${year} ${hour}:${minute}`,
+      like: 0
+    });
+    renderComments();
     nameInputElement.value = "";
     comentInputElement.value = "";
   })
@@ -137,19 +164,19 @@
     }
   });
 
-// Добавление элемента в список по нажатию Enter
-document.addEventListener("keypress", function(event) {
-  if (event.key === "Enter") {
-    addButtonElement.click();
-  }
-});
+  // Добавление элемента в список по нажатию Enter
+  document.addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+      addButtonElement.click();
+    }
+  });
 
-//Удаление последнего комментари
-endDeleteButtonElement.addEventListener("click", () => {
+  //Удаление последнего комментари
+  endDeleteButtonElement.addEventListener("click", () => {
 
-const lastElement=listElement.lastElementChild;
-      lastElement.remove();
-     });
+    const lastElement = listElement.lastElementChild;
+    lastElement.remove();
+  });
 
   console.log("It works!");
 </script>
