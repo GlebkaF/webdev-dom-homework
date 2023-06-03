@@ -1,12 +1,7 @@
 "use strict";
 import { fetchComments, createComment } from "./api.js";
 import { formatDate } from "./utils.js";
-import {
-  renderComments,
-  // onCommentLikeClick,
-  // onCommentEditClick,
-  // onCommentFeedbackClick
-} from "./renderComments.js"
+import { renderComments } from "./renderComments.js"
 
 const render = () => {
   renderComments(comments, handleCommentEditClick, handleCommentFeedbackClick, handleCommentLikeClick);
@@ -37,10 +32,10 @@ const render = () => {
   let comments = [
 ];
 
-const handleCommentLikeClick = () => {
+const handleCommentLikeClick = (event) => {
   event.stopPropagation();
-  const index = likeButtonsElement.dataset.index;
-  const likesContainer = likeButtonsElement.closest('.comment-footer');
+  const index = event.target.dataset.index;
+  const likesContainer = event.target.closest('.comment-footer');
   const likesCounter = likesContainer.querySelector('.likes-counter');
   let likesCount = likesCounter.textContent;
   if (comments[index].active === true) {
@@ -54,10 +49,10 @@ const handleCommentLikeClick = () => {
   render();
 };
 
-const handleCommentEditClick = () => { 
+const handleCommentEditClick = (event) => { 
   event.stopPropagation();
-  const index = editButtonElement.dataset.index; 
   const button = event.target; 
+  const index = button.dataset.index; 
   const buttonTitle = button.innerText; 
   const commentElement = button.parentNode.parentNode; 
   const text = commentElement.getElementsByClassName('comment-text')[0]; 
@@ -81,8 +76,8 @@ const handleCommentEditClick = () => {
 };
 
 let currentCommentFeedback = null;
-const handleCommentFeedbackClick = () => {  
-  currentCommentFeedback = feedbackButtonsElement.dataset.index;
+const handleCommentFeedbackClick = (event) => {  
+  currentCommentFeedback = event.target.dataset.index;
   commentInputElement.value = `>${comments[currentCommentFeedback].text} ${comments[currentCommentFeedback].name}`;
 };
 

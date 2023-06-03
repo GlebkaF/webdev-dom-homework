@@ -25,11 +25,9 @@ export const renderComments = (comments, handleCommentEditClick, handleCommentFe
      .join('');
 const listElement = document.getElementById("list");
      listElement.innerHTML = commentsHtml;
-    setTimeout(() => {
       onCommentLikeClick(handleCommentLikeClick);
       onCommentEditClick(handleCommentEditClick);
-      onCommentFeedbackClick(handleCommentFeedbackClick)
-    }, 1000) 
+      onCommentFeedbackClick(handleCommentFeedbackClick);
    }
 export const onCommentLikeClick = (handleCommentLikeClick) => {
     const likeButtonsElements = document.querySelectorAll(".like-button");
