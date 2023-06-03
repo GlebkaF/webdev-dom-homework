@@ -1,6 +1,7 @@
-
+let token
+const host = ' https://wedev-api.sky.pro/api/v2/ruslan-shevelev/comments'
 function getAPI(callback) {
-    return fetch("https://webdev-hw-api.vercel.app/api/v1/ruslan-shevelev/comments", {
+    return fetch(host, {
         method: "GET"
     })
         .then((response) => {
@@ -13,7 +14,7 @@ function getAPI(callback) {
 };
 
 function postApi(body, callback) {
-    fetch("https://webdev-hw-api.vercel.app/api/v1/ruslan-shevelev/comments", {
+    fetch(host, {
         method: "POST",
         body: JSON.stringify(body),
     })
@@ -23,3 +24,34 @@ function postApi(body, callback) {
 };
 
 export { getAPI, postApi };
+
+export function registerUser({ login, password, name }) {
+    return fetch("https://webdev-hw-api.vercel.app/api/user", {
+      method: "POST",
+      body: JSON.stringify({
+        login,
+        password,
+        name,
+      }),
+    }).then((response) => {
+      if (response.status === 400) {
+        throw new Error("Такой пользователь уже существует");
+      }
+      return response.json();
+    });
+  };
+  
+  export function loginUser({ login, password }) {
+    return fetch("https://webdev-hw-api.vercel.app/api/user/login", {
+      method: "POST",
+      body: JSON.stringify({
+        login,
+        password,
+      }),
+    }).then((response) => {
+      if (response.status === 400) {
+        throw new Error("Неверный логин или пароль");
+      }
+      return response.json();
+    });
+  }

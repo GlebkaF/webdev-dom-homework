@@ -1,12 +1,11 @@
 "use strict";
 // Код писать здесь
 let messages = [];
-const appElement = document.getElementById("app")
-const listElement = document.getElementById("list");
-const addFormElement = document.getElementById("addForm");
-const loadingElement = document.querySelector(".loading");
+let appElement = document.getElementById("app")
+let token = "jhghgjgk";
 import { getAPI } from "./api.js";
 import renderMain from "./render.js";
+import { postApi } from "./api.js";
 
 const getCommentDataMain = (comment) => {
   return {
@@ -19,21 +18,25 @@ const getCommentDataMain = (comment) => {
     isLoading: false
   };
 };
-const renderMainList = () => {
-  renderMain(messages, getCommentListMain, appElement);
-  initLikeButtonsListeners();
-  initCorrectButtonsListeners();
-  initAnswersListeners();
-}
+const renderMainList = (token) => {
+  renderMain(messages, getCommentListMain, appElement, token);
+  if (token) {
+    const nameInputElement = document.getElementById("name-input");
+    const commentInputElement = document.getElementById("comment-input");
+    initLikeButtonsListeners();
+    initCorrectButtonsListeners();
+    initAnswersListeners(commentInputElement);
+    // TODO
+    initDeleteButton();
+    initInputs(nameInputElement, commentInputElement);
+  }
+};
 
 const fetchAndRenderMessages = () => {
   getAPI(getCommentDataMain).then((result) => {
     messages = result;
-    renderMainList();
-  }).then(() => {
-    const loadingTitleElement = document.querySelector(".loading-title");
-    loadingTitleElement.style.display = 'none';
-  });
+    renderMainList(token);
+  })
 };
 fetchAndRenderMessages();
 
@@ -91,14 +94,14 @@ const initCorrectButtonsListeners = () => {
     });
   };
 };
-const initAnswersListeners = () => {
+const initAnswersListeners = (element) => {
   const answersElements = document.querySelectorAll(".comment");
   for (const answerElement of answersElements) {
     answerElement.addEventListener("click", () => {
       const index = answerElement.dataset.index;
       const quote = answerElement.querySelector(".comment-text");
-      commentInputElement.value = `QUOTE_BEGIN ${messages[index].name}: \n ${quote.innerText}, QUOTE_END \n`;
-      renderMainList();
+      element.value = `QUOTE_BEGIN ${messages[index].name}: \n ${quote.innerText}, QUOTE_END \n`;
+      // renderMainList();
     });
   };
 };
@@ -106,7 +109,7 @@ const initAnswersListeners = () => {
 function getCommentListMain(message, index) {
   let like = (message.liked) ? 'like-button -active-like' : 'like-button';
   let edit = (message.isEdit) ? `<textarea type="textarea" class="comment-correction"rows="4">${message.comment}</textarea>` : `<div class="comment-text">${message.comment.replaceAll("QUOTE_BEGIN", "<div class='quote'>").replaceAll("QUOTE_END", "</div>").replaceAll("\n", "<br>")}</div>`;
-  let correctBtn = (message.isEdit) ? `<button data-index="${index}" class="correct-button save-button">Сохранить</button>` : `<button data-index="${index}" class="correct-button">Редактировать</button>`;
+  let correctBtn = (message.isEdit) ? `<button data-index="${index}" class="correct-button save-button">Сохранить</button>` : `<button data-index="${index}" class="correct-button hide">Редактировать</button>`;
   return `<li class="comment" data-index="${index}">
   <div class="comment-header" >
     <div>${message.name}</div>
@@ -125,31 +128,31 @@ function getCommentListMain(message, index) {
 </li>`;
 }
 
-const nameInputElement = document.getElementById("name-input");
-const commentInputElement = document.getElementById("comment-input");
-const deleteButtonElement = document.getElementById("delete-button");
-const buttonElement = document.getElementById("write-button");
 
-buttonElement.addEventListener("click", (event) => {
-  event.stopPropagation();
-  addComments();
-});
-function addComments() {
-  if (nameInputElement.value.trim() === "") {
-    nameInputElement.classList.add("input-error");
-    return;
-  }
-  if (commentInputElement.value.trim() === "") {
-    commentInputElement.classList.add("input-error");
-    return;
-  }
-  fetchPost();
+const initAddButton = () => {
+
 };
-const fetchPost = () => {
+
+function addComments(elem1, elem2) {
+  // const nameInputElement = document.getElementById("name-input");
+  // const commentInputElement = document.getElementById("comment-input");
+  if (elem1.value.trim() === "") {
+    elem1.classList.add("input-error");
+    return;
+  }
+  if (elem2.value.trim() === "") {
+    elem2.classList.add("input-error");
+    return;
+  }
+  fetchPost(elem1, elem2);
+};
+const fetchPost = (elem1, elem2) => {
+  const addFormElement = document.getElementById("addForm");
+  const loadingElement = document.querySelector(".loading");
   addFormElement.style.display = 'none';
   loadingElement.style.display = 'block';
   let postBody = {
-    name: nameInputElement.value
+    name: elem1.value
       .replaceAll("&", "&amp;")
       .replaceAll("<", "&lt;")
       .replaceAll(">", "&gt;")
@@ -157,7 +160,7 @@ const fetchPost = () => {
     date: new Date(),
     isLiked: false,
     likes: 0,
-    text: commentInputElement.value
+    text: elem2.value
       .replaceAll("&", "&amp;")
       .replaceAll("<", "&lt;")
       .replaceAll(">", "&gt;")
@@ -177,8 +180,8 @@ const fetchPost = () => {
       addFormElement.style.display = "flex";
       deleteButtonElement.classList.add('delete-active');
       buttonElement.setAttribute('disabled', '');
-      nameInputElement.value = "";
-      commentInputElement.value = "";
+      elem1.value = "";
+      elem2.value = "";
     })
       .catch((error) => {
         loadingElement.style.display = 'none';
@@ -200,30 +203,38 @@ const fetchPost = () => {
   };
   postApi(postBody, getAPIResponse);
 };
-import { postApi } from "./api.js";
-
-const inputElements = document.querySelectorAll(".add-form");
-for (const inputElement of inputElements) {
-  inputElement.addEventListener('keyup', (event) => {
+const initInputs = (elem1, elem2) => {
+  const buttonElement = document.getElementById("write-button");
+  buttonElement.addEventListener("click", (event) => {
     event.stopPropagation();
-    if (event.code === 'Enter') {
-      addComments();
-    };
+    addComments(elem1, elem2);
   });
-  inputElement.addEventListener('input', (event) => {
-    event.stopPropagation();
-    buttonElement.removeAttribute('disabled', '');
-    nameInputElement.classList.remove("input-error");
-    commentInputElement.classList.remove("input-error");
-  }
-  )
+  const inputElements = document.querySelectorAll(".add-form");
+  for (const inputElement of inputElements) {
+    inputElement.addEventListener('input', (event) => {
+      event.stopPropagation();
+      buttonElement.removeAttribute('disabled', '');
+      inputElement.classList.remove("input-error");
+      // commentInputElement.classList.remove("input-error");
+    }
+    );
+    inputElement.addEventListener('keyup', (event) => {
+      event.stopPropagation();
+      if (event.code === 'Enter') {
+        addComments(elem1, elem2);
+      };
+    });
+  };
 };
 
-deleteButtonElement.addEventListener('click', () => {
-  messages.pop();
-  deleteButtonElement.classList.remove('delete-active');
-  renderMainList();
-});
+const initDeleteButton = () => {
+  const deleteButtonElement = document.getElementById("delete-button");
+  deleteButtonElement.addEventListener('click', () => {
+    messages.pop();
+    deleteButtonElement.classList.remove('delete-active');
+    renderMainList();
+  });
+};
 
 function getCurrentDate(date) {
   let day = date.getDate();
