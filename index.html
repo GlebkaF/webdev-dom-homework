@@ -21,6 +21,7 @@
           </div>
         </div>
         <div class="comment-footer">
+          <button class="delete-button">Удалить</button>
           <div class="likes">
             <span class="likes-counter">3</span>
             <button class="like-button"></button>
@@ -38,6 +39,7 @@
           </div>
         </div>
         <div class="comment-footer">
+          <button class="delete-button">Удалить</button>
           <div class="likes">
             <span class="likes-counter">75</span>
             <button class="like-button -active-like"></button>
@@ -50,8 +52,10 @@
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
         id="coment-input"></textarea>
       <div class="add-form-row">
-        <button class="add-form-button" id="add-button">Написать</button>
+       <button class="add-form-button" id="end-delete-button">Удалить</button>
+       <button class="add-form-button" id="add-button">Написать</button>
       </div>
+      
     </div>
   </div>
 </body>
@@ -68,6 +72,7 @@
   const comentInputElement = document.getElementById("coment-input");
   const addButtonElement = document.getElementById("add-button");
   const listElement = document.getElementById("list");
+  const endDeleteButtonElement = document.getElementById("end-delete-button")
 
   //Добавить обработчик клика
   addButtonElement.addEventListener("click", () => {
@@ -135,10 +140,16 @@
 // Добавление элемента в список по нажатию Enter
 document.addEventListener("keypress", function(event) {
   if (event.key === "Enter") {
-    event.preventDefault();
     addButtonElement.click();
   }
 });
+
+//Удаление последнего комментари
+endDeleteButtonElement.addEventListener("click", () => {
+
+const lastElement=listElement.lastElementChild;
+      lastElement.remove();
+     });
 
   console.log("It works!");
 </script>
