@@ -1,10 +1,85 @@
 
 let commentaries = [];
 const host = 'https://wedev-api.sky.pro/api/v2/tanya-koryachkina/comments';
-let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+//let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+token = null;
+const commentsLoad = document.querySelector(".comments-load");
+const fetchGet = () => {
+
+    commentsLoad.style.display = "block";
+    //listElement.style.display = "none";
+    fetch(host, {
+        method: "GET",
+        headers: {
+            Authorization: token,
+        }
+    })
+    .then((response) => {
+        /*if(response.status ===401) {
+
+            alert("Не авторизованы");
+            throw new Error ("Не авторизованы");
+            
+        }*/
+        return response.json();
+    })
+    .then((responseData) => {
+        const appComments = responseData.comments
+        .map((comment) => {
+            return {
+                name: comment.author.name,
+                date: new Date(Date.parse(comment.date)).toLocaleDateString() + ' ' + new Date(Date.parse(comment.date)).getHours() + ':' + new Date(Date.parse(comment.date)).getMinutes(),
+                text: comment.text,
+                likes: comment.likes,
+                isLiked: false,
+                id: comment.id,
+            };
+        
+        });
+        return appComments;
+    })
+    .then((data) => {
+        commentsLoad.style.display = "none";
+        //listElement.style.display = "flex";
+        commentaries = data;
+        renderApp();
+    });
+        
+
+      
+};
 
 const renderApp = () => {
     const appEl = document.getElementById('app');
+    if(!token) {
+        const appHtml = `
+        <div class="container">
+          <div class="add-form">
+            <h3 class="form-title">Форма входа</h3>
+            <div class="form-row">
+              Логин    
+              <input id="login-input" type="text" class="add-form-name"/>
+              <br />
+              <br />
+              Пароль
+              <input id="login-input" type="text" class="add-form-name"/>
+            </div>
+            <br />
+            <button id='login-button' class="add-form-button">Войти</button>
+        </div>`
+          
+        appEl.innerHTML = appHtml;
+
+        
+        document.getElementById("login-button").addEventListener("click", () => {
+            token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+            
+            fetchGet();
+            //renderApp();
+        })
+        return;
+    }
+    
     const commentsHtml = commentaries.map((comment, index) => {
         if(comment.isLiked) {
           return `<li  class="comment" data-index="${index}">
@@ -47,19 +122,7 @@ const renderApp = () => {
         //console.log(commentsHtml);
         const appHtml = `
         <div class="container">
-          <div class="add-form">
-            <h3 class="form-title">Форма входа</h3>
-            <div class="form-row">
-              Логин    
-              <input id="login-input" type="text" class="add-form-name"/>
-              <br />
-              <br />
-              Пароль
-              <input id="login-input" type="text" class="add-form-name"/>
-            </div>
-            <br />
-            <button id='login-button' class="add-form-button">Войти</button>
-          </div>
+          
           <ul id="list" class="comments">
             <!-- <li   class="comment">
               <div class="comment-header">
@@ -154,50 +217,7 @@ const renderApp = () => {
             }
         };
 
-        const fetchGet = () => {
-
-            commentsLoad.style.display = "block";
-            listElement.style.display = "none";
-            fetch(host, {
-                method: "GET",
-                headers: {
-                    Authorization: token,
-                }
-            })
-            .then((response) => {
-                if(response.status ===401) {
-
-                    alert("Не авторизованы");
-                    throw new Error ("Не авторизованы");
-                    
-                }
-                return response.json();
-            })
-            .then((responseData) => {
-                const appComments = responseData.comments
-                .map((comment) => {
-                    return {
-                        name: comment.author.name,
-                        date: new Date(Date.parse(comment.date)).toLocaleDateString() + ' ' + new Date(Date.parse(comment.date)).getHours() + ':' + new Date(Date.parse(comment.date)).getMinutes(),
-                        text: comment.text,
-                        likes: comment.likes,
-                        isLiked: false,
-                        id: comment.id,
-                    };
-                
-                });
-                return appComments;
-            })
-            .then((data) => {
-                commentsLoad.style.display = "none";
-                listElement.style.display = "flex";
-                commentaries = data;
-                renderApp();
-            });
-                
         
-              
-        };
 
         const fetchPost = () => {
             fetch(host, {
