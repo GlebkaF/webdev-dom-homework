@@ -3,6 +3,10 @@ import { renderCommentsMod } from "./main.js";
 import { nameInputElement } from "./main.js";
 import { commentInputElement } from "./main.js";
 
+
+
+
+
 export const getAllComments = (comments) => {
     return fetch("https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov/comments", {
         method: "GET",

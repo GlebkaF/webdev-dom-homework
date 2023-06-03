@@ -1,3 +1,6 @@
+import { listElement } from "./main.js";
+import { initlikeButtonListeners } from "./main.js";
+import { initAnswerComment } from "./main.js";
 // export const getListComment = (comment, index) => {
 //   // let isLike = '';
 //   // if (comments[index].isLiked) {
@@ -33,11 +36,11 @@
 export const renderComments = (comments) => {
     const commentsHtml = comments.map((comment, index) => {
 
-    //   let isLike = '';
-    //   if (comments[index].isLiked) {
-    //     isLike = '-active-like'
-    //   }
-      return `<li class="comment">
+        //   let isLike = '';
+        //   if (comments[index].isLiked) {
+        //     isLike = '-active-like'
+        //   }
+        return `<li class="comment">
         <div class="comment-header">
           <div>${comment.name}</div>
           <div>${comment.date}</div>
@@ -60,4 +63,4 @@ export const renderComments = (comments) => {
     listElement.innerHTML = commentsHtml;
     initlikeButtonListeners();
     initAnswerComment();
-  };
+};

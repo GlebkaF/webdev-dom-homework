@@ -5,7 +5,7 @@ import { getAllComments, finComments } from "./api.js";
 // Код писать здесь
 
 const buttonElemtnt = document.getElementById('add-button');
-const listElement = document.getElementById('list');
+export const listElement = document.getElementById('list');
 export const nameInputElement = document.getElementById("name-input");
 export const commentInputElement = document.getElementById("comment-input");
 const deletElement = document.getElementById("delet-button");
@@ -73,7 +73,7 @@ export let comments = [
 ];
 
 //Функция для обработчика клика для лайка
-const initlikeButtonListeners = () => {
+export const initlikeButtonListeners = () => {
   const likeButtonElements = document.querySelectorAll('.like-button');
   for (const likeButtonElement of likeButtonElements) {
     likeButtonElement.addEventListener('click', (event) => {
@@ -94,7 +94,7 @@ const initlikeButtonListeners = () => {
 
 };
 
-const initAnswerComment = () => {
+export const initAnswerComment = () => {
   const oldComments = document.querySelectorAll('.comment')
   for (const oldComment of oldComments) {
     oldComment.addEventListener('click', () => {
@@ -147,7 +147,7 @@ initlikeButtonListeners();
 //   initAnswerComment();
 // };
 export const renderCommentsMod = () => {
-  renderComments();
+  renderComments(comments);
 };
 
 
