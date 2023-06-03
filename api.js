@@ -1,8 +1,11 @@
 let token
 const host = ' https://wedev-api.sky.pro/api/v2/ruslan-shevelev/comments'
-function getAPI(callback) {
+function getAPI(token, callback) {
     return fetch(host, {
-        method: "GET"
+        method: "GET",
+        headers: {
+          Authorization: token,
+        },
     })
         .then((response) => {
             return response.json();
@@ -13,36 +16,64 @@ function getAPI(callback) {
 
 };
 
-function postApi(body, callback) {
+function postApi(body, callback, token) {
     fetch(host, {
         method: "POST",
         body: JSON.stringify(body),
-    })
+        headers: {
+          Authorization: token,
+        },})
         .then((response) => {
-            callback(response);
+          if (response.status === 500) {
+            throw new Error("Сервер сломался");
+          }
+          if (response.status === 400) {
+            throw new Error("Плохой запрос");
+          }
+          return response.json();
+        })
+        .then((responseData) => {
+          callback(responseData);
+        })
+        .catch((error) => {
+          // loadingElement.style.display = 'none';
+          // addFormElement.style.display = "flex";
+          if (error.message === "Сервер сломался") {
+            alert("Сервер сломался, попробуйте позже");
+            postApi(body, callback, token);
+            return;
+          }
+          if (error.message === "Плохой запрос") {
+            alert("Имя и комментарий должны быть не короче трех символов");
+            // nameInputElement.classList.add("input-error");
+            // commentInputElement.classList.add("input-error");
+            return;
+          }
+          alert('Кажется что-то пошло не так, возможно отсутствует подключение к интернету');
+          console.warn(error);
         });
 };
 
 export { getAPI, postApi };
 
 export function registerUser({ login, password, name }) {
-    return fetch("https://webdev-hw-api.vercel.app/api/user", {
+    return fetch("https://wedev-api.sky.pro/api/user", {
       method: "POST",
       body: JSON.stringify({
         login,
-        password,
         name,
+        password,
       }),
     }).then((response) => {
       if (response.status === 400) {
-        throw new Error("Такой пользователь уже существует");
+        throw new Error("Пользователь с таким логином уже сущетсвует");
       }
       return response.json();
     });
   };
   
   export function loginUser({ login, password }) {
-    return fetch("https://webdev-hw-api.vercel.app/api/user/login", {
+    return fetch("https://wedev-api.sky.pro/api/user/login", {
       method: "POST",
       body: JSON.stringify({
         login,
@@ -52,6 +83,16 @@ export function registerUser({ login, password, name }) {
       if (response.status === 400) {
         throw new Error("Неверный логин или пароль");
       }
+      return response.json();
+    });
+  }
+  export function deleteComment({ token, id }) {
+    return fetch("https://wedev-api.sky.pro/api/v2/ruslan-shevelev/comments/" + id, {
+      method: "DELETE",
+      headers: {
+        Authorization: token,
+      },
+    }).then((response) => {
       return response.json();
     });
   }

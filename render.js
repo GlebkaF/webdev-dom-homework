@@ -1,4 +1,3 @@
-import { renderLoginComponent } from "./components/login-component.js";
 function renderMain(messages, getCommentList, element, token) {
   const messagesHtml = messages.map((message, index) => getCommentList(message, index)).join("");
   const appHTML = `
@@ -18,10 +17,6 @@ function renderMain(messages, getCommentList, element, token) {
     <div class="loading"></div>` : ""}` 
 
   element.innerHTML = appHTML;
-  if (!token) {
-  document.getElementById('login-link').addEventListener('click', () => {
-    renderLoginComponent(element);
-  });}
   return;
 }
 export default renderMain;

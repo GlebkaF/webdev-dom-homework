@@ -1,5 +1,5 @@
 import { loginUser, registerUser } from "../api.js";
-export function renderLoginComponent(element) {
+export function renderLoginComponent(element, {setToken}, {setUser}, fetchAndRender) {
   let isLoginMode = true;
   const renderForm = () => {
     const loginHTML = `
@@ -16,49 +16,47 @@ export function renderLoginComponent(element) {
     element.innerHTML = loginHTML;
 
     document.getElementById("loginButton").addEventListener("click", () => {
+      const login = document.getElementById("login").value;
+      const password = document.getElementById("password").value;
+      if (!login) {
+        alert("Введите логин");
+        return;
+      }
+
+      if (!password) {
+        alert("Введите пароль");
+        return;
+      }
+
       if (isLoginMode) {
-        const login = document.getElementById("login-input").value;
-        const password = document.getElementById("password-input").value;
-
-        if (!login) {
-          alert("Введите логин");
-          return;
-        }
-
-        if (!password) {
-          alert("Введите пароль");
-          return;
-        }
-
         loginUser({
           login: login,
           password: password,
         })
           .then((user) => {
             setToken(`Bearer ${user.user.token}`);
-            fetchTodosAndRender();
+            setUser(user.user);
+            fetchAndRender();
           })
           .catch((error) => {
-            // TODO: Выводить алерт красиво
             alert(error.message);
           });
       } else {
-        const login = document.getElementById("login").value;
         const name = document.getElementById("name").value;
-        const password = document.getElementById("password").value;
+        // const password = document.getElementById("password").value;
         if (!name) {
           alert("Введите имя");
           return;
         }
-        if (!login) {
-          alert("Введите логин");
-          return;
-        }
+        // if (!login) {
+        //   alert("Введите логин");
+        //   return;
+        // }
 
-        if (!password) {
-          alert("Введите пароль");
-          return;
-        }
+        // if (!password) {
+        //   alert("Введите пароль");
+        //   return;
+        // }
 
         registerUser({
           login: login,
@@ -67,7 +65,8 @@ export function renderLoginComponent(element) {
         })
           .then((user) => {
             setToken(`Bearer ${user.user.token}`);
-            fetchTodosAndRender();
+            console.log(user);
+            fetchAndRender();
           })
           .catch((error) => {
             // TODO: Выводить алерт красиво

@@ -1,41 +1,56 @@
 "use strict";
 // Код писать здесь
+let user = "";
 let messages = [];
 let appElement = document.getElementById("app")
-let token = "jhghgjgk";
-import { getAPI } from "./api.js";
+let token = "";
+import { getAPI, postApi, deleteComment } from "./api.js";
 import renderMain from "./render.js";
-import { postApi } from "./api.js";
+import { renderLoginComponent } from "./components/login-component.js";
 
 const getCommentDataMain = (comment) => {
   return {
+    userId: comment.author.id,
+    login: comment.author.login,
     name: comment.author.name,
     time: getCurrentDate(new Date(comment.date)),
     comment: comment.text,
+    commentID: comment.id,
     likesCount: comment.likes,
     liked: comment.isLiked,
     isEdit: false,
-    isLoading: false
+    isLoading: false,
   };
 };
-const renderMainList = (token) => {
+const renderMainList = () => {
   renderMain(messages, getCommentListMain, appElement, token);
   if (token) {
     const nameInputElement = document.getElementById("name-input");
+    nameInputElement.value = user.name;
+    console.log(user);
+    console.log(messages);
     const commentInputElement = document.getElementById("comment-input");
     initLikeButtonsListeners();
     initCorrectButtonsListeners();
     initAnswersListeners(commentInputElement);
-    // TODO
-    initDeleteButton();
+    initDeleteButton(getCommentDataMain);
     initInputs(nameInputElement, commentInputElement);
   }
+  else {
+    document.getElementById('login-link').addEventListener('click', () => {
+      renderLoginComponent(appElement,
+        { setToken: (newToken) => { token = newToken; } },
+        { setUser: (newUser) => { user = newUser; } },
+        fetchAndRenderMessages);
+    });
+  };
 };
 
 const fetchAndRenderMessages = () => {
-  getAPI(getCommentDataMain).then((result) => {
+  return getAPI(token, getCommentDataMain).then((result) => {
     messages = result;
-    renderMainList(token);
+    // console.log(messages);
+    renderMainList(messages);
   })
 };
 fetchAndRenderMessages();
@@ -109,7 +124,7 @@ const initAnswersListeners = (element) => {
 function getCommentListMain(message, index) {
   let like = (message.liked) ? 'like-button -active-like' : 'like-button';
   let edit = (message.isEdit) ? `<textarea type="textarea" class="comment-correction"rows="4">${message.comment}</textarea>` : `<div class="comment-text">${message.comment.replaceAll("QUOTE_BEGIN", "<div class='quote'>").replaceAll("QUOTE_END", "</div>").replaceAll("\n", "<br>")}</div>`;
-  let correctBtn = (message.isEdit) ? `<button data-index="${index}" class="correct-button save-button">Сохранить</button>` : `<button data-index="${index}" class="correct-button hide">Редактировать</button>`;
+  let correctBtn = (message.isEdit) ? `<button data-index="${index}" class="correct-button save-button">Сохранить</button>` : `<button data-index="${index}" class="correct-button">Редактировать</button>`;
   return `<li class="comment" data-index="${index}">
   <div class="comment-header" >
     <div>${message.name}</div>
@@ -120,22 +135,16 @@ function getCommentListMain(message, index) {
   </div>
   <div class="comment-footer">
     ${correctBtn}
+    <button data-id="${message.commentID}" class="delete">Удалить</button>
     <div class="likes">
       <span class="likes-counter">${message.likesCount}</span>
       <button data-index="${index}" class="${like}"></button>
     </div>
   </div>
 </li>`;
-}
-
-
-const initAddButton = () => {
-
 };
 
 function addComments(elem1, elem2) {
-  // const nameInputElement = document.getElementById("name-input");
-  // const commentInputElement = document.getElementById("comment-input");
   if (elem1.value.trim() === "") {
     elem1.classList.add("input-error");
     return;
@@ -168,40 +177,14 @@ const fetchPost = (elem1, elem2) => {
     forceError: false,
   };
   const getAPIResponse = (response) => {
-    new Promise(() => {
-      if (response.status === 500) {
-        throw new Error("Сервер сломался");
-      }
-      if (response.status === 400) {
-        throw new Error("Плохой запрос");
-      }
+    if (response.result === "ok") {
       fetchAndRenderMessages();
-      loadingElement.style.display = 'none';
-      addFormElement.style.display = "flex";
-      deleteButtonElement.classList.add('delete-active');
-      buttonElement.setAttribute('disabled', '');
-      elem1.value = "";
-      elem2.value = "";
-    })
-      .catch((error) => {
-        loadingElement.style.display = 'none';
-        addFormElement.style.display = "flex";
-        if (error.message === "Сервер сломался") {
-          alert("Сервер сломался, попробуйте позже");
-          fetchPost();
-          return;
-        }
-        if (error.message === "Плохой запрос") {
-          alert("Имя и комментарий должны быть не короче трех символов");
-          nameInputElement.classList.add("input-error");
-          commentInputElement.classList.add("input-error");
-          return;
-        }
-        alert('Кажется что-то пошло не так, возможно отсутствует подключение к интернету');
-        console.warn(error);
-      });
+    }
+    else {
+      return
+    ;}
   };
-  postApi(postBody, getAPIResponse);
+  postApi(postBody, getAPIResponse, token);
 };
 const initInputs = (elem1, elem2) => {
   const buttonElement = document.getElementById("write-button");
@@ -215,7 +198,6 @@ const initInputs = (elem1, elem2) => {
       event.stopPropagation();
       buttonElement.removeAttribute('disabled', '');
       inputElement.classList.remove("input-error");
-      // commentInputElement.classList.remove("input-error");
     }
     );
     inputElement.addEventListener('keyup', (event) => {
@@ -228,13 +210,25 @@ const initInputs = (elem1, elem2) => {
 };
 
 const initDeleteButton = () => {
-  const deleteButtonElement = document.getElementById("delete-button");
-  deleteButtonElement.addEventListener('click', () => {
-    messages.pop();
-    deleteButtonElement.classList.remove('delete-active');
-    renderMainList();
-  });
+  const deleteButtons = document.querySelectorAll(".delete");
+  for (const deleteButton of deleteButtons) {
+    deleteButton.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const id = deleteButton.dataset.id;
+      deleteComment({
+        id,
+        token,
+      }).then((responseData) => {
+        console.log(responseData);
+        // responseData.comments.map((item) => callback(item))
+        // messages = responseData.todos;
+        // renderMainList(messages);
+        fetchAndRenderMessages();
+      });
+    });
+  };
 };
+
 
 function getCurrentDate(date) {
   let day = date.getDate();
@@ -246,4 +240,4 @@ function getCurrentDate(date) {
   let minute = date.getMinutes();
   if (minute < 10) minute = "0" + minute;
   return day + '.' + month + '.' + date.getFullYear() % 100 + ' ' + hour + ':' + minute;
-}
+};
