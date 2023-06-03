@@ -1,10 +1,12 @@
 // Импорты
 import { delay, replaceValue, correctDate } from "./supportFunc.js";
 
+// Переменные
 let host = "https://webdev-hw-api.vercel.app/api/v2/marina-obruch/comments";
 let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
 token = null;
 
+// КОД
 let comments = [];
 let isWaitingComment = false;
 
@@ -56,7 +58,7 @@ const renderComments = () => {
         })
         return;
     }
-
+    // В процессе клик на кнопку ввода
     // document.getElementById("in-button").addEventListener("click", () => {
     //     const login = document.getElementById("add-login").value;
     //     const password = document.getElementById("add-password").value;
@@ -94,6 +96,7 @@ const renderComments = () => {
           </div>
         </li>`
         }).join("");
+
 
     const appHtml = `<div class="container">
             <ul id="comments" class="comments">
@@ -147,7 +150,6 @@ const renderComments = () => {
         }
         clickButton();
     });
-
 
     // валидация на ввод (неактивная кнопка "Написать")
     nameInputElement.addEventListener('input', () => {
