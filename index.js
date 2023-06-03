@@ -1,4 +1,5 @@
 import { addComment, getFetchComments } from "./api.js";
+import { renderLoginComponent } from "./components/login-component.js";
 
 
 let commentaries = [];
@@ -36,11 +37,11 @@ const fetchGet = () => {
 
       
 };
-
+const appEl = document.getElementById('app');
 const renderApp = () => {
-    const appEl = document.getElementById('app');
+    
     if(!token) {
-        const appHtml = `
+        /*const appHtml = `
         <div class="container">
           <div class="add-form">
             <h3 class="form-title">Форма входа</h3>
@@ -64,9 +65,14 @@ const renderApp = () => {
             
             fetchGet();
             //renderApp();
-        })
+        })*/
+        renderLoginComponent({ appEl, setToken: (newToken) => {
+            token = newToken;
+        },
+        fetchGet,
+     });    
         return;
-    }
+}
     
     const commentsHtml = commentaries.map((comment, index) => {
         if(comment.isLiked) {
@@ -173,7 +179,7 @@ const renderApp = () => {
         const commentInputElement = document.getElementById("comment-input");
         const comment = document.getElementsByTagName('li');
         const deleteFormButtonElement = document.getElementById("delete-form-button");
-        const commentsLoad = document.querySelector(".comments-load");
+        //const commentsLoad = document.querySelector(".comments-load");
 
         const initLikeButtonListeners = () => {
             const likesElements = document.querySelectorAll(".like-button");
@@ -264,8 +270,8 @@ const renderApp = () => {
             renderApp();
             initLikeButtonListeners();
             
-        });
+        })
         
- };
+};
 
 renderApp();
