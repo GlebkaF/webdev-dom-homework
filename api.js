@@ -4,12 +4,24 @@ import { getListComments } from "./listComments.js";
 
 export let commentos = [];
 
+// const host = 'https://webdev-hw-api.vercel.app/api/v1/NSchenikov/comments';
+
+const host = 'https://wedev-api.sky.pro/api/v2/nikita-schenikov/comments';
+
+const token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+
 export const fetchGet = () => {
     commentsLoading.style.display = "block";
-    fetch('https://webdev-hw-api.vercel.app/api/v1/NSchenikov/comments', {
-        method: "GET"
+    fetch(host, {
+        method: "GET",
+        headers: {
+          Authorization: token,
+        }
     })
       .then((response) => {
+        if(response.status === 401) {
+          throw new Error("Нет авторизации");
+        }
         return response.json();
       })
       .then((responseData) => {
@@ -35,13 +47,16 @@ export const fetchGet = () => {
   };
 
   export const fetchPost = () => {
-    fetch("https://webdev-hw-api.vercel.app/api/v1/NSchenikov/comments", {
+    fetch(host, {
         method: "POST",
         body: JSON.stringify({
           name: addFormName.value,
           text: addFormText.value,
           // forceError: true,
-        })
+        }),
+        headers: {
+          Authorization: token,
+        }
       })
       .then((response) => {
         if(response.status === 500) {
