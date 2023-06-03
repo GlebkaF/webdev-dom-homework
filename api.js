@@ -30,10 +30,6 @@ export function addComment({ buttonEnter, nameText, text, option, token }) {
                 .replaceAll("<", "&lt;")
                 .replaceAll(">", "&gt;")
                 .replaceAll('"', "&quot;"),
-            // name: nameText.value.replaceAll("&", "&amp;")
-            //     .replaceAll("<", "&lt;")
-            //     .replaceAll(">", "&gt;")
-            //     .replaceAll('"', "&quot;"),
             forceError: true,
         }),
 
@@ -42,16 +38,12 @@ export function addComment({ buttonEnter, nameText, text, option, token }) {
             if (response.status === 400) {
                 throw new Error('Проблема в имени и/или тексте')
             };
-            if (response.status === 500) {
-                throw new Error('Ошибка на сервере')
-            };
             return response.json();
         })
         .then(() => {
             getUsers({ token });
             buttonEnter.disabled = false;
             buttonEnter.textContent = 'Написать';
-            nameText.value = "";
             text.value = "";
         })
         .catch((error) => {
@@ -61,10 +53,6 @@ export function addComment({ buttonEnter, nameText, text, option, token }) {
                 buttonEnter.textContent = 'Написать';
                 return;
             };
-            if (error.message === 'Ошибка на сервере') {
-                addComment({ buttonEnter, nameText, text, option })
-                return
-            }
             alert('Проверьте интернет соединение');
             buttonEnter.disabled = false;
             buttonEnter.textContent = 'Написать';
