@@ -22,28 +22,39 @@ loadrComments()
   return fetch("https://webdev-hw-api.vercel.app/api/v1/anna-makhortova/comments", {
     method: "GET"
   }).then((response) => {
-    return response.json();
+    if (response.status === 200) {
+      return response.json()
+    } if (response.status === 500) {
+      return Promise.reject(new Error("произошел сбой сервера"))
+    } else {
+      return Promise.reject(new Error("неизвестная ошибка"))
+    }
   }).then((responseData) => {
     usersComments = responseData.comments.map((comment) => {
 
-      return {
+   return {
         name: comment.author.name,
         date: new Date(comment.date),
         text: comment.text,
         likes: comment.likes,
-        isLiked: comment.isLiked
+        isLiked: comment.isLiked,
       }
-    });
+    })
     loadedComment = false
     renderForm(loadedComment)
     renderComments();
-  });
-}
+  }).catch((error) => {
+    alert(error)
+    loadedComment = false
+    renderForm(loadedComment)
+    });
+  }
 
 function postComments () {
   return fetch("https://webdev-hw-api.vercel.app/api/v1/anna-makhortova/comments", {
 method: "POST",
 body: JSON.stringify({
+  forceError: false,
 "text": newComment.value.replaceAll("&", "&amp;")
       .replaceAll("<", "&lt;")
       .replaceAll(">", "&gt;")
@@ -55,18 +66,40 @@ body: JSON.stringify({
       .replaceAll(">", "&gt;")
       .replaceAll('"', "&quot;"),
 })}).then((response) => {
-  return response.json()
+  if (response.status === 201) {
+    return response.json()
+  } if (response.status === 400 || newComment.value.length < 3 && newName.value.length < 3) {
+    return Promise.reject(new Error("Имя или комментарий слишком короткие"))
+  } if (response.status === 500) {
+    return Promise.reject(new Error("произошел сбой сервера"))
+  } else {
+    console.log(response.status)
+    return Promise.reject(new Error("неизвестная ошибка"))
+  }
 }).then((responseData) => {
   getComments()
+  cleareInputs()
     renderComments();
+}).catch((error) => {
+  alert(error.message)
+  loadedComment = false
+  renderForm(loadedComment)
+  if (error.message === "произошел сбой сервера") {
+    postComments()
+  } if (error.message === 'Failed to fetch') {
+    alert('Похоже интернет не работает, попробуйте позже')
+  } else {
+    alert(error.message)
+  }
 });
 }
+
+
 function addNewComment() {
   const dateNow = new Date();
   let loadedComment = true
     renderForm(loadedComment)
     postComments()
-    cleareInputs()
     renderComments()
     commentClickListener()
 }
@@ -95,7 +128,7 @@ function formatDate(date) {
 function cleareInputs () {
   newName.value = ''
   newComment.value = ''
-  addButton.setAttribute('disabled', 'disabled')
+  //addButton.setAttribute('disabled', 'disabled')
 }
 
 
@@ -104,19 +137,20 @@ function cleareInputs () {
 
 
 //ответ-комментарий
+
 const commentClickListener = () => {
+  
+  const boxOfCommentsTexts = boxOfComments.querySelectorAll('.comment')
 
-    const boxOfCommentsTexts = boxOfComments.querySelectorAll('.comment')
-
-    for (const comment of boxOfCommentsTexts) {
-      comment.addEventListener('click', () => {
-        newComment.setAttribute('style', 'white-space: pre-line;');
-        const replace = `${usersComments[comment.dataset.id].text} \r\n \r\n ${usersComments[comment.dataset.id].name}`
-        newComment.value = `| ${replace} \r\n\|`
-      })
-    }
-    commentClickListener()
+  for (const comment of boxOfCommentsTexts) {
+    comment.addEventListener('click', () => {
+      newComment.setAttribute('style', 'white-space: pre-line;');
+      const replace = `${usersComments[comment.dataset.id].text} \r\n \r\n ${usersComments[comment.dataset.id].name}`
+      newComment.value = `| ${replace} \r\n\|`
+    })
+  }
 }
+
 
 const initEventListeners = () => {
 
@@ -129,23 +163,23 @@ const likeButtons = document.querySelectorAll('.likes');
     })  
   } 
 }
-newName.addEventListener('input', function () {
-    if (newName.value.length < 2 || newComment.value.length < 5) {
-        addButton.setAttribute('disabled', 'disabled')
-    }
-    else{
-        addButton.removeAttribute('disabled')
-    }
-});
+//newName.addEventListener('input', function () {
+//    if (newName.value.length < 2 || newComment.value.length < 5) {
+//        addButton.setAttribute('disabled', 'disabled')
+//    }
+//    else{
+//        addButton.removeAttribute('disabled')
+ //   }
+//});
 
-newComment.addEventListener('input', function () {
-    if (newName.value.length < 2 || newComment.value.length < 5) {
-        addButton.setAttribute('disabled', 'disabled')
-    }
-    else{
-        addButton.removeAttribute('disabled')
-    }
-});
+//newComment.addEventListener('input', function () {
+//    if (newName.value.length < 2 || newComment.value.length < 5) {
+//        addButton.setAttribute('disabled', 'disabled')
+//    }
+//    else{
+//        addButton.removeAttribute('disabled')
+//    }
+//});
 
 
 addButton.addEventListener('click', addNewComment)
