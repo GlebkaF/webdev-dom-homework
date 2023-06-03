@@ -3,13 +3,18 @@ import renderComments from "./render.js";
 import { getComments } from "./comments.js";
 
 export let commentaries = [];
+export let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+export const host = 'https://wedev-api.sky.pro/api/v2/tanya-koryachkina/comments';
 
 export const fetchGet = () => {
 
     commentsLoad.style.display = "block";
     listElement.style.display = "none";
-    fetch("https://webdev-hw-api.vercel.app/api/v1/tanya-koryachkina/comments", {
+    fetch(host, {
         method: "GET",
+        headers: {
+            Authorization: token
+        }
     })
     .then((response) => {
         return response.json();
@@ -41,7 +46,7 @@ export const fetchGet = () => {
 };
 
 export const fetchPost = () => {
-    fetch('https://webdev-hw-api.vercel.app/api/v1/tanya-koryachkina/comments', {
+    fetch(host, {
         method: "POST",
         body: JSON.stringify({
           name: nameInputElement.value,
