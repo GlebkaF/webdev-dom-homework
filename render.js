@@ -1,4 +1,3 @@
-
 import { commentsList } from "./script.js";
 import { initLikesButton } from "./like-button.js";
 import { addReply } from "./add-reply.js";
