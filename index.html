@@ -65,7 +65,74 @@
 
   <script>
     "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const addButton = document.querySelector(".add-form-button");
+    const nameInput = document.querySelector(".add-form-name");
+    const commentInput = document.querySelector(".add-form-text");
+    const commentsList = document.querySelector(".comments");
+
+    const addComment = () => {
+
+      const name = nameInput.value;
+      const comment = commentInput.value;
+
+      if (name === "" || comment === "") {
+        alert("Пожалуйста, заполните все поля");
+        return;
+      }
+
+      const newComment = document.createElement("li");
+      newComment.className = "comment";
+
+      const commentHeader = document.createElement("div");
+      commentHeader.className = "comment-header";
+
+      const nameElement = document.createElement("div");
+      nameElement.textContent = name;
+      //время
+      const dateElement = document.createElement("div");
+      const currentDate = new Date();
+      const formattedDate = currentDate.toLocaleString();
+      dateElement.textContent = formattedDate;
+
+      commentHeader.appendChild(nameElement);
+      commentHeader.appendChild(dateElement);
+
+      const commentBody = document.createElement("div");
+      commentBody.className = "comment-body";
+
+      const commentText = document.createElement("div");
+      commentText.className = "comment-text";
+      commentText.textContent = comment;
+
+      commentBody.appendChild(commentText);
+
+      const commentFooter = document.createElement("div");
+      commentFooter.className = "comment-footer";
+      //лайки
+      const likes = document.createElement("div");
+      likes.className = "likes";
+
+      const likesCounter = document.createElement("span");
+      likesCounter.className = "likes-counter";
+      likesCounter.textContent = "0";
+
+      const likeButton = document.createElement("button");
+      likeButton.className = "like-button";
+      likes.appendChild(likesCounter);
+      likes.appendChild(likeButton);
+
+      commentFooter.appendChild(likes);
+
+      newComment.appendChild(commentHeader);
+      newComment.appendChild(commentBody);
+      newComment.appendChild(commentFooter);
+
+      commentsList.appendChild(newComment);
+
+      nameInput.value = "";
+      commentInput.value = "";
+    };
+    addButton.addEventListener("click", addComment);
+    //console.log("It works!");
   </script>
 </html>
