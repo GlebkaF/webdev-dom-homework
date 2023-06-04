@@ -1,33 +1,14 @@
 // Импорты
 import { delay, replaceValue, correctDate } from "./supportFunc.js";
+import { fetchAndRenderTasks, postComment } from "./api.js";
 
 // Переменные
-let host = "https://webdev-hw-api.vercel.app/api/v2/marina-obruch/comments";
 let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
 token = null;
 
 // КОД
 let comments = [];
 let isWaitingComment = false;
-
-const fetchAndRenderTasks = (token) => {
-    return fetch(host, {
-        method: "GET",
-        headers: {
-            Authorization: token,
-        },
-    })
-        .then((responseStart) => {
-            return responseStart.json();
-        })
-        .then((startJson) => {
-            comments = startJson.comments;
-            isWaitingComment = false;
-
-            renderComments();
-        })
-};
-
 
 // Функция render
 const renderComments = () => {
@@ -54,7 +35,7 @@ const renderComments = () => {
         document.getElementById("in-button").addEventListener("click", () => {
             token =
                 "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
-            fetchAndRenderTasks();
+            fetchAndRenderTasks(token, isWaitingComment, comments);
         })
         return;
     }
@@ -148,55 +129,11 @@ const renderComments = () => {
             // addCommentForm.classList.add('hidden');
             token =
                 "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
-            fetchAndRenderTasks();
+            fetchAndRenderTasks(token, isWaitingComment, comments);
         }
         clickButton();
 
-        // Добавляем новый комментарий в ленту
-        const postComment = (token) => {
-            return fetch(host, {
-                method: "POST",
-                body: JSON.stringify({
-                    name: replaceValue(nameInputElement.value),
-                    text: replaceValue(commentInputElement.value),
-                    // .replaceAll('START_QUOTE', '<div class="comment-quote">')
-                    // .replaceAll('END_QUOTE', '</div>'),
-                    headers: {
-                        Authorization: token,
-                    },
-                })
-            })
-                .then((response) => {
-                    if (response.status === 400) throw new Error('Ошибка 400');
-                    if (response.status === 500) throw new Error('Ошибка 500');
-
-                    return response.json();
-                })
-                .then(() => {
-                    nameInputElement.value = "";
-                    commentInputElement.value = "";
-                    // addCommentForm.classList.remove('hidden');
-                    // constWaitingComment.classList.add('hidden');
-
-                    return fetchAndRenderTasks();
-                })
-                .catch((error) => {
-                    if (error.message === "Ошибка 400") {
-                        alert("Неправильный логин или пароль");
-                        addCommentForm.classList.remove('hidden');
-                        constWaitingComment.classList.add('hidden');
-                    }
-                    else if (error.message === "Ошибка 500") {
-                        alert("Сервер сломался, попробуй позже");
-                    }
-                    else {
-                        alert("Кажется, у вас сломался интернет, попробуйте позже");
-                        addCommentForm.classList.remove('hidden');
-                        constWaitingComment.classList.add('hidden');
-                    }
-                });
-        };
-        // postComment();
+        postComment(token, nameInputElement, commentInputElement, addCommentForm, constWaitingComment);
     });
 
     // валидация на ввод (неактивная кнопка "Написать")
@@ -236,8 +173,9 @@ const renderComments = () => {
     //     });
     // };
 
-
 }
 
-fetchAndRenderTasks();
+fetchAndRenderTasks(token, isWaitingComment, comments);
 renderComments();
+
+export { renderComments };
