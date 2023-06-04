@@ -1,16 +1,12 @@
 
-import { getAllCommentsEdit, newComment } from "./api.js";
-import { now } from "./data.js";
+import { getAllComments, newComment } from "./api.js";
 import { renderComments } from "./render.js";
 
-const renderComment = () => {
-    renderComments(comments, renderCommentLikeClick);
-}
 
-const listElement = document.getElementById("list")
+export const listElement = document.getElementById("list")
 const buttonElement = document.getElementById("add-button");
-const nameElement = document.getElementById("add-name");
-const textElement = document.getElementById("add-text");
+export const nameElement = document.getElementById("add-name");
+export const textElement = document.getElementById("add-text");
 const likeButtonElements = document.querySelectorAll(".like-button");
 const deleteButtonElement = document.querySelector(".delete-button");
 const invisibleDiv = document.getElementById('invizDiv');
@@ -18,39 +14,9 @@ const invisibleDivHead = document.getElementById('invizDivHeader');
 const addHidden = document.getElementById('add-hidden');
 
 invisibleDiv.classList.add('hidden');
-const getAllComments = () => {
-    getAllCommentsEdit()
-        .then((appComments) => {
-            comments = appComments;
-            renderComment();
-        }).then((data) => {
-            invisibleDivHead.classList.add('hidden');
-        })
-        .catch((error) => {
-            if (error.message === "Ошибка сервера") {
-                alert("Сервер сломался, попробуй позже");
-                return;
-            } else {
-                alert("У вас проблемы с интернетом");
-                return;
-            }
-        });
+invisibleDivHead.classList.add('hidden');
 
-};
-getAllComments();
-
-// const now = (commentDate) => {
-//     let date = new Date();
-//     let month = (date.getMonth() + 1).toString().padStart(2, '0');
-//     let day = date.getDate().toString().padStart(2, '0');
-//     let year = date.getFullYear().toString().substr(-2);
-//     let hours = date.getHours().toString().padStart(2, '0');
-//     let minutes = date.getMinutes().toString().padStart(2, '0');
-//     const resultDate = `${day}.${month}.${year} ${hours}:${minutes}`;
-//     return resultDate;
-// }
-
-let comments = [
+export let comments = [
     // {
     //   name: "Глеб Фокин",
     //   date: "12.02.22 12:18",
@@ -67,26 +33,27 @@ let comments = [
     // }
 
 ];
-deleteButtonElement.addEventListener("click", () => {
-    comments.pop();
-    renderComment();
-})
-const renderCommentLikeClick = (event) => {
-    event.stopPropagation();
-    const index = event.target.dataset.index;
-    let countInLike = Number(comments[index].like);
-    if (likeButtonElement.classList.contains("-active-like")) {
-        countInLike -= 1;
-        comments[index].isLiked = false;
-    } else {
-        countInLike += 1;
-        comments[index].isLiked = true;
-    }
-    comments[index].like = countInLike;
-    renderComment();
-};
 
-const initAnswerButton = () => {
+export const initLikeButtonListener = () => {
+    const likeButtonElements = document.querySelectorAll(".like-button");
+    for (let likeButtonElement of likeButtonElements) {
+        likeButtonElement.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const index = likeButtonElement.dataset.index;
+            let countInLike = Number(comments[index].like);
+            if (likeButtonElement.classList.contains("-active-like")) {
+                countInLike -= 1;
+                comments[index].isLiked = false;
+            } else {
+                countInLike += 1;
+                comments[index].isLiked = true;
+            }
+            comments[index].like = countInLike;
+            renderComments();
+        });
+    }
+};
+export const initAnswerButton = () => {
     const commentsAnswers = document.querySelectorAll('.comment');
     for (let commentsAnswer of commentsAnswers) {
         commentsAnswer.addEventListener("click", () => {
@@ -105,38 +72,10 @@ const initAnswerButton = () => {
     }
 }
 initAnswerButton();
-// renderCommentLikeClick();
-
-
-//
-//     let isLike = '';
-//     if (comments[index].isLiked) {
-//         isLike = '-active-like'
-//     }
-//     return `<li class="comment">
-//     <div class="comment-header">
-//       <div>${comment.name}</div>
-//       <div>${comment.date}</div>
-//     </div>
-//     <div class="comment-body">
-//       <div class="comment-text">
-//         ${comment.text}
-//       </div>
-//     </div>
-//     <div class="comment-footer">
-//       <div class="likes">
-//         <span class="likes-counter" >${comment.like}</span>
-//         <button class="like-button ${isLike}" data-index="${index}" ></button>
-//       </div>
-//     </div>
-//   </li>`
-
-// listElement.innerHTML = commentsHtml;
-// initAnswerButton();
-// initLikeButtonListener();
-//};
+initLikeButtonListener();
 getAllComments();
-renderComment();
+
+
 
 buttonElement.disabled = true;
 nameElement.addEventListener('input', () => {
@@ -148,7 +87,7 @@ nameElement.addEventListener('input', () => {
 });
 
 buttonElement.addEventListener("click", () => {
-    // let countInLike;
+    let countInLike;
     // const date = new Date();
     // const now = date.getDate().toString().padStart(2, '0') + '.' + (date.getMonth() + 1).toString().padStart(2, '0') + '.' + date.getFullYear().toString().slice(-2) + ' ' + date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
 
@@ -166,41 +105,24 @@ buttonElement.addEventListener("click", () => {
         }
         return;
     }
-    buttonElement.disabled = true;
-    buttonElement.textContent = "Комментарий добавляется";
-    addHidden.style.display = "none";
-
-
-    newComment(nameElement.value, textElement.value)
-
-        .then((responseData) => {
-            getAllComments();
-        })
-        .then(() => {
-            buttonElement.disabled = false;
-            buttonElement.textContent = "Написать";
-            addHidden.style.display = "block";
-            nameElement.value = "";
-            textElement.value = "";
-        })
-        .catch((error) => {
-            buttonElement.disabled = false;
-            buttonElement.textContent = "Написать";
-            addHidden.style.display = "block";
-            if (error.message === "Ошибка сервера") {
-                alert("Сервер сломался, попробуй позже");
-                return;
-            };
-            if (error.message === "Неверный запрос") {
-                alert("Имя и комментарий должны быть не короче 3 символов");
-                return;
-            } else {
-                alert("У вас проблемы с интернетом");
-                return;
-            };
-        })
+    invisibleDiv.classList.remove('hidden');
+    invisibleDiv.classList.add('hidden');
+    newComment();
+    countInLike = 0
+    deleteButtonElement.value
 });
-renderComment();
+
+document.addEventListener('kayup', (event) => {
+    if (event.key === 'Enter') {
+        buttonElement.click();
+    }
+});
+deleteButtonElement.addEventListener("click", () => {
+
+    comments.pop();
+    renderComments();
+})
+//renderComment();
 
     //   //     listElement.innerHTML += `<li class="comment">
     //   //   <div class="comment-header">

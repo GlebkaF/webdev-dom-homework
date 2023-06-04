@@ -1,5 +1,9 @@
 import { now } from "./data.js";
-export const getAllCommentsEdit = () => {
+import { renderComments } from "./render.js";
+import { comments } from "./main.js";
+import { textElement, nameElement } from "./main.js";
+
+export const getAllComments = (comments) => {
     return fetch("https://webdev-hw-api.vercel.app/api/v1/ramzil-khalimov/comments", {
         method: "GET",
         forceError: false,
@@ -22,16 +26,17 @@ export const getAllCommentsEdit = () => {
                     isLiked: false,
                 };
             });
-            return appComments;
+            comments = appComments;
+            renderComments(comments);
         });
 };
 
-export const newComment = (name, text) => {
+export const newComment = () => {
     fetch("https://webdev-hw-api.vercel.app/api/v1/ramzil-khalimov/comments", {
         method: "POST",
         body: JSON.stringify({
-            name: name,
-            text: text,
+            name: nameElement.value,
+            text: textElement.value,
             forceError: false,
         })
     }).then((response) => {
@@ -45,6 +50,25 @@ export const newComment = (name, text) => {
         }
         return response.json();
     }).then((responseData) => {
-        return getAllCommentsEdit();
+        return getAllComments(comments);
+    }).then(() => {
+        // buttonElement.disabled = false;
+        // buttonElement.textContent = "Написать";
+        // addHidden.style.display = "block";
+        nameElement.value = "";
+        textElement.value = "";
+    }).catch((error) => {
+        if (error.message === "Ошибка сервера") {
+            alert("Сервер сломался, попробуй позже");
+            return;
+        };
+        if (error.message === "Неверный запрос") {
+            alert("Имя и комментарий должны быть не короче 3 символов");
+            return;
+        } else {
+            alert("У вас проблемы с интернетом");
+            return;
+        };
+
     })
 };
