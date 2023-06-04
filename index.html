@@ -73,25 +73,55 @@
   const comentInputElement = document.getElementById("coment-input");
   const addButtonElement = document.getElementById("add-button");
   const listElement = document.getElementById("list");
-  const endDeleteButtonElement = document.getElementById("end-delete-button")
+  const endDeleteButtonElement = document.getElementById("end-delete-button");
 
+  // Создание массива
   const comments = [
     {
       name: "Глеб Фокин",
       text: "Это будет первый комментарий на этой странице",
       eachDate: "12.02.22 12:18",
-      like: 3
+      like: 3,
+      currentLike: false,
     },
     {
       name: "Варвара Н.",
       text: "Мне нравится как оформлена эта страница! ❤",
       eachDate: "13.02.22 19:22",
-      like: 75
+      like: 75,
+      currentLike: false
     }
   ]
 
+  // Добавление кликабельностm лайка и счётчика лайков
+  const initlikeButtonsListeners = () => {
+    const likeButtonsElements = document.querySelectorAll(".like-button");
+
+    for (const likeButtonElement of likeButtonsElements) {
+      likeButtonElement.addEventListener("click", () => {
+        const index = likeButtonElement.dataset.index;
+        comments[index].currentLike = !comments[index].currentLike;
+        console.log(comments[index].currentLike);
+        if (comments[index].currentLike) {
+          comments[index].like = ++comments[index].like;
+          likeButtonElement.classList.add("active-like");//Не работает присвоение класса
+        } else {
+          comments[index].like = --comments[index].like;
+          likeButtonElement.classList.remove("active-like");//Не работает присвоение класса
+        }
+        renderComments();//если убрать отсюда рендер-функцию, то не тработает счётчик, но присвоение класса рпботает
+        // План добавления лайка
+        // 1. (+) Мы храним список коментов в js массиве
+        // 2. (+) При клике мы меняем значение currentLike на противоположное в массиве у соответствующего элемента
+        // 3. В зависимости от currentLike корректируем счётчик лайков и обратно
+        // 4. На основе нового массива в js формируем html разметку списка
+      });
+    }
+  };
+
+  // Рендерим из массива разметку
   const renderComments = () => {
-    const commentsHTML = comments.map((comment) => {
+    const commentsHTML = comments.map((comment, index) => {
       return `<li class="comment">
         <div class="comment-header">
           <div>${comment.name}</div>
@@ -105,16 +135,19 @@
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${comment.like}</span>
-            <button class="like-button"></button>
+            <button class="like-button" data-index="${index}"></button>
           </div>
         </div>
       </li>`;
     }).join('');
     listElement.innerHTML = commentsHTML;
+    initlikeButtonsListeners();
+
   }
+
   renderComments();
 
-  //Добавить обработчик клика
+  // Добавить обработчик клика для добавления элемента
   addButtonElement.addEventListener("click", () => {
 
     //Добавляем валидацию
@@ -149,8 +182,10 @@
       name: nameInputElement.value,
       text: comentInputElement.value,
       eachDate: `${day}.${month}.${year} ${hour}:${minute}`,
-      like: 0
+      like: 0,
+      currentLike: false
     });
+
     renderComments();
     nameInputElement.value = "";
     comentInputElement.value = "";
@@ -171,7 +206,7 @@
     }
   });
 
-  //Удаление последнего комментари
+  // Удаление последнего комментари
   endDeleteButtonElement.addEventListener("click", () => {
 
     const lastElement = listElement.lastElementChild;
