@@ -23,9 +23,9 @@ fetchAndRenderTasks()
 
 fetchAndRenderTasks();
 
+renderComments(app, isLoading, isWaitingComment, comments);
 
-// функция клик addEventListener на добавление комментария
-buttonElement.addEventListener('click', () => {
+const handlePostClick = () => {
     // валидация на ввод
     nameInputElement.classList.remove("error");
     if (nameInputElement.value === "") {
@@ -69,6 +69,9 @@ buttonElement.addEventListener('click', () => {
             }
         });
     renderComments(app, isLoading, isWaitingComment, comments);
-});
+}
+
+buttonElement.addEventListener('click', handlePostClick);
+
 
 renderComments(app, isLoading, isWaitingComment, comments);

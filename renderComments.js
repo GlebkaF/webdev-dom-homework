@@ -84,14 +84,11 @@ const renderComments = (app, isLoading, isWaitingComment, comments, user) => {
           id="add-form-name"
           class="add-form-name"
           value="${user.name}"
+          disabled
           placeholder="Введите ваше имя" />
               
-          <textarea
-          type="textarea"
-          id="add-form-text"            
-          class="add-form-text"
-           placeholder="ведите ваш коментарий"rows="4">
-          </textarea>
+          <textarea type="textarea" id="add-form-text" class="add-form-text" placeholder="Введите ваш коментарий"
+          rows="4"></textarea>
 
              <div class="add-form-row">
               <button type="button" id="add-form-button" class="add-form-button" disabled>Написать</button>
@@ -172,7 +169,7 @@ const renderComments = (app, isLoading, isWaitingComment, comments, user) => {
         let index = element.dataset.index;
 
         commentInputElement.value = `START_QUOTE${comments[index].author.name}:
-\n${comments[index].text.replaceAll('<div class="comment-quote">', 'START_QUOTE').replaceAll('</div>', 'END_QUOTE')} END_QUOTE`;
+  \n${comments[index].text.replaceAll('<div class="comment-quote">', 'START_QUOTE').replaceAll('</div>', 'END_QUOTE')} END_QUOTE`;
       });
     }
   }
