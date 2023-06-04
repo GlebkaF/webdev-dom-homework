@@ -244,16 +244,8 @@ buttonElemtnt.addEventListener('click', () => {
     invisibleDiv.classList.add('hidden');
     finComments();
 
-
-
-
-    renderCommentsMod();
-
-
     countInLike = 0;
-
-
-    renderCommentsMod();
+    // renderComments(comments);
     // nameInputElement.value = "";
     // commentInputElement.value = "";
     // buttonElemtnt.disabled = true;
@@ -276,6 +268,6 @@ deletElement.addEventListener("click", () => {
     }
 
     comments.pop();
-    renderCommentsMod();
+    renderComments();
 });
 
