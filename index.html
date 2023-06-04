@@ -46,18 +46,20 @@
       </ul>
       <div class="add-form">
         <input
+          id="name-input"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
+          id="comment-input"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="add-button">Написать</button>
         </div>
       </div>
     </div>
@@ -65,7 +67,34 @@
 
   <script>
     "use strict";
+    const buttonElement = document.getElementById('add-button');
+    const nameInputElement = document.getElementById('name-input');
+    const commentInputElement = document.getElementById('comment-input');
+
+
+    buttonElement.addEventListener("click", () => {
+      const oldNameInputElement = nameInputElement.innerHTML;
+      nameInputElement.innerHTML = oldNameInputElement + `<li class="comment">
+          <div class="comment-header">
+            <div>${oldNameInputElement.value}</div>
+            <div>${newDateElemet.value}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${commentInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">3</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+    });
+
+    
     // Код писать здесь
-    console.log("It works!");
+    console.log(buttonElement.innerHTML);
   </script>
 </html>
