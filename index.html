@@ -9,7 +9,26 @@
 
 <body>
   <!-- Список рендерится в JS -->
-  <div id="app" class="app"></div>
+  <div class="container">
+    <ul id="comments" class="comments">
+      <!-- Список рендерится в js -->
+    </ul>
+
+    <div class="add-form">
+      <input type="text" id="add-form-name" class="add-form-name" placeholder="Введите ваше имя" />
+
+      <textarea type="textarea" id="add-form-text" class="add-form-text" placeholder="Введите ваш коментарий"
+        rows="4"></textarea>
+
+      <div class="add-form-row">
+        <button type="button" id="add-form-button" class="add-form-button" disabled>Написать</button>
+        <button class="remove-form-button">Удалить последний</button>
+      </div>
+    </div>
+    <p class="add-waiting">Комментарий добавляется...</p>
+  </div>
+
+  <!-- <div id="app" class="app"></div> -->
 
   <style>
     .error {

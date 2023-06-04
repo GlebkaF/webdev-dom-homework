@@ -1,138 +1,128 @@
-// // Переменные
-// const addCommentForm = document.querySelector(".add-form");
-// const buttonElement = document.querySelector(".add-form-button");
-// const listOfComments = document.querySelector(".comments");
-// const nameInputElement = document.querySelector(".add-form-name");
-// const commentInputElement = document.querySelector(".add-form-text");
-// const constWaitingComment = document.querySelector('.add-waiting');
-// const startingElement = document.querySelector('.starting');
+import { delay, correctDate } from "/supportFunc.js";
+
+const addCommentForm = document.querySelector(".add-form");
+const buttonElement = document.querySelector(".add-form-button");
+const listOfComments = document.querySelector(".comments");
+const nameInputElement = document.querySelector(".add-form-name");
+const commentInputElement = document.querySelector(".add-form-text");
+const constWaitingComment = document.querySelector('.add-waiting'); // Комментарий добавляется...
 
 
-// // Импорты
-// import { delay, replaceValue, correctDate } from "./supportFunc.js";
+// Функция render
+const renderComments = (isLoading, isWaitingComment, comments) => {
+  // Лоадинг на загрузку комментариев на страницу
+  if (isLoading) {
+    document.getElementById('comments').innerHTML =
+      'Пожалуйста подождите, загружаю комментарии...';
+    constWaitingComment.classList.add(`hidden`);
+    return;
+  }
+
+  // Рендер
+  listOfComments.innerHTML = comments.
+    map((comment, index) => {
+      return `<li id="comment" class="comment" data-index="${index}">
+      <div class="comment-header">
+        <div id="name">${comment.author.name}</div>
+        <div id="date">${correctDate(comment.date)}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">
+          ${comment.text}
+        </div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">${comment.likes}</span>
+          <button data-index="${index}" id="like-button" class="like-button ${comment.isLiked ? '-active-like' : ''} ${comment.isLikeLoading ? '-loading-like' : ''}"></button>
+        </div>
+      </div>
+    </li>`
+    }).join("");
+
+  // Функция лоадинг при добавлении комментариев в ленту
+  const waitingAddComment = () => {
+    if (isWaitingComment) {
+      constWaitingComment.classList.remove(`hidden`);
+      addCommentForm.classList.add(`hidden`);
+    } else {
+      constWaitingComment.classList.add(`hidden`);
+      addCommentForm.classList.remove(`hidden`);
+    }
+  };
+  waitingAddComment();
 
 
-// // Функция render
-// const renderComments = (comments) => {
+  // Добавление клика на лайк
+  const initLikeButtons = () => {
+    const likeButtonsElements = document.querySelectorAll(".like-button");
 
-//   const appHTML = document.getElementById("app");
+    for (const likeButtonsElement of likeButtonsElements) {
 
-//   const commentHTML = comments
-//     .map(comment => {
-//       return `
-//         <li id="comment" class="comment">
-//         <div class="comment-header">
-//           <div id="name">${comment.author.name}</div>
-//           <div id="date">${correctDate(comment.date)}</div>
-//         </div>
-//         <div class="comment-body">
-//           <div class="comment-text">${comment.text}</div>
-//         </div>
-//         <div class="comment-footer">
-//           <div class="likes">
-//             <span class="likes-counter">${comment.likes}</span>
-//             <button id="like-button" class="like-button
-//             ${comment.isLiked ? '-active-like' : ''}
-//             ${comment.isLikeLoading ? '-loading-like' : ''}">
-//             </button>
-//           </div>
-//         </div>
-//       </li>`
-//     }).join("");
+      likeButtonsElement.addEventListener('click', (event) => {
+        event.stopPropagation();
 
+        let comment = comments[likeButtonsElement.dataset.index];
+        comment.isLikeLoading = true;
 
-//   const appEl = `<div class="container">
-//           <ul id="comments" class="comments">
-//             <!-- Список рендерится в js -->
-//             ${commentHTML}
-//           </ul>
-//           <p class="starting hidden">Список загружается...</p>
-//           <div class="add-form">
-//             <input type="text" id="add-form-name" class="add-form-name" placeholder="Введите ваше имя" />
+        renderComments();
 
-//             <textarea type="textarea" id="add-form-text" class="add-form-text" placeholder="Введите ваш коментарий"
-//               rows="4"></textarea>
+        // Инициализация задержки при обработке лайка на комментарий
+        delay(2000).then(() => {
+          if (comment.isLiked) {
+            comment.likes = comment.likes - 1;
+          } else {
+            comment.likes = comment.likes + 1;
+          }
 
-//             <div class="add-form-row">
-//               <button type="button" id="add-form-button" class="add-form-button" disabled>Написать</button>
-//               <button class="remove-form-button">Удалить последний</button>
-//             </div>
-//           </div>
-//           <p class="add-waiting hidden">Комментарий добавляется...</p>
-//         </div>
-
-//         <div class="registration">
-//           <div class="add-form">
-//             <h3>Форма ввода</h3>
-//             <div class="reg-input">
-//               <input type="text" id="add-login" class="add-login" placeholder="Введите логин" />
-//               <input type="text" id="add-password" class="add-password" placeholder="Введите пароль"></input>
-//             </div>
-//             <div class="add-reg-form">
-//               <button type="button" id="in-button" class="in-button">Войти</button>
-//               <button class="reg-button">Зарегистрироваться</button>
-//             </div>
-//           </div>
-//         </div>`
-
-//   appHTML.innerHTML = appEl;
-
-//   // Переменные
-//   const addCommentForm = document.querySelector(".add-form");
-//   const buttonElement = document.querySelector(".add-form-button");
-//   const listOfComments = document.querySelector(".comments");
-//   const nameInputElement = document.querySelector(".add-form-name");
-//   const commentInputElement = document.querySelector(".add-form-text");
-//   const constWaitingComment = document.querySelector('.add-waiting');
-//   const startingElement = document.querySelector('.starting');
-// }
-
-// export { renderComments };
+          comment.isLiked = !comment.isLiked;
+          comment.isLikeLoading = false;
+          renderComments();
+        });
+      });
+    }
+  }
+  initLikeButtons();
 
 
+  // Добавление ответа на комментарии
+  const answerComment = () => {
+    const commentElements = document.querySelectorAll('.comment');
 
-// // // Функция render
-// // const renderComments = (element, comments) => {
-// //   // Рендер
-// //   element.innerHTML = comments.map(comment => {
-// //     return `
-// //         <li id="comment" class="comment">
-// //         <div class="comment-header">
-// //           <div id="name">${comment.author.name}</div>
-// //           <div id="date">${correctDate(comment.date)}</div>
-// //         </div>
-// //         <div class="comment-body">
-// //           <div class="comment-text">${comment.text}</div>
-// //         </div>
-// //         <div class="comment-footer">
-// //           <div class="likes">
-// //             <span class="likes-counter">${comment.likes}</span>
-// //             <button id="like-button" class="like-button ${comment.isLiked ? '-active-like' : ''} ${comment.isLikeLoading ? '-loading-like' : ''}"></button>
-// //           </div>
-// //         </div>
-// //       </li>`
-// //   }).join("");
+    for (let element of commentElements) {
+      element.addEventListener('click', () => {
+        let index = element.dataset.index;
 
-// //   // Добавление клика на лайк
-// //   [...document.querySelectorAll(".like-button")]
-// //     .forEach((like, index) => {
-// //       like.addEventListener('click', event => {
-// //         event.stopPropagation();
+        commentInputElement.value = `START_QUOTE${comments[index].author.name}:
+          \n${comments[index].text.replaceAll('<div class="comment-quote">', 'START_QUOTE').replaceAll('</div>', 'END_QUOTE')}END_QUOTE`;
+      });
+    }
+  }
+  answerComment();
 
-// //         comments[index].isLikeLoading = true;
+  // валидация на ввод (неактивная кнопка "Написать")
+  const checkAddButton = () => {
+    nameInputElement.addEventListener('input', () => {
+      if (nameInputElement.value) {
+        buttonElement.disabled = false;
+        return;
+      } else {
+        buttonElement.disabled = true;
+        return;
+      }
+    });
 
-// //         renderComments(element, comments);
+    commentInputElement.addEventListener('input', () => {
+      if (commentInputElement.value) {
+        buttonElement.disabled = false;
+        return;
+      } else {
+        buttonElement.disabled = true;
+        return;
+      }
+    });
+  }
+  checkAddButton();
+}
 
-// //         // Инициализация задержки при обработке лайка на комментарий
-// //         delay(2000)
-// //           .then(() => {
-// //             comments[index].isLiked ? comments[index].likes-- : comments[index].likes++;
-
-// //             comments[index].isLiked = !comments[index].isLiked;
-// //             comments[index].isLikeLoading = false;
-
-// //             renderComments(element, comments);
-// //           });
-// //       });
-// //     });
-// // }
+export { renderComments };
