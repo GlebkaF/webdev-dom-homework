@@ -126,7 +126,7 @@ const renderComments = (
         let comment = comments[likeButtonsElement.dataset.index];
         comment.isLikeLoading = true;
 
-        renderComments(app, isLoading, isWaitingComment, comments);
+        renderComments(app, isLoading, isWaitingComment, comments, user);
 
         // Инициализация задержки при обработке лайка на комментарий
         delay(2000).then(() => {
@@ -138,7 +138,7 @@ const renderComments = (
 
           comment.isLiked = !comment.isLiked;
           comment.isLikeLoading = false;
-          renderComments(app, isLoading, isWaitingComment, comments);
+          renderComments(app, isLoading, isWaitingComment, comments, user);
         });
       });
     }

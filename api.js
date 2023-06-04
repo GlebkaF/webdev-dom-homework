@@ -51,10 +51,9 @@ function fetchLogin(login, password) {
             login,
             password,
         }),
+    }).then((response) => {
+        return response.json();
     })
-        .then((response) => {
-            return response.json();
-        })
 }
 
 export { fetchAndRenderTasks, postComment, fetchLogin }

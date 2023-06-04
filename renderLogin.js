@@ -1,24 +1,43 @@
-// import { fetchAndRenderTasks, postComment, fetchLogin } from "/api.js";
-// import { fetchAndRerenderCommentsnderTasks } from "/renderComments.js";
+import { fetchLogin } from "/api.js";
+import { renderComments } from "/renderComments.js";
 
-export const renderLogin = (
-    app,
-    isLoading,
-    isWaitingComment,
-    comments) => {
+export const renderLogin = (app, isLoading, isWaitingComment, comments) => {
     app.innerHTML = `
-              <div class="registration">
-              <div class="add-form">
-                <h3>Форма ввода</h3>
+        <div class="registration">
+            <div class="add-form">
+            <h3>Форма ввода</h3>
                 <div class="reg-input">
-                  <input type="text" id="add-login" class="add-login" placeholder="Введите логин" />
-                  <input type="text" id="add-password" class="add-password" placeholder="Введите пароль"></input>
+                  <input type="text"
+                    id="add-login"
+                    class="add-login"
+                    placeholder="Введите логин"
+                    />
+                  <input
+                    type="text"
+                    id="add-password"
+                    class="add-password"
+                    placeholder="Введите пароль"
+                    </>
                 </div>
                 <div class="add-reg-form">
-                  <button type="button" id="in-button" class="in-button">Войти</button>
+                  <button
+                  type="button"
+                  id="auth-button"
+                  class="auth-button">Войти</button>
                   <button class="reg-button">Зарегистрироваться</button>
                 </div>
-              </div>
             </div>
+        </div>
     `
+    const authButton = document.getElementById("auth-button");
+    authButton.addEventListener("click", () => {
+        const userLogin = document.getElementById("add-login");
+        const userPassword = document.getElementById("add-password");
+        fetchLogin(userLogin, userPassword)
+            .then((response) => {
+                renderComments(app, isLoading, isWaitingComment, comments, response.user);
+            });
+    })
 }
+
+
