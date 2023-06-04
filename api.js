@@ -18,11 +18,11 @@ export function getFetchComments({ token }) {
     })
 };
 
-export function addComment({ text, token }) {
+export function addComment({ name, text, token }) {
     return fetch(host, {
         method: "POST",
         body: JSON.stringify({
-          name: nameInputElement.value,
+          name,
           text,
           //forceError: true,
         }), 

@@ -214,7 +214,7 @@ const renderApp = () => {
         
 
         const fetchPost = () => {
-           addComment({ text: commentInputElement.value, token})
+           addComment({ name: nameInputElement.value, text: commentInputElement.value, token})
             .then((responseData) => {
                 //comments = appComments;
                 console.log(responseData);
