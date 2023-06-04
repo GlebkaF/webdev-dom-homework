@@ -49,7 +49,7 @@ export function addComment({ name, text, token }) {
     })
 };
 
-export function login({ login, password }) {
+export function loginUser({ login, password }) {
     return fetch('https://wedev-api.sky.pro/api/user/login', {
         method: "POST",
         body: JSON.stringify({
@@ -68,9 +68,9 @@ export function login({ login, password }) {
 
         } else if(response.status === 400) {
 
-            alert('Имя и комментарий должны содержать хотя бы 3 символа');
+            //alert('Неверный логин или пароль');
               
-            throw new Error("Неверный запрос");
+            throw new Error("Неверный логин или пароль");
 
         } else {
             return response.json();
