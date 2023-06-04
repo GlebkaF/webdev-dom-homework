@@ -106,6 +106,31 @@
     }
 
     renderComments();
+
+    function getComments() {
+      fetch(
+        'https://wedev-api.sky.pro/api/v1/maksim-balyaev/comments',
+        {
+          method: 'GET'
+        }
+      ).then((response) => {
+        response.json().then((responseData) => {
+          const date = new Date();
+          const appComments = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: new Date(comment.date),
+              text: comment.text,
+              likes: comment.likes,
+              isLiked: false,
+            };
+          });
+      
+          comments = appComments;
+          renderComments();
+        });
+      });
+    }
   
     buttonForm.addEventListener('click', (event) => {
       if (inputName.value === '' || inputComment.value === '') {
@@ -132,27 +157,7 @@
         response.json().then((responseData) => {
           comments = responseData.comments;
         });
-        fetch(
-        'https://wedev-api.sky.pro/api/v1/maksim-balyaev/comments',
-        {
-          method: 'GET'
-        }
-      ).then((response) => {
-        response.json().then((responseData) => {
-          const appComments = responseData.comments.map((comment) => {
-            return {
-              name: comment.author.name,
-              date: new Date(comment.date),
-              text: comment.text,
-              likes: comment.likes,
-              isLiked: false,
-            };
-          });
-      
-          comments = appComments;
-          renderComments();
-        });
-      });
+        getComments();
       });
 
       renderComments();
@@ -162,28 +167,7 @@
 
     });
 
-    fetch(
-        'https://wedev-api.sky.pro/api/v1/maksim-balyaev/comments',
-        {
-          method: 'GET'
-        }
-    ).then((response) => {
-        response.json().then((responseData) => {
-          const date = new Date();
-          const appComments = responseData.comments.map((comment) => {
-            return {
-              name: comment.author.name,
-              date: new Date(comment.date),
-              text: comment.text,
-              likes: comment.likes,
-              isLiked: false,
-            };
-          });
-      
-          comments = appComments;
-          renderComments();
-        });
-    });
+    getComments();
 
   </script>
 </html>
