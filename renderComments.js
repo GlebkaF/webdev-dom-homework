@@ -1,4 +1,5 @@
 import { delay, correctDate } from "/supportFunc.js";
+import { renderLogin } from "/renderLogin.js";
 
 const addCommentForm = document.querySelector(".add-form");
 const buttonElement = document.querySelector(".add-form-button");
@@ -46,15 +47,20 @@ const constWaitingComment = document.querySelector('.add-waiting'); // Комм�
 //     appEl.innerHTML = /////;
 
 // Функция render
-const renderComments = (app, isLoading, isWaitingComment, comments) => {
+const renderComments = (
+  app,
+  isLoading,
+  isWaitingComment,
+  comments,
+  user) => {
 
-  // // Лоадинг на загрузку комментариев на страницу
-  // if (isLoading) {
-  //   document.getElementById('comments').innerHTML =
-  //     'Пожалуйста подождите, загружаю комментарии...';
-  //   constWaitingComment.classList.add(`hidden`);
-  //   return;
-  // }
+  // Лоадинг на загрузку комментариев на страницу
+  if (isLoading) {
+    document.getElementById('comments').innerHTML =
+      'Пожалуйста подождите, загружаю комментарии...';
+    constWaitingComment.classList.add(`hidden`);
+    return;
+  }
 
   // Рендер
   const commentHTML = comments
@@ -154,6 +160,12 @@ const renderComments = (app, isLoading, isWaitingComment, comments) => {
     }
   }
   answerComment();
+
+  const goGoLogin = document.getElementById("go-to-login");
+  goGoLogin.addEventListener("click", (event) => {
+    event.preventDefault();
+    renderLogin(app, isLoading, isWaitingComment, comments);
+  })
 
   // // валидация на ввод (неактивная кнопка "Написать")
   // const checkAddButton = () => {

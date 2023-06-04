@@ -4,6 +4,7 @@ const nameInputElement = document.querySelector(".add-form-name");
 const commentInputElement = document.querySelector(".add-form-text");
 
 const host = "https://webdev-hw-api.vercel.app/api/v2/marina-obruch/comments";
+const loginHost = "https://wedev-api.sky.pro/api/user/login";
 
 const fetchAndRenderTasks = () => {
     return fetch(host, {
@@ -41,7 +42,19 @@ function postComment() {
                 throw new Error("Сервер сломался");
             }
         })
-
 }
 
-export { fetchAndRenderTasks, postComment }
+function fetchLogin(login, password) {
+    return fetch(loginHost, {
+        method: "POST",
+        body: JSON.stringify({
+            login,
+            password,
+        }),
+    })
+        .then((response) => {
+            return response.json();
+        })
+}
+
+export { fetchAndRenderTasks, postComment, fetchLogin }
