@@ -47,4 +47,33 @@ export function addComment({ text, token }) {
             return response.json();
         } 
     })
+};
+
+export function login({ login, password }) {
+    return fetch('https://wedev-api.sky.pro/api/user/login', {
+        method: "POST",
+        body: JSON.stringify({
+          login,
+          password,
+          //forceError: true,
+        }), 
+        
+    })
+    .then((response) => {
+        if(response.status === 500) {
+
+            alert('Сервер сломался, попробуй позже');
+              
+            throw new Error("Сервер упал");
+
+        } else if(response.status === 400) {
+
+            alert('Имя и комментарий должны содержать хотя бы 3 символа');
+              
+            throw new Error("Неверный запрос");
+
+        } else {
+            return response.json();
+        } 
+    })
 }
