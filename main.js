@@ -16,60 +16,7 @@ const invisibleDivHead = document.getElementById('invizDivHeader');
 
 invisibleDivHead.classList.add('hidden');
 invisibleDiv.classList.add('hidden');
-// const getAllComments = () => {
-//   return fetch("https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov/comments", {
-//     method: "GET",
-//   })
-//     .then((response) => {
-//       return response.json();
-//     })
-//     .then((responseData) => {
-//       const appComments = responseData.comments.map((comment) => {
-//         return {
-//           name: comment.author.name,
-//           date: formatDate(comment.date),
-//           text: comment.text,
-//           active: false,
-//           like: comment.likes,
-//         }
-//       });
-//       comments = appComments;
-//       renderComments();
-//       invisibleDivHead.classList.add('hidden');
-//     });
-// };
-
-
-
-
-// getAllComments(comments);
-
-export const formatDate = (commentDate) => {
-    let date = new Date();
-    let month = (date.getMonth() + 1).toString().padStart(2, '0');
-    let day = date.getDate().toString().padStart(2, '0');
-    let year = date.getFullYear().toString().substr(-2);
-    let hours = date.getHours().toString().padStart(2, '0');
-    let minutes = date.getMinutes().toString().padStart(2, '0');
-    const resultDate = `${day}.${month}.${year} ${hours}:${minutes}`;
-    return resultDate;
-}
-
 export let comments = [
-    // {
-    //   name: "Глеб Фокин",
-    //   date: "12.02.22 12:18",
-    //   text: "Это будет первый комментарий на этой странице",
-    //   like: 3,
-    //   isLiked: false,
-    // },
-    // {
-    //   name: "Варвара Н",
-    //   date: "13.02.22 19:22",
-    //   text: "Мне нравится как оформлена эта страница! ❤",
-    //   like: 75,
-    //   isLiked: false,
-    // },
 ];
 
 //Функция для обработчика клика для лайка
@@ -113,49 +60,7 @@ export const initAnswerComment = () => {
 }
 initAnswerComment();
 initlikeButtonListeners();
-
-// Рендер функция
-// export const renderComments = () => {
-//   const commentsHtml = comments.map((comment, index) => getListComment(comment, index)).join("");
-//   //  {
-//   //   let isLike = '';
-//   //   if (comments[index].isLiked) {
-//   //     isLike = '-active-like'
-//   //   }
-//   //   return `<li class="comment">
-//   //       <div class="comment-header">
-//   //         <div>${comment.name}</div>
-//   //         <div>${comment.date}</div>
-//   //       </div>
-//   //       <div class="comment-body">
-//   //         <div class="comment-text">
-//   //           ${comment.text}
-//   //         </div>
-//   //       </div>
-//   //       <div class="comment-footer">
-//   //         <div class="likes">
-//   //           <span class="likes-counter ">${comment.like}</span>
-//   //           <button class="like-button  ${isLike}" data-index="${index}"></button>
-//   //         </div>
-//   //       </div>
-//   //     </li>`
-//   // }).join('');
-
-//   listElement.innerHTML = commentsHtml;
-
-//   initlikeButtonListeners();
-//   initAnswerComment();
-// };
-
 getAllComments();
-//                                                  Закоментил
-// export const renderCommentsMod = () => {
-//     renderComments(comments);
-// };
-
-// renderCommentsMod();
-
-
 
 nameInputElement.addEventListener('input', () => {
     if (nameInputElement.value.trim() !== '') {
@@ -177,78 +82,12 @@ buttonElemtnt.addEventListener('click', () => {
     if (commentInputElement.value === '') {
         commentInputElement.classList.add('error');
         return;
-    }
-
-    //   addFormLoad.classList.add('hidden');                                                             
+    }                                                            
     invisibleDiv.classList.remove('hidden');
-
-    // const finComments = () => {
-    //   fetch("https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov/comments", {
-    //     method: "POST",
-    //     body: JSON.stringify({
-    //       name: nameInputElement.value,
-    //       text: commentInputElement.value,
-    //       forceError: false,
-    //     }),
-    //   })
-    //     .then((response) => {
-    //       console.log(response);
-    //       if (response.status === 201) {
-    //         return response.json();
-    //       } else if (response.status === 400) {
-    //         // alert("Имя и комментарий должны быть не короче 3 символов");
-    //         throw new Error("Неверный запрос")
-    //         // addFormLoad.classList.add('hidden');
-    //         // return Promise.reject("Имя и комментарий должны быть не короче 3 символов");
-
-    //       } else if (response.status === 500) {
-    //         // alert('Сервер не доступен, попробуй позже...');
-    //         throw new Error("Ошибка сервера")
-    //         // throw new Error("Сервер совсем упал");
-    //       } else {
-    //         alert("отсутствует интернет")
-    //       }
-    //     })
-    //     .then((responseData) => {
-    //       return getAllComments();
-    //     })
-    //     .then((data) => {
-    //       addFormLoad.classList.remove('hidden');
-    //       invisibleDiv.classList.add('hidden');
-    //       nameInputElement.value = "";
-    //       commentInputElement.value = "";
-    //       buttonElemtnt.disabled = true;
-    //     })
-    //     .catch((error) => {
-    //       // alert("Кажется, у вас сломался интернет, попробуйте позже");
-    //       addFormLoad.classList.add('hidden');
-    //       //TODO: Отправлять с систему сбора ошибок
-    //       if (error.message === "Ошибка сервера") {
-    //         alert('Сервер не доступен, попробуй позже...');
-    //         return;
-    //       };
-    //       if (error.message === "Неверный запрос") {
-    //         alert("Имя и комментарий должны быть не короче 3 символов");
-    //         return;
-    //       } else {
-    //         alert("Кажется, у вас сломался интернет, попробуйте позже")
-    //       }
-
-    //       console.warn(error);
-    //     })
-    //     .then((data) => {
-    //       addFormLoad.classList.remove('hidden');
-    //       invisibleDiv.classList.add('hidden');
-    //     })
-    // };
     invisibleDiv.classList.add('hidden');
     finComments();
 
     countInLike = 0;
-    // renderComments(comments);
-    // nameInputElement.value = "";
-    // commentInputElement.value = "";
-    // buttonElemtnt.disabled = true;
     deletElement.value;
 
 });

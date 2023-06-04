@@ -1,6 +1,6 @@
 import { formatDate } from "./Date.js";
 import { renderComments } from "./render.js";
-import { nameInputElement } from "./main.js";
+import { comments, nameInputElement } from "./main.js";
 import { commentInputElement } from "./main.js";
 
 
@@ -15,7 +15,7 @@ export const getAllComments = (comments) => {
             const appComments = responseData.comments.map((comment) => {
                 return {
                     name: comment.author.name,
-                    date: formatDate(comment.date),
+                    date: formatDate(new Date(comment.date)),
                     text: comment.text,
                     active: false,
                     like: comment.likes,
@@ -27,7 +27,8 @@ export const getAllComments = (comments) => {
         });
 };
 
-getAllComments();
+// getAllComments();
+
 
 // export {getAllComments};
 export const finComments = () => {
@@ -59,7 +60,7 @@ export const finComments = () => {
             // invisibleDiv.classList.add('hidden');
             nameInputElement.value = "";
             commentInputElement.value = "";
-            buttonElemtnt.disabled = true;
+            // buttonElemtnt.disabled = true;
         })
         .catch((error) => {
             // addFormLoad.classList.add('hidden');
