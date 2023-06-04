@@ -9,7 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments" id = "comments">
-        <li class="comment">
+        <!-- <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -39,10 +39,10 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
+              <button class="like-button -active-like" id="like-button"></button>
             </div>
           </div>
-        </li>
+        </li> -->
       </ul>
       <div class="add-form">
         <input
@@ -79,7 +79,25 @@
     const messageButtonElement = document.getElementById("message-button");
     const addNameElement = document.getElementById("add-name");
     const addTextElement = document.getElementById("add-text");
+    const deleteLastCommentButton = document.getElementById("delete-last-comment");
     const currentDate = new Date();
+
+    const comments = [
+      {
+        commentAuthor: "Глеб Фокин",
+        commentText: "Это будет первый комментарий на этой странице",
+        commentLikes: 3,
+        commentDate: "12.02.22 12:18",
+        commentNoLike: true,
+      },
+      {
+        commentAuthor: "Варвара Н.",
+        commentText: "Мне нравится как оформлена эта страница! ❤",
+        commentLikes: 75,
+        commentDate: "13.02.22 19:22",
+        commentNoLike: false,
+      }
+    ]
 
     function getLastTwoDigitsOfYear(date) {
       return date.getFullYear().toString().slice(-2);
@@ -103,6 +121,24 @@
       return `${dateString} ${timeString}`;
     }
 
+    const addLikeButtonElement = () => {
+      const likeButtonElements = document.querySelectorAll('.like-button');
+      for (let i = 0; i < likeButtonElements.length; i++) {
+        likeButtonElements[i].addEventListener("click", (event) => {
+          // event.stopPropagation();
+          if (comments[i].commentNoLike === true) {
+            comments[i].commentNoLike = false;
+            comments[i].commentLikes++;
+          }
+          else if (comments[i].commentNoLike === false){
+            comments[i].commentNoLike = true;
+            comments[i].commentLikes--;
+          }
+          renderComments();
+        })
+      }
+    };
+
     const newCurrentDate = formatDate(currentDate);
 
     messageButtonElement.addEventListener('click', () => {
@@ -118,30 +154,20 @@
             return;
       }
 
-      const oldListHtml = commentsList.innerHTML;
+      comments.push ({
+        commentAuthor: addNameElement.value,
+        commentText: addTextElement.value,
+        commentLikes: 0,
+        commentDate: newCurrentDate,
+        commentNoLike: true,
+      });
 
-      commentsList.innerHTML = oldListHtml +           
-      `<li class="comment">
-        <div class="comment-header">
-              <div>${addNameElement.value}</div>
-              <div>${newCurrentDate}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-                ${addTextElement.value}
-          </div>
-        </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-          </div>
-        </div>
-      </li>`;
+      renderComments();
+      addNameElement.value = "";
+      addTextElement.value = "";
     }
     )
 
-    const deleteLastCommentButton = document.getElementById("delete-last-comment");
     deleteLastCommentButton.addEventListener("click", () => {
       const commentsList = document.getElementById("comments");
       const lastComment = commentsList.querySelector(".comment:last-of-type");
@@ -151,6 +177,33 @@
       }
     });
 
+    const renderComments = () => {
+      const commentsHtml = comments
+      .map((comment) => {
+        return `<li class="comment">
+        <div class="comment-header">
+              <div>${comment.commentAuthor}</div>
+              <div>${comment.commentDate}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+                ${comment.commentText}
+          </div>
+        </div>
+          <div class="comment-footer">
+            <div class="likes"> 
+              <span class="likes-counter">${comment.commentLikes}</span>
+              <button class="${comment.commentNoLike ? 'like-button' : 'like-button -active-like'}"></button>
+          </div>
+        </div>
+      </li>`;
+      })
+      .join("");
+
+      commentsList.innerHTML = commentsHtml;
+      addLikeButtonElement();
+    }
+    renderComments();
 
 
     console.log("It works!");
