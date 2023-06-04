@@ -5,6 +5,9 @@ const nameInputEl = document.getElementById("name-input");
 const commentTextEl = document.getElementById("comment-text");
 const listEl = document.getElementById("comment-list");
 let currentDate = new Date();
+const deleteButtonEl = document.getElementById("delete-button");
+const list = document.getElementsByClassName("comment");
+
 
 //date of comment
 let day = currentDate.getDay();
@@ -27,24 +30,47 @@ if (minute < 10) {
 }
 
 let commentDate = day + '.' + month + '.' + year + ' ' + hour + ':' + minute;
-//
+
+
+document.addEventListener("keyup", (e) => {
+    if (e.code === "Enter") {
+        WriteButtonEl.click();
+    }
+});
+
+WriteButtonEl.setAttribute("disabled", true);
+WriteButtonEl.classList.add("error-btn");
+
+nameInputEl.addEventListener("input", () => {
+    if ((nameInputEl.value.length > 0) && (commentTextEl.value.length > 0)) {
+        WriteButtonEl.removeAttribute("disabled");
+        WriteButtonEl.classList.remove("error-btn");
+    }
+});
+
+commentTextEl.addEventListener("input", () => {
+    if ((nameInputEl.value.length > 0) && (commentTextEl.value.length > 0)) {
+        WriteButtonEl.removeAttribute("disabled");
+        WriteButtonEl.classList.remove("error-btn");
+        return;
+    }
+});
 
 WriteButtonEl.addEventListener("click", () => {
     nameInputEl.classList.remove("error");
-    commentTextEl.classList.remove("error-btn");
-
-    if (nameInputEl.value === "" && commentTextEl.value === "") {
+    commentTextEl.classList.remove("error");
+   
+    if ((nameInputEl.value.length < 0) && (commentTextEl.value.length < 0)) {
         nameInputEl.classList.add("error");
         commentTextEl.classList.add("error");
-        WriteButtonEl.classList.add("error-btn").disabled;
+        WriteButtonEl.classList.add("error-btn");
+        WriteButtonEl.disabled === true;
         return;
-      } else if (nameInputEl.value === "" && commentTextEl.value !== "") {
+      } else if ((nameInputEl.value.length < 0) && (commentTextEl.value.length > 0)) {
         nameInputEl.classList.add("error");
-        WriteButtonEl.classList.add("error-btn").disabled;
         return;
-      } else if (nameInputEl.value !== "" && commentTextEl.value === "") {
+      } else if ((nameInputEl.value.length > 0) && (commentTextEl.value.length < 0)) {
         commentTextEl.classList.add("error");
-        WriteButtonEl.classList.add("error-btn").disabled;
         return;
       } else {
         const oldListHtml = listEl.innerHTML;
@@ -67,10 +93,18 @@ WriteButtonEl.addEventListener("click", () => {
             </div>
           </div>
           </li>`
-      }
-      nameInputEl.value = "";
-      commentTextEl.value = "";
+    };
+    
+    nameInputEl.value = "";
+    commentTextEl.value = "";
+    WriteButtonEl.setAttribute("disabled", true);
+    WriteButtonEl.classList.add("error-btn");
 
+});
+
+deleteButtonEl.addEventListener("click", () => {
+    const lastListEl = list[list.length - 1];
+    return listEl.removeChild(lastListEl);
 });
 
 console.log("It works!");
