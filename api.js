@@ -1,10 +1,7 @@
 import { formatDate } from "./Date.js";
-import { renderCommentsMod } from "./main.js";
+import { renderComments } from "./render.js";
 import { nameInputElement } from "./main.js";
 import { commentInputElement } from "./main.js";
-
-
-
 
 
 export const getAllComments = (comments) => {
@@ -25,10 +22,12 @@ export const getAllComments = (comments) => {
                 }
             });
             comments = appComments;
-            renderCommentsMod();
+            renderComments(comments);
             // invisibleDivHead.classList.add('hidden');
         });
 };
+
+getAllComments();
 
 // export {getAllComments};
 export const finComments = () => {
@@ -45,15 +44,9 @@ export const finComments = () => {
             if (response.status === 201) {
                 return response.json();
             } else if (response.status === 400) {
-                // alert("Имя и комментарий должны быть не короче 3 символов");
                 throw new Error("Неверный запрос")
-                // addFormLoad.classList.add('hidden');
-                // return Promise.reject("Имя и комментарий должны быть не короче 3 символов");
-
             } else if (response.status === 500) {
-                // alert('Сервер не доступен, попробуй позже...');
                 throw new Error("Ошибка сервера")
-                // throw new Error("Сервер совсем упал");
             } else {
                 alert("отсутствует интернет")
             }
@@ -69,7 +62,6 @@ export const finComments = () => {
             buttonElemtnt.disabled = true;
         })
         .catch((error) => {
-            // alert("Кажется, у вас сломался интернет, попробуйте позже");
             // addFormLoad.classList.add('hidden');
             //TODO: Отправлять с систему сбора ошибок
             if (error.message === "Ошибка сервера") {
