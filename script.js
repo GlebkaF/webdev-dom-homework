@@ -133,24 +133,70 @@ const renderComments = () => {
     // валидация на ввод
     buttonElement.addEventListener('click', () => {
         function clickButton() {
-            nameInputElement.classList.remove("error");
-            if (nameInputElement.value === "") {
-                nameInputElement.classList.add("error");
-                return;
-            }
+            // nameInputElement.classList.remove("error");
+            // if (nameInputElement.value === "") {
+            //     nameInputElement.classList.add("error");
+            //     return;
+            // }
 
-            commentInputElement.classList.remove("error");
-            if (commentInputElement.value === "") {
-                commentInputElement.classList.add("error");
-                return;
-            }
-            constWaitingComment.classList.remove('hidden');
-            addCommentForm.classList.add('hidden');
+            // commentInputElement.classList.remove("error");
+            // if (commentInputElement.value === "") {
+            //     commentInputElement.classList.add("error");
+            //     return;
+            // }
+            // constWaitingComment.classList.remove('hidden');
+            // addCommentForm.classList.add('hidden');
             token =
                 "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
-            postComment();
+            fetchAndRenderTasks();
         }
         clickButton();
+
+        // Добавляем новый комментарий в ленту
+        const postComment = (token) => {
+            return fetch(host, {
+                method: "POST",
+                body: JSON.stringify({
+                    name: replaceValue(nameInputElement.value),
+                    text: replaceValue(commentInputElement.value),
+                    // .replaceAll('START_QUOTE', '<div class="comment-quote">')
+                    // .replaceAll('END_QUOTE', '</div>'),
+                    headers: {
+                        Authorization: token,
+                    },
+                })
+            })
+                .then((response) => {
+                    if (response.status === 400) throw new Error('Ошибка 400');
+                    if (response.status === 500) throw new Error('Ошибка 500');
+
+                    return response.json();
+                })
+                .then(() => {
+                    nameInputElement.value = "";
+                    commentInputElement.value = "";
+                    // addCommentForm.classList.remove('hidden');
+                    // constWaitingComment.classList.add('hidden');
+
+                    return fetchAndRenderTasks();
+                })
+                .catch((error) => {
+                    if (error.message === "Ошибка 400") {
+                        alert("Неправильный логин или пароль");
+                        addCommentForm.classList.remove('hidden');
+                        constWaitingComment.classList.add('hidden');
+                    }
+                    else if (error.message === "Ошибка 500") {
+                        alert("Сервер сломался, попробуй позже");
+                    }
+                    else {
+                        alert("Кажется, у вас сломался интернет, попробуйте позже");
+                        addCommentForm.classList.remove('hidden');
+                        constWaitingComment.classList.add('hidden');
+                    }
+                });
+        };
+        // postComment();
     });
 
     // валидация на ввод (неактивная кнопка "Написать")
@@ -191,51 +237,6 @@ const renderComments = () => {
     // };
 
 
-    // Добавляем новый комментарий в ленту
-    const postComment = (token) => {
-        return fetch(host, {
-            method: "POST",
-            body: JSON.stringify({
-                name: replaceValue(nameInputElement.value),
-                text: replaceValue(commentInputElement.value),
-                // .replaceAll('START_QUOTE', '<div class="comment-quote">')
-                // .replaceAll('END_QUOTE', '</div>'),
-                headers: {
-                    Authorization: token,
-                },
-            })
-        })
-            .then((response) => {
-                if (response.status === 400) throw new Error('Ошибка 400');
-                if (response.status === 500) throw new Error('Ошибка 500');
-
-                return response.json();
-            })
-            .then(() => {
-                nameInputElement.value = "";
-                commentInputElement.value = "";
-                addCommentForm.classList.remove('hidden');
-                constWaitingComment.classList.add('hidden');
-
-                return fetchAndRenderTasks();
-            })
-            .catch((error) => {
-                if (error.message === "Ошибка 400") {
-                    alert("Неправильный логин или пароль");
-                    addCommentForm.classList.remove('hidden');
-                    constWaitingComment.classList.add('hidden');
-                }
-                else if (error.message === "Ошибка 500") {
-                    alert("Сервер сломался, попробуй позже");
-                    fetchAndRenderTasks();
-                }
-                else {
-                    alert("Кажется, у вас сломался интернет, попробуйте позже");
-                    addCommentForm.classList.remove('hidden');
-                    constWaitingComment.classList.add('hidden');
-                }
-            });
-    };
 }
 
 fetchAndRenderTasks();
