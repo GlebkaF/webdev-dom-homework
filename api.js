@@ -3,7 +3,7 @@ import { replaceValue } from "/supportFunc.js";
 const nameInputElement = document.querySelector(".add-form-name");
 const commentInputElement = document.querySelector(".add-form-text");
 
-const host = "https://webdev-hw-api.vercel.app/api/v1/marina-obruch/comments";
+const host = "https://webdev-hw-api.vercel.app/api/v2/marina-obruch/comments";
 
 const fetchAndRenderTasks = () => {
     return fetch(host, {
@@ -41,9 +41,6 @@ function postComment() {
                 throw new Error("Сервер сломался");
             }
         })
-    // .then((data) => {
-    //     return data;
-    // })
 
 }
 

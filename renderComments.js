@@ -10,6 +10,7 @@ const constWaitingComment = document.querySelector('.add-waiting'); // Комм�
 
 // Функция render
 const renderComments = (isLoading, isWaitingComment, comments) => {
+
   // Лоадинг на загрузку комментариев на страницу
   if (isLoading) {
     document.getElementById('comments').innerHTML =
@@ -19,8 +20,8 @@ const renderComments = (isLoading, isWaitingComment, comments) => {
   }
 
   // Рендер
-  listOfComments.innerHTML = comments.
-    map((comment, index) => {
+  listOfComments.innerHTML = comments
+    .map((comment, index) => {
       return `<li id="comment" class="comment" data-index="${index}">
       <div class="comment-header">
         <div id="name">${comment.author.name}</div>
@@ -34,7 +35,10 @@ const renderComments = (isLoading, isWaitingComment, comments) => {
       <div class="comment-footer">
         <div class="likes">
           <span class="likes-counter">${comment.likes}</span>
-          <button data-index="${index}" id="like-button" class="like-button ${comment.isLiked ? '-active-like' : ''} ${comment.isLikeLoading ? '-loading-like' : ''}"></button>
+          <button data-index="${index}" id="like-button" class="like-button
+          ${comment.isLiked ? '-active-like' : ''}
+          ${comment.isLikeLoading ? '-loading-like' : ''}">
+          </button>
         </div>
       </div>
     </li>`
@@ -65,7 +69,7 @@ const renderComments = (isLoading, isWaitingComment, comments) => {
         let comment = comments[likeButtonsElement.dataset.index];
         comment.isLikeLoading = true;
 
-        renderComments();
+        renderComments(isLoading, isWaitingComment, comments);
 
         // Инициализация задержки при обработке лайка на комментарий
         delay(2000).then(() => {
@@ -77,7 +81,7 @@ const renderComments = (isLoading, isWaitingComment, comments) => {
 
           comment.isLiked = !comment.isLiked;
           comment.isLikeLoading = false;
-          renderComments();
+          renderComments(isLoading, isWaitingComment, comments);
         });
       });
     }
