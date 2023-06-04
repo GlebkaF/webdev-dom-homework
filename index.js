@@ -1,4 +1,93 @@
-import { addComment, getFetchComments } from "./api.js";
+import { getFetchComments, addComment } from "./api.js";
+import { renderComments } from "./renderComments.js";
+import { delay } from "./utils.js";
+
+// const name = document.getElementById("name-input");
+// const text = document.getElementById("text-input");
+
+
+
+let comments = [];
+
+let isStarting = true;
+let isPosting = false;
+
+
+
+getFetchComments()
+  .then((data) => delay(data))
+  .then((data) => {
+    comments = data;
+    isStarting = false;
+    renderComments(app, isPosting, isStarting, comments);
+  })
+  .catch((error) => {
+    alert(error.message);
+  });
+
+renderComments(app, isPosting, isStarting, comments);
+
+const addButton = document.getElementById("add-button");
+
+const handlePostClick = () => {
+  if (!name.value || !text.value) {
+    alert("Заполните форму");
+    return;
+  }
+
+  isPosting = true;
+  document.querySelector(".form-loading").style.display = "block";
+  document.querySelector(".add-form").style.display = "none";
+  renderComments(app, isPosting, isStarting, comments);
+
+  addComment(text.value, name.value)
+    .then((data) => {
+      name.value = "";
+      text.value = "";
+      document.querySelector(".form-loading").style.display = "none";
+      document.querySelector(".add-form").style.display = "flex";
+      isPosting = false;
+      comments = data;
+      renderComments(app, isPosting, isStarting, comments);
+    })
+    .catch((error) => {
+      document.querySelector(".form-loading").style.display = "none";
+      document.querySelector(".add-form").style.display = "flex";
+      isPosting = false;
+
+      if (error.message === "Ошибка сервера") {
+        handlePostClick();
+        alert("Сервер сломался, попробуй позже");
+      }
+
+      if (error.message === "Неверный запрос") {
+        alert("Имя и комментарий должны быть не короче 3х символов");
+
+        name.classList.add("-error");
+        text.classList.add("-error");
+        setTimeout(() => {
+          name.classList.remove("-error");
+          text.classList.remove("-error");
+        }, 2000);
+      }
+    });
+
+  renderComments(app, isPosting, isStarting, comments);
+};
+
+// addButton.addEventListener("click", handlePostClick);
+
+
+
+
+
+
+
+
+
+
+
+/*import { addComment, getFetchComments } from "./api.js";
 import { renderLoginComponent } from "./components/login-component.js";
 
 
@@ -66,7 +155,7 @@ const renderApp = () => {
             fetchGet();
             //renderApp();
         })*/
-        renderLoginComponent({ appEl, setToken: (newToken) => {
+        /*renderLoginComponent({ appEl, setToken: (newToken) => {
             token = newToken;
         },
         fetchGet,
@@ -274,4 +363,4 @@ const renderApp = () => {
         
 };
 
-renderApp();
+renderApp();*/
