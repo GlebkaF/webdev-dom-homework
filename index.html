@@ -142,11 +142,13 @@
       buttonElement.classList.add("disabled");
     });
     inputTextElement.addEventListener("keyup", (event) => {
-      if (event.keyCode === 13 && !buttonElement.disabled) {
-        event.preventDefault();
-        buttonElement.click();
-      }
-    });
+  if (event.keyCode === 13) {
+    event.preventDefault();
+    if (inputNameElement.value.trim() !== "" && inputTextElement.value.trim() !== "") {
+      buttonElement.click();
+    }
+  }
+});
   </script>
 </html>
 <!-- 
