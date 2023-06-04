@@ -1,16 +1,7 @@
 import { delay, correctDate } from "/supportFunc.js";
 import { renderLogin } from "/renderLogin.js";
 
-const addCommentForm = document.querySelector(".add-form");
-const buttonElement = document.querySelector(".add-form-button");
-const listOfComments = document.querySelector(".comments");
-const nameInputElement = document.querySelector(".add-form-name");
-const commentInputElement = document.querySelector(".add-form-text");
-const constWaitingComment = document.querySelector('.add-waiting'); // Комментарий добавляется...
 
-
-
-// // ОСТАВИТЬ
 //     const ///// = `<div class="container">
 //             <ul id="comments" class="comments">
 //               ${commentHTML}
@@ -47,22 +38,8 @@ const constWaitingComment = document.querySelector('.add-waiting'); // Комм�
 //     appEl.innerHTML = /////;
 
 // Функция render
-const renderComments = (
-  app,
-  isLoading,
-  isWaitingComment,
-  comments,
-  user) => {
+const renderComments = (app, isLoading, isWaitingComment, comments, user) => {
 
-  // Лоадинг на загрузку комментариев на страницу
-  if (isLoading) {
-    document.getElementById('comments').innerHTML =
-      'Пожалуйста подождите, загружаю комментарии...';
-    constWaitingComment.classList.add(`hidden`);
-    return;
-  }
-
-  // Рендер
   const commentHTML = comments
     .map((comment, index) => {
       return `<li id="comment" class="comment" data-index="${index}">
@@ -96,34 +73,35 @@ const renderComments = (
       : commentHTML
     }
        </ul>
+
     ${user
       ? `
       <div class="container">
-           <ul id="comments" class="comments">
-             ${commentHTML}
-           </ul>
-           <div class="add-form">
-              <input type="text"
-              id="add-form-name"
-              class="add-form-name"
-              value="${user.name}"
-              placeholder="Введите ваше имя" />
+        <ul id="comments" class="comments">
+        </ul>
+        <div class="add-form">
+          <input type="text"
+          id="add-form-name"
+          class="add-form-name"
+          value="${user.name}"
+          placeholder="Введите ваше имя" />
               
-              <textarea
-              type="textarea"
-              id="add-form-text"
-              class="add-form-text"
-              placeholder="Введите ваш коментарий"rows="4">
-              </textarea>
+          <textarea
+          type="textarea"
+          id="add-form-text"            
+          class="add-form-text"
+           placeholder="ведите ваш коментарий"rows="4">
+          </textarea>
 
-                <div class="add-form-row">
-                  <button type="button" id="add-form-button" class="add-form-button" disabled>Написать</button>
+             <div class="add-form-row">
+              <button type="button" id="add-form-button" class="add-form-button" disabled>Написать</button>
 
-                  <button class="remove-form-button">Удалить последний</button>
-                </div>
+              <button class="remove-form-button">Удалить последний</button>
             </div>
-               <p class="add-waiting hidden">Комментарий добавляется...</p>
-             </div>`
+      </div>
+            <p class="add-waiting hidden">Комментарий добавляется...</p>
+          </div>`
+
       : `<div class="form-loaging" style="margin-top: 20px">
       Чтобы добавить комментарий, <a href=" " id="go-to-login">Авторизуйтесь</a>
     </div>`
@@ -131,6 +109,14 @@ const renderComments = (
     </div>`;
 
   app.innerHTML = appHtml;
+
+
+  const addCommentForm = document.querySelector(".add-form");
+  const buttonElement = document.querySelector(".add-form-button");
+  const listOfComments = document.querySelector(".comments");
+  const nameInputElement = document.querySelector(".add-form-name");
+  const commentInputElement = document.querySelector(".add-form-text");
+  const constWaitingComment = document.querySelector('.add-waiting'); // Комментарий добавляется...
 
   // Функция лоадинг при добавлении комментариев в ленту
   // const waitingAddComment = () => {
@@ -192,11 +178,14 @@ const renderComments = (
   }
   answerComment();
 
-  const goGoLogin = document.getElementById("go-to-login");
-  goGoLogin.addEventListener("click", (event) => {
-    event.preventDefault();
-    renderLogin(app, isLoading, isWaitingComment, comments);
-  })
+  if (!user) {
+    const goToLogin = document.getElementById("go-to-login");
+    goToLogin.addEventListener("click", (event) => {
+      event.preventDefault();
+      renderLogin(app, isLoading, isWaitingComment, comments);
+    })
+  }
+
 
   // // валидация на ввод (неактивная кнопка "Написать")
   // const checkAddButton = () => {

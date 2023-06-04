@@ -1,15 +1,12 @@
 import { fetchAndRenderTasks, postComment } from "/api.js";
 import { renderComments } from "/renderComments.js";
 
-// Определение переменных
-
 const buttonElement = document.querySelector(".add-form-button");
 const nameInputElement = document.querySelector(".add-form-name");
 const commentInputElement = document.querySelector(".add-form-text");
 const app = document.getElementById("app");
 
 
-// Данные о комментариях и маркеры для лоадингов/загрузки
 let comments = [];
 
 let isLoading = true;
