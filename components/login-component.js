@@ -1,7 +1,7 @@
-import { loginUser } from '../api.js'
+import { loginUser, registerUser } from '../api.js'
 
 export function renderLoginComponent({ appEl, setToken, fetchGet }) {
-    let isLoginMode = false;
+    let isLoginMode = true;
 
     const renderForm = () => {
             const appHtml = `
@@ -33,29 +33,65 @@ export function renderLoginComponent({ appEl, setToken, fetchGet }) {
         `;
         appEl.innerHTML = appHtml;
         document.getElementById("login-button").addEventListener("click", () => {
-            const login = document.getElementById("login-input").value;
-            const password = document.getElementById("password-input").value;
+            if(isLoginMode) {
+                const login = document.getElementById("login-input").value;
+                const password = document.getElementById("password-input").value;
 
-            if(!login) {
-                alert('Введите логин')
-                return;
-            }
-            if(!password) {
-                alert('Введите пароль')
-                return;
-            }
-            //setToken("Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k");
+                if(!login) {
+                    alert('Введите логин')
+                    return;
+                }
+                if(!password) {
+                    alert('Введите пароль')
+                    return;
+                }
+                //setToken("Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k");
 
-            loginUser({
-                login: login,
-                password: password
-            }).then((user) => {
-                //console.log(user);
-                setToken(`Bearer ${user.user.token}`);
-                fetchGet();
-            }).catch(error => {
-                alert(error.message);
-            })
+                loginUser({
+                    login: login,
+                    password: password
+                }).then((user) => {
+                    //console.log(user);
+                    setToken(`Bearer ${user.user.token}`);
+                    fetchGet();
+                }).catch(error => {
+                    alert(error.message);
+                });
+            } else {
+                //alert('Заглушка регистрации');
+                const login = document.getElementById("login-input").value;
+                const name = document.getElementById("name-input").value;
+                const password = document.getElementById("password-input").value;
+
+                if(!name) {
+                    alert('Введите имя')
+                    return;
+                }
+                
+                if(!login) {
+                    alert('Введите логин')
+                    return;
+                }
+                if(!password) {
+                    alert('Введите пароль')
+                    return;
+                }
+                //setToken("Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k");
+
+                registerUser({
+                    login: login,
+                    password: password,
+                    name: name
+                }).then((user) => {
+                    //console.log(user);
+                    setToken(`Bearer ${user.user.token}`);
+                    fetchGet();
+                }).catch(error => {
+                    alert(error.message);
+                });
+            }
+            
+            
             
             //renderApp();
         });
