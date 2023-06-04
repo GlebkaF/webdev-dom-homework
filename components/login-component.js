@@ -1,11 +1,23 @@
 import { loginUser } from '../api.js'
 
 export function renderLoginComponent({ appEl, setToken, fetchGet }) {
-        const appHtml = `
-        <div class="container">
-          <div class="add-form">
-            <h3 class="form-title">Форма входа</h3>
+    let isLoginMode = false;
+
+    const renderForm = () => {
+            const appHtml = `
+            <div class="container">
+            <div class="add-form">
+            <h3 class="form-title">Форма ${isLoginMode ? 'входа' : 'регистрации'}</h3>
             <div class="form-row">
+                ${
+                    isLoginMode 
+                    ? '' 
+                    : `
+                    Имя
+              <input id="name-input" type="text" class="add-form-name"/>
+              <br /><br />`
+            }
+              
               Логин    
               <input id="login-input" type="text" class="add-form-name"/>
               <br />
@@ -14,12 +26,12 @@ export function renderLoginComponent({ appEl, setToken, fetchGet }) {
               <input id="password-input" type="password" class="add-form-name"/>
             </div>
             <br />
-            <button id='login-button' class="add-form-button">Войти</button>
-        </div>`
-          
+            <button id='login-button' class="add-form-button">${isLoginMode ? 'Войти' : 'Зарегистрироваться'}</button>
+            <br /><br /><br />
+            <button id='toggle-button' class="add-form-button">Перейти ${isLoginMode ? 'к регистрации' : 'ко входу'}</button>
+        </div>
+        `;
         appEl.innerHTML = appHtml;
-
-        
         document.getElementById("login-button").addEventListener("click", () => {
             const login = document.getElementById("login-input").value;
             const password = document.getElementById("password-input").value;
@@ -46,6 +58,24 @@ export function renderLoginComponent({ appEl, setToken, fetchGet }) {
             })
             
             //renderApp();
-        })
+        });
+
+        document.getElementById("toggle-button").addEventListener('click', () => {
+            isLoginMode = !isLoginMode;
+            renderForm();
+
+        });
+    };
+    renderForm();
+}
+
+
+
     
-};
+      
+        
+
+        
+       
+
+ 
