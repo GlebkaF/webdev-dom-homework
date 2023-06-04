@@ -89,16 +89,47 @@ const renderComments = (
 
   const appHtml = `
   <div class="container">
-          <ul id="comments" class="comments">
+      <ul id="comments" class="comments">
 
-      ${isLoading
+      ${isLoading // пока не работает
       ? "<p class='add-waiting hidden'>Комментарий добавляется...</p>"
       : commentHTML
     }
-          </ul >
-  <div class="form-loaging" style="margin-top: 20px">
-    Чтобы добавить комментарий, <a href=" " id="go-to-login">Авторизуйтесь</a>
-  </div>`;
+       </ul>
+    ${user
+      ? `
+      <div class="container">
+           <ul id="comments" class="comments">
+             ${commentHTML}
+           </ul>
+           <div class="add-form">
+              <input type="text"
+              id="add-form-name"
+              class="add-form-name"
+              value="${user.name}"
+              placeholder="Введите ваше имя" />
+              
+              <textarea
+              type="textarea"
+              id="add-form-text"
+              class="add-form-text"
+              placeholder="Введите ваш коментарий"rows="4">
+              </textarea>
+
+                <div class="add-form-row">
+                  <button type="button" id="add-form-button" class="add-form-button" disabled>Написать</button>
+
+                  <button class="remove-form-button">Удалить последний</button>
+                </div>
+            </div>
+               <p class="add-waiting hidden">Комментарий добавляется...</p>
+             </div>`
+      : `<div class="form-loaging" style="margin-top: 20px">
+      Чтобы добавить комментарий, <a href=" " id="go-to-login">Авторизуйтесь</a>
+    </div>`
+    }
+    </div>`;
+
   app.innerHTML = appHtml;
 
   // Функция лоадинг при добавлении комментариев в ленту
