@@ -1,12 +1,23 @@
 "use strict";
-// Код писать здесь
-let user = "";
-let messages = [];
-let appElement = document.getElementById("app")
-let token = "";
-import { getAPI, postApi, deleteComment } from "./api.js";
+import { getAPI, postApi, deleteComment, toggleLike, commentCorrection, loginUser } from "./api.js";
 import renderMain from "./render.js";
 import { renderLoginComponent } from "./components/login-component.js";
+
+let user = "";
+let token = "";
+let messages = [];
+
+let appElement = document.getElementById("app");
+
+const updateUser = () => {
+  if (localStorage.user === undefined) {
+    return
+  }
+  else {
+    user = JSON.parse(localStorage.user);
+    token = `Bearer ${user.token}`;
+  };
+};
 
 const getCommentDataMain = (comment) => {
   return {
@@ -22,65 +33,58 @@ const getCommentDataMain = (comment) => {
     isLoading: false,
   };
 };
-const renderMainList = () => {
-  renderMain(messages, getCommentListMain, appElement, token);
+
+const renderMainList = (messages) => {
+  renderMain(messages, appElement, token, user);
   if (token) {
     const nameInputElement = document.getElementById("name-input");
     nameInputElement.value = user.name;
-    console.log(user);
-    console.log(messages);
+    nameInputElement.setAttribute('disabled', '');
     const commentInputElement = document.getElementById("comment-input");
     initLikeButtonsListeners();
     initCorrectButtonsListeners();
     initAnswersListeners(commentInputElement);
     initDeleteButton(getCommentDataMain);
-    initInputs(nameInputElement, commentInputElement);
+    initInputs(commentInputElement);
+    document.getElementById('exit').addEventListener('click', () => {
+      localStorage.clear();
+      user = "";
+      token = "";
+      fetchAndRenderMessages();
+    });
   }
   else {
     document.getElementById('login-link').addEventListener('click', () => {
-      renderLoginComponent(appElement,
-        { setToken: (newToken) => { token = newToken; } },
-        { setUser: (newUser) => { user = newUser; } },
-        fetchAndRenderMessages);
+      renderLoginComponent(appElement, fetchAndRenderMessages);
     });
   };
 };
 
 const fetchAndRenderMessages = () => {
+  updateUser();
   return getAPI(token, getCommentDataMain).then((result) => {
     messages = result;
-    // console.log(messages);
-    renderMainList(messages);
+    renderMainList(messages, token, user);
   })
 };
 fetchAndRenderMessages();
 
-function delay(interval = 300) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, interval);
-  });
-};
 const initLikeButtonsListeners = () => {
   const likeButtonsElements = document.querySelectorAll(".like-button");
   for (const likeButtonElement of likeButtonsElements) {
     likeButtonElement.addEventListener("click", (event) => {
       event.stopPropagation();
       likeButtonElement.classList.add('-loading-like');
-      const index = likeButtonElement.dataset.index;
-      messages[index].liked = !messages[index].liked;
-      if (messages[index].liked) {
-        messages[index].likesCount += 1;
-      }
-      else {
-        messages[index].likesCount -= 1;
-      }
-      delay(2000).then(renderMainList);
+      const id = likeButtonElement.dataset.id;
+      toggleLike({
+        id,
+        token,
+      }).then(() => {
+        fetchAndRenderMessages();
+      })
     })
   };
 };
-
 const initCorrectButtonsListeners = () => {
   const correctButtonsElements = document.querySelectorAll(".correct-button");
   const correctedComments = document.querySelectorAll('.comment-correction');
@@ -94,18 +98,32 @@ const initCorrectButtonsListeners = () => {
       event.stopPropagation();
       const index = correctButtonElement.dataset.index;
       if (messages[index].isEdit) {
-        const correctionText = document.querySelector('.comment-correction')
-        messages[index].comment = correctionText.value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;");
-        messages[index].isEdit = !messages[index].isEdit;
+        const id = correctButtonElement.dataset.id;
+        let body = {
+          text: document.querySelector('.comment-correction').value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;"),
+        }
+        commentCorrection(body, token, id)
+          .then((responseData) => {
+            fetchAndRenderMessages();
+            // const index = correctButtonElement.dataset.index;
+            // if (messages[index].isEdit) {
+            //   const correctionText = document.querySelector('.comment-correction')
+            //   messages[index].comment = correctionText.value
+            //     .replaceAll("&", "&amp;")
+            //     .replaceAll("<", "&lt;")
+            //     .replaceAll(">", "&gt;")
+            //     .replaceAll('"', "&quot;");
+            //   messages[index].isEdit = !messages[index].isEdit;
+          })
       }
       else {
         messages[index].isEdit = !messages[index].isEdit;
+        renderMainList();
       };
-      renderMainList();
     });
   };
 };
@@ -116,56 +134,25 @@ const initAnswersListeners = (element) => {
       const index = answerElement.dataset.index;
       const quote = answerElement.querySelector(".comment-text");
       element.value = `QUOTE_BEGIN ${messages[index].name}: \n ${quote.innerText}, QUOTE_END \n`;
-      // renderMainList();
     });
   };
 };
 
-function getCommentListMain(message, index) {
-  let like = (message.liked) ? 'like-button -active-like' : 'like-button';
-  let edit = (message.isEdit) ? `<textarea type="textarea" class="comment-correction"rows="4">${message.comment}</textarea>` : `<div class="comment-text">${message.comment.replaceAll("QUOTE_BEGIN", "<div class='quote'>").replaceAll("QUOTE_END", "</div>").replaceAll("\n", "<br>")}</div>`;
-  let correctBtn = (message.isEdit) ? `<button data-index="${index}" class="correct-button save-button">Сохранить</button>` : `<button data-index="${index}" class="correct-button">Редактировать</button>`;
-  return `<li class="comment" data-index="${index}">
-  <div class="comment-header" >
-    <div>${message.name}</div>
-    <div>${message.time}</div>
-  </div>
-  <div class="comment-body">
-    ${edit}
-  </div>
-  <div class="comment-footer">
-    ${correctBtn}
-    <button data-id="${message.commentID}" class="delete">Удалить</button>
-    <div class="likes">
-      <span class="likes-counter">${message.likesCount}</span>
-      <button data-index="${index}" class="${like}"></button>
-    </div>
-  </div>
-</li>`;
-};
-
-function addComments(elem1, elem2) {
-  if (elem1.value.trim() === "") {
-    elem1.classList.add("input-error");
-    return;
-  }
+function addComments(elem2) {
   if (elem2.value.trim() === "") {
     elem2.classList.add("input-error");
     return;
   }
-  fetchPost(elem1, elem2);
+  fetchPost(elem2);
 };
-const fetchPost = (elem1, elem2) => {
+const fetchPost = (elem2) => {
   const addFormElement = document.getElementById("addForm");
   const loadingElement = document.querySelector(".loading");
   addFormElement.style.display = 'none';
   loadingElement.style.display = 'block';
   let postBody = {
-    name: elem1.value
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;"),
+    name: user.name,
+    // userId:user.id,
     date: new Date(),
     isLiked: false,
     likes: 0,
@@ -181,8 +168,8 @@ const fetchPost = (elem1, elem2) => {
       fetchAndRenderMessages();
     }
     else {
-      return
-    ;}
+      return;
+    };
   };
   postApi(postBody, getAPIResponse, token);
 };
@@ -210,25 +197,24 @@ const initInputs = (elem1, elem2) => {
 };
 
 const initDeleteButton = () => {
+  const addFormElement = document.getElementById("addForm");
+  const loadingElement = document.querySelector(".loading");
   const deleteButtons = document.querySelectorAll(".delete");
   for (const deleteButton of deleteButtons) {
     deleteButton.addEventListener("click", (event) => {
       event.stopPropagation();
+      addFormElement.style.display = 'none';
+      loadingElement.style.display = 'block';
       const id = deleteButton.dataset.id;
       deleteComment({
         id,
         token,
       }).then((responseData) => {
-        console.log(responseData);
-        // responseData.comments.map((item) => callback(item))
-        // messages = responseData.todos;
-        // renderMainList(messages);
         fetchAndRenderMessages();
       });
     });
   };
 };
-
 
 function getCurrentDate(date) {
   let day = date.getDate();

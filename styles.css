@@ -67,10 +67,14 @@ body {
 
 .comment-footer {
   display: flex;
+  justify-content: flex-end;
+  gap:165px;
+}
+.buttons{
+  display: flex;
   justify-content: space-between;
   gap: 20px;
 }
-
 .comment-body {
   margin-top: 32px;
   margin-bottom: 32px;
@@ -144,7 +148,8 @@ body {
 .add-form-row,
 .login-form-row {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   gap: 12px;
 }
 .login-form-row{
@@ -181,8 +186,7 @@ display: none;
   border: none;
   border-radius: 18px;
   cursor: pointer;
-  display: none;
-}
+ }
 
 .delete-active {
   display: block;
@@ -203,7 +207,7 @@ display: none;
 .correct-button,
 .delete {
   font-size: 18px;
-  padding: 10px 20px;
+  padding: 5px 20px;
   background-color: rgba(255, 142, 255, 0.959);
   border: none;
   border-radius: 18px;

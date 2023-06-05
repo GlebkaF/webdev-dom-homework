@@ -1,5 +1,5 @@
 import { loginUser, registerUser } from "../api.js";
-export function renderLoginComponent(element, {setToken}, {setUser}, fetchAndRender) {
+export function renderLoginComponent(element, fetchAndRender) {
   let isLoginMode = true;
   const renderForm = () => {
     const loginHTML = `
@@ -33,9 +33,8 @@ export function renderLoginComponent(element, {setToken}, {setUser}, fetchAndRen
           login: login,
           password: password,
         })
-          .then((user) => {
-            setToken(`Bearer ${user.user.token}`);
-            setUser(user.user);
+          .then((userData) => {
+            localStorage.setItem('user', JSON.stringify(userData.user));
             fetchAndRender();
           })
           .catch((error) => {
@@ -43,7 +42,6 @@ export function renderLoginComponent(element, {setToken}, {setUser}, fetchAndRen
           });
       } else {
         const name = document.getElementById("name").value;
-        // const password = document.getElementById("password").value;
         if (!name) {
           alert("Введите имя");
           return;
@@ -64,12 +62,10 @@ export function renderLoginComponent(element, {setToken}, {setUser}, fetchAndRen
           password: password,
         })
           .then((user) => {
-            setToken(`Bearer ${user.user.token}`);
-            console.log(user);
+            localStorage.setItem('user', JSON.stringify(userData.user));
             fetchAndRender();
           })
           .catch((error) => {
-            // TODO: Выводить алерт красиво
             alert(error.message);
           });
 
