@@ -1,5 +1,3 @@
-// import { comments } from "./comments.js";
-// import { likeButtonsListeners, editButtonsListeners, replyToCommentListeners } from "./main.js";
 
 const renderComments = (data, elem, getList) => {
     const commentsHtml = data
@@ -8,8 +6,6 @@ const renderComments = (data, elem, getList) => {
 
     elem.innerHTML = commentsHtml;
     // likeButtonsListeners();
-    // editButtonsListeners();
-    // replyToCommentListeners();
 };
 
 

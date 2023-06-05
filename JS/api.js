@@ -25,10 +25,10 @@ function getFromApiFirstTime(data, loadingElem) {
     }).catch((error) => {
         if (error.message === "Ошибка 500") {
             console.log(error);
-            console.log("Сервер сломался, попробуй позже"); // ВЕРНУТЬ ОБРАТНО НА АЛЕРТ!!!
+            alert("Сервер сломался, попробуй позже");
         } else {
             console.log(error);
-            console.log("Кажется, у вас сломался интернет, попробуйте позже"); // ВЕРНУТЬ ОБРАТНО НА АЛЕРТ!!!
+            alert("Кажется, у вас сломался интернет, попробуйте позже");
         };
     })
 };
@@ -106,8 +106,7 @@ function postToApi(data, addCommentElem, addNameElem) {
         } else if (error.message === "Ошибка 500") {
             console.log(error);
             changeMessageToAddForm();
-            // alert("Сервер сломался, попробуй позже");
-            postToApi();
+            postToApi(data, addCommentElem, addNameElem);
         } else {
             changeMessageToAddForm();
             alert("Кажется, у вас сломался интернет, попробуйте позже");
