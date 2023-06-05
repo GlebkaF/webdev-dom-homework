@@ -1,6 +1,7 @@
 "use strict";
+import { comments } from "./comments.js";
 // import { likeButtonsListeners } from "./likes.js"
-import { getFromApiFirstTime } from "./api.js"
+import { getFromApiFirstTime } from "./api.js";
 import { renderComments } from "./renderComments.js";
 import { getCommentsList } from "./CommentsList.js";
 
@@ -14,7 +15,7 @@ const loadingComments = document.querySelector('.loading');
 const commentAddedElem = document.querySelector('.comment-added');
 const addFormElem = document.querySelector('.add-form');
 
-let comments = [
+// let comments = [
     // {
     //   userName: "Глеб Фокин",
     //   commentDate: "13.02.22 19:22",
@@ -31,10 +32,10 @@ let comments = [
     //   isLiked: false,
     //   isEdit: false,
     // },
-];
+// ];
 
-console.log(getFromApiFirstTime(comments, loadingComments, renderComments(listElem, getCommentsList)));
-console.log(renderComments(listElem, getCommentsList));
+console.log(getFromApiFirstTime(comments, loadingComments));
+console.log(renderComments(comments, listElem, getCommentsList));
 
 
 // function getFromApiFirstTime() {
@@ -64,27 +65,27 @@ console.log(renderComments(listElem, getCommentsList));
 // };
 
 
-function getFromApi() {
-    return fetch("https://webdev-hw-api.vercel.app/api/v1/freddy-krugliy/comments", {
-        method: "GET",
-    }).then((responce) => {
-        if (responce.status === 500) {
-            throw new Error("Ошибка 500");
-        } else {
-            return responce.json();
-        }
-    }).then((responceData) => {
-        comments = responceData.comments;
-        renderComments(listElem, getCommentsList);
-    }).catch((error) => {
-        if (error.message === "Ошибка 500") {
-            console.log(error);
-            alert("Сервер сломался, попробуй позже");
-        } else {
-            console.log("Кажется, у вас сломался интернет, попробуйте позже");
-        };
-    })
-};
+// function getFromApi() {
+//     return fetch("https://webdev-hw-api.vercel.app/api/v1/freddy-krugliy/comments", {
+//         method: "GET",
+//     }).then((responce) => {
+//         if (responce.status === 500) {
+//             throw new Error("Ошибка 500");
+//         } else {
+//             return responce.json();
+//         }
+//     }).then((responceData) => {
+//         comments = responceData.comments;
+//         renderComments(listElem, getCommentsList);
+//     }).catch((error) => {
+//         if (error.message === "Ошибка 500") {
+//             console.log(error);
+//             alert("Сервер сломался, попробуй позже");
+//         } else {
+//             console.log("Кажется, у вас сломался интернет, попробуйте позже");
+//         };
+//     })
+// };
 
 
 function delay(interval = 300) {
@@ -200,7 +201,7 @@ const replyToCommentListeners = () => {
 //     replyToCommentListeners();
 // };
 
-renderComments(listElem, getCommentsList);
+renderComments(comments, listElem, getCommentsList);
 
 
 function getActualDate(date) {
@@ -237,14 +238,14 @@ const addNewComment = () => {
         };
 
 
-        function escapeHtml(text) {
-            return text
-                .replaceAll("&", "&amp;")
-                .replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;")
-                .replaceAll('"', "&quot;")
-                .replaceAll("$", "&#36");
-        };
+        // function escapeHtml(text) {
+        //     return text
+        //         .replaceAll("&", "&amp;")
+        //         .replaceAll("<", "&lt;")
+        //         .replaceAll(">", "&gt;")
+        //         .replaceAll('"', "&quot;")
+        //         .replaceAll("$", "&#36");
+        // };
 
         // comments.push({
         //   userName: escapeHtml(addName.value),
@@ -255,54 +256,54 @@ const addNewComment = () => {
         //   isEdit: false,
         // });
 
-        function changeMessageToAddForm() {
-            addFormElem.style.display = 'block';
-            commentAddedElem.style.display = 'none';
-        };
+        // function changeMessageToAddForm() {
+        //     addFormElem.style.display = 'block';
+        //     commentAddedElem.style.display = 'none';
+        // };
 
 
-        function postToApi() {
-            addFormElem.style.display = 'none';
-            commentAddedElem.style.display = 'block';
+        // function postToApi() {
+        //     addFormElem.style.display = 'none';
+        //     commentAddedElem.style.display = 'block';
 
-            return fetch("https://webdev-hw-api.vercel.app/api/v1/freddy-krugliy/comments", {
-                method: "POST",
-                body: JSON.stringify({
-                    text: escapeHtml(addComment.value.trim()),
-                    name: escapeHtml(addName.value.trim()),
-                    forceError: true,
-                })
-            }).then((responce) => {
-                if (responce.status === 400) {
-                    throw new Error("Ошибка 400");
-                } else if (responce.status === 500) {
-                    throw new Error("Ошибка 500");
-                } else {
-                    console.log(responce.status);
-                    return responce.json();
-                }
-            }).then((responceData) => {
-                return getFromApi();
-            }).then(() => {
-                changeMessageToAddForm();
-                addName.value = '';
-                addComment.value = '';
-            }).catch((error) => {
-                if (error.message === "Ошибка 400") {
-                    console.log(error);
-                    changeMessageToAddForm();
-                    alert("Имя и комментарий должны быть не короче 3 символов");
-                } else if (error.message === "Ошибка 500") {
-                    console.log(error);
-                    changeMessageToAddForm();
-                    console.log("Сервер сломался, попробуй позже");
-                    postToApi();
-                } else {
-                    changeMessageToAddForm();
-                    console.log("Кажется, у вас сломался интернет, попробуйте позже");
-                };
-            })
-        };
+        //     return fetch("https://webdev-hw-api.vercel.app/api/v1/freddy-krugliy/comments", {
+        //         method: "POST",
+        //         body: JSON.stringify({
+        //             text: escapeHtml(addComment.value.trim()),
+        //             name: escapeHtml(addName.value.trim()),
+        //             forceError: true,
+        //         })
+        //     }).then((responce) => {
+        //         if (responce.status === 400) {
+        //             throw new Error("Ошибка 400");
+        //         } else if (responce.status === 500) {
+        //             throw new Error("Ошибка 500");
+        //         } else {
+        //             console.log(responce.status);
+        //             return responce.json();
+        //         }
+        //     }).then((responceData) => {
+        //         return getFromApi();
+        //     }).then(() => {
+        //         changeMessageToAddForm();
+        //         addName.value = '';
+        //         addComment.value = '';
+        //     }).catch((error) => {
+        //         if (error.message === "Ошибка 400") {
+        //             console.log(error);
+        //             changeMessageToAddForm();
+        //             alert("Имя и комментарий должны быть не короче 3 символов");
+        //         } else if (error.message === "Ошибка 500") {
+        //             console.log(error);
+        //             changeMessageToAddForm();
+        //             console.log("Сервер сломался, попробуй позже");
+        //             postToApi();
+        //         } else {
+        //             changeMessageToAddForm();
+        //             console.log("Кажется, у вас сломался интернет, попробуйте позже");
+        //         };
+        //     })
+        // };
 
         renderComments(listElem, getCommentsList);
         postToApi();

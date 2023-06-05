@@ -1,9 +1,11 @@
-import { comments } from "./comments.js";
+// import { comments } from "./comments.js";
 import { renderComments } from "./renderComments.js";
 import { getCommentsList } from "./CommentsList.js";
 
+const listElem = document.getElementById('list-comments');
 
-function getFromApiFirstTime(data, loadingElem, render) {
+
+function getFromApiFirstTime(data, loadingElem) {
     loadingElem.style.display = 'block';
 
     return fetch("https://webdev-hw-api.vercel.app/api/v1/freddy-krugliy/comments", {
@@ -18,7 +20,7 @@ function getFromApiFirstTime(data, loadingElem, render) {
         }
     }).then((responceData) => {
         data = responceData.comments;
-        render;
+        renderComments(data, listElem, getCommentsList);
     }).catch((error) => {
         if (error.message === "Ошибка 500") {
             console.log(error);
@@ -31,7 +33,7 @@ function getFromApiFirstTime(data, loadingElem, render) {
 };
 
 
-function getFromApi() {
+function getFromApi(data) {
     return fetch("https://webdev-hw-api.vercel.app/api/v1/freddy-krugliy/comments", {
         method: "GET",
     }).then((responce) => {
@@ -41,8 +43,8 @@ function getFromApi() {
             return responce.json();
         }
     }).then((responceData) => {
-        comments = responceData.comments;
-        renderComments(listElem, getCommentsList);
+        data = responceData.comments;
+        renderComments(data, listElem, getCommentsList);
     }).catch((error) => {
         if (error.message === "Ошибка 500") {
             console.log(error);
@@ -54,7 +56,22 @@ function getFromApi() {
 };
 
 
-function postToApi() {
+function changeMessageToAddForm() {
+    addFormElem.style.display = 'block';
+    commentAddedElem.style.display = 'none';
+};
+
+function escapeHtml(text) {
+    return text
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("$", "&#36");
+};
+
+
+function postToApi(data) {
     addFormElem.style.display = 'none';
     commentAddedElem.style.display = 'block';
 
@@ -75,7 +92,7 @@ function postToApi() {
             return responce.json();
         }
     }).then((responceData) => {
-        return getFromApi();
+        return getFromApi(data);
     }).then(() => {
         changeMessageToAddForm();
         addName.value = '';
