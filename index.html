@@ -70,18 +70,19 @@
     const buttonElement = document.getElementById('add-button');
     const nameInputElement = document.getElementById('name-input');
     const commentInputElement = document.getElementById('comment-input');
-
+    let date = new Date();
 
     buttonElement.addEventListener("click", () => {
-      const oldNameInputElement = nameInputElement.innerHTML;
-      nameInputElement.innerHTML = oldNameInputElement + `<li class="comment">
+      const oldListHtml = nameInputElement.innerHTML;
+      const oldCommentHtml = commentInputElement.innerHTML;
+      nameInputElement.innerHTML = oldListHtml + `<li class="comment">
           <div class="comment-header">
-            <div>${oldNameInputElement.value}</div>
-            <div>${newDateElemet.value}</div>
+            <div>${oldListHtml}</div>
+            <div>${date}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${commentInputElement.value}
+              ${oldCommentHtml}
             </div>
           </div>
           <div class="comment-footer">
@@ -91,8 +92,8 @@
             </div>
           </div>
         </li>`;
-    });
 
+    });
     
     // Код писать здесь
     console.log(buttonElement.innerHTML);
