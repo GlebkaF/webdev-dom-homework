@@ -52,7 +52,7 @@ const addComment = (userName, textComment) => {
 
   if (validate()) {
     // Форматирование даты
-    const formattedDate = format(date, "dd.MM.yyyy HH:mm:ss");
+    const formattedDate = format(date, "dd.mm.yyyy hh:mm:ss");
 
     const newComment = {
       name: userName.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
