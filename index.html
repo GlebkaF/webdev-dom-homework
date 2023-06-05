@@ -11,7 +11,7 @@
       <ul class="comments" id="comments">
         <!-- Комментарии рендерятся из JS -->
       </ul>
-      <div class="add-form">
+      <div id="form" class="add-form">
         <input id="input-name"
           type="text"
           class="add-form-name"
@@ -35,6 +35,7 @@
     const inputComment = document.getElementById('input-comment');
     const buttonForm = document.getElementById('button-form');
     const listElement = document.getElementById('comments');
+    const form = document.getElementById('form');
 
     let comments = [];
 
@@ -107,14 +108,16 @@
 
     renderComments();
 
-    function getComments() {
-      fetch(
+    const getComments = () => {
+      return fetch(
         'https://wedev-api.sky.pro/api/v1/maksim-balyaev/comments',
         {
           method: 'GET'
         }
       ).then((response) => {
-        response.json().then((responseData) => {
+          return response.json();
+        })
+        .then((responseData) => {
           const date = new Date();
           const appComments = responseData.comments.map((comment) => {
             return {
@@ -125,17 +128,17 @@
               isLiked: false,
             };
           });
-      
           comments = appComments;
           renderComments();
         });
-      });
-    }
+      };
   
     buttonForm.addEventListener('click', (event) => {
       if (inputName.value === '' || inputComment.value === '') {
         return;
       }
+
+      form.style.display = "none";
 
       fetch(
       'https://wedev-api.sky.pro/api/v1/maksim-balyaev/comments',
@@ -153,19 +156,23 @@
           .replaceAll(">", "&gt;")
           .replaceAll('"', "&quot;"),
         }),
-      }).then((response) => {
-        response.json().then((responseData) => {
-          comments = responseData.comments;
-        });
-        getComments();
-      });
-
-      renderComments();
-
-      inputName.value = '';
-      inputComment.value = '';
-
+      })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
+        comments = responseData.comments;
+        return getComments();
+        renderComments();
+      })
     });
+
+    form.style.display = "flex";
+
+    inputName.value = "";
+    inputComment.value = "";
+
+    listElement.innerHTML = "Подождите, каментарии загружаются..."
 
     getComments();
 
