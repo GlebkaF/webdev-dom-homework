@@ -10,7 +10,9 @@
 <body>
   <div class="container">
     <ul class="comments">
-      <li class="comment">
+
+      <!-- Список рендерится из JS -->
+      <!-- <li class="comment">
         <div class="comment-header">
           <div>Глеб Фокин</div>
           <div>12.02.22 12:18</div>
@@ -43,7 +45,7 @@
             <button class="like-button -active-like"></button>
           </div>
         </div>
-      </li>
+      </li> -->
     </ul>
     <div class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
@@ -67,8 +69,93 @@
   const buttonElementDel = document.querySelector('.delete-form-button');
 
 
+  const comments = [
+    {
+      name: 'Глеб Фокин',
+      dateСreation: '12.02.22 12:18',
+      textComment: 'Это будет первый комментарий на этой страницe',
+      likeComment: false,
+      likesNumber: 3,
+     // propertyColorLike: classList.add("-no-active-like"),
+    },
+    {
+      name: 'Варвара Н.',
+      dateСreation: '13.02.22 19:22',
+      textComment: 'Мне нравится как оформлена эта страница! ❤',
+      likeComment: false,
+      likesNumber: 75,
+      //propertyColorLike: classList.add("-no-active-like"),
+    },
+  ];
 
-//доп.задание1  кнопка «Написать» не кликабельна, если имя или текст в форме незаполненные.
+
+
+   function getLikeButton() {    
+
+    const likesButton = document.querySelectorAll('.like-button');
+
+    for (const like of likesButton) {
+
+      like.addEventListener("click", () => {
+        const likeIndex = like.dataset.index;
+        const commentsElement = comments[likeIndex];
+                
+        if (commentsElement.likeComment) {
+          commentsElement.likesNumber -= 1;
+          commentsElement.likeComment = false;
+          //like.style.backgroundImage = url("data:image/svg+xml,%3Csvg width='22' height='20' viewBox='0 0 22 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15.95 0C14.036 0 12.199 0.882834 11 2.26703C9.801 0.882834 7.964 0 6.05 0C2.662 0 0 2.6267 0 5.99455C0 10.1035 3.74 13.4714 9.405 18.5613L11 20L12.595 18.5613C18.26 13.4714 22 10.1035 22 5.99455C22 2.6267 19.338 0 15.95 0Z' fill='none' stroke='%23BCEC30'/%3E%3C/svg%3E");
+          like.classList.add("-no-active-like");
+          like.classList.remove("-active-like");
+          renderComments();     
+        } else {
+          commentsElement.likesNumber += 1;
+          commentsElement.likeComment = true;
+          //like.style.backgroundImage = url("data:image/svg+xml,%3Csvg width='22' height='20' viewBox='0 0 22 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15.95 0C14.036 0 12.199 0.882834 11 2.26703C9.801 0.882834 7.964 0 6.05 0C2.662 0 0 2.6267 0 5.99455C0 10.1035 3.74 13.4714 9.405 18.5613L11 20L12.595 18.5613C18.26 13.4714 22 10.1035 22 5.99455C22 2.6267 19.338 0 15.95 0Z' fill='%23BCEC30'/%3E%3C/svg%3E");
+          like.classList.add("-active-like");
+          like.classList.remove("-no-active-like");
+          renderComments();         
+        }
+       
+      })
+    }
+  };
+  getLikeButton();
+
+   const renderComments = () => {
+    
+    const commentsHtml = comments.map((comment, index) => {   
+
+    return `<li class="comment">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.dateСreation}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.textComment}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter"> ${comment.likesNumber}</span>
+              <button data-index="${index}" class="like-button -no-active-like"></button>
+            </div>
+          </div>
+        </li>`;
+    }).join("");
+
+    
+    commentsElement.innerHTML = commentsHtml;
+    getLikeButton();
+  };
+
+  renderComments();
+
+
+
+
+
+  //доп.задание1  кнопка «Написать» не кликабельна, если имя или текст в форме незаполненные.
   buttonElement.setAttribute('disabled', true);
 
   inputNameElement.addEventListener("input", () => {
@@ -87,7 +174,7 @@
 
     if ((inputNameElement.value.length > 0) && (inputTextElement.value.length > 0)) {
 
-       buttonElement.removeAttribute('disabled');
+      buttonElement.removeAttribute('disabled');
     }
   });
 
@@ -100,72 +187,54 @@
   // const currentDate = new Date().toLocaleDateString('default', {day: '2-digit', month: '2-digit', year: '2-digit'}) +
   // " "+ new Date().toLocaleTimeString().slice(0,-3);
 
-//основное дз
-
-
 
   buttonElement.addEventListener("click", () => {
-    
+
     buttonElement.setAttribute('disabled', true);
 
 
-    // inputNameElement.style.backgroundColor = '';
-    // inputTextElement.style.backgroundColor = '';
+    comments.push({
+      name: inputNameElement.value,
+      dateСreation: currentDate,
+      textComment: inputTextElement.value,
+      likeComment: false,
+      likesNumber: 0,
+    });
+    renderComments();
 
-    // if (inputNameElement.value === '' && inputTextElement.value === '') {
-    //   inputNameElement.style.backgroundColor = 'red';
-    //   inputTextElement.style.backgroundColor = 'red';
-    //   return;
-    // } else if (inputNameElement.value === '') {
-    //   inputNameElement.style.backgroundColor = 'red';
-    //   return;
-    // } else if (inputTextElement.value === '') {
-    //   inputTextElement.style.backgroundColor = 'red';
-    //   return;
-    // }
 
-      commentsElement.innerHTML =
-      commentsElement.innerHTML + `<li class="comment">
-          <div class="comment-header">
-            <div>${inputNameElement.value}</div>
-            <div>${currentDate}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${inputTextElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>`;
 
     inputNameElement.value = "";
     inputTextElement.value = "";
+
+
   });
 
 
+
+
+
+
+
+
+
+
   ///Доп.задание2 нажатие клавиши Enter должно вызывать ту же логику, которая срабатывает при клике на кнопку «Добавить».
- document.addEventListener("keyup", function(enter) {
-  if (enter.keyCode == 13) {
-    buttonElement.click();
-  }
-});
+  document.addEventListener("keyup", function (enter) {
+    if (enter.keyCode == 13) {
+      buttonElement.click();
+    }
+  });
 
+  //удаление последнего комментари
+  buttonElementDel.addEventListener("click", () => {
 
+    //const lastElement = commentsElement.lastIndexOf(commentElement)
+    comments.pop();
 
-  
-//удаление последнего комментари
- buttonElementDel.addEventListener("click", () => {
-
-       //const lastElement = commentsElement.lastIndexOf(commentElement);
-      
-      const lastElement=commentsElement.lastElementChild;
-      lastElement.remove();
-     });
+    const lastElement = commentsElement.lastElementChild;
+    lastElement.remove();
+  });
 
    //console.log("It works!");
 </script>
