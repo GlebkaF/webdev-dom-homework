@@ -34,7 +34,8 @@ export const getComments = () => {
           }
         });
         renderCommentList(commentList);
-      });
+        
+        });
       });
       };
     
@@ -105,26 +106,30 @@ export const getComments = () => {
             fetchPromise.then((response) => {
               const jsonPromise = response.json();
       
-            jsonPromise.then((responseData) => {
-              console.log(responseData);
+            jsonPromise.then((user) => {
+              // console.log(responseData);
+              console.log(user);
                 
               });
             });
           };
 
-          export const postLogIn = (login, password) => {
+          export const postLogIn = (user) => {
             const fetchPromise = fetch("  https://wedev-api.sky.pro/api/user/login",
               {
                 method: "POST",
                 body: JSON.stringify({
-                login,
-                password
+                login: user.login,
+                password: user.password
               })
             });
-            fetchPromise.then((response) => {
-              const jsonPromise = response.json();
-            });
+            
+            fetchPromise.then((user) => {
+              // const jsonPromise = response.json();
               getUsers();
+              
+            });
+            
             };
           
           

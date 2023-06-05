@@ -49,12 +49,12 @@ linkButtonElement.addEventListener("click", () =>{
   exitButton = document.getElementById('exit-button');
 
   buttonButton = document.getElementById('button-button');
-  buttonButton.addEventListener("click", () => {
+  buttonButton.addEventListener("click", (user) => {
     postLogIn({
       login: '',
       password : ''
-    }).then((user) => {
-      console.log(user);
+    }).then(() => {
+      // console.log(user);
       setToken(`Bearer ${user.user.token}`)
     });
   })
