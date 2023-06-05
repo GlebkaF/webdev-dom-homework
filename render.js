@@ -5,13 +5,13 @@ import { initAnswerComment } from "./main.js";
 
 
 export const renderComments = (comments) => {
-    const commentsHtml = comments.map((comment, index) => {
+  const commentsHtml = comments.map((comment, index) => {
 
-        let isLike = '';
-        if (comments[index].isLiked) {
-            isLike = '-active-like'
-        }
-        return `<li class="comment">
+    let isLike = '';
+    if (comments[index].isLiked) {
+      isLike = '-active-like'
+    }
+    return `<li class="comment">
         <div class="comment-header">
           <div>${comment.name}</div>
           <div>${comment.date}</div>
@@ -30,8 +30,9 @@ export const renderComments = (comments) => {
       </li>`
 
 
-    }).join('');
-    listElement.innerHTML = commentsHtml;
-    initlikeButtonListeners();
-    initAnswerComment();
+  }).join('');
+  listElement.innerHTML = commentsHtml;
+  initlikeButtonListeners(comments);
+  initAnswerComment();
+
 };

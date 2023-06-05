@@ -20,7 +20,7 @@ export let comments = [
 ];
 
 //Функция для обработчика клика для лайка
-export const initlikeButtonListeners = () => {
+export const initlikeButtonListeners = (comments) => {
     const likeButtonElements = document.querySelectorAll('.like-button');
     for (const likeButtonElement of likeButtonElements) {
         likeButtonElement.addEventListener('click', (event) => {
@@ -35,7 +35,7 @@ export const initlikeButtonListeners = () => {
                 comments[index].isLiked = true;
             }
             comments[index].like = countInLike;
-            renderCommentsMod();
+            renderComments(comments);
         });
     };
 
@@ -82,14 +82,13 @@ buttonElemtnt.addEventListener('click', () => {
     if (commentInputElement.value === '') {
         commentInputElement.classList.add('error');
         return;
-    }                                                            
+    }
     invisibleDiv.classList.remove('hidden');
     invisibleDiv.classList.add('hidden');
     finComments();
 
     countInLike = 0;
     deletElement.value;
-
 });
 
 
@@ -105,7 +104,6 @@ deletElement.addEventListener("click", () => {
     if (lastCommentIndex !== -1) {
         listElement.innerHTML = listElement.innerHTML.substring(0, lastCommentIndex);
     }
-
     comments.pop();
     renderComments();
 });

@@ -3,7 +3,6 @@ import { renderComments } from "./render.js";
 import { comments, nameInputElement } from "./main.js";
 import { commentInputElement } from "./main.js";
 
-
 export const getAllComments = (comments) => {
     return fetch("https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov/comments", {
         method: "GET",
@@ -27,10 +26,6 @@ export const getAllComments = (comments) => {
         });
 };
 
-// getAllComments();
-
-
-// export {getAllComments};
 export const finComments = () => {
     fetch("https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov/comments", {
         method: "POST",
@@ -75,7 +70,6 @@ export const finComments = () => {
             } else {
                 alert("Кажется, у вас сломался интернет, попробуйте позже")
             }
-
             console.warn(error);
         })
         .then((data) => {
@@ -83,5 +77,4 @@ export const finComments = () => {
             // invisibleDiv.classList.add('hidden');
         })
 };
-
 // // export { getAllComments, finComments };
