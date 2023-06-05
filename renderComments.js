@@ -20,11 +20,64 @@ const getListCommentsEdit = (comment, index) => {
          </li>`
 }
 
-export const renderComments = (comments, handleCommentEditClick, handleCommentFeedbackClick, handleCommentLikeClick) => {
-    const commentsHtml = comments.map((comment, index) => getListCommentsEdit(comment, index))
-     .join('');
-const listElement = document.getElementById("list");
-     listElement.innerHTML = commentsHtml;
+export const renderComments = ({comments, handleCommentEditClick, handleCommentFeedbackClick, handleCommentLikeClick}) => {
+  const appEl = document.getElementById("app");
+  const commentsHtml = comments.map((comment, index) => getListCommentsEdit(comment, index))
+  .join('');
+  const appHtml = `<div class="container-registr">
+    <div>
+      <div class="add-form">Форма регистрации
+        <input 
+          type="text"
+          class="add-form-namelogin"
+          placeholder="Введите имя"
+        />
+        <input
+          type="text"
+          class="add-form-login"
+          placeholder="Введите логин"
+        />
+        <input
+          type="password"
+          class="add-form-password"
+          placeholder="Введите пароль"
+        />
+        <div class="add-form-registration">
+          <button class="add-form-button-registration-activ-registr">Зарегистрироваться</button>
+        </div>
+        <div class="add-form-enter">Войти</div>
+      </div>
+  <div class="container" id="container" >
+  <div id="commentsContainer">
+    <ul id="list" class="comments">
+    ${commentsHtml}
+    </ul>
+    <div class="add-form" id="form-comment">
+      <input id="name-input"
+        type="text"
+        class="add-form-name"
+        placeholder="Введите ваше имя"
+      />
+      <textarea id="comment-input"
+        type="textarea"
+        class="add-form-text"
+        placeholder="Введите ваш коментарий"
+        rows="4"
+      ></textarea>
+      <div class="add-form-row">
+        <button id="button" class="add-form-button">Написать</button>
+      </div>
+    </div>
+  </div>
+  </div>`
+     appEl.innerHTML = appHtml;
+     const buttonElement = document.getElementById("button")
+  const listElement = document.getElementById("list");
+  const nameInputElement = document.getElementById("name-input");
+  const commentInputElement = document.getElementById("comment-input");
+  const commentForm = document.getElementById("form-comment");
+  const commentsContainer = document.getElementById("commentsContainer");
+  const newContainerComments = document.getElementById("container")
       onCommentLikeClick(handleCommentLikeClick);
       onCommentEditClick(handleCommentEditClick);
       onCommentFeedbackClick(handleCommentFeedbackClick);

@@ -1,11 +1,11 @@
 "use strict";
 import { fetchComments, createComment } from "./api.js";
-import { formatDate } from "./utils.js";
 import { renderComments } from "./renderComments.js"
 
 const render = () => {
-  renderComments(comments, handleCommentEditClick, handleCommentFeedbackClick, handleCommentLikeClick);
+renderComments({comments, handleCommentEditClick, handleCommentFeedbackClick, handleCommentLikeClick});
 }
+
   const buttonElement = document.getElementById("button")
   const listElement = document.getElementById("list");
   const nameInputElement = document.getElementById("name-input");
@@ -13,19 +13,20 @@ const render = () => {
   const commentForm = document.getElementById("form-comment");
   const commentsContainer = document.getElementById("commentsContainer");
   const newContainerComments = document.getElementById("container")
-
-  commentsContainer.style.display = 'none';
+  
   const commentAdding = document.createElement('div'); 
+  const appEl = document.getElementById("app");
   commentAdding.innerText = 'Пожалуйста подождите, загружаю комментарии...';
-  commentsContainer.parentNode.insertBefore(commentAdding, commentsContainer);
-  const fetchPromise = () => { fetchComments()
+  appEl.appendChild(commentAdding);
+  
+  const initApp = () => { fetchComments()
   .then((appComments) => {
     comments = appComments;
     render();
+    addComment();
   })
   .then((data) => {
     commentAdding.style.display = 'none';
-    commentsContainer.style.display = 'block';
   });
 }
 
@@ -76,15 +77,21 @@ const handleCommentEditClick = (event) => {
 };
 
 let currentCommentFeedback = null;
-const handleCommentFeedbackClick = (event) => {  
+const handleCommentFeedbackClick = (event) => { 
+  const commentInputElement = document.getElementById("comment-input");
   currentCommentFeedback = event.target.dataset.index;
   commentInputElement.value = `>${comments[currentCommentFeedback].text} ${comments[currentCommentFeedback].name}`;
 };
 
-fetchPromise();
-render();
+initApp();
 
-buttonElement.addEventListener("click", () => {
+
+const addComment = () => { 
+  const buttonElement = document.getElementById("button")
+  buttonElement.addEventListener("click", () => {
+  const commentForm = document.getElementById("form-comment");
+  const nameInputElement = document.getElementById("name-input");
+  const commentInputElement = document.getElementById("comment-input");
   commentForm.style.display = 'none';
   const commentAddingMessage = document.createElement('div'); 
   commentAddingMessage.innerText = 'Комментарий добавляется...';
@@ -100,22 +107,10 @@ buttonElement.addEventListener("click", () => {
       commentInputElement.classList.add("error");
       return;
       }
-  let date = new Date();
-  let likes = 0;
-  comments.push({ 
-    name: nameInputElement.value
-    .replaceAll("<", "&lt;")
-    .replaceAll(">","&gt;"), 
-    date: formatDate(date), 
-    text: commentInputElement.value
-    .replaceAll("<", "&lt;")
-    .replaceAll(">","&gt;"), 
-    active: false,
-    like: likes, 
-  });
-createComment(nameInputElement.value, commentInputElement.value)      
+  render();
+  createComment(nameInputElement.value, commentInputElement.value)      
   .then(() => {
-    fetchPromise();
+    initApp();
   })
   .then((data) => {
     commentAddingMessage.style.display = 'none';
@@ -139,4 +134,6 @@ createComment(nameInputElement.value, commentInputElement.value)
     console.warn(error);
   });
 });
+}
+
 
