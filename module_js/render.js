@@ -1,4 +1,6 @@
-const renderComments = () => {
+import {comments, listElement, textInputElement} from "./variables";
+
+function renderComments() {
   const commentsHtml = comments
     .map((comment, index) => {
       let activeLike = "";
@@ -30,7 +32,7 @@ const renderComments = () => {
   copyComment();
 };
 
-const copyComment = () => {
+function copyComment() {
   const commentsElement = document.querySelectorAll(".comment");
 
   for (const comment of commentsElement) {
@@ -52,7 +54,7 @@ const copyComment = () => {
   }
 };
 
-const initLike = () => {
+function initLike() {
   const likeButtonElements = document.querySelectorAll(".like-button");
   for (const likeButton of likeButtonElements) {
     const index = likeButton.dataset.index;
@@ -71,4 +73,4 @@ const initLike = () => {
   }
 };
 
-export { renderComments, copyComment, initLike };
+export {renderComments};
