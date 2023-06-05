@@ -15,15 +15,9 @@ export function renderComments() {
       if (comment.date) {
         dates = comment.date;
       } else {
+        //Форматирование даты
         const date = new Date();
-
-        // const day = ('0' + date.getDate()).slice(-2);
-        // const month = ('0' + (date.getMonth() + 1)).slice(-2);
-        // const year = date.getFullYear().toString().slice(-2);
-        // const hours = ('0' + date.getHours()).slice(-2);
-        // const minutes = ('0' + date.getMinutes()).slice(-2);
-        // dates = `${day}.${month}.${year} ${hours}:${minutes}`;
-        dates = format(date, "dd.MM.yyyy hh:mm:ss");
+        dates = format(date, "yyyy-MM-dd hh:mm:ss"); //YYYY-MM-DD hh:mm:ss
       }
 
       return `<li class="comment" data-id="${id}">

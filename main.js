@@ -1,5 +1,6 @@
 import { getCommentsFromAPI, sendCommentToServer, appComments } from './api.js';
 import { renderComments } from './rendering.js';
+import { format } from 'date-fns';
 
 const loading = document.querySelector('.loading');
 const commentList = document.querySelector('.comments');
@@ -50,12 +51,8 @@ const addComment = (userName, textComment) => {
   const date = new Date();
 
   if (validate()) {
-    const day = ('0' + date.getDate()).slice(-2);
-    const month = ('0' + (date.getMonth() + 1)).slice(-2);
-    const year = date.getFullYear().toString().slice(-2);
-    const hours = ('0' + date.getHours()).slice(-2);
-    const minutes = ('0' + date.getMinutes()).slice(-2);
-    const formattedDate = `${day}.${month}.${year} ${hours}:${minutes}`;
+    // Форматирование даты
+    const formattedDate = format(date, "dd.MM.yyyy hh:mm:ss");
 
     const newComment = {
       name: userName.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
