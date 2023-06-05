@@ -53,15 +53,7 @@
                 + (newDate.getMonth() < 10 ? '0' : '') + newDate.getMonth() + '.' 
                 + `${newDate.getFullYear() - 2000} ${newDate.getHours()}:${newDate.getMinutes()}`;
 
-    /* nameElement.oninput = function input() {
-    if ((nameElement.value == "") && (textElement.value == "")) {
-        buttonElement.setAttribute('disabled', true);
-    } else{
-        buttonElement.removeAttribute('disabled');
-    }
-  } // не получилось
-*/
-
+  
     const commentElement = document.querySelectorAll('.comment');
 
     const comments = [
@@ -105,34 +97,50 @@
 
     renderComment();
 
-  buttonElement.addEventListener("click", () => {
-
-    const oldListHtml = listElement.innerHTML;
-
-    nameInputElement.style.backgroundColor = '';
-    if (nameInputElement.value === "") {
+    buttonElement.addEventListener("click", () => {
+    
+      const oldListHtml = listElement.innerHTML;
+    
+      nameInputElement.style.backgroundColor = '';
+      if (nameInputElement.value === "") {
       nameInputElement.style.backgroundColor = 'red';
     return;
     }
-
-    textInputElement.style.backgroundColor = '';
-    if (textInputElement.value === "") {
+    
+      textInputElement.style.backgroundColor = '';
+      if (textInputElement.value === "") {
       textInputElement.style.backgroundColor = 'red';
       return;
     }
-
-    comments.push({
-      name: nameInputElement.value,
-      date: fullDate,
-      text: textInputElement.value,
-      likes: "0",
-    })
     
-    renderComment();
+      comments.push({
+        name: nameInputElement.value,
+        date: fullDate,
+        text: textInputElement.value,
+        likes: "0",
+      })
+    
+      renderComment();
+      initEventListeners();
+
 
       nameInputElement.value = '';
       textInputElement.value = '';
-  });
+    });
+
+    
+
+    const initEventListeners = () =>{
+      const likesElements = document.querySelectorAll('.likes');
+
+      for (const likesElement of likesElements) {
+        likesElement.addEventListener('click', () =>{
+          console.log(1);
+        });
+      };
+    };
+    
+    initEventListeners();
 
     console.log("It works!");
   </script>
