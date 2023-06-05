@@ -83,15 +83,17 @@
       eachDate: "12.02.22 12:18",
       like: 3,
       currentLike: false,
+      classLike: 'like-button -no-active-like',
     },
     {
       name: "Варвара Н.",
       text: "Мне нравится как оформлена эта страница! ❤",
       eachDate: "13.02.22 19:22",
       like: 75,
-      currentLike: false
-    }
-  ]
+      currentLike: false,
+      classLike: 'like-button -no-active-like',
+    },
+  ];
 
   // Добавление кликабельностm лайка и счётчика лайков
   const initlikeButtonsListeners = () => {
@@ -104,10 +106,10 @@
         console.log(comments[index].currentLike);
         if (comments[index].currentLike) {
           comments[index].like = ++comments[index].like;
-          likeButtonElement.classList.add("active-like");//Не работает присвоение класса
+          comments[index].classLike = 'like-button -active-like';
         } else {
           comments[index].like = --comments[index].like;
-          likeButtonElement.classList.remove("active-like");//Не работает присвоение класса
+          comments[index].classLike = 'like-button -no-active-like';
         }
         renderComments();//если убрать отсюда рендер-функцию, то не тработает счётчик, но присвоение класса рпботает
         // План добавления лайка
@@ -135,7 +137,7 @@
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${comment.like}</span>
-            <button class="like-button" data-index="${index}"></button>
+            <button class="${comment.classLike}" data-index="${index}"></button>
           </div>
         </div>
       </li>`;
@@ -183,7 +185,8 @@
       text: comentInputElement.value,
       eachDate: `${day}.${month}.${year} ${hour}:${minute}`,
       like: 0,
-      currentLike: false
+      currentLike: false,
+      classLike: 'like-button -no-active-like',
     });
 
     renderComments();
