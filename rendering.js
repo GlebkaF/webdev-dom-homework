@@ -17,7 +17,7 @@ export function renderComments() {
       } else {
         //Форматирование даты
         const date = new Date();
-        dates = format(date, "yyyy-MM-dd hh:mm:ss"); //YYYY-MM-DD hh:mm:ss
+        dates = format(date, "yyyy-MM-dd HH:mm:ss"); //YYYY-MM-DD hh:mm:ss
       }
 
       return `<li class="comment" data-id="${id}">
