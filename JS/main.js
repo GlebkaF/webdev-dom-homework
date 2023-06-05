@@ -1,7 +1,7 @@
 "use strict";
 import { comments } from "./comments.js";
 // import { likeButtonsListeners } from "./likes.js"
-import { getFromApiFirstTime } from "./api.js";
+import { getFromApiFirstTime, getFromApi, postToApi } from "./api.js";
 import { renderComments } from "./renderComments.js";
 import { getCommentsList } from "./CommentsList.js";
 
@@ -12,8 +12,6 @@ const addComment = document.getElementById('add-comment');
 const commentElements = document.querySelectorAll('comments');
 const lastCommentDeleteButton = document.getElementById('form-delete-button');
 const loadingComments = document.querySelector('.loading');
-const commentAddedElem = document.querySelector('.comment-added');
-const addFormElem = document.querySelector('.add-form');
 
 // let comments = [
     // {
@@ -34,8 +32,7 @@ const addFormElem = document.querySelector('.add-form');
     // },
 // ];
 
-console.log(getFromApiFirstTime(comments, loadingComments));
-console.log(renderComments(comments, listElem, getCommentsList));
+getFromApiFirstTime(comments, loadingComments);
 
 
 // function getFromApiFirstTime() {
@@ -305,8 +302,8 @@ const addNewComment = () => {
         //     })
         // };
 
-        renderComments(listElem, getCommentsList);
-        postToApi();
+        renderComments(comments, listElem, getCommentsList);
+        postToApi(comments, addComment, addName);
     });
 };
 

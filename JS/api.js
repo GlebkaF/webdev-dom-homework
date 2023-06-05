@@ -1,8 +1,9 @@
-// import { comments } from "./comments.js";
 import { renderComments } from "./renderComments.js";
 import { getCommentsList } from "./CommentsList.js";
 
 const listElem = document.getElementById('list-comments');
+const commentAddedElem = document.querySelector('.comment-added');
+const addFormElem = document.querySelector('.add-form');
 
 
 function getFromApiFirstTime(data, loadingElem) {
@@ -71,15 +72,15 @@ function escapeHtml(text) {
 };
 
 
-function postToApi(data) {
+function postToApi(data, addCommentElem, addNameElem) {
     addFormElem.style.display = 'none';
     commentAddedElem.style.display = 'block';
 
     return fetch("https://webdev-hw-api.vercel.app/api/v1/freddy-krugliy/comments", {
         method: "POST",
         body: JSON.stringify({
-            text: escapeHtml(addComment.value.trim()),
-            name: escapeHtml(addName.value.trim()),
+            text: escapeHtml(addCommentElem.value.trim()),
+            name: escapeHtml(addNameElem.value.trim()),
             forceError: true,
         })
     }).then((responce) => {
@@ -95,8 +96,8 @@ function postToApi(data) {
         return getFromApi(data);
     }).then(() => {
         changeMessageToAddForm();
-        addName.value = '';
-        addComment.value = '';
+        addNameElem.value = '';
+        addCommentElem.value = '';
     }).catch((error) => {
         if (error.message === "Ошибка 400") {
             console.log(error);
