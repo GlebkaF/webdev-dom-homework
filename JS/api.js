@@ -5,6 +5,7 @@ const listElem = document.getElementById('list-comments');
 const commentAddedElem = document.querySelector('.comment-added');
 const addFormElem = document.querySelector('.add-form');
 
+export let newComments = [];
 
 function getFromApiFirstTime(data, loadingElem) {
     loadingElem.style.display = 'block';
@@ -22,6 +23,7 @@ function getFromApiFirstTime(data, loadingElem) {
     }).then((responceData) => {
         data = responceData.comments;
         renderComments(data, listElem, getCommentsList);
+        newComments = data;
     }).catch((error) => {
         if (error.message === "Ошибка 500") {
             console.log(error);
@@ -46,6 +48,7 @@ function getFromApi(data) {
     }).then((responceData) => {
         data = responceData.comments;
         renderComments(data, listElem, getCommentsList);
+        newComments = data;
     }).catch((error) => {
         if (error.message === "Ошибка 500") {
             console.log(error);
@@ -81,7 +84,7 @@ function postToApi(data, addCommentElem, addNameElem) {
         body: JSON.stringify({
             text: escapeHtml(addCommentElem.value.trim()),
             name: escapeHtml(addNameElem.value.trim()),
-            forceError: true,
+            // forceError: true,
         })
     }).then((responce) => {
         if (responce.status === 400) {

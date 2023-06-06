@@ -1,8 +1,8 @@
 "use strict";
-import { comments } from "./comments.js";
 import { getFromApiFirstTime, postToApi } from "./api.js";
 import { renderComments } from "./renderComments.js";
 import { getCommentsList } from "./CommentsList.js";
+import { newComments } from "./api.js";
 
 const listElem = document.getElementById('list-comments');
 const commentBtn = document.getElementById('form-add-button');
@@ -11,8 +11,8 @@ const addComment = document.getElementById('add-comment');
 const loadingComments = document.querySelector('.loading');
 
 
-getFromApiFirstTime(comments, loadingComments);
-renderComments(comments, listElem, getCommentsList);
+getFromApiFirstTime(newComments, loadingComments);
+renderComments(newComments, listElem, getCommentsList);
 
 
 const addNewComment = () => {
@@ -27,8 +27,8 @@ const addNewComment = () => {
         };
 
 
-        renderComments(comments, listElem, getCommentsList);
-        postToApi(comments, addComment, addName);
+        renderComments(newComments, listElem, getCommentsList);
+        postToApi(newComments, addComment, addName);
     });
 };
 
