@@ -2,7 +2,7 @@
 import { fetchComments, createComment } from "./api.js";
 import { renderComments } from "./renderComments.js"
 
-const render = () => {
+const renderApp = () => {
 renderComments({comments, handleCommentEditClick, handleCommentFeedbackClick, handleCommentLikeClick});
 }
 
@@ -18,11 +18,11 @@ renderComments({comments, handleCommentEditClick, handleCommentFeedbackClick, ha
   const appEl = document.getElementById("app");
   commentAdding.innerText = 'Пожалуйста подождите, загружаю комментарии...';
   appEl.appendChild(commentAdding);
-  
-  const initApp = () => { fetchComments()
+ 
+  export const initApp = () => { fetchComments()
   .then((appComments) => {
     comments = appComments;
-    render();
+    renderApp();
     addComment();
   })
   .then((data) => {
@@ -47,7 +47,7 @@ const handleCommentLikeClick = (event) => {
     comments[index].active = true;
   }
   comments[index].like = likesCount;
-  render();
+  renderApp();
 };
 
 const handleCommentEditClick = (event) => { 
@@ -85,7 +85,6 @@ const handleCommentFeedbackClick = (event) => {
 
 initApp();
 
-
 const addComment = () => { 
   const buttonElement = document.getElementById("button")
   buttonElement.addEventListener("click", () => {
@@ -97,27 +96,27 @@ const addComment = () => {
   commentAddingMessage.innerText = 'Комментарий добавляется...';
   commentForm.parentNode.insertBefore(commentAddingMessage, commentForm); 
       
-  nameInputElement.classList.remove("error");
-  if (nameInputElement.value === "" && nameInputElement.value.length < 3) {
-      nameInputElement.classList.add("error");
-      return;
-      }
+  // nameInputElement.classList.remove("error");
+  // if (nameInputElement.value === "" && nameInputElement.value.length < 3) {
+  //     nameInputElement.classList.add("error");
+  //     return;
+  //     }
   commentInputElement.classList.remove("error");
   if (commentInputElement.value === "" && commentInputElement.value.length < 3) {
       commentInputElement.classList.add("error");
       return;
       }
-  render();
-  createComment(nameInputElement.value, commentInputElement.value)      
+  renderApp();
+  createComment(commentInputElement.value)      
   .then(() => {
     initApp();
   })
   .then((data) => {
     commentAddingMessage.style.display = 'none';
     commentForm.style.display = 'block';
-    nameInputElement.value = "";
+    // nameInputElement.value = "";
     commentInputElement.value = "";
-    render();
+    renderApp();
   })
   .catch((error) => {
     commentAddingMessage.style.display = "none";

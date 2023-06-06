@@ -1,7 +1,13 @@
 import { formatDate } from "./utils.js";
+let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+token = null;
+const host = "https://wedev-api.sky.pro/api/v2/olya-myalo/comments";
 export const fetchComments = () => {
-   return fetch("https://webdev-hw-api.vercel.app/api/v1/olya-myalo/comments", {
-      method: "GET"
+   return fetch(host, {
+      method: "GET",
+      headers: {
+        Authorization: token,
+      }
     })
     .then((response) => (response.json()))
     .then((responseData) => { 
@@ -19,10 +25,9 @@ export const fetchComments = () => {
 }
 
 export const createComment = (name, text) => {
-  return  fetch("https://webdev-hw-api.vercel.app/api/v1/olya-myalo/comments", {
+  return  fetch(host, {
         method: "POST",
         body: JSON.stringify({
-          name: name,  
           text: text,
           forceError: false,
         })

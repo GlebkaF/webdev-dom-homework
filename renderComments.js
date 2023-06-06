@@ -1,3 +1,7 @@
+import {initApp} from "./main.js";
+
+let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+token = null;
 const getListCommentsEdit = (comment, index) => {
   let likeClass = comment.active ? "-active-like" : "";
      return `<li class="comment">
@@ -22,9 +26,8 @@ const getListCommentsEdit = (comment, index) => {
 
 export const renderComments = ({comments, handleCommentEditClick, handleCommentFeedbackClick, handleCommentLikeClick}) => {
   const appEl = document.getElementById("app");
-  const commentsHtml = comments.map((comment, index) => getListCommentsEdit(comment, index))
-  .join('');
-  const appHtml = `<div class="container-registr">
+  if (!token) {
+    const appHtml = `<div class="container-registr" id="container-registr">
     <div>
       <div class="add-form">Форма регистрации
         <input 
@@ -43,10 +46,22 @@ export const renderComments = ({comments, handleCommentEditClick, handleCommentF
           placeholder="Введите пароль"
         />
         <div class="add-form-registration">
-          <button class="add-form-button-registration-activ-registr">Зарегистрироваться</button>
+          <button class="add-form-button-registration-activ-registr" id="activ-registr">Зарегистрироваться</button>
         </div>
         <div class="add-form-enter">Войти</div>
-      </div>
+      </div>`;
+    appEl.innerHTML = appHtml;
+    document.getElementById("activ-registr").addEventListener("click", () => {
+        token =
+          "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+          initApp();
+      });
+
+    return;
+  }
+  const commentsHtml = comments.map((comment, index) => getListCommentsEdit(comment, index))
+  .join('');
+  const appHtml = `
   <div class="container" id="container" >
   <div id="commentsContainer">
     <ul id="list" class="comments">
@@ -71,13 +86,13 @@ export const renderComments = ({comments, handleCommentEditClick, handleCommentF
   </div>
   </div>`
      appEl.innerHTML = appHtml;
-     const buttonElement = document.getElementById("button")
-  const listElement = document.getElementById("list");
-  const nameInputElement = document.getElementById("name-input");
-  const commentInputElement = document.getElementById("comment-input");
-  const commentForm = document.getElementById("form-comment");
-  const commentsContainer = document.getElementById("commentsContainer");
-  const newContainerComments = document.getElementById("container")
+  //    const buttonElement = document.getElementById("button")
+  // const listElement = document.getElementById("list");
+  // const nameInputElement = document.getElementById("name-input");
+  // const commentInputElement = document.getElementById("comment-input");
+  // const commentForm = document.getElementById("form-comment");
+  // const commentsContainer = document.getElementById("commentsContainer");
+  // const newContainerComments = document.getElementById("container")
       onCommentLikeClick(handleCommentLikeClick);
       onCommentEditClick(handleCommentEditClick);
       onCommentFeedbackClick(handleCommentFeedbackClick);
