@@ -1,5 +1,5 @@
-import { fetchLogin } from "/api.js";
-import { renderComments } from "/renderComments.js";
+import { fetchLogin } from "./api.js";
+import { renderComments } from "./renderComments.js";
 
 export const renderLogin = (app, isLoading, isWaitingComment, comments) => {
     app.innerHTML = `
@@ -31,13 +31,11 @@ export const renderLogin = (app, isLoading, isWaitingComment, comments) => {
     `
     const authButton = document.getElementById("auth-button");
     authButton.addEventListener("click", () => {
-        const userLogin = document.getElementById("add-login");
-        const userPassword = document.getElementById("add-password");
-        fetchLogin(userLogin, userPassword)
+        const login = document.getElementById("add-login").value;
+        const password = document.getElementById("add-password").value;
+        fetchLogin(login, password)
             .then((response) => {
                 renderComments(app, isLoading, isWaitingComment, comments, response.user);
             });
     })
 }
-
-

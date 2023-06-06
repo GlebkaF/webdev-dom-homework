@@ -1,5 +1,6 @@
-import { delay, correctDate } from "/supportFunc.js";
-import { renderLogin } from "/renderLogin.js";
+import { delay, correctDate } from "./supportFunc.js";
+import { renderLogin } from "./renderLogin.js";
+import { postComment } from "./api.js";
 
 
 //     const ///// = `<div class="container">
@@ -40,9 +41,8 @@ import { renderLogin } from "/renderLogin.js";
 // Функция render
 const renderComments = (app, isLoading, isWaitingComment, comments, user) => {
 
-  const commentHTML = comments
-    .map((comment, index) => {
-      return `<li id="comment" class="comment" data-index="${index}">
+  const commentHTML = comments.map((comment, index) => {
+    return `<li id="comment" class="comment" data-index="${index}">
       <div class="comment-header">
         <div id="name">${comment.author.name}</div>
         <div id="date">${correctDate(comment.date)}</div>
@@ -62,16 +62,13 @@ const renderComments = (app, isLoading, isWaitingComment, comments, user) => {
         </div>
       </div>
     </li>`
-    }).join("");
+  }).join("");
 
   const appHtml = `
   <div class="container">
       <ul id="comments" class="comments">
 
-      ${isLoading // пока не работает
-      ? "<p class='add-waiting hidden'>Комментарий добавляется...</p>"
-      : commentHTML
-    }
+      ${isLoading ? `<p>Комментарий добавляется...</p>` : commentHTML}
        </ul>
 
     ${user
@@ -91,7 +88,7 @@ const renderComments = (app, isLoading, isWaitingComment, comments, user) => {
           rows="4"></textarea>
 
              <div class="add-form-row">
-              <button type="button" id="add-form-button" class="add-form-button" disabled>Написать</button>
+              <button type="button" id="add-form-button" class="add-form-button">Написать</button>
 
               <button class="remove-form-button">Удалить последний</button>
             </div>
@@ -109,13 +106,12 @@ const renderComments = (app, isLoading, isWaitingComment, comments, user) => {
 
 
   const addCommentForm = document.querySelector(".add-form");
-  const buttonElement = document.querySelector(".add-form-button");
+
   const listOfComments = document.querySelector(".comments");
   const nameInputElement = document.querySelector(".add-form-name");
   const commentInputElement = document.querySelector(".add-form-text");
-  const constWaitingComment = document.querySelector('.add-waiting'); // Комментарий добавляется...
 
-  // Функция лоадинг при добавлении комментариев в ленту
+  // // Функция лоадинг при добавлении комментариев в ленту - пока отключена, добавить логику через if
   // const waitingAddComment = () => {
   //   if (isWaitingComment) {
   //     constWaitingComment.classList.remove(`hidden`);
@@ -129,6 +125,7 @@ const renderComments = (app, isLoading, isWaitingComment, comments, user) => {
 
 
   // Добавление клика на лайк
+
   const initLikeButtons = () => {
     const likeButtonsElements = document.querySelectorAll(".like-button");
 
@@ -183,30 +180,20 @@ const renderComments = (app, isLoading, isWaitingComment, comments, user) => {
     })
   }
 
-
-  // // валидация на ввод (неактивная кнопка "Написать")
-  // const checkAddButton = () => {
-  //   nameInputElement.addEventListener('input', () => {
-  //     if (nameInputElement.value) {
-  //       buttonElement.disabled = false;
-  //       return;
-  //     } else {
-  //       buttonElement.disabled = true;
-  //       return;
-  //     }
-  //   });
-
-  //   commentInputElement.addEventListener('input', () => {
-  //     if (commentInputElement.value) {
-  //       buttonElement.disabled = false;
-  //       return;
-  //     } else {
-  //       buttonElement.disabled = true;
-  //       return;
-  //     }
-  //   });
-  // }
-  // checkAddButton();
+  if (user) {
+    const buttonElement = document.querySelector(".add-form-button");
+    buttonElement.addEventListener("click", () => {
+      const text = document.getElementById("add-form-text").value;
+      console.log(text);
+      if (text) {
+        postComment(text, user.token).then((response) => {
+          renderComments(app, isLoading, isWaitingComment, comments, response.user);
+        });
+      }
+    });
+  }
 }
+
+
 
 export { renderComments };

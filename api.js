@@ -1,12 +1,7 @@
-import { replaceValue } from "/supportFunc.js";
-
-const nameInputElement = document.querySelector(".add-form-name");
-const commentInputElement = document.querySelector(".add-form-text");
-
 const host = "https://webdev-hw-api.vercel.app/api/v2/marina-obruch/comments";
 const loginHost = "https://wedev-api.sky.pro/api/user/login";
 
-const fetchAndRenderTasks = () => {
+const getFetch = () => {
     return fetch(host, {
         method: "GET"
     })
@@ -17,29 +12,28 @@ const fetchAndRenderTasks = () => {
 
 
 // Добавляем новый комментарий в ленту с помощью POST
-function postComment() {
+function postComment(text, token) {
     return fetch(host, {
         method: "POST",
         body: JSON.stringify({
-            forceError: false,
-            name: replaceValue(nameInputElement.value),
-            text: replaceValue(commentInputElement.value)
-                .replaceAll('START_QUOTE', '<div class="comment-quote">')
-                .replaceAll('END_QUOTE', '</div>')
-        })
+            text,
+        }),
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
     })
         .then((response) => {
-            if (response.status === 201) { // Если всё работает
-                comments = response;
+            if (response.status === 201) {
+                console.log(response);
+                return response.json();
             }
-            else if (response.status === 400) { // Если введено меньше 3х символов
+            if (response.status === 400) {
+                console.log("Ошибка 400");
                 throw new Error("Ошибка 400");
             }
-            else if (response.status === 500) {
+            if (response.status === 500) {
+                console.log("Ошибка 500");
                 throw new Error("Ошибка 500");
-            }
-            else { // Если падает API
-                throw new Error("Сервер сломался");
             }
         })
 }
@@ -56,4 +50,4 @@ function fetchLogin(login, password) {
     })
 }
 
-export { fetchAndRenderTasks, postComment, fetchLogin }
+export { getFetch, postComment, fetchLogin }
