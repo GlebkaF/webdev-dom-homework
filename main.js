@@ -6,13 +6,13 @@ const renderApp = () => {
 renderComments({comments, handleCommentEditClick, handleCommentFeedbackClick, handleCommentLikeClick});
 }
 
-  const buttonElement = document.getElementById("button")
-  const listElement = document.getElementById("list");
-  const nameInputElement = document.getElementById("name-input");
-  const commentInputElement = document.getElementById("comment-input");
-  const commentForm = document.getElementById("form-comment");
-  const commentsContainer = document.getElementById("commentsContainer");
-  const newContainerComments = document.getElementById("container")
+  // const buttonElement = document.getElementById("button")
+  // const listElement = document.getElementById("list");
+  // const nameInputElement = document.getElementById("name-input");
+  // const commentInputElement = document.getElementById("comment-input");
+  // const commentForm = document.getElementById("form-comment");
+  // const commentsContainer = document.getElementById("commentsContainer");
+  // const newContainerComments = document.getElementById("container")
   
   const commentAdding = document.createElement('div'); 
   const appEl = document.getElementById("app");
@@ -89,7 +89,7 @@ const addComment = () => {
   const buttonElement = document.getElementById("button")
   buttonElement.addEventListener("click", () => {
   const commentForm = document.getElementById("form-comment");
-  const nameInputElement = document.getElementById("name-input");
+  // const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
   commentForm.style.display = 'none';
   const commentAddingMessage = document.createElement('div'); 

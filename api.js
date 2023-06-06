@@ -2,7 +2,7 @@ import { formatDate } from "./utils.js";
 let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
 token = null;
 const host = "https://wedev-api.sky.pro/api/v2/olya-myalo/comments";
-export const fetchComments = () => {
+export const fetchComments = (token) => {
    return fetch(host, {
       method: "GET",
       headers: {
@@ -24,14 +24,18 @@ export const fetchComments = () => {
     });
 }
 
-export const createComment = (name, text) => {
+export const createComment = (token, text) => {
   return  fetch(host, {
         method: "POST",
         body: JSON.stringify({
           text: text,
           forceError: false,
-        })
+        }),
+        headers: {
+          Authorization: token,
+        },
       })
+    
       .then((response) => {
         if (response.status === 500) {
           throw new Error("Сервер упал");
