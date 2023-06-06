@@ -187,7 +187,7 @@ const renderComments = (app, isLoading, isWaitingComment, comments, user) => {
       console.log(text);
       if (text) {
         postComment(text, user.token).then((response) => {
-          renderComments(app, isLoading, isWaitingComment, comments, response.user);
+          renderComments(app, isLoading, isWaitingComment, comments, response, user);
         });
       }
     });
