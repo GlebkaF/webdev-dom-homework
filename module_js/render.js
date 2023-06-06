@@ -1,4 +1,4 @@
-import {comments, listElement, textInputElement} from "./variables";
+import { comments, listElement, textInputElement } from "./variables.js";
 
 function renderComments() {
   const commentsHtml = comments
@@ -30,7 +30,7 @@ function renderComments() {
 
   initLike();
   copyComment();
-};
+}
 
 function copyComment() {
   const commentsElement = document.querySelectorAll(".comment");
@@ -52,7 +52,7 @@ function copyComment() {
           .replaceAll("&quot;", '"')}`;
     });
   }
-};
+}
 
 function initLike() {
   const likeButtonElements = document.querySelectorAll(".like-button");
@@ -71,6 +71,6 @@ function initLike() {
       renderComments();
     });
   }
-};
+}
 
-export {renderComments};
+export { renderComments };

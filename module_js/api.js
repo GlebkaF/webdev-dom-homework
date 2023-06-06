@@ -1,5 +1,10 @@
-import { formatDate, nameInputElement, textInputElement } from "./variables";
-import { renderComments } from "./render";
+import {
+  comments,
+  formatDate,
+  nameInputElement,
+  textInputElement,
+} from "./variables.js";
+import { renderComments } from "./render.js";
 
 function getPromise() {
   const fetchPromise = fetch(
@@ -11,7 +16,7 @@ function getPromise() {
 
   fetchPromise.then((responce) => {
     responce.json().then((responceData) => {
-      const appComments = responceData.comments.map((comment) => {
+      let appComments = responceData.comments.map((comment) => {
         return {
           name: comment.author.name,
           date: formatDate(comment.date),

@@ -1,6 +1,10 @@
 import { renderComments } from "./render.js";
 import { getPromise, getPost } from "./api.js";
-import { textInputElement, nameInputElement } from "./variables.js";
+import {
+  textInputElement,
+  nameInputElement,
+  buttonElement,
+} from "./variables.js";
 
 getPromise();
 
