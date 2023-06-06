@@ -1,6 +1,9 @@
 import { elementComment} from './element.js';
 import { renderComments } from './render.js';
 
+
+//обрабочик лайков
+
 const like = (commentArr) => {
     const likeButtons = document.querySelectorAll('.like-button');
     for (const likeButton of likeButtons) {
@@ -39,6 +42,7 @@ const like = (commentArr) => {
     }
   }
 
+//защищаем код 
 
   const protectionHtml = (string) => {
     return string
