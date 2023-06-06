@@ -1,12 +1,13 @@
 "use strict";
 import { fetchComments, createComment } from "./api.js";
 import { renderComments } from "./renderComments.js"
+import { renderLogin } from "./renderLogin.js";
 
 const renderApp = () => {
 renderComments({comments, handleCommentEditClick, handleCommentFeedbackClick, handleCommentLikeClick});
 }
 
-  // const buttonElement = document.getElementById("button")
+  const buttonElement = document.getElementById("button")
   // const listElement = document.getElementById("list");
   // const nameInputElement = document.getElementById("name-input");
   // const commentInputElement = document.getElementById("comment-input");

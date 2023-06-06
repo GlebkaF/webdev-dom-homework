@@ -7,7 +7,7 @@ const getListCommentsEdit = (comment, index) => {
   let likeClass = comment.active ? "-active-like" : "";
      return `<li class="comment">
            <div class="comment-header">
-             <div id ="name">${comment.name}</div>
+             <div id ="name">${comment.user?.name ?? "Неизвестно"}</div>
              <div>${comment.date} </div>
            </div>
            <div class="comment-body">
@@ -64,7 +64,7 @@ export const renderComments = ({comments, handleCommentEditClick, handleCommentF
   </div>
   </div>`
      appEl.innerHTML = appHtml;
-  //    const buttonElement = document.getElementById("button")
+     const buttonElement = document.getElementById("button")
   // const listElement = document.getElementById("list");
   // const nameInputElement = document.getElementById("name-input");
   // const commentInputElement = document.getElementById("comment-input");
