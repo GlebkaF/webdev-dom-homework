@@ -105,10 +105,10 @@
         comments[index].currentLike = !comments[index].currentLike;
         console.log(comments[index].currentLike);
         if (comments[index].currentLike) {
-          comments[index].like = ++comments[index].like;
+          ++comments[index].like;
           comments[index].classLike = 'like-button -active-like';
         } else {
-          comments[index].like = --comments[index].like;
+          --comments[index].like;
           comments[index].classLike = 'like-button -no-active-like';
         }
         renderComments();//если убрать отсюда рендер-функцию, то не тработает счётчик, но присвоение класса рпботает
