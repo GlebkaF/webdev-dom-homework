@@ -201,10 +201,12 @@
             return response.json();
           } else if (response.status === 500) {
             alert("Извините, похоже что-то с сервером. Попробуйте позже");
+            throw new Error("Ошибка сервера");
           } else if (response.status === 400) {
             alert(
               "Проверьте, корректность введенных данных имени и текста комментария: Имя или текст не должны быть короче 3 символов"
             );
+            throw new Error("Ошибка ввода данных");
           }
         })
         .then((responseData) => {
@@ -218,7 +220,6 @@
         .catch((error) => {
           buttonElement.disabled = false;
           buttonElement.textContent = "Написать";
-          console.log("Что-то пошло не так, попробуйте снова");
         });
     });
 
