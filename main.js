@@ -1,6 +1,7 @@
 
 import { getAllComments, newComment } from "./api.js";
 import { renderComments } from "./render.js";
+// import { initLikeButtonListener } from "./render.js";
 
 
 export const listElement = document.getElementById("list")
@@ -34,7 +35,7 @@ export let comments = [
 
 ];
 
-export const initLikeButtonListener = () => {
+export const initLikeButtonListener = (comments) => {
     const likeButtonElements = document.querySelectorAll(".like-button");
     for (let likeButtonElement of likeButtonElements) {
         likeButtonElement.addEventListener("click", (event) => {
@@ -49,7 +50,7 @@ export const initLikeButtonListener = () => {
                 comments[index].isLiked = true;
             }
             comments[index].like = countInLike;
-            renderComments();
+            renderComments(comments);
         });
     }
 };
@@ -121,43 +122,40 @@ deleteButtonElement.addEventListener("click", () => {
 
     comments.pop();
     renderComments();
-})
-//renderComment();
+});
 
-    //   //     listElement.innerHTML += `<li class="comment">
-    //   //   <div class="comment-header">
-    //   //     <div>${nameElement.value}</div>
-    //   //     <div>${now}</div>
-    //   //   </div>
-    //   //   <div class="comment-body">
-    //   //     <div class="comment-text">
-    //   //       ${textElement.value}
-    //   //     </div>
-    //   //   </div>
-    //   //   <div class="comment-footer">
-    //   //     <div class="likes">
-    //   //       <span class="likes-counter">${countInLike}</span>
-    //   //       <button class="like-button"></button>
-    //   //     </div>
-    //   //   </div>
-    //   // </li>`;
+// listElement.innerHTML += `<li class="comment">
+//         <div class="comment-header">
+//           <div>${nameElement.value}</div>
+//           <div>${now}</div>
+//         </div>
+//         <div class="comment-body">
+//           <div class="comment-text">
+//             ${textElement.value}
+//           </div>
+//         </div>
+//         <div class="comment-footer">
+//           <div class="likes">
+//             <span class="likes-counter">${countInLike}</span>
+//             <button class="like-button"></button>
+//           </div>
+//         </div>
+//       </li>`;
 
-    //   //countInLike = 0;
-
-    //   // comments.push({
-    //   //   name: nameElement.value
-    //   //     .replaceAll('<', '&lt;')
-    //   //     .replaceAll('>', '&gt;')
-    //   //     .replaceAll('&', '&amp;')
-    //   //     .replaceAll('"', '&quot;'),
-    //   //   date: now,
-    //   //   text: textElement.value
-    //   //     .replaceAll('<', '&lt;')
-    //   //     .replaceAll('>', '&gt;')
-    //   //     .replaceAll('&', '&amp;')
-    //   //     .replaceAll('"', '&quot;'),
-    //   //   like: countInLike,
-    //   //   isLiked: false,
-    //   // });
-    //   renderComment();
-    //   buttonElement.disabled = true;
+// comments.push({
+//     name: nameElement.value
+//         .replaceAll('<', '&lt;')
+//         .replaceAll('>', '&gt;')
+//         .replaceAll('&', '&amp;')
+//         .replaceAll('"', '&quot;'),
+//     date: now,
+//     text: textElement.value
+//         .replaceAll('<', '&lt;')
+//         .replaceAll('>', '&gt;')
+//         .replaceAll('&', '&amp;')
+//         .replaceAll('"', '&quot;'),
+//     like: countInLike,
+//     isLiked: false,
+// });
+// renderComments();
+buttonElement.disabled = true;
