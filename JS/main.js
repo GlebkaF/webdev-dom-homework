@@ -1,6 +1,5 @@
 "use strict";
 import { comments } from "./comments.js";
-// import { likeButtonsListeners } from "./likes.js"
 import { getFromApiFirstTime, postToApi } from "./api.js";
 import { renderComments } from "./renderComments.js";
 import { getCommentsList } from "./CommentsList.js";

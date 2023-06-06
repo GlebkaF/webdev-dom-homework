@@ -1,9 +1,11 @@
 import { comments } from "./comments.js";
-import { renderComments } from "./main.js";
+import { renderComments } from "./renderComments.js";
+import { getCommentsList } from "./CommentsList.js";
+
+const listElem = document.getElementById('list-comments');
 
 const likeButtonsListeners = () => {
     const likeButtonElements = document.querySelectorAll('.like-button');
-    const likeCountElements = document.querySelectorAll('.likes-counter');
 
     for (const likeButtonElement of likeButtonElements) {
 
@@ -13,10 +15,11 @@ const likeButtonsListeners = () => {
             const comment = comments[likeButtonElement.dataset.index];
 
             delay(2000).then(() => {
-                // console.log(comment);
                 comment.likes = comment.isLiked ? comment.likes - 1 : comment.likes + 1;
                 comment.isLiked = !comment.isLiked;
-                renderComments();
+            }).then(() => {
+                likeButtonElement.classList.remove("-loading-like");
+                renderComments(comments, listElem, getCommentsList);
             });
         });
     };

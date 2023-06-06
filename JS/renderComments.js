@@ -1,3 +1,4 @@
+import { likeButtonsListeners } from "./likes.js"
 
 const renderComments = (data, elem, getList) => {
     const commentsHtml = data
@@ -5,7 +6,8 @@ const renderComments = (data, elem, getList) => {
         .join('');
 
     elem.innerHTML = commentsHtml;
-    // likeButtonsListeners();
+    
+    likeButtonsListeners();
 };
 
 
