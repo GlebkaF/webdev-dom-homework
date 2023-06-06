@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -70,31 +70,46 @@
     const buttonElement = document.getElementById('add-button');
     const nameInputElement = document.getElementById('name-input');
     const commentInputElement = document.getElementById('comment-input');
+    const commentList = document.getElementById('comments');
     let date = new Date();
 
+   
     buttonElement.addEventListener("click", () => {
+      if (nameInputElement.value === '') {
+        alert('Строка ввода пустая, введите имя пожалуйста');
+        return;
+      };
+
+      if (commentInputElement.value === '') {
+        alert('Строка ввода пустая, напишите коментарий пожалуйста');
+        return;
+      };
+
       const oldListHtml = nameInputElement.innerHTML;
-      const oldCommentHtml = commentInputElement.innerHTML;
-      nameInputElement.innerHTML = oldListHtml + `<li class="comment">
+      const oldCommentHtml = commentList.innerHTML;
+      commentList.innerHTML = oldCommentHtml +
+      `<li class="comment"> 
           <div class="comment-header">
-            <div>${oldListHtml}</div>
-            <div>${date}</div>
+            <div>${nameInputElement.value}</div>
+            <div>${date.toLocaleString()}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${oldCommentHtml}
+              ${commentInputElement.value}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">3</span>
+              <span class="likes-counter">0</span>
               <button class="like-button"></button>
             </div>
           </div>
-        </li>`;
-
+        </li>`
+        nameInputElement.value = '';
+        commentInputElement.value = '';
     });
-    
+
+   
     // Код писать здесь
     console.log(buttonElement.innerHTML);
   </script>
