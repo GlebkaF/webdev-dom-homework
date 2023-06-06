@@ -98,9 +98,9 @@
   // Добавление кликабельностm лайка и счётчика лайков
   const initlikeButtonsListeners = () => {
     const likeButtonsElements = document.querySelectorAll(".like-button");
-
     for (const likeButtonElement of likeButtonsElements) {
-      likeButtonElement.addEventListener("click", () => {
+      likeButtonElement.addEventListener("click", (event) => {
+        event.stopPropagation();
         const index = likeButtonElement.dataset.index;
         comments[index].currentLike = !comments[index].currentLike;
         console.log(comments[index].currentLike);
@@ -120,11 +120,25 @@
       });
     }
   };
+  
+  //Функция редактирования коментов
+  const redactComments = () => {
+    const commentsElements = document.querySelectorAll(".comment");
+    for (const commentElement of commentsElements) {
+      commentElement.addEventListener("click", () => {
+        const index = commentElement.dataset.index;
+        console.log(comments[index].text);
+        comentInputElement.value = `QUOTE_BEGIN${comments[index].name}:\n${comments[index].text}QUOTE_END`;
+
+      })
+    }
+  }
+  redactComments();
 
   // Рендерим из массива разметку
   const renderComments = () => {
     const commentsHTML = comments.map((comment, index) => {
-      return `<li class="comment">
+      return `<li class="comment" data-index="${index}">
         <div class="comment-header">
           <div>${comment.name}</div>
           <div>${comment.eachDate}</div>
@@ -144,7 +158,7 @@
     }).join('');
     listElement.innerHTML = commentsHTML;
     initlikeButtonsListeners();
-
+    redactComments();
   }
 
   renderComments();
@@ -181,8 +195,18 @@
 
     //Добавляем данные для нового комента
     comments.push({
-      name: nameInputElement.value,
-      text: comentInputElement.value,
+      name: nameInputElement.value
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;"),
+      text: comentInputElement.value
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+        .replaceAll("QUOTE_END", "</div><br><br>,"),
       eachDate: `${day}.${month}.${year} ${hour}:${minute}`,
       like: 0,
       currentLike: false,
