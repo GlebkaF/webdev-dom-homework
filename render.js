@@ -1,6 +1,26 @@
 import { listElement } from "./main.js";
 import { initAnswerButton } from "./main.js";
 import { initLikeButtonListener } from "./main.js";
+// export const initLikeButtonListener = () => {
+//     const likeButtonElements = document.querySelectorAll(".like-button");
+//     for (let likeButtonElement of likeButtonElements) {
+//         likeButtonElement.addEventListener("click", (event) => {
+//             event.stopPropagation();
+//             const index = likeButtonElement.dataset.index;
+//             let countInLike = Number(comments[index].like);
+//             if (likeButtonElement.classList.contains("-active-like")) {
+//                 countInLike -= 1;
+//                 comments[index].isLiked = false;
+//             } else {
+//                 countInLike += 1;
+//                 comments[index].isLiked = true;
+//             }
+//             comments[index].like = countInLike;
+//             renderComments();
+//         });
+//     }
+// };
+// initLikeButtonListener();
 export const renderComments = (comments) => {
     const commentsHtml = comments.map((comment, index) => {
 
@@ -29,6 +49,6 @@ export const renderComments = (comments) => {
 
     }).join('');
     listElement.innerHTML = commentsHtml;
-    initLikeButtonListener();
+    initLikeButtonListener(comments);
     initAnswerButton();
 };
