@@ -61,18 +61,20 @@
         name: "Глеб Фокин",
         date: "12.02.22 12:18",
         text: "Это будет первый комментарий на этой странице",
-        likes: "3",
+        activeLike: false,
+        likes: 3,
       },
       {
         name: "Варвара Н.",
         date: "13.02.22 19:22",
         text: "Мне нравится как оформлена эта страница! ❤",
-        likes: "75",
+        activeLike: false,
+        likes: 75,
       },
     ];
 
     const renderComment = () => {
-      const commentsHtml = comments.map((comment) => {
+      const commentsHtml = comments.map((comment, index) => {
         return `<li class="comment">
         <div class="comment-header">
           <div>${comment.name}</div>
@@ -85,8 +87,8 @@
         </div>
         <div class="comment-footer">
           <div class="likes">
-            <span class="likes-counter">${comment.likes}</span>
-            <button class="like-button"></button>
+            <span class="likes-counter" data-counter="${comment.likes}">${comment.likes}</span>
+            <button class="like-button" data-index="${index}"></button>
           </div>
         </div>
       </li>`
@@ -103,21 +105,21 @@
     
       nameInputElement.style.backgroundColor = '';
       if (nameInputElement.value === "") {
-      nameInputElement.style.backgroundColor = 'red';
-    return;
-    }
+        nameInputElement.style.backgroundColor = 'red';
+        return;
+      }
     
       textInputElement.style.backgroundColor = '';
       if (textInputElement.value === "") {
-      textInputElement.style.backgroundColor = 'red';
-      return;
-    }
+        textInputElement.style.backgroundColor = 'red';
+        return;
+      }
     
       comments.push({
         name: nameInputElement.value,
         date: fullDate,
         text: textInputElement.value,
-        likes: "0",
+        likes: 0,
       })
     
       renderComment();
@@ -129,14 +131,31 @@
     });
 
     
-
+      
     const initEventListeners = () =>{
       const likesElements = document.querySelectorAll('.likes');
+      const counter = document.querySelectorAll('.likes-counter');
+      const likeBtn = document.querySelectorAll('.like-button');
 
-      for (const likesElement of likesElements) {
-        likesElement.addEventListener('click', () =>{
-          console.log(1);
+      for (const likeElement of likeBtn) {
+        
+        likeElement.addEventListener('click', () => {
+          const index = likeElement.dataset.index;
+          const commentElement = comments[index];
+
+          if (commentElement.activeLike) {
+            commentElement.likes -= 1;
+            commentElement.activeLike = false;
+  
+          } else {
+            commentElement.likes += 1;
+            commentElement.activeLike = true;
+            
+          }
+          renderComment();
+      
         });
+        
       };
     };
     
