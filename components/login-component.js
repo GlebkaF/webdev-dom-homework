@@ -5,9 +5,11 @@ export function renderLoginComponent(element, fetchAndRender) {
     const loginHTML = `
     <div class="login-form" id="loginForm">
     <h2 class= "title">Форма ${isLoginMode ? 'входа' : 'регистрации'}</h2>
+    <form class = "form" action="#">
     ${isLoginMode ? "" : '<input type="text" class="login-form-input" placeholder="Введите ваше имя" id="name" />'}
-    <input type="text" class="login-form-input" placeholder="Введите логин" id="login" />
-    <input type="password" class="login-form-input" placeholder="Введите пароль" id="password" />
+    <input type="text" class="login-form-input" autocomplete="username"placeholder="Введите логин" id="login" />
+    <input type="password" class="login-form-input" autocomplete="current-password" placeholder="Введите пароль" id="password" />
+    </form>
     <div class="login-form-row">
       <a href="#" id = "toggle-link" class="link">${isLoginMode ? 'Перейти к регистрации' : 'Вернуться к авторизации'}</a>
       <button id="loginButton" class="login-button">${isLoginMode ? 'Войти' : 'Зарегистрироваться'}</button>
@@ -61,7 +63,7 @@ export function renderLoginComponent(element, fetchAndRender) {
           name: name,
           password: password,
         })
-          .then((user) => {
+          .then((userData) => {
             localStorage.setItem('user', JSON.stringify(userData.user));
             fetchAndRender();
           })
