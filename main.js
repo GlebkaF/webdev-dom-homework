@@ -1,23 +1,38 @@
 "use strict";
 
-import { loadComments, postComment } from "./api.js";
+import { loadComments, postComment, fetchLogin, toggleLike, deleteComment } from "./api.js";
 import { renderComments } from "./render.js";
+import { renderLogin } from "./renderLogin.js";
 
-const buttonElement = document.getElementById("add-button");
-const nameInputElement = document.getElementById("name-input");
-const textInputElement = document.getElementById("text-input");
-const deleteButtonElement = document.getElementById("delete-button");
-const listLoaderElement = document.querySelector(".list-loader");
-const inputLoaderElement = document.querySelector(".input-loader");
-const formElement = document.querySelector(".comment-form");
+const app = document.getElementById("app");
 
 let comments = [];
+let isInitialLoading = true;
+let isPosting = false;
+let user;
+let postError = '';
+let loginError = '';
 
-inputLoaderElement.style.display = "none";
+function renderPage() {
+  renderComments(
+    app,
+    isPosting,
+    postError,
+    isInitialLoading,
+    comments,
+    user,
+    onPostSubmit,
+    onLoginSubmit,
+    loginError,
+    onToggleLike,
+    onDeleteClick
+  );
+}
 
 function getComments() {
   return loadComments()
   .then((responseData) => {
+    isInitialLoading = false;
     const appComments = responseData.comments.map((comment) => {
       return {
         name: comment.author.name,
@@ -25,22 +40,74 @@ function getComments() {
         text: comment.text,
         likes: comment.likes,
         favorite: false,
+        id: comment.id
       };
     });
     comments = appComments;
-    listLoaderElement.style.display = "none";
-    renderComments(comments);
+    renderPage();
   });
 }
 
-getComments();
+function onToggleLike(commentID) {
+  toggleLike(commentID, user.token)
+    .then(() => {
+      getComments();
+    })
+    .catch((error) => {
+      alert(error.message);
+    })
+}
 
-function checkForm() {
-  if (textInputElement.value !== "" && nameInputElement.value !== "") {
-    buttonElement.removeAttribute("disabled");
-  } else {
-    buttonElement.setAttribute("disabled", true);
-  }
+function onDeleteClick() {
+  const lastComment = comments[comments.length - 1];
+  deleteComment(lastComment.id, user.token)
+    .then(() => {
+      getComments();
+    })
+    .catch((error) => {
+      alert(error.message);
+    })
+}
+
+function onPostSubmit(text) {
+  isPosting = true;
+  renderPage();
+
+  const replacedText = text
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+
+  postComment(replacedText, user.token)
+    .then(() => {
+      isPosting = false;
+      postError = '';
+      getComments();
+    })
+    .catch((error) => {
+      isPosting = false;
+
+      if (error.message === 'Сервер сломался, попробуй позже' || error.message === 'Имя и комментарий должны быть не короче 3 символов') {
+        postError = error.message;
+      } else {
+        postError = "Кажется, у вас сломался интернет, попробуйте позже";
+      }
+
+      renderPage();
+    }); 
+}
+
+function onLoginSubmit(login, password) {
+  return fetchLogin(login, password).then((response) => {
+    user = response.user;
+    loginError = '';
+    renderPage();
+  })
+  .catch((error) => {
+    loginError = error.message;
+    renderLogin(app, onLoginSubmit, loginError);
+  });
 }
 
 function normalDate(date) {
@@ -68,72 +135,4 @@ function normalDate(date) {
   return `${day}.${month}.${years} ${hours}:${minutes}`;
 }
 
-function onCommentSubmit() {
-  if (nameInputElement.value === "") {
-    nameInputElement.classList.add("error");
-    return;
-  }
-
-  if (textInputElement.value === "") {
-    textInputElement.classList.add("error");
-    return;
-  }
-
-  formElement.style.display = "none";
-  inputLoaderElement.style.display = "block";
-
-  const payload = {
-    name: nameInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-    text: textInputElement.value
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;"),
-  };
-
-  postComment(payload.text, payload.name)
-    .then(() => {
-      getComments()
-      inputLoaderElement.style.display = "none";
-      formElement.style.display = "flex";
-      nameInputElement.value = "";
-      textInputElement.value = "";
-    })
-    .catch((error) => {
-      inputLoaderElement.style.display = "none";
-      formElement.style.display = "flex";      
-      console.log(error.message);
-      if (error.message === 'Сервер сломался, попробуй позже' || error.message === 'Имя и комментарий должны быть не короче 3 символов') {
-        alert(`${error.message}`);            
-      } else {
-        alert("Кажется, у вас сломался интернет, попробуйте позже"); 
-      }
-    });   
-}
-
-nameInputElement.addEventListener("input", () => {
-  nameInputElement.classList.remove("error");
-  checkForm();
-});
-
-textInputElement.addEventListener("input", () => {
-  textInputElement.classList.remove("error");
-  checkForm();
-});
-
-buttonElement.addEventListener("click", onCommentSubmit);
-
-document.addEventListener("keyup", (event) => {
-  if (event.code === 'Enter') {
-    onCommentSubmit();
-  }
-})
-
-deleteButtonElement.addEventListener('click', () => {
-  comments.pop();
-  renderComments(comments);
-})
+getComments();
