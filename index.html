@@ -64,52 +64,94 @@
   </body>
 
   <script>
- const Name = document.querySelector('.add-form-name');
+ 
+const Name = document.querySelector('.add-form-name');
 const Text = document.querySelector('.add-form-text');
 const addButton = document.querySelector('.add-form-button');
 const Comments = document.querySelector('.comments');
 
-// Лайкнуть 
-function likeComment(event) {
-const likeButton = event.target; // Получаем кнопку лайка
-const likesParent = likeButton.parentNode; // Получаем набор элементов: кнопку "мне нравится" и количество лайков
-const likesCounter = likesParent.querySelector('.likes-counter'); // Получаем счетчик лайков
-// Увеличить счетчик лайков и добавить класс active-like, полное сердечко
-if (!likeButton.classList.contains('-active-like')) {
-likesCounter.textContent = Number(likesCounter.textContent) + 1;
-likeButton.classList.add('-active-like');
-}
-// Уменьшить счетчик лайков и убрать класс -active-like
-else {
-likesCounter.textContent = Number(likesCounter.textContent) - 1;
-likeButton.classList.remove('-active-like');
-}
-}
-// Активировать лайк для всех кнопок лайка
-const likeButtons = document.querySelectorAll('.like-button');
-likeButtons.forEach(button => button.addEventListener('click', likeComment));
+const AllComments = [
+  {NameUser:"Глеб Фокин",
+  DataTime:"12.02.22 12:18",
+  Comm:"Это будет первый комментарий на этой странице",
+  LikesUser: false,
+  QuantityLikes: 3,
+  Class: "like-button",
+  },
+  {NameUser:"Варвара Н.",
+  DataTime:"13.02.22 19:22",
+  Comm:"Мне нравится как оформлена эта страница! ❤",
+  LikesUser: true,
+  QuantityLikes: 75,
+  Class: "like-button -active-like",
+  },
 
-// Добавить коммент
+];
+
+const initLikeClick = () => {
+  const likeClickElements = document.querySelectorAll('.likes');
+  for (const likeClickElement of likeClickElements) {
+    likeClickElement.addEventListener('click', (e) => {
+      (AllComments[e.target.dataset.id].LikesUser) ? delLikes(e) : addLikes(e);
+      renderAllComments();
+    });
+  }
+}
+function addLikes(e) {
+  const index = e.target.dataset.id;
+  AllComments[index].QuantityLikes++;
+  AllComments[index].LikesUser = true;
+};
+
+function delLikes(e) {
+  const index = e.target.dataset.id;
+  AllComments[index].QuantityLikes--;
+  AllComments[index].LikesUser = false;
+};
+const renderAllComments = () => {
+  const AllCommentsHtml = AllComments.map((AllComment, index) => { // добавили получение индекса комментария
+    const activeClass = AllComment.LikesUser ? '-active-like' : ''; // добавили определение класса для кнопки лайка
+    return `<li class="comment">
+      <div class="comment-header">
+        <div>${AllComment.NameUser}</div>
+        <div>${AllComment.DataTime}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">${AllComment.Comm}</div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">${AllComment.QuantityLikes}</span>
+          <button class="like-button ${activeClass}" aria-pressed="${AllComment.LikesUser}" data-id="${index}"></button> 
+        </div>
+      </div>
+    </li>`;
+  }).join('');
+  Comments.innerHTML = AllCommentsHtml;
+  initLikeClick();
+};
+renderAllComments();
+
+// Функция добавления нового комментария
 function addComment() {
-// Поля заполнены
-if (Name.value && Text.value) {
-const date = new Date(); // Для даты и времени
-const comment = document.createElement('li'); // Создаем элемент списка
-comment.classList.add('comment'); // Добавляем класс
-// Создаём новуюю html-структуру и добавляем в неё введённые пользователем значения
-comment.innerHTML =`<div class="comment-header"><div>${Name.value}</div><div>${date.toLocaleString()}</div></div><div class="comment-body"><div class="comment-text">${Text.value}</div></div><div class="comment-footer"><div class="likes"><span class="likes-counter">0</span><button class="like-button"></button></div></div>`;
-Comments.appendChild(comment); // Добавить 
-// Добавить функцию лайка кнопке лайка новодобавленного коммента
-const likeButton = comment.querySelector('.like-button');
-likeButton.addEventListener('click', likeComment);
-// Очистить поля
-Name.value = '';
-Text.value = '';
+  if (Name.value && Text.value) {
+    const date = new Date()
+    AllComments.push({
+      NameUser:Name.value,
+      DataTime: date.toLocaleString(),
+      Comm: Text.value,
+      LikesUser: false,
+      QuantityLikes: 0,
+      Class: "like-button",
+    })
+    renderAllComments();
+    Name.value = '';
+    Text.value = '';
+  }
 }
-}
-// Активировать кнопку "Написать"
-addButton.addEventListener('click', addComment,likeComment);
 
+// Активировать кнопку "Написать"
+addButton.addEventListener('click', addComment);
 
 
 
