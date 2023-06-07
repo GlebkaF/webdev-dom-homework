@@ -6,6 +6,12 @@ import { renderCommentList } from "./render.js";
     const commentsLoader = document.getElementById('loader');
     const nameElement = document.getElementById('name');
     const commentsElement = document.getElementById('comments');
+    let token = ''
+
+    export const getToken = () => token;
+    export const setToken = (newToken) => {
+      token = newToken
+      };
 
     
 export const getComments = () => {
@@ -77,24 +83,18 @@ export const getComments = () => {
 
 
       export const getUsers = () => {
-        const fetchPromise = fetch("https://wedev-api.sky.pro/api/user",
+        return fetch("https://wedev-api.sky.pro/api/user",
           {
             method: "GET"
-          });
-
-          fetchPromise.then((response) => {
+          }).then((response) => {
             const jsonPromise = response.json();
-    
-          jsonPromise.then((responseData) => {
-            console.log(responseData);
-              
-            });
+            return jsonPromise;
           });
-          };
+        };
           
 
           export const postRegistration = (data) => {
-            const fetchPromise = fetch(" https://wedev-api.sky.pro/api/user",
+            return fetch(" https://wedev-api.sky.pro/api/user",
               {
                 method: "POST",
                 body: JSON.stringify({
@@ -102,34 +102,27 @@ export const getComments = () => {
                 name: registrationName.value,
                 password: password.value
               })
-            });
-            fetchPromise.then((response) => {
+            }).then((response) => {
               const jsonPromise = response.json();
-      
-            jsonPromise.then((user) => {
-              // console.log(responseData);
-              console.log(user);
-                
+              console.log(jsonPromise);
+              return jsonPromise;
               });
-            });
           };
 
-          export const postLogIn = (user) => {
-            const fetchPromise = fetch("  https://wedev-api.sky.pro/api/user/login",
+          export const postLogIn = (login, password) => {
+            return fetch("  https://wedev-api.sky.pro/api/user/login",
               {
                 method: "POST",
                 body: JSON.stringify({
-                login: user.login,
-                password: user.password
+                login: login,
+                password: password
               })
-            });
-            
-            fetchPromise.then((user) => {
-              // const jsonPromise = response.json();
+            }).then((response) => {
               getUsers();
-              
-            });
-            
+              const jsonPromise = response.json();
+              console.log(jsonPromise);
+              return jsonPromise;
+              });
             };
           
           

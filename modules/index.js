@@ -1,4 +1,4 @@
-import { getComments, postComment, getUsers, postRegistration, postLogIn} from "./api.js";
+import { getComments, postComment, getUsers, postRegistration, postLogIn, setToken} from "./api.js";
 import { renderAddingList } from "./render.js"
 
 
@@ -9,6 +9,7 @@ import { renderAddingList } from "./render.js"
     const commentsElement = document.getElementById('comments');
     const linkButtonElement = document.getElementById('link-button');
     const commentEntrance = document.getElementById('entrance');
+    let auth = document.getElementById('auth');
     let registrationElement = document.getElementById('form-registration');
     let registrationButton = document.getElementById('registration-button');
     let entranceElement = document.getElementById('form-entrance');
@@ -50,12 +51,15 @@ linkButtonElement.addEventListener("click", () =>{
 
   buttonButton = document.getElementById('button-button');
   buttonButton.addEventListener("click", (user) => {
-    postLogIn({
-      login: '',
-      password : ''
-    }).then(() => {
-      // console.log(user);
-      setToken(`Bearer ${user.user.token}`)
+    const loginValue = document.getElementById('login').value;
+    const passwordValue = document.getElementById('password').value;
+    postLogIn(loginValue, passwordValue).then((user) => {
+      setToken(`Bearer ${user.user.token}`);
+      auth = document.getElementById('auth');
+      auth.classList.add("_hidden");
+      getComments();
+      addingAComment.classList.remove("_hidden");
+      postComment();
     });
   })
 
