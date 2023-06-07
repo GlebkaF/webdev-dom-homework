@@ -60,7 +60,8 @@ const renderComments = (app, isInitialLoading, isWaitingComment, comments, callb
             <p class="add-waiting">Комментарий добавляется...</p>
           </div>`
 
-      : `<div class="form-loaging" style="margin-top: 20px">
+      : `
+      <div class="form-loaging" style="margin-top: 20px">
       Чтобы добавить комментарий, <a href=" " id="go-to-login">Авторизуйтесь</a>
     </div>`
     }
@@ -148,19 +149,5 @@ const renderComments = (app, isInitialLoading, isWaitingComment, comments, callb
     if (callback) callback(user)
   }
 }
-
-//   if (user) {
-//     const addButton = document.querySelector(".add-form-button");
-//     addButton.addEventListener("click", () => {
-//       const text = document.getElementById("add-form-text").value;
-//       console.log(text);
-//       if (text) {
-//         postComment(text, user.token).then((response) => {
-//           renderComments(app, isInitialLoading, isWaitingComment, comments, callback, user);
-//         });
-//       }
-//     });
-//   }
-// }
 
 export { renderComments };
