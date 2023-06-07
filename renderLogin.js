@@ -1,8 +1,8 @@
 import { userAuthorization, userRegistration } from "./api.js";
 
-export const renderLogin = ({appEl, setToken, initApp}) => {
+export const renderLogin = ({appEl, initApp}) => {
     let isLoginMode = true;
-    // const renderForm = () => {
+    const renderForm = () => {
         const appHtml = `<div class="container-registr" id="container-registr">
         <div>
           <div class="add-form">Форма ${isLoginMode ? 'входа' : 'регистрации'}
@@ -49,17 +49,16 @@ export const renderLogin = ({appEl, setToken, initApp}) => {
                     password: password,
                 })
                 .then((user) => {
-                    setToken(`Bearer ${user.user.token}`);
                     initApp();
                 })
                 .catch(error =>  {
                     alert(error.message);
                 });
             } else {
-                const userName = document.getElementById("user-name").value;
+                const name = document.getElementById("user-name").value;
                 const login = document.getElementById("login").value;
                 const password = document.getElementById("password").value;
-                if (!userName) {
+                if (!name) {
                     alert("Введите имя")
                     return;
                 }
@@ -77,7 +76,6 @@ export const renderLogin = ({appEl, setToken, initApp}) => {
                     name: name,
                 })
                 .then((user) => {
-                    setToken(`Bearer ${user.user.token}`);
                     initApp();
                 })
                 .catch(error =>  {
@@ -86,10 +84,9 @@ export const renderLogin = ({appEl, setToken, initApp}) => {
             }
           });
           document.getElementById("toggle").addEventListener("click", () => {
-            let isLoginMode = !isLoginMode;
-            
-          })
-    //       renderForm();
-    // }
-    
+            isLoginMode = !isLoginMode;
+            renderForm();
+          }) 
+    }
+    renderForm();
 }

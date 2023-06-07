@@ -1,8 +1,8 @@
 import { formatDate } from "./utils.js";
-let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
-// token = null;
+
 const host = "https://wedev-api.sky.pro/api/v2/olya-myalo/comments";
-export const fetchComments = (token) => {
+export const fetchComments = () => {
+  const token = localStorage.getItem('token');
    return fetch(host, {
       method: "GET",
       headers: {
@@ -24,7 +24,8 @@ export const fetchComments = (token) => {
     });
 }
 
-export const createComment = (token, text) => {
+export const createComment = (text) => {
+  const token = localStorage.getItem('token');
   return  fetch(host, {
         method: "POST",
         body: JSON.stringify({
@@ -48,6 +49,7 @@ export const createComment = (token, text) => {
         }
       })
 }
+
 export const userAuthorization = ({login, password}) => {
   return fetch ("https://wedev-api.sky.pro/api/user/login", {
   method: "POST",
@@ -61,6 +63,10 @@ export const userAuthorization = ({login, password}) => {
     throw new Error('Неверный логин или пароль');
   }
   return response.json();
+})
+.then((user) => {
+  localStorage.setItem('token', `Bearer ${user.user.token}`);
+  localStorage.setItem('user', user.user.name);
 });
 }
 
@@ -78,5 +84,17 @@ export const userRegistration = ({name, login, password}) => {
       throw new Error('Такой пользователь уже существует');
     }
     return response.json();
+  })
+  .then((user) => {
+    localStorage.setItem('token', `Bearer ${user.user.token}`);
+    localStorage.setItem('user', user.user.name);
   });
+  }
+
+  export const isUserAuthorization = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      return true;
+    } 
+    return false;
   }

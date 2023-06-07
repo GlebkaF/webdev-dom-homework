@@ -1,13 +1,12 @@
+import { isUserAuthorization, createComment } from "./api.js";
 import {initApp} from "./main.js";
 import {renderLogin} from "./renderLogin.js"
 
-let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
-token = null;
 const getListCommentsEdit = (comment, index) => {
   let likeClass = comment.active ? "-active-like" : "";
      return `<li class="comment">
            <div class="comment-header">
-             <div id ="name">${comment.user?.name ?? "Неизвестно"}</div>
+             <div id ="name">${comment.name}</div>
              <div>${comment.date} </div>
            </div>
            <div class="comment-body">
@@ -25,14 +24,13 @@ const getListCommentsEdit = (comment, index) => {
          </li>`
 }
 
+
 export const renderComments = ({comments, handleCommentEditClick, handleCommentFeedbackClick, handleCommentLikeClick}) => {
   const appEl = document.getElementById("app");
-  if (!token)  {
+  const nameUser = localStorage.getItem('user');
+  if (!isUserAuthorization())  {
     renderLogin({
       appEl,
-      setToken: (newToken) => {
-        token = newToken;
-      },
       initApp,
     });
     return
@@ -50,6 +48,7 @@ export const renderComments = ({comments, handleCommentEditClick, handleCommentF
         type="text"
         class="add-form-name"
         placeholder="Введите ваше имя"
+        value = "${nameUser}"
       />
       <textarea id="comment-input"
         type="textarea"
@@ -65,12 +64,47 @@ export const renderComments = ({comments, handleCommentEditClick, handleCommentF
   </div>`
      appEl.innerHTML = appHtml;
      const buttonElement = document.getElementById("button")
-  // const listElement = document.getElementById("list");
-  // const nameInputElement = document.getElementById("name-input");
-  // const commentInputElement = document.getElementById("comment-input");
-  // const commentForm = document.getElementById("form-comment");
-  // const commentsContainer = document.getElementById("commentsContainer");
-  // const newContainerComments = document.getElementById("container")
+  const addComment = () => { 
+    const buttonElement = document.getElementById("button")
+    buttonElement.addEventListener("click", () => {
+    const commentForm = document.getElementById("form-comment");
+    const commentInputElement = document.getElementById("comment-input");
+    commentForm.style.display = 'none';
+    const commentAddingMessage = document.createElement('div'); 
+    commentAddingMessage.innerText = 'Комментарий добавляется...';
+    commentForm.parentNode.insertBefore(commentAddingMessage, commentForm); 
+        
+    commentInputElement.classList.remove("error");
+    if (commentInputElement.value === "" && commentInputElement.value.length < 3) {
+        commentInputElement.classList.add("error");
+        return;
+        }
+    createComment(commentInputElement.value)      
+    .then(() => {
+      initApp();
+    })
+    .then((data) => {
+      commentAddingMessage.style.display = 'none';
+      commentForm.style.display = 'block';
+      commentInputElement.value = "";
+    })
+    .catch((error) => {
+      commentAddingMessage.style.display = "none";
+      commentForm.style.display = "block";
+      if (error.message === "Неверный запрос") {
+        alert("Комментарий должен быть не короче 3-х символов");
+      } 
+      if (error.message === "Сервер упал") {
+        alert("Извините сервер сломался, попробуйте позже");
+      }
+      else {
+        alert("Отсутствует подключение к сети, попробуйте позже!");
+      }
+      console.warn(error);
+    });
+  });
+  }
+  addComment();
       onCommentLikeClick(handleCommentLikeClick);
       onCommentEditClick(handleCommentEditClick);
       onCommentFeedbackClick(handleCommentFeedbackClick);

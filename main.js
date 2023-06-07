@@ -1,20 +1,12 @@
 "use strict";
 import { fetchComments, createComment } from "./api.js";
 import { renderComments } from "./renderComments.js"
-import { renderLogin } from "./renderLogin.js";
 
 const renderApp = () => {
 renderComments({comments, handleCommentEditClick, handleCommentFeedbackClick, handleCommentLikeClick});
 }
 
   const buttonElement = document.getElementById("button")
-  // const listElement = document.getElementById("list");
-  // const nameInputElement = document.getElementById("name-input");
-  // const commentInputElement = document.getElementById("comment-input");
-  // const commentForm = document.getElementById("form-comment");
-  // const commentsContainer = document.getElementById("commentsContainer");
-  // const newContainerComments = document.getElementById("container")
-  
   const commentAdding = document.createElement('div'); 
   const appEl = document.getElementById("app");
   commentAdding.innerText = 'Пожалуйста подождите, загружаю комментарии...';
@@ -24,7 +16,6 @@ renderComments({comments, handleCommentEditClick, handleCommentFeedbackClick, ha
   .then((appComments) => {
     comments = appComments;
     renderApp();
-    addComment();
   })
   .then((data) => {
     commentAdding.style.display = 'none';
@@ -86,54 +77,5 @@ const handleCommentFeedbackClick = (event) => {
 
 initApp();
 
-const addComment = () => { 
-  const buttonElement = document.getElementById("button")
-  buttonElement.addEventListener("click", () => {
-  const commentForm = document.getElementById("form-comment");
-  // const nameInputElement = document.getElementById("name-input");
-  const commentInputElement = document.getElementById("comment-input");
-  commentForm.style.display = 'none';
-  const commentAddingMessage = document.createElement('div'); 
-  commentAddingMessage.innerText = 'Комментарий добавляется...';
-  commentForm.parentNode.insertBefore(commentAddingMessage, commentForm); 
-      
-  // nameInputElement.classList.remove("error");
-  // if (nameInputElement.value === "" && nameInputElement.value.length < 3) {
-  //     nameInputElement.classList.add("error");
-  //     return;
-  //     }
-  commentInputElement.classList.remove("error");
-  if (commentInputElement.value === "" && commentInputElement.value.length < 3) {
-      commentInputElement.classList.add("error");
-      return;
-      }
-  renderApp();
-  createComment(commentInputElement.value)      
-  .then(() => {
-    initApp();
-  })
-  .then((data) => {
-    commentAddingMessage.style.display = 'none';
-    commentForm.style.display = 'block';
-    // nameInputElement.value = "";
-    commentInputElement.value = "";
-    renderApp();
-  })
-  .catch((error) => {
-    commentAddingMessage.style.display = "none";
-    commentForm.style.display = "block";
-    if (error.message === "Неверный запрос") {
-      alert("Имя и комментарий должны быть не короче 3-х символов");
-    } 
-    if (error.message === "Сервер упал") {
-      alert("Извините сервер сломался, попробуйте позже");
-    }
-    else {
-      alert("Отсутствует подключение к сети, попробуйте позже!");
-    }
-    console.warn(error);
-  });
-});
-}
 
 
