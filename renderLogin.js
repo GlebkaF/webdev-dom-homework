@@ -23,7 +23,7 @@ export const renderLogin = (app, isInitialLoading, isWaitingComment, comments, c
                     placeholder="Введите логин"
                     />
                   <input
-                    type="text"
+                    type="password"
                     id="add-password"
                     class="add-password"
                     placeholder="Введите пароль"
@@ -34,14 +34,23 @@ export const renderLogin = (app, isInitialLoading, isWaitingComment, comments, c
                   type="button"
                   id="auth-button"
                   class="auth-button">${isAuthMode ? 'Войти' : 'Зарегистрироваться'}</button>
-                  <button class="reg-button">${isAuthMode ? 'Зарегистрироваться' : 'Войти'}</button>
+                  <button id="reg-button" class="reg-button">${isAuthMode ? 'Зарегистрироваться' : 'Войти'}</button>
                 </div>
             </div>
         </div>
     `
+
+    document.getElementById("reg-button")
+        .addEventListener('click', (event) => {
+            event.preventDefault();
+
+            isAuthMode = !isAuthMode;
+
+            renderLogin(app, isInitialLoading, isWaitingComment, comments, callback, user);
+        });
+
     const authButton = document.getElementById("auth-button");
     authButton.addEventListener("click", () => {
-        isAuthMode = !isAuthMode;
         const login = document.getElementById("add-login").value;
         const password = document.getElementById("add-password").value;
         fetchLogin(login, password)
