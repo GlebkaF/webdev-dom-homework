@@ -42,7 +42,6 @@ export const renderLogin = (app, isInitialLoading, isWaitingComment, comments, c
 
         document.getElementById("reg-button")
             .addEventListener('click', (event) => {
-                console.log("кнопка работает");
                 event.preventDefault();
 
                 isAuthMode = !isAuthMode;
