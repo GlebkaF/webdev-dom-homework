@@ -2,11 +2,21 @@ import { fetchLogin } from "./api.js";
 import { renderComments } from "./renderComments.js";
 
 export const renderLogin = (app, isInitialLoading, isWaitingComment, comments, callback, user) => {
+
+    let isAuthMode = true;
+
     app.innerHTML = `
         <div class="registration">
             <div class="add-form">
             <h3>Форма ввода</h3>
                 <div class="reg-input">
+                ${isAuthMode ? '' : `
+                    <input type="text"
+                    id="add-name"
+                    class="add-name"
+                    placeholder="Введите имя"
+                    />`
+        }
                   <input type="text"
                     id="add-login"
                     class="add-login"
@@ -23,14 +33,15 @@ export const renderLogin = (app, isInitialLoading, isWaitingComment, comments, c
                   <button
                   type="button"
                   id="auth-button"
-                  class="auth-button">Войти</button>
-                  <button class="reg-button">Зарегистрироваться</button>
+                  class="auth-button">${isAuthMode ? 'Войти' : 'Зарегистрироваться'}</button>
+                  <button class="reg-button">${isAuthMode ? 'Зарегистрироваться' : 'Войти'}</button>
                 </div>
             </div>
         </div>
     `
     const authButton = document.getElementById("auth-button");
     authButton.addEventListener("click", () => {
+        isAuthMode = !isAuthMode;
         const login = document.getElementById("add-login").value;
         const password = document.getElementById("add-password").value;
         fetchLogin(login, password)
