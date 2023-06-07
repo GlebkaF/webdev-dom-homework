@@ -3,7 +3,7 @@ import { renderLogin } from "./renderLogin.js";
 import { postComment } from "./api.js";
 
 // Функция render
-const renderComments = (app, isLoading, isWaitingComment, comments, callback, user) => {
+const renderComments = (app, isInitialLoading, isWaitingComment, comments, callback, user) => {
 
   const commentHTML = comments.map((comment, index) => {
     return `<li id="comment" class="comment" data-index="${index}">
@@ -32,7 +32,7 @@ const renderComments = (app, isLoading, isWaitingComment, comments, callback, us
   <div class="container">
       <ul id="comments" class="comments">
 
-      ${isLoading ? `<p>Комментарий добавляется...</p>` : commentHTML}
+      ${isInitialLoading ? '<div>Комментарии загружаются</div>' : commentHTML}
        </ul>
 
     ${user
@@ -57,7 +57,7 @@ const renderComments = (app, isLoading, isWaitingComment, comments, callback, us
               <button class="remove-form-button">Удалить последний</button>
             </div>
       </div>
-            <p class="add-waiting hidden">Комментарий добавляется...</p>
+            <p class="add-waiting">Комментарий добавляется...</p>
           </div>`
 
       : `<div class="form-loaging" style="margin-top: 20px">
@@ -68,28 +68,28 @@ const renderComments = (app, isLoading, isWaitingComment, comments, callback, us
 
   app.innerHTML = appHtml;
 
-
   const addCommentForm = document.querySelector(".add-form");
-
-  const listOfComments = document.querySelector(".comments");
-  const nameInputElement = document.querySelector(".add-form-name");
   const commentInputElement = document.querySelector(".add-form-text");
 
-  // // Функция лоадинг при добавлении комментариев в ленту - пока отключена, добавить логику через if
-  // const waitingAddComment = () => {
-  //   if (isWaitingComment) {
-  //     constWaitingComment.classList.remove(`hidden`);
-  //     addCommentForm.classList.add(`hidden`);
-  //   } else {
-  //     constWaitingComment.classList.add(`hidden`);
-  //     addCommentForm.classList.remove(`hidden`);
-  //   }
-  // };
-  // waitingAddComment();
+  // Функция лоадинг при добавлении комментариев в ленту - пока отключена, добавить логику через if
+  if (user) {
+    const waitingAddComment = () => {
+
+      const constWaitingComment = document.querySelector('.add-waiting');
+
+      if (isWaitingComment) {
+        constWaitingComment.classList.remove(`hidden`);
+        addCommentForm.classList.add(`hidden`);
+      } else {
+        constWaitingComment.classList.add(`hidden`);
+        addCommentForm.classList.remove(`hidden`);
+      }
+    };
+    waitingAddComment();
+  }
 
 
   // Добавление клика на лайк
-
   const initLikeButtons = () => {
     const likeButtonsElements = document.querySelectorAll(".like-button");
 
@@ -101,7 +101,7 @@ const renderComments = (app, isLoading, isWaitingComment, comments, callback, us
         let comment = comments[likeButtonsElement.dataset.index];
         comment.isLikeLoading = true;
 
-        renderComments(app, isLoading, isWaitingComment, comments, callback, user);
+        renderComments(app, isInitialLoading, isWaitingComment, comments, callback, user);
 
         // Инициализация задержки при обработке лайка на комментарий
         delay(2000).then(() => {
@@ -113,7 +113,7 @@ const renderComments = (app, isLoading, isWaitingComment, comments, callback, us
 
           comment.isLiked = !comment.isLiked;
           comment.isLikeLoading = false;
-          renderComments(app, isLoading, isWaitingComment, comments, initAddButton, user);
+          renderComments(app, isInitialLoading, isWaitingComment, comments, callback, user);
         });
       });
     }
@@ -140,7 +140,7 @@ const renderComments = (app, isLoading, isWaitingComment, comments, callback, us
     const goToLogin = document.getElementById("go-to-login");
     goToLogin.addEventListener("click", (event) => {
       event.preventDefault();
-      renderLogin(app, isLoading, isWaitingComment, comments, callback, user);
+      renderLogin(app, isInitialLoading, isWaitingComment, comments, callback, user);
     })
   }
 
@@ -156,7 +156,7 @@ const renderComments = (app, isLoading, isWaitingComment, comments, callback, us
 //       console.log(text);
 //       if (text) {
 //         postComment(text, user.token).then((response) => {
-//           renderComments(app, isLoading, isWaitingComment, comments, initAddButton, user);
+//           renderComments(app, isInitialLoading, isWaitingComment, comments, callback, user);
 //         });
 //       }
 //     });

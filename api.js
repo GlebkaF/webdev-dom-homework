@@ -29,12 +29,10 @@ function postComment(commentInputElement, token) {
             }
             if (response.status === 400) {
                 console.log("Ошибка 400");
-                alert("Имя и комментарий должны быть не короче 3 символов");
                 throw new Error("Ошибка 400");
             }
             if (response.status === 500) {
                 console.log("Ошибка 500");
-                alert("Сервер сломался, попробуй позже");
                 throw new Error("Ошибка 500");
             }
         })

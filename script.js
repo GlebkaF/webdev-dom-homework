@@ -6,7 +6,7 @@ const app = document.getElementById("app");
 
 let comments = [];
 
-let isLoading = true;
+let isInitialLoading = true;
 let isWaitingComment = false;
 
 export function handlePostClick(user) {
@@ -48,12 +48,13 @@ export function handlePostClick(user) {
                 return startFetch(user);
             }
         });
-    renderComments(app, isLoading, isWaitingComment, comments, initAddButton, user);
+    renderComments(app, isInitialLoading, isWaitingComment, comments, initAddButton, user);
 }
 
 
 function initAddButton(user) {
     let addButton = document.getElementById('add-form-button');
+    isWaitingComment = true;
     addButton.addEventListener('click', function () {
         handlePostClick(user)
     });
@@ -63,12 +64,9 @@ export function startFetch(user) {
     getFetch().then((startJson) => {
         comments = startJson.comments;
         isWaitingComment = false;
-        isLoading = false;
-        renderComments(app, isLoading, isWaitingComment, comments, initAddButton, user);
+        isInitialLoading = false;
+        renderComments(app, isInitialLoading, isWaitingComment, comments, initAddButton, user);
     })
-        .catch((error) => {
-            console.log(error.message);
-        });
 }
 startFetch();
 
