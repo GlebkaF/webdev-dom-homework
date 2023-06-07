@@ -2,44 +2,8 @@ import { delay, correctDate } from "./supportFunc.js";
 import { renderLogin } from "./renderLogin.js";
 import { postComment } from "./api.js";
 
-
-//     const ///// = `<div class="container">
-//             <ul id="comments" class="comments">
-//               ${commentHTML}
-//             </ul>
-//             <div class="add-form">
-//               <input type="text" id="add-form-name" class="add-form-name" placeholder="Введите ваше имя" />
-
-//               <textarea type="textarea" id="add-form-text" class="add-form-text" placeholder="Введите ваш коментарий"
-//                 rows="4"></textarea>
-
-//               <div class="add-form-row">
-//                 <button type="button" id="add-form-button" class="add-form-button" disabled>Написать</button>
-//                 <button class="remove-form-button">Удалить последний</button>
-//               </div>
-//             </div>
-//             <p class="add-waiting hidden">Комментарий добавляется...</p>
-//           </div>
-
-//           <div class="registration">
-//           <div class="add-form">
-//             <h3>Форма ввода</h3>
-//             <div class="reg-input">
-//               <input type="text" id="add-login" class="add-login" placeholder="Введите логин" />
-//               <input type="text" id="add-password" class="add-password" placeholder="Введите пароль"></input>
-//             </div>
-//             <div class="add-reg-form">
-//               <button type="button" id="in-button" class="in-button">Войти</button>
-//               <button class="reg-button">Зарегистрироваться</button>
-//             </div>
-//           </div>
-//         </div>
-//           `
-
-//     appEl.innerHTML = /////;
-
 // Функция render
-const renderComments = (app, isLoading, isWaitingComment, comments, user) => {
+const renderComments = (app, isLoading, isWaitingComment, comments, callback, user) => {
 
   const commentHTML = comments.map((comment, index) => {
     return `<li id="comment" class="comment" data-index="${index}">
@@ -137,7 +101,7 @@ const renderComments = (app, isLoading, isWaitingComment, comments, user) => {
         let comment = comments[likeButtonsElement.dataset.index];
         comment.isLikeLoading = true;
 
-        renderComments(app, isLoading, isWaitingComment, comments, user);
+        renderComments(app, isLoading, isWaitingComment, comments, callback, user);
 
         // Инициализация задержки при обработке лайка на комментарий
         delay(2000).then(() => {
@@ -149,7 +113,7 @@ const renderComments = (app, isLoading, isWaitingComment, comments, user) => {
 
           comment.isLiked = !comment.isLiked;
           comment.isLikeLoading = false;
-          renderComments(app, isLoading, isWaitingComment, comments, user);
+          renderComments(app, isLoading, isWaitingComment, comments, initAddButton, user);
         });
       });
     }
@@ -176,23 +140,28 @@ const renderComments = (app, isLoading, isWaitingComment, comments, user) => {
     const goToLogin = document.getElementById("go-to-login");
     goToLogin.addEventListener("click", (event) => {
       event.preventDefault();
-      renderLogin(app, isLoading, isWaitingComment, comments);
+      renderLogin(app, isLoading, isWaitingComment, comments, callback, user);
     })
   }
 
   if (user) {
-    const buttonElement = document.querySelector(".add-form-button");
-    buttonElement.addEventListener("click", () => {
-      const text = document.getElementById("add-form-text").value;
-      console.log(text);
-      if (text) {
-        postComment(text, user.token).then((response) => {
-          renderComments(app, isLoading, isWaitingComment, comments, response, user);
-        });
-      }
-    });
+    if (callback) callback(user)
   }
 }
+
+//   if (user) {
+//     const addButton = document.querySelector(".add-form-button");
+//     addButton.addEventListener("click", () => {
+//       const text = document.getElementById("add-form-text").value;
+//       console.log(text);
+//       if (text) {
+//         postComment(text, user.token).then((response) => {
+//           renderComments(app, isLoading, isWaitingComment, comments, initAddButton, user);
+//         });
+//       }
+//     });
+//   }
+// }
 
 
 

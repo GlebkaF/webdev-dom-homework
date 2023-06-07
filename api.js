@@ -12,11 +12,11 @@ const getFetch = () => {
 
 
 // Добавляем новый комментарий в ленту с помощью POST
-function postComment(text, token) {
+function postComment(commentInputElement, token) {
     return fetch(host, {
         method: "POST",
         body: JSON.stringify({
-            text,
+            text: commentInputElement.value,
         }),
         headers: {
             Authorization: `Bearer ${token}`,
