@@ -1,13 +1,24 @@
 import { formatDate } from "./Date.js";
 import { renderComments } from "./render.js";
-import { comments, nameInputElement } from "./main.js";
+import { comments, nameInputElement } from "./render.js";
 import { commentInputElement } from "./main.js";
 
+const host = "https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov/comments";
+const host2 = "https://wedev-api.sky.pro/api/v2/max-kyrtimov/comments";
+let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+
 export const getAllComments = (comments) => {
-    return fetch("https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov/comments", {
+    return fetch(host2, {
         method: "GET",
+        headers: {
+            Authorization: token,
+        },
     })
         .then((response) => {
+            // if(response.status === 401) {
+            //     password = prompt("Введите верный пароль");
+            //     throw new Error("Нет авторизации");
+            // }
             return response.json();
         })
         .then((responseData) => {
@@ -27,13 +38,16 @@ export const getAllComments = (comments) => {
 };
 
 export const finComments = () => {
-    fetch("https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov/comments", {
+    fetch(host2, {
         method: "POST",
         body: JSON.stringify({
             name: nameInputElement.value,
             text: commentInputElement.value,
             forceError: false,
         }),
+        headers: {
+            Authorization: token,
+        },
     })
         .then((response) => {
             console.log(response);

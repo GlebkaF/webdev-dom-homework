@@ -4,7 +4,8 @@ import { initAnswerComment } from "./main.js";
 
 
 
-export const renderComments = (comments) => {
+const renderComments = (comments) => {
+  const appEl = document.getElementById("app");
   const commentsHtml = comments.map((comment, index) => {
 
     let isLike = '';
@@ -31,8 +32,54 @@ export const renderComments = (comments) => {
 
 
   }).join('');
-  listElement.innerHTML = commentsHtml;
+
+   const appHtml = `
+      <div class="container">
+        <ul id="list" class="comments">
+          <!-- Список рендериться в main -->
+          ${commentsHtml}
+        </ul>
+        <div id="block-form" class="login-form">
+          <input id="login-input" type="text" class="add-form-name" placeholder="Введите ваш логин" />
+          <br/>
+          <input id="password-input" type="text" class="add-form-name" placeholder="Введите ваш пароль" />
+          <div class="login-form-row">
+            <button id="login-button" class="login-form-button">Войти</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="container">
+        <div>
+          <h3 id="invizDivHeader">Идет загрука комментариев...</h3>
+        </div>
+        <ul id="list" class="comments">
+          <!-- Список рендериться в main -->
+        </ul>
+        <div>
+          <h3 id="invizDiv">Загружаю комментарий...</h3>
+        </div>
+        <div id="block-form" class="add-form">
+          <input id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+          <textarea id="comment-input" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+            rows="4"></textarea>
+          <div class="add-form-row">
+            <button id="add-button" class="add-form-button">Написать</button>
+          </div>
+          <div class="add-form-row">
+            <button id="delet-button" class="add-form-button">Удалить коммент</button>
+          </div>
+        </div>
+      </div>`
+
+
+
+      appEl.innerHTML = appHtml;
+
+      const nameInputElement = document.getElementById("name-input");
   initlikeButtonListeners(comments);
   initAnswerComment();
 
 };
+
+export {nameInputElement, renderComments};
