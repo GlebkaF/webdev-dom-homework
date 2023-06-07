@@ -140,6 +140,10 @@
 
       form.style.display = "none";
 
+      const newComment = document.createElement('div');
+      newComment.textContent = "Загружаю комментарий...";
+      listElement.appendChild(newComment);
+
       fetch(
       'https://wedev-api.sky.pro/api/v1/maksim-balyaev/comments',
       {
@@ -157,20 +161,16 @@
           .replaceAll('"', "&quot;"),
         }),
       })
-      .then((response) => {
-        return response.json();
+      .then((responseData) => {
+        return getComments();
       })
       .then((responseData) => {
-        comments = responseData.comments;
-        return getComments();
-        renderComments();
+        form.style.display = "flex";
+        inputName.value = "";
+        inputComment.value = "";
+        newComment.remove();
       })
     });
-
-    form.style.display = "flex";
-
-    inputName.value = "";
-    inputComment.value = "";
 
     listElement.innerHTML = "Подождите, каментарии загружаются..."
 
