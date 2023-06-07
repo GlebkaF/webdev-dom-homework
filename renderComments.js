@@ -71,7 +71,7 @@ const renderComments = (app, isInitialLoading, isWaitingComment, comments, callb
   const addCommentForm = document.querySelector(".add-form");
   const commentInputElement = document.querySelector(".add-form-text");
 
-  // Функция лоадинг при добавлении комментариев в ленту - пока отключена, добавить логику через if
+  // Функция лоадинг при добавлении комментариев в ленту
   if (user) {
     const waitingAddComment = () => {
 
