@@ -9,41 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-           
-          </div>
-        </li>
+       <!-- Список рендерится из JS -->
       </ul>
       <div class="add-form">
         <input 
@@ -59,7 +25,9 @@
         ></textarea>
         <div class="add-form-row">
           <button class="add-form-button">Написать</button>
+          
         </div>
+        <button id="buttontwo" class="add-form-button">Удалить последний комментарий</button>
       </div>
     </div>
   </body>
@@ -71,8 +39,76 @@
     const buttonElement = document.querySelector ('.add-form-button');
     const commentElement = document.querySelector ('.comments');
     const currentDate = new Date().toLocaleDateString('default', {day: '2-digit', month: '2-digit', year: '2-digit'}) + " "+ new Date().toLocaleTimeString().slice(0,-3);
+    const buttontwoElement = document.getElementById ('buttontwo');
     
+    const comments = [
+      {
+        name: 'Глеб Фокин',
+        date: '12.02.22 12:18',
+        textComment: 'Это будет первый комментарий на этой странице',
+        likeComment: false,
+        likesNumber: 3,
+        colorLikes: 'like-button  -active-like',
+      },
+      {
+        name: 'Варвара Н.',
+        date: '13.02.22 19:22',
+        textComment: 'Мне нравится как оформлена эта страница! ❤',
+        likeComment: false,
+        likesNumber:75,
+        colorLikes: 'like-button  -active-like',
+      },
+    ];
+     
+   function getLikeButton () {
+    const likesButtons = document.querySelectorAll (".like-button");
+    for (const likeButton of likesButtons) {
+      likeButton.addEventListener ('click',()=> {
+        const likeButtonIndex =  likeButton.dataset.index;
+        const commentsElement = comments [likeButtonIndex];
+      if (commentsElement.likeComment) {
+        commentsElement.likesNumber -=1;
+        // commentsElement.colorLikes = 'like-button  -no-active-like';
+        commentsElement.likeComment = false;
+      } else {
+        commentsElement.likesNumber +=1;
+        // commentsElement.colorLikes = 'like-button  -active-like';
+        commentsElement.likeComment = true;
+      }
+      renderComments ();
+      });
+    };
     
+   };
+   
+  getLikeButton ();
+
+    const renderComments = () => {
+      const commentsHtml = comments.map ((comment, index)=>{
+        return `<li class="comment">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.textComment}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.likesNumber}</span>
+              <button data-index= '${index}'  class='${comment.colorLikes}'></button>
+            </div>
+          </div>
+        </li>`;
+      }).join ("");
+      commentElement.innerHTML = commentsHtml; 
+      getLikeButton (); 
+    };
+    renderComments ();
+   
+
 
     buttonElement.addEventListener("click", () => {
       inputNameElement.style.backgroundColor = '';
@@ -90,7 +126,8 @@
           inputTextElement.style.backgroundColor = 'red';
           return;
         };
-     
+
+ 
       
     
     //   //Первое доп задание
@@ -101,35 +138,32 @@
     //     buttonElement.disabled = true;
     //     return;
     // } else if (inputNameElement.value!=='' && inputTextElement.value!=='') {
-    //   buttonElement.disabled.false;
+    //   buttonElement.disabled=false;
     //   return;
     // };
-  
 
-      const commentElementOld = commentElement.innerHTML;
-      commentElement.innerHTML =
-      commentElementOld + `<li class="comment">
-          <div class="comment-header">
-            <div>${inputNameElement.value}</div>
-            <div>${currentDate}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${inputTextElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>`;
+    // Второе доп задание
+  //  document.addEventListener("keyup", function(enter) {
+  // if (enter.keyCode == 13) {
+  //   buttonElement.click();
+  // }
+// });
+     comments.push ({
+      name: inputNameElement.value,
+      date: currentDate,
+      textComment:inputTextElement.value,
+      likeComment: false,
+      likesNumber: 0,
+      colorLikes: 'like-button no -active-like',
+     });
+     renderComments ();
+
+
         inputNameElement.value="";
         inputTextElement.value="";
      
     });
-    
+  
 
 
  
