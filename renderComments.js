@@ -163,6 +163,4 @@ const renderComments = (app, isInitialLoading, isWaitingComment, comments, callb
 //   }
 // }
 
-
-
 export { renderComments };
