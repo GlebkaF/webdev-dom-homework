@@ -1,61 +1,72 @@
-// Переменные
-const addCommentForm = document.querySelector(".add-form");
-const buttonElement = document.querySelector(".add-form-button");
-const listOfComments = document.querySelector(".comments");
-const nameInputElement = document.querySelector(".add-form-name");
-const commentInputElement = document.querySelector(".add-form-text");
-const removeButton = document.querySelector('.remove-form-button');
-const constWaitingComment = document.querySelector('.add-waiting');
-const startingElement = document.querySelector('.starting');
+import { getFetch, postComment } from "./api.js";
+import { renderComments } from "./renderComments.js";
+export { delay } from "./supportFunc.js";
 
-// Импорты
-import { fetchAndRenderTasks, postComment } from "./api.js";
+const app = document.getElementById("app");
 
+let comments = [];
 
-startingElement.classList.remove('hidden');
-listOfComments.classList.add('hidden');
+let isInitialLoading = true;
+let isWaitingComment = false;
 
-fetchAndRenderTasks(listOfComments);
+export function handlePostClick(user) {
 
-// валидация на ввод
-buttonElement.addEventListener('click', () => {
-    function clickButton() {
-        nameInputElement.classList.remove("error");
-        if (nameInputElement.value === "") {
-            nameInputElement.classList.add("error");
-            return;
-        }
+    const addButton = document.getElementById('add-form-button');
+    const nameInputElement = document.querySelector('.add-form-name');
+    const commentInputElement = document.querySelector('.add-form-text');
 
-        commentInputElement.classList.remove("error");
-        if (commentInputElement.value === "") {
-            commentInputElement.classList.add("error");
-            return;
-        }
-        constWaitingComment.classList.remove('hidden');
-        addCommentForm.classList.add('hidden');
-        postComment(listOfComments);
-    }
-    clickButton();
-});
+    addButton.disabled = true;
+    addButton.textContent = 'Отправление...';
+
+    nameInputElement.classList.remove('error');
+    commentInputElement.classList.remove('error');
 
 
-// валидация на ввод (неактивная кнопка "Написать")
-nameInputElement.addEventListener('input', () => {
-    if (nameInputElement.value) {
-        buttonElement.disabled = false;
-        return;
-    } else {
-        buttonElement.disabled = true;
-        return;
-    }
-});
+    postComment(commentInputElement, user.token)
+        .then(() => {
+            return startFetch(user);
+        })
+        .then(() => {
+            addButton.disabled = false;
+            addButton.textContent = 'Написать';
 
-commentInputElement.addEventListener('input', () => {
-    if (commentInputElement.value) {
-        buttonElement.disabled = false;
-        return;
-    } else {
-        buttonElement.disabled = true;
-        return;
-    }
-});
+            nameInputElement.value = '';
+            commentInputElement.value = '';
+        })
+        .catch((error) => {
+            addButton.disabled = false;
+            addButton.textContent = 'Написать';
+
+            if (error.message === "Ошибка 400") {
+                console.log("Ошибка 400");
+                alert("Имя и комментарий должны быть не короче 3 символов");
+                return startFetch(user);
+            }
+            if (error.message === "Ошибка 500") {
+                console.log("Ошибка 500");
+                alert("Сервер сломался, попробуй позже");
+                return startFetch(user);
+            }
+        });
+    renderComments(app, isInitialLoading, isWaitingComment, comments, initAddButton, user);
+}
+
+
+function initAddButton(user) {
+    let addButton = document.getElementById('add-form-button');
+    isWaitingComment = true;
+    addButton.addEventListener('click', function () {
+        handlePostClick(user)
+    });
+}
+
+export function startFetch(user) {
+    getFetch().then((startJson) => {
+        comments = startJson.comments;
+        isWaitingComment = false;
+        isInitialLoading = false;
+        renderComments(app, isInitialLoading, isWaitingComment, comments, initAddButton, user);
+    })
+}
+startFetch();
+

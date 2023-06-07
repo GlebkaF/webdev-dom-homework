@@ -1,82 +1,53 @@
-// Переменные
-const addCommentForm = document.querySelector(".add-form");
-const buttonElement = document.querySelector(".add-form-button");
-const listOfComments = document.querySelector(".comments");
-const nameInputElement = document.querySelector(".add-form-name");
-const commentInputElement = document.querySelector(".add-form-text");
-const removeButton = document.querySelector('.remove-form-button');
-const constWaitingComment = document.querySelector('.add-waiting');
-const startingElement = document.querySelector('.starting');
+const host = "https://webdev-hw-api.vercel.app/api/v2/marina-obruch/comments";
+const loginHost = "https://wedev-api.sky.pro/api/user/login";
 
-// Импорты
-import { delay, replaceValue, correctDate } from "./supportFunc.js";
-import renderComments from "./renderComments.js";
-
-
-// Создаем функцию fetch для получения списка
-const fetchAndRenderTasks = (element) => {
-    return fetch("https://webdev-hw-api.vercel.app/api/v1/marina-obruch/comments", {
+const getFetch = () => {
+    return fetch(host, {
         method: "GET"
     })
         .then((responseStart) => {
             return responseStart.json();
         })
-        .then((startJson) => {
-            const comments = startJson.comments;
-            listOfComments.classList.remove('hidden');
-            startingElement.classList.add('hidden');
-
-            renderComments(element, comments);
-        })
-        .catch((error) => {
-            alert("Что-то пошло не так, попробуйте позднее");
-            console.warn(error);
-        })
 };
 
 
-// Добавляем новый комментарий в ленту
-const postComment = (element) => {
-    fetch('https://webdev-hw-api.vercel.app/api/v1/marina-obruch/comments', {
+// Добавляем новый комментарий в ленту с помощью POST
+function postComment(commentInputElement, token) {
+    return fetch(host, {
         method: "POST",
         body: JSON.stringify({
-            name: replaceValue(nameInputElement.value),
-            text: replaceValue(commentInputElement.value)
-                .replaceAll('START_QUOTE', '<div class="comment-quote">')
-                .replaceAll('END_QUOTE', '</div>'),
-            forceError: false,
-        })
+            text: commentInputElement.value,
+        }),
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
     })
         .then((response) => {
-            if (response.status === 400) throw new Error('Ошибка 400');
-            if (response.status === 500) throw new Error('Ошибка 500');
-
-            return response.json();
+            if (response.status === 201) {
+                console.log(response);
+                return response.json();
+            }
+            if (response.status === 400) {
+                console.log("Ошибка 400");
+                throw new Error("Ошибка 400");
+            }
+            if (response.status === 500) {
+                console.log("Ошибка 500");
+                throw new Error("Ошибка 500");
+            }
         })
-        .then(() => {
-            nameInputElement.value = "";
-            commentInputElement.value = "";
-            addCommentForm.classList.remove('hidden');
-            constWaitingComment.classList.add('hidden');
-
-            return fetchAndRenderTasks(element);
-        })
-        .catch((error) => {
-            if (error.message === "Ошибка 400") {
-                alert("Имя и комментарий должны быть не короче 3 символов");
-                addCommentForm.classList.remove('hidden');
-                constWaitingComment.classList.add('hidden');
-            }
-            else if (error.message === "Ошибка 500") {
-                alert("Сервер сломался, попробуй позже");
-                fetchAndRenderTasks(element);
-            }
-            else {
-                alert("Кажется, у вас сломался интернет, попробуйте позже");
-                addCommentForm.classList.remove('hidden');
-                constWaitingComment.classList.add('hidden');
-            }
-        });
 }
 
-export { fetchAndRenderTasks, postComment }
+function fetchLogin(login, password) {
+    return fetch(loginHost, {
+        method: "POST",
+        body: JSON.stringify({
+            login,
+            password,
+        }),
+    }).then((response) => {
+        return response.json();
+    })
+}
+
+export { getFetch, postComment, fetchLogin }
