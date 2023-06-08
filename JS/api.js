@@ -4,16 +4,21 @@ import { getCommentsList } from "./CommentsList.js";
 const listElem = document.getElementById('list-comments');
 const commentAddedElem = document.querySelector('.comment-added');
 const addFormElem = document.querySelector('.add-form');
-// const loadingComments = document.querySelector('.loading');
 
 export let newComments = [];
 export let isInitialLoading = true;
 
 const baseHost = "https://wedev-api.sky.pro/api/v2/freddy-krugliy/comments";
 
+let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+
+
 function getFromApi(data) {
     return fetch(baseHost, {
         method: "GET",
+        headers: {
+            Authorization: token,
+        },
     }).then((responce) => {
         if (responce.status === 500) {
             throw new Error("Ошибка 500");
@@ -58,6 +63,9 @@ function postToApi(data, addCommentElem, addNameElem) {
 
     return fetch(baseHost, {
         method: "POST",
+        headers: {
+            Authorization: token,
+        },
         body: JSON.stringify({
             text: escapeHtml(addCommentElem.value.trim()),
             name: escapeHtml(addNameElem.value.trim()),

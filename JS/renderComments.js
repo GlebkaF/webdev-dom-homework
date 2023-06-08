@@ -3,6 +3,7 @@ import { isInitialLoading } from "./api.js"
 
 const loadingComments = document.querySelector('.loading');
 
+
 const renderComments = (data, elem, getList) => {
     if (isInitialLoading) {
         loadingComments.style.display = 'block';
