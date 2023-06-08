@@ -1,12 +1,19 @@
 import { formatDate } from "./utils.js";
+ 
+const host = "https://wedev-api.sky.pro/api/v2/olya-myalo/comments";
 export const fetchComments = () => {
-   return fetch("https://webdev-hw-api.vercel.app/api/v1/olya-myalo/comments", {
-      method: "GET"
+  const token = localStorage.getItem('token');
+   return fetch(host, {
+      method: "GET",
+      headers: {
+        Authorization: token,
+      }
     })
     .then((response) => (response.json()))
     .then((responseData) => { 
     const appComments = responseData.comments.map((comment) => { 
       return { 
+        id: comment.id,
         name: comment.author.name,  
         date: formatDate(new Date(comment.date)),  
         text: comment.text, 
@@ -18,14 +25,17 @@ export const fetchComments = () => {
     });
 }
 
-export const createComment = (name, text) => {
-  return  fetch("https://webdev-hw-api.vercel.app/api/v1/olya-myalo/comments", {
+export const createComment = (text) => {
+  const token = localStorage.getItem('token');
+  return  fetch(host, {
         method: "POST",
         body: JSON.stringify({
-          name: name,  
           text: text,
           forceError: false,
-        })
+        }),
+        headers: {
+          Authorization: token,
+        },
       })
       .then((response) => {
         if (response.status === 500) {
@@ -39,3 +49,62 @@ export const createComment = (name, text) => {
         }
       })
 }
+
+export const userAuthorization = ({login, password}) => {
+  return fetch ("https://wedev-api.sky.pro/api/user/login", {
+  method: "POST",
+  body: JSON.stringify({
+    login,
+    password,
+  }),
+})
+.then((response) => {
+  if (response.status === 400) {
+    throw new Error('Неверный логин или пароль');
+  }
+  return response.json();
+})
+.then((user) => {
+  localStorage.setItem('token', `Bearer ${user.user.token}`);
+  localStorage.setItem('user', user.user.name);
+});
+}
+
+export const userRegistration = ({name, login, password}) => {
+  return fetch ("https://wedev-api.sky.pro/api/user", {
+    method: "POST",
+    body: JSON.stringify({
+    name,
+    login,
+    password,
+  }),
+  })
+  .then((response) => {
+    if (response.status === 400) {
+      throw new Error('Такой пользователь уже существует');
+    }
+    return response.json();
+  })
+  .then((user) => {
+    localStorage.setItem('token', `Bearer ${user.user.token}`);
+    localStorage.setItem('user', user.user.name);
+  });
+  }
+
+  // export const apiLike = (id) => {
+  //   return fetch (`https://wedev-api.sky.pro/api/v2/olya-myalo/comments/${id}/toggle-like`, {
+  //     method: "POST"
+  //   })
+  //   .then((user) => {
+  //     localStorage.setItem('token', `Bearer ${user.user.token}`);
+  //     localStorage.setItem('user', user.user.name);
+  //   });
+  //   }
+
+  export const isUserAuthorization = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      return true;
+    } 
+    return false;
+  }

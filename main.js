@@ -1,31 +1,23 @@
 "use strict";
 import { fetchComments, createComment } from "./api.js";
-import { formatDate } from "./utils.js";
 import { renderComments } from "./renderComments.js"
 
-const render = () => {
-  renderComments(comments, handleCommentEditClick, handleCommentFeedbackClick, handleCommentLikeClick);
+const renderApp = () => {
+renderComments({comments, handleCommentEditClick, handleCommentFeedbackClick, handleCommentLikeClick});
 }
-  const buttonElement = document.getElementById("button")
-  const listElement = document.getElementById("list");
-  const nameInputElement = document.getElementById("name-input");
-  const commentInputElement = document.getElementById("comment-input");
-  const commentForm = document.getElementById("form-comment");
-  const commentsContainer = document.getElementById("commentsContainer");
-  const newContainerComments = document.getElementById("container")
 
-  commentsContainer.style.display = 'none';
   const commentAdding = document.createElement('div'); 
+  const appEl = document.getElementById("app");
   commentAdding.innerText = 'Пожалуйста подождите, загружаю комментарии...';
-  commentsContainer.parentNode.insertBefore(commentAdding, commentsContainer);
-  const fetchPromise = () => { fetchComments()
+  appEl.appendChild(commentAdding);
+ 
+  export const initApp = () => { fetchComments()
   .then((appComments) => {
     comments = appComments;
-    render();
+    renderApp();
   })
   .then((data) => {
     commentAdding.style.display = 'none';
-    commentsContainer.style.display = 'block';
   });
 }
 
@@ -46,7 +38,7 @@ const handleCommentLikeClick = (event) => {
     comments[index].active = true;
   }
   comments[index].like = likesCount;
-  render();
+  renderApp();
 };
 
 const handleCommentEditClick = (event) => { 
@@ -76,67 +68,13 @@ const handleCommentEditClick = (event) => {
 };
 
 let currentCommentFeedback = null;
-const handleCommentFeedbackClick = (event) => {  
+const handleCommentFeedbackClick = (event) => { 
+  const commentInputElement = document.getElementById("comment-input");
   currentCommentFeedback = event.target.dataset.index;
   commentInputElement.value = `>${comments[currentCommentFeedback].text} ${comments[currentCommentFeedback].name}`;
 };
 
-fetchPromise();
-render();
+initApp();
 
-buttonElement.addEventListener("click", () => {
-  commentForm.style.display = 'none';
-  const commentAddingMessage = document.createElement('div'); 
-  commentAddingMessage.innerText = 'Комментарий добавляется...';
-  commentForm.parentNode.insertBefore(commentAddingMessage, commentForm); 
-      
-  nameInputElement.classList.remove("error");
-  if (nameInputElement.value === "" && nameInputElement.value.length < 3) {
-      nameInputElement.classList.add("error");
-      return;
-      }
-  commentInputElement.classList.remove("error");
-  if (commentInputElement.value === "" && commentInputElement.value.length < 3) {
-      commentInputElement.classList.add("error");
-      return;
-      }
-  let date = new Date();
-  let likes = 0;
-  comments.push({ 
-    name: nameInputElement.value
-    .replaceAll("<", "&lt;")
-    .replaceAll(">","&gt;"), 
-    date: formatDate(date), 
-    text: commentInputElement.value
-    .replaceAll("<", "&lt;")
-    .replaceAll(">","&gt;"), 
-    active: false,
-    like: likes, 
-  });
-createComment(nameInputElement.value, commentInputElement.value)      
-  .then(() => {
-    fetchPromise();
-  })
-  .then((data) => {
-    commentAddingMessage.style.display = 'none';
-    commentForm.style.display = 'block';
-    nameInputElement.value = "";
-    commentInputElement.value = "";
-    render();
-  })
-  .catch((error) => {
-    commentAddingMessage.style.display = "none";
-    commentForm.style.display = "block";
-    if (error.message === "Неверный запрос") {
-      alert("Имя и комментарий должны быть не короче 3-х символов");
-    } 
-    if (error.message === "Сервер упал") {
-      alert("Извините сервер сломался, попробуйте позже");
-    }
-    else {
-      alert("Отсутствует подключение к сети, попробуйте позже!");
-    }
-    console.warn(error);
-  });
-});
+
 
