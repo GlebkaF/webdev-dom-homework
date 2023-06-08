@@ -1,6 +1,6 @@
-import { listElement } from "./main.js";
-import { initlikeButtonListeners } from "./main.js";
-import { initAnswerComment } from "./main.js";
+// import { listElement } from "./main.js";
+// import { initlikeButtonListeners } from "./main.js";
+// import { initAnswerComment } from "./main.js";
 
 
 
@@ -75,11 +75,20 @@ const renderComments = (comments) => {
 
 
       appEl.innerHTML = appHtml;
-
+      const buttonElemtnt = document.getElementById('add-button');
+      const listElement = document.getElementById('list');
       const nameInputElement = document.getElementById("name-input");
+      const commentInputElement = document.getElementById("comment-input");
+      const deletElement = document.getElementById("delet-button");
+      const likeButtonElements = document.querySelectorAll('.like-button');
+      const addFormLoad = document.getElementById('block-form');
+      const invisibleDiv = document.getElementById('invizDiv');
+      const invisibleDivHead = document.getElementById('invizDivHeader');
+      // const nameInputElement = document.getElementById("name-input");
   initlikeButtonListeners(comments);
   initAnswerComment();
 
 };
 
-export {nameInputElement, renderComments};
+export { renderComments};
+export {commentInputElement};

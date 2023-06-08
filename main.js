@@ -2,18 +2,9 @@ import { renderComments } from "./render.js";
 "use strict";
 
 import { getAllComments, finComments } from "./api.js";
-import { nameInputElement } from "./render.js";
 // Код писать здесь
 
-const buttonElemtnt = document.getElementById('add-button');
-export const listElement = document.getElementById('list');
-// export const nameInputElement = document.getElementById("name-input");   в рендере
-export const commentInputElement = document.getElementById("comment-input");
-const deletElement = document.getElementById("delet-button");
-const likeButtonElements = document.querySelectorAll('.like-button');
-const addFormLoad = document.getElementById('block-form');
-const invisibleDiv = document.getElementById('invizDiv');
-const invisibleDivHead = document.getElementById('invizDivHeader');
+
 
 // invisibleDivHead.classList.add('hidden');
 // invisibleDiv.classList.add('hidden');

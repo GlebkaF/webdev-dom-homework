@@ -1,7 +1,10 @@
 import { formatDate } from "./Date.js";
-import { renderComments } from "./render.js";
-import { comments, nameInputElement } from "./render.js";
-import { commentInputElement } from "./main.js";
+import { renderComments} from "./render.js";
+import { commentInputElement} from "./render.js";
+import {comments} from "./render.js";
+import { nameInputElement  } from "./render.js";
+// import { comments, nameInputElement } from "./main.js";
+// import { commentInputElement } from "./main.js";
 
 const host = "https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov/comments";
 const host2 = "https://wedev-api.sky.pro/api/v2/max-kyrtimov/comments";
