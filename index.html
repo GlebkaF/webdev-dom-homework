@@ -75,13 +75,37 @@
       },
     ];
 
+    const replayToComment = () => {
+
+      const oldComments = document.querySelectorAll('.comment');
+
+      for (const oldElement of oldComments) {
+
+        oldElement.addEventListener('click', () => {
+          
+          const indexComment = oldElement.dataset.index;
+
+         textInputElement.value =
+          `${comments[indexComment].name}:\n${comments[indexComment].text}`;
+
+          
+        });
+        
+      };
+
+
+    };
+    replayToComment();
+
     const initEventListeners = () =>{
 
     const likeBtn = document.querySelectorAll('.like-button');
 
     for (const likeElement of likeBtn) {
 
-      likeElement.addEventListener('click', () => {
+      likeElement.addEventListener('click', (event) => {
+        event.stopPropagation();
+
         const index = likeElement.dataset.index;
         const commentElement = comments[index];
 
@@ -90,16 +114,10 @@
           commentElement.activeLike = false;
           commentElement.propertyColorLike = 'like-button -no-active-like'; 
         
-          console.log(commentElement.likes);
-          console.log(commentElement.activeLike);
-        
         } else {
           commentElement.likes += 1;
           commentElement.activeLike = true;
           commentElement.propertyColorLike = 'like-button -active-like';
-
-          console.log(commentElement.likes);
-          console.log(commentElement.activeLike);
 
         }
         renderComment();
@@ -113,7 +131,7 @@
 
     const renderComment = () => {
       const commentsHtml = comments.map((comment, index) => {
-        return `<li class="comment">
+        return `<li class="comment" data-index="${index}">
         <div class="comment-header">
           <div>${comment.name}</div>
           <div>${comment.date}</div>
@@ -134,11 +152,10 @@
 
       listElement.innerHTML = commentsHtml;
       initEventListeners(); 
+      replayToComment();
     };
 
     renderComment();
-    
-
 
     buttonElement.addEventListener("click", () => {
     
