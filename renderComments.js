@@ -1,15 +1,19 @@
-import { delay, correctDate } from "./supportFunc.js";
+import { delay } from "./supportFunc.js";
 import { renderLogin } from "./renderLogin.js";
 import { postComment } from "./api.js";
+import { format } from "date-fns";
 
 // Функция render
 const renderComments = (app, isInitialLoading, isWaitingComment, comments, callback, user) => {
 
   const commentHTML = comments.map((comment, index) => {
+
+    const createDate = format(new Date(comment.date), 'dd/MM/yyyy HH:mm');
+
     return `<li id="comment" class="comment" data-index="${index}">
       <div class="comment-header">
         <div id="name">${comment.author.name}</div>
-        <div id="date">${correctDate(comment.date)}</div>
+        <div id="date">${createDate}</div>
       </div>
       <div class="comment-body">
         <div class="comment-text">
