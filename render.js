@@ -8,6 +8,8 @@ const renderComments = (comments) => {
   const appEl = document.getElementById("app");
   const commentsHtml = comments.map((comment, index) => {
 
+
+
     let isLike = '';
     if (comments[index].isLiked) {
       isLike = '-active-like'
@@ -39,7 +41,7 @@ const renderComments = (comments) => {
           <!-- Список рендериться в main -->
           ${commentsHtml}
         </ul>
-        <div id="block-form" class="login-form">
+        <div id="block-form-login" class="login-form">
           <input id="login-input" type="text" class="add-form-name" placeholder="Введите ваш логин" />
           <br/>
           <input id="password-input" type="text" class="add-form-name" placeholder="Введите ваш пароль" />
@@ -84,11 +86,20 @@ const renderComments = (comments) => {
       const addFormLoad = document.getElementById('block-form');
       const invisibleDiv = document.getElementById('invizDiv');
       const invisibleDivHead = document.getElementById('invizDivHeader');
+      const invizPushComm = document.getElementById('block-form');
       // const nameInputElement = document.getElementById("name-input");
+
+
+      invisibleDivHead.classList.add('hidden');
+      invisibleDiv.classList.add('hidden');
+      invizPushComm.classList.add('hidden');
+
+
+      
   initlikeButtonListeners(comments);
   initAnswerComment();
 
 };
 
 export { renderComments};
-export {commentInputElement};
+// export {commentInputElement};

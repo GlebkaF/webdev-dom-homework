@@ -1,8 +1,8 @@
 import { formatDate } from "./Date.js";
 import { renderComments} from "./render.js";
-import { commentInputElement} from "./render.js";
-import {comments} from "./render.js";
-import { nameInputElement  } from "./render.js";
+// import { commentInputElement} from "./render.js";
+// import {comments} from "./render.js";
+// import { nameInputElement  } from "./render.js";
 // import { comments, nameInputElement } from "./main.js";
 // import { commentInputElement } from "./main.js";
 
