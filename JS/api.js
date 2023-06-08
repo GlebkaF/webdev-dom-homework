@@ -4,40 +4,15 @@ import { getCommentsList } from "./CommentsList.js";
 const listElem = document.getElementById('list-comments');
 const commentAddedElem = document.querySelector('.comment-added');
 const addFormElem = document.querySelector('.add-form');
+// const loadingComments = document.querySelector('.loading');
 
 export let newComments = [];
+export let isInitialLoading = true;
 
-function getFromApiFirstTime(data, loadingElem) {
-    loadingElem.style.display = 'block';
-
-    return fetch("https://webdev-hw-api.vercel.app/api/v1/freddy-krugliy/comments", {
-        method: "GET",
-    }).then((responce) => {
-        loadingElem.style.display = 'none';
-
-        if (responce.status === 500) {
-            throw new Error("Ошибка 500");
-        } else {
-            return responce.json();
-        }
-    }).then((responceData) => {
-        data = responceData.comments;
-        renderComments(data, listElem, getCommentsList);
-        newComments = data;
-    }).catch((error) => {
-        if (error.message === "Ошибка 500") {
-            console.log(error);
-            alert("Сервер сломался, попробуй позже");
-        } else {
-            console.log(error);
-            alert("Кажется, у вас сломался интернет, попробуйте позже");
-        };
-    })
-};
-
+const baseHost = "https://wedev-api.sky.pro/api/v2/freddy-krugliy/comments";
 
 function getFromApi(data) {
-    return fetch("https://webdev-hw-api.vercel.app/api/v1/freddy-krugliy/comments", {
+    return fetch(baseHost, {
         method: "GET",
     }).then((responce) => {
         if (responce.status === 500) {
@@ -47,6 +22,7 @@ function getFromApi(data) {
         }
     }).then((responceData) => {
         data = responceData.comments;
+        isInitialLoading = false;
         renderComments(data, listElem, getCommentsList);
         newComments = data;
     }).catch((error) => {
@@ -54,6 +30,7 @@ function getFromApi(data) {
             console.log(error);
             alert("Сервер сломался, попробуй позже");
         } else {
+            console.log(error);
             alert("Кажется, у вас сломался интернет, попробуйте позже");
         };
     })
@@ -79,7 +56,7 @@ function postToApi(data, addCommentElem, addNameElem) {
     addFormElem.style.display = 'none';
     commentAddedElem.style.display = 'block';
 
-    return fetch("https://webdev-hw-api.vercel.app/api/v1/freddy-krugliy/comments", {
+    return fetch(baseHost, {
         method: "POST",
         body: JSON.stringify({
             text: escapeHtml(addCommentElem.value.trim()),
@@ -119,4 +96,4 @@ function postToApi(data, addCommentElem, addNameElem) {
 
 
 
-export { getFromApiFirstTime, getFromApi, postToApi };
+export { getFromApi, postToApi };
