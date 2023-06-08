@@ -4,20 +4,25 @@ const textInputElement = document.getElementById('textInput');
 const nameInputElement = document.getElementById('nameInput');
 const buttonElement = document.getElementById('add-button');
 
-const getComments = () => {
-    return fetch('https://webdev-hw-api.vercel.app/api/v1/katerina-nosova/comments', {
-        method: 'GET'
+const host = 'https://wedev-api.sky.pro/api/v2/katerina-nosova';
+
+const getComments = ({ token }) => {
+    return fetch(host + '/comments', {
+        method: 'GET',
+        headers: {
+            Authorization: token,
+        }
     })
         .then((response) => {
             if (response.message === 500) {
                 throw new Error('Сервер упал');
             }
-            else {
-                return response.json();
+            else if (response.status === 401) {
+                throw new Error('Нет авторизации');
             }
+            return response.json();
         })
         .then((responseData) => {
-            //преобразование данных формата api в наш формат
             comments = responseData.comments.map((comment) => {
                 return {
                     name: comment.author.name,
@@ -27,7 +32,7 @@ const getComments = () => {
                     isLiked: false
                 };
             });
-            // renderComments(commentsListElement, getListComments);
+
         })
         .catch((error) => {
             console.log(error);
@@ -39,14 +44,17 @@ const getComments = () => {
         })
 };
 
-const postComments = () => {
-    return fetch('https://webdev-hw-api.vercel.app/api/v1/katerina-nosova/comments', {
+const postComments = ({ token, text, name }) => {
+    return fetch(host + '/comments', {
         method: 'POST',
         body: JSON.stringify({
-            text: textInputElement.value,
-            name: nameInputElement.value,
+            text,
+            name,
             forceError: true
-        })
+        }),
+        headers: {
+            Authorization: token,
+        }
     })
         .then((response) => {
             console.log(response);
@@ -62,12 +70,12 @@ const postComments = () => {
         })
         .then((responseData) => {
             comments = responseData.comments;
-            return getComments();
+            return getComments({ token });
         })
         .catch((error) => {
             console.log(error);
             if (error.message === 'Сервер упал') {
-                //alert('Сервер прилёг отдохнуть, попробуй позже');
+                // alert('Сервер прилёг отдохнуть, попробуй позже');
                 buttonElement.click();
             }
             else if (error.message === 'Плохой запрос') {
@@ -77,8 +85,52 @@ const postComments = () => {
                 alert('Кажется, у вас сломался интернет, попробуйте позже');
                 console.log(error);
             }
-            // toggleForm(false);
+
         });
 };
 
-export { getComments, postComments };
+const loginUser = ({login, password}) => {
+    return fetch('https://wedev-api.sky.pro/api/user/login', {
+        method: 'POST',
+        body: JSON.stringify({
+            login,
+            password
+        })
+    }).then((response) => {
+        console.log(response);
+        if (response.status === 500) {
+            throw new Error('Сервер упал');
+        }
+        if (response.status === 400) {
+            throw new Error("Плохой запрос");
+        }
+        else {
+            return response.json();
+        }
+    }).catch((error) => {
+        if (error.message === 'Сервер упал') {
+            // alert('Сервер прилёг отдохнуть, попробуй позже');
+            buttonElement.click();
+        }
+        else if (error.message === 'Плохой запрос') {
+            alert('Неверный логин или пароль');
+        }
+        else {
+            alert('Кажется, у вас сломался интернет, попробуйте позже');
+            console.log(error);
+        }
+    });
+};
+
+const deleteComment = ({token, id}) => {
+    return fetch(host + '/comments/' + id, {
+        method: 'DELETE',
+        headers: {
+            Authorization: token
+        }
+    }).then((response) => {
+        return response.json();
+    });
+};
+
+export { getComments, postComments, loginUser, deleteComment };

@@ -1,4 +1,4 @@
-const getListComments = (comment, index, getDate) => {
+export function getListComments (comment, index, getDate, isRegistered) {
     return `<li class="comment" data-index='${index}'>
         <div class="comment-header">
           <div>${comment.name
@@ -23,7 +23,7 @@ const getListComments = (comment, index, getDate) => {
         </div>
         <div class="comment-footer">
           <div class="edit">
-            <button data-index='${index}' class="edit-button">${comment.isEdit ? 'Save' : 'Edit'}</button>
+          ${isRegistered ? `<button data-id='${comment.id}' class="delete-button">Delete</button>` : ''}            
           </div>
           <div class="likes">
             <span class="likes-counter">${comment.likes}</span>
@@ -33,4 +33,3 @@ const getListComments = (comment, index, getDate) => {
       </li>`;
   };
 
-  export {getListComments};
