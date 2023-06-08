@@ -78,23 +78,19 @@
     const replayToComment = () => {
 
       const oldComments = document.querySelectorAll('.comment');
-
+      
       for (const oldElement of oldComments) {
 
         oldElement.addEventListener('click', () => {
           
           const indexComment = oldElement.dataset.index;
-
-         textInputElement.value =
-          `${comments[indexComment].name}:\n${comments[indexComment].text}`;
-
+          
+          textInputElement.value = `${comments[indexComment].name}: ${comments[indexComment].text}`;
           
         });
-        
       };
-
-
     };
+
     replayToComment();
 
     const initEventListeners = () =>{
@@ -133,17 +129,32 @@
       const commentsHtml = comments.map((comment, index) => {
         return `<li class="comment" data-index="${index}">
         <div class="comment-header">
-          <div>${comment.name}</div>
+          <div>${comment.name
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("$", "&#65284;")
+          .replaceAll("{", "&#123;")
+          .replaceAll("}", "&#125;")}
+          </div>
           <div>${comment.date}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
-            ${comment.text}
+            ${comment.text
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("$", "&#65284;")
+          .replaceAll("{", "&#123;")
+          .replaceAll("}", "&#125;")}
           </div>
         </div>
         <div class="comment-footer">
           <div class="likes">
-            <span class="likes-counter" data-counter="${comment.likes}">${comment.likes}</span>
+            <span class="likes-counter">${comment.likes}</span>
             <button class="like-button ${comment.propertyColorLike}" data-index="${index}"></button>
           </div>
         </div>
