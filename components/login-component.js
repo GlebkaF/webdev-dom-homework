@@ -105,13 +105,3 @@ export function renderLoginComponent({ appEl, setToken, fetchGet }) {
     renderForm();
 }
 
-
-
-    
-      
-        
-
-        
-       
-
- 

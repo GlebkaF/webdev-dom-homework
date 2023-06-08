@@ -1,5 +1,36 @@
+import { commentsLoad, renderApp,  token } from "./index.js";
 const host = 'https://wedev-api.sky.pro/api/v2/tanya-koryachkina/comments';
+export let commentaries = [];
+export function fetchGet () {
 
+    commentsLoad.style.display = "block";
+    //listElement.style.display = "none";
+    return getFetchComments({ token })
+    .then((responseData) => {
+        const appComments = responseData.comments
+        .map((comment) => {
+            return {
+                name: comment.author.name,
+                date: new Date(Date.parse(comment.date)).toLocaleDateString() + ' ' + new Date(Date.parse(comment.date)).getHours() + ':' + new Date(Date.parse(comment.date)).getMinutes(),
+                text: comment.text,
+                likes: comment.likes,
+                isLiked: false,
+                id: comment.id,
+            };
+        
+        });
+        return appComments;
+    })
+    .then((data) => {
+        commentsLoad.style.display = "none";
+        //listElement.style.display = "flex";
+        commentaries = data;
+        renderApp();
+    });
+        
+
+      
+};
 export function getFetchComments({ token }) {
     return fetch(host, {
         method: "GET",
