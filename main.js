@@ -6,7 +6,6 @@ const renderApp = () => {
 renderComments({comments, handleCommentEditClick, handleCommentFeedbackClick, handleCommentLikeClick});
 }
 
-  const buttonElement = document.getElementById("button")
   const commentAdding = document.createElement('div'); 
   const appEl = document.getElementById("app");
   commentAdding.innerText = 'Пожалуйста подождите, загружаю комментарии...';

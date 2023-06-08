@@ -24,46 +24,35 @@ const getListCommentsEdit = (comment, index) => {
          </li>`
 }
 
-
 export const renderComments = ({comments, handleCommentEditClick, handleCommentFeedbackClick, handleCommentLikeClick}) => {
   const appEl = document.getElementById("app");
   const nameUser = localStorage.getItem('user');
-  if (!isUserAuthorization())  {
-    renderLogin({
-      appEl,
-      initApp,
-    });
-    return
-  }
   const commentsHtml = comments.map((comment, index) => getListCommentsEdit(comment, index))
   .join('');
-  const appHtml = `
-  <div class="container" id="container" >
-  <div id="commentsContainer">
+  const ShowComment = `
     <ul id="list" class="comments">
     ${commentsHtml}
-    </ul>
-    <div class="add-form" id="form-comment">
-      <input id="name-input"
-        type="text"
-        class="add-form-name"
-        placeholder="Введите ваше имя"
-        value = "${nameUser}"
-      />
-      <textarea id="comment-input"
-        type="textarea"
-        class="add-form-text"
-        placeholder="Введите ваш коментарий"
-        rows="4"
-      ></textarea>
-      <div class="add-form-row">
-        <button id="button" class="add-form-button">Написать</button>
-      </div>
-    </div>
+    </ul>`
+  const showInputButtonComment = `
+  <div class="add-form" id="form-comment">
+  <input id="name-input"
+    type="text"
+    class="add-form-name"
+    disabled="disabled"
+    value = "${nameUser}"
+  />
+  <textarea id="comment-input"
+    type="textarea"
+    class="add-form-text"
+    placeholder="Введите ваш коментарий"
+    rows="4"
+  ></textarea>
+  <div class="add-form-row">
+    <button id="button" class="add-form-button">Написать</button>
   </div>
   </div>`
-     appEl.innerHTML = appHtml;
-     const buttonElement = document.getElementById("button")
+  const textEnter = `<div id ="toggle-page">Чтобы добавить комментарий, авторизируйтесь</div>
+  </div>`
   const addComment = () => { 
     const buttonElement = document.getElementById("button")
     buttonElement.addEventListener("click", () => {
@@ -77,6 +66,9 @@ export const renderComments = ({comments, handleCommentEditClick, handleCommentF
     commentInputElement.classList.remove("error");
     if (commentInputElement.value === "" && commentInputElement.value.length < 3) {
         commentInputElement.classList.add("error");
+        alert("Введите комментарий более 3-х символов")
+        commentAddingMessage.style.display = "none";
+        commentForm.style.display = "block";
         return;
         }
     createComment(commentInputElement.value)      
@@ -104,7 +96,29 @@ export const renderComments = ({comments, handleCommentEditClick, handleCommentF
     });
   });
   }
-  addComment();
+  const app = () => {
+    let appHtml = '';
+    if (!isUserAuthorization()) {
+      appHtml = `
+      <div id="commentsContainer">
+      <div class="container" id="container" >
+      ${ShowComment} ${ textEnter}
+      </div>
+      </div>`
+      appEl.innerHTML = appHtml;
+    document.getElementById("toggle-page").addEventListener("click", () => {
+    renderLogin({appEl, initApp,});})
+    } else { appHtml = `
+      <div id="commentsContainer">
+      <div class="container" id="container" >
+      ${ShowComment} ${ showInputButtonComment}
+      </div>
+      </div>`
+      appEl.innerHTML = appHtml;
+      addComment();
+    }
+    }
+    app() 
       onCommentLikeClick(handleCommentLikeClick);
       onCommentEditClick(handleCommentEditClick);
       onCommentFeedbackClick(handleCommentFeedbackClick);

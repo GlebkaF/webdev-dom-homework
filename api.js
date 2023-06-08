@@ -1,5 +1,5 @@
 import { formatDate } from "./utils.js";
-
+ 
 const host = "https://wedev-api.sky.pro/api/v2/olya-myalo/comments";
 export const fetchComments = () => {
   const token = localStorage.getItem('token');
@@ -13,6 +13,7 @@ export const fetchComments = () => {
     .then((responseData) => { 
     const appComments = responseData.comments.map((comment) => { 
       return { 
+        id: comment.id,
         name: comment.author.name,  
         date: formatDate(new Date(comment.date)),  
         text: comment.text, 
@@ -36,7 +37,6 @@ export const createComment = (text) => {
           Authorization: token,
         },
       })
-    
       .then((response) => {
         if (response.status === 500) {
           throw new Error("Сервер упал");
@@ -90,6 +90,16 @@ export const userRegistration = ({name, login, password}) => {
     localStorage.setItem('user', user.user.name);
   });
   }
+
+  // export const apiLike = (id) => {
+  //   return fetch (`https://wedev-api.sky.pro/api/v2/olya-myalo/comments/${id}/toggle-like`, {
+  //     method: "POST"
+  //   })
+  //   .then((user) => {
+  //     localStorage.setItem('token', `Bearer ${user.user.token}`);
+  //     localStorage.setItem('user', user.user.name);
+  //   });
+  //   }
 
   export const isUserAuthorization = () => {
     const token = localStorage.getItem('token');
