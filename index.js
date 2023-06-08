@@ -1,4 +1,4 @@
-import { addComment, fetchGet, commentaries } from "./api.js";
+import { addComment, getFetchComments } from "./api.js";
 import { renderLoginComponent } from "./components/login-component.js";
 
 
@@ -12,114 +12,144 @@ const appEl = document.getElementById('app');
 export function renderApp  ()  {
     
     if(!token) {
-        const commentsHtml = commentaries.map((comment, index) => {
+        /*const appHtml = `
+        <div class="container">
+          <div class="add-form">
+            <h3 class="form-title">Форма входа</h3>
+            <div class="form-row">
+              Логин    
+              <input id="login-input" type="text" class="add-form-name"/>
+              <br />
+              <br />
+              Пароль
+              <input id="login-input" type="text" class="add-form-name"/>
+            </div>
+            <br />
+            <button id='login-button' class="add-form-button">Войти</button>
+        </div>`
+          
+        appEl.innerHTML = appHtml;
 
-            return `<li class="comment" data-id='${comment.id}'>
-                  <div class="comment-header">
-                    <div>${comment.name}</div>
-                    <div>${comment.date}
-                    </div>
-                  </div>
-                  <div class="comment-body">
-                    <div class="comment-text">
-                      ${comment.text}
-                    </div>
-                  </div>
-                  <div class="comment-footer">
-                    <div class="likes">
-                      <span class="likes-counter" data-id='${comment.id}'>${commentaries[index].likes}</span>
-                      <button 
-                      class="like-button ${comment.isLiked ? '-active-like' : ''}" 
-                      data-index='${index}'>
-                      </button>
-                    </div>
-                  </div>
-                </li>`;
-            }).join('');
         
-              const appHtml = `
-                  <div class="container">
-                  <div class="comments-load">
-                  Данные загружаются, пожалуйста подождите...
-                  </div>
-                  <ul class="comments">
-                    <!-- add by js --->
-                    ${commentsHtml}
-                  </ul>
-                  <div>Чтобы добавить комментарий <span class="link"> авторизуйтесь</span></div>
-                </div>`;
-        
-              appEl.innerHTML = appHtml;
-        
-              document.querySelector('.link').addEventListener("click", () => {
-                renderLoginComponent({ 
-                  appEl, 
-                  setToken: (newToken) => {token = newToken;},
-                  fetchGet,
-                  renderApp
-                });
-              });
-            } else {
-                const commentsHtml = commentaries.map((comment, index) => {
-
-                    return `<li class="comment" data-id='${comment.id}'>
-                    <div class="comment-header">
-                      <div>${comment.name}</div>
-                      <div>${comment.date}
-                      </div>
-                    </div>
-                    <div class="comment-body">
-                      <div class="comment-text">
-                        ${comment.text}
-                      </div>
-                    </div>
-                    <div class="comment-footer">
-                      <div class="likes">
-                        <span class="likes-counter" data-id='${comment.id}'>${commentaries[index].likes}</span>
-                        <button 
-                        class="like-button ${comment.isLiked ? '-active-like' : ''}" 
-                        data-index='${index}'>
-                        </button>
-                      </div>
-                    </div>
-                  </li>`;
-                }).join('');
+        document.getElementById("login-button").addEventListener("click", () => {
+            token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
             
-                  const appHtml = `
-                        <div class="container">
-                
-                        <div class="comments-load">
-                        Данные загружаются, пожалуйста подождите...
-                        </div>
-                        <ul class="comments">
-                          <!-- add by js --->
-                          ${commentsHtml}
-                        </ul>
-                        <div class="add-form">
-                          <input id="name-input"
-                            type="text"
-                            class="add-form-name"
-                            placeholder="Введите ваше имя"
-                          />
-                          <textarea id="comment-input"
-                            type="textarea"
-                            class="add-form-text"
-                            placeholder="Введите ваш коментарий"
-                            rows="4"
-                          ></textarea>
-                          <div class="add-form-row">
-                            <button class="add-form-button id="add-button">Написать</button>
-                            <button class="delete-form-button" id="delete-form-button">Удалить последний комментарий</button>
-                          </div>
-                        </div>
-                      </div>`;
-            
-                  appEl.innerHTML = appHtml; 
-                    let buttonElement = document.querySelector(".add-form-button");
-                    let nameInputElement = document.querySelector(".add-form-name");
-                    let commentInputElement = document.querySelector(".add-form-text");
-                //const comment = document.getElementsByTagName('li');
-                    let deleteFormButtonElement = document.querySelector(".delete-form-button");
+            fetchGet();
+            //renderApp();
+        })*/
+        renderLoginComponent({ appEl, setToken: (newToken) => {
+            token = newToken;
+        },
+        fetchGet,
+     });    
+        return;
+}
+    
+    const commentsHtml = commentaries.map((comment, index) => {
+        if(comment.isLiked) {
+          return `<li  class="comment" data-index="${index}">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.likes}</span>
+              <button data-index="${index}"  class="like-button -active-like"></button>
+            </div>
+          </div>
+        </li>`;
+        } else {
+          return `<li  class="comment" data-index="${index}">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.likes}</span>
+              <button data-index="${index}" data-likes=${comment.likes} class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+        }
+    }).join("");
+        //console.log(commentsHtml);
+        const appHtml = `
+        <div class="container">
+          
+          <ul id="list" class="comments">
+            <!-- <li   class="comment">
+              <div class="comment-header">
+                <div>Глеб Фокин</div>
+                <div>12.02.22 12:18</div>
+              </div>
+              <div class="comment-body">
+                <div class="comment-text">
+                  Это будет первый комментарий на этой странице
+                </div>
+              </div>
+              <div class="comment-footer">
+                <div class="likes">
+                  <span  class="likes-counter">3</span>
+                  <button data-likes="3" class="like-button"></button>
+                </div>
+              </div>
+            </li>
+            <li  class="comment">
+              <div class="comment-header">
+                <div>Варвара Н.</div>
+                <div>13.02.22 19:22</div>
+              </div>
+              <div class="comment-body">
+                <div class="comment-text">
+                  Мне нравится как оформлена эта страница! ❤
+                </div>
+              </div>
+              <div class="comment-footer">
+                <div class="likes">
+                  <span class="likes-counter">75</span>
+                  <button data-likes="75" class="like-button -active-like"></button>
+                </div>
+              </div>
+            </li> -->
+            ${commentsHtml}
+          </ul>
+          <div class="add-form">
+            <input id="name-input"
+              type="text"
+              class="add-form-name"
+              placeholder="Введите ваше имя"
+            />
+            <textarea id="comment-input"
+              type="textarea"
+              class="add-form-text"
+              placeholder="Введите ваш коментарий"
+              rows="4"
+            ></textarea>
+            <div class="add-form-row">
+              <button id='add-button' class="add-form-button">Написать</button>
+              <button class = "delete-form-button" id="delete-form-button">Удалить последний комментарий</button>
+            </div>
+          </div>
+    </div>`
+        appEl.innerHTML = appHtml;
+        const buttonElement = document.getElementById('add-button');
+        const listElement = document.getElementById("list");
+        const nameInputElement = document.getElementById("name-input");
+        const commentInputElement = document.getElementById("comment-input");
+        const comment = document.getElementsByTagName('li');
+        const deleteFormButtonElement = document.getElementById("delete-form-button");
         //const commentsLoad = document.querySelector(".comments-load");
 
         const initLikeButtonListeners = () => {
