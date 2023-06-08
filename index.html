@@ -48,7 +48,7 @@
         textComment: 'Это будет первый комментарий на этой странице',
         likeComment: false,
         likesNumber: 3,
-        colorLikes: 'like-button  -active-like',
+        colorLikes: 'like-button  no-active-like',
       },
       {
         name: 'Варвара Н.',
@@ -56,7 +56,7 @@
         textComment: 'Мне нравится как оформлена эта страница! ❤',
         likeComment: false,
         likesNumber:75,
-        colorLikes: 'like-button  -active-like',
+        colorLikes: 'like-button  no-active-like',
       },
     ];
      
@@ -68,11 +68,11 @@
         const commentsElement = comments [likeButtonIndex];
       if (commentsElement.likeComment) {
         commentsElement.likesNumber -=1;
-        // commentsElement.colorLikes = 'like-button  -no-active-like';
+        commentsElement.colorLikes = 'like-button  -no-active-like';
         commentsElement.likeComment = false;
       } else {
         commentsElement.likesNumber +=1;
-        // commentsElement.colorLikes = 'like-button  -active-like';
+        commentsElement.colorLikes = 'like-button  -active-like';
         commentsElement.likeComment = true;
       }
       renderComments ();
@@ -98,7 +98,7 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${comment.likesNumber}</span>
-              <button data-index= '${index}'  class='${comment.colorLikes}'></button>
+               <button data-index= '${index}'  class='${comment.colorLikes}'></button> 
             </div>
           </div>
         </li>`;
@@ -128,7 +128,7 @@
         };
 
  
-      
+       
     
     //   //Первое доп задание
     
@@ -154,7 +154,7 @@
       textComment:inputTextElement.value,
       likeComment: false,
       likesNumber: 0,
-      colorLikes: 'like-button no -active-like',
+      colorLikes: 'like-button no-active-like',
      });
      renderComments ();
 
