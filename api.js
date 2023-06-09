@@ -44,8 +44,7 @@ export const finComments = () => {
     fetch(host2, {
         method: "POST",
         body: JSON.stringify({
-            name: nameInputElement.value,
-            text: commentInputElement.value,
+            text: text,
             forceError: false,
         }),
         headers: {

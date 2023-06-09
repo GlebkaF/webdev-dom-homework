@@ -130,7 +130,7 @@ const initAnswerComment = () => {
 }
 initAnswerComment();
 initlikeButtonListeners();
-getAllComments();
+
 
 nameInputElement.addEventListener('input', () => {
     if (nameInputElement.value.trim() !== '') {

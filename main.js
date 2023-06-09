@@ -99,5 +99,6 @@ export let comments = [
 //     comments.pop();
 //     renderComments();
 // });
+getAllComments();
 
 renderComments(comments)
