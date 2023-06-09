@@ -1,4 +1,3 @@
-const comments = document.querySelectorAll('.comment');
 const commentList = document.querySelector('.comments');
 const addForm = document.querySelector('.add-form');
 const userName = document.querySelector('.add-form-name');
@@ -27,16 +26,19 @@ const commentsListArray = [
     Iliked: true,
   }
 ];
+
 const addLikes = (e) => {
   const comment = commentsListArray[e.target.dataset.id];
   comment.like++;
   comment.Iliked = true;
 }
+
 const delLikes = (e) => {
   const comment = commentsListArray[e.target.dataset.id];
   comment.like--;
   comment.Iliked = false;
 }
+
 const initLikeClick = () => {
   const likeClickElements = document.querySelectorAll('.likes');
   for (const likeClickElement of likeClickElements) {
@@ -47,6 +49,7 @@ const initLikeClick = () => {
     });
   }
 }
+
 function renderComments() {
   const commentHtmlResult = commentsListArray.map((comment, id) => {
     (comment.Iliked) ? Iliked = '-active-like' : Iliked = '';
@@ -70,11 +73,13 @@ function renderComments() {
   initLikeClick();
   addCommentListener()
 }
+
 const validate = () => {
   userName.classList.toggle('error', userName.value.length === 0);
   textComment.classList.toggle('error', textComment.value.length === 0);
   return (userName.value.length >= 1 && textComment.value.length >= 1);
 }
+
 const addComment = () => {
   const date = new Date();
   if (validate()) {
@@ -92,15 +97,18 @@ const addComment = () => {
     button.setAttribute('disabled', '');
   }
 };
+
 button.addEventListener('click', (event) => {
   addComment();
 });
+
 addForm.addEventListener('input', (event) => {
   if (validate) {
     button.removeAttribute('disabled');
     button.classList.remove('add-form-button-disabled');
   }
 });
+
 addForm.addEventListener('keydown', (event) => {
   if (event.ctrlKey && event.key === "Enter") {
     event.preventDefault();
@@ -108,8 +116,11 @@ addForm.addEventListener('keydown', (event) => {
   }
 });
 renderComments();
+
 // Функция добавляет ответ на комментарий
 function addCommentListener() {
+  const comments = document.querySelectorAll('.comment');
+
   comments.forEach((comment) => {
     comment.addEventListener('click', () => {
       const answer = comment.querySelector('.comment-body').textContent;
