@@ -1,7 +1,7 @@
 import { likeButtonsListeners } from "./likes.js";
 import { isInitialLoading, isPosting, token } from "./api.js";
 import { postToApi } from "./api.js";
-import { getApp, getCommentsAndAuth } from "./appHtml.js";
+import { getApp, getAuthForm, getCommentsAndAuth } from "./appHtml.js";
 
 export const appElement = document.getElementById('app');
 
@@ -27,8 +27,14 @@ const renderApp = (data, elem, getList) => {
         appElement.innerHTML = appHtml;
 
         const loadingComments = document.querySelector('.loading');
+        const authLink = document.getElementById('auth-link');
 
         isInitialLoadingFunc(loadingComments);
+
+        authLink.addEventListener("click", () => {
+            appHtml = getAuthForm();
+            appElement.innerHTML = appHtml;
+        });
 
     } else {
         appHtml = getApp(commentsHtml);
