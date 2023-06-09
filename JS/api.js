@@ -2,11 +2,10 @@ import { renderComments } from "./renderComments.js";
 import { getCommentsList } from "./CommentsList.js";
 
 const listElem = document.getElementById('list-comments');
-const commentAddedElem = document.querySelector('.comment-added');
-const addFormElem = document.querySelector('.add-form');
 
 export let newComments = [];
 export let isInitialLoading = true;
+export let isPosting = false;
 
 const baseHost = "https://wedev-api.sky.pro/api/v2/freddy-krugliy/comments";
 
@@ -42,11 +41,6 @@ function getFromApi(data) {
 };
 
 
-function changeMessageToAddForm() {
-    addFormElem.style.display = 'block';
-    commentAddedElem.style.display = 'none';
-};
-
 function escapeHtml(text) {
     return text
         .replaceAll("&", "&amp;")
@@ -58,8 +52,6 @@ function escapeHtml(text) {
 
 
 function postToApi(data, addCommentElem, addNameElem) {
-    addFormElem.style.display = 'none';
-    commentAddedElem.style.display = 'block';
 
     return fetch(baseHost, {
         method: "POST",
@@ -81,22 +73,21 @@ function postToApi(data, addCommentElem, addNameElem) {
             return responce.json();
         }
     }).then((responceData) => {
-        return getFromApi(data);
+        getFromApi(data);
     }).then(() => {
-        changeMessageToAddForm();
+        isPosting = true;
+        renderComments(data, listElem, getCommentsList);
         addNameElem.value = '';
         addCommentElem.value = '';
+        isPosting = false;
     }).catch((error) => {
         if (error.message === "Ошибка 400") {
             console.log(error);
-            changeMessageToAddForm();
             alert("Имя и комментарий должны быть не короче 3 символов");
         } else if (error.message === "Ошибка 500") {
             console.log(error);
-            changeMessageToAddForm();
             postToApi(data, addCommentElem, addNameElem);
         } else {
-            changeMessageToAddForm();
             alert("Кажется, у вас сломался интернет, попробуйте позже");
         };
     })

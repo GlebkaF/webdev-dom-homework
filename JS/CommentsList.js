@@ -1,5 +1,5 @@
 const getCommentsList = (comment, index) => {
-    return `<li class="comment" data-index="${index}">
+  return `<li class="comment" data-index="${index}">
           <div class="comment-header">
             <div>
               ${comment.author.name}
@@ -27,24 +27,24 @@ const getCommentsList = (comment, index) => {
 
 
 function getActualDate(date) {
-    let userDate = new Date(date);
-    let month = userDate.getMonth() + 1;
-    let minutes = userDate.getMinutes();
-    let year = userDate.getFullYear() % 100;
+  let userDate = new Date(date);
+  let month = userDate.getMonth() + 1;
+  let minutes = userDate.getMinutes();
+  let year = userDate.getFullYear() % 100;
 
-    if (month < 10) {
-        month = "0" + month;
-    };
+  if (month < 10) {
+    month = "0" + month;
+  };
 
-    if (minutes < 10) {
-        minutes = "0" + minutes;
-    };
+  if (minutes < 10) {
+    minutes = "0" + minutes;
+  };
 
-    if (year < 10) {
-        year = "0" + year;
-    };
+  if (year < 10) {
+    year = "0" + year;
+  };
 
-    return `${userDate.getDate()}.${month}.${year} ${userDate.getHours()}:${minutes}`;
+  return `${userDate.getDate()}.${month}.${year} ${userDate.getHours()}:${minutes}`;
 };
 
 
