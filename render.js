@@ -1,7 +1,8 @@
 // import { listElement } from "./main.js";
 // import { initlikeButtonListeners } from "./main.js";
 // import { initAnswerComment } from "./main.js";
-
+// import { comments } from "./main";
+import { getAllComments, finComments } from "./api.js";
 
 
 const renderComments = (comments) => {
@@ -87,7 +88,7 @@ const renderComments = (comments) => {
   const invisibleDiv = document.getElementById('invizDiv');
   const invisibleDivHead = document.getElementById('invizDivHeader');
   const invizPushComm = document.getElementById('block-form');
-  // const nameInputElement = document.getElementById("name-input");
+
 
   const initlikeButtonListeners = (comments) => {
     const likeButtonElements = document.querySelectorAll('.like-button');
@@ -129,7 +130,7 @@ const initAnswerComment = () => {
 }
 initAnswerComment();
 initlikeButtonListeners();
-// getAllComments();
+getAllComments();
 
 nameInputElement.addEventListener('input', () => {
     if (nameInputElement.value.trim() !== '') {
@@ -179,13 +180,13 @@ deletElement.addEventListener("click", () => {
 
   invisibleDivHead.classList.add('hidden');
   invisibleDiv.classList.add('hidden');
-  invizPushComm.classList.add('hidden');
+  // invizPushComm.classList.add('hidden');
 
 
 
   initlikeButtonListeners(comments);
   initAnswerComment();
-
+  // renderComments()
 };
 
 export { renderComments };
