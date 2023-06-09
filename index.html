@@ -125,7 +125,7 @@
       const likeButtonElements = document.querySelectorAll('.like-button');
       for (let i = 0; i < likeButtonElements.length; i++) {
         likeButtonElements[i].addEventListener("click", (event) => {
-          // event.stopPropagation();
+          event.stopPropagation();
           if (comments[i].commentNoLike === true) {
             comments[i].commentNoLike = false;
             comments[i].commentLikes++;
@@ -167,7 +167,17 @@
       addTextElement.value = "";
     }
     )
-
+    function addReply() {
+      const commentElements = document.querySelectorAll(".comment");
+      for (const commentElement of commentElements) {
+        commentElement.addEventListener("click", () => {
+          const authorName = commentElement.querySelector(".comment-header div:first-child").textContent;
+          const authorText = commentElement.querySelector(".comment-text").textContent;
+          addTextElement.value = `> ${authorText.trim()}\n${authorName}, `;
+          addTextElement.focus();
+        })
+      }
+    }
     deleteLastCommentButton.addEventListener("click", () => {
       const commentsList = document.getElementById("comments");
       const lastComment = commentsList.querySelector(".comment:last-of-type");
@@ -202,6 +212,8 @@
 
       commentsList.innerHTML = commentsHtml;
       addLikeButtonElement();
+      addReply();
+
     }
     renderComments();
 
