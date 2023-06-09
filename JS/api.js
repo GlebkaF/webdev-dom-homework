@@ -1,4 +1,4 @@
-import { renderComments } from "./renderComments.js";
+import { renderApp } from "./renderApp.js";
 import { getCommentsList } from "./CommentsList.js";
 
 const listElem = document.getElementById('list-comments');
@@ -27,7 +27,7 @@ function getFromApi(data) {
     }).then((responceData) => {
         data = responceData.comments;
         isInitialLoading = false;
-        renderComments(data, listElem, getCommentsList);
+        renderApp(data, listElem, getCommentsList);
         newComments = data;
     }).catch((error) => {
         if (error.message === "Ошибка 500") {
@@ -76,7 +76,7 @@ function postToApi(data, addCommentElem, addNameElem) {
         getFromApi(data);
     }).then(() => {
         isPosting = true;
-        renderComments(data, listElem, getCommentsList);
+        renderApp(data, listElem, getCommentsList);
         addNameElem.value = '';
         addCommentElem.value = '';
         isPosting = false;

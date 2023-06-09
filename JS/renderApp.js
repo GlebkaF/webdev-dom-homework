@@ -1,12 +1,11 @@
 import { likeButtonsListeners } from "./likes.js";
 import { isInitialLoading, isPosting } from "./api.js";
-import { getFromApi, postToApi } from "./api.js";
+import { postToApi } from "./api.js";
 
-// const loadingComments = document.querySelector('.loading');
 const appElement = document.getElementById('app');
 
 
-const renderComments = (data, elem, getList) => {
+const renderApp = (data, elem, getList) => {
 
     const commentsHtml = data
         .map((comment, index) => getList(comment, index))
@@ -42,7 +41,7 @@ const renderComments = (data, elem, getList) => {
 
     appElement.innerHTML = appHtml;
 
-    // const listElem = document.getElementById('list-comments');
+
     const commentBtn = document.getElementById('form-add-button');
     const addName = document.getElementById('add-name');
     const addComment = document.getElementById('add-comment');
@@ -67,8 +66,6 @@ const renderComments = (data, elem, getList) => {
     likeButtonsListeners();
 
 
-
-
     const addNewComment = () => {
         commentBtn.addEventListener("click", () => {
             addName.classList.remove("error");
@@ -81,7 +78,7 @@ const renderComments = (data, elem, getList) => {
             };
 
 
-            renderComments(data, elem, getList);
+            renderApp(data, elem, getList);
             postToApi(data, addComment, addName);
         });
     };
@@ -129,4 +126,4 @@ const renderComments = (data, elem, getList) => {
 };
 
 
-export { renderComments };
+export { renderApp };
