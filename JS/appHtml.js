@@ -25,3 +25,15 @@ export const getApp = (commentsHtml) => {
                 <div class="comment-added" style="display: none;">Комментарий добавляется...</div>
             </div>`
 };
+
+
+export const getCommentsAndAuth = (commentsHtml) => {
+    return `
+            <div class="container">
+                <div class="loading" style="display: none;">Комментарии загружаются...</div>
+                <ul class="comments" id="list-comments">
+                ${commentsHtml}
+                </ul>
+                <div class="offer">Чтобы добавить комментарий, <a href="#" class="link">авторизуйтесь</a></div>
+            </div>`
+};
