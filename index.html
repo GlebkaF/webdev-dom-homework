@@ -7,8 +7,8 @@
   </head>
 
   <body>
-    <div class="container">
-      <ul class="comments">
+    <div class="container" >
+      <ul class="comments" id="comment_contaiter">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -22,7 +22,7 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">3</span>
-              <button class="like-button"></button>
+              <button id="buttonlike" class="like-button"></button>
             </div>
           </div>
         </li>
@@ -44,28 +44,93 @@
           </div>
         </li>
       </ul>
-      <div class="add-form">
+      <div  class="add-form">
         <input
+          id="input_name"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
+          id="text_massage"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="button_send" class="add-form-button pointer-events">Написать</button>
         </div>
       </div>
     </div>
   </body>
 
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+
+      const input_name = document.getElementById("input_name");
+      const text_massage = document.getElementById("text_massage");
+      const button_send = document.getElementById("button_send");
+      const add_form = document.getElementById("add_form");
+      const comment_contaiter = document.getElementById("comment_contaiter");
+     const now = new Date();
+    const data = (now.getDate() + "." + 0 + (Number(now.getMonth()) + 1) + "." + (Number(now.getFullYear()) - 2000) + " " + now.getHours() + ":" + now.getMinutes());
+
+      button_send.addEventListener("click", ()=> {
+        if(input_name.value === '' ) {
+          input_name.style.backgroundColor = 'red';
+          return
+        }
+
+        if(text_massage.value === ''){
+          text_massage.style.backgroundColor = 'red';
+          return
+        }
+
+         const oldcontainer = comment_contaiter.innerHTML;
+         comment_contaiter.innerHTML = oldcontainer + `<li class="comment">
+          <div class="comment-header display_flex">
+            <div>${input_name.value}</div>
+            <div>${data}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${text_massage.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div></li>`
+          input_name.style.backgroundColor = 'white';
+          text_massage.style.backgroundColor = 'white';
+          input_name.value= '';
+          text_massage.value= '';
+      });
+
+      
+      input_name.addEventListener("input", ()=> {
+        button_send.classList.remove('pointer-events')
+        input_name.style.backgroundColor = 'white;'
+      });
+
+      text_massage.addEventListener("input", ()=> {
+        button_send.classList.remove('pointer-events')
+        text_massage.style.backgroundColor = 'white;'
+      });
+
+
+      
+
+
+
+    
+
+
+      
+
+
+
   </script>
 </html>
