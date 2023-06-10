@@ -1,19 +1,17 @@
 import { now } from "./data.js";
-import { renderComments } from "./render.js";
-import { comments } from "./main.js";
-import { textElement, nameElement } from "./main.js";
 
-export const getAllComments = (comments) => {
-    return fetch("https://webdev-hw-api.vercel.app/api/v1/ramzil-khalimov/comments", {
+const baseHost = "https://wedev-api.sky.pro/api/v2/ramzil-khalimov/comments"
+
+export const getAllComments = () => {
+    const token = localStorage.getItem('token');
+    return fetch(baseHost, {
         method: "GET",
         forceError: false,
+        headers: {
+            Authorization: token,
+        },
     })
         .then((response) => {
-            if (response.status === 200) {
-            };
-            if (response.status === 500) {
-                throw new Error("Ошибка сервера");
-            };
             return response.json();
         })
         .then((responseData) => {
@@ -25,23 +23,23 @@ export const getAllComments = (comments) => {
                     like: comment.likes,
                     isLiked: false,
                 };
-            });
-            comments = appComments;
-            renderComments(comments);
+            })
+            return appComments;
         });
 };
 
-export const newComment = () => {
-    fetch("https://webdev-hw-api.vercel.app/api/v1/ramzil-khalimov/comments", {
+export const newComment = (text) => {
+    const token = localStorage.getItem('token');
+    return fetch(baseHost, {
         method: "POST",
         body: JSON.stringify({
-            name: nameElement.value,
-            text: textElement.value,
+            text: text,
             forceError: false,
-        })
+        }),
+        headers: {
+            Authorization: token,
+        }
     }).then((response) => {
-        if (response.status === 201) {
-        };
         if (response.status === 500) {
             throw new Error("Ошибка сервера");
         }
@@ -49,26 +47,46 @@ export const newComment = () => {
             throw new Error("Неверный запрос");
         }
         return response.json();
-    }).then((responseData) => {
-        return getAllComments(comments);
-    }).then(() => {
-        // buttonElement.disabled = false;
-        // buttonElement.textContent = "Написать";
-        // addHidden.style.display = "block";
-        nameElement.value = "";
-        textElement.value = "";
-    }).catch((error) => {
-        if (error.message === "Ошибка сервера") {
-            alert("Сервер сломался, попробуй позже");
-            return;
-        };
-        if (error.message === "Неверный запрос") {
-            alert("Имя и комментарий должны быть не короче 3 символов");
-            return;
-        } else {
-            alert("У вас проблемы с интернетом");
-            return;
-        };
-
     })
 };
+export function registerUser({ login, password, name }) {
+    return fetch("https://wedev-api.sky.pro/api/user", {
+        method: "POST",
+        body: JSON.stringify({
+            login,
+            password,
+            name,
+        }),
+    }).then((response) => {
+        if (response.status === 400) {
+            throw new Error("Такой пользователь уже существует");
+        }
+        return response.json();
+    });
+}
+
+export function loginUser({ login, password }) {
+    return fetch(" https://wedev-api.sky.pro/api/user/login", {
+        method: "POST",
+        body: JSON.stringify({
+            login,
+            password,
+        }),
+    }).then((response) => {
+        if (response.status === 400) {
+            throw new Error("Неверный логин или пароль");
+        }
+        return response.json();
+    }).then((user) => {
+        localStorage.setItem('token', `Bearer ${user.user.token}`);
+        localStorage.setItem('user', user.user.name);
+    });
+
+}
+export const isUserAuthorization = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        return true;
+    }
+    return false;
+}
