@@ -9,7 +9,6 @@ export let isPosting = false;
 
 const baseHost = "https://wedev-api.sky.pro/api/v2/freddy-krugliy/comments";
 
-
 function getFromApi(data) {
     return fetch(baseHost, {
         method: "GET",
@@ -30,7 +29,7 @@ function getFromApi(data) {
     }).catch((error) => {
         if (error.message === "Ошибка 500") {
             console.log(error);
-            alert("Сервер сломался, попробуй позже");
+            alert("Сервер сломался, попробуйте позже");
         } else {
             console.log(error);
             alert("Кажется, у вас сломался интернет, попробуйте позже");

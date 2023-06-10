@@ -19,13 +19,29 @@ export function renderLoginComponent({ appHtml, appElement, commentsHtml, setTok
         const loginBtn = document.getElementById('login-button');
 
         loginBtn.addEventListener("click", () => {
+            const login = document.getElementById('login-input').value;
+            const password = document.getElementById('password-input').value;
+
+            if (!login) {
+                alert("Вы не ввели логин")
+                return;
+            };
+
+            if (!password) {
+                alert("Вы не ввели пароль")
+                return;
+            };
 
             loginToApp({
-                login: "admin",
-                password: "admin",
+                login: login,
+                password: password,
             }).then((user) => {
                 setToken(`Bearer ${user.user.token}`);
                 getFromApi(newComments);
+            }).catch((error) => {
+                if (error.message === "Неверный логин или пароль") {
+                    alert(error.message);
+                }
             })
         });
     });
