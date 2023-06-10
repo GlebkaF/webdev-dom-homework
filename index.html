@@ -54,7 +54,7 @@ const comments = [
   likeComment: false,
   likesNumber: 75, 
   propertyColorLike:  '',
-
+  
   },
 ];
 let now = new Date().toLocaleDateString('default', {year: '2-digit', month: '2-digit', day: '2-digit'})
@@ -67,7 +67,8 @@ const likesButton = document.querySelectorAll('.like-button');
 
 for (const like of likesButton) {
 
-  like.addEventListener("click", () => {
+  like.addEventListener("click", (event) => {
+    event.stopPropagation();
     const likeIndex = like.dataset.index;
     const commentsElement = comments[likeIndex];
             
@@ -81,15 +82,16 @@ for (const like of likesButton) {
       commentsElement.propertyColorLike = 'like-button -active-like';                  
     }
     renderComments();  
-   
+     
   })
 }
+
 };
 likeCommentButton();
 
 const renderComments = () => {
  const commentsHTML = comments.map((comment, index) => {
-return    `<li class = 'comment'> <div class = 'comment-header'>
+return    `<li class = 'comment' class = 'whiteSpace'   data-index ="${index}"> <div class = 'comment-header'>
       <div>${comment.name}</div> 
       <div>${comment.dateCreation}</div>
     </div>  
@@ -113,7 +115,7 @@ return    `<li class = 'comment'> <div class = 'comment-header'>
 
 commentsElement.innerHTML = commentsHTML;
 likeCommentButton();
-          };
+};
 renderComments();
   
 buttonElement.addEventListener ("click", () => {
@@ -135,7 +137,7 @@ comments.push({
         .replaceAll('"', "&quot;"),
   dateCreation: commentDate, 
   textElement: textElement.value
-         .replaceAll("&", "&amp;")
+        .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;"),
@@ -149,6 +151,19 @@ textElement.value = '';
 
 });
 
+const quotation = () => {
+  
+  const commentElements  = document.querySelectorAll ('.comment');
+  for (const commentElement of commentElements){
+commentElement.addEventListener('click', () => {
+const index = commentElement.dataset.index;
+textElement.value = `"${comments[index].name}:  ${comments[index].textElement}"\n`
+
+    })
+  }
+
+}
+quotation ();
     console.log("It works!");
   </script>
 </html>
