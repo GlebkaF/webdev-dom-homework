@@ -1,4 +1,5 @@
 import { commentsLoad, renderApp,  token } from "./index.js";
+
 const host = 'https://wedev-api.sky.pro/api/v2/tanya-koryachkina/comments';
 export let commentaries = [];
 export function fetchGet () {
@@ -11,7 +12,7 @@ export function fetchGet () {
         .map((comment) => {
             return {
                 name: comment.author.name,
-                date: new Date(Date.parse(comment.date)).toLocaleDateString() + ' ' + new Date(Date.parse(comment.date)).getHours() + ':' + new Date(Date.parse(comment.date)).getMinutes(),
+                date: comment.date,
                 text: comment.text,
                 likes: comment.likes,
                 isLiked: false,

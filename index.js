@@ -1,23 +1,28 @@
 import { addComment, fetchGet, commentaries } from "./api.js";
 import { renderLoginComponent } from "./components/login-component.js";
+//import { formatDateToSw } from "./lib/formatDate/formatDate.js";
+import { format } from "date-fns";
+
 
 
 //export let commentaries = [];
 
 //let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+
 export let token = null;
 export const commentsLoad = document.querySelector(".comments-load");
-fetchGet ()
+fetchGet ();
 const appEl = document.getElementById('app');
 export function renderApp  ()  {
     
     if(!token) {
         const commentsHtml = commentaries.map((comment, index) => {
-
+            const createDate = format(new Date(comment.date), 'yyyy-MM-dd HH.mm.ss');
             return `<li class="comment" data-id='${comment.id}'>
                   <div class="comment-header">
                     <div>${comment.name}</div>
-                    <div>${comment.date}
+                    <div>
+                    ${createDate}
                     </div>
                   </div>
                   <div class="comment-body">
@@ -61,11 +66,11 @@ export function renderApp  ()  {
               });
             } else {
                 const commentsHtml = commentaries.map((comment, index) => {
-
+                  const createDate = format(new Date(comment.date), 'yyyy-MM-dd HH.mm.ss');
                     return `<li class="comment" data-id='${comment.id}'>
                     <div class="comment-header">
                       <div>${comment.name}</div>
-                      <div>${comment.date}
+                      <div>${createDate}
                       </div>
                     </div>
                     <div class="comment-body">
