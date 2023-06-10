@@ -89,12 +89,11 @@
   const initLikeButtonListeners = () => {
     const likeButtonsElements = document.querySelectorAll(".like-button");
     for (const likeButtonElement of likeButtonsElements) {
-      likeButtonElement.addEventListener("click", () => {
+      likeButtonElement.addEventListener("click", (event) => {
         const index = likeButtonElement.dataset.index;
         if (comments[index].tap) {
           comments[index].likes--;
           comments[index].tap = false;
-          console.log(likeButtonsElements[index]);
         } else {
           comments[index].likes++;
           comments[index].tap = true;
@@ -104,9 +103,22 @@
 
         console.log("нажал");
         renderComments();
+        event.stopPropagation();
       });
     }
   };
+
+  const answerComment = () => {
+    const boxCommentsTexts = document.querySelectorAll('.comment');
+    boxCommentsTexts.forEach((comment) => {
+      comment.addEventListener('click', () => {
+        const author = comment.querySelector('.comment-header div:first-child').textContent;
+        const text = comment.querySelector('.comment-text').textContent;
+        addFormText.value = ` > Автор: ${author} \n ${text} \n Ответ: `;
+      });
+    });
+  }
+  answerComment();
 
   const renderComments = () => {
     const commentsHtml = comments
@@ -132,6 +144,7 @@
       .join("");
     listElement.innerHTML = commentsHtml;
     initLikeButtonListeners();
+    answerComment();
   };
 
   renderComments();
@@ -167,9 +180,17 @@
         </div>
       </li>`
     comments.push({
-      name: addFormName.value,
+      name: addFormName.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       date: now,
-      comment: addFormText.value,
+      comment: addFormText.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       likes: 0,
       tap: false,
     });
