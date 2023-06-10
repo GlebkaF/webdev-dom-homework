@@ -5,8 +5,8 @@ export const renderLoginComponent = ({ appEl, initApp }) => {
   let isLoginMode = true;
   const renderForm = () => {
     const appHtml = `
-    <div class="form">
-    <h3 class="add-form">Форма ${isLoginMode ? "входа" : "регистрации"}</h3>
+    <div class="form"></div>
+    <div class="add-form">Форма ${isLoginMode ? "входа" : "регистрации"}
     ${isLoginMode ? ""
         :
         `<input type="text" class="form-name" 
@@ -19,8 +19,8 @@ export const renderLoginComponent = ({ appEl, initApp }) => {
 
     <div class="form-row">
       <button id="active-registr" class="form-button">${isLoginMode ? "Войти" : "Зарегистрироваться"}</button>
+      </div>
       <a id="signUp" class="form-registr" href="#">${isLoginMode ? "Зарегистрироваться" : "Войти"}</a>
-    </div>
   </div>
   `
     appEl.innerHTML = appHtml;

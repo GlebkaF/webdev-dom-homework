@@ -122,7 +122,6 @@ export const renderComments = ({ comments, handleCommentAnswerClick, handleComme
   initAppRender()
   initLikeButtonListener(handleCommentLikeClick);
   initAnswerButton(handleCommentAnswerClick);
-  // deleteButton(handleCommentDeleteClick);
 }
 
 export const initLikeButtonListener = (handleCommentLikeClick) => {
@@ -137,9 +136,3 @@ export const initAnswerButton = (handleCommentAnswerClick) => {
     commentsAnswer.addEventListener("click", handleCommentAnswerClick);
   }
 };
-// export const deleteButton = (handleCommentDeleteClick) => {
-//   const deleteButtonElements = document.querySelectorAll(".delete-button");
-//   for (let deleteButtonElement of deleteButtonElements) {
-//     deleteButtonElement.addEventListener("click", handleCommentDeleteClick);
-//   }
-// };
