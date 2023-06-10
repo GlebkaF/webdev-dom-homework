@@ -8,12 +8,12 @@ export const appElement = document.getElementById('app');
 
 // + Добавить авторизацию по логину и паролю
 // + Связать авторизацию с токеном, после аутентификации должна загружаться рабочая страница
-// - Добавить форму регистрации и кнопку-toggle
+// + Добавить форму регистрации и кнопку-toggle
 // + Перенести рендер логина в отдельный модуль
+// - Подключить регистрацию
 // - Обработать логин, имя и пароль при регистрации (функцией escapeHtml)
 // - Заменить алерты более подходящим способом
 // - В конце не забыть убрать все доп функции в отдельный модуль
-
 
 export let token;
 let appHtml;
@@ -44,7 +44,6 @@ const renderApp = (data, elem, getList) => {
         });
         return;
     };
-
 
     appHtml = getApp(commentsHtml);
     appElement.innerHTML = appHtml;
@@ -121,13 +120,10 @@ const renderApp = (data, elem, getList) => {
         };
     };
 
-
     addName.addEventListener('input', checkInputs);
     addName.addEventListener('keyup', addNewCommentOnEnter);
     addComment.addEventListener('input', checkInputs);
     addComment.addEventListener('keyup', addNewCommentOnEnter);
-
 };
-
 
 export { renderApp };

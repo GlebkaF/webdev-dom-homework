@@ -58,7 +58,6 @@ function postToApi(data, addCommentElem, addNameElem) {
         body: JSON.stringify({
             text: escapeHtml(addCommentElem.value.trim()),
             name: escapeHtml(addNameElem.value.trim()),
-            // forceError: true,
         })
     }).then((response) => {
         if (response.status === 400) {

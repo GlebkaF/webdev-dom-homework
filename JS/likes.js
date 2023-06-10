@@ -15,7 +15,7 @@ const likeButtonsListeners = () => {
             likeButtonElement.classList.add("-loading-like");
             const comment = newComments[likeButtonElement.dataset.index];
 
-            delay(2000).then(() => {
+            delay().then(() => {
                 comment.likes = comment.isLiked ? comment.likes - 1 : comment.likes + 1;
                 comment.isLiked = !comment.isLiked;
             }).then(() => {
