@@ -1,4 +1,4 @@
-import { isLoginMode } from "./components/login-component.js";
+import { isLoginMode, userName } from "./components/login-component.js";
 
 
 export const getApp = (commentsHtml) => {
@@ -9,7 +9,7 @@ export const getApp = (commentsHtml) => {
                 ${commentsHtml}
                 </ul>
                 <div class="add-form">
-                    <input type="text" class="add-form-name" id="add-name" placeholder="Введите ваше имя" />
+                    <input type="text" class="add-form-name" id="add-name" placeholder="Введите ваше имя" value="${userName}" disabled />
                     <textarea type="textarea" class="add-form-text" id="add-comment" placeholder="Введите ваш коментарий"
                         rows="4"></textarea>
                     <div class="add-form-row">

@@ -4,7 +4,7 @@ import { isInitialLoadingFunc } from "../renderApp.js";
 import { loginToApp } from "../user-api.js";
 
 export let isLoginMode = true;
-
+export let userName = {};
 
 export function renderLoginComponent({ appHtml, appElement, commentsHtml, setToken }) {
 
@@ -44,6 +44,8 @@ export function renderLoginComponent({ appHtml, appElement, commentsHtml, setTok
                     password: password,
                 }).then((user) => {
                     setToken(`Bearer ${user.user.token}`);
+                    userName = user.user.name;
+                    console.log(userName);
                     getFromApi(newComments);
                 }).catch((error) => {
                     if (error.message === "Неверный логин или пароль") {
