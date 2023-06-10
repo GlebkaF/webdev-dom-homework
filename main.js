@@ -44,11 +44,12 @@ let commentAnswer = null;
 const handleCommentAnswerClick = (event) => {
     const textElement = document.getElementById("add-text");
     commentAnswer = event.target.dataset.index;
-    textElement.value = `>${comments[commentAnswer].text} ${comments[commentAnswer].name}`
-    // .replaceAll('<', '&lt;')
-    // .replaceAll('>', '&gt;')
-    // .replaceAll('&', '&amp;')
-    // .replaceAll('"', '&quot;')}`;
+    textElement.value = `> ${comments[commentAnswer].text
+        }`
+        + `\n\n${comments[commentAnswer].name
+        }`
+    // textElement.value = `>${comments[commentAnswer]}`;
+
 };
 // const handleCommentDeleteClick = (event) => {
 //     const button = event.target;
