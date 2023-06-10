@@ -102,6 +102,17 @@ export const userRegistration = ({name, login, password}) => {
     .then((response) => (response.json()))
     }
 
+    export const apiDeleteComment = (id) => {
+      const token = localStorage.getItem('token');
+      return fetch (`https://wedev-api.sky.pro/api/v2/olya-myalo/comments/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then((response) => (response.json()))
+      }
+
   export const isUserAuthorization = () => {
     const token = localStorage.getItem('token');
     if (token) {

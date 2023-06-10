@@ -1,9 +1,9 @@
 "use strict";
-import { fetchComments, apiLike } from "./api.js";
+import { fetchComments, apiLike, apiDeleteComment } from "./api.js";
 import { renderComments } from "./renderComments.js"
 
 const renderApp = () => {
-renderComments({comments, handleCommentEditClick, handleCommentFeedbackClick, handleCommentLikeClick});
+renderComments({comments, handleCommentDeleteClick, handleCommentEditClick, handleCommentFeedbackClick, handleCommentLikeClick});
 }
 
   const commentAdding = document.createElement('div'); 
@@ -74,6 +74,14 @@ const handleCommentFeedbackClick = (event) => {
   currentCommentFeedback = event.target.dataset.index;
   commentInputElement.value = `>${comments[currentCommentFeedback].text} ${comments[currentCommentFeedback].name}`;
 };
+
+const handleCommentDeleteClick = (event, comment) => {
+  const commentElement = event.target.closest(".comment");
+  if (commentElement) {
+    commentElement.remove();
+    apiDeleteComment(comment.id);
+  }
+}
 
 initApp();
 

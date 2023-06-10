@@ -15,6 +15,7 @@ const getListCommentsEdit = (comment, index) => {
              </div>
            </div>
            <div class="comment-footer">
+              <button data-index="${index}" class="delete-button">Удалить</button>
              <button data-index="${index}" class="edited-button">Редактировать</button>
              <div class="likes">
                <span class="likes-counter">${comment.like}</span> ${comment.like === 1 ? 'лайк' : 'лайков'}
@@ -24,7 +25,7 @@ const getListCommentsEdit = (comment, index) => {
          </li>`
 }
 
-export const renderComments = ({comments, handleCommentEditClick, handleCommentFeedbackClick, handleCommentLikeClick}) => {
+export const renderComments = ({comments, handleCommentDeleteClick, handleCommentEditClick, handleCommentFeedbackClick, handleCommentLikeClick}) => {
   const appEl = document.getElementById("app");
   const nameUser = localStorage.getItem('user');
   const commentsHtml = comments.map((comment, index) => getListCommentsEdit(comment, index))
@@ -122,6 +123,7 @@ export const renderComments = ({comments, handleCommentEditClick, handleCommentF
       onCommentLikeClick(handleCommentLikeClick);
       onCommentEditClick(handleCommentEditClick);
       onCommentFeedbackClick(handleCommentFeedbackClick);
+      onCommentDeleteClick(handleCommentDeleteClick);
    }
 export const onCommentLikeClick = (handleCommentLikeClick) => {
     const likeButtonsElements = document.querySelectorAll(".like-button");
@@ -134,6 +136,12 @@ export const onCommentEditClick = (handleCommentEditClick) => {
     for (const editButtonElement of editButtonsElements) { 
       editButtonElement.addEventListener("click", handleCommentEditClick);
     } 
+  };
+  export const onCommentDeleteClick = (handleCommentDeleteClick) => {   
+    const deleteButtonsElements = document.querySelectorAll(".delete-button");    
+    for (const deleteButtonElement of deleteButtonsElements) {    
+      deleteButtonElement.addEventListener("click", handleCommentDeleteClick);   
+    }   
   };
 export const onCommentFeedbackClick = (handleCommentFeedbackClick) => {  
     const feedbackButtonsElements = document.querySelectorAll(".comment-text");   
