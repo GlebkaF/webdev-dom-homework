@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="comment-list">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -26,7 +26,7 @@
             </div>
           </div>
         </li>
-        <li class="comment">
+        <li id="" class="comment">
           <div class="comment-header">
             <div>Варвара Н.</div>
             <div>13.02.22 19:22</div>
@@ -44,28 +44,28 @@
           </div>
         </li>
       </ul>
+      <div class="add-form-row">
+        <button class="add-form-button" id="delete-button">Удалить комментарий</button>
+      </div>
       <div class="add-form">
         <input
+          id="name-input"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
+          id="comment-text"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="write-button">Написать</button>
         </div>
       </div>
     </div>
+    <script src="hw-9.js"></script>
   </body>
-
-  <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
-  </script>
 </html>
