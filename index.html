@@ -70,16 +70,6 @@
     const newComment = form.querySelector('.add-form-text');
     const addButton = form.querySelector('.add-form-button');
     const comments = document.querySelector('.comments');
-    const boxOfComments = document.querySelector('.comments');
-
-
-function prov() {
-    addButton.disabled = true;
-  if (newName.lenght===0 && newComment.lenght===0) {
-    addButton.disabled = true;
-}
-}
-prov();
 
     newName.addEventListener('input', function () {
     if (newName.value==='' || newComment.value==='') {
