@@ -44,22 +44,12 @@ let commentAnswer = null;
 const handleCommentAnswerClick = (event) => {
     const textElement = document.getElementById("add-text");
     commentAnswer = event.target.dataset.index;
-    textElement.value = `> ${comments[commentAnswer].text
+    textElement.value = `> ${comments[commentAnswer]
         }`
-        + `\n\n${comments[commentAnswer].name
+        + `\n\n${comments[commentAnswer]
         }`
-    // textElement.value = `>${comments[commentAnswer]}`;
+
 
 };
-// const handleCommentDeleteClick = (event) => {
-//     const button = event.target;
-//     const index = button.dataset.index;
-//     const lastCommentIndex = document.getElementById('add-delete')
-//     if (lastCommentIndex !== -1) {
-//         comments[index]
-//     }
-//     comments.pop();
-//     renderApp();
-// }
 initApp();
 
