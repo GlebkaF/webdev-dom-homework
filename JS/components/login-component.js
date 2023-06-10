@@ -3,7 +3,11 @@ import { getAuthForm, getCommentsAndAuth } from "../appHtml.js";
 import { isInitialLoadingFunc } from "../renderApp.js";
 import { loginToApp } from "../user-api.js";
 
+export let isLoginMode = true;
+
+
 export function renderLoginComponent({ appHtml, appElement, commentsHtml, setToken }) {
+
     appHtml = getCommentsAndAuth(commentsHtml);
     appElement.innerHTML = appHtml;
 
@@ -13,36 +17,47 @@ export function renderLoginComponent({ appHtml, appElement, commentsHtml, setTok
     isInitialLoadingFunc(loadingComments);
 
     authLink.addEventListener("click", () => {
-        appHtml = getAuthForm();
-        appElement.innerHTML = appHtml;
 
-        const loginBtn = document.getElementById('login-button');
+        const renderForm = () => {
+            appHtml = getAuthForm();
+            appElement.innerHTML = appHtml;
 
-        loginBtn.addEventListener("click", () => {
-            const login = document.getElementById('login-input').value;
-            const password = document.getElementById('password-input').value;
+            const loginBtn = document.getElementById('login-button');
+            const toggleBtn = document.getElementById('toggle-button');
 
-            if (!login) {
-                alert("Вы не ввели логин")
-                return;
-            };
+            loginBtn.addEventListener("click", () => {
+                const login = document.getElementById('login-input').value;
+                const password = document.getElementById('password-input').value;
 
-            if (!password) {
-                alert("Вы не ввели пароль")
-                return;
-            };
+                if (!login) {
+                    alert("Вы не ввели логин")
+                    return;
+                };
 
-            loginToApp({
-                login: login,
-                password: password,
-            }).then((user) => {
-                setToken(`Bearer ${user.user.token}`);
-                getFromApi(newComments);
-            }).catch((error) => {
-                if (error.message === "Неверный логин или пароль") {
-                    alert(error.message);
-                }
-            })
-        });
+                if (!password) {
+                    alert("Вы не ввели пароль")
+                    return;
+                };
+
+                loginToApp({
+                    login: login,
+                    password: password,
+                }).then((user) => {
+                    setToken(`Bearer ${user.user.token}`);
+                    getFromApi(newComments);
+                }).catch((error) => {
+                    if (error.message === "Неверный логин или пароль") {
+                        alert(error.message);
+                    }
+                })
+            });
+
+            toggleBtn.addEventListener("click", () => {
+                isLoginMode = !isLoginMode;
+                renderForm();
+            });
+        };
+
+        renderForm();
     });
 };
