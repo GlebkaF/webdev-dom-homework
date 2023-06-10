@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Проект "Комменты"</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <ul class="comments" id="comments">
+<!-- Список из js -->
+      </ul>
+      <div class="add-form">
+        <input
+          type="text"
+          class="add-form-name"
+          placeholder="Введите ваше имя" id = 'input-name'
+        />
+        <textarea
+          type="textarea"
+          class="add-form-text"
+          placeholder="Введите ваш коментарий"
+          rows="4" id ="new-text"
+        ></textarea>
+        <div class="add-form-row">
+          <button class="add-form-button" id = 'add-form-button'>Написать</button>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    "use strict";
+const buttonElement = document.getElementById('add-form-button');
+const commentsElement = document.querySelector('.comments');
+const nameInputElement = document.getElementById('input-name');
+const textElement = document.querySelector('.add-form-text');
+
+
+
+const comments = [
+  {
+  name: 'Глеб Фокин',
+  dateCreation: '12.02.22 12:18', 
+  textElement: 'Это будет первый комментарий на этой странице',
+  likeComment: false,
+  likesNumber: 3, 
+  propertyColorLike:  '',
+  },
+  {
+  name: 'Варвара Н.',
+  dateCreation: '13.02.22 19:22', 
+  textElement: 'Мне нравится как оформлена эта страница! ❤',
+  likeComment: false,
+  likesNumber: 75, 
+  propertyColorLike:  '',
+
+  },
+];
+let now = new Date().toLocaleDateString('default', {year: '2-digit', month: '2-digit', day: '2-digit'})
+let time = new Date().toTimeString().substr(0,5);
+let commentDate = ` ${now} ${time}`;
+
+function likeCommentButton() {    
+
+const likesButton = document.querySelectorAll('.like-button');
+
+for (const like of likesButton) {
+
+  like.addEventListener("click", () => {
+    const likeIndex = like.dataset.index;
+    const commentsElement = comments[likeIndex];
+            
+    if (commentsElement.likeComment) {
+      commentsElement.likesNumber -= 1;
+      commentsElement.likeComment = false;
+      commentsElement.propertyColorLike = 'like-button -no-active-like';           
+    } else {
+      commentsElement.likesNumber += 1;
+      commentsElement.likeComment = true;
+      commentsElement.propertyColorLike = 'like-button -active-like';                  
+    }
+    renderComments();  
+   
+  })
+}
+};
+likeCommentButton();
+
+const renderComments = () => {
+ const commentsHTML = comments.map((comment, index) => {
+return    `<li class = 'comment'> <div class = 'comment-header'>
+      <div>${comment.name}</div> 
+      <div>${comment.dateCreation}</div>
+    </div>  
+
+    <div class = 'comment-body'>
+  <div class = "comment-text">
+  ${comment.textElement}
+  </div>
+  </div>
+
+
+  <div class = "comment-footer" >
+    <div class = 'likes'>      
+        <span class="likes-counter">${comment.likesNumber}</span>
+    <button data-index = '${index}' class=" like-button ${comment.propertyColorLike}"></button>
+            </div> 
+</div>
+      
+
+            </li>`;}).join('');
+
+commentsElement.innerHTML = commentsHTML;
+likeCommentButton();
+          };
+renderComments();
+  
+buttonElement.addEventListener ("click", () => {
+  nameInputElement.style.background = '';
+if (nameInputElement.value === "" ){
+  nameInputElement.style.background = 'red';
+  return;
+ };
+ textElement.style.background = '';
+if (textElement.value === ""){
+  textElement.style.background = 'red';
+  return;
+ };
+comments.push({
+  name: nameInputElement.value,
+  dateCreation: commentDate, 
+  textElement: textElement.value,
+  likeComment: false,
+  likesNumber: 0, 
+  propertyColorLike:  '',
+})
+renderComments();
+nameInputElement.value = "";
+textElement.value = '';
+
+});
+
+    console.log("It works!");
+  </script>
+</html>
