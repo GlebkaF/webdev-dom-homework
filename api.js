@@ -1,5 +1,5 @@
 import { formatDate } from "./Date.js";
-import { renderComments} from "./render.js";
+import { renderComments, token } from "./render.js";
 // import { commentInputElement} from "./render.js";
 // import {comments} from "./render.js";
 // import { nameInputElement  } from "./render.js";
@@ -7,8 +7,9 @@ import { renderComments} from "./render.js";
 // import { commentInputElement } from "./main.js";
 
 const host = "https://webdev-hw-api.vercel.app/api/v1/max-kyrtimov/comments";
-const host2 = "https://wedev-api.sky.pro/api/v2/max-kyrtimov/comments";
-let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+const host2 = "https://wedev-api.sky.pro/api/v2/max-kyrtimov12/comments";
+
+
 
 export const getAllComments = (comments) => {
     return fetch(host2, {
@@ -40,7 +41,7 @@ export const getAllComments = (comments) => {
         });
 };
 
-export const finComments = () => {
+export const finComments = ({ text, token }) => {
     fetch(host2, {
         method: "POST",
         body: JSON.stringify({
@@ -64,13 +65,13 @@ export const finComments = () => {
             }
         })
         .then((responseData) => {
-            return getAllComments(comments);
+            return getAllComments();
         })
         .then((data) => {
             // addFormLoad.classList.remove('hidden');
             // invisibleDiv.classList.add('hidden');
-            nameInputElement.value = "";
-            commentInputElement.value = "";
+            // nameInputElement.value = "";
+            // commentInputElement.value = "";
             // buttonElemtnt.disabled = true;
         })
         .catch((error) => {
@@ -93,4 +94,36 @@ export const finComments = () => {
             // invisibleDiv.classList.add('hidden');
         })
 };
-// // export { getAllComments, finComments };
+
+
+// https://github.com/GlebkaF/webdev-hw-api/blob/main/pages/api/user/README.md
+export function loginUser({ login, password }) {
+    return fetch("https:wedev-api.sky.pro/api/user/login", {
+        method: "POST",
+        body: JSON.stringify({
+            login,
+            password,
+        }),
+    }).then((response) => {
+        if(response.status === 400) {
+            throw new Error('Неверный логин или пароль')
+        }
+        return response.json();
+    });
+}
+
+export function registrUser({ login, password, name }) {
+    return fetch("https:wedev-api.sky.pro/api/user", {
+        method: "POST",
+        body: JSON.stringify({
+            login,
+            password,
+            name,
+        }),
+    }).then((response) => {
+        if(response.status === 400) {
+            throw new Error('Такой пользователь уже существует')
+        }
+        return response.json();
+    });
+}
