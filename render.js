@@ -48,7 +48,7 @@ export const renderComments = ({ comments, handleCommentAnswerClick, handleComme
         id="add-text"></textarea>
       <div class="add-form-row">
         <button id="add-button" class="add-form-button">Написать</button>
-        <button id="add-delete" class="delete-button" data-index="${index}">Удалить</button>
+        <button id="add-delete" class="delete-button">Удалить</button>
       </div>
     </div>
   </div>
@@ -122,7 +122,7 @@ export const renderComments = ({ comments, handleCommentAnswerClick, handleComme
   initAppRender()
   initLikeButtonListener(handleCommentLikeClick);
   initAnswerButton(handleCommentAnswerClick);
-  deleteButton(handleCommentDeleteClick);
+  // deleteButton(handleCommentDeleteClick);
 }
 
 export const initLikeButtonListener = (handleCommentLikeClick) => {
@@ -137,9 +137,9 @@ export const initAnswerButton = (handleCommentAnswerClick) => {
     commentsAnswer.addEventListener("click", handleCommentAnswerClick);
   }
 };
-export const deleteButton = (handleCommentDeleteClick) => {
-  const deleteButtonElements = document.querySelectorAll(".delete-button");
-  for (let deleteButtonElement of deleteButtonElements) {
-    deleteButtonElement.addEventListener("click", handleCommentDeleteClick);
-  }
-};
+// export const deleteButton = (handleCommentDeleteClick) => {
+//   const deleteButtonElements = document.querySelectorAll(".delete-button");
+//   for (let deleteButtonElement of deleteButtonElements) {
+//     deleteButtonElement.addEventListener("click", handleCommentDeleteClick);
+//   }
+// };

@@ -50,15 +50,15 @@ const handleCommentAnswerClick = (event) => {
     // .replaceAll('&', '&amp;')
     // .replaceAll('"', '&quot;')}`;
 };
-const handleCommentDeleteClick = (event) => {
-    const button = event.target;
-    const index = button.dataset.index;
-    const lastCommentIndex = document.getElementById('add-delete')
-    if (lastCommentIndex !== -1) {
-        comments[index]
-    }
-    comments.pop();
-    renderApp();
-}
+// const handleCommentDeleteClick = (event) => {
+//     const button = event.target;
+//     const index = button.dataset.index;
+//     const lastCommentIndex = document.getElementById('add-delete')
+//     if (lastCommentIndex !== -1) {
+//         comments[index]
+//     }
+//     comments.pop();
+//     renderApp();
+// }
 initApp();
 
