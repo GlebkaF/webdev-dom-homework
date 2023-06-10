@@ -128,9 +128,17 @@ if (textElement.value === ""){
   return;
  };
 comments.push({
-  name: nameInputElement.value,
+  name: nameInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
   dateCreation: commentDate, 
-  textElement: textElement.value,
+  textElement: textElement.value
+         .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
   likeComment: false,
   likesNumber: 0, 
   propertyColorLike:  '',
