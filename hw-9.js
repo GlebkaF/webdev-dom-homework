@@ -1,6 +1,6 @@
 "use strict";
 
-const WriteButtonEl = document.getElementById("write-button");
+const writeButtonEl = document.getElementById("write-button");
 const nameInputEl = document.getElementById("name-input");
 const commentTextEl = document.getElementById("comment-text");
 const listEl = document.getElementById("comment-list");
@@ -38,33 +38,33 @@ document.addEventListener("keyup", (e) => {
     }
 });
 
-WriteButtonEl.setAttribute("disabled", true);
-WriteButtonEl.classList.add("error-btn");
+writeButtonEl.setAttribute("disabled", true);
+writeButtonEl.classList.add("error-btn");
 
 nameInputEl.addEventListener("input", () => {
     if ((nameInputEl.value.length > 0) && (commentTextEl.value.length > 0)) {
-        WriteButtonEl.removeAttribute("disabled");
-        WriteButtonEl.classList.remove("error-btn");
+        writeButtonEl.removeAttribute("disabled");
+        writeButtonEl.classList.remove("error-btn");
     }
 });
 
 commentTextEl.addEventListener("input", () => {
     if ((nameInputEl.value.length > 0) && (commentTextEl.value.length > 0)) {
-        WriteButtonEl.removeAttribute("disabled");
-        WriteButtonEl.classList.remove("error-btn");
+        writeButtonEl.removeAttribute("disabled");
+        writeButtonEl.classList.remove("error-btn");
         return;
     }
 });
 
-WriteButtonEl.addEventListener("click", () => {
+writeButtonEl.addEventListener("click", () => {
     nameInputEl.classList.remove("error");
     commentTextEl.classList.remove("error");
    
     if ((nameInputEl.value.length < 0) && (commentTextEl.value.length < 0)) {
         nameInputEl.classList.add("error");
         commentTextEl.classList.add("error");
-        WriteButtonEl.classList.add("error-btn");
-        WriteButtonEl.disabled === true;
+        writeButtonEl.classList.add("error-btn");
+        writeButtonEl.disabled === true;
         return;
       } else if ((nameInputEl.value.length < 0) && (commentTextEl.value.length > 0)) {
         nameInputEl.classList.add("error");
@@ -97,8 +97,8 @@ WriteButtonEl.addEventListener("click", () => {
     
     nameInputEl.value = "";
     commentTextEl.value = "";
-    WriteButtonEl.setAttribute("disabled", true);
-    WriteButtonEl.classList.add("error-btn");
+    writeButtonEl.setAttribute("disabled", true);
+    writeButtonEl.classList.add("error-btn");
 
 });
 
