@@ -1,6 +1,7 @@
 import { getFromApi, newComments } from "../api.js";
 import { getAuthForm, getCommentsAndAuth } from "../appHtml.js";
 import { isInitialLoadingFunc } from "../renderApp.js";
+import { loginToApp } from "../user-api.js";
 
 export function renderLoginComponent({ appHtml, appElement, commentsHtml, setToken }) {
     appHtml = getCommentsAndAuth(commentsHtml);
@@ -18,8 +19,14 @@ export function renderLoginComponent({ appHtml, appElement, commentsHtml, setTok
         const loginBtn = document.getElementById('login-button');
 
         loginBtn.addEventListener("click", () => {
-            setToken("Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k");
-            getFromApi(newComments);
+
+            loginToApp({
+                login: "admin",
+                password: "admin",
+            }).then((user) => {
+                setToken(`Bearer ${user.user.token}`);
+                getFromApi(newComments);
+            })
         });
     });
 };

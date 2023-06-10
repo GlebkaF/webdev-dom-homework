@@ -16,14 +16,14 @@ function getFromApi(data) {
         headers: {
             Authorization: token,
         },
-    }).then((responce) => {
-        if (responce.status === 500) {
+    }).then((response) => {
+        if (response.status === 500) {
             throw new Error("Ошибка 500");
         } else {
-            return responce.json();
+            return response.json();
         }
-    }).then((responceData) => {
-        data = responceData.comments;
+    }).then((responseData) => {
+        data = responseData.comments;
         isInitialLoading = false;
         renderApp(data, listElem, getCommentsList);
         newComments = data;
@@ -61,16 +61,15 @@ function postToApi(data, addCommentElem, addNameElem) {
             name: escapeHtml(addNameElem.value.trim()),
             // forceError: true,
         })
-    }).then((responce) => {
-        if (responce.status === 400) {
+    }).then((response) => {
+        if (response.status === 400) {
             throw new Error("Ошибка 400");
-        } else if (responce.status === 500) {
+        } else if (response.status === 500) {
             throw new Error("Ошибка 500");
         } else {
-            console.log(responce.status);
-            return responce.json();
+            return response.json();
         }
-    }).then((responceData) => {
+    }).then((responseData) => {
         getFromApi(data);
     }).then(() => {
         isPosting = true;
@@ -90,6 +89,5 @@ function postToApi(data, addCommentElem, addNameElem) {
         };
     })
 };
-
 
 export { getFromApi, postToApi };
