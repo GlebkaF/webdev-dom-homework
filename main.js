@@ -1,5 +1,5 @@
 "use strict";
-import { fetchComments, createComment } from "./api.js";
+import { fetchComments, apiLike } from "./api.js";
 import { renderComments } from "./renderComments.js"
 
 const renderApp = () => {
@@ -38,6 +38,7 @@ const handleCommentLikeClick = (event) => {
     comments[index].active = true;
   }
   comments[index].like = likesCount;
+  apiLike(comments[index].id);
   renderApp();
 };
 

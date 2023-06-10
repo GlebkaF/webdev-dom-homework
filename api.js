@@ -91,15 +91,16 @@ export const userRegistration = ({name, login, password}) => {
   });
   }
 
-  // export const apiLike = (id) => {
-  //   return fetch (`https://wedev-api.sky.pro/api/v2/olya-myalo/comments/${id}/toggle-like`, {
-  //     method: "POST"
-  //   })
-  //   .then((user) => {
-  //     localStorage.setItem('token', `Bearer ${user.user.token}`);
-  //     localStorage.setItem('user', user.user.name);
-  //   });
-  //   }
+  export const apiLike = (id) => {
+    const token = localStorage.getItem('token');
+    return fetch (`https://wedev-api.sky.pro/api/v2/olya-myalo/comments/${id}/toggle-like`, {
+      method: "POST",
+      headers: {
+        Authorization: token,
+      },
+    })
+    .then((response) => (response.json()))
+    }
 
   export const isUserAuthorization = () => {
     const token = localStorage.getItem('token');
