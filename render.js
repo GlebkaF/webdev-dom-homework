@@ -7,11 +7,11 @@ const getListCommentsEdit = (comment, index) => {
   let isLike = comment.isLike ? "-active-like" : "";
   return `<li class="comment">
         <div class="comment-header">
-          <div id="name">${comment.name}</div>
+          <div>${comment.name}</div>
           <div>${comment.date}</div>
         </div>
         <div class="comment-body">
-          <div id="text" data-index="${index} class="comment-text" style={{ whiteSpace: 'pre-line' }}>
+          <div data-index="${index} class="comment-text" style={{ whiteSpace: 'pre-line' }}>
             ${comment.text}
           </div>
         </div>
@@ -132,7 +132,7 @@ export const initLikeButtonListener = (handleCommentLikeClick) => {
   }
 };
 export const initAnswerButton = (handleCommentAnswerClick) => {
-  const commentsAnswers = document.querySelectorAll(".comment-text");
+  const commentsAnswers = document.querySelectorAll(".comment");
   for (let commentsAnswer of commentsAnswers) {
     commentsAnswer.addEventListener("click", handleCommentAnswerClick);
   }
