@@ -45,7 +45,7 @@ const comments = [
   textElement: 'Это будет первый комментарий на этой странице',
   likeComment: false,
   likesNumber: 3, 
-  propertyColorLike:  'like-button -no-active-like',
+  propertyColorLike:  '',
   },
   {
   name: 'Варвара Н.',
@@ -53,7 +53,7 @@ const comments = [
   textElement: 'Мне нравится как оформлена эта страница! ❤',
   likeComment: false,
   likesNumber: 75, 
-  propertyColorLike:  'like-button -no-active-like',
+  propertyColorLike:  '',
 
   },
 ];
@@ -104,7 +104,7 @@ return    `<li class = 'comment'> <div class = 'comment-header'>
   <div class = "comment-footer" >
     <div class = 'likes'>      
         <span class="likes-counter">${comment.likesNumber}</span>
-    <button data-index = '${index}' class="${comment.propertyColorLike}"></button>
+    <button data-index = '${index}' class=" like-button ${comment.propertyColorLike}"></button>
             </div> 
 </div>
       
@@ -133,7 +133,7 @@ comments.push({
   textElement: textElement.value,
   likeComment: false,
   likesNumber: 0, 
-  propertyColorLike:  'like-button -no-active-like',
+  propertyColorLike:  '',
 })
 renderComments();
 nameInputElement.value = "";
