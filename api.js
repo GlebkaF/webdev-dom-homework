@@ -1,3 +1,5 @@
+import { renderComments } from "./renderComments";
+
 const host = "https://webdev-hw-api.vercel.app/api/v2/marina-obruch/comments";
 const loginHost = "https://wedev-api.sky.pro/api/user/login";
 
@@ -11,7 +13,6 @@ const getFetch = () => {
 };
 
 
-// Добавляем новый комментарий в ленту с помощью POST
 function postComment(commentInputElement, token) {
     return fetch(host, {
         method: "POST",
