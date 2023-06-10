@@ -10,7 +10,7 @@
 <body>
   <div class="container">
     <ul class="comments" id="list">
-      <li class="comment">
+      <!-- <li class="comment">
         <div class="comment-header">
           <div>Глеб Фокин</div>
           <div>12.02.22 12:18</div>
@@ -43,7 +43,7 @@
             <button class="like-button -active-like"></button>
           </div>
         </div>
-      </li>
+      </li> -->
     </ul>
     <div class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="add-form-name" />
@@ -56,9 +56,7 @@
   </div>
 </body>
 <style>
-  .error {
-    background-color: red;
-  }
+
 </style>
 <script>
   "use strict";
@@ -68,6 +66,76 @@
   const listElement = document.getElementById("list");
   const addFormName = document.getElementById("add-form-name");
   const addFormText = document.getElementById("add-form-text");
+
+
+
+  const comments = [
+    {
+      name: 'Глеб Фокин',
+      date: '12.02.2022 12:18',
+      comment: "Это будет первый комментарий на этой странице",
+      likes: 75,
+      tap: false,
+    },
+    {
+      name: "Варвара Н.",
+      date: "13.02.2022 19:22",
+      comment: "Мне нравится как оформлена эта страница! ❤",
+      likes: 13,
+      tap: false,
+    },
+  ]
+
+  const initLikeButtonListeners = () => {
+    const likeButtonsElements = document.querySelectorAll(".like-button");
+    for (const likeButtonElement of likeButtonsElements) {
+      likeButtonElement.addEventListener("click", () => {
+        const index = likeButtonElement.dataset.index;
+        if (comments[index].tap) {
+          comments[index].likes--;
+          comments[index].tap = false;
+          console.log(likeButtonsElements[index]);
+        } else {
+          comments[index].likes++;
+          comments[index].tap = true;
+
+        }
+
+
+        console.log("нажал");
+        renderComments();
+      });
+    }
+  };
+
+  const renderComments = () => {
+    const commentsHtml = comments
+      .map((comment, index) => {
+        return `<li class="comment">
+        <div class="comment-header">
+          <div>${comment.name}</div>
+          <div>${comment.date}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${comment.comment}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter" >${comment.likes}</span>
+            <button class="like-button" data-index=${index}></button>
+          </div>
+        </div>
+      </li>`;
+      })
+      .join("");
+    listElement.innerHTML = commentsHtml;
+    initLikeButtonListeners();
+  };
+
+  renderComments();
+
 
 
   addButton.addEventListener("click", () => {
@@ -98,6 +166,14 @@
           </div>
         </div>
       </li>`
+    comments.push({
+      name: addFormName.value,
+      date: now,
+      comment: addFormText.value,
+      likes: 0,
+      tap: false,
+    });
+    renderComments();
     addFormName.value = '';
     addFormText.value = '';
   })
