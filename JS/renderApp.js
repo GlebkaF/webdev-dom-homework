@@ -1,65 +1,48 @@
 import { likeButtonsListeners } from "./likes.js";
-import { isInitialLoading, isPosting } from "./api.js"; // ВЕРНУТЬ TOKEN!
-import { getFromApi, postToApi } from "./api.js";
-import { getApp, getAuthForm, getCommentsAndAuth } from "./appHtml.js";
+import { isInitialLoading, isPosting } from "./api.js";
+import { postToApi } from "./api.js";
+import { getApp } from "./appHtml.js";
+import { renderLoginComponent } from "./components/login-component.js";
 
 export const appElement = document.getElementById('app');
 
+// - Добавить авторизацию по логину и паролю! Пока авторизация происходит без каких-либо данных
+// + Связать авторизацию с токеном, после аутентификации должна загружаться рабочая страница
+// - Добавить форму регистрации и кнопку-toggle
+// + Перенести рендер логина в отдельный модуль
+// - В конце не забыть убрать все доп функции в отдельный модуль
 
 
-
-let token = null;
+export let token = null;  // Убрать/заменить!
 // "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+let appHtml;
+
+
+export const isInitialLoadingFunc = (loadElem) => {
+    if (isInitialLoading) {
+        loadElem.style.display = 'block';
+    } else {
+        loadElem.style.display = 'none';
+    };
+};
 
 
 const renderApp = (data, elem, getList) => {
-    let appHtml;
 
     const commentsHtml = data
         .map((comment, index) => getList(comment, index))
         .join('');
 
 
-    const isInitialLoadingFunc = (loadElem) => {
-        if (isInitialLoading) {
-            loadElem.style.display = 'block';
-        } else {
-            loadElem.style.display = 'none';
-        };
-    };
-
     if (!token) {
-        appHtml = getCommentsAndAuth(commentsHtml);
-        appElement.innerHTML = appHtml;
-
-        const loadingComments = document.querySelector('.loading');
-        const authLink = document.getElementById('auth-link');
-
-        isInitialLoadingFunc(loadingComments);
-
-        authLink.addEventListener("click", () => {
-            appHtml = getAuthForm();
-            appElement.innerHTML = appHtml;
-
-            const loginBtn = document.getElementById('login-button');
-
-            // - Добавить авторизацию по логину и паролю! Пока авторизация происходит без каких-либо данных
-            // + Связать авторизацию с токеном, после аутентификации должна загружаться рабочая страница
-            // - Добавить форму регистрации и кнопку-toggle
-            // - Обернуть (appHtml = функция вызова разметки(); appElement.innerHTML = appHtml;) в функцию
-            // - В конце не забыть убрать все доп функции в отдельный модуль
-
-
-            loginBtn.addEventListener("click", () => {
-                // appHtml = getApp(commentsHtml);
-                // appElement.innerHTML = appHtml;
-                token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
-                getFromApi(data);
-            });
+        renderLoginComponent({
+            appHtml,
+            appElement, 
+            commentsHtml, 
+            setToken: (newToken) => token = newToken,
         });
         return;
     };
-
 
 
     appHtml = getApp(commentsHtml);
