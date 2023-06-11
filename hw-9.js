@@ -151,14 +151,12 @@ const initLikeButton = () =>{
       if (users[index].isLiked === false) {
         users[index].like = users[index].like + 1;
         users[index].isLiked = true;
-        renderUsers();
-        initLikeButton();
       } else {
         users[index].like = users[index].like - 1;
         users[index].isLiked = false;
-        renderUsers();
-        initLikeButton();
       }
+      renderUsers();
+      initLikeButton();
       }
     )
   }
