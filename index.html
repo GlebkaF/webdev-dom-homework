@@ -59,11 +59,31 @@
         colorLikes: 'like-button  no-active-like',
       },
     ];
-     
+    
+
+
+  function changeComment () {
+   const textComments = document.querySelectorAll ('.comment');
+   for (const textComment of textComments ) {
+     textComment.addEventListener ('click',()=> {
+     const textCommentIndex = textComment.dataset.index;
+     inputTextElement.value =`${comments[textCommentIndex].name}:\n${comments[textCommentIndex].textComment}`;
+
+        renderComments ();
+     });
+    };  
+  };
+  changeComment ();
+
+
+
+
    function getLikeButton () {
+    
     const likesButtons = document.querySelectorAll (".like-button");
     for (const likeButton of likesButtons) {
-      likeButton.addEventListener ('click',()=> {
+      likeButton.addEventListener ('click',(event)=> {
+        event.stopPropagation ();
         const likeButtonIndex =  likeButton.dataset.index;
         const commentsElement = comments [likeButtonIndex];
       if (commentsElement.likeComment) {
@@ -85,7 +105,7 @@
 
     const renderComments = () => {
       const commentsHtml = comments.map ((comment, index)=>{
-        return `<li class="comment">
+        return `<li class="comment" data-index='${index}'>
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.date}</div>
@@ -105,6 +125,8 @@
       }).join ("");
       commentElement.innerHTML = commentsHtml; 
       getLikeButton (); 
+      changeComment ();
+
     };
     renderComments ();
    
@@ -149,9 +171,13 @@
   // }
 // });
      comments.push ({
-      name: inputNameElement.value,
+      name: inputNameElement.value
+      .replaceAll ("<","&lt;")
+      .replaceAll (">","&gt;"),
       date: currentDate,
-      textComment:inputTextElement.value,
+      textComment:inputTextElement.value
+      .replaceAll ("<","&lt;")
+      .replaceAll (">","&gt;"),
       likeComment: false,
       likesNumber: 0,
       colorLikes: 'like-button no-active-like',
