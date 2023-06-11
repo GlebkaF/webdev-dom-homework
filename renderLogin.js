@@ -53,10 +53,24 @@ export const renderLogin = (app, isInitialLoading, isWaitingComment, comments, c
         authButton.addEventListener("click", () => {
             const login = document.getElementById("add-login").value;
             const password = document.getElementById("add-password").value;
+
+            if (!login) {
+                alert("Введите логин");
+                return;
+            }
+
+            if (!password) {
+                alert("Введите пароль");
+                return;
+            }
+
             fetchLogin(login, password)
                 .then((response) => {
                     renderComments(app, isInitialLoading, isWaitingComment, comments, callback, response.user);
-                });
+                })
+                .catch(error => {
+                    alert(error.message)
+                })
         })
     }
     renderForm();

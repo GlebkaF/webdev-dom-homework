@@ -1,12 +1,12 @@
 import { delay } from "./supportFunc.js";
 import { renderLogin } from "./renderLogin.js";
-import { postComment } from "./api.js";
+import { postComment, deleteComment, getFetch } from "./api.js";
 import { format } from "date-fns";
 
 // Функция render
-const renderComments = (app, isInitialLoading, isWaitingComment, comments, callback, user) => {
+export const renderComments = (app, isInitialLoading, isWaitingComment, comments, callback, user) => {
 
-  const commentHTML = comments.map((comment, index) => {
+  const commentHTML = comments.map((comment, index, id) => {
 
     const createDate = format(new Date(comment.date), 'dd/MM/yyyy HH:mm');
 
@@ -21,7 +21,9 @@ const renderComments = (app, isInitialLoading, isWaitingComment, comments, callb
         </div>
       </div>
       <div class="common-footer">
+
         <button data-id="${comment.id}" class="delete-button">Удалить комментарий</button>
+        
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${comment.likes}</span>
@@ -78,24 +80,30 @@ const renderComments = (app, isInitialLoading, isWaitingComment, comments, callb
   const commentInputElement = document.querySelector(".add-form-text");
 
 
-  //Функция удаления задачи из списка задач
-  const deleteButtons = document.querySelectorAll(".delete-button");
+  //Функция удаления комментария
+  if (!user) {
+    const deleteButtons = document.querySelectorAll(".delete-button");
+    for (const deleteButton of deleteButtons) {
+      deleteButton.setAttribute('disabled', '');
+      deleteButton.classList.add("disabled");
+    }
+  }
 
-  for (const deleteButton of deleteButtons) {
-    deleteButton.addEventListener("click", (event) => {
-      console.log("1");
-      event.stopPropagation();
+  if (user) {
+    const deleteButtons = document.querySelectorAll(".delete-button");
 
-      // const id = deleteButton.dataset.id;
+    for (const deleteButton of deleteButtons) {
+      deleteButton.addEventListener("click", (event) => {
+        event.stopPropagation();
 
-      // return deleteTodo({ token, id })
-      //     .then((responseData) => {
-      //         tasks = responseData.todos;
-      //         renderApp();
-      //         deleteButton.textContent = "Добавить";
-      //     })
-    });
-  };
+        const id = deleteButton.dataset.id;
+
+        deleteComment(id)
+        renderComments(app, isInitialLoading, isWaitingComment, comments, callback, user);
+      })
+    };
+  }
+
 
   // Функция лоадинг при добавлении комментариев в ленту
   if (user) {
@@ -175,18 +183,3 @@ const renderComments = (app, isInitialLoading, isWaitingComment, comments, callb
     if (callback) callback(user)
   }
 }
-
-
-
-// function deleteComment() {
-//   return fetch(host + id, {
-//       method: "DELETE",
-//   }).then((response) => {
-//       response.json().then((responseData) => {
-//           comments = responseData.comments;
-//           renderComments();
-//       }
-//   })
-// }
-
-export { renderComments };
