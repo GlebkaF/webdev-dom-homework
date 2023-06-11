@@ -5,6 +5,7 @@ import { cleareInputs} from "./utilis.js";
 
 
 let allComments = []
+
 function getComments () {
     renderLoaderComments()
     return fetch("https://webdev-hw-api.vercel.app/api/v1/anna-makhortova/comments", {
@@ -19,7 +20,6 @@ function getComments () {
         }
       }).then((responseData) => {
         allComments = responseData.comments.map((comment) => {
-    
        return {
             name: comment.author.name,
             date: new Date(comment.date),
@@ -28,10 +28,11 @@ function getComments () {
             isLiked: comment.isLiked,
           }
         })
-        loadedComment = false
+        let loadedComment = false
         renderForm(loadedComment)
         renderComments();
       }).catch((error) => {
+        console.log(error)
         alert(error)
         let loadedComment = false
         renderForm(loadedComment)
