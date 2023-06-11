@@ -100,8 +100,7 @@
   // Добавление кнопки редактирования на каждый комент
   const initiateRedactButton = () => {
     const redactButtons = document.querySelectorAll(".redact-button");
-    console.log(redactButtons);
-    for (const redactButton of redactButtons) {
+        for (const redactButton of redactButtons) {
       redactButton.addEventListener("click", (event) => {
         event.stopPropagation();
         const index = redactButton.dataset.index;
