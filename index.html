@@ -137,9 +137,18 @@ function addComment() {
   if (Name.value && Text.value) {
     const date = new Date()
     AllComments.push({
-      NameUser:Name.value,
+      NameUser:`${Name.value}`.replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
       DataTime: date.toLocaleString(),
-      Comm: Text.value,
+      Comm: `${Text.value}`
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replace("|", "<div class='quote'>")
+          .replace("|", "</div>"),
       LikesUser: false,
       QuantityLikes: 0,
       Class: "like-button",
