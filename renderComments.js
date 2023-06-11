@@ -3,6 +3,7 @@ import { renderLogin } from "./renderLogin.js";
 import { postComment, deleteComment, getFetch } from "./api.js";
 import { format } from "date-fns";
 
+
 // Функция render
 export const renderComments = (app, isInitialLoading, isWaitingComment, comments, callback, user) => {
 

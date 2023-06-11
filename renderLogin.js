@@ -1,4 +1,4 @@
-import { fetchLogin } from "./api.js";
+import { fetchLogin, fetchRegistration } from "./api.js";
 import { renderComments } from "./renderComments.js";
 
 export const renderLogin = (app, isInitialLoading, isWaitingComment, comments, callback, user) => {
@@ -51,26 +51,58 @@ export const renderLogin = (app, isInitialLoading, isWaitingComment, comments, c
 
         const authButton = document.getElementById("auth-button");
         authButton.addEventListener("click", () => {
-            const login = document.getElementById("add-login").value;
-            const password = document.getElementById("add-password").value;
 
-            if (!login) {
-                alert("Введите логин");
-                return;
+            if (isAuthMode) {
+                const login = document.getElementById("add-login").value;
+                const password = document.getElementById("add-password").value;
+
+                if (!login) {
+                    alert("Введите логин");
+                    return;
+                }
+
+                if (!password) {
+                    alert("Введите пароль");
+                    return;
+                }
+
+                fetchLogin(login, password)
+                    .then((response) => {
+                        renderComments(app, isInitialLoading, isWaitingComment, comments, callback, response.user);
+                    })
+                    .catch(error => {
+                        alert(error.message)
+                    })
             }
 
-            if (!password) {
-                alert("Введите пароль");
-                return;
-            }
+            else {
+                const name = document.getElementById("add-name").value;
+                const login = document.getElementById("add-login").value;
+                const password = document.getElementById("add-password").value;
 
-            fetchLogin(login, password)
-                .then((response) => {
-                    renderComments(app, isInitialLoading, isWaitingComment, comments, callback, response.user);
-                })
-                .catch(error => {
-                    alert(error.message)
-                })
+                if (!name) {
+                    alert("Введите имя");
+                    return;
+                }
+
+                if (!login) {
+                    alert("Введите логин");
+                    return;
+                }
+
+                if (!password) {
+                    alert("Введите пароль");
+                    return;
+                }
+
+                fetchRegistration(login, password, name)
+                    .then((response) => {
+                        renderComments(app, isInitialLoading, isWaitingComment, comments, callback, response.user);
+                    })
+                    .catch(error => {
+                        alert(error.message)
+                    })
+            }
         })
     }
     renderForm();

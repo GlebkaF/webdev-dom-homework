@@ -9,6 +9,15 @@ let comments = [];
 let isInitialLoading = true;
 let isWaitingComment = false;
 
+
+const getInitFetch = () => {
+    return getTodos({ token })
+        .then((responseData) => {
+            tasks = responseData.todos;
+            renderApp();
+        });
+};
+
 export function handlePostClick(user) {
 
     const addButton = document.getElementById('add-form-button');
