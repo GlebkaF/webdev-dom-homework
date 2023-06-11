@@ -2,14 +2,22 @@
 
 // Импорт данных из модулей
 import { elementName, elementComment, DateFormatComment, loadingCommentElement, addFormElement, comments, buttonElement } from './script.js'
-import { renderComments } from './render.js'
+import { renderComments } from './render.js';
+
+// Адерес нового сервера (V2)
+const host = 'https://wedev-api.sky.pro/api/v2/alexey-tsukanov/comments';
+
+let token = 'Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k';
 
 //  Получаем данные из API(Сервера)
 function fetchAndRenderComments() {
   return fetch(
-    'https://wedev-api.sky.pro/api/v1/alexey-tsukanov/comments',
+    host,
     {
-      method: 'GET'
+      method: 'GET',
+      // headers: {
+      //   Authorization: token,
+      // }
     })
     .then((response) => {
       convertServer(response, comments)
@@ -46,14 +54,16 @@ const postComment = () => {
 
   // Добавляем новый комменрарий в API
   return fetch(
-    'https://wedev-api.sky.pro/api/v1/alexey-tsukanov/comments',
+    host,
     {
       method: 'POST',
       body: JSON.stringify(
         {
           text: protectionHtml(elementComment.value),
           name: protectionHtml(elementName.value),
-          forceError: true,
+          headers: {
+            Authorization: token,
+          }
         })
     })
     .then((response) => {
@@ -61,11 +71,12 @@ const postComment = () => {
         elementName.classList.remove('error');
         elementComment.classList.remove('error');
         return response.json()
-      } if (response.status === 400) {
-        throw new Error("Плохой запрос")
-      } else {
-        throw new Error('Сервер не отвечает')
-      }
+      } 
+      // if (response.status === 400) {
+      //   throw new Error("Плохой запрос")
+      // } else {
+      //   throw new Error('Сервер не отвечает')
+      // }
     })
     .then(() => {
       elementName.value = '';

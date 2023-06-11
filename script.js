@@ -13,6 +13,7 @@ const loadingListElement = document.getElementById('loadingList');
 const loadingCommentElement = document.getElementById('loadingComment');
 const addFormElement = document.getElementById('addForm')
 
+
 //  Массив в который будем рендерить полученные данные
 let comments = [];
 
@@ -37,8 +38,6 @@ buttonElement.addEventListener('click', () => {
   addFormElement.style.display = 'none';
   postComment()
 });
-
-
 
 // Активность кнопки "Написать"
 buttonElement.disabled = true;
