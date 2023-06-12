@@ -226,7 +226,7 @@
         const appComments = responseData.comments.map((comment) => {
           return {
             name: comment.author.name,
-            date: new Date(comment.date),
+            date: new Date(comment.date).toLocaleString().slice(0, -3),
             text: comment.text,
             likes: comment.likes,
             isLike: false,
