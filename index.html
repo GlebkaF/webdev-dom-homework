@@ -115,15 +115,13 @@
         event.stopPropagation();
         const index = saveButton.dataset.index;
         comments[index].isEdit = !comments[index].isEdit;
-        //comments[index].text = 
+        comments[index].text = saveButton.closest('.comment').querySelector('textarea').value
           renderComments();
       });
 
     }
 
   };
-
-
   // Добавление кликабельностm лайка и счётчика лайков
   const initlikeButtonsListeners = () => {
     const likeButtonsElements = document.querySelectorAll(".like-button");
