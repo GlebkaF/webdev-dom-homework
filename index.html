@@ -97,15 +97,15 @@
         users.forEach((user) => {
           const listItem = document.createElement("li");
           listItem.innerHTML = `
-          <div class="comment">
+          <div class="comment" onclick="copyToInput('${user.name}', '${
+            user.text
+          }')">
             <div class="comment-header">
               <div>${user.name}</div>
               <div>${user.date}</div>
             </div>
             <div class="comment-body">
-          <div class="comment-text" onclick="copyToInput('${user.name}', '${
-            user.text
-          }')">
+          <div class="comment-text">
             <a class="comment__link" href="#" id="text-button-${user.text}">${
             user.text
           }</a>
