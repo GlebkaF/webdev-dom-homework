@@ -10,7 +10,6 @@ const textEnter = `<div id="toggle-page">Чтобы добавить комме�
 const renderComments = (comments) => {
   const appEl = document.getElementById("app");
 
-
   // if (token) {
   //   renderLoginComponent({
   //     appEl, setToken: (newToken) => {
