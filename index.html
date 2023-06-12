@@ -68,8 +68,9 @@
   const enterNameElement = document.getElementById("enter-name")
   const enterCommentElement = document.getElementById("enter-comment")
   const buttonElement = document.getElementById("btn")
-  const currentDate = new Date()
-  const newDate = currentDate.getDate() + '.' + currentDate.getMonth() + '.' + currentDate.getFullYear() + ' ' + currentDate.getHours() + ':' + currentDate.getMinutes()
+  // const currentDate = new Date()
+  // const newDate = currentDate.getDate() + '.' + currentDate.getMonth() + '.' + currentDate.getFullYear() + ' ' + currentDate.getHours() + ':' + currentDate.getMinutes()
+
 
   buttonElement.addEventListener("click", () => {
 
@@ -85,11 +86,14 @@
       return;
     }
 
+    const currentDate = new Date()
+    let newDate = currentDate.getDate() + '.' + currentDate.getMonth() + '.' + currentDate.getFullYear() + ' ' + currentDate.getHours() + ':' + currentDate.getMinutes()
+
     const oldListCommentElement = listCommentElement.innerHTML;
     listCommentElement.innerHTML = oldListCommentElement +
       `<li class="comment">
         <div class="comment-header">
-          <div>${enterNameElement.value}</div>
+          <div>${enterNameElement.value}</div>  
           <div>${newDate}</div>
         </div>
         <div class="comment-body">
@@ -104,6 +108,7 @@
           </div>
         </div>
       </li>`;
+
   });
 
   console.log("It works!");
