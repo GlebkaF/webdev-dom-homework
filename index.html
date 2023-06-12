@@ -60,7 +60,6 @@
 </style>
 <script>
   "use strict";
-  var now = new Date().toLocaleString().slice(0, -3);;
 
   const addButton = document.getElementById("add-form-button");
   const listElement = document.getElementById("list");
@@ -69,22 +68,61 @@
 
 
 
-  const comments = [
-    {
-      name: 'Глеб Фокин',
-      date: '12.02.2022 12:18',
-      comment: "Это будет первый комментарий на этой странице",
-      likes: 75,
-      isLike: false,
-    },
-    {
-      name: "Варвара Н.",
-      date: "13.02.2022 19:22",
-      comment: "Мне нравится как оформлена эта страница! ❤",
-      likes: 13,
-      isLike: false,
-    },
-  ]
+  // const comments = [
+  //   {
+  //     name: 'Глеб Фокин',
+  //     date: '12.02.2022 12:18',
+  //     comment: "Это будет первый комментарий на этой странице",
+  //     likes: 75,
+  //     isLike: false,
+  //   },
+  //   {
+  //     name: "Варвара Н.",
+  //     date: "13.02.2022 19:22",
+  //     comment: "Мне нравится как оформлена эта страница! ❤",
+  //     likes: 13,
+  //     isLike: false,
+  //   },
+  // ]
+
+  let comments = [];
+  const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/:MeLook/comments", {
+    method: "GET"
+  });
+  //Подписываемся на ответ от API
+  fetchPromise.then((response) => {
+    //просим JSON сделать норм код
+    const jsonPromise = response.json();
+    //Подписываемся на результат JSON
+    jsonPromise.then((responseData) => {
+      //Получаем данные и рендерим
+      const appComments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: new Date(comment.date).toLocaleString().slice(0, -3),
+          text: comment.text,
+          likes: comment.likes,
+          isLike: false,
+        };
+      });
+
+      comments = appComments;
+      renderComments();
+    });
+  });
+
+
+  const answerComment = () => {
+    const boxCommentsTexts = document.querySelectorAll('.comment');
+    boxCommentsTexts.forEach((comment) => {
+      comment.addEventListener('click', () => {
+        const author = comment.querySelector('.comment-header div:first-child').textContent;
+        const text = comment.querySelector('.comment-text').textContent;
+        addFormText.value = ` > Автор: ${author} \n ${text} \n Ответ: `;
+      });
+    });
+  }
+  answerComment();
 
   const initLikeButtonListeners = () => {
     const likeButtonsElements = document.querySelectorAll(".like-button");
@@ -108,17 +146,7 @@
     }
   };
 
-  const answerComment = () => {
-    const boxCommentsTexts = document.querySelectorAll('.comment');
-    boxCommentsTexts.forEach((comment) => {
-      comment.addEventListener('click', () => {
-        const author = comment.querySelector('.comment-header div:first-child').textContent;
-        const text = comment.querySelector('.comment-text').textContent;
-        addFormText.value = ` > Автор: ${author} \n ${text} \n Ответ: `;
-      });
-    });
-  }
-  answerComment();
+
 
   const renderComments = () => {
     const commentsHtml = comments
@@ -130,13 +158,13 @@
         </div>
         <div class="comment-body">
           <div class="comment-text">
-            ${comment.comment}
+            ${comment.text}
           </div>
         </div>
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter" >${comment.likes}</span>
-            <button class="like-button ${comment.isLike ? '-active-like' : ''}" data-index=${index}></button>
+            <button class="like-button ${comment.isLike ? '-active-like' : ''}" data-index = ${index} data-id=${comment.id}></button>
           </div>
         </div>
       </li>`;
@@ -161,20 +189,53 @@
       return;
     }
 
-    comments.push({
-      name: addFormName.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-      date: now,
-      comment: addFormText.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-      likes: 0,
-      tap: false,
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/:MeLook/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        name: addFormName.value,
+        date: now,
+        text: addFormText.value,
+        likes: "0",
+        isLike: false
+      })
+    });
+    //Подписываемся на ответ от API
+    fetchPromise.then((response) => {
+      //просим JSON сделать норм код
+      const jsonPromise = response.json();
+      //Подписываемся на результат JSON
+      jsonPromise.then((responseData) => {
+        //Получаем данные и рендерим
+
+
+        comments = appComments;
+        renderComments();
+      });
+    });
+    //ОБНОВЛЯЕМ КОММЕНТАРИИ СНОВА
+    const fetchPromiseNew = fetch("https://wedev-api.sky.pro/api/v1/:MeLook/comments", {
+      method: "GET"
+    });
+    //Подписываемся на ответ от API
+    fetchPromiseNew.then((response) => {
+      //просим JSON сделать норм код
+      const jsonPromise = response.json();
+      //Подписываемся на результат JSON
+      jsonPromise.then((responseData) => {
+        //Получаем данные и рендерим
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: new Date(comment.date),
+            text: comment.text,
+            likes: comment.likes,
+            isLike: false,
+          };
+        });
+
+        comments = appComments;
+        renderComments();
+      });
     });
     renderComments();
     addFormName.value = '';
