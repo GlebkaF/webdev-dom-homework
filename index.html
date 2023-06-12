@@ -74,6 +74,7 @@
   const addButtonElement = document.getElementById("add-button");
   const listElement = document.getElementById("list");
   const endDeleteButtonElement = document.getElementById("end-delete-button");
+  //const redactInputElement = document.getElementById("redact-input");
 
   // Создание массива
   const comments = [
@@ -84,6 +85,7 @@
       like: 3,
       currentLike: false,
       classLike: 'like-button -no-active-like',
+      isEdit: false,
     },
     {
       name: "Варвара Н.",
@@ -92,15 +94,40 @@
       like: 75,
       currentLike: false,
       classLike: 'like-button -no-active-like',
+      isEdit: false,
     },
   ];
+  // Добавление возможности редактирования на каждый комент
+  const initiateRedact = () => {
+    const redactButtons = document.querySelectorAll(".redact-button");
+    for (const redactButton of redactButtons) {
+      redactButton.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const index = redactButton.dataset.index;
+        comments[index].isEdit = !comments[index].isEdit;
+        renderComments();
+      });
 
+    }
+    const saveButtons = document.querySelectorAll(".save-button");
+    for (const saveButton of saveButtons) {
+      saveButton.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const index = saveButton.dataset.index;
+        comments[index].isEdit = !comments[index].isEdit;
+        comments[index].text = saveButton.closest('.comment').querySelector('textarea').value
+          renderComments();
+      });
+
+    }
+
+  };
   // Добавление кликабельностm лайка и счётчика лайков
   const initlikeButtonsListeners = () => {
     const likeButtonsElements = document.querySelectorAll(".like-button");
-
     for (const likeButtonElement of likeButtonsElements) {
-      likeButtonElement.addEventListener("click", () => {
+      likeButtonElement.addEventListener("click", (event) => {
+        event.stopPropagation();
         const index = likeButtonElement.dataset.index;
         comments[index].currentLike = !comments[index].currentLike;
         console.log(comments[index].currentLike);
@@ -121,20 +148,43 @@
     }
   };
 
+  //Функция редактирования коментов
+  const redactComments = () => {
+    const commentsElements = document.querySelectorAll(".comment");
+    for (const commentElement of commentsElements) {
+      commentElement.addEventListener("click", () => {
+        const index = commentElement.dataset.index;
+        console.log(comments[index].text);
+        comentInputElement.value = `QUOTE_BEGIN${comments[index].name}:\n${comments[index].text}QUOTE_END`;
+
+      })
+    }
+  }
+  redactComments();
+
   // Рендерим из массива разметку
   const renderComments = () => {
     const commentsHTML = comments.map((comment, index) => {
-      return `<li class="comment">
+      return `<li class="comment" data-index="${index}">
         <div class="comment-header">
           <div>${comment.name}</div>
           <div>${comment.eachDate}</div>
         </div>
         <div class="comment-body">
-          <div class="comment-text">
+          <div class="${comment.isEdit ? 'display-none' : 'comment-text'}">
             ${comment.text}
           </div>
         </div>
+        <div>
+        <textarea type="textarea" class="${comment.isEdit ? 'add-form-text' : 'display-none'}" rows="4">${comment.text}</textarea>
+        </div>
         <div class="comment-footer">
+          <div class="redact">
+            <button class="${comment.isEdit ? 'display-none' : 'redact-button'}" data-index="${index}">Редактировать</button>
+          </div>    
+          <div class="redact">
+            <button class="${comment.isEdit ? 'save-button' : 'display-none'}" data-index="${index}">Сохранить</button>
+          </div>      
           <div class="likes">
             <span class="likes-counter">${comment.like}</span>
             <button class="${comment.classLike}" data-index="${index}"></button>
@@ -144,7 +194,8 @@
     }).join('');
     listElement.innerHTML = commentsHTML;
     initlikeButtonsListeners();
-
+    redactComments();
+    initiateRedact();
   }
 
   renderComments();
@@ -181,12 +232,23 @@
 
     //Добавляем данные для нового комента
     comments.push({
-      name: nameInputElement.value,
-      text: comentInputElement.value,
+      name: nameInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
+      text: comentInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+        .replaceAll("QUOTE_END", "</div><br><br>,"),
       eachDate: `${day}.${month}.${year} ${hour}:${minute}`,
       like: 0,
       currentLike: false,
       classLike: 'like-button -no-active-like',
+      isEdit: false,
     });
 
     renderComments();
