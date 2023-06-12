@@ -17,6 +17,10 @@
       .like-button.-active-like {
         background-image: url("data:image/svg+xml,%3Csvg width='22' height='20' viewBox='0 0 22 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15.95 0C14.036 0 12.199 0.882834 11 2.26703C9.801 0.882834 7.964 0 6.05 0C2.662 0 0 2.6267 0 5.99455C0 10.1035 3.74 13.4714 9.405 18.5613L11 20L12.595 18.5613C18.26 13.4714 22 10.1035 22 5.99455C22 2.6267 19.338 0 15.95 0Z' fill='%23BCEC30'/%3E%3C/svg%3E");
       }
+      .comment__link {
+        text-decoration: none;
+        color: white;
+      }
     </style>
   </head>
 
@@ -81,19 +85,30 @@
         });
       };
 
+      const attachTextButtonListener = (user) => {
+        const textButton = document.getElementById(`text-button-${user.text}`);
+        textButton.addEventListener("click", () => {
+          inputTextElement.value = user.text;
+        });
+      };
+
       const renderUsers = () => {
         listElement.innerHTML = "";
         users.forEach((user) => {
           const listItem = document.createElement("li");
           listItem.innerHTML = `
-      <div class="comment">
-        <div class="comment-header">
-          <div>${user.name}</div>
-          <div>${user.date}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${user.text}
+          <div class="comment">
+            <div class="comment-header">
+              <div>${user.name}</div>
+              <div>${user.date}</div>
+            </div>
+            <div class="comment-body">
+          <div class="comment-text" onclick="copyToInput('${user.name}', '${
+            user.text
+          }')">
+            <a class="comment__link" href="#" id="text-button-${user.text}">${
+            user.text
+          }</a>
           </div>
         </div>
         <div class="comment-footer">
@@ -107,11 +122,16 @@
           </div>
         </div>
       </div>
-    `;
+        `;
           listElement.appendChild(listItem);
           attachLikeButtonListener(user);
         });
       };
+
+      function copyToInput(name, text) {
+        inputTextElement.value = name + "\n" + text;
+        inputTextElement.style.whiteSpace = "pre-line";
+      }
 
       const toggleButton = () => {
         if (inputNameElement.value && inputTextElement.value) {
@@ -153,10 +173,14 @@
         const newId = users.length;
         users.push({
           id: newId,
-          name: inputNameElement.value,
+          name: inputNameElement.value
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;"),
           date: currentDate,
           likes: 0,
-          text: inputTextElement.value,
+          text: inputTextElement.value
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;"),
           isLiked: false,
         });
         renderUsers();
