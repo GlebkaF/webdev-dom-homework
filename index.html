@@ -74,7 +74,7 @@
   const addButtonElement = document.getElementById("add-button");
   const listElement = document.getElementById("list");
   const endDeleteButtonElement = document.getElementById("end-delete-button");
-  const redactInputElement = document.getElementById("redact-input");
+  //const redactInputElement = document.getElementById("redact-input");
 
   // Создание массива
   const comments = [
@@ -97,19 +97,30 @@
       isEdit: false,
     },
   ];
-  // Добавление кнопки редактирования на каждый комент
-  const initiateRedactButton = () => {
+  // Добавление возможности редактирования на каждый комент
+  const initiateRedact = () => {
     const redactButtons = document.querySelectorAll(".redact-button");
-        for (const redactButton of redactButtons) {
+    for (const redactButton of redactButtons) {
       redactButton.addEventListener("click", (event) => {
         event.stopPropagation();
         const index = redactButton.dataset.index;
         comments[index].isEdit = !comments[index].isEdit;
         renderComments();
       });
-      
+
     }
-    
+    const saveButtons = document.querySelectorAll(".save-button");
+    for (const saveButton of saveButtons) {
+      saveButton.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const index = saveButton.dataset.index;
+        comments[index].isEdit = !comments[index].isEdit;
+        //comments[index].text = 
+          renderComments();
+      });
+
+    }
+
   };
 
 
@@ -167,12 +178,15 @@
           </div>
         </div>
         <div>
-        <textarea type="textarea" class="${comment.isEdit ? 'add-form-text' : 'display-none'}" rows="4" id="redact-input">${comment.text}</textarea>
+        <textarea type="textarea" class="${comment.isEdit ? 'add-form-text' : 'display-none'}" rows="4">${comment.text}</textarea>
         </div>
         <div class="comment-footer">
           <div class="redact">
-            <button class="redact-button" id data-index="${index}">${comment.isEdit? 'Сохранить' : 'Редактировать'}</button>
-          </div>         
+            <button class="${comment.isEdit ? 'display-none' : 'redact-button'}" data-index="${index}">Редактировать</button>
+          </div>    
+          <div class="redact">
+            <button class="${comment.isEdit ? 'save-button' : 'display-none'}" data-index="${index}">Сохранить</button>
+          </div>      
           <div class="likes">
             <span class="likes-counter">${comment.like}</span>
             <button class="${comment.classLike}" data-index="${index}"></button>
@@ -183,7 +197,7 @@
     listElement.innerHTML = commentsHTML;
     initlikeButtonsListeners();
     redactComments();
-    initiateRedactButton();
+    initiateRedact();
   }
 
   renderComments();
