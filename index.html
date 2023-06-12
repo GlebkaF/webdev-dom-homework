@@ -75,14 +75,14 @@
       date: '12.02.2022 12:18',
       comment: "Это будет первый комментарий на этой странице",
       likes: 75,
-      tap: false,
+      isLike: false,
     },
     {
       name: "Варвара Н.",
       date: "13.02.2022 19:22",
       comment: "Мне нравится как оформлена эта страница! ❤",
       likes: 13,
-      tap: false,
+      isLike: false,
     },
   ]
 
@@ -91,12 +91,12 @@
     for (const likeButtonElement of likeButtonsElements) {
       likeButtonElement.addEventListener("click", (event) => {
         const index = likeButtonElement.dataset.index;
-        if (comments[index].tap) {
+        if (comments[index].isLike) {
           comments[index].likes--;
-          comments[index].tap = false;
+          comments[index].isLike = false;
         } else {
           comments[index].likes++;
-          comments[index].tap = true;
+          comments[index].isLike = true;
 
         }
 
@@ -136,7 +136,7 @@
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter" >${comment.likes}</span>
-            <button class="like-button" data-index=${index}></button>
+            <button class="like-button ${comment.isLike ? '-active-like' : ''}" data-index=${index}></button>
           </div>
         </div>
       </li>`;
@@ -160,25 +160,7 @@
       alert("Поля не заполнены");
       return;
     }
-    const oldListElement = listElement.innerHTML;
-    listElement.innerHTML = oldListElement +
-      `<li class="comment">
-        <div class="comment-header">
-          <div>${addFormName.value}</div>
-          <div>${now}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${addFormText.value}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>`
+
     comments.push({
       name: addFormName.value
         .replaceAll("&", "&amp;")
