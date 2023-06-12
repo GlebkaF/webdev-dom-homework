@@ -9,42 +9,11 @@
 
 <body>
   <div class="container">
+
     <ul class="comments" id="list-comment">
-      <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>
+      <!-- Список рендерится из JS -->
     </ul>
+
     <div class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="enter-name" />
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
@@ -55,6 +24,7 @@
     </div>
   </div>
 </body>
+
 <style>
   .error {
     background-color: red;
@@ -68,9 +38,79 @@
   const enterNameElement = document.getElementById("enter-name")
   const enterCommentElement = document.getElementById("enter-comment")
   const buttonElement = document.getElementById("btn")
-  // const currentDate = new Date()
-  // const newDate = currentDate.getDate() + '.' + currentDate.getMonth() + '.' + currentDate.getFullYear() + ' ' + currentDate.getHours() + ':' + currentDate.getMinutes()
 
+  const users = [
+    {
+      name: "Глеб Фокин",
+      comment: "Это будет первый комментарий на этой странице",
+      dateTime: "12.02.22 12:18",
+      like: false,
+      likeNumber: 3,
+      colorLike: 'like-button -no-active-like',
+    },
+    {
+      name: "Варвара Н.",
+      comment: "Мне нравится как оформлена эта страница! ❤",
+      dateTime: "13.02.22 19:22",
+      like: false,
+      likeNumber: 75,
+      colorLike: 'like-button no-active-like',
+    },
+  ];
+
+  const initLikeButton = () => {
+    const likeButtonElements = document.querySelectorAll('.like-button');
+    for (const likeButtonElement of likeButtonElements) {
+      likeButtonElement.addEventListener("click", () => {
+        const likeButtonIndex = likeButtonElement.dataset.index;
+        const listElement = users[likeButtonIndex];
+
+        if (listElement.like) {
+          listElement.likeNumber -= 1;
+          listElement.like = false;
+          listElement.colorLike = 'like-button no-active-like';
+          renderUsers();
+        } else {
+          listElement.likeNumber += 1;
+          listElement.like = true;
+          listElement.colorLike = 'like-button -active-like';
+          renderUsers();
+        }
+      });
+    };
+  };
+
+  initLikeButton();
+
+  const renderUsers = () => {
+    const userHtml = users.map((user, index) => {
+      return `<li class="comment">
+
+        <div class="comment-header">
+          <div>${user.name}</div>  
+          <div>${user.dateTime}</div>
+        </div>
+
+        <div class="comment-body">
+          <div class="comment-text">
+            ${user.comment}
+          </div>
+        </div>
+
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter" >${user.likeNumber}</span>
+            <button data-index="${index}" class='${user.colorLike}'></button>
+          </div>
+        </div>
+
+      </li>`;
+    }).join('');
+    listCommentElement.innerHTML = userHtml;
+    initLikeButton();
+  };
+
+  renderUsers();
 
   buttonElement.addEventListener("click", () => {
 
@@ -89,27 +129,14 @@
     const currentDate = new Date()
     let newDate = currentDate.getDate() + '.' + currentDate.getMonth() + '.' + currentDate.getFullYear() + ' ' + currentDate.getHours() + ':' + currentDate.getMinutes()
 
-    const oldListCommentElement = listCommentElement.innerHTML;
-    listCommentElement.innerHTML = oldListCommentElement +
-      `<li class="comment">
-        <div class="comment-header">
-          <div>${enterNameElement.value}</div>  
-          <div>${newDate}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${enterCommentElement.value}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>`;
-
+    users.push({
+      name: enterNameElement.value,
+      comment: enterCommentElement.value,
+      dateTime: newDate,
+    });
+    renderUsers();
   });
+
 
   console.log("It works!");
 </script>
