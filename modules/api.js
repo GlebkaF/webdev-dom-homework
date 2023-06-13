@@ -50,6 +50,7 @@ export const getComments = () => {
       const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v2/valeriy-poletaev/comments",
         {
           method: "POST",
+          headers: {Authentication: `Bearer {token}`},
           body: JSON.stringify({
           name: nameElement.value.replaceAll('<', '&lt').replaceAll('>', '&gt'),
           date: new Date(),
@@ -58,6 +59,7 @@ export const getComments = () => {
           activeLike: false,
           activeClass: "",
           forceError: true,
+          
         })
       });
         fetchPromise.then((response) => {
@@ -79,6 +81,7 @@ export const getComments = () => {
           }
         });
         getComments();
+        
       };
 
 

@@ -106,6 +106,8 @@ linkButtonElement.addEventListener("click", () =>{
   getUsers();
   getComments();
 
+  
+
     
 
 
