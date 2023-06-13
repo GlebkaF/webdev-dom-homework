@@ -80,7 +80,7 @@ getPromise();
 //   initLike();
 //   copyComment();
 // };
-renderComments();
+
 
 buttonElement.addEventListener("click", () => {
   buttonElement.classList.remove("add-form-button-error");

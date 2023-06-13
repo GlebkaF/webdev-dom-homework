@@ -1,10 +1,10 @@
 import { comments, listElement, textInputElement } from "./variables.js";
 
-function renderComments() {
-  const commentsHtml = comments
+function renderComments(array) {
+  const commentsHtml = array
     .map((comment, index) => {
       let activeLike = "";
-      if (comments[index].isLiked) {
+      if (array[index].isLiked) {
         activeLike = "-active-like";
       }
       return `
@@ -28,7 +28,7 @@ function renderComments() {
 
   listElement.innerHTML = commentsHtml;
 
-  initLike();
+  initLike(array);
   copyComment();
 }
 
@@ -54,21 +54,21 @@ function copyComment() {
   }
 }
 
-function initLike() {
+function initLike(array) {
   const likeButtonElements = document.querySelectorAll(".like-button");
   for (const likeButton of likeButtonElements) {
     const index = likeButton.dataset.index;
     likeButton.addEventListener("click", (e) => {
       e.stopPropagation();
 
-      if (comments[index].isLiked) {
-        comments[index].likes--;
+      if (array[index].isLiked) {
+        array[index].likes--;
       } else {
-        comments[index].likes++;
+        array[index].likes++;
       }
-      comments[index].isLiked = !comments[index].isLiked;
+      array[index].isLiked = !array[index].isLiked;
 
-      renderComments();
+      renderComments(array);
     });
   }
 }
