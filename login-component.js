@@ -1,16 +1,19 @@
 import { loginApi } from "./api.js"
 
 export function renderLoginComponent({ appEl, setToken, getApiFunction }) {
-    let appHtml = `<div class="container">
+
+    let isLoginMode = true
+    const renderForm = () => {
+       let appHtml = `<div class="container">
   <div class="add-form">
-  <div class="form-header">Форма входа</div>
-  <input type="text" id="get-form-name" class="add-form-name entrance-inputs" placeholder="Введите имя" />
+  <div class="form-header">Форма ${isLoginMode ? "входа" : "регистрации"}</div>
+  ${isLoginMode ? "" : `<input type="text" id="get-form-name" class="add-form-name entrance-inputs" placeholder="Введите имя" />`}
   <input type="text" id="get-form-login" class="add-form-name entrance-inputs" placeholder="Введите логин" />
   <input type="password" id="get-form-password" class="add-form-name entrance-inputs"
     placeholder="Введите пароль" />
   <div class="add-form-row entrance-buttons">
-    <button id="login-form-button" class="add-form-button">Войти</button>
-    <button id="switch-form-button" class="reg-form-button">Зарегистрироваться</button>
+    <button id="login-form-button" class="add-form-button">${isLoginMode ? "Войти" : "Зарегистрироваться"}</button>
+    <button id="switch-form-button" class="reg-form-button">${isLoginMode ? "Зарегистрироваться" : "Вернуться ко входу"}</button>
   </div>
   </div>`
     appEl.innerHTML = appHtml
@@ -42,5 +45,12 @@ export function renderLoginComponent({ appEl, setToken, getApiFunction }) {
 
         // renderApp()
     })
+    document.getElementById('switch-form-button').addEventListener('click', () => {
+        isLoginMode = !isLoginMode
+        renderForm()
+    }) 
+    }
+renderForm()
+    
 
 }
