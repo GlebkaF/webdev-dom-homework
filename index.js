@@ -6,6 +6,8 @@ let comments = [
 ]
 let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k"
 
+// token = null
+
 function getApiFunction() {
     return fetch('https://wedev-api.sky.pro/api/v2/sergey-bondarenko/comments', {
         method: "GET",
@@ -32,7 +34,7 @@ function getApiFunction() {
                 }
             })
             comments = appComents
-            renderComments()
+            renderApp()
         })
         .then(() => {
             // commentsLoader.innerHTML = ""
@@ -44,9 +46,12 @@ function getApiFunction() {
 
 getApiFunction()
 
-
-
 function postApiFunction() {
+
+    let addFormButton = document.getElementById('add-form-button')
+    let addFormName = document.getElementById('add-form-name')
+    let addFormText = document.getElementById('add-form-text')
+
     return fetch('https://wedev-api.sky.pro/api/v2/sergey-bondarenko/comments', {
         method: "POST",
         body: JSON.stringify({
@@ -93,9 +98,11 @@ function postApiFunction() {
                 alert('Отсутствует подключение к интернету')
             }
         })
+
 }
 
 const editCommentText = () => {
+    let addFormText = document.getElementById('add-form-text')
     const commentElements = document.querySelectorAll('.comment')
     for (const comment of commentElements) {
         comment.addEventListener('click', () => {
@@ -118,22 +125,40 @@ const initLikeButtons = () => {
             const comment = comments[likeButtonElement.dataset.index]
             comment.likes = comment.isLiked ? comment.likes - 1 : comment.likes + 1
             comment.isLiked = !comment.isLiked
-            renderComments()
+            renderApp()
         })
     }
 }
 initLikeButtons()
 
-const renderComments = () => {
+const renderApp = () => {
     const appEl = document.getElementById('app')
-    const commentsHtml = comments.map((comment, index) => {
-        return `<li class="comment" data-index="${index}">
+
+    if (!token) {
+        let appHtml = `<div class="container">
+  <div class="add-form">
+  <div class="form-header">Форма входа</div>
+  <input type="text" id="get-form-name" class="add-form-name entrance-inputs" placeholder="Введите ваше имя" />
+  <input type="text" id="get-form-login" class="add-form-name entrance-inputs" placeholder="Введите ваш логин" />
+  <input type="password" id="get-form-password" class="add-form-name entrance-inputs"
+    placeholder="Введите ваш пароль" />
+  <div class="add-form-row entrance-buttons">
+    <button id="reg-form-button" class="add-form-button">Войти</button>
+    <button id="reg-form-button" class="reg-form-button">Зарегистрироваться</button>
+  </div>
+  </div>`
+        appEl.innerHTML = appHtml
+    }
+
+    else {
+        const commentsHtml = comments.map((comment, index) => {
+            return `<li class="comment" data-index="${index}">
       <div class="comment-header">
         <div class="comment-name" data-index="${index}">${comment.name
-                .replaceAll("&", "&amp;")
-                .replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;")
-                .replaceAll('"', "&quot;")}</div>
+                    .replaceAll("&", "&amp;")
+                    .replaceAll("<", "&lt;")
+                    .replaceAll(">", "&gt;")
+                    .replaceAll('"', "&quot;")}</div>
         <div>
           ${getDate(comment.date)}
           </div>
@@ -141,10 +166,10 @@ const renderComments = () => {
       <div class="comment-body">
         <div class="comment-text">
           ${comment.text
-                .replaceAll("&", "&amp;")
-                .replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;")
-                .replaceAll('"', "&quot;")}
+                    .replaceAll("&", "&amp;")
+                    .replaceAll("<", "&lt;")
+                    .replaceAll(">", "&gt;")
+                    .replaceAll('"', "&quot;")}
           </div>
       </div>
       <div class="comment-footer">
@@ -154,9 +179,9 @@ const renderComments = () => {
         </div>
       </div>
     </li>`
-    }).join('')
+        }).join('')
 
-    let appHtml = `<div class="container">
+        let appHtml = `<div class="container">
   <div class="add-form">
   <div class="form-header">Форма входа</div>
   <input type="text" id="get-form-name" class="add-form-name entrance-inputs" placeholder="Введите ваше имя" />
@@ -182,14 +207,17 @@ const renderComments = () => {
   </div>
   </div>
   </div>`
+        appEl.innerHTML = appHtml
+    }
 
 
-    appEl.innerHTML = appHtml
-    const commentsContainer = document.getElementById('comments')
-    const addFormButton = document.getElementById('add-form-button')
-    const addFormName = document.getElementById('add-form-name')
-    const addFormText = document.getElementById('add-form-text')
-    const commentForm = document.querySelector('.add-form')
+
+
+    let commentsContainer = document.getElementById('comments')
+    let addFormButton = document.getElementById('add-form-button')
+    let addFormName = document.getElementById('add-form-name')
+    let addFormText = document.getElementById('add-form-text')
+    let commentForm = document.querySelector('.add-form')
     // const commentsLoader = document.querySelector('.comments-loader')
 
     // commentsLoader.innerHTML = "Комментарии загружаются"
@@ -197,9 +225,8 @@ const renderComments = () => {
 
     initLikeButtons()
     editCommentText()
-
     addFormButton.addEventListener('click', () => {
-        addFormName.classList.remove('error')
+        // addFormName.classList.remove('error')
         addFormText.classList.remove('error')
         //   if (addFormName.value === "") {
         //     return addFormName.classList.add('error')
@@ -211,15 +238,16 @@ const renderComments = () => {
         addFormButton.textContent = "Отправка"
         postApiFunction()
 
-        renderComments()
+        renderApp()
         // initLikeColor()
         // initLikeButtons()
 
 
     })
+
 }
 
-renderComments()
+renderApp()
 
 
 function getDate(date) {
