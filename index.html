@@ -10,40 +10,6 @@
 <body>
   <div class="container">
     <ul class="comments" id="list">
-      <!-- <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li> -->
     </ul>
     <div class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="add-form-name" />
@@ -67,52 +33,33 @@
   const addFormName = document.getElementById("add-form-name");
   const addFormText = document.getElementById("add-form-text");
 
-
-
-  // const comments = [
-  //   {
-  //     name: 'Глеб Фокин',
-  //     date: '12.02.2022 12:18',
-  //     comment: "Это будет первый комментарий на этой странице",
-  //     likes: 75,
-  //     isLike: false,
-  //   },
-  //   {
-  //     name: "Варвара Н.",
-  //     date: "13.02.2022 19:22",
-  //     comment: "Мне нравится как оформлена эта страница! ❤",
-  //     likes: 13,
-  //     isLike: false,
-  //   },
-  // ]
-
   let comments = [];
-  const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/:MeLook/comments", {
-    method: "GET"
-  });
-  //Подписываемся на ответ от API
-  fetchPromise.then((response) => {
-    //просим JSON сделать норм код
-    const jsonPromise = response.json();
-    //Подписываемся на результат JSON
-    jsonPromise.then((responseData) => {
-      //Получаем данные и рендерим
-      const appComments = responseData.comments.map((comment) => {
-        return {
-          name: comment.author.name,
-          date: new Date(comment.date).toLocaleString().slice(0, -3),
-          text: comment.text,
-          likes: comment.likes,
-          isLike: false,
-        };
+  //Отправляем GET-запрос
+  const fetchAndRenderComments = () => {
+    return fetch("https://wedev-api.sky.pro/api/v1/:MeLook/comments", {
+      method: "GET"
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: new Date(comment.date).toLocaleString().slice(0, -3),
+            text: comment.text,
+            likes: comment.likes,
+            isLike: false,
+          };
+        });
+        comments = appComments;
+        renderComments();
       });
-
-      comments = appComments;
-      renderComments();
-    });
-  });
+  };
 
 
+
+  //Злостно (или нет) отвечаем на коммент
   const answerComment = () => {
     const boxCommentsTexts = document.querySelectorAll('.comment');
     boxCommentsTexts.forEach((comment) => {
@@ -125,6 +72,7 @@
   }
   answerComment();
 
+  //Ставим лайки комментам
   const initLikeButtonListeners = () => {
     const likeButtonsElements = document.querySelectorAll(".like-button");
     for (const likeButtonElement of likeButtonsElements) {
@@ -148,7 +96,7 @@
   };
 
 
-
+  //Рендер комментов
   const renderComments = () => {
     var now = new Date().toLocaleString().slice(0, -3);
     const commentsHtml = comments
@@ -176,11 +124,11 @@
     initLikeButtonListeners();
     answerComment();
   };
-
+  fetchAndRenderComments();
   renderComments();
 
 
-
+  //Пишется коммент
   addButton.addEventListener("click", () => {
     addFormName.classList.remove("error");
     addFormText.classList.remove("error");
@@ -191,7 +139,7 @@
       return;
     }
 
-    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/:MeLook/comments", {
+    fetch("https://wedev-api.sky.pro/api/v1/:MeLook/comments", {
       method: "POST",
       body: JSON.stringify({
         name: addFormName.value,
@@ -199,53 +147,18 @@
         text: addFormText.value,
         likes: "0",
         isLike: false
+      }),
+    })
+      .then((response) => {
+        return response.json();
       })
-    });
-    //Подписываемся на ответ от API
-    fetchPromise.then((response) => {
-      //просим JSON сделать норм код
-      const jsonPromise = response.json();
-      //Подписываемся на результат JSON
-      jsonPromise.then((responseData) => {
-        //Получаем данные и рендерим
-
-
-        comments = appComments;
-        renderComments();
+      .then(() => {
+        return fetchAndRenderComments();
       });
-    });
-    //ОБНОВЛЯЕМ КОММЕНТАРИИ СНОВА
-    const fetchPromiseNew = fetch("https://wedev-api.sky.pro/api/v1/:MeLook/comments", {
-      method: "GET"
-    });
-    //Подписываемся на ответ от API
-    fetchPromiseNew.then((response) => {
-      //просим JSON сделать норм код
-      const jsonPromise = response.json();
-      //Подписываемся на результат JSON
-      jsonPromise.then((responseData) => {
-        //Получаем данные и рендерим
-        const appComments = responseData.comments.map((comment) => {
-          return {
-            name: comment.author.name,
-            date: new Date(comment.date).toLocaleString().slice(0, -3),
-            text: comment.text,
-            likes: comment.likes,
-            isLike: false,
-          };
-        });
-
-        comments = appComments;
-        renderComments();
-      });
-    });
     renderComments();
     addFormName.value = '';
     addFormText.value = '';
-  })
-
-
-
+  });
 
   console.log("It works!");
 </script>
