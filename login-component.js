@@ -1,3 +1,5 @@
+import { loginApi } from "./api.js"
+
 export function renderLoginComponent({ appEl, setToken, getApiFunction}) {
     let appHtml = `<div class="container">
   <div class="add-form">
@@ -14,8 +16,16 @@ export function renderLoginComponent({ appEl, setToken, getApiFunction}) {
         appEl.innerHTML = appHtml
 
         document.getElementById('login-form-button').addEventListener('click', () => {
-            setToken("Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k")
-            getApiFunction() // не знаю точно надо ли тут это? и так работает 
+            
+
+            loginApi({
+                login: "admin",
+                password: "admin",
+            }).then((user) => {
+                setToken(`Bearer ${user.user.token}`)
+                getApiFunction() 
+            })
+            
             // renderApp()
         })
 
