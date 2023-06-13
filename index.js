@@ -2,7 +2,7 @@
 
 import { getApi, postApi } from "./api.js";
 import { renderLoginComponent } from "./login-component.js";
-
+import { getDate } from "./date.js";
 // Код писать здесь
 
 
@@ -108,8 +108,6 @@ const renderApp = () => {
 
         return
     }
-
-
     const commentsHtml = comments.map((comment, index) => {
         return `<li class="comment" data-index="${index}">
       <div class="comment-header">
@@ -157,10 +155,6 @@ const renderApp = () => {
   </div>`
     appEl.innerHTML = appHtml
 
-
-
-
-
     let commentsContainer = document.getElementById('comments')
     let addFormButton = document.getElementById('add-form-button')
     let addFormName = document.getElementById('add-form-name')
@@ -169,7 +163,6 @@ const renderApp = () => {
     // const commentsLoader = document.querySelector('.comments-loader')
 
     // commentsLoader.innerHTML = "Комментарии загружаются"
-
 
     initLikeButtons()
     editCommentText()
@@ -189,35 +182,10 @@ const renderApp = () => {
         renderApp()
         // initLikeColor()
         // initLikeButtons()
-
-
     })
 
 }
 
 renderApp()
-
-
-function getDate(date) {
-    let myDate = new Date(date)
-
-
-    let hours = myDate.getHours()
-    let minutes = myDate.getMinutes()
-
-    if (hours < 10) {
-        hours = '0' + hours
-    }
-    if (minutes < 10) {
-        minutes = '0' + minutes
-    }
-    let day = myDate.getDate()
-    let month = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
-    let year = Number(String(myDate.getFullYear()).substring(2))
-    let userDate = day + "." + month[myDate.getMonth()] + "." + year + ' ' + hours + ":" + minutes
-    return userDate
-}
-
-
 
 console.log("It works!");
