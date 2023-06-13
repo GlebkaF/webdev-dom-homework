@@ -69,13 +69,12 @@
           listElement.likeNumber -= 1;
           listElement.like = false;
           listElement.colorLike = 'like-button no-active-like';
-          renderUsers();
         } else {
           listElement.likeNumber += 1;
           listElement.like = true;
           listElement.colorLike = 'like-button -active-like';
-          renderUsers();
         }
+        renderUsers();
       });
     };
   };
