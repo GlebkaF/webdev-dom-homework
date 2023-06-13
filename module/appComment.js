@@ -1,5 +1,6 @@
 
-import {renderComments, formDataComment} from "./render.js"
+import { token } from "./loginCompontnt.js";
+import {renderComments, formDataComment, renderApp} from "./render.js"
 
 const convertServer = (response, commentArr) => {
     return response.json().then((responseData) => {
@@ -13,7 +14,10 @@ const convertServer = (response, commentArr) => {
           isActiveLike: false,
         }
       });
-      renderComments(commentArr);      //после того как преобразовали данные, рендерим их на страницу в виде комментария
+      if(!token){
+        renderComments(commentArr); 
+      } else renderApp(commentArr);
+           
     })
   }
 export {convertServer}

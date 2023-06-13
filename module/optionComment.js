@@ -1,6 +1,7 @@
-import { elementComment} from './element.js';
-import { renderComments } from './render.js';
 
+import { renderApp } from './render.js';
+import { fetchAndRenderComments, postCommit, loginUser, regUser } from './api.js';
+import { letClearForm } from './elementChange.js';
 
 //обрабочик лайков
 
@@ -17,7 +18,7 @@ const like = (commentArr) => {
             commentArr[index].likes++;
         }
         commentArr[index].isActiveLike = !commentArr[index].isActiveLike;
-        renderComments(commentArr);
+        renderApp(commentArr);
       })
     }
   };
@@ -25,6 +26,7 @@ const like = (commentArr) => {
   // Добавляю обработчик клика 
   
   const initAnswer = () => {
+    const elementComment = document.getElementById('commentInput');
     const commentsElements = document.querySelectorAll(".comment");
     for (const commentElement of commentsElements) {
       commentElement.addEventListener('click', () => {
@@ -44,12 +46,86 @@ const like = (commentArr) => {
 
 //защищаем код 
 
-  const protectionHtml = (string) => {
-    return string
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-  };
 
-  export {like, initAnswer, protectionHtml }
+
+ export const sendComment = () => {
+
+  const elementName = document.getElementById('nameInput');
+  const elementComment = document.getElementById('commentInput');
+  const loadingListElement = document.querySelector('.loading-text');
+  const addFormElement = document.querySelector('.add-form');
+
+    letClearForm(elementName);
+    letClearForm(elementComment);
+
+    if (elementName.value === "") {
+      elementName.classList.add("error");
+      if (elementComment.value.replaceAll("\n", '') === '') {
+          elementComment.classList.add("error");
+      };
+        return;
+      }
+    if (elementComment.value.replaceAll("\n", '') === '') {
+        elementComment.classList.add("error");
+        return;
+    };
+
+    addFormElement.classList.add('disnone');           
+    loadingListElement.classList.remove('disnone');
+
+    postCommit();
+
+  }
+
+
+  export const authorizationUser = (setToken, setUser) => {
+    const login = document.getElementById('inputForRegLogin').value;
+    const password = document.getElementById('inputForRegPassword').value;
+    if (!login) {
+        alert('Введите логин');
+        return;
+    }
+    if (!password) {
+        alert('Введите пароль');
+        return;
+    }
+    loginUser(login, password)      
+        .then((user) => {
+            setToken(`Bearer ${user.user.token}`); 
+            setUser(user.user.name);
+            fetchAndRenderComments(); 
+        })
+        .catch((error) => {
+            alert(error.message);
+        })
+}
+
+//---функция регистрации:
+export const registrationUser = (setToken, setUser) => {
+    const login = document.getElementById('inputForRegLogin').value;
+    const name = document.getElementById('inputForRegName').value;
+    const password = document.getElementById('inputForRegPassword').value;
+    if (!name) {
+        alert('Введите имя');
+        return;
+    }
+    if (!login) {
+        alert('Введите логин');
+        return;
+    }
+    if (!password) {
+        alert('Введите пароль');
+        return;
+    }
+    regUser(login, password, name)
+        .then((user) => {
+            setToken(`Bearer ${user.user.token}`); 
+            setUser(user.user.name);
+            fetchAndRenderComments(); 
+        })
+        .catch((error) => {
+            alert(error.message);
+        })
+}
+
+  export {like, initAnswer}
