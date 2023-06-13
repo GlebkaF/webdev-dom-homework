@@ -6,9 +6,11 @@ let comments = [
 ]
 let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k"
 
-// token = null
+token = null
 
 function getApiFunction() {
+    // const commentsLoader = document.querySelector('.comments-loader')
+
     return fetch('https://wedev-api.sky.pro/api/v2/sergey-bondarenko/comments', {
         method: "GET",
         headers: {
@@ -143,22 +145,29 @@ const renderApp = () => {
   <input type="password" id="get-form-password" class="add-form-name entrance-inputs"
     placeholder="Введите ваш пароль" />
   <div class="add-form-row entrance-buttons">
-    <button id="reg-form-button" class="add-form-button">Войти</button>
-    <button id="reg-form-button" class="reg-form-button">Зарегистрироваться</button>
+    <button id="login-form-button" class="add-form-button">Войти</button>
+    <button id="switch-form-button" class="reg-form-button">Зарегистрироваться</button>
   </div>
   </div>`
         appEl.innerHTML = appHtml
+
+        document.getElementById('login-form-button').addEventListener('click', () => {
+            token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k"
+            renderApp()
+        })
+
+        return
     }
 
-    else {
-        const commentsHtml = comments.map((comment, index) => {
-            return `<li class="comment" data-index="${index}">
+
+    const commentsHtml = comments.map((comment, index) => {
+        return `<li class="comment" data-index="${index}">
       <div class="comment-header">
         <div class="comment-name" data-index="${index}">${comment.name
-                    .replaceAll("&", "&amp;")
-                    .replaceAll("<", "&lt;")
-                    .replaceAll(">", "&gt;")
-                    .replaceAll('"', "&quot;")}</div>
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")}</div>
         <div>
           ${getDate(comment.date)}
           </div>
@@ -166,10 +175,10 @@ const renderApp = () => {
       <div class="comment-body">
         <div class="comment-text">
           ${comment.text
-                    .replaceAll("&", "&amp;")
-                    .replaceAll("<", "&lt;")
-                    .replaceAll(">", "&gt;")
-                    .replaceAll('"', "&quot;")}
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")}
           </div>
       </div>
       <div class="comment-footer">
@@ -179,20 +188,9 @@ const renderApp = () => {
         </div>
       </div>
     </li>`
-        }).join('')
+    }).join('')
 
-        let appHtml = `<div class="container">
-  <div class="add-form">
-  <div class="form-header">Форма входа</div>
-  <input type="text" id="get-form-name" class="add-form-name entrance-inputs" placeholder="Введите ваше имя" />
-  <input type="text" id="get-form-login" class="add-form-name entrance-inputs" placeholder="Введите ваш логин" />
-  <input type="password" id="get-form-password" class="add-form-name entrance-inputs"
-    placeholder="Введите ваш пароль" />
-  <div class="add-form-row entrance-buttons">
-    <button id="reg-form-button" class="add-form-button">Войти</button>
-    <button id="reg-form-button" class="reg-form-button">Зарегистрироваться</button>
-  </div>
-  </div>
+    let appHtml = `<div class="container">
   <div class="comments-loader"></div>
   <ul id="comments" class="comments">
   <!-- rendering from JS -->
@@ -207,8 +205,8 @@ const renderApp = () => {
   </div>
   </div>
   </div>`
-        appEl.innerHTML = appHtml
-    }
+    appEl.innerHTML = appHtml
+
 
 
 
