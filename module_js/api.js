@@ -6,28 +6,24 @@ import {
 } from "./variables.js";
 import { renderComments } from "./render.js";
 
-function getPromise() {
-  const fetchPromise = fetch(
-    "https://wedev-api.sky.pro/api/v1/qwitchers/comments",
-    {
-      method: "GET",
-    }
-  );
+const getAppComments = () => {
+  let appComments = comments.map((comment) => {
+    return {
+      name: comment.author.name,
+      date: formatDate(comment.date),
+      text: comment.text,
+      likes: "0",
+      isLiked: false,
+    };
+  });
+  return appComments;
+};
 
-  fetchPromise.then((responce) => {
-    responce.json().then((responceData) => {
-      let appComments = responceData.comments.map((comment) => {
-        return {
-          name: comment.author.name,
-          date: formatDate(comment.date),
-          text: comment.text,
-          likes: "0",
-          isLiked: false,
-        };
-      });
-      comments = appComments;
-      renderComments();
-    });
+function getPromise() {
+  fetch("https://wedev-api.sky.pro/api/v1/qwitchers/comments", {
+    method: "GET",
+  }).then((response) => {
+    getAppComments(response, comments);
   });
 }
 
@@ -36,38 +32,37 @@ function getPost() {
     method: "POST",
     body: JSON.stringify({
       name: nameInputElement.value,
-      date: formatDate(),
       text: textInputElement.value,
-      likes: "0",
-      isLiked: false,
-      forseError: true,
+      forceError: true,
     }),
   })
     .then((response) => {
       if (response.status === 201) {
         return response.json();
-      } else if (response.status === 500) {
-        alert("Извините, похоже что-то с сервером. Попробуйте позже");
-      } else if (response.status === 400) {
-        alert("Некорректно переданны данные");
-        alert(
-          "Проверьте, корректность введенных данных имени и текста комментария: Имя или текст не должны быть короче 3 символов"
-        );
+      } else if (response.status === 400 ) {
+        throw new Error("Плохой запрос");
+      } else {
+        throw new Error("Сервер упал");
       }
     })
     .then((responseData) => {
-      return getPromise();
+      comments = responseData.comments;
+      textInputElement.value = "";
+      nameInputElement.value = "";
+      getPromise();
     })
     .then(() => {
       buttonElement.disabled = false;
       buttonElement.textContent = "Написать";
-      textInputElement.value = "";
     })
     .catch((error) => {
       buttonElement.disabled = false;
       buttonElement.textContent = "Написать";
-      alert("Что-то пошло не так, попробуйте снова");
+      getPost();
+      getPromise();
     });
 }
+
+
 
 export { getPromise, getPost };
