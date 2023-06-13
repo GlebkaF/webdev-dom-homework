@@ -1,10 +1,10 @@
-import { loginApi } from "./api.js"
+import { loginUser, registrationUser } from "./api.js"
 
 export function renderLoginComponent({ appEl, setToken, getApiFunction }) {
 
     let isLoginMode = true
     const renderForm = () => {
-       let appHtml = `<div class="container">
+        let appHtml = `<div class="container">
   <div class="add-form">
   <div class="form-header">Форма ${isLoginMode ? "входа" : "регистрации"}</div>
   ${isLoginMode ? "" : `<input type="text" id="get-form-name" class="add-form-name entrance-inputs" placeholder="Введите имя" />`}
@@ -16,41 +16,84 @@ export function renderLoginComponent({ appEl, setToken, getApiFunction }) {
     <button id="switch-form-button" class="reg-form-button">${isLoginMode ? "Зарегистрироваться" : "Вернуться ко входу"}</button>
   </div>
   </div>`
-    appEl.innerHTML = appHtml
+        appEl.innerHTML = appHtml
 
-    document.getElementById('login-form-button').addEventListener('click', () => {
-        const login = document.getElementById('get-form-login')
-        const password = document.getElementById('get-form-password')
-        login.classList.remove("error")
-        password.classList.remove("error")
+        document.getElementById('login-form-button').addEventListener('click', () => {
 
-        if (login.value === "") {
-            login.classList.add("error")
-            return
-        }
-        if (password.value === "") {
-            password.classList.add("error")
-            return
-        }
+            if (isLoginMode) {
+                const login = document.getElementById('get-form-login').value
+                const password = document.getElementById('get-form-password').value
+                const loginArea = document.getElementById('get-form-login')
+                const passwordArea = document.getElementById('get-form-password')
 
-        loginApi({
-            login: login,
-            password: password,
-        }).then((user) => {
-            setToken(`Bearer ${user.user.token}`)
-            getApiFunction()
-        }).catch(error => {
-            alert(error.message)
+
+                loginArea.classList.remove("error")
+                passwordArea.classList.remove("error")
+
+                if (loginArea.value === "") {
+                    loginArea.classList.add("error")
+                    return
+                }
+                if (passwordArea.value === "") {
+                    passwordArea.classList.add("error")
+                    return
+                }
+
+                loginUser({
+                    login: login,
+                    password: password,
+                }).then((user) => {
+                    setToken(`Bearer ${user.user.token}`)
+                    getApiFunction()
+                }).catch(error => {
+                    alert(error.message)
+                })
+            } else {
+                const login = document.getElementById('get-form-login')
+                const name = document.getElementById('get-form-name')
+                const password = document.getElementById('get-form-password')
+                const loginArea = document.getElementById('get-form-login')
+                const passwordArea = document.getElementById('get-form-password')
+                const nameArea = document.getElementById('get-form-name')
+
+                loginArea.classList.remove("error")
+                passwordArea.classList.remove("error")
+                nameArea.classList.remove("error")
+
+                if (loginArea.value === "") {
+                    loginArea.classList.add("error")
+                    return
+                }
+                if (nameArea.value === "") {
+                    nameArea.classList.add("error")
+                    return
+                }
+                if (passwordArea.value === "") {
+                    passwordArea.classList.add("error")
+                    return
+                }
+
+                registrationUser({
+                    login: login,
+                    password: password,
+                    name: name,
+                }).then((user) => {
+                    setToken(`Bearer ${user.user.token}`)
+                    getApiFunction()
+                }).catch(error => {
+                    alert(error.message)
+                })
+            }
+
+
+            // renderApp()
         })
-
-        // renderApp()
-    })
-    document.getElementById('switch-form-button').addEventListener('click', () => {
-        isLoginMode = !isLoginMode
-        renderForm()
-    }) 
+        document.getElementById('switch-form-button').addEventListener('click', () => {
+            isLoginMode = !isLoginMode
+            renderForm()
+        })
     }
-renderForm()
-    
+    renderForm()
+
 
 }

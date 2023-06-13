@@ -1,18 +1,18 @@
 export function getApi(token) {
-return fetch('https://wedev-api.sky.pro/api/v2/sergey-bondarenko/comments', {
-    method: "GET",
-    headers: {
-        Authorization: token
-    }
-})
-    .then((response) => {
-        if (response.status === 200) {
-            return response.json()
-        }
-        else {
-            throw new Error()
+    return fetch('https://wedev-api.sky.pro/api/v2/sergey-bondarenko/comments', {
+        method: "GET",
+        headers: {
+            Authorization: token
         }
     })
+        .then((response) => {
+            if (response.status === 200) {
+                return response.json()
+            }
+            else {
+                throw new Error()
+            }
+        })
 }
 
 export function postApi({
@@ -46,7 +46,7 @@ export function postApi({
         })
 }
 
-export function loginApi({
+export function loginUser({
     login,
     password
 }) {
@@ -59,9 +59,31 @@ export function loginApi({
     })
         .then((response) => {
 
-            if(response.status == "400") {
+            if (response.status == "400") {
                 throw new Error("Неверный логин или пароль")
             }
-                return response.json()
+            return response.json()
+        })
+}
+
+export function registrationUser({
+    login,
+    password,
+    name
+}) {
+    return fetch('https://wedev-api.sky.pro/api/user', {
+        method: "POST",
+        body: JSON.stringify({
+            login,
+            password,
+            name
+        })
+    })
+        .then((response) => {
+
+            if (response.status == "400") {
+                throw new Error("Неподходящее имя пользователя или пароль")
+            }
+            return response.json()
         })
 }
