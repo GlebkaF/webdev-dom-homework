@@ -3,6 +3,7 @@
 import { loadComments, postComment, fetchLogin, toggleLike, deleteComment } from "./api.js";
 import { renderComments } from "./render.js";
 import { renderLogin } from "./renderLogin.js";
+import { format } from "date-fns";
 
 const app = document.getElementById("app");
 
@@ -36,7 +37,7 @@ function getComments() {
     const appComments = responseData.comments.map((comment) => {
       return {
         name: comment.author.name,
-        date: normalDate(new Date(comment.date)),
+        date: format(new Date(comment.date), "yyyy-MM-dd hh.mm.ss"),
         text: comment.text,
         likes: comment.likes,
         favorite: false,
@@ -108,31 +109,6 @@ function onLoginSubmit(login, password) {
     loginError = error.message;
     renderLogin(app, onLoginSubmit, loginError);
   });
-}
-
-function normalDate(date) {
-  let today = date;
-  let day = today.getDate();
-  let month = today.getMonth() + 1;
-  let years = today.getFullYear();
-  let hours = today.getHours();
-  let minutes = today.getMinutes();
-
-  if (minutes < 10) {
-    minutes = "0" + minutes
-  }
-
-  if (day < 10) {
-    day = "0" + day
-  }
-
-  if (month < 10) {
-    month = "0" + month
-  }
-
-  years = String(years).slice(2);
-
-  return `${day}.${month}.${years} ${hours}:${minutes}`;
 }
 
 getComments();
