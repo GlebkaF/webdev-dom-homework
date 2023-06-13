@@ -16,7 +16,7 @@ function getApiFunction() {
     // const commentsLoader = document.querySelector('.comments-loader')
 
     return getApi(token).then((responseData) => {
-        const appComents = responseData.comments.map((comment) => {
+        const appComments = responseData.comments.map((comment) => {
             return {
                 name: comment.author.name,
                 date: comment.date,
@@ -25,7 +25,7 @@ function getApiFunction() {
                 isLiked: false,
             }
         })
-        comments = appComents
+        comments = appComments
         renderApp()
     })
         .then(() => {
@@ -101,15 +101,9 @@ initLikeButtons()
 const renderApp = () => {
     const appEl = document.getElementById('app')
 
-    if (!token) {
-        renderLoginComponent({ appEl, setToken: (newToken) => {
-            token = newToken
-        }, getApiFunction})
-
-        return
-    }
     const commentsHtml = comments.map((comment, index) => {
-        return `<li class="comment" data-index="${index}">
+        return `
+        <li class="comment" data-index="${index}">
       <div class="comment-header">
         <div class="comment-name" data-index="${index}">${comment.name
                 .replaceAll("&", "&amp;")
@@ -137,6 +131,30 @@ const renderApp = () => {
       </div>
     </li>`
     }).join('')
+
+    if (!token) {
+        let appHtml = `<div class="container">
+        <div class="comments-loader"></div>
+        <ul id="comments" class="comments">
+        <!-- rendering from JS -->
+        ${commentsHtml}
+        </ul>
+        <p class="is-user__text">Чтобы оставить комментарий -
+        <button class="is-user__text is-user__text-link" id="is-user">авторизуйтесь</button>
+        </p>`
+
+        appEl.innerHTML = appHtml
+        document.getElementById('is-user').addEventListener('click', () => {
+            renderLoginComponent({
+                appEl, setToken: (newToken) => {
+                    token = newToken
+                }, getApiFunction
+            })
+        })
+
+        return
+    }
+
 
     let appHtml = `<div class="container">
   <div class="comments-loader"></div>
