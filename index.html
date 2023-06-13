@@ -193,20 +193,34 @@
           text: textInputElement.value,
           likes: "0",
           isLiked: false,
+          forceError: true,
         }),
       })
         .then((response) => {
-          return response.json();
+          if (response.status === 201) {
+            return response.json();
+          } else if (response.status === 500) {
+            alert("Извините, похоже что-то с сервером. Попробуйте позже");
+            throw new Error("Ошибка сервера");
+          } else if (response.status === 400) {
+            alert(
+              "Проверьте, корректность введенных данных имени и текста комментария: Имя или текст не должны быть короче 3 символов"
+            );
+            throw new Error("Ошибка ввода данных");
+          }
         })
         .then((responseData) => {
           return getPromise();
-        }).then(() => {
-
+        })
+        .then(() => {
+          buttonElement.disabled = false;
+          buttonElement.textContent = "Написать";
+          textInputElement.value = "";
+        })
+        .catch((error) => {
           buttonElement.disabled = false;
           buttonElement.textContent = "Написать";
         });
-
-      textInputElement.value = "";
     });
 
     // deleteButtonElement.addEventListener("click", () => {
