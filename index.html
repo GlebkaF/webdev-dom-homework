@@ -74,30 +74,86 @@
   const addButtonElement = document.getElementById("add-button");
   const listElement = document.getElementById("list");
   const endDeleteButtonElement = document.getElementById("end-delete-button");
-  //const redactInputElement = document.getElementById("redact-input");
 
-  // Создание массива
-  const comments = [
-    {
-      name: "Глеб Фокин",
-      text: "Это будет первый комментарий на этой странице",
-      eachDate: "12.02.22 12:18",
-      like: 3,
-      currentLike: false,
-      classLike: 'like-button -no-active-like',
-      isEdit: false,
-    },
-    {
-      name: "Варвара Н.",
-      text: "Мне нравится как оформлена эта страница! ❤",
-      eachDate: "13.02.22 19:22",
-      like: 75,
-      currentLike: false,
-      classLike: 'like-button -no-active-like',
-      isEdit: false,
-    },
-  ];
+
+  // Функция для даты
+  function takeDate(currentDate) {
+    let day = currentDate.getDate();
+    if (day < 10) {
+      day = '0' + day;
+    }
+    let month = +currentDate.getMonth() + 1;
+    if (month < 10) {
+      month = '0' + month;
+    }
+    let year = currentDate.getFullYear();
+    let arrYear = Array.from(String(year));
+    year = arrYear[2] + arrYear[3];
+    let hour = currentDate.getHours();
+    if (hour < 10) {
+      hour = '0' + hour;
+    }
+    let minute = currentDate.getMinutes();
+    if (minute < 10) {
+      minute = '0' + minute;
+    }
+    return `${day}.${month}.${year} ${hour}:${minute}`;
+  }
+
+  // TODO: Получать из хранилища данных
+  let comments = [];
+
+  // Запросы в API - асинхронные, мы не знаем как долго будет выполняться запрос
+  // Запрос может выполняться секунды и даже минуты
+  // fetch - запускает запрос в api
+  const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/:sofia-iakovleva/comments", {
+    method: "GET"
+  });
+
+  // Подписываемся на успешное завершение запроса с помощью then
+  fetchPromise.then((response) => {
+    // Запускаем преобразовываем "сырые" данные от API в json формат и 
+    //подписываемся на успешное завершение запроса с помощью then:
+    response.json().then((responseData) => {
+      const appComments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          text: comment.text,
+          eachDate: takeDate(new Date(comment.date)),
+          like: comment.likes,
+          currentLike: false,
+          classLike: 'like-button -no-active-like',
+          isEdit: false,
+        };
+      });
+      comments = appComments;
+      renderComments();
+    });
+  });
+
+  // // Создание массива
+  // const comments = [
+  //   {
+  //     name: "Глеб Фокин",
+  //     text: "Это будет первый комментарий на этой странице",
+  //     eachDate: "12.02.22 12:18",
+  //     like: 3,
+  //     currentLike: false,
+  //     classLike: 'like-button -no-active-like',
+  //     isEdit: false,
+  //   },
+  //   {
+  //     name: "Варвара Н.",
+  //     text: "Мне нравится как оформлена эта страница! ❤",
+  //     eachDate: "13.02.22 19:22",
+  //     like: 75,
+  //     currentLike: false,
+  //     classLike: 'like-button -no-active-like',
+  //     isEdit: false,
+  //   },
+  // ];
   // Добавление возможности редактирования на каждый комент
+
   const initiateRedact = () => {
     const redactButtons = document.querySelectorAll(".redact-button");
     for (const redactButton of redactButtons) {
@@ -116,7 +172,7 @@
         const index = saveButton.dataset.index;
         comments[index].isEdit = !comments[index].isEdit;
         comments[index].text = saveButton.closest('.comment').querySelector('textarea').value
-          renderComments();
+        renderComments();
       });
 
     }
@@ -208,28 +264,6 @@
       return;
     }
 
-    // Извлекаем параметы текущей даты
-    let currentDate = new Date();
-    let day = currentDate.getDate();
-    if (day < 10) {
-      day = '0' + day;
-    }
-    let month = +currentDate.getMonth() + 1;
-    if (month < 10) {
-      month = '0' + month;
-    }
-    let year = currentDate.getFullYear();
-    let arrYear = Array.from(String(year));
-    year = arrYear[2] + arrYear[3];
-    let hour = currentDate.getHours();
-    if (hour < 10) {
-      hour = '0' + hour;
-    }
-    let minute = currentDate.getMinutes();
-    if (minute < 10) {
-      minute = '0' + minute;
-    }
-
     //Добавляем данные для нового комента
     comments.push({
       name: nameInputElement.value
@@ -244,7 +278,7 @@
         .replaceAll('"', "&quot;")
         .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
         .replaceAll("QUOTE_END", "</div><br><br>,"),
-      eachDate: `${day}.${month}.${year} ${hour}:${minute}`,
+      eachDate: takeDate(new Date),
       like: 0,
       currentLike: false,
       classLike: 'like-button -no-active-like',
