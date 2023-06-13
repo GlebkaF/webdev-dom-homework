@@ -186,6 +186,8 @@ const replyТoСomment = () =>{
       const userName = listElement.dataset.name;
       commentTextEl.value = ">" + " "  + commentText + " " + userName;
       renderUsers();
+      initLikeButton();
+      replyТoСomment();
     });
   }
 }
