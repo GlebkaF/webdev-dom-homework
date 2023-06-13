@@ -100,16 +100,11 @@
     return `${day}.${month}.${year} ${hour}:${minute}`;
   }
 
-  // TODO: Получать из хранилища данных
-  let comments = [];
 
-  // Запросы в API - асинхронные, мы не знаем как долго будет выполняться запрос
-  // Запрос может выполняться секунды и даже минуты
-  // fetch - запускает запрос в api
+  let comments = [];
   const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/:sofia-iakovleva/comments", {
     method: "GET"
   });
-
   // Подписываемся на успешное завершение запроса с помощью then
   fetchPromise.then((response) => {
     // Запускаем преобразовываем "сырые" данные от API в json формат и 
@@ -265,24 +260,67 @@
     }
 
     //Добавляем данные для нового комента
-    comments.push({
-      name: nameInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-      text: comentInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
-        .replaceAll("QUOTE_END", "</div><br><br>,"),
-      eachDate: takeDate(new Date),
-      like: 0,
-      currentLike: false,
-      classLike: 'like-button -no-active-like',
-      isEdit: false,
+    // comments.push({
+    //   name: nameInputElement.value
+    //     .replaceAll("&", "&amp;")
+    //     .replaceAll("<", "&lt;")
+    //     .replaceAll(">", "&gt;")
+    //     .replaceAll('"', "&quot;"),
+    //   text: comentInputElement.value
+    //     .replaceAll("&", "&amp;")
+    //     .replaceAll("<", "&lt;")
+    //     .replaceAll(">", "&gt;")
+    //     .replaceAll('"', "&quot;")
+    //     .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+    //     .replaceAll("QUOTE_END", "</div><br><br>,"),
+    //   eachDate: takeDate(new Date),
+    //   like: 0,
+    //   currentLike: false,
+    //   classLike: 'like-button -no-active-like',
+    //   isEdit: false,
+    // });
+
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/:sofia-iakovleva/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        name: nameInputElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
+        text: comentInputElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+          .replaceAll("QUOTE_END", "</div><br><br>,"),
+        eachDate: takeDate(new Date),
+        likes: 0,
+        currentLike: false,
+        classLike: 'like-button -no-active-like',
+        isEdit: false,
+      })
+    });
+    // Подписываемся на успешное завершение запроса с помощью then
+    fetchPromise.then((response) => {
+      // Запускаем преобразовываем "сырые" данные от API в json формат и 
+      //подписываемся на успешное завершение запроса с помощью then:
+      response.json().then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            text: comment.text,
+            eachDate: takeDate(new Date(comment.date)),
+            like: comment.likes,
+            currentLike: false,
+            classLike: 'like-button -no-active-like',
+            isEdit: false,
+          };
+        });
+        comments = appComments;
+        renderComments();
+      });
     });
 
     renderComments();
