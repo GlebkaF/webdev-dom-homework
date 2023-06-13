@@ -1,4 +1,7 @@
 "use strict";
+
+import { getApi, postApi } from "./api.js";
+
 // Код писать здесь
 
 
@@ -11,21 +14,7 @@ token = null
 function getApiFunction() {
     // const commentsLoader = document.querySelector('.comments-loader')
 
-    return fetch('https://wedev-api.sky.pro/api/v2/sergey-bondarenko/comments', {
-        method: "GET",
-        headers: {
-            Authorization: token
-        }
-    })
-        .then((response) => {
-            if (response.status === 200) {
-                return response.json()
-            }
-            else {
-                throw new Error()
-            }
-        })
-        .then((responseData) => {
+    return getApi(token).then((responseData) => {
             const appComents = responseData.comments.map((comment) => {
                 return {
                     name: comment.author.name,
@@ -54,32 +43,7 @@ function postApiFunction() {
     let addFormName = document.getElementById('add-form-name')
     let addFormText = document.getElementById('add-form-text')
 
-    return fetch('https://wedev-api.sky.pro/api/v2/sergey-bondarenko/comments', {
-        method: "POST",
-        body: JSON.stringify({
-            //   name: addFormName.value,
-            text: addFormText.value
-        }),
-        headers: {
-            Authorization: token
-        }
-    })
-        .then((response) => {
-            // console.log(response);
-            if (response.status === 201) {
-                return response.json()
-            }
-            else if (response.status === 400) {
-                throw new Error("Ошибка ввода")
-            }
-            else if (response.status === 500) {
-                throw new Error("Ошибка сервера")
-            }
-            else {
-                throw new Error("Ошибка")
-            }
-        })
-        .then((responseData) => {
+    return postApi({token, text: addFormText.value}).then((responseData) => {
             return getApiFunction()
         })
         .then(() => {
@@ -153,6 +117,7 @@ const renderApp = () => {
 
         document.getElementById('login-form-button').addEventListener('click', () => {
             token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k"
+            getApiFunction() // не знаю точно надо ли тут это? и так работает 
             renderApp()
         })
 
