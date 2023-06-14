@@ -1,5 +1,5 @@
-import { addButton, newComment, newName } from "./comments.js";
-import { allComments, postComments} from "./api.js";
+import { addButton } from "./comments.js";
+import { allComments, postCommentss, userData} from "./api.js";
 import { renderComments, renderForm} from "./renderComments.js";
 import { commentClickListener } from "./listeners.js";
 
@@ -22,8 +22,7 @@ function formatDate(date) {
     return dd + '.' + mm + '.' + yy + ' ' + hh + ':' + mi;
 }
 
-function cleareInputs () {
-    newName.value = ''
+function cleareInputs (newComment) {
     newComment.value = ''
     addButton.setAttribute('disabled', 'disabled')
 }
@@ -51,12 +50,14 @@ function delay(interval = 300) {
 }
 
 function addNewComment() {
-    let date = new Date();
+  let newComment = document.querySelector('.add-form-text') 
+  let date = new Date();
     let loadedComment = true
     renderForm(loadedComment)
-    postComments()
+    postComments(newComment)
     renderComments()
     commentClickListener()
 }
+
 
 export {formatDate, cleareInputs, AddLikeOrDelLike, addNewComment}

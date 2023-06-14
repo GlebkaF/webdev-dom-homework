@@ -1,7 +1,8 @@
 import { form, newName, newComment, addButton} from "./comments.js";
-import {allComments } from "./api.js";
+import {allComments, autorisationUser, loginUser, userData } from "./api.js";
 import { AddLikeOrDelLike } from "./utilis.js";
 import { addNewComment } from "./utilis.js";
+import {  renderRegForm, autorizationForm} from "./renderComments.js";
 
 let commentClickListener = () => {
   
@@ -16,7 +17,6 @@ let commentClickListener = () => {
   }
 }
 
-
 let initEventListeners = () => {
 
 let likeButtons = document.querySelectorAll('.likes');
@@ -26,47 +26,93 @@ let likeButtons = document.querySelectorAll('.likes');
       e.stopPropagation()
       AddLikeOrDelLike(e)
     })  
+
   } 
 }
 
-export {commentClickListener, initEventListeners}
+let comments = document.querySelector('.comments');
 
-newName.addEventListener('input', function () {
-    if (newName.value.length < 3 || newComment.value.length < 3) {
-        addButton.setAttribute('disabled', 'disabled')
-    }
-    else{
-        addButton.removeAttribute('disabled')
-    }
-});
-
-newComment.addEventListener('input', function () {
-    if (newName.value.length < 3 || newComment.value.length < 3) {
-        addButton.setAttribute('disabled', 'disabled')
-    }
-    else{
-        addButton.removeAttribute('disabled')
-    }
-});
+export function listenersOfForm() {
+  let addButton = document.querySelector('.add-form-button')
+  let form = document.querySelector('.add-form')
 
 
-addButton.addEventListener('click', addNewComment)
+  addButton.addEventListener('click', addNewComment)
 
-form.addEventListener('keyup', function (event) {
-    if (!addButton.attributes.disabled && event.code == 'Enter') {
-       addNewComment()
-    }
-    else{
+  form.addEventListener('keyup', function (event) {
+      if (!addButton.attributes.disabled && event.code == 'Enter') {
+         addNewComment()
+      }
+      else{
         return
-    }
+      }
+
 })
 
 
-let comments = document.querySelector('.comments');
-let delButton = form.querySelector('.del-form-button');
-
-delButton.addEventListener('click', function () {
+let delButton = document.querySelector('.del-form-button');
+  delButton.addEventListener('click', function () {
     comments.removeChild(comments.lastChild)
     allComments.pop()
+  })
+}
+
+function listenerHref() {
+    let href = document.getElementById("reg-href")
+    href.addEventListener('click', function (event) {
+      event.preventDefault()
+      renderRegForm()
+      listenerOfReg()
+    })
+}
+
+function listenerOfReg() {
+  let regButton = document.getElementById('reg-button')
+  let regLogin = document.getElementById('reg-form-login')
+  let regName = document.getElementById('reg-form-name')
+  let regPassword = document.getElementById('reg-form-password')
+  let loginButton = document.querySelector('.login-form')
+  regButton.addEventListener('click', function () {
+    loginUser(regLogin, regName, regPassword)
+  })
+  loginButton.addEventListener('click', function () {
+    autorizationForm()
+    listenerOfAutoriz()
+  })
+}
+
+function listenerOfAutoriz() {
+  let loginUserButton = document.querySelector('.login')
+  let logLogin = document.querySelector('.log-form-login')
+  let logPassword= document.querySelector('.log-form-password')
+  let regPageButton= document.querySelector('.reg-form-button')
+  logLogin.addEventListener('input', function () {
+    if (logLogin.value.length >= 3 && logPassword.value.length >= 3) {
+      loginUserButton.removeAttribute('disabled')
+    }
+    else{
+      loginUserButton.setAttribute('disabled','disabled')
+    }
 })
+
+logPassword.addEventListener('input', function () {
+  if (logLogin.value.length >= 3 && logPassword.value.length >= 3) {
+    loginUserButton.removeAttribute('disabled')
+  }
+  else {
+    loginUserButton.setAttribute('disabled', 'disabled')
+    }
+})
+
+loginUserButton.addEventListener('click', function () {
+  autorisationUser(logLogin, logPassword)
+  })
+regPageButton.addEventListener('click', function () {
+  renderRegForm()
+  listenerOfReg()
+  })
+}
+
+
+export {commentClickListener, initEventListeners, listenerHref}
 
