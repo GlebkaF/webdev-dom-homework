@@ -41,23 +41,50 @@
     const currentDate = new Date().toLocaleDateString('default', {day: '2-digit', month: '2-digit', year: '2-digit'}) + " "+ new Date().toLocaleTimeString().slice(0,-3);
     const buttontwoElement = document.getElementById ('buttontwo');
     
-    const comments = [
+     function getFetchPromice(){
+    const fetchPromise = fetch (
+      "https://wedev-api.sky.pro/api/v1/:Ilmira-Sh/comments",
       {
-        name: 'Глеб Фокин',
-        date: '12.02.22 12:18',
-        textComment: 'Это будет первый комментарий на этой странице',
-        likeComment: false,
-        likesNumber: 3,
-        colorLikes: 'like-button  no-active-like',
-      },
-      {
-        name: 'Варвара Н.',
-        date: '13.02.22 19:22',
-        textComment: 'Мне нравится как оформлена эта страница! ❤',
-        likeComment: false,
-        likesNumber:75,
-        colorLikes: 'like-button  no-active-like',
-      },
+      method: "GET"
+      });
+
+      fetchPromise.then ((response)=> {
+      const jsonPromise = response.json();
+      jsonPromise.then ((responseData)=> {
+      const appComments = responseData.comments.map ((comment)=>{
+        return {
+          name:comment.author.name,
+          date: new Date().toLocaleDateString('default', {day: '2-digit', month: '2-digit', year: '2-digit'}) + " "+ new Date().toLocaleTimeString().slice(0,-3),
+          textComment: comment.text,
+          likesNumber: comment.likes,
+          colorLikes: 'like-button  no-active-like',
+        };
+      });
+      
+      comments = appComments;
+    //  comments = responseData.comments;
+      renderComments ();
+      });
+      });
+     };
+     getFetchPromice();
+    let comments = [
+      // {
+      //   name: 'Глеб Фокин',
+      //   date: '12.02.22 12:18',
+      //   textComment: 'Это будет первый комментарий на этой странице',
+      //   likeComment: false,
+      //   likesNumber: 3,
+      //   colorLikes: 'like-button  no-active-like',
+      // },
+      // {
+      //   name: 'Варвара Н.',
+      //   date: '13.02.22 19:22',
+      //   textComment: 'Мне нравится как оформлена эта страница! ❤',
+      //   likeComment: false,
+      //   likesNumber:75,
+      //   colorLikes: 'like-button  no-active-like',
+      // },
     ];
     
   
@@ -170,28 +197,39 @@
   //   buttonElement.click();
   // }
 // });
-     comments.push ({
-      name: inputNameElement.value
-      .replaceAll ("<","&lt;")
-      .replaceAll (">","&gt;"),
-      date: currentDate,
-      textComment:inputTextElement.value
-      .replaceAll ("<","&lt;")
-      .replaceAll (">","&gt;"),
-      likeComment: false,
-      likesNumber: 0,
-      colorLikes: 'like-button no-active-like',
-     });
-     renderComments ();
 
 
+    //  comments.push ({
+    //   name: inputNameElement.value
+    //   .replaceAll ("<","&lt;")
+    //   .replaceAll (">","&gt;"),
+    //   date: currentDate,
+    //   textComment:inputTextElement.value
+    //   .replaceAll ("<","&lt;")
+    //   .replaceAll (">","&gt;"),
+    //   likeComment: false,
+    //   likesNumber: 0,
+    //   colorLikes: 'like-button no-active-like',
+    //  });
+    //  renderComments ();
+
+     const fetchPromise = fetch (
+      "https://wedev-api.sky.pro/api/v1/:Ilmira-Sh/comments",
+      {
+      method: "POST",
+      body: JSON.stringify({ 
+        name:inputNameElement.value,
+        text:inputTextElement.value,
+      }),
+      });
+
+      fetchPromise.then ((response)=> {
+      const jsonPromise = response.json();
+      jsonPromise.then(()=>getFetchPromice());
+      });
         inputNameElement.value="";
         inputTextElement.value="";
      
     });
-  
-
-
- 
   </script>
 </html>
