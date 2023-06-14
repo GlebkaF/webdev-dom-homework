@@ -15,7 +15,7 @@ import { renderCommentList } from "./render.js";
 
     
 export const getComments = () => {
-    const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v2/valeriy-poletaev/comments",
+    const fetchPromise = fetch(" https://wedev-api.sky.pro/api/v2/valeriy-poletaev/comments",
       {
         method: "GET"
       });
@@ -37,28 +37,28 @@ export const getComments = () => {
                activeLike: comment.isLiked,
               activeClass: activeClass, 
               isEdit: false,
+              id: comment.id,
+              author: {
+                id: comment.author.id,
+                login: comment.author.login,
+                name: comment.author.name 
+              }             
           }
         });
-        renderCommentList(commentList);
-        
+        renderCommentList(commentList); 
         });
       });
       };
     
 
     export const postComment = (data) => {
-      const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v2/valeriy-poletaev/comments",
+      const fetchPromise = fetch(" https://wedev-api.sky.pro/api/v2/valeriy-poletaev/comments",
         {
           method: "POST",
           headers: {Authentication: `Bearer {token}`},
           body: JSON.stringify({
-          name: nameElement.value.replaceAll('<', '&lt').replaceAll('>', '&gt'),
-          date: new Date(),
+        
           text: commentsElement.value.replaceAll('<', '&lt').replaceAll('>', '&gt'),
-          likes: 0,
-          activeLike: false,
-          activeClass: "",
-          forceError: true,
           
         })
       });
@@ -97,7 +97,7 @@ export const getComments = () => {
           
 
           export const postRegistration = (data) => {
-            return fetch(" https://wedev-api.sky.pro/api/user",
+            return fetch("https://wedev-api.sky.pro/api/user",
               {
                 method: "POST",
                 body: JSON.stringify({
@@ -113,7 +113,7 @@ export const getComments = () => {
           };
 
           export const postLogIn = (login, password) => {
-            return fetch("  https://wedev-api.sky.pro/api/user/login",
+            return fetch(" https://wedev-api.sky.pro/api/user/login",
               {
                 method: "POST",
                 body: JSON.stringify({
@@ -121,6 +121,9 @@ export const getComments = () => {
                 password: password
               })
             }).then((response) => {
+              if (response.status === 400 ) {
+                alert("Неверный логин или пароль")
+              };
               getUsers();
               const jsonPromise = response.json();
               console.log(jsonPromise);
