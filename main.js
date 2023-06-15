@@ -127,7 +127,7 @@ const userComment = [
     isLike: false,
   },
   {  name: 'Варвара Н.',
-    date: '13.02.22 ',
+    date: '13.02.22 19:22',
     comment: 'Мне нравится как оформлена эта страница! ❤',
     likes: 75,
     isLike: true,
