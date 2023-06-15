@@ -49,31 +49,60 @@
     
 
     const newDate = new Date(); //12.02.22 12:18
-    let fullDate = (newDate.getDate() < 10 ? '0' : '') + newDate.getDate() + '.' 
-                + (newDate.getMonth() < 10 ? '0' : '') + newDate.getMonth() + '.' 
-                + `${newDate.getFullYear() - 2000} ${newDate.getHours()}:${newDate.getMinutes()}`;
-
-  
+    let fullDate = (newDate.getDate() < 10 ? '0' : '') + newDate.getDate() + '.' + (newDate.getMonth() < 10 ? '0' : '') + newDate.getMonth() + '.' + `${newDate.getFullYear() - 2000} ${newDate.getHours()}:${newDate.getMinutes()}`;
+    const getCurrentDate = (date) => {
+    return date.getDate().toString().padStart(2, '0') + '.' +
+      (date.getMonth() + 1).toString().padStart(2, '0') + '.' +
+      date.getFullYear().toString().slice(-2) + " " +
+      date.toLocaleTimeString().slice(0, -3);}
+    
     const commentElement = document.querySelectorAll('.comment');
 
-    const comments = [
-      {
-        name: "Глеб Фокин",
-        date: "12.02.22 12:18",
-        text: "Это будет первый комментарий на этой странице",
-        activeLike: false,
-        likes: 3,
-        propertyColorLike: 'like-button -no-active-like',
-      },
-      {
-        name: "Варвара Н.",
-        date: "13.02.22 19:22",
-        text: "Мне нравится как оформлена эта страница! ❤",
-        activeLike: false,
-        likes: 75,
-        propertyColorLike: 'like-button -no-active-like',
-      },
-    ];
+      // const comments = [
+      //   {
+      //     name: "Глеб Фокин",
+      //     date: "12.02.22 12:18",
+      //     text: "Это будет первый комментарий на этой странице",
+      //     activeLike: false,
+      //     likes: 3,
+      //     propertyColorLike: 'like-button -no-active-like',
+      //   },
+      //   {
+      //     name: "Варвара Н.",
+      //     date: "13.02.22 19:22",
+      //     text: "Мне нравится как оформлена эта страница! ❤",
+      //     activeLike: false,
+      //     likes: 75,
+      //     propertyColorLike: 'like-button -no-active-like',
+      //   },
+      // ];
+    
+    let comments = [];
+    
+    function getFetchPromise() {
+
+    const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/gleb-fokin/comments',{
+      method: "GET"
+      }).then((response) => {
+        response.json().then((responseDate) => {
+        
+        const appComments = responseDate.comments.map ((comment) => {
+          return{
+            name: comment.author.name,
+            text: comment.text,
+            date: getCurrentDate(new Date(comment.date)),
+            likes: comment.likes,
+            activeLike: false,
+            propertyColorLike: 'like-button -no-active-like',
+          }
+        });
+        comments = appComments;
+        renderComment();
+        });
+      })};
+  
+      getFetchPromise();
+    
 
     const replayToComment = () => {
 
@@ -133,10 +162,7 @@
           .replaceAll("&", "&amp;")
           .replaceAll("<", "&lt;")
           .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;")
-          .replaceAll("$", "&#65284;")
-          .replaceAll("{", "&#123;")
-          .replaceAll("}", "&#125;")}
+          .replaceAll('"', "&quot;")}
           </div>
           <div>${comment.date}</div>
         </div>
@@ -146,10 +172,7 @@
           .replaceAll("&", "&amp;")
           .replaceAll("<", "&lt;")
           .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;")
-          .replaceAll("$", "&#65284;")
-          .replaceAll("{", "&#123;")
-          .replaceAll("}", "&#125;")}
+          .replaceAll('"', "&quot;")}
           </div>
         </div>
         <div class="comment-footer">
@@ -183,15 +206,42 @@
         textInputElement.style.backgroundColor = 'red';
         return;
       }
-    
+/*
       comments.push({
         name: nameInputElement.value,
         date: fullDate,
         text: textInputElement.value,
         likes: 0,
-      })
+      });
+*/
+      fetch('https://wedev-api.sky.pro/api/v1/gleb-fokin/comments',{
+        method: "POST",
+        body: JSON.stringify({
+          name: nameInputElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
+          text: textInputElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
+          date: getCurrentDate(new Date()),
+          likes: 0,
+          activeLike: false,
+          propertyColorLike: 'like-button -no-active-like',
+        })
+      }).then((response) => {
+
+        response.json().then((responseDate) => {
+          
+         getFetchPromise();
+
+        });
+      });
     
-      renderComment();
+      //renderComment();
       initEventListeners();
 
 
