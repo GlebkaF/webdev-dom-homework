@@ -23,13 +23,14 @@ if (minute < 10) {
 }
 date = day + "." + month + "." + year + "  " + hour + ":" + minute;
 
-btn.addEventListener("click", (e) => {
-    //! Проверка на ввод имени/комментария
-    if (nameUser.value === "" || commentUser.value === "") {
-        alert("Вы не ввели имя или комментарий");
-        return;
-    }
-    //! создание нового элемента li
+function addComment() {
+  //! Проверка на ввод имени/комментария
+  if (nameUser.value === "" || commentUser.value === "") {
+    alert("Вы не ввели имя или комментарий");
+    return;
+  }
+
+  //! создание нового элемента li
   const oldUl = ul.innerHTML;
   ul.innerHTML =
     oldUl +
@@ -50,83 +51,59 @@ btn.addEventListener("click", (e) => {
       </div>
     </div>
   </li>`;
-//! Чистка инпута после отправки
+
+  //! Чистка инпута после отправки
   nameUser.value = "";
   commentUser.value = "";
+}
+
+//! Срабатывание добавления комментария при нажатии на кнопку 'Написать'
+btn.addEventListener("click", () => {
+  addComment();
 });
 
-//! Срабатывание добавления комментария на кнопку Enter
-form.addEventListener('keyup', (e) => {
-    if (e.key == "Enter") {
-    if (nameUser.value === "" || commentUser.value === "") {
-        alert("Вы не ввели имя или комментарий");
-        return;
-    }
-  const oldUl = ul.innerHTML;
-  ul.innerHTML =
-    oldUl +
-    `<li class="comment">
-    <div class="comment-header">
-      <div>${nameUser.value}</div>
-      <div>${date}</div>
-    </div>
-    <div class="comment-body">
-      <div class="comment-text">
-        ${commentUser.value}
-      </div>
-    </div>
-    <div class="comment-footer">
-      <div class="likes">
-        <span class="likes-counter">0</span>
-        <button class="like-button"></button>
-      </div>
-    </div>
-  </li>`;
-  nameUser.value = "";
-  commentUser.value = "";
-    }
-})
+//! Срабатывание добавления комментария при нажатии на кнопку Enter
+form.addEventListener("keyup", (e) => {
+  if (e.key == "Enter") {
+    addComment();
+  }
+});
 
 //! Удаление последнего коммента
-del.addEventListener('click', (e) => {
-    let newLi = ul.lastElementChild.remove();
-})
-
-
-
-
-
+del.addEventListener("click", (e) => {
+  let newLi = ul.lastElementChild.remove();
+});
 
 //! Делаем отправку некликабельной, если у нас не заполнены поля
-btn.addEventListener('click', () => {
-  console.log('Нажал на кнопку');
-})
+btn.addEventListener("click", () => {
+  console.log("Нажал на кнопку");
+});
 
 if (nameUser.value == "" || commentUser.value == "") {
   btn.classList.add("btn-gray");
-  btn.setAttribute('disabled', "disabled");
+  btn.setAttribute("disabled", "disabled");
 }
 
 commentUser.addEventListener("input", commentUnlock);
 function commentUnlock(e) {
-    if (e.target.value === "") {
-        btn.classList.add("btn-gray");
-        btn.setAttribute('disabled', "disabled");
-    }
-    if (e.target.value !== "") {
-      btn.classList.remove("btn-gray");
-      btn.removeAttribute('disabled', "disabled");
-    }
+  if (e.target.value === "") {
+    btn.classList.add("btn-gray");
+    btn.setAttribute("disabled", "disabled");
+  }
+  if (e.target.value !== "") {
+    btn.classList.remove("btn-gray");
+    btn.removeAttribute("disabled", "disabled");
+  }
 }
 
 nameUser.addEventListener("input", userUnlock);
 function userUnlock(e) {
   if (e.target.value == "") {
-      btn.classList.add("btn-gray");
-      btn.setAttribute('disabled', "disabled");
+    btn.classList.add("btn-gray");
+    btn.setAttribute("disabled", "disabled");
   }
   if (e.target.value !== "") {
     btn.classList.remove("btn-gray");
-    btn.removeAttribute('disabled', "disabled");
+    btn.removeAttribute("disabled", "disabled");
   }
 }
