@@ -1,5 +1,5 @@
 export function getApi(token) {
-    return fetch('https://wedev-api.sky.pro/api/v2/sergei-bondarenko/comments', {
+    return fetch('https://wedev-api.sky.pro/api/v2/sergey-bondarenko/comments', {
         method: "GET",
         headers: {
             Authorization: token
