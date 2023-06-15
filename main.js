@@ -23,38 +23,37 @@ if (minute < 10) {
 }
 date = day + "." + month + "." + year + "  " + hour + ":" + minute;
 
+//! Обходим массив лайков до и после добавления комментариев
+const initLikesBtn = () => {
+  const likeBtns = document.querySelectorAll('.like-button');
+  for (const likeBtn of likeBtns) {
+    likeBtn.addEventListener('click', () => {
+      console.log('like');
+    })
+  }
+}
+
 function addComment() {
   //! Проверка на ввод имени/комментария
   if (nameUser.value === "" || commentUser.value === "") {
     alert("Вы не ввели имя или комментарий");
     return;
   }
-
-  //! создание нового элемента li
-  const oldUl = ul.innerHTML;
-  ul.innerHTML =
-    oldUl +
-    `<li class="comment">
-    <div class="comment-header">
-      <div>${nameUser.value}</div>
-      <div>${date}</div>
-    </div>
-    <div class="comment-body">
-      <div class="comment-text">
-        ${commentUser.value}
-      </div>
-    </div>
-    <div class="comment-footer">
-      <div class="likes">
-        <span class="likes-counter">0</span>
-        <button class="like-button"></button>
-      </div>
-    </div>
-  </li>`;
-
+  //! создание нового комментария
+  userComment.push({
+    name: nameUser.value,
+    date: date,
+    comment: commentUser.value,
+    likes: 0,
+    isLike: false,
+  });
+  //! Добавляем чтение клика по лайку
+  initLikesBtn();
   //! Чистка инпута после отправки
   nameUser.value = "";
   commentUser.value = "";
+  //! Добавляем чтение комментариев после добавления комментария
+  renderUserComments();
 }
 
 //! Срабатывание добавления комментария при нажатии на кнопку 'Написать'
@@ -107,3 +106,53 @@ function userUnlock(e) {
     btn.removeAttribute("disabled", "disabled");
   }
 }
+
+// //! Массив с комментариями
+const userComments = document.querySelector('.comments');
+const userComment = [
+  {  name: 'Глеб Фокин',
+    date: '12.02.22 12:18',
+    comment: 'Это будет первый комментарий на этой странице',
+    likes: 3,
+    isLike: false,
+  },
+  {  name: 'Варвара Н.',
+    date: '13.02.22 ',
+    comment: 'Мне нравится как оформлена эта страница! ❤',
+    likes: 75,
+    isLike: true,
+  },
+];
+
+
+//! Рендерим массив
+const renderUserComments = () => {
+  console.log(50);
+  userComments.innerHTML = userComment.map((comments, index) => {
+    return `
+    <li class="comment">
+    <div class="comment-header">
+      <div>${comments.name}</div>
+      <div>${comments.date}</div>
+    </div>
+    <div class="comment-body">
+      <div class="comment-text">
+         ${comments.comment}
+      </div>
+    </div>
+    <div class="comment-footer">
+      <div class="likes">
+        <span class="likes-counter">${comments.likes}</span>
+        <button class="like-button" data-index=${index} ${comments.like}></button>
+      </div>
+    </div>
+  </li>`
+  }).join('');
+  //! Добавляем чтение клика по лайку после добавления комментари
+  initLikesBtn();
+
+};
+
+renderUserComments();
+
+
