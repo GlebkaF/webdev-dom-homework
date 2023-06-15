@@ -36,7 +36,7 @@
   let comments = [];
   //Отправляем GET-запрос
   const fetchAndRenderComments = () => {
-    return fetch("https://wedev-api.sky.pro/api/v1/:MeLook/comments", {
+    return fetch("https://wedev-api.sky.pro/api/v1/MeLook/comments", {
       method: "GET"
     })
       .then((response) => {
@@ -49,7 +49,7 @@
             date: new Date(comment.date).toLocaleString().slice(0, -3),
             text: comment.text,
             likes: comment.likes,
-            isLike: false,
+            isLiked: false,
           };
         });
         comments = appComments;
@@ -78,12 +78,12 @@
     for (const likeButtonElement of likeButtonsElements) {
       likeButtonElement.addEventListener("click", (event) => {
         const index = likeButtonElement.dataset.index;
-        if (comments[index].isLike) {
+        if (comments[index].isLiked) {
           comments[index].likes--;
-          comments[index].isLike = false;
+          comments[index].isLiked = false;
         } else {
           comments[index].likes++;
-          comments[index].isLike = true;
+          comments[index].isLiked = true;
 
         }
 
@@ -114,7 +114,7 @@
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter" >${comment.likes}</span>
-            <button class="like-button ${comment.isLike ? '-active-like' : ''}" data-index = ${index} data-id=${comment.id}></button>
+            <button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index = ${index} data-id=${comment.id}></button>
           </div>
         </div>
       </li>`;
@@ -139,14 +139,14 @@
       return;
     }
 
-    fetch("https://wedev-api.sky.pro/api/v1/:MeLook/comments", {
+    fetch("https://wedev-api.sky.pro/api/v1/MeLook/comments", {
       method: "POST",
       body: JSON.stringify({
         name: addFormName.value,
         date: now,
         text: addFormText.value,
         likes: "0",
-        isLike: false
+        isLiked: false
       }),
     })
       .then((response) => {
