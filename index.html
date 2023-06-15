@@ -32,13 +32,28 @@
   const listElement = document.getElementById("list");
   const addFormName = document.getElementById("add-form-name");
   const addFormText = document.getElementById("add-form-text");
+  const container = document.querySelector(".container");
+  const addFormBox = document.querySelector(".add-form");
+  let loader = document.createElement("p");
+
+
 
   let comments = [];
   //Отправляем GET-запрос
+
   const fetchAndRenderComments = () => {
+    listElement.classList.add("hidden");
+    loader.className = "loader";
+    loader.textContent = "Загрузка комментариев...";
+    container.insertBefore(loader, container.firstChild);
     return fetch("https://wedev-api.sky.pro/api/v1/MeLook/comments", {
       method: "GET"
     })
+      .then((response) => {
+        listElement.classList.remove("hidden");
+        loader.classList.add("hidden");
+        return response;
+      })
       .then((response) => {
         return response.json();
       })
@@ -52,6 +67,7 @@
             isLiked: false,
           };
         });
+        addFormBox.classList.remove('hidden');
         comments = appComments;
         renderComments();
       });
@@ -138,7 +154,10 @@
       alert("Поля не заполнены");
       return;
     }
-
+    addFormBox.classList.add("hidden");
+    loader.className = "loader";
+    loader.textContent = "Загрузка вашего комментария...";
+    container.appendChild(loader);
     fetch("https://wedev-api.sky.pro/api/v1/MeLook/comments", {
       method: "POST",
       body: JSON.stringify({
@@ -149,6 +168,11 @@
         isLiked: false
       }),
     })
+      .then((response) => {
+        addFormBox.classList.remove("hidden");
+        loader.classList.add("hidden");
+        return response;
+      })
       .then((response) => {
         return response.json();
       })
