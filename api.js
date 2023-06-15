@@ -1,5 +1,5 @@
 export function getApi(token) {
-    return fetch('https://wedev-api.sky.pro/api/v2/sergey-bondarenko/comments', {
+    return fetch('https://wedev-api.sky.pro/api/v2/sergei-bondarenko/comments', {
         method: "GET",
         headers: {
             Authorization: token
@@ -66,11 +66,7 @@ export function loginUser({
         })
 }
 
-export function registrationUser({
-    login,
-    password,
-    name
-}) {
+export function registrationUser({ login, password, name }) {
     return fetch('https://wedev-api.sky.pro/api/user', {
         method: "POST",
         body: JSON.stringify({

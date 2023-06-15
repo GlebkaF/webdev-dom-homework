@@ -173,11 +173,11 @@ const renderApp = () => {
   </div>`
     appEl.innerHTML = appHtml
 
-    let commentsContainer = document.getElementById('comments')
+    // let commentsContainer = document.getElementById('comments')
     let addFormButton = document.getElementById('add-form-button')
-    let addFormName = document.getElementById('add-form-name')
+    // let addFormName = document.getElementById('add-form-name')
     let addFormText = document.getElementById('add-form-text')
-    let commentForm = document.querySelector('.add-form')
+    // let commentForm = document.querySelector('.add-form')
     // const commentsLoader = document.querySelector('.comments-loader')
 
     // commentsLoader.innerHTML = "Комментарии загружаются"

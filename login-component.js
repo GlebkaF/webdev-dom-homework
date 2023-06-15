@@ -74,9 +74,9 @@ export function renderLoginComponent({ appEl, setToken, getApiFunction }) {
                 }
 
                 registrationUser({
-                    login: login,
-                    password: password,
-                    name: name,
+                    login: login.value,
+                    password: password.value,
+                    name: name.value,
                 }).then((user) => {
                     setToken(`Bearer ${user.user.token}`)
                     getApiFunction()
