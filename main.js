@@ -27,9 +27,15 @@ date = day + "." + month + "." + year + "  " + hour + ":" + minute;
 const initLikesBtn = () => {
   const likeBtns = document.querySelectorAll('.like-button');
   for (const likeBtn of likeBtns) {
+    if (likeBtn.dataset.like === 'true') {
+      likeBtn.classList.add('-active-like');
+    }
+    if (likeBtn.dataset.like === 'false') {
+      likeBtn.classList.remove('-active-like');
+    }
     likeBtn.addEventListener('click', () => {
-      console.log('like');
-    })
+      likeBtn.classList.toggle('-active-like');
+    });
   }
 }
 
@@ -107,7 +113,11 @@ function userUnlock(e) {
   }
 }
 
-// //! Массив с комментариями
+
+
+
+//? Домашка №2
+//! Массив с комментариями
 const userComments = document.querySelector('.comments');
 const userComment = [
   {  name: 'Глеб Фокин',
@@ -124,10 +134,9 @@ const userComment = [
   },
 ];
 
-
 //! Рендерим массив
 const renderUserComments = () => {
-  console.log(50);
+  console.log('рендер работает');
   userComments.innerHTML = userComment.map((comments, index) => {
     return `
     <li class="comment">
@@ -143,14 +152,13 @@ const renderUserComments = () => {
     <div class="comment-footer">
       <div class="likes">
         <span class="likes-counter">${comments.likes}</span>
-        <button class="like-button" data-index=${index} ${comments.like}></button>
+        <button class="like-button" data-index=${index} data-like=${comments.isLike}></button>
       </div>
     </div>
   </li>`
   }).join('');
   //! Добавляем чтение клика по лайку после добавления комментари
   initLikesBtn();
-
 };
 
 renderUserComments();
