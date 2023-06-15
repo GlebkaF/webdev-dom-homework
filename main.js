@@ -98,28 +98,35 @@ del.addEventListener('click', (e) => {
 
 
 //! Делаем отправку некликабельной, если у нас не заполнены поля
+btn.addEventListener('click', () => {
+  console.log('Нажал на кнопку');
+})
 
-// btn.addEventListener('click', () => {
-//     console.log(12);
-// })
+if (nameUser.value == "" || commentUser.value == "") {
+  btn.classList.add("btn-gray");
+  btn.setAttribute('disabled', "disabled");
+}
 
-// commentUser.addEventListener("input", commentUnlock);
-// function commentUnlock(e) {
-//     if (commentUser.textContent == "") {
-//         btn.classList.remove("btn-gray");
-//     }
-//     if (e.target.value == "") {
-//         btn.classList.add("btn-gray");
-//     }
-// }
+commentUser.addEventListener("input", commentUnlock);
+function commentUnlock(e) {
+    if (e.target.value === "") {
+        btn.classList.add("btn-gray");
+        btn.setAttribute('disabled', "disabled");
+    }
+    if (e.target.value !== "") {
+      btn.classList.remove("btn-gray");
+      btn.removeAttribute('disabled', "disabled");
+    }
+}
 
-// nameUser.addEventListener("input", nameUnlock);
-// function nameUnlock(e) {
-//     if (nameUser.textContent == "") {
-//         btn.classList.remove("btn-gray");
-//     }
-//     if (e.target.value == "") {
-//         btn.classList.add("btn-gray");
-//     }
-// }
-
+nameUser.addEventListener("input", userUnlock);
+function userUnlock(e) {
+  if (e.target.value == "") {
+      btn.classList.add("btn-gray");
+      btn.setAttribute('disabled', "disabled");
+  }
+  if (e.target.value !== "") {
+    btn.classList.remove("btn-gray");
+    btn.removeAttribute('disabled', "disabled");
+  }
+}
