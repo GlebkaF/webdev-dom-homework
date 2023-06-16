@@ -81,22 +81,26 @@
     const addTextElement = document.getElementById("add-text");
     const deleteLastCommentButton = document.getElementById("delete-last-comment");
     const currentDate = new Date();
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('message');
+    messageElement.textContent = 'Пожалуйста, подождите, комментарии загружаются...';
+    // commentsList.append(messageElement); 
 
-    const comments = [
-      {
-        commentAuthor: "Глеб Фокин",
-        commentText: "Это будет первый комментарий на этой странице",
-        commentLikes: 3,
-        commentDate: "12.02.22 12:18",
-        commentNoLike: true,
-      },
-      {
-        commentAuthor: "Варвара Н.",
-        commentText: "Мне нравится как оформлена эта страница! ❤",
-        commentLikes: 75,
-        commentDate: "13.02.22 19:22",
-        commentNoLike: false,
-      }
+    let comments = [
+      // {
+      //   commentAuthor: "Глеб Фокин",
+      //   commentText: "Это будет первый комментарий на этой странице",
+      //   commentLikes: 3,
+      //   commentDate: "12.02.22 12:18",
+      //   commentIsLike: false,
+      // },
+      // {
+      //   commentAuthor: "Варвара Н.",
+      //   commentText: "Мне нравится как оформлена эта страница! ❤",
+      //   commentLikes: 75,
+      //   commentDate: "13.02.22 19:22",
+      //   commentIsLike: true,
+      // }
     ]
 
     function getLastTwoDigitsOfYear(date) {
@@ -120,26 +124,25 @@
       const timeString = `${hours}:${minutes}`;
       return `${dateString} ${timeString}`;
     }
+    const newCurrentDate = formatDate(currentDate);
 
     const addLikeButtonElement = () => {
       const likeButtonElements = document.querySelectorAll('.like-button');
       for (let i = 0; i < likeButtonElements.length; i++) {
         likeButtonElements[i].addEventListener("click", (event) => {
           event.stopPropagation();
-          if (comments[i].commentNoLike === true) {
-            comments[i].commentNoLike = false;
+          if (comments[i].commentIsLike === false) {
+            comments[i].commentIsLike = true;
             comments[i].commentLikes++;
           }
-          else if (comments[i].commentNoLike === false){
-            comments[i].commentNoLike = true;
+          else if (comments[i].commentIsLike === true){
+            comments[i].commentIsLike = false;
             comments[i].commentLikes--;
           }
           renderComments();
         })
       }
     };
-
-    const newCurrentDate = formatDate(currentDate);
 
     messageButtonElement.addEventListener('click', () => {
       addNameElement.classList.remove("error");
@@ -153,20 +156,37 @@
             addTextElement.classList.add("error");
             return;
       }
+      
+      // comments.push ({
+      //   commentAuthor: addNameElement.value.replaceAll("&", "&amp;")
+      //   .replaceAll("<", "&lt;")
+      //   .replaceAll(">", "&gt;")
+      //   .replaceAll('"', "&quot;"),
+      //   commentText: addTextElement.value.replaceAll("&", "&amp;")
+      //   .replaceAll("<", "&lt;")
+      //   .replaceAll(">", "&gt;")
+      //   .replaceAll('"', "&quot;"),
+      //   commentLikes: 0,
+      //   commentDate: newCurrentDate,
+      //   commentIsLike: false,
+      // });
+      messageButtonElement.disabled = true;
+      messageButtonElement.textContent = "Комментарий добавляется...";
+      postApi();
+      // getApi();
+      // renderComments();
 
-      comments.push ({
-        commentAuthor: addNameElement.value,
-        commentText: addTextElement.value,
-        commentLikes: 0,
-        commentDate: newCurrentDate,
-        commentNoLike: true,
-      });
+    })
 
-      renderComments();
-      addNameElement.value = "";
-      addTextElement.value = "";
-    }
-    )
+    deleteLastCommentButton.addEventListener("click", () => {
+      const commentsList = document.getElementById("comments");
+      const lastComment = commentsList.querySelector(".comment:last-of-type");
+
+      if (lastComment) {
+        commentsList.removeChild(lastComment);
+      }
+    });
+    
     function addReply() {
       const commentElements = document.querySelectorAll(".comment");
       for (const commentElement of commentElements) {
@@ -178,14 +198,6 @@
         })
       }
     }
-    deleteLastCommentButton.addEventListener("click", () => {
-      const commentsList = document.getElementById("comments");
-      const lastComment = commentsList.querySelector(".comment:last-of-type");
-
-      if (lastComment) {
-        commentsList.removeChild(lastComment);
-      }
-    });
 
     const renderComments = () => {
       const commentsHtml = comments
@@ -203,7 +215,7 @@
           <div class="comment-footer">
             <div class="likes"> 
               <span class="likes-counter">${comment.commentLikes}</span>
-              <button class="${comment.commentNoLike ? 'like-button' : 'like-button -active-like'}"></button>
+              <button class="${comment.commentIsLike ? 'like-button -active-like' : 'like-button'}"></button>
           </div>
         </div>
       </li>`;
@@ -213,11 +225,60 @@
       commentsList.innerHTML = commentsHtml;
       addLikeButtonElement();
       addReply();
-
     }
+    
+    function postApi () { 
+        fetch ("https://wedev-api.sky.pro/api/v1/:anast-tro/comments", {
+          method: "POST",
+          body: JSON.stringify({
+            text: addTextElement.value,
+            name: addNameElement.value,
+          })
+        })
+        .then((response) => {
+          return response.json();
+        })
+        .then(() => {
+          getApi();
+          // renderComments();
+        })
+        // .then(() => {
+        //   messageButtonElement.disabled = false;
+        //   messageButtonElement.textContent = 'Написать';
+        // })
+        // renderComments();
+        addNameElement.value = "";
+        addTextElement.value = "";
+        }
+      
+    function getApi () {
+      fetch ("https://wedev-api.sky.pro/api/v1/:anast-tro/comments", {
+        method: "GET",
+      })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
+        comments = responseData.comments.map((comment) => {
+          return {
+            commentAuthor: comment.author.name,
+            commentText: comment.text,
+            commentLikes: comment.likes,
+            commentDate: formatDate(new Date(comment.date)),
+            commentIsLike: comment.isLiked,
+          }
+        })
+        renderComments();
+      })
+      .then(() => {
+          messageButtonElement.disabled = false;
+          messageButtonElement.textContent = 'Написать';
+        })
+    }
+    
     renderComments();
-
-
+    getApi();
+    commentsList.append(messageElement); 
     console.log("It works!");
   </script>
 </html> 
