@@ -4,24 +4,6 @@
     <title>Проект "Комменты"</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="styles.css" />
-    <style>
-      .error {
-        background-color: darkred;
-      }
-      .liked {
-        color: red;
-      }
-      .like-button.-no-active-like {
-        background-image: url("data:image/svg+xml,%3Csvg width='22' height='20' viewBox='0 0 22 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15.95 0C14.036 0 12.199 0.882834 11 2.26703C9.801 0.882834 7.964 0 6.05 0C2.662 0 0 2.6267 0 5.99455C0 10.1035 3.74 13.4714 9.405 18.5613L11 20L12.595 18.5613C18.26 13.4714 22 10.1035 22 5.99455C22 2.6267 19.338 0 15.95 0Z' fill='none' stroke='%23BCEC30'/%3E%3C/svg%3E");
-      }
-      .like-button.-active-like {
-        background-image: url("data:image/svg+xml,%3Csvg width='22' height='20' viewBox='0 0 22 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15.95 0C14.036 0 12.199 0.882834 11 2.26703C9.801 0.882834 7.964 0 6.05 0C2.662 0 0 2.6267 0 5.99455C0 10.1035 3.74 13.4714 9.405 18.5613L11 20L12.595 18.5613C18.26 13.4714 22 10.1035 22 5.99455C22 2.6267 19.338 0 15.95 0Z' fill='%23BCEC30'/%3E%3C/svg%3E");
-      }
-      .comment__link {
-        text-decoration: none;
-        color: white;
-      }
-    </style>
   </head>
 
   <body>
@@ -53,24 +35,52 @@
       const listElement = document.getElementById("list");
       const inputNameElement = document.getElementById("name-input");
       const inputTextElement = document.getElementById("comment-input");
-      const users = [
+
+      // const users = [
+      //   {
+      //     id: 0,
+      //     name: "Глеб Фокин",
+      //     date: "12.02.22 12:18",
+      //     likes: 3,
+      //     text: "Это будет первый комментарий на этой странице",
+      //     isLiked: false,
+      //   },
+      //   {
+      //     id: 1,
+      //     name: "Варвара Н.",
+      //     date: "13.02.22 19:22",
+      //     likes: 75,
+      //     text: "Мне нравится как оформлена эта страница! ❤",
+      //     isLiked: false,
+      //   },
+      // ];
+      let users = [];
+      const fetchPromise = fetch(
+        "https://wedev-api.sky.pro/api/v1/dima-nosov/comments",
         {
-          id: 0,
-          name: "Глеб Фокин",
-          date: "12.02.22 12:18",
-          likes: 3,
-          text: "Это будет первый комментарий на этой странице",
-          isLiked: false,
-        },
-        {
-          id: 1,
-          name: "Варвара Н.",
-          date: "13.02.22 19:22",
-          likes: 75,
-          text: "Мне нравится как оформлена эта страница! ❤",
-          isLiked: false,
-        },
-      ];
+          method: "GET",
+        }
+      );
+
+      function fetchPromiseArray() {
+        fetchPromise
+          .then((response) => response.json())
+          .then((responseData) => {
+            const appUsers = responseData.comments.map((comment) => {
+              return {
+                name: comment.author.name,
+                date: currentDate(new Date(comment.date)),
+                likes: comment.likes,
+                text: comment.text,
+                isLiked: false,
+              };
+            });
+            users = appUsers;
+            renderUsers();
+          });
+      }
+
+      fetchPromiseArray();
 
       const attachLikeButtonListener = (user) => {
         const likesButton = document.getElementById(`like-button-${user.id}`);
@@ -157,30 +167,53 @@
           return;
         }
 
-        const currentDate = new Date().toLocaleString("ru-RU", {
-          hour12: false,
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-          day: "2-digit",
-          month: "2-digit",
-          year: "2-digit",
-        });
+        function currentDate(date) {
+          return date.toLocaleString("ru-RU", {
+            hour12: false,
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            day: "2-digit",
+            month: "2-digit",
+            year: "2-digit",
+          });
+        }
 
-        const newId = users.length;
-        users.push({
-          id: newId,
-          name: inputNameElement.value
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;"),
-          date: currentDate,
-          likes: 0,
-          text: inputTextElement.value
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;"),
-          isLiked: false,
+        // users.push({
+        //   name: inputNameElement.value
+        //     .replace(/</g, "&lt;")
+        //     .replace(/>/g, "&gt;"),
+        //   date: currentDate,
+        //   likes: 0,
+        //   text: inputTextElement.value
+        //     .replace(/</g, "&lt;")
+        //     .replace(/>/g, "&gt;"),
+        //   isLiked: false,
+        // });
+
+        const fetchPromise = fetch(
+          "https://wedev-api.sky.pro/api/v1/dima-nosov/comments",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              name: inputNameElement.value
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;"),
+              date: currentDate,
+              likes: 0,
+              text: inputTextElement.value
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;"),
+              isLiked: false,
+            }),
+          }
+        );
+
+        fetchPromise.then((response) => {
+          response.json().then((responseData) => {
+            fetchPromiseArray();
+          });
         });
-        renderUsers();
 
         inputNameElement.value = "";
         inputTextElement.value = "";
@@ -200,7 +233,9 @@
         }
       });
 
-      renderUsers();
+      fetchPromise.then(() => {
+        renderUsers();
+      });
     </script>
   </body>
 </html>
