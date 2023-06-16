@@ -9,7 +9,8 @@
 
 <body>
   <div class="container">
-    <ul class="comments" id="list">
+    <p class="loader">Загрузка комментариев...</p>
+    <ul class="comments hidden" id="list">
     </ul>
     <div class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="add-form-name" />
@@ -34,7 +35,7 @@
   const addFormText = document.getElementById("add-form-text");
   const container = document.querySelector(".container");
   const addFormBox = document.querySelector(".add-form");
-  let loader = document.createElement("p");
+  const loader = document.querySelector("p");
 
 
 
@@ -42,10 +43,6 @@
   //Отправляем GET-запрос
 
   const fetchAndRenderComments = () => {
-    listElement.classList.add("hidden");
-    loader.className = "loader";
-    loader.textContent = "Загрузка комментариев...";
-    container.insertBefore(loader, container.firstChild);
     return fetch("https://wedev-api.sky.pro/api/v1/MeLook/comments", {
       method: "GET"
     })
