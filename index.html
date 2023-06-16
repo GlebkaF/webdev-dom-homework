@@ -119,21 +119,7 @@
     nameElement.addEventListener('input', checkFields);
     commentElement.addEventListener('input', checkFields);
 
- 
-
-    
-    //Поля ввода подкрашиваются красным, если одно из полей не заполнено
-    buttonElement.addEventListener('click', () => {
-
-      nameElement.classList.remove('error');
-      commentElement.classList.remove('error');
-
-      if (nameElement.value === '' || commentElement.value === '') {
-        nameElement.classList.add('error');
-        commentElement.classList.add('error');
-        alert('Заполните оба поля (имя и комментарий)!');
-        return;
-      }    
+    function addComment() {
       //Добавляем новый комментарий
       const oldList = listElement.innerHTML;
       listElement.innerHTML = oldList + ` <li id="comment-list" class="comment">
@@ -157,33 +143,29 @@
       nameElement.value = '';
       commentElement.value = '';
       buttonElement.disabled = true;
+    }
+
+    
+    //Поля ввода подкрашиваются красным, если одно из полей не заполнено
+    buttonElement.addEventListener('click', () => {
+
+      nameElement.classList.remove('error');
+      commentElement.classList.remove('error');
+
+      if (nameElement.value === '' || commentElement.value === '') {
+        nameElement.classList.add('error');
+        commentElement.classList.add('error');
+        alert('Заполните оба поля (имя и комментарий)!');
+        return;
+      }    
+      addComment();
     });
 
     //Комментарий добавляется при нажатии на Enter
     commentElement.addEventListener('keyup', function(e) {
       if (e.key === 'Enter') {
-        const oldList = listElement.innerHTML;
-      listElement.innerHTML = oldList + ` <li id="comment-list" class="comment">
-          <div class="comment-header">
-            <div>${nameElement.value}</div>
-            <div>${day + '.' + month + '.' + year + ' ' + hour + ':' + minutes}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${commentElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>`
-        //После нажатия на кнопку поля становятся пустыми, кнопка не активна.
-      nameElement.value = '';
-      commentElement.value = '';
-      buttonElement.disabled = true;
+    
+        addComment();
       }
     })
 
