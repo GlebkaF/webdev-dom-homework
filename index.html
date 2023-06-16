@@ -4,12 +4,13 @@
     <title>Проект "Комменты"</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="styles.css" />
+    
   </head>
 
   <body>
     <div class="container">
       <ul class="comments">
-        <li class="comment">
+        <li id="comment" class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -28,24 +29,24 @@
         </li>
         <li class="comment">
           <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
+            <div id="name">Варвара Н.</div>
+            <div id="data">13.02.22 19:22</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
+            <div id="comment-text" class="comment-text">
               Мне нравится как оформлена эта страница! ❤
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">75</span>
+              <span id="likes-counter" class="likes-counter">75</span>
               <button class="like-button -active-like"></button>
             </div>
           </div>
         </li>
       </ul>
       <div class="add-form">
-        <input
+        <input id="add-form-name"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
@@ -55,17 +56,55 @@
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+          id="add-form-text"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
 
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    
+   const buttonElement = document.getElementById('add-form-button');
+   const inputElement = document.getElementById('add-form-name');
+    const textElement = document.getElementById('add-form-text');
+    const nameElement = document.getElementById('name');
+    const commentElement = document.getElementById('comment-text');
+    const dataElement = document.getElementById('data')
+    const likesElement = document.getElementById('likes-counter');
+    const commentBlocElement = document.getElementById('comment');
+   
+
+
+   buttonElement.addEventListener('click', () => {
+      inputElement.classList.remove('bord');
+      textElement.classList.remove('bord')
+      if(inputElement.value === '' ){
+        inputElement.classList.add('bord');
+        
+                   
+      } if (textElement.value === ''){
+        textElement.classList.add('bord');
+        
+      } else {
+        buttonElement.setAttribute('disabled', '');
+      inputElement.setAttribute('disabled', '');
+      textElement.setAttribute('disabled', '');
+      }
+
+     
+      
+      nameElement.innerHTML = inputElement.value;
+     commentElement.innerHTML = textElement.value;
+     likesElement.innerHTML = "0";
+     dataElement.innerHTML = new Date().toLocaleDateString().slice(0, -2) + ' ' + new Date().toLocaleTimeString().slice(0, -3);
+     
+     
+
+
+   });
+    
   </script>
 </html>
