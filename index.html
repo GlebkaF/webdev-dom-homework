@@ -103,19 +103,26 @@
       minutes = '0' + minutes;
     }
 
-    buttonElement.addEventListener ('input', (event) => {
+    //Если поля не заполнены, кнопка не активна
 
-      console.log(event.target);
-      console.log(event.target.value);
-    //   if (nameElement.value === '' || commentElement.value === '') {
-    //   buttonElement.disabled = true;
-    // } else {
-    //   buttonElement.disabled = false;
-    // }
-    })
+    function checkFields() {
+
+      if (nameElement.value && commentElement.value) {
+        buttonElement.disabled = false;
+      } else {
+        buttonElement.disabled = true;
+      }
+      
+    }
+    checkFields();
+
+    nameElement.addEventListener('input', checkFields);
+    commentElement.addEventListener('input', checkFields);
+
+ 
 
     
-
+    //Поля ввода подкрашиваются красным, если одно из полей не заполнено
     buttonElement.addEventListener('click', () => {
 
       nameElement.classList.remove('error');
@@ -127,7 +134,7 @@
         alert('Заполните оба поля (имя и комментарий)!');
         return;
       }    
-
+      //Добавляем новый комментарий
       const oldList = listElement.innerHTML;
       listElement.innerHTML = oldList + ` <li id="comment-list" class="comment">
           <div class="comment-header">
@@ -146,10 +153,50 @@
             </div>
           </div>
         </li>`
-
+        //После нажатия на кнопку поля становятся пустыми, кнопка не активна.
       nameElement.value = '';
       commentElement.value = '';
+      buttonElement.disabled = true;
     });
+
+    //Комментарий добавляется при нажатии на Enter
+    commentElement.addEventListener('keyup', function(e) {
+      if (e.key === 'Enter') {
+        const oldList = listElement.innerHTML;
+      listElement.innerHTML = oldList + ` <li id="comment-list" class="comment">
+          <div class="comment-header">
+            <div>${nameElement.value}</div>
+            <div>${day + '.' + month + '.' + year + ' ' + hour + ':' + minutes}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${commentElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button -active-like"></button>
+            </div>
+          </div>
+        </li>`
+        //После нажатия на кнопку поля становятся пустыми, кнопка не активна.
+      nameElement.value = '';
+      commentElement.value = '';
+      buttonElement.disabled = true;
+      }
+    })
+
+    //Удалить последний комментарий
+    cancelElement.addEventListener('click', () => {
+      const lastElementIndex = listElement.innerHTML.lastIndexOf('<li class="comment">');
+      if (lastElementIndex !== -1) {
+        const allComments = listElement.querySelectorAll('.comment');
+        const lastElement = allComments[allComments.length - 1];
+        lastElement.remove();
+      }
+    })
+  
 
     console.log("It works!");
   </script>
