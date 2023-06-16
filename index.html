@@ -37,37 +37,46 @@ const nameInputElement = document.getElementById('input-name');
 const textElement = document.querySelector('.add-form-text');
 
 
-
-const comments = [
-  {
-  name: 'Глеб Фокин',
-  dateCreation: '12.02.22 12:18', 
-  textElement: 'Это будет первый комментарий на этой странице',
-  likeComment: false,
-  likesNumber: 3, 
-  propertyColorLike:  '',
-  },
-  {
-  name: 'Варвара Н.',
-  dateCreation: '13.02.22 19:22', 
-  textElement: 'Мне нравится как оформлена эта страница! ❤',
-  likeComment: false,
-  likesNumber: 75, 
-  propertyColorLike:  '',
-  
-  },
-];
-let now = new Date().toLocaleDateString('default', {year: '2-digit', month: '2-digit', day: '2-digit'})
+let now = new Date().toLocaleDateString('default', {year: '2-digit', month: '2-digit', day: '2-digit'});
 let time = new Date().toTimeString().substr(0,5);
 let commentDate = ` ${now} ${time}`;
 
+//получить из хранилища данных 
+let  comments = [];
+
+function fetchFunction  () {
+const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/tanya-bulaeva/comments",{
+method: "GET"
+});
+
+fetchPromise.then((response) => {
+const jsonPromise = response.json();
+jsonPromise.then((responseData) => {
+const appComments  = responseData.comments.map ((comment) => {
+
+  return {
+name: comment.author.name,
+dateCreation: commentDate,
+textElement: comment.text,
+likesNumber: comment.likes,
+isLiked: false,
+  };
+});
+comments = appComments;
+renderComments();
+})
+});
+}
+fetchFunction();
+
+
+//лайки
 function likeCommentButton() {    
 
 const likesButton = document.querySelectorAll('.like-button');
 
 for (const like of likesButton) {
-
-  like.addEventListener("click", (event) => {
+    like.addEventListener("click", (event) => {
     event.stopPropagation();
     const likeIndex = like.dataset.index;
     const commentsElement = comments[likeIndex];
@@ -89,8 +98,9 @@ for (const like of likesButton) {
 };
 likeCommentButton();
 
+//добавление новых комментариев
 const renderComments = () => {
- const commentsHTML = comments.map((comment, index) => {
+const commentsHTML = comments.map((comment, index) => {
 return    `<li class = 'comment' class = 'whiteSpace'   data-index ="${index}"> <div class = 'comment-header'>
       <div>${comment.name}</div> 
       <div>${comment.dateCreation}</div>
@@ -118,6 +128,7 @@ likeCommentButton();
 };
 renderComments();
   
+//добавление новых комментариев по кнопке с сохранением в api
 buttonElement.addEventListener ("click", () => {
   nameInputElement.style.background = '';
 if (nameInputElement.value === "" ){
@@ -129,40 +140,40 @@ if (textElement.value === ""){
   textElement.style.background = 'red';
   return;
  };
-comments.push({
-  name: nameInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-  dateCreation: commentDate, 
-  textElement: textElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-  likeComment: false,
-  likesNumber: 0, 
-  propertyColorLike:  '',
+const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/tanya-bulaeva/comments",
+{
+method: "POST",
+body: JSON.stringify({
+name:   nameInputElement.value,
+text: textElement.value,
+date: commentDate,
+likes: 0,
 })
-renderComments();
-nameInputElement.value = "";
-textElement.value = '';
+}).then((response) => {
+response.json().then((responseData) => {
+fetchFunction();
+      });
+    });
 
+nameInputElement.value = "";
+textElement.value = ''; 
 });
 
+
+renderComments();
+
+//цитирование
 const quotation = () => {
-  
-  const commentElements  = document.querySelectorAll ('.comment');
-  for (const commentElement of commentElements){
+ const commentElements  = document.querySelectorAll ('.comment');
+for (const commentElement of commentElements){
 commentElement.addEventListener('click', () => {
 const index = commentElement.dataset.index;
 textElement.value = `"${comments[index].name}:  ${comments[index].textElement}"\n`
+    });
+  };
 
-    })
-  }
-
-}
+};
+fetchFunction();
 quotation ();
 
     console.log("It works!");
