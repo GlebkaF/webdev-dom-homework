@@ -9,10 +9,7 @@
 
 <body>
   <div class="preloader">
-    <div class="preloader__row">
-      <div class="preloader__item"></div>
-      <div class="preloader__item"></div>
-    </div>
+<p class="preloader-text">Пожалуйста, подождите, комментарии загружаются...</p>
   </div>
   <div class="container">
     <ul class="comments" id="list">
@@ -54,7 +51,7 @@
         </div>
       </li> -->
     </ul>
-    <div class="add-form">
+    <div class="add-form" id="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input" />
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
         id="coment-input"></textarea>
@@ -80,6 +77,7 @@
   const addButtonElement = document.getElementById("add-button");
   const listElement = document.getElementById("list");
   const endDeleteButtonElement = document.getElementById("end-delete-button");
+  const addFormElement = document.getElementById("add-form");
 
   // Функция для даты
   function takeDate(currentDate) {
@@ -202,12 +200,7 @@
           --comments[index].like;
           comments[index].classLike = 'like-button -no-active-like';
         }
-        renderComments();//если убрать отсюда рендер-функцию, то не тработает счётчик, но присвоение класса рпботает
-        // План добавления лайка
-        // 1. (+) Мы храним список коментов в js массиве
-        // 2. (+) При клике мы меняем значение currentLike на противоположное в массиве у соответствующего элемента
-        // 3. В зависимости от currentLike корректируем счётчик лайков и обратно
-        // 4. На основе нового массива в js формируем html разметку списка
+        renderComments();
       });
     }
   };
@@ -271,8 +264,7 @@
     if ((nameInputElement.value === "") || (comentInputElement.value === "")) {
       return;
     }
-    addButtonElement.disabled = true;
-    addButtonElement.textContent = "Ваш комментарий добавляется...";
+    addFormElement.innerHTML = "Ваш комментарий добавляется...";
     //Добавляем данные для нового комента
     // comments.push({
     //   name: nameInputElement.value
@@ -326,10 +318,15 @@
         return getArr();
       })
       .then((data) => {
-        addButtonElement.disabled = false;
-        addButtonElement.textContent = "Написать";
+        addFormElement.innerHTML = (`<div class="add-form" id="add-form">
+      <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input" />
+      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
+        id="coment-input"></textarea>
+      <div class="add-form-row">
+        <button class="add-form-button" id="end-delete-button">Удалить</button>
+        <button class="add-form-button" id="add-button">Написать</button>
+      </div>`);
       });
-
 
     renderComments();
     nameInputElement.value = "";
