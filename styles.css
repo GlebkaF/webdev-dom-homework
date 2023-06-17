@@ -190,7 +190,6 @@ body {
   }
   CSS
 
-  Копировать
   .preloader {
     /*фиксированное позиционирование*/
     position: fixed;
@@ -199,8 +198,8 @@ body {
     top: 0;
     right: 0;
     bottom: 0;
+    background-color: #202020;
     /* фоновый цвет элемента */
-    background: #e0e0e0;
     /* размещаем блок над всеми элементами на странице (это значение должно быть больше, чем у любого другого позиционированного элемента на странице) */
     z-index: 1001;
   }
@@ -211,17 +210,18 @@ body {
     left: 50%;
     width: 70px;
     height: 70px;
-    margin-top: -35px;
+    margin-top: 35px;
     margin-left: -35px;
     text-align: center;
     animation: preloader-rotate 2s infinite linear;
+    background-color: inherit;
   }
   
   .preloader__item {
     position: absolute;
     display: inline-block;
     top: 0;
-    background-color: #337ab7;
+    background-color: #bcec30;
     border-radius: 100%;
     width: 35px;
     height: 35px;
