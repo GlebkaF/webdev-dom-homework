@@ -47,10 +47,11 @@ function addComment() {
     comment: commentUser.value,
     likes: 0,
     isLike: false,
+    isEdit: false,
   });
   //! Добавляем чтение клика по лайку
   initLikesBtn();
-  //! Чистка инпута после отправки
+  //! Чистка текстовых полей формы после отправки
   nameUser.value = "";
   commentUser.value = "";
   //! Добавляем чтение комментариев после добавления комментария
@@ -72,7 +73,7 @@ form.addEventListener("keyup", (e) => {
 });
 
 //! Удаление последнего коммента
-del.addEventListener("click", (e) => {
+del.addEventListener("click", () => {
   let newLi = ul.lastElementChild.remove();
 });
 
@@ -101,12 +102,14 @@ const userComment = [
     comment: 'Это будет первый комментарий на этой странице',
     likes: 3,
     isLike: false,
+    isEdit: false,
   },
   {  name: 'Варвара Н.',
     date: '13.02.22 19:22',
     comment: 'Мне нравится как оформлена эта страница! ❤',
     likes: 75,
     isLike: true,
+    isEdit: false,
   },
 ];
 
@@ -133,7 +136,7 @@ const renderUserComments = () => {
     </div>
   </li>`
   }).join('');
-  //! Добавляем чтение клика по лайку после добавления комментари
+  //! Добавляем чтение клика по лайку после добавления комментария
   initLikesBtn();
 };
 
