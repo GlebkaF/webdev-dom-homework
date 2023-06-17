@@ -8,6 +8,12 @@
 </head>
 
 <body>
+  <div class="preloader">
+    <div class="preloader__row">
+      <div class="preloader__item"></div>
+      <div class="preloader__item"></div>
+    </div>
+  </div>
   <div class="container">
     <ul class="comments" id="list">
       <!-- Список рендерится из JS -->
@@ -75,7 +81,6 @@
   const listElement = document.getElementById("list");
   const endDeleteButtonElement = document.getElementById("end-delete-button");
 
-
   // Функция для даты
   function takeDate(currentDate) {
     let day = currentDate.getDate();
@@ -99,36 +104,40 @@
     }
     return `${day}.${month}.${year} ${hour}:${minute}`;
   }
-let comments = [];
-function getArr() {  
-  const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/:sofia-iakovleva/comments", {
-    method: "GET"
-  });
-  // Подписываемся на успешное завершение запроса с помощью then
-  fetchPromise.then((response) => {
-    // Запускаем преобразовываем "сырые" данные от API в json формат и 
-    //подписываемся на успешное завершение запроса с помощью then:
-    response.json().then((responseData) => {
-      const appComments = responseData.comments.map((comment) => {
-        return {
-          name: comment.author.name,
-          text: comment.text,
-          eachDate: takeDate(new Date(comment.date)),
-          like: comment.likes,
-          currentLike: false,
-          classLike: 'like-button -no-active-like',
-          isEdit: false,
-        };
-      });
-      comments = appComments;
-      return renderComments();
-    });
-  }); 
-}
+  let comments = [];
+  function getArr() {
+    return fetch("https://wedev-api.sky.pro/api/v1/:sofia-iakovleva/comments", {
+      method: "GET"
+    })
+      // Подписываемся на успешное завершение запроса с помощью then
+      .then((response) => {
+        // Запускаем преобразовываем "сырые" данные от API в json формат и 
+        //подписываемся на успешное завершение запроса с помощью then:
+        return response.json();
+      })
+      .then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            text: comment.text,
+            eachDate: takeDate(new Date(comment.date)),
+            like: comment.likes,
+            currentLike: false,
+            classLike: 'like-button -no-active-like',
+            isEdit: false,
+          };
+        });
+        comments = appComments;
+        return renderComments()
+      })
+      .then((data) => {
+        document.body.classList.add('loaded');
+          });
+  }
 
-getArr();
-  
-  
+  getArr();
+
+
 
   // // Создание массива
   // const comments = [
@@ -262,7 +271,8 @@ getArr();
     if ((nameInputElement.value === "") || (comentInputElement.value === "")) {
       return;
     }
-
+    addButtonElement.disabled = true;
+    addButtonElement.textContent = "Ваш комментарий добавляется...";
     //Добавляем данные для нового комента
     // comments.push({
     //   name: nameInputElement.value
@@ -284,7 +294,7 @@ getArr();
     //   isEdit: false,
     // });
 
-    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/:sofia-iakovleva/comments", {
+    fetch("https://wedev-api.sky.pro/api/v1/:sofia-iakovleva/comments", {
       method: "POST",
       body: JSON.stringify({
         name: nameInputElement.value
@@ -304,16 +314,22 @@ getArr();
         currentLike: false,
         classLike: 'like-button -no-active-like',
         isEdit: false,
+      }),
+    })
+      // Подписываемся на успешное завершение запроса с помощью then
+      .then((response) => {
+        // Запускаем преобразовываем "сырые" данные от API в json формат и 
+        //подписываемся на успешное завершение запроса с помощью then:
+        return response.json();
       })
-    });
-    // Подписываемся на успешное завершение запроса с помощью then
-    fetchPromise.then((response) => {
-      // Запускаем преобразовываем "сырые" данные от API в json формат и 
-      //подписываемся на успешное завершение запроса с помощью then:
-      response.json().then((responseData) => {
-        getArr();
+      .then((responseData) => {
+        return getArr();
+      })
+      .then((data) => {
+        addButtonElement.disabled = false;
+        addButtonElement.textContent = "Написать";
       });
-    });
+
 
     renderComments();
     nameInputElement.value = "";
