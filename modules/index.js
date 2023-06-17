@@ -30,10 +30,7 @@ import { renderAddingList } from "./render.js"
     commentsLoader.classList.add("_hidden");
    
     buttonElement.addEventListener("click", () => {
-      if (nameElement.value === ""){
-        alert("Пожалуйста введите имя!");
-        return;
-      };
+    
       if (commentsElement.value === ""){
         alert("Пожалуйста введите коментарий!");
         return;
@@ -48,7 +45,6 @@ linkButtonElement.addEventListener("click", () =>{
   registrationElement = document.getElementById('form-registration');
   button = document.getElementById('button');
   exitButton = document.getElementById('exit-button');
-
   buttonButton = document.getElementById('button-button');
   buttonButton.addEventListener("click", (user) => {
     const loginValue = document.getElementById('login').value;
@@ -59,7 +55,7 @@ linkButtonElement.addEventListener("click", () =>{
       auth.classList.add("_hidden");
       getComments();
       addingAComment.classList.remove("_hidden");
-      postComment();
+      // renderCommentList(commentList)
     });
   })
 
