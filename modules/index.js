@@ -1,5 +1,5 @@
 import { getComments, postComment, getUsers, postRegistration, postLogIn, setToken} from "./api.js";
-import { renderAddingList } from "./render.js"
+import { renderAddingList, renderName } from "./render.js"
 
 
     const buttonElement = document.getElementById('add-button');
@@ -56,6 +56,7 @@ linkButtonElement.addEventListener("click", () =>{
       getComments();
       addingAComment.classList.remove("_hidden");
       // renderCommentList(commentList)
+      renderName();
     });
   })
 

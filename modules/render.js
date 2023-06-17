@@ -65,6 +65,10 @@ export const renderCommentList = (commentList) => {
         listElement.innerHTML = authHtml;
         };
 
+        export const renderName = () => {
+            document.getElementById('name').value = "Привет";
+        }
+
         
 
 
