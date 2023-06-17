@@ -82,6 +82,20 @@
     });
 
   }
+
+
+  const initAnswerOnCommentEventListeners = () => {
+
+
+    comments.forEach((commentText, index) => {
+      commentText.addEventListener('click', () => {
+        const answerIndex = commentText.dataset.index;
+
+      })
+    })
+
+  }
+
   
   const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
@@ -91,7 +105,7 @@
                     <div>${comment.date}</div>
                   </div>
                   <div class="comment-body">
-                    <div class="comment-text">
+                    <div data-index='${index}' class="comment-text">
                     ${comment.commentText}
                     </div>
                   </div>
@@ -116,6 +130,8 @@
       renderComments();
     }
 
+
+
     function addComment() {
 
       nameInput.classList.remove('error');
@@ -128,8 +144,8 @@
       }
 
       comments.push({
-        name: nameInput.value,
-        commentText: commentInput.value,
+        name: nameInput.value.replaceAll('<', '&lt'),
+        commentText: commentInput.value.replaceAll('>', '&gt'),
         date: `${new Date().toLocaleString().slice(0, -3)}`,
         likes: 0,
         isLiked: '',
@@ -142,9 +158,11 @@
     }
 
 
+
     addButton.addEventListener('click', () => {
       addComment();
     });
+
 
     addForm.addEventListener('keydown', (event) => {
 
