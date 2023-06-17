@@ -40,11 +40,6 @@ const initLikesBtn = () => {
 }
 
 function addComment() {
-  //! Проверка на ввод имени/комментария
-  if (nameUser.value === "" || commentUser.value === "") {
-    alert("Вы не ввели имя или комментарий");
-    return;
-  }
   //! создание нового комментария
   userComment.push({
     name: nameUser.value,
@@ -60,6 +55,8 @@ function addComment() {
   commentUser.value = "";
   //! Добавляем чтение комментариев после добавления комментария
   renderUserComments();
+  //! Делаем отправку некликабельной, если у нас не заполнены поля
+  checkFields();
 }
 
 //! Срабатывание добавления комментария при нажатии на кнопку 'Написать'
@@ -88,7 +85,6 @@ function checkFields() {
     btn.disabled = true;
     btn.classList.add('btn-gray');
   }
-
 }
 checkFields();
 
