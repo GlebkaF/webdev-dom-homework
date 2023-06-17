@@ -9,7 +9,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="comments" class="comments">
         <li id="comment" class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -74,7 +74,7 @@
     const commentElement = document.getElementById('comment-text');
     const dataElement = document.getElementById('data')
     const likesElement = document.getElementById('likes-counter');
-    const commentBlocElement = document.getElementById('comment');
+    const commentBlocElement = document.getElementById('comments');
    
 
 
@@ -83,26 +83,46 @@
       textElement.classList.remove('bord')
       if(inputElement.value === '' ){
         inputElement.classList.add('bord');
-        
+       
                    
       } if (textElement.value === ''){
         textElement.classList.add('bord');
-        
+      } 
+       
+      const newElement = commentBlocElement.innerHTML;
+
+      if (inputElement.value === '' || textElement.value === ''){
+        newElement = commentBlocElement.innerHTML;
       } else {
-        buttonElement.setAttribute('disabled', '');
-      inputElement.setAttribute('disabled', '');
-      textElement.setAttribute('disabled', '');
-      }
-
-     
+      commentBlocElement.innerHTML = newElement + `<ul id="comments" class="comments">
+        <li id="comment" class="comment">
+          <div class="comment-header">
+            <div>${inputElement.value}</div>
+            <div>${new Date().toLocaleDateString().slice(0, -2) + ' ' + new Date().toLocaleTimeString().slice(0, -3)}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>
       
-      nameElement.innerHTML = inputElement.value;
-     commentElement.innerHTML = textElement.value;
-     likesElement.innerHTML = "0";
-     dataElement.innerHTML = new Date().toLocaleDateString().slice(0, -2) + ' ' + new Date().toLocaleTimeString().slice(0, -3);
-     
-     
-
+      </ul>`};
+      
+    //   nameElement.innerHTML = inputElement.value;
+    //  commentElement.innerHTML = textElement.value;
+    //  likesElement.innerHTML = "0";
+    //  dataElement.innerHTML = new Date().toLocaleDateString().slice(0, -2) + ' ' + new Date().toLocaleTimeString().slice(0, -3);
+    
+    inputElement.value = '';
+    textElement.value = '';
+    
 
    });
     
