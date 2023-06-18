@@ -39,6 +39,7 @@
   const enterCommentElement = document.getElementById("enter-comment")
   const buttonElement = document.getElementById("btn")
 
+  // Массив с комменами
   const users = [
     {
       name: "Глеб Фокин",
@@ -58,10 +59,12 @@
     },
   ];
 
+  // Закрашиваем кнопку лайка
   const initLikeButton = () => {
     const likeButtonElements = document.querySelectorAll('.like-button');
     for (const likeButtonElement of likeButtonElements) {
-      likeButtonElement.addEventListener("click", () => {
+      likeButtonElement.addEventListener("click", (event) => {
+        event.stopPropagation();
         const likeButtonIndex = likeButtonElement.dataset.index;
         const listElement = users[likeButtonIndex];
 
@@ -78,15 +81,28 @@
       });
     };
   };
-
   initLikeButton();
 
+  // Добавляем ответ цитатой
+  const commentText = () => {
+    const commentTextElements = document.querySelectorAll('.comment');
+    for (const commentTextElement of commentTextElements) {
+      commentTextElement.addEventListener("click", () => {
+        const commTextElem = commentTextElement.querySelector('.comment-text')
+        const nameTextElem = commentTextElement.querySelector('.comment-name')
+        enterCommentElement.value = (` ${commTextElem.innerHTML} ${nameTextElem.innerHTML}`);
+        renderUsers();
+      });
+    };
+  };
+  commentText();
+
+  // Рендерим список комментов
   const renderUsers = () => {
     const userHtml = users.map((user, index) => {
       return `<li class="comment">
-
         <div class="comment-header">
-          <div>${user.name}</div>  
+          <div class="comment-name">${user.name}</div>  
           <div>${user.dateTime}</div>
         </div>
 
@@ -102,38 +118,44 @@
             <button data-index="${index}" class='${user.colorLike}'></button>
           </div>
         </div>
-
       </li>`;
     }).join('');
     listCommentElement.innerHTML = userHtml;
     initLikeButton();
+    commentText();
   };
 
   renderUsers();
 
+  // Добавляем коммент кнопкой написать
   buttonElement.addEventListener("click", () => {
-
+    // Подсвечивает поле Name если оно пусто
     enterNameElement.classList.remove('error');
     if (enterNameElement.value === "") {
       enterNameElement.classList.add('error');
       return;
     }
-
+    // Подсвечивает поле коммента если оно пусто
     enterCommentElement.classList.remove('error');
     if (enterCommentElement.value === "") {
       enterCommentElement.classList.add('error');
       return;
     }
-
+    // Установка текущей даты и времени коммента
     const currentDate = new Date()
     let newDate = currentDate.getDate() + '.' + currentDate.getMonth() + '.' + currentDate.getFullYear() + ' ' + currentDate.getHours() + ':' + currentDate.getMinutes()
-
+    // Пушит в массив коментов новый коммент
     users.push({
-      name: enterNameElement.value,
-      comment: enterCommentElement.value,
+      name: enterNameElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+      comment: enterCommentElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
       dateTime: newDate,
+      likeNumber: 0,
+      colorLike: 'like-button -no-active-like',
     });
+    commentText();
     renderUsers();
+    enterCommentElement.value = "";
+    enterNameElement.value = "";
   });
 
 
