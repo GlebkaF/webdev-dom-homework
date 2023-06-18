@@ -36,6 +36,18 @@
       const inputNameElement = document.getElementById("name-input");
       const inputTextElement = document.getElementById("comment-input");
 
+      function currentDate(date) {
+        return date.toLocaleString("ru-RU", {
+          hour12: false,
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          day: "2-digit",
+          month: "2-digit",
+          year: "2-digit",
+        });
+      }
+
       // const users = [
       //   {
       //     id: 0,
@@ -55,14 +67,15 @@
       //   },
       // ];
       let users = [];
-      const fetchPromise = fetch(
-        "https://wedev-api.sky.pro/api/v1/dima-nosov/comments",
-        {
-          method: "GET",
-        }
-      );
+      let fetchPromise;
 
       function fetchPromiseArray() {
+        fetchPromise = fetch(
+          "https://wedev-api.sky.pro/api/v1/dima-nosov/comments",
+          {
+            method: "GET",
+          }
+        );
         fetchPromise
           .then((response) => response.json())
           .then((responseData) => {
@@ -109,31 +122,29 @@
         listElement.innerHTML = "";
         users.forEach((user) => {
           const listItem = document.createElement("li");
-          listItem.innerHTML = `
-        <div class="comment" id="comment-${user.id}">
-          <div class="comment-header">
-            <div>${user.name}</div>
-            <div>${user.date}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              <a class="comment__link" href="#" id="text-button-${user.text}">${
+          listItem.innerHTML = `<div class="comment" id="comment-${user.id}">
+        <div class="comment-header">
+          <div>${user.name}</div>
+          <div>${user.date}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            <a class="comment__link" href="#" id="text-button-${user.text}">${
             user.text
           }</a>
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span id="likes-counter-${user.id}" class="likes-counter">${
-            user.likes
-          }</span>
-              <button id="like-button-${user.id}" class="like-button ${
-            user.isLiked ? "-active-like" : "-no-active-like"
-          }"></button>
-            </div>
           </div>
         </div>
-      `;
+        <div class="comment-footer">
+          <div class="likes">
+            <span id="likes-counter-${user.id}" class="likes-counter">${
+            user.likes
+          }</span>
+            <button id="like-button-${user.id}" class="like-button ${
+            user.isLiked ? "-active-like" : "-no-active-like"
+          }"></button>
+          </div>
+        </div>
+      </div> `;
           listElement.appendChild(listItem);
           attachLikeButtonListener(user);
           attachTextButtonListener(user);
@@ -167,30 +178,6 @@
           return;
         }
 
-        function currentDate(date) {
-          return date.toLocaleString("ru-RU", {
-            hour12: false,
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-            day: "2-digit",
-            month: "2-digit",
-            year: "2-digit",
-          });
-        }
-
-        // users.push({
-        //   name: inputNameElement.value
-        //     .replace(/</g, "&lt;")
-        //     .replace(/>/g, "&gt;"),
-        //   date: currentDate,
-        //   likes: 0,
-        //   text: inputTextElement.value
-        //     .replace(/</g, "&lt;")
-        //     .replace(/>/g, "&gt;"),
-        //   isLiked: false,
-        // });
-
         const fetchPromise = fetch(
           "https://wedev-api.sky.pro/api/v1/dima-nosov/comments",
           {
@@ -212,6 +199,8 @@
         fetchPromise.then((response) => {
           response.json().then((responseData) => {
             fetchPromiseArray();
+            attachLikeButtonListener(responseData);
+            attachTextButtonListener();
           });
         });
 
