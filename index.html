@@ -85,12 +85,15 @@
 
 
   const initAnswerOnCommentEventListeners = () => {
+    const commentsText = Array.from(document.querySelectorAll('.comment-text'));
 
+    commentsText.forEach((commentTexts, index) => {
+      commentTexts.addEventListener('click', () => {
+        const answerIndex = commentTexts.dataset.index;
+        const quote = comments[answerIndex].commentText;
+        commentInput.value = quote;
 
-    comments.forEach((commentText, index) => {
-      commentText.addEventListener('click', () => {
-        const answerIndex = commentText.dataset.index;
-
+        renderComments();
       })
     })
 
