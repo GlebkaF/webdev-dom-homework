@@ -81,7 +81,7 @@
     
     function getFetchPromise() {
 
-    const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/gleb-fokin/comments',{
+    const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/ulyana-korotkova/comments',{
       method: "GET"
       }).then((response) => {
         response.json().then((responseDate) => {
@@ -214,7 +214,7 @@
         likes: 0,
       });
 */
-      fetch('https://wedev-api.sky.pro/api/v1/gleb-fokin/comments',{
+      fetch('https://wedev-api.sky.pro/api/v1/ulyana-korotkova/comments',{
         method: "POST",
         body: JSON.stringify({
           name: nameInputElement.value
@@ -234,11 +234,8 @@
         })
       }).then((response) => {
 
-        response.json().then((responseDate) => {
-          
-         getFetchPromise();
+       getFetchPromise();
 
-        });
       });
     
       //renderComment();
