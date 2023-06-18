@@ -8,7 +8,8 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="list" class="comments">
+
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -26,13 +27,16 @@
             </div>
           </div>
         </li>
-        <li class="comment">
+        <li  class="comment">
           <div class="comment-header">
             <div>Варвара Н.</div>
+
             <div>13.02.22 19:22</div>
+
           </div>
           <div class="comment-body">
             <div class="comment-text">
+
               Мне нравится как оформлена эта страница! ❤
             </div>
           </div>
@@ -46,26 +50,77 @@
       </ul>
       <div class="add-form">
         <input
+        id="name-comment"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
+        id="text-comment" 
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button type="submit" id="add-comment" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
 
+<style>
+  .error {
+    background-color: violet;
+  }
+</style>
+
   <script>
     "use strict";
-    // Код писать здесь
+    const buttonElement = document.getElementById("add-comment");
+    const listElement = document.getElementById("list");
+    const nameInputElement = document.getElementById("name-comment");
+    const textInputElement = document.getElementById("text-comment");
+    const nowDay = new Date();
+    const option = {
+      year: '2-digit',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    }
+
+    buttonElement.addEventListener("click", () => {
+
+      nameInputElement.classList.remove("error"); textInputElement.classList.remove("error");
+      if (nameInputElement.value === "" || textInputElement.value === "") {
+        nameInputElement.classList.add("error"); textInputElement.classList.add("error");
+        return;
+      }
+      const oldListHTML = listElement.innerHTML;
+      listElement.innerHTML = oldListHTML + 
+        `<li  class="comment">
+            <div class="comment-header">
+              <div>${nameInputElement.value}</div>
+              <div>${nowDay.toLocaleString('ru-RU', option)}</div>
+            </div>
+            <div class="comment-body">
+              <div class="comment-text">
+                ${textInputElement.value}
+              </div>
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">0</span>
+                <button class="like-button -active-like"></button>
+              </div>
+            </div>
+        </li>`
+        nameInputElement.value = "";
+        textInputElement.value = "";
+
+    })
     console.log("It works!");
   </script>
 </html>
+
