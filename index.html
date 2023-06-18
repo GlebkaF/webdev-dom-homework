@@ -8,8 +8,9 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
-        <li class="comment">
+      <ul class="comments" id="comment-list">
+        <!-- Список рендерится в JS -->
+        <!-- <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -42,30 +43,195 @@
               <button class="like-button -active-like"></button>
             </div>
           </div>
-        </li>
+        </li> -->
       </ul>
       <div class="add-form">
         <input
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          id="input-name"
         />
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
+          id="input-text"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button add-form-button_disabled" id="add-button" disabled>Написать</button>
         </div>
       </div>
     </div>
   </body>
 
+  <style>
+.error{
+border: 3px solid red;
+}
+  </style>
+
   <script>
     "use strict";
-    // Код писать здесь
+    // Код писать здесь 
+
+    let countOfLikes = 0;
+
+    const buttonElement = document.getElementById("add-button");
+    const nameElement = document.getElementById("input-name");
+    const textElement = document.getElementById("input-text");
+    const listElement = document.getElementById("comment-list");
+
+    let comments = [
+    {
+    name: 'Глеб Фокин', 
+    date: '12.02.22 12:18', 
+    text: 'Это будет первый комментарий на этой странице',
+    likes: '3',
+    isActiveLike: false,
+    }, 
+    {
+      name: 'Варвара Н.', 
+    date: '13.02.22 19:22', 
+    text: 'Мне нравится как оформлена эта страница! ❤',
+    likes: '75',
+    isActiveLike: false,
+    }];
+
+    const initUpdateLike = () => {
+      const likeButtonsElements = document.querySelectorAll('.like-button');
+
+      for (const likeButtonsElement of likeButtonsElements) {
+        likeButtonsElement.addEventListener('click', () => {
+          const index = likeButtonsElement.dataset.index; 
+          if (likeButtonsElement.classList.contains('-active-like')) {
+            comments[index].likes = Number(comments[index].likes)-1;
+          } else {
+            comments[index].likes = Number(comments[index].likes)+1;
+          }
+          comments[index].isActiveLike = !comments[index].isActiveLike;
+          renderComments();
+        })
+      }
+    };
+
+    const renderComments = () => {
+      const commentHtml = comments.map((item, index) => {
+        let activeLike = '';
+        if (comments[index].isActiveLike) {
+          activeLike = '-active-like'
+        }
+        return `  
+        <li class="comment">
+          <div class="comment-header">
+            <div> ${item.name} </div>
+            <div> ${item.date} </div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${item.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">
+                ${item.likes}
+              </span>
+              <button class="like-button ${activeLike}" data-index="${index}"></button>
+            </div>
+          </div>
+        </li>`
+      }).join('');
+      listElement.innerHTML = commentHtml;
+      initUpdateLike();
+    }
+
+    renderComments();
+
+    function letDisabledButton(expectedValue) {
+      if (expectedValue === '') {
+        buttonElement.disabled = true;
+        buttonElement.classList.add('add-form-button_disabled')
+      } else {
+        buttonElement.disabled = false;
+        buttonElement.classList.remove('add-form-button_disabled')
+      }
+    };
+
+    function letClearForm(form) {
+      form.classList.remove('error')
+    };
+    nameElement.addEventListener('input', () => {
+      letDisabledButton(nameElement.value);
+    });
+    textElement.addEventListener('input', () => {
+      letDisabledButton(textElement.value);
+    });
+    nameElement.addEventListener('click', () => {
+      letClearForm(nameElement);
+    });
+    textElement.addEventListener('click', () => {
+      letClearForm(textElement);
+    });
+
+    //Функция форматирования даты 
+    const formattedDate = (dateObject) => {
+      let minutes = dateObject.getMinutes();
+      let months = dateObject.getMonth() + 1;
+      let years = dateObject.getFullYear() - 2000;
+      if (minutes < 10) {
+        minutes = "0" + minutes;
+      }
+      if (months < 10) {
+        months = "0" + months;
+      }
+      const outDate = dateObject.getDate() + '.' + months + '.' + years + '  ' + dateObject.getHours() + ':' + minutes;
+      return outDate;
+    }
+    
+    //Функция вызываемая в обработчике 
+    const sentComment = () => {
+    nameElement.classList.remove('error');
+    textElement.classList.remove('error');
+
+      let currentDate = new Date();
+
+      if (nameElement.value === '') {
+        nameElement.classList.add('error');
+        if (textElement.value === '' || textElement.value === '\n') {
+          textElement.classList.add('error');
+        }
+        return;
+      }
+      if (textElement.value === '' || textElement.value === '\n') {
+        textElement.classList.add('error');
+        return;
+    }
+    countOfLikes = 0;
+
+    comments.push({
+      name: nameElement.value,
+      date: formattedDate(currentDate), 
+      text: textElement.value,
+      likes: countOfLikes,
+      isActiveLike: false,
+    })
+
+    renderComments();
+    nameElement.value = '';
+    textElement.value = '';
+  }
+
+   buttonElement.addEventListener('click', sentComment);
+
+   document.addEventListener('keyup', (e) => {
+    if (e.code === 'Enter') {
+      sentComment();
+    }
+   })
+
     console.log("It works!");
+   
   </script>
 </html>
