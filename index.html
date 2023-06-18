@@ -185,6 +185,16 @@
 
   };
   // Добавление кликабельностm лайка и счётчика лайков
+  function delay(interval = 300) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, interval);
+      });
+}
+
+
+
   const initlikeButtonsListeners = () => {
     const likeButtonsElements = document.querySelectorAll(".like-button");
     for (const likeButtonElement of likeButtonsElements) {
@@ -192,7 +202,8 @@
         event.stopPropagation();
         const index = likeButtonElement.dataset.index;
         comments[index].currentLike = !comments[index].currentLike;
-        console.log(comments[index].currentLike);
+        likeButtonElement.classList.add('-loading-like');
+        delay(2000).then(() => {
         if (comments[index].currentLike) {
           ++comments[index].like;
           comments[index].classLike = 'like-button -active-like';
@@ -201,6 +212,10 @@
           comments[index].classLike = 'like-button -no-active-like';
         }
         renderComments();
+      })
+      .then((data) => {
+        likeButtonElement.classList.remove('-loading-like');
+          });
       });
     }
   };
