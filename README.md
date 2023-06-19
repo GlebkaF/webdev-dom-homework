@@ -6,4 +6,4 @@ https://glebkaf.github.io/webdev-dom-homework/
 
 ## Как разрабатывать
 
-Открой index.html в браузере
+Открой index.html в браузере1
