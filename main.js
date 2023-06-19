@@ -46,24 +46,22 @@ const userComment = [
 const initLikesBtn = () => {
   const likeBtns = document.querySelectorAll('.like-button');
   for (const likeBtn of likeBtns) {
+    const index = likeBtn.dataset.index;
     likeBtn.addEventListener('click', () => {
-      for (const comment of userComment) {
-        const index = likeBtn.dataset.index;
-        console.log(index);
-        console.log(comment.likes);
-        if (comment.isLike === true) {
-          comment.likes = comment.likes += 1;
+
+          if (userComment[index].isLike === true) {
+          userComment[index].likes = userComment[index].likes += 1;
+          userComment[index].isLike = false;
         }
         
-        if (comment.isLike === false) {
-          comment.likes = comment.likes -= 1;
+        else if (userComment[index].isLike === false) {
+          userComment[index].likes = userComment[index].likes -= 1;
+          userComment[index].isLike = true;
         }
-      }
       renderUserComments();
     });
   }
 }
-initLikesBtn();
 
 function addComment() {
   //! создание нового комментария
@@ -72,11 +70,9 @@ function addComment() {
     date: date,
     comment: commentUser.value,
     likes: 0,
-    isLike: false,
+    isLike: true,
     isEdit: false,
   });
-  //! Добавляем чтение клика по лайку
-  initLikesBtn();
   //! Чистка текстовых полей формы после отправки
   nameUser.value = "";
   commentUser.value = "";
