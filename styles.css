@@ -104,11 +104,17 @@ body {
     font-family: Helvetica;
     border-radius: 8px;
     border: none;
+    outline: none;
   }
 
   .add-form-name {
     width: 300px;
     padding: 11px 22px;
+  }
+
+  .add-form-name_error,
+  .add-form-comment_error {
+    outline: 3px solid rgb(228, 84, 84);
   }
 
   .add-form-text {
@@ -119,7 +125,8 @@ body {
 
   .add-form-row {
     display: flex;
-    justify-content: flex-end;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
   .add-form-button {
@@ -130,6 +137,11 @@ body {
     border: none;
     border-radius: 18px;
     cursor: pointer;
+  }
+
+  .add-form-button_disable {
+    background-color: gray;
+    pointer-events: none;
   }
 
   .add-form-button:hover {
