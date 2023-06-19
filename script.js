@@ -21,8 +21,10 @@ console.log(buttonElement);
 buttonElement.addEventListener("click", () => {
 
   nameInputElement.classList.remove("error");
+  commentsElement.classList.remove("error");
   if (nameInputElement.value === "") {
     nameInputElement.classList.add("error");
+    commentsElement.classList.add("error");
     return;
   }
   let datetime = dt();
