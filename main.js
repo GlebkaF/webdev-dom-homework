@@ -1,17 +1,6 @@
 "use strict";
 import { fetchComments, apiLike, apiDeleteComment } from "./api.js";
 import { renderComments } from "./renderComments.js"
-import { format } from "date-fns"
-export const now = (comment) => {
-    let date = format(new Date(comment.date), "yyyy-MM-dd hh.mm.ss");
-    let month = (date.getMonth() + 1).toString().padStart(2, '0');
-    let day = date.getDate().toString().padStart(2, '0');
-    let year = date.getFullYear().toString().substr(-2);
-    let hours = date.getHours().toString().padStart(2, '0');
-    let minutes = date.getMinutes().toString().padStart(2, '0');
-    const resultDate = `${year}.${month}.${day} ${hours}:${minutes}`;
-    return resultDate;
-};
 
 const renderApp = () => {
 renderComments({comments, handleCommentDeleteClick, handleCommentEditClick, handleCommentFeedbackClick, handleCommentLikeClick});

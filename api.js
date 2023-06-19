@@ -1,4 +1,4 @@
-import { formatDate } from "./utils.js";
+import { now } from "./utils.js";
  
 const host = "https://wedev-api.sky.pro/api/v2/olya-myalo/comments";
 export const fetchComments = () => {
@@ -15,7 +15,7 @@ export const fetchComments = () => {
       return { 
         id: comment.id,
         name: comment.author.name,  
-        date: formatDate(new Date(comment.date)),  
+        date: now(new Date(comment.date)),  
         text: comment.text, 
         active: false,
         like: comment.likes, 
