@@ -55,7 +55,6 @@ linkButtonElement.addEventListener("click", () =>{
       auth.classList.add("_hidden");
       getComments();
       addingAComment.classList.remove("_hidden");
-      // renderCommentList(commentList)
       renderName();
     });
   })

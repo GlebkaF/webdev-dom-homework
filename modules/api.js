@@ -74,10 +74,9 @@ export const getComments = () => {
           else{
             commentsElement.value = "";
             nameElement.value = "";  
+            getComments();
           }
         });
-        getComments();
-        renderCommentList()
       };
 
 

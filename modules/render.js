@@ -66,7 +66,7 @@ export const renderCommentList = (commentList) => {
         };
 
         export const renderName = () => {
-            document.getElementById('name').value = "Привет";
+            document.getElementById('name').value = "Пользователь";
         }
 
         
