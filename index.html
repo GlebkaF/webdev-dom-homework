@@ -8,6 +8,7 @@
 
   <body>
     <div class="container">
+     <div class="loader">Пожалуйста подождите, комментарии загружаются...</div>
       <ul id = "list" class="comments">
 
         <!--Список рендерится из JS-->
@@ -42,10 +43,13 @@
   </style>
   <script>
     "use strict";
+    const commentsLoading = document.querySelector('.loader');
+    const addFormElement = document.querySelector('.add-form');
     const buttonElement = document.getElementById('add-button');
     const listElement = document.getElementById("list");
     const nameInputElement = document.getElementById("input-name");
     const textInputElement = document.getElementById("textarea-text");
+    const commentElement = document.querySelectorAll('.comment');
     
 
     const newDate = new Date(); //12.02.22 12:18
@@ -56,52 +60,36 @@
       date.getFullYear().toString().slice(-2) + " " +
       date.toLocaleTimeString().slice(0, -3);}
     
-    const commentElement = document.querySelectorAll('.comment');
 
-      // const comments = [
-      //   {
-      //     name: "Глеб Фокин",
-      //     date: "12.02.22 12:18",
-      //     text: "Это будет первый комментарий на этой странице",
-      //     activeLike: false,
-      //     likes: 3,
-      //     propertyColorLike: 'like-button -no-active-like',
-      //   },
-      //   {
-      //     name: "Варвара Н.",
-      //     date: "13.02.22 19:22",
-      //     text: "Мне нравится как оформлена эта страница! ❤",
-      //     activeLike: false,
-      //     likes: 75,
-      //     propertyColorLike: 'like-button -no-active-like',
-      //   },
-      // ];
-    
     let comments = [];
-    
-    function getFetchPromise() {
 
-    const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/ulyana-korotkova/comments',{
-      method: "GET"
-      }).then((response) => {
-        response.json().then((responseDate) => {
-        
+    const getFetchPromise = () => {
+     return fetch('https://wedev-api.sky.pro/api/v1/ulyana-korotkova/comments',{
+       method: "GET"
+       })
+      .then((response) => {
+         return response.json()
+      })
+      .then((responseDate) => {
         const appComments = responseDate.comments.map ((comment) => {
           return{
             name: comment.author.name,
-            text: comment.text,
-            date: getCurrentDate(new Date(comment.date)),
-            likes: comment.likes,
-            activeLike: false,
-            propertyColorLike: 'like-button -no-active-like',
+           text: comment.text,
+           date: getCurrentDate(new Date(comment.date)),
+           likes: comment.likes,
+           activeLike: false,
+           propertyColorLike: 'like-button -no-active-like',
           }
-        });
-        comments = appComments;
-        renderComment();
-        });
-      })};
+        })
+         comments = appComments;
+         renderComment();
+      })
+      .then(() => {
+         commentsLoading.style.display = 'none';
+      })
+    };
   
-      getFetchPromise();
+    getFetchPromise();
     
 
     const replayToComment = () => {
@@ -122,7 +110,7 @@
 
     replayToComment();
 
-    const initEventListeners = () =>{
+    const initEventListeners = () => {
 
     const likeBtn = document.querySelectorAll('.like-button');
 
@@ -181,6 +169,7 @@
             <button class="like-button ${comment.propertyColorLike}" data-index="${index}"></button>
           </div>
         </div>
+        
       </li>`
       }).join('');
 
@@ -205,50 +194,41 @@
       if (textInputElement.value === "") {
         textInputElement.style.backgroundColor = 'red';
         return;
-      }
-/*
-      comments.push({
-        name: nameInputElement.value,
-        date: fullDate,
-        text: textInputElement.value,
-        likes: 0,
-      });
-*/
-      fetch('https://wedev-api.sky.pro/api/v1/ulyana-korotkova/comments',{
+      };
+
+      
+
+      fetch('https://wedev-api.sky.pro/api/v1/ulyana-korotkova/comments', {
         method: "POST",
         body: JSON.stringify({
           name: nameInputElement.value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;"),
+           .replaceAll("&", "&amp;")
+           .replaceAll("<", "&lt;")
+           .replaceAll(">", "&gt;")
+           .replaceAll('"', "&quot;"),
           text: textInputElement.value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;"),
+           .replaceAll("&", "&amp;")
+           .replaceAll("<", "&lt;")
+           .replaceAll(">", "&gt;")
+           .replaceAll('"', "&quot;"),
           date: getCurrentDate(new Date()),
           likes: 0,
           activeLike: false,
           propertyColorLike: 'like-button -no-active-like',
         })
-      }).then((response) => {
-
-       getFetchPromise();
-
+      })
+      .then((response) => {
+       return getFetchPromise();
       });
-    
-      //renderComment();
-      initEventListeners();
+      
+        initEventListeners();
 
-
-      nameInputElement.value = '';
-      textInputElement.value = '';
+        nameInputElement.value = '';
+        textInputElement.value = '';
     });
 
    
-    
-
+      
     console.log("It works!");
   </script>
 </html>
