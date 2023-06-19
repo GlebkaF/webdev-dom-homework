@@ -69,31 +69,36 @@
       let users = [];
       let fetchPromise;
 
-      function fetchPromiseArray() {
-        fetchPromise = fetch(
-          "https://wedev-api.sky.pro/api/v1/dima-nosov/comments",
-          {
+      const fetchPromise = fetch(
+        "https://wedev-api.sky.pro/api/v1/dima-nosov/comments",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            name: inputNameElement.value
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;"),
+            date: currentDate(new Date()),
+            likes: 0,
+            text: inputTextElement.value
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;"),
+            isLiked: false,
+          }),
+        }
+      )
+        .then((response) => response.json())
+        .then((responseData) => {
+          return fetch("https://wedev-api.sky.pro/api/v1/dima-nosov/comments", {
             method: "GET",
-          }
-        );
-        fetchPromise
-          .then((response) => response.json())
-          .then((responseData) => {
-            const appUsers = responseData.comments.map((comment) => {
-              return {
-                name: comment.author.name,
-                date: currentDate(new Date(comment.date)),
-                likes: comment.likes,
-                text: comment.text,
-                isLiked: false,
-              };
-            });
-            users = appUsers;
-            renderUsers();
           });
-      }
-
-      fetchPromiseArray();
+        })
+        .then((response) => response.json())
+        .then((responseData) => {
+          users = responseData;
+          renderUsers();
+          attachLikeButtonListener(responseData);
+          attachTextButtonListener();
+        });
 
       const attachLikeButtonListener = (user) => {
         const likesButton = document.getElementById(`like-button-${user.id}`);
@@ -122,29 +127,31 @@
         listElement.innerHTML = "";
         users.forEach((user, index) => {
           const listItem = document.createElement("li");
-          listItem.innerHTML = `<div class="comment" id="comment-${index}">
-        <div class="comment-header">
-          <div>${user.name}</div>
-          <div>${user.date}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            <a class="comment__link" href="#" id="text-button-${user.text}">${
-            user.text
-          }</a>
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span id="likes-counter-${index}" class="likes-counter">${
-            user.likes
-          }</span>
-            <button id="like-button-${index}" class="like-button ${
+          listItem.innerHTML = `<div class="comment" id="comment-${user.index}">
+                    <div class="comment-header">
+                      <div>${user.name}</div>
+                      <div>${user.date}</div>
+                    </div>
+                    <div class="comment-body">
+                      <div class="comment-text">
+                        <a class="comment__link" href="#" id="text-button-${
+                          user.text
+                        }">${user.text}</a>
+                      </div>
+                    </div>
+                    <div class="comment-footer">
+                      <div class="likes">
+                        <span id="likes-counter-${
+                          user.index
+                        }" class="likes-counter">${user.likes}</span>
+                        <button id="like-button-${
+                          user.index
+                        }" class="like-button ${
             user.isLiked ? "-active-like" : "-no-active-like"
           }"></button>
-          </div>
-        </div>
-      </div> `;
+                      </div>
+                    </div>
+                  </div> `;
           listElement.appendChild(listItem);
           attachLikeButtonListener(user, index);
           attachTextButtonListener(user, index);
@@ -177,32 +184,6 @@
           inputTextElement.classList.add("error");
           return;
         }
-
-        const fetchPromise = fetch(
-          "https://wedev-api.sky.pro/api/v1/dima-nosov/comments",
-          {
-            method: "POST",
-            body: JSON.stringify({
-              name: inputNameElement.value
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;"),
-              date: currentDate,
-              likes: 0,
-              text: inputTextElement.value
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;"),
-              isLiked: false,
-            }),
-          }
-        );
-
-        fetchPromise.then((response) => {
-          response.json().then((responseData) => {
-            fetchPromiseArray();
-            attachLikeButtonListener(responseData);
-            attachTextButtonListener();
-          });
-        });
 
         inputNameElement.value = "";
         inputTextElement.value = "";
