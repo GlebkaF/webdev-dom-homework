@@ -1,12 +1,14 @@
-const date = new Date();
-const year = date.getFullYear().toString().slice(-2);
-const month = (date.getMonth() + 1).toString().padStart(2, '0');
-const day = date.getDate().toString().padStart(2, '0');
-const hours = date.getHours().toString().padStart(2, '0');
-const minutes = date.getMinutes().toString().padStart(2, '0');
-const datetime = `${day}.${month}.${year} ${hours}:${minutes}`;
-console.log(datetime);
-
+function dt() {
+  const date = new Date();
+  const year = date.getFullYear().toString().slice(-2);
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const datetime = `${day}.${month}.${year} ${hours}:${minutes}`;
+  console.log(datetime);
+  return datetime;
+}
 
 const nameInputElement = document.getElementsByClassName('add-form-name')[0];
 const commentsElement = document.getElementsByClassName('add-form-text')[0];
@@ -18,15 +20,16 @@ console.log(buttonElement);
 
 buttonElement.addEventListener("click", () => {
 
-    nameInputElement.classList.remove("error");
-    if (nameInputElement.value === "") {
-        nameInputElement.classList.add("error");
-        return;
-    }
-    const oldListHtml = listElement.innerHTML;
-    listElement.innerHTML =
-        oldListHtml +
-        `<li class="comment">
+  nameInputElement.classList.remove("error");
+  if (nameInputElement.value === "") {
+    nameInputElement.classList.add("error");
+    return;
+  }
+  let datetime = dt();
+  const oldListHtml = listElement.innerHTML;
+  listElement.innerHTML =
+    oldListHtml +
+    `<li class="comment">
         <div class="comment-header">
           <div>${nameInputElement.value}</div>
           <div>${datetime}</div>
@@ -44,6 +47,6 @@ buttonElement.addEventListener("click", () => {
         </div>
       </li>`;
 
-    nameInputElement.value = "";
-    commentsElement.value = "";
+  nameInputElement.value = "";
+  commentsElement.value = "";
 });
