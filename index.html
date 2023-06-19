@@ -9,11 +9,13 @@
   <body>
     <div class="container">
      <div class="loader">Пожалуйста подождите, комментарии загружаются...</div>
+     
       <ul id = "list" class="comments">
 
         <!--Список рендерится из JS-->
 
       </ul>
+      <div class="loader-li">Комментарий добавляется...</div>
       <div class="add-form">
         <input
           type="text"
@@ -169,7 +171,6 @@
             <button class="like-button ${comment.propertyColorLike}" data-index="${index}"></button>
           </div>
         </div>
-        
       </li>`
       }).join('');
 
@@ -179,6 +180,8 @@
     };
 
     renderComment();
+
+    
 
     buttonElement.addEventListener("click", () => {
     
@@ -196,7 +199,9 @@
         return;
       };
 
-      
+      const loaderLi = document.querySelector('.loader-li');
+      loaderLi.style.display = 'flex';
+      addFormElement.style.display = 'none';
 
       fetch('https://wedev-api.sky.pro/api/v1/ulyana-korotkova/comments', {
         method: "POST",
@@ -219,8 +224,12 @@
       })
       .then((response) => {
        return getFetchPromise();
+      })
+      .then((response) => {
+        loaderLi.style.display = 'none';
+        addFormElement.style.display = 'flex';
       });
-      
+
         initEventListeners();
 
         nameInputElement.value = '';
