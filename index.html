@@ -173,9 +173,6 @@
       messageButtonElement.disabled = true;
       messageButtonElement.textContent = "Комментарий добавляется...";
       postApi();
-      // getApi();
-      // renderComments();
-
     })
 
     deleteLastCommentButton.addEventListener("click", () => {
@@ -228,28 +225,44 @@
     }
     
     function postApi () { 
-        fetch ("https://wedev-api.sky.pro/api/v1/:anast-tro/comments", {
-          method: "POST",
-          body: JSON.stringify({
-            text: addTextElement.value,
-            name: addNameElement.value,
-          })
+      fetch ("https://wedev-api.sky.pro/api/v1/:anast-tro/comments", {
+        method: "POST",
+        body: JSON.stringify({
+          text: addTextElement.value,
+          name: addNameElement.value,
+          forceError: true
         })
-        .then((response) => {
-          return response.json();
-        })
-        .then(() => {
-          getApi();
-          // renderComments();
-        })
-        // .then(() => {
-        //   messageButtonElement.disabled = false;
-        //   messageButtonElement.textContent = 'Написать';
-        // })
-        // renderComments();
+      })
+      .then((response) => {
+        if (response.status === 500) {
+          throw new Error ('Сервер упал');
+        };
+        if (response.status === 400) {
+          throw new Error ('Неверный запрос');
+        };
+        return response.json();
+      })
+      .then(() => {
+        getApi();
+      })
+      .then(() =>{
         addNameElement.value = "";
         addTextElement.value = "";
-        }
+       })
+      .catch((error) => {
+          console.warn(error);
+          messageButtonElement.disabled = false;
+          messageButtonElement.textContent = "Написать";
+          if (error.message === 'Сервер упал') {
+            alert('Сервер упал');
+          } else if (error.message === 'Неверный запрос') {
+            alert('Имя и комментарий должны быть не короче 3-х символов');
+          } else {
+            alert('Кажется, что-то пошло не так, повторите позже');
+          }
+      })
+    }
+        
       
     function getApi () {
       fetch ("https://wedev-api.sky.pro/api/v1/:anast-tro/comments", {
