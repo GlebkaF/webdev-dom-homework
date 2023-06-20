@@ -17,9 +17,7 @@ const nameInputElement = document.getElementsByClassName('add-form-name')[0];
 const commentsElement = document.getElementsByClassName('add-form-text')[0];
 const buttonElement = document.getElementsByClassName('add-form-button')[0];
 const listElement = document.getElementsByClassName('comments')[0];
-console.log(nameInputElement);
-console.log(commentsElement);
-console.log(buttonElement);
+
 
 // функция для добавления комментария
 function addComment() {
@@ -75,9 +73,11 @@ commentsElement.addEventListener('keydown', (event) => {
 });
 
 // обработка нажатия на кнопку "Удалить последний комментарий"
-// deleteButtonElement.addEventListener('click', () => {
-//   const comments = listElement.querySelectorAll('li.comment');
-//   if (comments.length > 0) {
-//     comments[comments.length - 1].remove();
-//   }
-// });
+deleteButtonElement.addEventListener('click', () => {
+  const lastCommentIndex = listElement.innerHTML.lastIndexOf('<li class="comment">');
+  if (lastCommentIndex >= 0) {
+    listElement.innerHTML = listElement.innerHTML.substring(0, lastCommentIndex);
+  }
+});
+
+// добавление кнопки "Удалить последний комментарий" на страницу в HTML
