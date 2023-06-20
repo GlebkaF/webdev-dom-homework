@@ -31,7 +31,7 @@ const userComment = [
     comment: 'Это будет первый комментарий на этой странице',
     likes: 3,
     isLike: false,
-    isEdit: false,
+    isEdit: true,
   },
   {  name: 'Варвара Н.',
     date: '13.02.22 19:22',
@@ -49,7 +49,7 @@ const initLikesBtn = () => {
     const index = likeBtn.dataset.index;
     likeBtn.addEventListener('click', () => {
 
-          if (userComment[index].isLike === true) {
+        if (userComment[index].isLike === true) {
           userComment[index].likes = userComment[index].likes += 1;
           userComment[index].isLike = false;
         }
@@ -60,6 +60,28 @@ const initLikesBtn = () => {
         }
       renderUserComments();
     });
+  }
+}
+
+//! Обходим массив кнопок 'редактировать'
+const changeComment = () => {
+  const changeBtns = document.querySelectorAll('.change-button');
+  for (const changeBtn of changeBtns) {
+    console.log(changeBtn);
+    changeBtn.addEventListener('click', () => {
+      const index = changeBtn.dataset.index;
+  
+        if (userComment[index].isEdit === true) {
+
+          userComment[index].isEdit = false;
+        }
+        
+        else if (userComment[index].isEdit === false) {
+
+          userComment[index].isEdit = true;
+        }
+      renderUserComments();
+      });
   }
 }
 
@@ -119,6 +141,8 @@ commentUser.addEventListener('input', checkFields);
 const renderUserComments = () => {
   console.log('рендер работает');
   userComments.innerHTML = userComment.map((comments, index) => {
+    const commentText = comments.isEdit === true ? `<textarea type="textarea" class="add-form-text" rows="4">${comments.comment}</textarea>` : `${comments.comment}`;
+
     return `
     <li class="comment">
     <div class="comment-header">
@@ -127,13 +151,13 @@ const renderUserComments = () => {
     </div>
     <div class="comment-body">
       <div class="comment-text">
-         ${comments.comment}
+        ${commentText} 
       </div>
     </div>
     <div class="comment-footer">
 
       <div class="change">
-        <button class="change-button">Редактировать</button>
+        <button class="change-button" data-index=${index}>Редактировать</button>
       </div>
 
       <div class="likes">
@@ -146,8 +170,11 @@ const renderUserComments = () => {
 
   //! Добавляем рендер лайка после добавления комментария
   initLikesBtn();
+  //! Добавляем рендер кнопки 'редактировать'
+  changeComment();
 };
 renderUserComments();
+
 
 
 
