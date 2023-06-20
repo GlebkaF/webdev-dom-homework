@@ -12,7 +12,7 @@
 <p class="preloader-text">Пожалуйста, подождите, комментарии загружаются...</p>
   </div>
   <div class="container">
-    <ul class="comments" id="list">
+        <ul class="comments" id="list">
       <!-- Список рендерится из JS -->
       <!-- <li class="comment">
         <div class="comment-header">
@@ -279,6 +279,8 @@
     if ((nameInputElement.value === "") || (comentInputElement.value === "")) {
       return;
     }
+    let nameInputElementNow = nameInputElement.value;
+    let comentInputElementNow = comentInputElement.value;
     addFormElement.innerHTML = "Ваш комментарий добавляется...";
     //Добавляем данные для нового комента
     // comments.push({
@@ -300,7 +302,7 @@
     //   classLike: 'like-button -no-active-like',
     //   isEdit: false,
     // });
-
+let answer = "Кажется, у вас сломался интернет, попробуйте позже";
     fetch("https://wedev-api.sky.pro/api/v1/:sofia-iakovleva/comments", {
       method: "POST",
       body: JSON.stringify({
@@ -321,18 +323,28 @@
         currentLike: false,
         classLike: 'like-button -no-active-like',
         isEdit: false,
+        forceError: true,
       }),
     })
       // Подписываемся на успешное завершение запроса с помощью then
       .then((response) => {
-        // Запускаем преобразовываем "сырые" данные от API в json формат и 
-        //подписываемся на успешное завершение запроса с помощью then:
-        return response.json();
+        if (response.status === 500) {
+          answer = "Сервер сломался, попробуйте позже";
+          throw new Error("Сервер сломался, попробуйте позже");
+        }
+        if (response.status === 400) {
+          answer = "Имя и комментарий должны быть не короче трёх символов";
+          throw new Error("Имя и комментарий должны быть не короче трёх символов");
+        } else {
+          console.log(response);
+        return response.json(); 
+        }
+
       })
-      .then((responseData) => {
+      .then(() => {
         return getArr();
       })
-      .then((data) => {
+      .then(() => {
         addFormElement.innerHTML = (`<div class="add-form" id="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input" />
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
@@ -341,11 +353,26 @@
         <button class="add-form-button" id="end-delete-button">Удалить</button>
         <button class="add-form-button" id="add-button">Написать</button>
       </div>`);
-      });
+      nameInputElement.value = "";
+    comentInputElement.value = "";
+      })
+      .catch((error) =>{
+        alert(answer);
+        nameInputElement.value = nameInputElementNow;
+       console.log(nameInputElementNow);
+        addFormElement.innerHTML = (`<div class="add-form" id="add-form">
+      <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input" value="${nameInputElementNow}"/>
+      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
+        id="coment-input">${comentInputElementNow}</textarea>
+      <div class="add-form-row">
+        <button class="add-form-button" id="end-delete-button">Удалить</button>
+        <button class="add-form-button" id="add-button">Написать</button>
+      </div>`);
+        console.log(error);
+              });
 
     renderComments();
-    nameInputElement.value = "";
-    comentInputElement.value = "";
+ 
   })
 
   // Добавление обработчика ввода для input
