@@ -188,3 +188,49 @@ body {
   .save-button:hover {
     opacity: 0.9;
   }
+  CSS
+
+  .preloader {
+    /*фиксированное позиционирование*/
+    position: fixed;
+    /* координаты положения */
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    /* размещаем блок над всеми элементами на странице (это значение должно быть больше, чем у любого другого позиционированного элемента на странице) */
+    z-index: 1001;
+  }
+  .preloader-text{
+    font-size: 16px;
+    font-family: Helvetica;
+    background-color: #202020;
+    color: #ffffff;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    text-align: center;
+   margin: 0px;
+  }
+   
+  .loaded .preloader {
+    display: none;
+  }
+
+  @keyframes rotating {
+    from {
+      transform: rotate(0deg);
+    }
+    25% {
+      transform: rotate(30deg);;
+    }
+    75% {
+      transform: rotate(-30deg);;
+    }
+    to {
+      transform: rotate(0deg);
+    }
+  }
+
+  .-loading-like {
+    animation: rotating 2s linear infinite;
+  }

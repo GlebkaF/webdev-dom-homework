@@ -8,6 +8,9 @@
 </head>
 
 <body>
+  <div class="preloader">
+<p class="preloader-text">Пожалуйста, подождите, комментарии загружаются...</p>
+  </div>
   <div class="container">
     <ul class="comments" id="list">
       <!-- Список рендерится из JS -->
@@ -48,7 +51,7 @@
         </div>
       </li> -->
     </ul>
-    <div class="add-form">
+    <div class="add-form" id="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input" />
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
         id="coment-input"></textarea>
@@ -74,7 +77,7 @@
   const addButtonElement = document.getElementById("add-button");
   const listElement = document.getElementById("list");
   const endDeleteButtonElement = document.getElementById("end-delete-button");
-
+  const addFormElement = document.getElementById("add-form");
 
   // Функция для даты
   function takeDate(currentDate) {
@@ -99,36 +102,40 @@
     }
     return `${day}.${month}.${year} ${hour}:${minute}`;
   }
-let comments = [];
-function getArr() {  
-  const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/:sofia-iakovleva/comments", {
-    method: "GET"
-  });
-  // Подписываемся на успешное завершение запроса с помощью then
-  fetchPromise.then((response) => {
-    // Запускаем преобразовываем "сырые" данные от API в json формат и 
-    //подписываемся на успешное завершение запроса с помощью then:
-    response.json().then((responseData) => {
-      const appComments = responseData.comments.map((comment) => {
-        return {
-          name: comment.author.name,
-          text: comment.text,
-          eachDate: takeDate(new Date(comment.date)),
-          like: comment.likes,
-          currentLike: false,
-          classLike: 'like-button -no-active-like',
-          isEdit: false,
-        };
-      });
-      comments = appComments;
-      return renderComments();
-    });
-  }); 
-}
+  let comments = [];
+  function getArr() {
+    return fetch("https://wedev-api.sky.pro/api/v1/:sofia-iakovleva/comments", {
+      method: "GET"
+    })
+      // Подписываемся на успешное завершение запроса с помощью then
+      .then((response) => {
+        // Запускаем преобразовываем "сырые" данные от API в json формат и 
+        //подписываемся на успешное завершение запроса с помощью then:
+        return response.json();
+      })
+      .then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            text: comment.text,
+            eachDate: takeDate(new Date(comment.date)),
+            like: comment.likes,
+            currentLike: false,
+            classLike: 'like-button -no-active-like',
+            isEdit: false,
+          };
+        });
+        comments = appComments;
+        return renderComments()
+      })
+      .then((data) => {
+        document.body.classList.add('loaded');
+          });
+  }
 
-getArr();
-  
-  
+  getArr();
+
+
 
   // // Создание массива
   // const comments = [
@@ -178,6 +185,16 @@ getArr();
 
   };
   // Добавление кликабельностm лайка и счётчика лайков
+  function delay(interval = 300) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, interval);
+      });
+}
+
+
+
   const initlikeButtonsListeners = () => {
     const likeButtonsElements = document.querySelectorAll(".like-button");
     for (const likeButtonElement of likeButtonsElements) {
@@ -185,7 +202,8 @@ getArr();
         event.stopPropagation();
         const index = likeButtonElement.dataset.index;
         comments[index].currentLike = !comments[index].currentLike;
-        console.log(comments[index].currentLike);
+        likeButtonElement.classList.add('-loading-like');
+        delay(2000).then(() => {
         if (comments[index].currentLike) {
           ++comments[index].like;
           comments[index].classLike = 'like-button -active-like';
@@ -193,12 +211,11 @@ getArr();
           --comments[index].like;
           comments[index].classLike = 'like-button -no-active-like';
         }
-        renderComments();//если убрать отсюда рендер-функцию, то не тработает счётчик, но присвоение класса рпботает
-        // План добавления лайка
-        // 1. (+) Мы храним список коментов в js массиве
-        // 2. (+) При клике мы меняем значение currentLike на противоположное в массиве у соответствующего элемента
-        // 3. В зависимости от currentLike корректируем счётчик лайков и обратно
-        // 4. На основе нового массива в js формируем html разметку списка
+        renderComments();
+      })
+      .then((data) => {
+        likeButtonElement.classList.remove('-loading-like');
+          });
       });
     }
   };
@@ -262,7 +279,7 @@ getArr();
     if ((nameInputElement.value === "") || (comentInputElement.value === "")) {
       return;
     }
-
+    addFormElement.innerHTML = "Ваш комментарий добавляется...";
     //Добавляем данные для нового комента
     // comments.push({
     //   name: nameInputElement.value
@@ -284,7 +301,7 @@ getArr();
     //   isEdit: false,
     // });
 
-    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/:sofia-iakovleva/comments", {
+    fetch("https://wedev-api.sky.pro/api/v1/:sofia-iakovleva/comments", {
       method: "POST",
       body: JSON.stringify({
         name: nameInputElement.value
@@ -304,16 +321,27 @@ getArr();
         currentLike: false,
         classLike: 'like-button -no-active-like',
         isEdit: false,
+      }),
+    })
+      // Подписываемся на успешное завершение запроса с помощью then
+      .then((response) => {
+        // Запускаем преобразовываем "сырые" данные от API в json формат и 
+        //подписываемся на успешное завершение запроса с помощью then:
+        return response.json();
       })
-    });
-    // Подписываемся на успешное завершение запроса с помощью then
-    fetchPromise.then((response) => {
-      // Запускаем преобразовываем "сырые" данные от API в json формат и 
-      //подписываемся на успешное завершение запроса с помощью then:
-      response.json().then((responseData) => {
-        getArr();
+      .then((responseData) => {
+        return getArr();
+      })
+      .then((data) => {
+        addFormElement.innerHTML = (`<div class="add-form" id="add-form">
+      <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input" />
+      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
+        id="coment-input"></textarea>
+      <div class="add-form-row">
+        <button class="add-form-button" id="end-delete-button">Удалить</button>
+        <button class="add-form-button" id="add-button">Написать</button>
+      </div>`);
       });
-    });
 
     renderComments();
     nameInputElement.value = "";
