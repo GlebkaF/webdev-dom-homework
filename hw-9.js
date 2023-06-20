@@ -7,40 +7,40 @@ const listEl = document.getElementById("comment-list");
 let currentDate = new Date();
 const deleteButtonEl = document.getElementById("delete-button");
 
+let users = [];
+//Получить список комментариев
 
+const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/NastyaTsyf/comments", {
+ method: "GET"
+});
 
-const users = [
-  {
-    name: "Глеб Фокин",
-    date: "12.02.22 12:18",
-    comment: " Это будет первый комментарий на этой странице",
-    like: 3,
-    isLiked: false
-  },
-  {
-    name: "Варвара Н.",
-    date: "13.02.22 19:22",
-    comment: "Мне нравится как оформлена эта страница! ❤",
-    like: 75,
-    isLiked: false
-  }
-];
+fetchPromise.then((response) => {
+  const jsonPromise = response.json();
+  jsonPromise.then((responseData) => {
+    users = responseData.comments;
+    console.log(users);
+    renderUsers();
+    initLikeButton();
+    replyТoСomment();
+  });
+});
+
 
 const renderUsers = () =>{
   const usersHtml = users.map((user, index) =>{
-    return  `<li class="comment" data-comment="${user.comment}" data-name="${user.name}">
+    return  `<li class="comment" data-comment="${user.text}" data-name="${user.author.name}">
     <div class="comment-header">
-      <div>${user.name}</div>
+      <div>${user.author.name}</div>
       <div>${user.date}</div>
     </div>
     <div class="comment-body">
       <div class="comment-text">
-        ${user.comment}
+        ${user.text}
       </div>
     </div>
     <div class="comment-footer">
       <div class="likes">
-        <span class="likes-counter">${user.like}</span>
+        <span class="likes-counter">${user.likes}</span>
         <button class="like-button ${user.isLiked ? '-active-like' : ''}" data-index="${index}"></button>
       </div>
     </div>
@@ -116,26 +116,32 @@ writeButtonEl.addEventListener("click", () => {
         commentTextEl.classList.add("error");
         return;
       } else {
-        users.push({
-          name: nameInputEl.value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;"),
-          date: commentDate,
-          comment: commentTextEl.value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;"),
-          like: 0,
-          isLiked: false
-
-        })
-        renderUsers();
-        initLikeButton();
-        replyТoСomment();
-
+        fetch("https://wedev-api.sky.pro/api/v1/NastyaTsyf/comments", {
+          method: "POST",
+          body: JSON.stringify({
+            author: {name: nameInputEl.value
+              .replaceAll("&", "&amp;")
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;")
+              .replaceAll('"', "&quot;"),
+            },
+            date: commentDate,
+            text: commentTextEl.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;"),
+            likes: 0,
+            isLiked: false
+          })
+        }).then((response) => {
+          response.json().then((responseData) => {
+            users = responseData.comments;
+            renderUsers();
+            initLikeButton();
+            replyТoСomment();
+          });
+        });
     };
     
     nameInputEl.value = "";
@@ -161,10 +167,10 @@ const initLikeButton = () =>{
       event.stopPropagation();
       const index = likeButtonElement.dataset.index;
       if (users[index].isLiked === false) {
-        users[index].like = users[index].like + 1;
+        users[index].likes = users[index].likes + 1;
         users[index].isLiked = true;
       } else {
-        users[index].like = users[index].like - 1;
+        users[index].likes = users[index].likes - 1;
         users[index].isLiked = false;
       }
       renderUsers();
