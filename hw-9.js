@@ -6,7 +6,7 @@ const commentTextEl = document.getElementById("comment-text");
 const listEl = document.getElementById("comment-list");
 let currentDate = new Date();
 const deleteButtonEl = document.getElementById("delete-button");
-const list = document.querySelectorAll(".comment");
+
 
 
 const users = [
@@ -28,7 +28,7 @@ const users = [
 
 const renderUsers = () =>{
   const usersHtml = users.map((user, index) =>{
-    return  `<li class="comment">
+    return  `<li class="comment" data-comment="${user.comment}" data-name="${user.name}">
     <div class="comment-header">
       <div>${user.name}</div>
       <div>${user.date}</div>
@@ -53,7 +53,7 @@ renderUsers();
 
 
 //date of comment
-let day = currentDate.getDay();
+let day = currentDate.getDate();
 let month = currentDate.getMonth() + 1;
 let year = String(currentDate.getFullYear()).split('').slice(2).join('');
 let hour = currentDate.getHours();
@@ -117,15 +117,24 @@ writeButtonEl.addEventListener("click", () => {
         return;
       } else {
         users.push({
-          name: nameInputEl.value,
+          name: nameInputEl.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
           date: commentDate,
-          comment: commentTextEl.value,
+          comment: commentTextEl.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
           like: 0,
           isLiked: false
 
         })
         renderUsers();
         initLikeButton();
+        replyТoСomment();
 
     };
     
@@ -139,6 +148,8 @@ writeButtonEl.addEventListener("click", () => {
 deleteButtonEl.addEventListener("click", () => {
    users.splice(-1, 1);
     renderUsers();
+    initLikeButton();
+    replyТoСomment();
 });
 
 
@@ -146,7 +157,8 @@ deleteButtonEl.addEventListener("click", () => {
 const initLikeButton = () =>{
   const likeButtonElements = document.querySelectorAll(".like-button");
   for (const likeButtonElement of likeButtonElements){
-    likeButtonElement.addEventListener("click", () => {
+    likeButtonElement.addEventListener("click", (event) => {
+      event.stopPropagation();
       const index = likeButtonElement.dataset.index;
       if (users[index].isLiked === false) {
         users[index].like = users[index].like + 1;
@@ -157,13 +169,30 @@ const initLikeButton = () =>{
       }
       renderUsers();
       initLikeButton();
+      replyТoСomment();
       }
     )
   }
 }
 initLikeButton();
 
+//Ответы на комментарии
 
-
+const replyТoСomment = () =>{
+  const listElements = document.querySelectorAll(".comment");
+  for (const listElement of listElements){
+    listElement.addEventListener("click", () => {
+      const commentText = listElement.dataset.comment;
+      const userName = listElement.dataset.name;
+      commentTextEl.value = ">" + " "  + commentText + " " + userName;
+      renderUsers();
+      initLikeButton();
+      replyТoСomment();
+    });
+  }
+}
+replyТoСomment();
 
 console.log("It works!");
+
+
