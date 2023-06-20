@@ -142,6 +142,7 @@ const renderUserComments = () => {
   console.log('рендер работает');
   userComments.innerHTML = userComment.map((comments, index) => {
     const commentText = comments.isEdit === true ? `<textarea type="textarea" class="add-form-text" rows="4">${comments.comment}</textarea>` : `${comments.comment}`;
+    const btnTextChange = comments.isEdit === true ? `Сохранить` : `Редактировать`;
 
     return `
     <li class="comment">
@@ -157,7 +158,7 @@ const renderUserComments = () => {
     <div class="comment-footer">
 
       <div class="change">
-        <button class="change-button" data-index=${index}>Редактировать</button>
+        <button class="change-button" data-index=${index}>${btnTextChange}</button>
       </div>
 
       <div class="likes">
