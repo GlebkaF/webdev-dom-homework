@@ -8,8 +8,8 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
-        <li class="comment">
+      <ul id="list" class="comments">
+        <li  class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -26,9 +26,9 @@
             </div>
           </div>
         </li>
-        <li class="comment">
+        <li  class="comment">
           <div class="comment-header">
-            <div>Варвара Н.</div>
+            <div> Варвара Н.</div>
             <div>13.02.22 19:22</div>
           </div>
           <div class="comment-body">
@@ -44,27 +44,77 @@
           </div>
         </li>
       </ul>
-      <div class="add-form">
-        <input
+      <div  class="add-form">
+        <input id="name-input"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          value=""
         />
-        <textarea
+        <textarea id="text-input"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+          value=""
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="add-button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
+  <style>
+    .error {
+      background-color: red;
+    }
+  </style>
 
   <script>
     "use strict";
+    const buttonElement = document.getElementById('add-button');
+    const listElement = document.getElementById('list');
+    const nameInputElement = document.getElementById('name-input');
+    const textInputElement = document.getElementById('text-input');
+    
+    
+
+    buttonElement.addEventListener('click', () => {
+
+      nameInputElement.classList.remove('error');
+      if (nameInputElement.value === '') {
+        nameInputElement.classList.add('error');
+        return;
+      }
+
+      textInputElement.classList.remove('error');
+      if (textInputElement.value === '') {
+        textInputElement.classList.add('error');
+        return;
+      }
+
+      
+
+const oldListHtml = listElement.innerHTML;
+listElement.innerHTML = oldListHtml +
+         `<li  class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${Date()}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+    })
     // Код писать здесь
     console.log("It works!");
   </script>
