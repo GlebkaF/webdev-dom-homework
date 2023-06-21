@@ -10,28 +10,41 @@ const deleteButtonEl = document.getElementById("delete-button");
 let users = [];
 //Получить список комментариев
 
-const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/NastyaTsyf/comments", {
- method: "GET"
-});
-
-fetchPromise.then((response) => {
-  const jsonPromise = response.json();
-  jsonPromise.then((responseData) => {
-    users = responseData.comments;
-    console.log(users);
-    renderUsers();
-    initLikeButton();
-    replyТoСomment();
+const getFetchPromise = () => {
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/NastyaTsyf/comments", {
+  method: "GET"
   });
-});
+
+  fetchPromise.then((response) => {
+    response.json().then((responseData) => {
+      const appComments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: new Date(comment.date),
+          text: comment.text,
+          likes: comment.likes,
+          isLiked: comment.isLiked,
+        }
+      })
+      users = appComments;
+      console.log(users);
+      renderUsers();
+      initLikeButton();
+      replyТoСomment();
+    });
+  });
+}
+
+getFetchPromise();
+
 
 
 const renderUsers = () =>{
   const usersHtml = users.map((user, index) =>{
-    return  `<li class="comment" data-comment="${user.text}" data-name="${user.author.name}">
+    return  `<li class="comment" data-comment="${user.text}" data-name="${user.name}">
     <div class="comment-header">
-      <div>${user.author.name}</div>
-      <div>${user.date}</div>
+      <div>${user.name}</div>
+      <div>${getCommentDate(new Date(user.date))}</div>
     </div>
     <div class="comment-body">
       <div class="comment-text">
@@ -53,26 +66,29 @@ renderUsers();
 
 
 //date of comment
-let day = currentDate.getDate();
-let month = currentDate.getMonth() + 1;
-let year = String(currentDate.getFullYear()).split('').slice(2).join('');
-let hour = currentDate.getHours();
-let minute = currentDate.getMinutes()
+const getCommentDate = () => {
+  let day = currentDate.getDate();
+  let month = currentDate.getMonth() + 1;
+  let year = String(currentDate.getFullYear()).split('').slice(2).join('');
+  let hour = currentDate.getHours();
+  let minute = currentDate.getMinutes()
 
-if (day < 10) { 
-	day = "0" + day; 
-}
-if (month < 10) { 
-	month = "0" + month; 
-}
-if (hour < 10) { 
-	hour = "0" + hour;
-};
-if (minute < 10) { 
-	minute = "0" + minute; 
+  if (day < 10) { 
+    day = "0" + day; 
+  }
+  if (month < 10) { 
+    month = "0" + month; 
+  }
+  if (hour < 10) { 
+    hour = "0" + hour;
+  };
+  if (minute < 10) { 
+    minute = "0" + minute; 
+  }
+  let commentDate = day + '.' + month + '.' + year + ' ' + hour + ':' + minute;
+  return commentDate;
 }
 
-let commentDate = day + '.' + month + '.' + year + ' ' + hour + ':' + minute;
 
 
 document.addEventListener("keyup", (e) => {
@@ -119,13 +135,12 @@ writeButtonEl.addEventListener("click", () => {
         fetch("https://wedev-api.sky.pro/api/v1/NastyaTsyf/comments", {
           method: "POST",
           body: JSON.stringify({
-            author: {name: nameInputEl.value
+            name: nameInputEl.value
               .replaceAll("&", "&amp;")
               .replaceAll("<", "&lt;")
               .replaceAll(">", "&gt;")
               .replaceAll('"', "&quot;"),
-            },
-            date: commentDate,
+            date: new Date(),
             text: commentTextEl.value
             .replaceAll("&", "&amp;")
             .replaceAll("<", "&lt;")
@@ -135,15 +150,9 @@ writeButtonEl.addEventListener("click", () => {
             isLiked: false
           })
         }).then((response) => {
-          response.json().then((responseData) => {
-            users = responseData.comments;
-            renderUsers();
-            initLikeButton();
-            replyТoСomment();
-          });
+          response.json().then(() => getFetchPromise());
         });
     };
-    
     nameInputEl.value = "";
     commentTextEl.value = "";
     writeButtonEl.setAttribute("disabled", true);
