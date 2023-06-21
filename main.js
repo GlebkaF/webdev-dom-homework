@@ -72,7 +72,8 @@ const changeComment = () => {
       const index = changeBtn.dataset.index;
   
         if (userComment[index].isEdit === true) {
-
+          // console.log(userComment[index].comment.input.value);
+          // userComment[index].comment = userComment[index].form.value = '';
           userComment[index].isEdit = false;
         }
         
@@ -141,7 +142,7 @@ commentUser.addEventListener('input', checkFields);
 const renderUserComments = () => {
   console.log('рендер работает');
   userComments.innerHTML = userComment.map((comments, index) => {
-    const commentText = comments.isEdit === true ? `<textarea type="textarea" class="add-form-text" rows="4">${comments.comment}</textarea>` : `${comments.comment}`;
+    const commentText = comments.isEdit === true ? `<textarea type="textarea" data-comment class="add-form-text" rows="4">${comments.comment}</textarea>` : `${comments.comment}`;
     const btnTextChange = comments.isEdit === true ? `Сохранить` : `Редактировать`;
 
     return `
