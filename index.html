@@ -58,6 +58,7 @@
         ></textarea>
         <div class="add-form-row">
           <button class="add-form-button">Написать</button>
+          <button class="add-form-button delete-button">Удалить последний комментарий</button>
         </div>
       </div>
     </div>
@@ -65,7 +66,93 @@
 
   <script>
     "use strict";
-    // Код писать здесь
+
+// Добавление коммента
+const nameInput = document.querySelector('.add-form-name');
+const commentInput = document.querySelector('.add-form-text');
+const addButton = document.querySelector('.add-form-button');
+const commentsList = document.querySelector('.comments');
+
+function addComment() {
+  const name = nameInput.value.trim();
+  const comment = commentInput.value.trim();
+
+  if (name === '') {
+    alert('Пожалуйста, укажите ваше имя.');
+    return;
+  }
+  if (comment === '') {
+    alert('Пожалуйста, напишите комментарий.');
+    return;
+  }
+
+  const newComment = document.createElement('li');
+  newComment.classList.add('comment');
+  const commentHeader = document.createElement('div');
+  commentHeader.classList.add('comment-header');
+  commentHeader.innerHTML = `
+    <div>${name}</div>
+    <div>${getCurrentDateTime()}</div>
+  `;
+
+  const commentBody = document.createElement('div');
+  commentBody.classList.add('comment-body');
+  commentBody.innerHTML = `
+    <div class="comment-text">${comment}</div>
+  `;
+
+  const commentFooter = document.createElement('div');
+  commentFooter.classList.add('comment-footer');
+  commentFooter.innerHTML = `
+    <div class="likes">
+      <span class="likes-counter">0</span>
+      <button class="like-button"></button>
+    </div>
+  `;
+
+  newComment.appendChild(commentHeader);
+  newComment.appendChild(commentBody);
+  newComment.appendChild(commentFooter);
+
+  commentsList.appendChild(newComment);
+
+  nameInput.value = '';
+  commentInput.value = '';
+}
+function getCurrentDateTime() {
+  const now = new Date();
+  const day = now.getDate().toString().padStart(2, '0');
+  const month = (now.getMonth() + 1).toString().padStart(2, '0');
+  const year = now.getFullYear().toString().slice(-2);
+  const hours = now.getHours().toString().padStart(2, '0');
+  const minutes = now.getMinutes().toString().padStart(2, '0');
+  return `${day}.${month}.${year} ${hours}:${minutes}`;
+}
+function handleKeyPress(event) {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    addComment();
+  }
+}
+document.addEventListener('keyup', handleKeyPress);
+addButton.addEventListener('click', addComment);
+
+
+// Удаление последнего коммента
+const deleteButton = document.querySelector('.delete-button');
+
+function deleteLastComment() {
+  const commentsContainer = document.querySelector('.comments');
+  const commentsHTML = commentsContainer.innerHTML;
+  const lastIndex = commentsHTML.lastIndexOf('<li class="comment">');
+  if (lastIndex !== -1) {
+    const updatedHTML = commentsHTML.slice(0, lastIndex);
+    commentsContainer.innerHTML = updatedHTML;
+  }
+}
+deleteButton.addEventListener('click', deleteLastComment);
+
+
     console.log("It works!");
   </script>
 </html>
