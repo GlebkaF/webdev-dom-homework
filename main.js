@@ -31,7 +31,7 @@ const userComment = [
     comment: 'Это будет первый комментарий на этой странице',
     likes: 3,
     isLike: false,
-    isEdit: true,
+    isEdit: false,
   },
   {  name: 'Варвара Н.',
     date: '13.02.22 19:22',
@@ -67,18 +67,14 @@ const initLikesBtn = () => {
 const changeComment = () => {
   const changeBtns = document.querySelectorAll('.change-button');
   for (const changeBtn of changeBtns) {
-    console.log(changeBtn);
     changeBtn.addEventListener('click', () => {
       const index = changeBtn.dataset.index;
-  
+      let findComment = document.getElementById('changedText');
         if (userComment[index].isEdit === true) {
-          // console.log(userComment[index].comment.input.value);
-          // userComment[index].comment = userComment[index].form.value = '';
+          userComment[index].comment = findComment.value;
           userComment[index].isEdit = false;
         }
-        
         else if (userComment[index].isEdit === false) {
-
           userComment[index].isEdit = true;
         }
       renderUserComments();
@@ -89,9 +85,9 @@ const changeComment = () => {
 function addComment() {
   //! создание нового комментария
   userComment.push({
-    name: nameUser.value,
+    name: nameUser.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
     date: date,
-    comment: commentUser.value,
+    comment: commentUser.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
     likes: 0,
     isLike: true,
     isEdit: false,
@@ -137,12 +133,10 @@ checkFields();
 nameUser.addEventListener('input', checkFields);
 commentUser.addEventListener('input', checkFields);
 
-
 //! Рендерим массив
 const renderUserComments = () => {
-  console.log('рендер работает');
   userComments.innerHTML = userComment.map((comments, index) => {
-    const commentText = comments.isEdit === true ? `<textarea type="textarea" data-comment class="add-form-text" rows="4">${comments.comment}</textarea>` : `${comments.comment}`;
+    const commentText = comments.isEdit === true ? `<textarea type="form" class="add-form-text" id="changedText" data-index=${index} rows="4">${comments.comment}</textarea>` : `${comments.comment}`;
     const btnTextChange = comments.isEdit === true ? `Сохранить` : `Редактировать`;
 
     return `
@@ -153,7 +147,7 @@ const renderUserComments = () => {
     </div>
     <div class="comment-body">
       <div class="comment-text">
-        ${commentText} 
+        ${commentText}
       </div>
     </div>
     <div class="comment-footer">
@@ -169,7 +163,7 @@ const renderUserComments = () => {
     </div>
   </li>`
   }).join('');
-
+  
   //! Добавляем рендер лайка после добавления комментария
   initLikesBtn();
   //! Добавляем рендер кнопки 'редактировать'
