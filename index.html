@@ -177,7 +177,6 @@ const comments = [
     commentsList.appendChild(newComment);
 
     newComment.addEventListener("click", () => {
-    // При клике на комментарий, заполняем поля формы добавления комментария данными комментария
     nameInput.value = '';
     commentInput.value = `@${comment.author}, ${comment.text}:`;
     commentInput.focus();
