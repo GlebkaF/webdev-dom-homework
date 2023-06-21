@@ -42,72 +42,35 @@ const addButton = document.querySelector('.add-form-button');
 const commentsList = document.querySelector('.comments');
 const likeButtons = document.querySelectorAll('.like-button');
 
-/*// Добавление кнопки "Редактировать"
-const editButton = document.createElement("button");
-    editButton.textContent = comment.isEdit ? "Сохранить" : "Редактировать";
-    commentFooter.appendChild(editButton);*/
 
-
-
-/*// Добавляем обработчик события клика на кнопку "Добавить"
-addButton.addEventListener('click', function() {
-  // проверяем, заполнены ли поля ввода
-  if (nameInput.value.trim() === '' || commentInput.value.trim() === '') {
-    alert('Заполните все поля ввода!');
-    return;
-  }
-  
-  // создаем новый элемент комментария
-  const newComment = document.createElement('li');
-  newComment.classList.add('comment');
-
-  const now = new Date();
-  const dateString = `${now.getDate()}.${now.getMonth() + 1}.${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`;*/
-
-
-
- /*//«оживляем» кнопку и счетчик лайков у каждого комментария
-  const likeButtons = document.querySelectorAll('.like-button');  
-  
-  // Добавляем обработчик события клика на кнопку лайка
-  likeButtons.forEach((button) => {
-  button.addEventListener('click', () => {
-    const likesCounter = button.previousElementSibling; // Получаем счетчик лайков
-    const currentLikes = parseInt(likesCounter.textContent); // Получаем текущее количество лайков
-
-    if (button.classList.contains('-active-like')) {
-      // Если кнопка уже активна (уже поставлен лайк), уменьшаем счетчик и удаляем класс активности
-      likesCounter.textContent = currentLikes - 1;
-      button.classList.remove('-active-like');
-    } else {
-      // Если кнопка неактивна (лайк не поставлен), увеличиваем счетчик и добавляем класс активности
-      likesCounter.textContent = currentLikes + 1;
-      button.classList.add('-active-like');
-    }
+let getComments = () => {
+  const fetchPromise = fetch ("https://wedev-api.sky.pro/api/v1/kristina-sapega/comments", 
+  {
+    method: "GET",
   });
-});*/
+  fetchPromise.then((response) => {
+    const jsonPromise = response.json ();
+    jsonPromise.then((responseData) => {
+      const appComments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: new Date(comment.date),
+          text: comment.text,
+          likes: comment.likes,
+          isLikes: false,
+        };
+      });
+      comments = appComments;
+      renderComments();
+    });
+  });
+};
 
-const comments = [
-  {
-    id: 1,
-    author: "Глеб Фокин",
-    date: "12.02.22 12:18",
-    text: "Это будет первый комментарий на этой странице",
-    likes: 3,
-    liked: false,
-    isEdit: false
+getComments();
 
-  },
-  {
-    id: 2,
-    author: "Варвара Н.",
-    date: "13.02.22 19:22",
-    text: "Мне нравится как оформлена эта страница! ❤",
-    likes: 75,
-    liked: true,
-    isEdit: false
-  }
-];
+
+let comments = [];
+
   const renderComments = () => {
   commentsList.innerHTML = "";
 
@@ -138,8 +101,8 @@ const comments = [
     
     newComment.innerHTML = `
       <div class="comment-header">
-        <div>${comment.author}</div>
-        <div>${comment.date}</div>
+        <div>${comment.name}</div>
+        <div>${comment.date.toISOString()}</div>
       </div>
       <div class="comment-body">
         <div class="comment-text">
@@ -149,9 +112,9 @@ const comments = [
       <div class="comment-footer">
         <div class="likes">
           <span class="likes-counter">${comment.likes}</span>
-          <button class="${likeButtonClass}" data-comment-id="${comment.id}"></button>
+          <button class="${likeButtonClass}" data-comment-id="${comment.name}"></button>
           <div class="edit-buttons">
-      <button class="edit-button" data-comment-id="${comment.id}">Редактировать</button>
+      <button class="edit-button" data-comment-id="${comment.name}">Редактировать</button>
         </div>
       </div>
     `;
@@ -177,22 +140,23 @@ const comments = [
     commentsList.appendChild(newComment);
 
     newComment.addEventListener("click", () => {
+    // При клике на комментарий, заполняем поля формы добавления комментария данными комментария
     nameInput.value = '';
-    commentInput.value = `@${comment.author}, ${comment.text}:`;
+    commentInput.value = `@${comment.name}, ${comment.text}:`;
     commentInput.focus();
     });
-
-
+    commentsList.appendChild(newComment);
   });
+
 
     const likeButtons = document.querySelectorAll('.like-button');
     likeButtons.forEach((button) => {
     button.addEventListener('click', (event) => {
       event.stopPropagation();
     // Получаем идентификатор комментария из атрибута data-comment-id кнопки лайка
-    const commentId = parseInt(button.dataset.commentId);
+    const commentName = parseInt(button.dataset.commentId);
     // Находим комментарий в массиве comments по идентификатору
-    const comment = comments.find((c) => c.id === commentId);
+    const comment = comments.find((c) => c.name === commentName);
 
       // Если комментарий уже был отмечен как понравившийся, уменьшаем счетчик лайков
       // Если комментарий не был отмечен, увеличиваем счетчик лайков
@@ -217,30 +181,58 @@ addButton.addEventListener('click', function() {
     alert('Заполните все поля ввода!');
     return;
   }
-
   const now = new Date();
   const dateString = `${now.getDate()}.${now.getMonth() + 1}.${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`;
 
   const newComment = {
     id: comments.length + 1,
-    author: nameInput.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+    author: nameInput.value.
+    replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll("&", "&amp;")
+    .replaceAll('"', "&quot;"),
     date: dateString,
-    text: commentInput.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-    likes: 0,
+    text: commentInput.value
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll("&", "&amp;")
+    .replaceAll('"', "&quot;"),
+    likes: "0",
     liked: false
   };
 
   comments.push(newComment);
-
-
-
   renderComments();
+
+  // Отправляем новый комментарий на сервер через POST-запрос
+  function addComments() {
+    fetch("https://wedev-api.sky.pro/api/v1/kristina-sapega/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        name: nameInput.value,
+        text: commentInput.value,
+      })
+    }).then((response) => {
+      response.json().then((responseData) => {
+        fetch("https://wedev-api.sky.pro/api/v1/kristina-sapega/comments").then((response) => {
+          response.json().then((responseData) => {
+            comments = responseData.comments;
+            getComments();
+          });
+        });
+      });
+    });
+  }
+  addComments();
+  
+
+
 
   
 
   // очищаем поля ввода
-  nameInput.value = '';
-  commentInput.value = '';
+  nameInput.value = "";
+  commentInput.value = "";
 });
 
 
@@ -248,3 +240,6 @@ addButton.addEventListener('click', function() {
     //console.log("It works!");
   </script>
 </html>
+
+
+
