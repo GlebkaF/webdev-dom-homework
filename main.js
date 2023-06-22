@@ -45,9 +45,9 @@ const userComment = [
 function addComment() {
   //! создание нового комментария
   userComment.push({
-    name: nameUser.value,
+    name: nameUser.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
     date: date,
-    comment: commentUser.value,
+    comment: commentUser.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
     likes: 0,
     isLike: false,
     isEdit: false,
@@ -110,11 +110,9 @@ function commentComment() {
   for (const comment of comments) {
     comment.addEventListener('click', () => {
       const index = comment.dataset.index;
-      commentUser.value = userComment[index].name + ' ' + userComment[index].comment + ', ';
+      commentUser.value =`QUOTE_BEGIN ${userComment[index].name + ':' + ' ' + userComment[index].comment} QUOTE_END`;
     });
   };
-  
-  
 }
 
 //! Срабатывание добавления комментария при нажатии на кнопку 'Написать'
@@ -163,7 +161,7 @@ const renderUserComments = () => {
     </div>
     <div class="comment-body">
       <div class="comment-text">
-        ${commentText}
+        ${commentText.replaceAll(`QUOTE_BEGIN`, "<div class='quote'>").replaceAll(`QUOTE_END`, "</div>")}
       </div>
     </div>
     <div class="comment-footer">
