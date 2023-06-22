@@ -31,7 +31,7 @@ const userComment = [
     comment: 'Это будет первый комментарий на этой странице',
     likes: 3,
     isLike: false,
-    isEdit: false,
+    isEdit: true,
   },
   {  name: 'Варвара Н.',
     date: '13.02.22 19:22',
@@ -104,6 +104,16 @@ const changeComment = () => {
   }
 }
 
+//! Обходим массива textarea для отмены заполнения поля при клике на инпут
+const findTextarea = () => {
+  const textareas = document.querySelectorAll('.add-form-text_comment');
+  for (const textarea of textareas) {
+    textarea.addEventListener('click', (e) => {
+    e.stopPropagation();
+  });
+  }
+}
+
 //! Ответ на комментарий
 function commentComment() {
   const comments = document.querySelectorAll(".comment");
@@ -150,7 +160,7 @@ commentUser.addEventListener('input', checkFields);
 //! Рендерим массив
 const renderUserComments = () => {
   userComments.innerHTML = userComment.map((comments, index) => {
-    const commentText = comments.isEdit === true ? `<textarea type="form" class="add-form-text" id="changedText" data-index=${index} rows="4">${comments.comment}</textarea>` : `${comments.comment}`;
+    const commentText = comments.isEdit === true ? `<textarea type="form" class="add-form-text_comment" id="changedText" data-index=${index} rows="4">${comments.comment}</textarea>` : `${comments.comment}`;
     const btnTextChange = comments.isEdit === true ? `Сохранить` : `Редактировать`;
 
     return `
@@ -184,7 +194,8 @@ const renderUserComments = () => {
   changeComment();
   //! Добавляем рендер ответа на комментарий
   commentComment();
-
+  //! Добавляем рендер ответа на комментарий для нахождения textarea
+  findTextarea();
 };
 renderUserComments();
 
