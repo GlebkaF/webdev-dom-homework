@@ -92,24 +92,27 @@ const initEditButtonsListeners = () => {
     const editButtons = document.querySelectorAll('#edit-button')
     editButtons.forEach(editButton => {
         editButton.addEventListener('click', () => {
-           if (editButton.dataset.status === 'edit') {
-            commentsList[editButton.dataset.index].editStatus = 'save'
-            commentsList[editButton.dataset.index].editButtonText = 'Сохранить'
-            commentsList[editButton.dataset.index].commentText = commentsList[editButton.dataset.index].isEdit;
+           if (editButton.dataset.status === 'edit') {           
+            commentsList[editButton.dataset.index].editStatus = 'save'  //переписываю статус у дата атрибута чтоб он по разному отрабатывал
+            commentsList[editButton.dataset.index].editButtonText = 'Сохранить'  //так же меняю текст внутри кнопки
+            commentsList[editButton.dataset.index].commentText = commentsList[editButton.dataset.index].isEdit; // чтоб в поле редактирования появился наш ранее введеный комментарий
             
 
            } else {
             const editCommentText = document.querySelector('.comment-edit')
+            // Проверка на пустой коммент 
+            //(пытался отключить кнопку с помощью addEventListener('input', () => {} )
+            //для отслеживания изменений в editCommentText.value при значении '',  не вышло =\
             if (!editCommentText.value == '') {
-                commentsList[editButton.dataset.index].editStatus = 'edit'
-                commentsList[editButton.dataset.index].editButtonText = 'Редактировать'                
-                commentsList[editButton.dataset.index].isEdit = `<textarea class="comment-edit">${editCommentText.value}</textarea>`
+                commentsList[editButton.dataset.index].editStatus = 'edit'  // возвращаю стаут edit для дата атрибута
+                commentsList[editButton.dataset.index].editButtonText = 'Редактировать'     // так же возвращаю текст кнопки            
+                commentsList[editButton.dataset.index].isEdit = `<textarea class="comment-edit">${editCommentText.value}</textarea>` // переписываю шаблон isEdit, иначе при втором редактировании подставлялся первый вариант
                 commentsList[editButton.dataset.index].commentText = editCommentText.value
             } else {
                 commentsList[editButton.dataset.index].editStatus = 'edit'
                 commentsList[editButton.dataset.index].editButtonText = 'Редактировать'                
                 commentsList[editButton.dataset.index].isEdit = `<textarea class="comment-edit">${'Комментарий не может быть пустым'}</textarea>`
-                commentsList[editButton.dataset.index].commentText = 'Комментарий не может быть пустым'
+                commentsList[editButton.dataset.index].commentText = 'Комментарий не может быть пустым' // заглушка на случай пустого коммента
             }
             
            }
