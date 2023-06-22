@@ -1,126 +1,186 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
-      <ul id="list" class="comments">
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
 
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li  class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
+<body>
+  <div class="container">
+    <ul id="list" class="comments">
 
-            <div>13.02.22 19:22</div>
-
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div class="add-form">
-        <input
-        id="name-comment"
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-        id="text-comment" 
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button type="submit" id="add-comment" class="add-form-button">Написать</button>
+      <li class="comment">
+        <div class="comment-header">
+          <div>Глеб Фокин</div>
+          <div>12.02.22 12:18</div>
         </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Это будет первый комментарий на этой странице
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">3</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>
+      <li class="comment">
+        <div class="comment-header">
+          <div>Варвара Н.</div>
+
+          <div>13.02.22 19:22</div>
+
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+
+            Мне нравится как оформлена эта страница! ❤
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="like-count">75</span>
+            <button class="like-button -active-like"></button>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <div class="add-form">
+      <input id="name-comment" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+      <textarea id="text-comment" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+        rows="4"></textarea>
+      <div class="add-form-row">
+        <button type="submit" id="add-comment" class="add-form-button">Написать</button>
       </div>
     </div>
-  </body>
+  </div>
+</body>
 
 <style>
-  .error {
-    background-color: violet;
-  }
+
 </style>
 
-  <script>
-    "use strict";
-    const buttonElement = document.getElementById("add-comment");
-    const listElement = document.getElementById("list");
-    const nameInputElement = document.getElementById("name-comment");
-    const textInputElement = document.getElementById("text-comment");
-    const nowDay = new Date();
-    const option = {
-      year: '2-digit',
-      month: 'numeric',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
+<script>
+  // "use strict";
+  const buttonElement = document.getElementById("add-comment");
+  const listElement = document.getElementById("list");
+  const nameInputElement = document.getElementById("name-comment");
+  const textInputElement = document.getElementById("text-comment");
+
+  const data = new Date();
+
+  const comments = [
+    {
+      name: "Глеб Фокин",
+      text: "Это будет первый комментарий на этой странице",
+      data: "12.02.22 12:18",
+      count: 3,
+      like: false,
+    },
+
+    {
+      name: "Варвара Н.",
+      text: "Мне нравится как оформлена эта страница! ❤",
+      data: "13.02.22 19:22",
+      count: 75,
+      like: false,
+    },
+  ];
+
+  const countLikeElement = () => {
+    const buttonLikeElements = document.querySelectorAll(".like-button");
+    for (const buttonLikeElement of buttonLikeElements) {
+      const index = buttonLikeElement.dataset.index;
+      buttonLikeElement.addEventListener("click", () => {
+        if (comments[index].like) {
+          comments[index].count = comments[index].count -= 1;
+          comments[index].like = false;
+        }
+          else {
+            comments[index].count = comments[index].count += 1;
+            comments[index].like = true;
+          }
+            renderComments();
+      });
     }
+  };
 
-    buttonElement.addEventListener("click", () => {
-
-      nameInputElement.classList.remove("error"); textInputElement.classList.remove("error");
-      if (nameInputElement.value === "" || textInputElement.value === "") {
-        nameInputElement.classList.add("error"); textInputElement.classList.add("error");
-        return;
-      }
-      const oldListHTML = listElement.innerHTML;
-      listElement.innerHTML = oldListHTML + 
-        `<li  class="comment">
-            <div class="comment-header">
-              <div>${nameInputElement.value}</div>
-              <div>${nowDay.toLocaleString('ru-RU', option)}</div>
-            </div>
-            <div class="comment-body">
-              <div class="comment-text">
-                ${textInputElement.value}
+  const renderComments = () => {
+    const commentsHTML = comments
+      .map((comment, index) => {
+        return `<ul id="ul-comment" class="comments">
+            <li class="comment" id="li_comment">
+              <div class="comment-header">
+                <div>${comment.name}</div>
+                <div>${comment.data}</div>
               </div>
-            </div>
-            <div class="comment-footer">
-              <div class="likes">
-                <span class="likes-counter">0</span>
-                <button class="like-button -active-like"></button>
+              <div class="comment-body">
+                <div class="comment-text">
+                  ${comment.text}
+                </div>
               </div>
-            </div>
-        </li>`
-        nameInputElement.value = "";
-        textInputElement.value = "";
+              <div class="comment-footer">
+                <div class="likes">
+                  <span class="likes-counter">${comment.count}</span>
+                  <button data-index="${index}" class="like-button ${comment.like ? "-active-like" : ""}"></button>
+                </div>
+              </div>
+            </li>
+          </ul>`;
+      })
+      .join("");
+    listElement.innerHTML = commentsHTML;
+    nameInputElement.value = "";
+    textInputElement.value = "";
+    buttonElement.disabled = true;
+    countLikeElement();
+  };
 
-    })
-    console.log("It works!");
-  </script>
+  renderComments();
+
+  const validation = () => {
+    if (nameInputElement.value && textInputElement.value) {
+      buttonElement.disabled = false;
+    }
+    else {
+      buttonElement.disabled = true;
+    }
+  };
+
+  validation();
+
+  nameInputElement.addEventListener("input", validation);
+  textInputElement.addEventListener("input", validation);
+
+  const commentPush = () => {
+    comments.push({
+      name: nameInputElement.value,
+      text: textInputElement.value,
+      data: data.toLocaleString(),
+      count: 0,
+      like: false,
+    });
+  };
+
+  buttonElement.addEventListener("click", () => {
+    commentPush();
+    renderComments();
+    countLikeElement();
+  });
+
+  textInputElement.addEventListener("keyup", (r) => {
+    if (r.key === "Enter") {
+      commentPush();
+      renderComments();
+      countLikeElement();
+    }
+  });
+
+  console.log("It works!");
+</script>
+
 </html>
-
