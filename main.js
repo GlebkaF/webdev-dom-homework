@@ -42,13 +42,34 @@ const userComment = [
   },
 ];
 
+function addComment() {
+  //! создание нового комментария
+  userComment.push({
+    name: nameUser.value,
+    date: date,
+    comment: commentUser.value,
+    likes: 0,
+    isLike: false,
+    isEdit: false,
+  });
+  //! Добавляем чтение клика по лайку
+  initLikesBtn();
+  //! Чистка текстовых полей формы после отправки
+  nameUser.value = "";
+  commentUser.value = "";
+  //! Добавляем чтение комментариев после добавления комментария
+  renderUserComments();
+  //! Делаем отправку некликабельной, если у нас не заполнены поля
+  checkFields();
+}
+
 //! Обходим массив лайков до и после добавления комментариев
 const initLikesBtn = () => {
   const likeBtns = document.querySelectorAll('.like-button');
   for (const likeBtn of likeBtns) {
     const index = likeBtn.dataset.index;
-    likeBtn.addEventListener('click', () => {
-
+    likeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
         if (userComment[index].isLike === true) {
           userComment[index].likes = userComment[index].likes += 1;
           userComment[index].isLike = false;
@@ -67,7 +88,8 @@ const initLikesBtn = () => {
 const changeComment = () => {
   const changeBtns = document.querySelectorAll('.change-button');
   for (const changeBtn of changeBtns) {
-    changeBtn.addEventListener('click', () => {
+    changeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
       const index = changeBtn.dataset.index;
       let findComment = document.getElementById('changedText');
         if (userComment[index].isEdit === true) {
@@ -82,23 +104,17 @@ const changeComment = () => {
   }
 }
 
-function addComment() {
-  //! создание нового комментария
-  userComment.push({
-    name: nameUser.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
-    date: date,
-    comment: commentUser.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
-    likes: 0,
-    isLike: true,
-    isEdit: false,
-  });
-  //! Чистка текстовых полей формы после отправки
-  nameUser.value = "";
-  commentUser.value = "";
-  //! Добавляем чтение комментариев после добавления комментария
-  renderUserComments();
-  //! Делаем отправку некликабельной, если у нас не заполнены поля
-  checkFields();
+//! Ответ на комментарий
+function commentComment() {
+  const comments = document.querySelectorAll(".comment");
+  for (const comment of comments) {
+    comment.addEventListener('click', () => {
+      const index = comment.dataset.index;
+      commentUser.value = userComment[index].name + ' ' + userComment[index].comment + ', ';
+    });
+  };
+  
+  
 }
 
 //! Срабатывание добавления комментария при нажатии на кнопку 'Написать'
@@ -140,7 +156,7 @@ const renderUserComments = () => {
     const btnTextChange = comments.isEdit === true ? `Сохранить` : `Редактировать`;
 
     return `
-    <li class="comment">
+    <li class="comment" data-index=${index}>
     <div class="comment-header">
       <div>${comments.name}</div>
       <div>${comments.date}</div>
@@ -168,6 +184,9 @@ const renderUserComments = () => {
   initLikesBtn();
   //! Добавляем рендер кнопки 'редактировать'
   changeComment();
+  //! Добавляем рендер ответа на комментарий
+  commentComment();
+
 };
 renderUserComments();
 
