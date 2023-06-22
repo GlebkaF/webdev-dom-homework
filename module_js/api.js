@@ -7,7 +7,10 @@ import {
   buttonElement,
 } from "./variables.js";
 
-let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+export let token =
+  "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+
+token = null;
 
 const host = "https://wedev-api.sky.pro/api/v2/aleksey-bateha/comments";
 
@@ -24,6 +27,11 @@ const getAppComments = (response, array) => {
       };
     });
     renderComments(array);
+    document.getElementById("login-button").addEventListener("click", () => {
+      token =
+        "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+      getPromise();
+    });
   });
 };
 
