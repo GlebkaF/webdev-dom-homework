@@ -11,7 +11,7 @@
       <ul class="comments" id="comments">
 <!-- Список из js -->
       </ul>
-      <div class="add-form">
+      <div class="add-form" id = 'add-form'>
         <input
           type="text"
           class="add-form-name"
@@ -36,22 +36,31 @@ const commentsElement = document.querySelector('.comments');
 const nameInputElement = document.getElementById('input-name');
 const textElement = document.querySelector('.add-form-text');
 
+const addFormElement = document.getElementById('add-form');
+
 
 let now = new Date().toLocaleDateString('default', {year: '2-digit', month: '2-digit', day: '2-digit'});
 let time = new Date().toTimeString().substr(0,5);
 let commentDate = ` ${now} ${time}`;
 
+function loaderComments (){
+  commentsElement.textContent = "Подождите, лента коммментариев загружается"; 
+}
+
+
 //получить из хранилища данных 
 let  comments = [];
 
 function fetchFunction  () {
-const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/tanya-bulaeva/comments",{
+return fetch("https://wedev-api.sky.pro/api/v1/tanya-bulaeva/comments",{
 method: "GET"
-});
+})
+.then((response) => {
 
-fetchPromise.then((response) => {
-const jsonPromise = response.json();
-jsonPromise.then((responseData) => {
+loaderComments();
+return  response.json()})
+.then((responseData) => {
+
 const appComments  = responseData.comments.map ((comment) => {
 
   return {
@@ -65,10 +74,23 @@ isLiked: false,
 comments = appComments;
 renderComments();
 })
-});
 }
 fetchFunction();
+loaderComments ();
 
+
+//цитирование
+const quotation = () => {
+let commentElements  = document.querySelectorAll ('.comment');
+for (const commentElement of commentElements){
+commentElement.addEventListener('click', () => {
+const index = commentElement.dataset.index;
+textElement.value =  `"${comments[index].name}:  ${comments[index].textElement}"\n`
+    });
+  };
+
+};
+quotation ();
 
 //лайки
 function likeCommentButton() {    
@@ -98,10 +120,13 @@ for (const like of likesButton) {
 };
 likeCommentButton();
 
+
+
 //добавление новых комментариев
 const renderComments = () => {
 const commentsHTML = comments.map((comment, index) => {
-return    `<li class = 'comment' class = 'whiteSpace'   data-index ="${index}"> <div class = 'comment-header'>
+  loaderComments ();
+return     `<li class = 'comment' class = 'whiteSpace'   data-index ="${index}"> <div class = 'comment-header'>
       <div>${comment.name}</div> 
       <div>${comment.dateCreation}</div>
     </div>  
@@ -124,10 +149,15 @@ return    `<li class = 'comment' class = 'whiteSpace'   data-index ="${index}"> 
             </li>`;}).join('');
 
 commentsElement.innerHTML = commentsHTML;
+addFormElement.classList.remove('hide');
+
 likeCommentButton();
+quotation();
 };
+
 renderComments();
-  
+
+
 //добавление новых комментариев по кнопке с сохранением в api
 buttonElement.addEventListener ("click", () => {
   nameInputElement.style.background = '';
@@ -140,7 +170,9 @@ if (textElement.value === ""){
   textElement.style.background = 'red';
   return;
  };
-const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/tanya-bulaeva/comments",
+
+
+ fetch("https://wedev-api.sky.pro/api/v1/tanya-bulaeva/comments",
 {
 method: "POST",
 body: JSON.stringify({
@@ -150,31 +182,25 @@ date: commentDate,
 likes: 0,
 })
 }).then((response) => {
-response.json().then((responseData) => {
-fetchFunction();
-      });
-    });
+addFormElement.classList.add('hide');
+commentsElement.textContent = `Загрузка комментария`;
+return response.json();
+}).then((responseData) => {
 
+return fetchFunction();
+      });
 nameInputElement.value = "";
 textElement.value = ''; 
-});
 
+renderComments();
+      });
 
 renderComments();
 
-//цитирование
-const quotation = () => {
- const commentElements  = document.querySelectorAll ('.comment');
-for (const commentElement of commentElements){
-commentElement.addEventListener('click', () => {
-const index = commentElement.dataset.index;
-textElement.value = `"${comments[index].name}:  ${comments[index].textElement}"\n`
-    });
-  };
+quotation();
 
-};
-fetchFunction();
-quotation ();
+
+
 
     console.log("It works!");
   </script>
