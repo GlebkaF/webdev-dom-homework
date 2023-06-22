@@ -31,7 +31,7 @@ const userComment = [
     comment: 'Это будет первый комментарий на этой странице',
     likes: 3,
     isLike: false,
-    isEdit: true,
+    isEdit: false,
   },
   {  name: 'Варвара Н.',
     date: '13.02.22 19:22',
