@@ -5,7 +5,6 @@
     <meta charset="utf-8" />
     <link rel="stylesheet" href="styles.css" />
   </head>
-
   <body>
     <div class="container">
       <ul class="comments">
@@ -65,7 +64,7 @@
   </body>
 
   <script>
-    "use strict";
+  "use strict";
 
 // Добавление коммента
 const nameInput = document.querySelector('.add-form-name');
@@ -87,35 +86,29 @@ function addComment() {
   }
 
   const newComment = document.createElement('li');
-newComment.classList.add('comment');
-const commentHeader = document.createElement('div');
-commentHeader.classList.add('comment-header');
-commentHeader.innerHTML = `
-  <div>${name}</div>
-  <div>${getCurrentDateTime()}</div>
-`;
+  newComment.classList.add('comment');
 
-const commentBody = document.createElement('div');
-commentBody.classList.add('comment-body');
-commentBody.innerHTML = `
-  <div class="comment-text">${comment}</div>
-`;
+  const commentTemplate = `
+    <div class="comment-header">
+      <div>${name}</div>
+      <div>${getCurrentDateTime()}</div>
+    </div>
+    <div class="comment-body">
+      <div class="comment-text">${comment}</div>
+    </div>
+    <div class="comment-footer">
+      <div class="likes">
+        <span class="likes-counter">0</span>
+        <button class="like-button"></button>
+      </div>
+    </div>
+  `;
 
-const commentFooter = document.createElement('div');
-commentFooter.classList.add('comment-footer');
-commentFooter.innerHTML = `
-  <div class="likes">
-    <span class="likes-counter">0</span>
-    <button class="like-button"></button>
-  </div>
-`;
+  newComment.innerHTML = commentTemplate;
+  commentsList.appendChild(newComment);
 
-newComment.appendChild(commentHeader);
-newComment.appendChild(commentBody);
-newComment.appendChild(commentFooter);
-commentsList.appendChild(newComment);
-nameInput.value = '';
-commentInput.value = '';
+  nameInput.value = '';
+  commentInput.value = '';
 }
 
 function getCurrentDateTime() {
