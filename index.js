@@ -6,14 +6,16 @@ const comments = [
         date: '12.02.22 12:18',
         text: 'Это будет первый комментарий на этой странице',
         counter: 3,
-        isLiked: 'true',
+        isLiked: true,
+        isEdit: false,
     },
     {
         name: 'Варвара Н.',
         date: '13.02.22 19:22',
         text: 'Мне нравится как оформлена эта страница! ❤',
         counter: 75,
-        isLiked: 'false',  
+        isLiked: false,  
+        isEdit: false,
     },
 ];
 // Код писать здесь
@@ -44,24 +46,59 @@ if (minutes < 10 ) {
   minutes = '0' + minutes;
 }
 
+//Исправление комментария 
+const getCorrectComments = () => {
+  const correctButtons = document.querySelectorAll('.add-correct-button');
+
+  for (const correctButton of correctButtons) {
+    
+    correctButton.addEventListener('click', () => {
+     
+        const correctIndex = parseInt(correctButton.dataset.index);
+        //console.log(correctIndex);
+  
+        const comment = comments[correctIndex];
+      
+
+      if (!comment.isEdit) {
+        correctButton.innerHTML = 'Сохранить'; 
+        comment.isEdit = true;
+        comment.text = comment.text;
+
+      } else {
+        correctButton.innerHTML = 'Редактировать';
+        comment.isEdit = false;
+        const newCommentText = document.getElementById('correct-textarea');
+        comment.text = newCommentText.value;
+      }
+    
+      console.log('paботает!');
+      renderComments();
+    });
+  }
+ 
+};
+
+
 // Добавление лайка
 const getLikes = () => {
     const likeButtons = document.querySelectorAll('.like-button');
 
     for (const likeButton of likeButtons) {
-        likeButton.addEventListener('click', () => {
+        likeButton.addEventListener('click', (event) => {
+          event.stopPropagation();
                       
         const commentIndex = parseInt(likeButton.dataset.index);
        // console.log(commentIndex);
         const comment = comments[commentIndex];
 
-        if (comment.isLiked === 'false') {
+        if (!comment.isLiked) {
           comment.counter += 1;
-          comment.isLiked = 'true';
+          comment.isLiked = true;
 
         } else {
           comment.counter -= 1;
-          comment.isLiked = 'false';
+          comment.isLiked = false
 
         }      
             renderComments();
@@ -72,26 +109,35 @@ const getLikes = () => {
 
 const renderComments = () => {
     const commentsHTML = comments.map((comment, index) => {
-        return ` <li id="comment-list" class="comment">
+        return ` <li id="comment-list" class="comment" data-index="${index}">
       <div class="comment-header">
         <div>${comment.name}</div>
         <div>${comment.date}</div>
       </div>
       <div class="comment-body">
         <div class="comment-text">
-          ${comment.text}
+          ${comment.isEdit ? `<textarea
+          id="correct-textarea"
+          type="textarea"
+          class="add-form-text"
+          rows="4"
+        >${comment.text}</textarea>` : comment.text}
         </div>
       </div>
       <div class="comment-footer">
         <div class="likes">
           <span class="likes-counter">${comment.counter}</span>
           <button data-index="${index}" 
-          class="like-button${comment.isLiked === 'true' ? " -active-like" : ""}">
+          class="like-button${comment.isLiked ? " -active-like" : ""}">
           </button>
         </div>
       </div>
+      <div class="add-form-row">
+          <button data-index="${index}" class="add-correct-button">${comment.isEdit ? 'Сохранить' : 'Редактировать'}</button>
+        </div>
     </li>`
     }).join('');
+
     listElement.innerHTML = commentsHTML;
 
     
@@ -99,9 +145,24 @@ const renderComments = () => {
   nameElement.value = '';
   commentElement.value = '';
   buttonElement.disabled = true;
+
+  //клик на комментарий, ответ на комментарий
+  const commentItems = document.querySelectorAll('.comment');
+  
+  for (const commentItem of commentItems) {
+    commentItem.addEventListener('click', () => {
+      const index = commentItem.dataset.index;
+      //console.log(index);
+      const comment = comments[index];
+      commentElement.value = ">" + comment.text + '\n' + comment.name;
+
+    })
+    
+  }
     
     checkFields();
     getLikes();
+    getCorrectComments();
 
 }
 
@@ -135,11 +196,16 @@ buttonElement.addEventListener('click', () => {
   }    
 
   comments.push({
-    name: nameElement.value,
+    name: nameElement.value
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;"),
         date: day + '.' + month + '.' + year + ' ' + hour + ':' + minutes,
-        text: commentElement.value,
+        text: commentElement.value
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;"),
         counter: 0,
         isLiked: 'false',
+        isEdit: 'false',
 })
 
 renderComments();
