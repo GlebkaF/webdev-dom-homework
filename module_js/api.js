@@ -7,6 +7,10 @@ import {
   buttonElement,
 } from "./variables.js";
 
+let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+
+const host = "https://wedev-api.sky.pro/api/v2/aleksey-bateha/comments";
+
 const getAppComments = (response, array) => {
   return response.json().then((responseData) => {
     array = responseData.comments;
@@ -24,20 +28,22 @@ const getAppComments = (response, array) => {
 };
 
 function getPromise() {
-  fetch("https://wedev-api.sky.pro/api/v1/qwitchers/comments", {
+  fetch(host, {
     method: "GET",
+    headers: {
+      Authorization: token,
+    },
   }).then((response) => {
     getAppComments(response, comments);
   });
 }
 
 function getPost() {
-  fetch("https://wedev-api.sky.pro/api/v1/qwitchers/comments", {
+  fetch(host, {
     method: "POST",
     body: JSON.stringify({
       name: nameInputElement.value,
       text: textInputElement.value,
-      forceError: true,
     }),
   })
     .then((response) => {
@@ -52,7 +58,7 @@ function getPost() {
     .then(() => {
       textInputElement.value = "";
       nameInputElement.value = "";
-      
+
       getPromise();
     })
     .then(() => {
