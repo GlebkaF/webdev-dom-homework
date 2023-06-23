@@ -9,7 +9,7 @@
 
 <body>
   <div class="preloader">
-<p class="preloader-text">Пожалуйста, подождите, комментарии загружаются...</p>
+    <p class="preloader-text">Пожалуйста, подождите, комментарии загружаются...</p>
   </div>
   <div class="container">
     <ul class="comments" id="list">
@@ -59,8 +59,8 @@
         <button class="add-form-button" id="end-delete-button">Удалить</button>
         <button class="add-form-button" id="add-button">Написать</button>
       </div>
-
     </div>
+    <div class="loading">Ваш комментарий добавляется...</div>
   </div>
 </body>
 <style>
@@ -78,6 +78,9 @@
   const listElement = document.getElementById("list");
   const endDeleteButtonElement = document.getElementById("end-delete-button");
   const addFormElement = document.getElementById("add-form");
+  const loadingElement = document.querySelector(".loading");
+
+
 
   // Функция для даты
   function takeDate(currentDate) {
@@ -130,7 +133,7 @@
       })
       .then((data) => {
         document.body.classList.add('loaded');
-          });
+      });
   }
 
   getArr();
@@ -186,12 +189,12 @@
   };
   // Добавление кликабельностm лайка и счётчика лайков
   function delay(interval = 300) {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve();
-        }, interval);
-      });
-}
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, interval);
+    });
+  }
 
 
 
@@ -204,17 +207,17 @@
         comments[index].currentLike = !comments[index].currentLike;
         likeButtonElement.classList.add('-loading-like');
         delay(2000).then(() => {
-        if (comments[index].currentLike) {
-          ++comments[index].like;
-          comments[index].classLike = 'like-button -active-like';
-        } else {
-          --comments[index].like;
-          comments[index].classLike = 'like-button -no-active-like';
-        }
-        renderComments();
-      })
-      .then((data) => {
-        likeButtonElement.classList.remove('-loading-like');
+          if (comments[index].currentLike) {
+            ++comments[index].like;
+            comments[index].classLike = 'like-button -active-like';
+          } else {
+            --comments[index].like;
+            comments[index].classLike = 'like-button -no-active-like';
+          }
+          renderComments();
+        })
+          .then((data) => {
+            likeButtonElement.classList.remove('-loading-like');
           });
       });
     }
@@ -271,82 +274,102 @@
   }
 
   renderComments();
+  loadingElement.classList.add("display-none");
 
   // Добавить обработчик клика для добавления элемента
-  addButtonElement.addEventListener("click", () => {
+  function clickButton() {
+    addButtonElement.addEventListener("click", () => {
 
-    //Добавляем валидацию
-    if ((nameInputElement.value === "") || (comentInputElement.value === "")) {
-      return;
-    }
-    addFormElement.innerHTML = "Ваш комментарий добавляется...";
-    //Добавляем данные для нового комента
-    // comments.push({
-    //   name: nameInputElement.value
-    //     .replaceAll("&", "&amp;")
-    //     .replaceAll("<", "&lt;")
-    //     .replaceAll(">", "&gt;")
-    //     .replaceAll('"', "&quot;"),
-    //   text: comentInputElement.value
-    //     .replaceAll("&", "&amp;")
-    //     .replaceAll("<", "&lt;")
-    //     .replaceAll(">", "&gt;")
-    //     .replaceAll('"', "&quot;")
-    //     .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
-    //     .replaceAll("QUOTE_END", "</div><br><br>,"),
-    //   eachDate: takeDate(new Date),
-    //   like: 0,
-    //   currentLike: false,
-    //   classLike: 'like-button -no-active-like',
-    //   isEdit: false,
-    // });
+      //Добавляем валидацию
+      if ((nameInputElement.value === "") || (comentInputElement.value === "")) {
+        return;
+      }
+      addFormElement.classList.add("display-none");
+      loadingElement.classList.remove("display-none");
+      //Добавляем данные для нового комента
+      // comments.push({
+      //   name: nameInputElement.value
+      //     .replaceAll("&", "&amp;")
+      //     .replaceAll("<", "&lt;")
+      //     .replaceAll(">", "&gt;")
+      //     .replaceAll('"', "&quot;"),
+      //   text: comentInputElement.value
+      //     .replaceAll("&", "&amp;")
+      //     .replaceAll("<", "&lt;")
+      //     .replaceAll(">", "&gt;")
+      //     .replaceAll('"', "&quot;")
+      //     .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+      //     .replaceAll("QUOTE_END", "</div><br><br>,"),
+      //   eachDate: takeDate(new Date),
+      //   like: 0,
+      //   currentLike: false,
+      //   classLike: 'like-button -no-active-like',
+      //   isEdit: false,
+      // });
+      let answer = "Кажется, у вас сломался интернет, попробуйте позже";
+      fetch("https://wedev-api.sky.pro/api/v1/:sofia-iakovleva/comments", {
+        method: "POST",
+        body: JSON.stringify({
+          name: nameInputElement.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;"),
+          text: comentInputElement.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+            .replaceAll("QUOTE_END", "</div><br><br>,"),
+          eachDate: takeDate(new Date),
+          likes: 0,
+          currentLike: false,
+          classLike: 'like-button -no-active-like',
+          isEdit: false,
+          forceError: true,
+        }),
+      })
+        // Подписываемся на успешное завершение запроса с помощью then
+        .then((response) => {
+          if (response.status === 500) {
+          throw new Error("Сервер сломался");
+        } else if (response.status === 400) {
+          throw new Error("Плохой запрос");
+          } else {
+            return response.json();
+          }
 
-    fetch("https://wedev-api.sky.pro/api/v1/:sofia-iakovleva/comments", {
-      method: "POST",
-      body: JSON.stringify({
-        name: nameInputElement.value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;"),
-        text: comentInputElement.value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;")
-          .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
-          .replaceAll("QUOTE_END", "</div><br><br>,"),
-        eachDate: takeDate(new Date),
-        likes: 0,
-        currentLike: false,
-        classLike: 'like-button -no-active-like',
-        isEdit: false,
-      }),
+        })
+        .then(() => {
+          return getArr();
+        })
+        .then(() => {
+          addFormElement.classList.remove("display-none");
+          loadingElement.classList.add("display-none");
+          nameInputElement.value = "";
+          comentInputElement.value = "";
+        })
+        .catch((error) => {
+          if (error.message === "Сервер сломался") {
+            alert("Сервер сломался, попробуйте позже");
+            clickButton()
+          } else if (error.message === "Плохой запрос") {
+            alert("Имя и комментарий должны быть не короче 3 символов");
+          } else {
+            alert("Кажется, у вас сломался интернет, попробуйте позже");
+            console.log(error);
+          }
+          addFormElement.classList.remove("display-none");
+          loadingElement.classList.add("display-none");
+        });
+
+      renderComments();
+
     })
-      // Подписываемся на успешное завершение запроса с помощью then
-      .then((response) => {
-        // Запускаем преобразовываем "сырые" данные от API в json формат и 
-        //подписываемся на успешное завершение запроса с помощью then:
-        return response.json();
-      })
-      .then((responseData) => {
-        return getArr();
-      })
-      .then((data) => {
-        addFormElement.innerHTML = (`<div class="add-form" id="add-form">
-      <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input" />
-      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
-        id="coment-input"></textarea>
-      <div class="add-form-row">
-        <button class="add-form-button" id="end-delete-button">Удалить</button>
-        <button class="add-form-button" id="add-button">Написать</button>
-      </div>`);
-      });
+  };
+  clickButton();
 
-    renderComments();
-    nameInputElement.value = "";
-    comentInputElement.value = "";
-  })
 
   // Добавление обработчика ввода для input
   addEventListener("input", () => {
