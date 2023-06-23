@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="list" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -49,15 +49,18 @@
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          id="name-input"
+          value=""
         />
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+          id="comment-input"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="add-button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
@@ -65,7 +68,48 @@
 
   <script>
     "use strict";
-    // Код писать здесь
+      const buttonElement = document.getElementById('add-button');
+      const listElement = document.getElementById('list');
+      const nameInputElement = document.getElementById('name-input');
+      const commentInputElement = document.getElementById('comment-input');
+      let myDate = new Date();
+      let fullDate = (myDate.getDate().toString().padStart(2, "0")) + "." + (myDate.getMonth() + 1).toString().padStart(2, "0") + "." + (myDate.getFullYear() - 2000) + " " + (myDate.getHours().toString().padStart(2, "0")) + ":" + (myDate.getMinutes().toString().padStart(2, "0"));
+      //console.log(fullDate);
+      // let options = {
+      //   year: 'numeric',
+      //   month: 'numeric',
+      //   day: 'numeric',
+      //   hour: 'numeric',
+      //   minute: 'numeric',
+      // }
+      // console.log(myDate.toLocaleString('ru-RU', options));
+
+
+      buttonElement.addEventListener('click', () => {
+        if (nameInputElement.value === "" || commentInputElement.value === "") {
+          return;
+        }
+
+        const oldListHTML = listElement.innerHTML;
+        listElement.innerHTML = oldListHTML + `<li class="comment">
+          <div class="comment-header">
+            <div id="name-input">${nameInputElement.value}</div>
+              <div>${fullDate}</div>
+          </div>
+          <div class="comment-body">
+            <div id="comment-input" class="comment-text">
+              ${commentInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+      })
     console.log("It works!");
   </script>
 </html>
+<!-- 13.02.22 19:22 -->
