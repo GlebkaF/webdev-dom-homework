@@ -70,11 +70,12 @@
   const listElement = document.getElementsByClassName("comments")[0];
 
   const toggleButton = () => {
-    if (nameInputElement && newCommentElement) {
+    if (nameInputElement.value === '' || newCommentElement.value === '') {
       document.getElementsByClassName("add-form-button")[0].disabled = false;
+      return;
     }
   }
-  
+
   const dateForComment = (date) => {
     let currentDate = new Date();
 
@@ -99,10 +100,18 @@
     return `${day}.${month}.${currentDate.getFullYear().toString().substr(-2)} ${hour}:${minute}`;
   }
 
+
+  // buttonElement.addEventListener("click", () => {
+  //   if (nameInputElement.value || newCommentElement.value === '') {
+
+  //   }
+  // })
   buttonElement.addEventListener("click", () => {
     nameInputElement.classList.remove('error');
-    if (nameInputElement.value === '') {
+    newCommentElement.classList.remove('error');
+    if (nameInputElement.value === '' || newCommentElement.value === '') {
       nameInputElement.classList.add('error');
+      newCommentElement.classList.add('error');
       return;
     }
 
