@@ -74,16 +74,6 @@
       const commentInputElement = document.getElementById('comment-input');
       let myDate = new Date();
       let fullDate = (myDate.getDate().toString().padStart(2, "0")) + "." + (myDate.getMonth() + 1).toString().padStart(2, "0") + "." + (myDate.getFullYear() - 2000) + " " + (myDate.getHours().toString().padStart(2, "0")) + ":" + (myDate.getMinutes().toString().padStart(2, "0"));
-      //console.log(fullDate);
-      // let options = {
-      //   year: 'numeric',
-      //   month: 'numeric',
-      //   day: 'numeric',
-      //   hour: 'numeric',
-      //   minute: 'numeric',
-      // }
-      // console.log(myDate.toLocaleString('ru-RU', options));
-
 
       buttonElement.addEventListener('click', () => {
         if (nameInputElement.value === "" || commentInputElement.value === "") {
