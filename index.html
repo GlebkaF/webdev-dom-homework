@@ -40,7 +40,7 @@ const nameInput = document.querySelector('#name-input');
 const commentInput = document.querySelector('#comment-input');
 const addButton = document.querySelector('.add-form-button');
 const commentsList = document.querySelector('.comments');
-const likeButtons = document.querySelectorAll('.like-button');
+//const likeButtons = document.querySelectorAll('.like-button');
 
 
 let getComments = () => {
@@ -53,11 +53,12 @@ let getComments = () => {
     jsonPromise.then((responseData) => {
       const appComments = responseData.comments.map((comment) => {
         return {
+          id: comment.id,
           name: comment.author.name,
           date: new Date(comment.date),
           text: comment.text,
           likes: comment.likes,
-          isLikes: false,
+          liked: false,
         };
       });
       comments = appComments;
@@ -80,7 +81,7 @@ let comments = [];
   
   const likeButtonClass = comment.liked ? "like-button -active-like" : "like-button";
 
-    
+   
     
     // Добавление кнопки "Редактировать" и "Сохранить"
     const editButton = document.createElement("button");
@@ -98,11 +99,11 @@ let comments = [];
     textarea.value = comment.text;
     textarea.style.display = "none"; // Изначально скрываем поле ввода
 
-    
+    const dateAndTime = `${comment.date.toLocaleDateString()} ${comment.date.toLocaleTimeString()}`;
     newComment.innerHTML = `
       <div class="comment-header">
         <div>${comment.name}</div>
-        <div>${comment.date.toISOString()}</div>
+        <div>${dateAndTime}</div>
       </div>
       <div class="comment-body">
         <div class="comment-text">
@@ -112,9 +113,9 @@ let comments = [];
       <div class="comment-footer">
         <div class="likes">
           <span class="likes-counter">${comment.likes}</span>
-          <button class="${likeButtonClass}" data-comment-id="${comment.name}"></button>
+          <button class="${likeButtonClass}" data-comment-id="${comment.id}"></button>
           <div class="edit-buttons">
-      <button class="edit-button" data-comment-id="${comment.name}">Редактировать</button>
+      <button class="edit-button" data-comment-id="${comment.id}">Редактировать</button>
         </div>
       </div>
     `;
@@ -148,15 +149,15 @@ let comments = [];
     commentsList.appendChild(newComment);
   });
 
-
+    // Найти кнопку лайка внутри текущего комм
     const likeButtons = document.querySelectorAll('.like-button');
     likeButtons.forEach((button) => {
     button.addEventListener('click', (event) => {
       event.stopPropagation();
     // Получаем идентификатор комментария из атрибута data-comment-id кнопки лайка
-    const commentName = parseInt(button.dataset.commentId);
+    const commentId = parseInt(button.dataset.commentId);
     // Находим комментарий в массиве comments по идентификатору
-    const comment = comments.find((c) => c.name === commentName);
+    const comment = comments.find((c) => c.id === commentId);
 
       // Если комментарий уже был отмечен как понравившийся, уменьшаем счетчик лайков
       // Если комментарий не был отмечен, увеличиваем счетчик лайков
@@ -174,7 +175,7 @@ let comments = [];
   });
 };
 
-renderComments();
+//renderComments();
 
 addButton.addEventListener('click', function() {
   if (nameInput.value.trim() === '' || commentInput.value.trim() === '') {
@@ -201,8 +202,8 @@ addButton.addEventListener('click', function() {
     liked: false
   };
 
-  comments.push(newComment);
-  renderComments();
+  //comments.push(newComment);
+  //renderComments();
 
   // Отправляем новый комментарий на сервер через POST-запрос
   function addComments() {
@@ -217,6 +218,7 @@ addButton.addEventListener('click', function() {
         fetch("https://wedev-api.sky.pro/api/v1/kristina-sapega/comments").then((response) => {
           response.json().then((responseData) => {
             comments = responseData.comments;
+            //получаем все комментарии, включая новый
             getComments();
           });
         });
