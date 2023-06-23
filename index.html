@@ -87,15 +87,19 @@
 
     //Функция включения кнопки
     function activeButton() {
-        buttonElement.classList.remove("inactive-button");
-        buttonElement.disabled = false;
+        if (nameInputElement.value && commentInputElement.value) {
+            buttonElement.classList.remove("inactive-button");
+            buttonElement.disabled = false;
+        } else {
+            buttonElement.classList.add("inactive-button");
+            buttonElement.disabled = true;
+        }
     }
 
-    //Функция добавления комментария
+    //Общая функция добавления комментария
     function addComment() {
         const oldsComments = commentsElement.innerHTML;
-        if (nameInputElement.value !== '' && commentInputElement.value !== '') {
-            commentsElement.innerHTML = oldsComments + `<li class="comment">
+        commentsElement.innerHTML = oldsComments + `<li class="comment">
         <div class="comment-header">
           <div>${nameInputElement.value}</div>
           <div>${getDate()}</div>
@@ -112,9 +116,18 @@
           </div>
         </div>
       </li>`;
-        }
+
         nameInputElement.value = '';
         commentInputElement.value = '';
+        buttonElement.classList.add("inactive-button");
+        buttonElement.disabled = true;
+    }
+
+    //Функция добавления коментария клавишей Enter
+    function addCommentEnter(key) {
+        if (key.code === "Enter") {
+            addComment();
+        }
     }
 
     //Функция удаления последнего комментария
@@ -122,26 +135,24 @@
         commentsElement.innerHTML = commentsElement.innerHTML.slice(0, commentsElement.innerHTML.lastIndexOf('<li'));
     }
 
-    //Включение кнопки
+    //Выключение кнопки
     buttonElement.disabled = true;
     buttonElement.classList.add("inactive-button");
-    nameInputElement.addEventListener("input", () => {
-        commentInputElement.addEventListener("input", activeButton)
-    });
+
+    //Проверка полей ввода на наличие введенных данных
+    nameInputElement.addEventListener('input', activeButton);
+    commentInputElement.addEventListener('input', activeButton);
 
     //Добавление комментария клавишей Enter
-    commentInputElement.addEventListener("keydown", (key) => {
-        if (key.code === "Enter") {
-            addComment();
-        }
-    })
+    nameInputElement.addEventListener("keyup", addCommentEnter)
+    commentInputElement.addEventListener("keyup", addCommentEnter);
 
     //Добавление комментария кнопкой "Написать"
     buttonElement.addEventListener("click", () => {
         addComment();
     })
 
-    //удаление последнего комментария
+    //Удаление последнего комментария
     buttonDeleteElement.addEventListener('click', deleteLastComment)
 
 </script>
