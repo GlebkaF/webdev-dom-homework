@@ -1,6 +1,11 @@
 
 "use strict";
 
+import { takeDate } from "./Date.js";
+import renderComments from "./render.js";
+import { getListComments } from "./listComments.js";
+//import { getArr } from "./fetch.js";
+
 //  Поиск элментов
 const nameInputElement = document.getElementById("name-input");
 const comentInputElement = document.getElementById("coment-input");
@@ -10,33 +15,9 @@ const endDeleteButtonElement = document.getElementById("end-delete-button");
 const addFormElement = document.getElementById("add-form");
 const loadingElement = document.querySelector(".loading");
 
-
-
-// Функция для даты
-function takeDate(currentDate) {
-    let day = currentDate.getDate();
-    if (day < 10) {
-        day = '0' + day;
-    }
-    let month = +currentDate.getMonth() + 1;
-    if (month < 10) {
-        month = '0' + month;
-    }
-    let year = currentDate.getFullYear();
-    let arrYear = Array.from(String(year));
-    year = arrYear[2] + arrYear[3];
-    let hour = currentDate.getHours();
-    if (hour < 10) {
-        hour = '0' + hour;
-    }
-    let minute = currentDate.getMinutes();
-    if (minute < 10) {
-        minute = '0' + minute;
-    }
-    return `${day}.${month}.${year} ${hour}:${minute}`;
-}
 let comments = [];
-function getArr() {
+
+function getArr() {    
     return fetch("https://wedev-api.sky.pro/api/v1/:sofia-iakovleva/comments", {
         method: "GET"
     })
@@ -59,38 +40,14 @@ function getArr() {
                 };
             });
             comments = appComments;
-            return renderComments()
+            return renderComments(listElement, getListComments)
         })
         .then((data) => {
             document.body.classList.add('loaded');
         });
 }
 
-getArr();
-
-
-
-// // Создание массива
-// const comments = [
-//   {
-//     name: "Глеб Фокин",
-//     text: "Это будет первый комментарий на этой странице",
-//     eachDate: "12.02.22 12:18",
-//     like: 3,
-//     currentLike: false,
-//     classLike: 'like-button -no-active-like',
-//     isEdit: false,
-//   },
-//   {
-//     name: "Варвара Н.",
-//     text: "Мне нравится как оформлена эта страница! ❤",
-//     eachDate: "13.02.22 19:22",
-//     like: 75,
-//     currentLike: false,
-//     classLike: 'like-button -no-active-like',
-//     isEdit: false,
-//   },
-// ];
+getArr(comments);
 
 // Добавление возможности редактирования на каждый комент
 const initiateRedact = () => {
@@ -100,7 +57,7 @@ const initiateRedact = () => {
             event.stopPropagation();
             const index = redactButton.dataset.index;
             comments[index].isEdit = !comments[index].isEdit;
-            renderComments();
+            renderComments(listElement, getListComments);
         });
 
     }
@@ -111,7 +68,7 @@ const initiateRedact = () => {
             const index = saveButton.dataset.index;
             comments[index].isEdit = !comments[index].isEdit;
             comments[index].text = saveButton.closest('.comment').querySelector('textarea').value
-            renderComments();
+            renderComments(listElement, getListComments);
         });
 
     }
@@ -141,7 +98,7 @@ const initlikeButtonsListeners = () => {
                     --comments[index].like;
                     comments[index].classLike = 'like-button -no-active-like';
                 }
-                renderComments();
+                renderComments(listElement, getListComments);
             })
                 .then((data) => {
                     likeButtonElement.classList.remove('-loading-like');
@@ -165,42 +122,8 @@ const redactComments = () => {
 redactComments();
 
 // Рендерим из массива разметку
-const renderComments = () => {
-    const commentsHTML = comments.map((comment, index) => {
-        return `<li class="comment" data-index="${index}">
-        <div class="comment-header">
-          <div>${comment.name}</div>
-          <div>${comment.eachDate}</div>
-        </div>
-        <div class="comment-body">
-          <div class="${comment.isEdit ? 'display-none' : 'comment-text'}">
-            ${comment.text}
-          </div>
-        </div>
-        <div>
-        <textarea type="textarea" class="${comment.isEdit ? 'add-form-text' : 'display-none'}" rows="4">${comment.text}</textarea>
-        </div>
-        <div class="comment-footer">
-          <div class="redact">
-            <button class="${comment.isEdit ? 'display-none' : 'redact-button'}" data-index="${index}">Редактировать</button>
-          </div>    
-          <div class="redact">
-            <button class="${comment.isEdit ? 'save-button' : 'display-none'}" data-index="${index}">Сохранить</button>
-          </div>      
-          <div class="likes">
-            <span class="likes-counter">${comment.like}</span>
-            <button class="${comment.classLike}" data-index="${index}"></button>
-          </div>
-        </div>
-      </li>`;
-    }).join('');
-    listElement.innerHTML = commentsHTML;
-    initlikeButtonsListeners();
-    redactComments();
-    initiateRedact();
-}
+renderComments(listElement, getListComments);
 
-renderComments();
 loadingElement.classList.add("display-none");
 
 // Добавить обработчик клика для добавления элемента
@@ -213,26 +136,6 @@ function clickButton() {
         }
         addFormElement.classList.add("display-none");
         loadingElement.classList.remove("display-none");
-        //Добавляем данные для нового комента
-        // comments.push({
-        //   name: nameInputElement.value
-        //     .replaceAll("&", "&amp;")
-        //     .replaceAll("<", "&lt;")
-        //     .replaceAll(">", "&gt;")
-        //     .replaceAll('"', "&quot;"),
-        //   text: comentInputElement.value
-        //     .replaceAll("&", "&amp;")
-        //     .replaceAll("<", "&lt;")
-        //     .replaceAll(">", "&gt;")
-        //     .replaceAll('"', "&quot;")
-        //     .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
-        //     .replaceAll("QUOTE_END", "</div><br><br>,"),
-        //   eachDate: takeDate(new Date),
-        //   like: 0,
-        //   currentLike: false,
-        //   classLike: 'like-button -no-active-like',
-        //   isEdit: false,
-        // });
         let answer = "Кажется, у вас сломался интернет, попробуйте позже";
         fetch("https://wedev-api.sky.pro/api/v1/:sofia-iakovleva/comments", {
             method: "POST",
@@ -269,7 +172,7 @@ function clickButton() {
 
             })
             .then(() => {
-                return getArr();
+                return getArr(comments);
             })
             .then(() => {
                 addFormElement.classList.remove("display-none");
@@ -291,7 +194,7 @@ function clickButton() {
                 loadingElement.classList.add("display-none");
             });
 
-        renderComments();
+        renderComments(listElement, getListComments);
 
     })
 };
