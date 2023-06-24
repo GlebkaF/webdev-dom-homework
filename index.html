@@ -214,13 +214,19 @@ boxOfComments.innerHTML = commentsHtml;
 initEventListeners();
 };
 renderComments()
+addCommentListener()
 
 // comment
+
+const validate = () => {
+  newName.classList.toggle('error', newName.value.length === 0);
+    textComment.classList.toggle('error', textComment.value.length === 0);
+    return (newName.value.length >= 1 && textComment.value.length >= 1);}
 
 const addComment = () => {
     const date = new Date();
     if (validate()) {
-      commentsListArray.push({
+      usersComments.push({
         //Убираем уязвимость, запрещаем вводить теги в поле ввода имени
         name: newName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
         date: `${("0" + date.getDate()).slice(-2)}.${("0" + (date.getMonth() + 1)).slice(-2)}.${date.getFullYear().toString().slice(-2)} ${("0" + date.getHours()).slice(-2)}:${("0" + date.getMinutes()).slice(-2)}`,
@@ -239,7 +245,7 @@ const addComment = () => {
   });
   addForm.addEventListener('input', (event) => {
     if (validate) {
-      button.removeAttribute('disabled');
+      button.removeAttribute('disabled');  
       button.classList.remove('add-form-button-disabled');
     }
   });
