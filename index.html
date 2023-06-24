@@ -9,40 +9,7 @@
   <body>
     <div  class="container">
       <ul id="container" class="comments">
-        <li  class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div id="date" >12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span id="likes-counter" class="likes-counter">3</span>
-              <button id="likebutton" class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button id="likebutton -active-like" class="like-button -active-like" class="like-button"></button>
-            </div>
-          </div>
-        </li>
+      <!-- список рендарится из Js -->
       </ul>
       <div class="add-form">
         <input id="add-form-name" 
@@ -69,9 +36,9 @@
     const newCommentElement =document.getElementById("container");
     const inputNameElement = document.getElementById("add-form-name");
     const commentsElement = document.getElementById("add-form-text");
-    let likesValue = document.getElementById("likes-counter");
     let likeButton = document.getElementById("likebutton");
     let likeButtonActiveLike = document.getElementById("likebutton -active-like");
+
     const commentElements = document.querySelectorAll('.comment');
     const initEventListeners = () => {
          const commentElements = document.querySelectorAll('.comment');
@@ -126,13 +93,14 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">${likesValue}</span>
+              <span class="likes-counter">0</span>
               <button class="like-button"></button>
             </div>
           </div>
         </li>`
-        likeButtons();
+        initlikeButtonsListeners();
         initEventListeners();
+      
     });
 
 
@@ -142,30 +110,36 @@
         coment: "Это будет первый комментарий на этой странице", 
         data: "12.02.22 12:18",
         likesCounter:"3",
+        likesElement : false
       },
       {
         name:"Варвара Н.",
         coment: "Мне нравится как оформлена эта страница! ❤", 
         data: "13.02.22 19:22",
         likesCounter:"75",
+        likesElement : true
       },
     ];
 
-    const likeButtons = ()=>{
+    const initlikeButtonsListeners = ()=> {
+      const likeButtons = document.querySelectorAll('.like-button','.like-button -active-like');
+      for (const likeButton of likeButtons) {
     likeButton.addEventListener("click", () => {
-      console.log('!');
+     const likesCounterElement = likeButton.previousElementSibling;
+     const  likesCounter = parseInt(likesCounterElement.textContent);
      
-     if (likeButton =  likeButtonActiveLike ){
-          likesValue +=1; 
+     if (likeButton.classList.contains( '-active-like')){
+      likeButton.classList.remove( '-active-like');
+      likesCounterElement.textContent = likesCounter - 1;
         }else{
-          likeButtonActiveLike = likeButton;
-          likesValue -=1; 
+          likeButton.classList.add('-active-like')
+          likesCounterElement.textContent = likesCounter + 1;
         }
       });
-    };
-    likeButtons();
-
-      const renderUsers = () =>{
+    }};
+    initlikeButtonsListeners();
+    
+    const renderUsers = () => {
          const usersHtml = users.map((user)=>{
           return`<li  class="comment">
           <div class="comment-header">
@@ -186,21 +160,13 @@
         </li>`
         })
         .join("");
-        initEventListeners();
-        likeButtons();
          newCommentElement.innerHTML = usersHtml;
+         initEventListeners();
+        initlikeButtonsListeners();
       };
        
-     
-
-      users.push({
-        name: inputNameElement,
-        coment: commentsElement,
-        data: dateElement(myDate),
-        likesCounter:likesValue,
-      });
-    
-    
+      renderUsers();
+      
 
     console.log("It works!");  
   </script>
