@@ -21,8 +21,8 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">3</span>
-              <button id="like-button" class="like-button"></button>
+              <span id="likes-counter" class="likes-counter">3</span>
+              <button id="likebutton" class="like-button"></button>
             </div>
           </div>
         </li>
@@ -39,7 +39,7 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
+              <button id="likebutton -active-like" class="like-button -active-like" class="like-button"></button>
             </div>
           </div>
         </li>
@@ -69,6 +69,22 @@
     const newCommentElement =document.getElementById("container");
     const inputNameElement = document.getElementById("add-form-name");
     const commentsElement = document.getElementById("add-form-text");
+    let likesValue = document.getElementById("likes-counter");
+    let likeButton = document.getElementById("likebutton");
+    let likeButtonActiveLike = document.getElementById("likebutton -active-like");
+    const commentElements = document.querySelectorAll('.comment');
+    const initEventListeners = () => {
+         const commentElements = document.querySelectorAll('.comment');
+         for (const commentElement of commentElements) {
+         commentElement.addEventListener("click", () => {
+         console.log(1);
+    });
+  };
+    };
+    initEventListeners();
+
+
+// добавление даты в нужном формате 
     let dateElement = document.getElementById("date");
     let myDate = new Date();
      dateElement = (date) => {
@@ -89,14 +105,16 @@
       return `${data}.${month}.${myDate.getFullYear().toString().substr(-2)} ${hour}:${minute}`;
      };
 
-    buttonElement.addEventListener("click", () => {
-      if(inputNameElement.value === "" || commentsElement.value === ""){
-      return false
-      }
+
+      //добавление нового коментария
+     buttonElement.addEventListener("click", () => {
+          if(inputNameElement.value === "" || commentsElement.value === ""){
+          return false
+      };
 
      const oldListHtml = newCommentElement.innerHTML;
-     newCommentElement.innerHTML = oldListHtml + 
-     `<li  class="comment">
+            newCommentElement.innerHTML = oldListHtml + 
+      `<li  class="comment">
           <div class="comment-header">
             <div>${inputNameElement.value}</div>
             <div>${dateElement(myDate)}</div>
@@ -108,12 +126,82 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">0</span>
+              <span class="likes-counter">${likesValue}</span>
               <button class="like-button"></button>
             </div>
           </div>
         </li>`
-    })
+        likeButtons();
+        initEventListeners();
+    });
+
+
+    const users = [
+      {
+        name:"Глеб Фокин",
+        coment: "Это будет первый комментарий на этой странице", 
+        data: "12.02.22 12:18",
+        likesCounter:"3",
+      },
+      {
+        name:"Варвара Н.",
+        coment: "Мне нравится как оформлена эта страница! ❤", 
+        data: "13.02.22 19:22",
+        likesCounter:"75",
+      },
+    ];
+
+    const likeButtons = ()=>{
+    likeButton.addEventListener("click", () => {
+      console.log('!');
+     
+     if (likeButton =  likeButtonActiveLike ){
+          likesValue +=1; 
+        }else{
+          likeButtonActiveLike = likeButton;
+          likesValue -=1; 
+        }
+      });
+    };
+    likeButtons();
+
+      const renderUsers = () =>{
+         const usersHtml = users.map((user)=>{
+          return`<li  class="comment">
+          <div class="comment-header">
+            <div>${user.name}</div>
+            <div>${user.data}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${user.coment}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${user.likesCounter}</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+        })
+        .join("");
+        initEventListeners();
+        likeButtons();
+         newCommentElement.innerHTML = usersHtml;
+      };
+       
+     
+
+      users.push({
+        name: inputNameElement,
+        coment: commentsElement,
+        data: dateElement(myDate),
+        likesCounter:likesValue,
+      });
+    
+    
+
     console.log("It works!");  
   </script>
 </html>
