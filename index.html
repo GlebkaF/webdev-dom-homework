@@ -218,19 +218,9 @@ addCommentListener()
 
 // comment
 
-const validate = () => {
-  newName.classList.toggle('error', newName.value.length === 0);
-    textComment.classList.toggle('error', textComment.value.length === 0);
-    return (newName.value.length >= 1 && textComment.value.length >= 1);}
-
-const addComment = () => {
-    const date = new Date();
-    if (validate()) {
       usersComments.push({
-        //Убираем уязвимость, запрещаем вводить теги в поле ввода имени
         name: newName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
         date: `${("0" + date.getDate()).slice(-2)}.${("0" + (date.getMonth() + 1)).slice(-2)}.${date.getFullYear().toString().slice(-2)} ${("0" + date.getHours()).slice(-2)}:${("0" + date.getMinutes()).slice(-2)}`,
-        //Убираем уязвимость, запрещаем вводить теги в поле ввода текста
         comment: textComment.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
         likes: 0,
       });
@@ -238,24 +228,6 @@ const addComment = () => {
       textComment.value = "";
       newName.value = "";
       button.setAttribute('disabled', '');
-    }
-  };
-  button.addEventListener('click', (event) => {
-    addComment();
-  });
-  addForm.addEventListener('input', (event) => {
-    if (validate) {
-      button.removeAttribute('disabled');  
-      button.classList.remove('add-form-button-disabled');
-    }
-  });
-  addForm.addEventListener('keydown', (event) => {
-    if (event.ctrlKey && event.key === "Enter") {
-      event.preventDefault();
-      addComment();
-    }
-  });
-  renderComments();
 
 function addCommentListener() {
     const comments = document.querySelectorAll('.comment');
