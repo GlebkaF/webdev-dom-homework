@@ -1,40 +1,4 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-    
-  </head>
-
-  <body>
-    <div class="container">
-      <ul id="comments" class="comments">
-     <!-- рендерится из js -->
-      </ul>
-      <div class="add-form">
-        <input id="add-form-name"
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-          id="add-form-text"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button" id="add-form-button">Написать</button>
-        </div>
-      </div>
-    </div>
-  </body>
-
-  <script>
-    
-    const butttonWriteElement = document.getElementById('add-form-button');
+const butttonWriteElement = document.getElementById('add-form-button');
 const commentsLinkElement = document.getElementById('comments');
 const commentNameElevent = document.getElementById('add-form-name');
 const commentTextElement = document.getElementById('add-form-text');
@@ -88,32 +52,33 @@ renderComments();
 
 
 
-
-
-const calculLikeSum = () => {
-    const likebuttonElements = document.querySelectorAll('.like-button');
-  
-    for (const likebuttonElement of likebuttonElements){
-         likebuttonElement.addEventListener('click', () => {
-          const el =  likebuttonElement.dataset.el;
-          comments[el].likesNum ++;
-       
-        renderComments(); 
-         });
-     };           
-};
-
 const colorLikeSum = () => {
     const likebuttonElements = document.querySelectorAll('.like-button');
 
     for (const likebuttonElement of likebuttonElements){
          likebuttonElement.addEventListener('click', () => {
           likebuttonElement.classList.add('click-btn') 
-         
+        
          });
      };           
 };
-colorLikeSum();
+colorLikeSum()
+
+const calculLikeSum = () => {
+    const likebuttonElements = document.querySelectorAll('.like-button');
+  
+    for (const likebuttonElement of likebuttonElements){
+         likebuttonElement.addEventListener('click', () => {
+            likebuttonElement.classList.add('click-btn') 
+          const el =  likebuttonElement.dataset.el;
+          console.log(el);
+        comments[el].likesNum ++;
+       
+        renderComments(); 
+         });
+     };           
+};
+
 
 
 
@@ -166,6 +131,3 @@ calculLikeSum()
 commentTextElement.value = '';
 });
 
-  </script>
-  <script src="new.js"></script>
-</html>
