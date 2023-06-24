@@ -11,12 +11,13 @@ let users = [];
 //Получить список комментариев
 
 const getFetchPromise = () => {
-    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/NastyaTsyf/comments", {
+   return fetch("https://wedev-api.sky.pro/api/v1/NastyaTsyf/comments", {
   method: "GET"
-  });
-
-  fetchPromise.then((response) => {
-    response.json().then((responseData) => {
+  })
+    .then((response) => {
+    return response.json()
+  })
+    .then((responseData) => {
       const appComments = responseData.comments.map((comment) => {
         return {
           name: comment.author.name,
@@ -32,12 +33,30 @@ const getFetchPromise = () => {
       initLikeButton();
       replyТoСomment();
     });
-  });
+}
+
+const addComment = () => {
+  return fetch("https://wedev-api.sky.pro/api/v1/NastyaTsyf/comments", {
+    method: "POST",
+    body: JSON.stringify({
+      name: nameInputEl.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
+      date: new Date(),
+      text: commentTextEl.value
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;"),
+      likes: 0,
+      isLiked: false
+    })
+  })  
 }
 
 getFetchPromise();
-
-
 
 const renderUsers = () =>{
   const usersHtml = users.map((user, index) =>{
@@ -132,26 +151,13 @@ writeButtonEl.addEventListener("click", () => {
         commentTextEl.classList.add("error");
         return;
       } else {
-        fetch("https://wedev-api.sky.pro/api/v1/NastyaTsyf/comments", {
-          method: "POST",
-          body: JSON.stringify({
-            name: nameInputEl.value
-              .replaceAll("&", "&amp;")
-              .replaceAll("<", "&lt;")
-              .replaceAll(">", "&gt;")
-              .replaceAll('"', "&quot;"),
-            date: new Date(),
-            text: commentTextEl.value
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;"),
-            likes: 0,
-            isLiked: false
+        addComment()
+          .then((response) => {
+          return response.json();
           })
-        }).then((response) => {
-          response.json().then(() => getFetchPromise());
-        });
+          .then(() => {
+            return getFetchPromise();
+          });
     };
     nameInputEl.value = "";
     commentTextEl.value = "";
