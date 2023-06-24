@@ -1,7 +1,7 @@
 "use strict";
 
 // Импорт данных из модулей
-import { elementComment, buttonElement } from './script.js';
+
 import { renderComments } from './render.js';
 
 // Отправка коммента с помощью кнопки Enter

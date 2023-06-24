@@ -1,10 +1,12 @@
 "use strict";
 
 // Импорт данных из модулей
-import { elementName, elementComment, DateFormatComment, loadingCommentElement, addFormElement, comments, buttonElement } from './script.js'
+import {  DateFormatComment, comments } from './script.js'
 import { renderComments } from './render.js';
 
 // Адерес нового сервера (V2)
+// ссылка на иструкцию к апи комментов
+// https://github.com/GlebkaF/webdev-hw-api/blob/main/pages/api/v2/%5Bkey%5D/comments/README.md
 const host = 'https://wedev-api.sky.pro/api/v2/alexey-tsukanov/comments';
 
 let token = 'Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k';
@@ -15,9 +17,6 @@ function fetchAndRenderComments() {
     host,
     {
       method: 'GET',
-      // headers: {
-      //   Authorization: token,
-      // }
     })
     .then((response) => {
       convertServer(response, comments)

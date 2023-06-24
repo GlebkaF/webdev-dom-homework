@@ -5,13 +5,13 @@ import { renderComments } from './render.js'
 import { fetchAndRenderComments, postComment } from './api.js';
 
 // Доступ к разметке html в JS
-const elementName = document.getElementById('nameInput');
-const elementComment = document.getElementById('commentInput');
-const listElement = document.getElementById('listComments');
-const buttonElement = document.getElementById('buttonComment');
-const loadingListElement = document.getElementById('loadingList');
-const loadingCommentElement = document.getElementById('loadingComment');
-const addFormElement = document.getElementById('addForm')
+// const elementName = document.getElementById('nameInput');
+// const elementComment = document.getElementById('commentInput');
+// const listElement = document.getElementById('listComments');
+// const buttonElement = document.getElementById('buttonComment');
+// const loadingListElement = document.getElementById('loadingList');
+// const loadingCommentElement = document.getElementById('loadingComment');
+// const addFormElement = document.getElementById('addForm')
 
 
 //  Массив в который будем рендерить полученные данные
@@ -19,7 +19,7 @@ let comments = [];
 
 
 // Убираем обработчик загрузки с экрана
-loadingCommentElement.style.display = 'none';
+// loadingCommentElement.style.display = 'none';
 
 // Функция обработчика даты
 const DateFormatComment = (commentDate) => {
@@ -33,36 +33,36 @@ const DateFormatComment = (commentDate) => {
 }
 
 // Обработчик клика на кнопку "Написать"
-buttonElement.addEventListener('click', () => {
-  loadingCommentElement.style.display = 'block';
-  addFormElement.style.display = 'none';
-  postComment()
-});
+// buttonElement.addEventListener('click', () => {
+//   loadingCommentElement.style.display = 'block';
+//   addFormElement.style.display = 'none';
+//   postComment()
+// });
 
 // Активность кнопки "Написать"
-buttonElement.disabled = true;
-elementName.addEventListener('input', () => {
-  if (elementName.value.trim() !== "") {
-    buttonElement.disabled = false;
-  } else {
-    buttonElement.disabled = true;
-  }
-});
+// buttonElement.disabled = true;
+// elementName.addEventListener('input', () => {
+//   if (elementName.value.trim() !== "") {
+//     buttonElement.disabled = false;
+//   } else {
+//     buttonElement.disabled = true;
+//   }
+// });
 
 //Удаление последнего комментария
-const deleteComment = document.getElementById('delComment');
-deleteComment.addEventListener('click', () => {
-  const lastCommentIndex = listElement.innerHTML.lastIndexOf(`<li class="comment">`);
-  if (lastCommentIndex !== -1) {
-    listElement.innerHTML = listElement.innerHTML.substring(0, lastCommentIndex)
-  }
-  comments.pop();
-  renderComments();
-});
+// const deleteComment = document.getElementById('delComment');
+// deleteComment.addEventListener('click', () => {
+//   const lastCommentIndex = listElement.innerHTML.lastIndexOf(`<li class="comment">`);
+//   if (lastCommentIndex !== -1) {
+//     listElement.innerHTML = listElement.innerHTML.substring(0, lastCommentIndex)
+//   }
+//   comments.pop();
+//   renderComments();
+// });
 
 fetchAndRenderComments();
 
 console.log("It works!");
 
 // Экспорт данных в модули
-export { elementName, elementComment, listElement, buttonElement, loadingListElement, loadingCommentElement, addFormElement, comments, DateFormatComment };
+export { comments, DateFormatComment };
