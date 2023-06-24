@@ -34,8 +34,6 @@
 <script>
   "use strict";
   const oldAddFormElement = document.getElementById("addForm")
-  // console.log(document.getElementById("addForm"));
-  // console.log(oldAddFormElement);
 
   console.log(oldAddFormElement.innerHTML);
 
@@ -51,17 +49,15 @@
       'https://wedev-api.sky.pro/api/v1/rashid-abdulkhamidov/comments',
       {
         method: "GET",
-      }
-    );
-    console.log(fetchPromise);
-
-    fetchPromise.then((response) => {
-      listCommentElement.innerHTML = 'Идет загрузка';
-
-      const jsonPromise = response.json();
-      console.log(jsonPromise);
-
-      jsonPromise.then((responseData) => {
+      })
+      .then((response) => {
+        listCommentElement.innerHTML = 'Идет загрузка';
+        const jsonPromise = response.json();
+        console.log(jsonPromise)
+        return jsonPromise
+      })
+      .then((responseData) => {
+        console.log(responseData);
         //Преобразовываем данные из формата API в формат приложения
         const currentDate = new Date()
         let newDate = currentDate.getDate() + '.' + currentDate.getMonth() + '.' + currentDate.getFullYear() + ' ' + currentDate.getHours() + ':' + currentDate.getMinutes()
@@ -81,7 +77,6 @@
         users = appComments;
         renderUsers();
       });
-    });
   };
 
   fetchPromiseFunc();
@@ -130,7 +125,6 @@
   // Рендерим список комментов
   const renderUsers = () => {
 
-
     const userHtml = users.map((user, index) => {
       return `<li class="comment">
         <div class="comment-header">
@@ -174,22 +168,6 @@
       return;
     }
 
-    addFormElement.disabled = true;
-    addFormElement.textContent = "Добавляется";
-
-    // Установка текущей даты и времени коммента
-    const currentDate = new Date()
-    let newDate = currentDate.getDate() + '.' + currentDate.getMonth() + '.' + currentDate.getFullYear() + ' ' + currentDate.getHours() + ':' + currentDate.getMinutes()
-
-    // Пушит в массив коментов новый коммент
-    users.push({
-      name: enterNameElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-      comment: enterCommentElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-      dateTime: newDate,
-      likeNumber: 0,
-      colorLike: 'like-button -no-active-like',
-    });
-
     const fetchPromise = fetch(
       'https://wedev-api.sky.pro/api/v1/rashid-abdulkhamidov/comments',
       {
@@ -200,12 +178,9 @@
         }),
       });
 
-    // fetchPromise.then(() => fetchPromiseFunc());
-    // addFormElement.disabled = false;
-    // addFormElement.innerHTML = oldAddFormElement;
 
     addFormElement.disabled = false;
-    addFormElement.textContent = oldAddFormElement.innerHTML;
+    addFormElement.innerHTML = oldAddFormElement.innerHTML;
 
     fetchPromiseFunc();
     renderUsers();
