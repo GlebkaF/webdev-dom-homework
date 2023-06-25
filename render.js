@@ -1,6 +1,7 @@
 "use strict";
 
-import { getToken, loginUser, regUser, setToken, postComment, fetchAndRenderComments } from "./api.js";
+import { getToken, loginUser, regUser, setToken, postComment} from "./api.js";
+import {like, initAnswer} from './option.js'
 
 
 
@@ -22,7 +23,7 @@ export const renderComments = (commentsArr, appHtml, user) => {
   // форма добавления комментария
   const commentFormHtml = `
     <div class="add-form" id="addForm">
-  <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="nameInput" value="" disabled
+  <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="nameInput" value="${user}" disabled
   />
   <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
     id="commentInput"></textarea>
@@ -109,7 +110,7 @@ ${commentsHtml}
       if (isloginemode) {
         loginUser(login, password).then((response) => {
           setToken(response.user.token);
-          renderComments(commentsArr);
+          renderComments(commentsArr, appHtml, user);
           sendComment()
         })
       } else {
@@ -117,10 +118,13 @@ ${commentsHtml}
         regUser(login, password, name)
           .then((response) => {
             setToken(response.user.token);
-            fetchAndRenderComments()
+            renderComments(commentsArr, appHtml, user);
             sendComment()
           })
       }
     })
   }
+
+like(commentsArr)
+initAnswer()
 }

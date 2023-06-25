@@ -5,9 +5,8 @@ import {  DateFormatComment, comments, isPosting } from './script.js'
 import { renderComments } from './render.js';
 
 
-// Адерес нового сервера (V2)
-// ссылка на иструкцию к апи комментов
-// https://github.com/GlebkaF/webdev-hw-api/blob/main/pages/api/v2/%5Bkey%5D/comments/README.md
+// Адерес сервера 
+
 const hostV1 = 'https://wedev-api.sky.pro/api';
 const hostV2 = 'https://wedev-api.sky.pro/api/v2/alexey-tsukanov/comments';
 
