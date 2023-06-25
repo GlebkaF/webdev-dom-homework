@@ -75,7 +75,7 @@
           method: "DELETE",
         })
           .then((response) => {
-            return fetchAndRenderTasks;
+            return fetchAndRenderTasks();
           })
           .catch((error) => {
             console.log('Произошла ошибка')

@@ -52,9 +52,7 @@
       })
       .then((response) => {
         listCommentElement.innerHTML = 'Идет загрузка';
-        const jsonPromise = response.json();
-        console.log(jsonPromise)
-        return jsonPromise
+        return response.json();
       })
       .then((responseData) => {
         console.log(responseData);
@@ -175,23 +173,24 @@
         body: JSON.stringify({
           text: enterCommentElement.value,
           name: enterNameElement.value,
-        }),
+        })
+          // .then((response) => {
+          //   users = appComments;
+          //   return response.json();
+          //   fetchPromiseFunc();
+          // }),
       });
-
 
     addFormElement.disabled = false;
     addFormElement.innerHTML = oldAddFormElement.innerHTML;
 
     fetchPromiseFunc();
-    renderUsers();
-    commentText();
 
     enterCommentElement.value = "";
     enterNameElement.value = "";
   });
 
   renderUsers();
-
 
   console.log("It works!");
 </script>
