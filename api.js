@@ -32,8 +32,8 @@ return fetch(
   {
     method: "POST",
     body: JSON.stringify({
-      login: login,
-      password: password
+      login,
+      password
     })
   }
 ).then((response) => {
@@ -48,9 +48,9 @@ export const regUser = (login, password, name) => {
     {
       method: "POST",
       body: JSON.stringify({
-        login: login,
-        name: name,
-        password: password,
+        login,
+        password,
+        name,
       })
     }
   ).then((response) => {
