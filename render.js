@@ -77,6 +77,7 @@ ${commentsHtml}
     renderLoginform();
   })
 
+  
   // обработчик клика кнопки "Войти"
   const renderLoginform = () => {
     appEl.innerHTML = `<div class="login-form" id="addForm">
