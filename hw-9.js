@@ -4,7 +4,6 @@ const writeButtonEl = document.getElementById("write-button");
 const nameInputEl = document.getElementById("name-input");
 const commentTextEl = document.getElementById("comment-text");
 let listEl = document.getElementById("comment-list");
-let currentDate = new Date();
 const deleteButtonEl = document.getElementById("delete-button");
 
 let users = [];
@@ -21,7 +20,7 @@ const getFetchPromise = () => {
       const appComments = responseData.comments.map((comment) => {
         return {
           name: comment.author.name,
-          date: new Date(comment.date),
+          date: getCommentDate(comment.date),
           text: comment.text,
           likes: comment.likes,
           isLiked: comment.isLiked,
@@ -61,7 +60,7 @@ const renderUsers = () =>{
     return  `<li class="comment" data-comment="${user.text}" data-name="${user.name}">
     <div class="comment-header">
       <div>${user.name}</div>
-      <div>${getCommentDate(new Date(user.date))}</div>
+      <div>${getCommentDate(getCommentDate(user.date))}</div>
     </div>
     <div class="comment-body">
       <div class="comment-text">
@@ -83,7 +82,7 @@ renderUsers();
 //loader
 
 const showDownload = () => {
-  listEl.innerHTML = `<h3 style="font-family: Helvetica; color: #ffffff;">Список загружается...</h3>`;
+  listEl.innerHTML = `<h3 style="font-family: Helvetica; color: #ffffff;">Пожалуйста подождите. Загружаю комментарии...</h3>`;
   deleteButtonEl.style.display = 'none';
   return getFetchPromise()
     .then(() => {
@@ -96,6 +95,7 @@ getFetchPromise()
 
 //date of comment
 const getCommentDate = () => {
+  let currentDate = new Date();
   let day = currentDate.getDate();
   let month = currentDate.getMonth() + 1;
   let year = String(currentDate.getFullYear()).split('').slice(2).join('');
@@ -161,12 +161,35 @@ writeButtonEl.addEventListener("click", () => {
         commentTextEl.classList.add("error");
         return;
       } else {
+        document.getElementById("add").innerHTML = `<h3 style="font-family: Helvetica; color: #ffffff;">Комментарий добавляется...</h3>`
         addComment()
           .then((response) => {
           return response.json();
           })
           .then(() => {
             return getFetchPromise();
+          })
+          .then(() => {
+            document.getElementById("add").innerHTML = `
+            <div class="add-form">
+            <input
+              id="name-input"
+              type="text"
+              class="add-form-name"
+              placeholder="Введите ваше имя"
+            />
+            <textarea
+              id="comment-text"
+              type="textarea"
+              class="add-form-text"
+              placeholder="Введите ваш коментарий"
+              rows="4"
+            ></textarea>
+            <div class="add-form-row">
+              <button class="add-form-button" id="write-button">Написать</button>
+            </div>
+          </div>
+          `;
           });
     };
     nameInputEl.value = "";
