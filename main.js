@@ -1,10 +1,13 @@
 
 "use strict";
 
-import { takeDate } from "./Date.js";
+import { takeDate } from "./date.js";
+import { fetchGet } from "./api.js";
+import { fetchPOST } from "./api.js";
 import renderComments from "./render.js";
 import { getListComments } from "./listComments.js";
-//import { getArr } from "./fetch.js";
+
+
 
 //  Поиск элментов
 const nameInputElement = document.getElementById("name-input");
@@ -15,18 +18,11 @@ const endDeleteButtonElement = document.getElementById("end-delete-button");
 const addFormElement = document.getElementById("add-form");
 const loadingElement = document.querySelector(".loading");
 
+
 let comments = [];
 
-function getArr() {    
-    return fetch("https://wedev-api.sky.pro/api/v1/:sofia-iakovleva/comments", {
-        method: "GET"
-    })
-        // Подписываемся на успешное завершение запроса с помощью then
-        .then((response) => {
-            // Запускаем преобразовываем "сырые" данные от API в json формат и 
-            //подписываемся на успешное завершение запроса с помощью then:
-            return response.json();
-        })
+function getArr() {
+    return fetchGet
         .then((responseData) => {
             const appComments = responseData.comments.map((comment) => {
                 return {
@@ -40,14 +36,14 @@ function getArr() {
                 };
             });
             comments = appComments;
-            return renderComments(listElement, getListComments)
+            return renderComments(listElement, getListComments, comments)
         })
-        .then((data) => {
+        .then(() => {
             document.body.classList.add('loaded');
         });
 }
 
-getArr(comments);
+getArr();
 
 // Добавление возможности редактирования на каждый комент
 const initiateRedact = () => {
@@ -57,7 +53,7 @@ const initiateRedact = () => {
             event.stopPropagation();
             const index = redactButton.dataset.index;
             comments[index].isEdit = !comments[index].isEdit;
-            renderComments(listElement, getListComments);
+            renderComments(listElement, getListComments, comments);
         });
 
     }
@@ -68,12 +64,13 @@ const initiateRedact = () => {
             const index = saveButton.dataset.index;
             comments[index].isEdit = !comments[index].isEdit;
             comments[index].text = saveButton.closest('.comment').querySelector('textarea').value
-            renderComments(listElement, getListComments);
+            renderComments(listElement, getListComments, comments);
         });
 
     }
 
 };
+
 // Добавление кликабельностm лайка и счётчика лайков
 function delay(interval = 300) {
     return new Promise((resolve) => {
@@ -98,7 +95,7 @@ const initlikeButtonsListeners = () => {
                     --comments[index].like;
                     comments[index].classLike = 'like-button -no-active-like';
                 }
-                renderComments(listElement, getListComments);
+                renderComments(listElement, getListComments, comments);
             })
                 .then((data) => {
                     likeButtonElement.classList.remove('-loading-like');
@@ -108,7 +105,7 @@ const initlikeButtonsListeners = () => {
 };
 
 //Функция редактирования коментов
-const redactComments = () => {
+ const redactComments = () => {
     const commentsElements = document.querySelectorAll(".comment");
     for (const commentElement of commentsElements) {
         commentElement.addEventListener("click", () => {
@@ -121,8 +118,10 @@ const redactComments = () => {
 }
 redactComments();
 
+export {initlikeButtonsListeners, redactComments, initiateRedact};
+
 // Рендерим из массива разметку
-renderComments(listElement, getListComments);
+renderComments(listElement, getListComments, comments);
 
 loadingElement.classList.add("display-none");
 
@@ -136,43 +135,9 @@ function clickButton() {
         }
         addFormElement.classList.add("display-none");
         loadingElement.classList.remove("display-none");
-        let answer = "Кажется, у вас сломался интернет, попробуйте позже";
-        fetch("https://wedev-api.sky.pro/api/v1/:sofia-iakovleva/comments", {
-            method: "POST",
-            body: JSON.stringify({
-                name: nameInputElement.value
-                    .replaceAll("&", "&amp;")
-                    .replaceAll("<", "&lt;")
-                    .replaceAll(">", "&gt;")
-                    .replaceAll('"', "&quot;"),
-                text: comentInputElement.value
-                    .replaceAll("&", "&amp;")
-                    .replaceAll("<", "&lt;")
-                    .replaceAll(">", "&gt;")
-                    .replaceAll('"', "&quot;")
-                    .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
-                    .replaceAll("QUOTE_END", "</div><br><br>,"),
-                eachDate: takeDate(new Date),
-                likes: 0,
-                currentLike: false,
-                classLike: 'like-button -no-active-like',
-                isEdit: false,
-                forceError: true,
-            }),
-        })
-            // Подписываемся на успешное завершение запроса с помощью then
-            .then((response) => {
-                if (response.status === 500) {
-                    throw new Error("Сервер сломался");
-                } else if (response.status === 400) {
-                    throw new Error("Плохой запрос");
-                } else {
-                    return response.json();
-                }
-
-            })
+        return fetchPOST(nameInputElement, comentInputElement)
             .then(() => {
-                return getArr(comments);
+                return getArr();
             })
             .then(() => {
                 addFormElement.classList.remove("display-none");
@@ -194,7 +159,7 @@ function clickButton() {
                 loadingElement.classList.add("display-none");
             });
 
-        renderComments(listElement, getListComments);
+        renderComments(listElement, getListComments, comments);
 
     })
 };

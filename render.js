@@ -1,5 +1,7 @@
+import {initlikeButtonsListeners, redactComments, initiateRedact} from "./main.js";
 
-function renderComments(element, getListComments) {
+// Рендерим из массива разметку
+function renderComments(element, getListComments, comments) {
     const commentsHTML = comments.map((comment, index) => getListComments(comment, index)).join('');
     element.innerHTML = commentsHTML;
     initlikeButtonsListeners();
