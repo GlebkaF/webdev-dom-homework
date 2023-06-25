@@ -1,7 +1,7 @@
 "use strict";
 
 // Импорт данных из модулей
-import {  DateFormatComment, comments } from './script.js'
+import {  DateFormatComment, comments, isPosting } from './script.js'
 import { renderComments } from './render.js';
 
 
@@ -41,16 +41,16 @@ return fetch(
 })
 }
 
-// функция регитрации юзера
+// функция регистрации юзера
 export const regUser = (login, password, name) => {
   return fetch(
-    `${hostV1}/user/login`,
+    `${hostV1}/user`,
     {
       method: "POST",
       body: JSON.stringify({
         login: login,
+        name: name,
         password: password,
-        name: name
       })
     }
   ).then((response) => {
@@ -92,8 +92,8 @@ const convertServer = (response, commentsArr) => {
 }
 
 // Фукнция поторного вызова в случае ошибки от сервера
-const postComment = () => {
-
+export const postComment = () => {
+  
   // Защащаем ввод данных
   const protectionHtml = (string) => {
     return string
@@ -104,6 +104,8 @@ const postComment = () => {
   };
 
   // Добавляем новый комменрарий в API
+  const elementComment = document.getElementById('commentInput');
+  const elementName = document.getElementById('nameInput');
   return fetch(
     hostV2,
     {
@@ -123,21 +125,18 @@ const postComment = () => {
         elementComment.classList.remove('error');
         return response.json()
       } 
-      // if (response.status === 400) {
-      //   throw new Error("Плохой запрос")
-      // } else {
-      //   throw new Error('Сервер не отвечает')
-      // }
+      if (response.status === 400) {
+        throw new Error("Плохой запрос")
+      } else {
+        throw new Error('Сервер не отвечает')
+      }
     })
     .then(() => {
       elementName.value = '';
       elementComment.value = '';
-      buttonElement.disabled = true;
       fetchAndRenderComments();
     })
     .catch((error) => {
-      loadingCommentElement.style.display = 'none';
-      addFormElement.style.display = 'flex';
       if (error.message === "Плохой запрос") {
         elementComment.classList.add('error');
         elementName.classList.add('error');
@@ -149,5 +148,3 @@ const postComment = () => {
     })
 };
 
-// Экспорт данных в модули
-export { postComment };

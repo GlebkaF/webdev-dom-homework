@@ -8,6 +8,7 @@ import { fetchAndRenderComments, postComment } from './api.js';
 //  Массив в который будем рендерить полученные данные
 let comments = [];
 
+export let isPosting = false;
 
 // Убираем обработчик загрузки с экрана
 // loadingCommentElement.style.display = 'none';
@@ -23,33 +24,8 @@ const DateFormatComment = (commentDate) => {
   return formatDate
 }
 
-// Обработчик клика на кнопку "Написать"
-// buttonElement.addEventListener('click', () => {
-//   loadingCommentElement.style.display = 'block';
-//   addFormElement.style.display = 'none';
-//   postComment()
-// });
 
-// Активность кнопки "Написать"
-// buttonElement.disabled = true;
-// elementName.addEventListener('input', () => {
-//   if (elementName.value.trim() !== "") {
-//     buttonElement.disabled = false;
-//   } else {
-//     buttonElement.disabled = true;
-//   }
-// });
 
-//Удаление последнего комментария
-// const deleteComment = document.getElementById('delComment');
-// deleteComment.addEventListener('click', () => {
-//   const lastCommentIndex = listElement.innerHTML.lastIndexOf(`<li class="comment">`);
-//   if (lastCommentIndex !== -1) {
-//     listElement.innerHTML = listElement.innerHTML.substring(0, lastCommentIndex)
-//   }
-//   comments.pop();
-//   renderComments();
-// });
 
 fetchAndRenderComments();
 
