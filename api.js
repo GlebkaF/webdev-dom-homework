@@ -70,11 +70,11 @@ export function fetchRegistration(login, password, name) {
     })
 }
 
-export function deleteComment(id) {
+export function deleteComment(id, token) {
     return fetch("https://webdev-hw-api.vercel.app/api/v2/marina-obruch/comments/" + id, {
         method: "DELETE",
         headers: {
-            Authorization: `Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k`,
+            Authorization: `Bearer ${token}`,
         },
     }).then((response) => {
         return response.json();

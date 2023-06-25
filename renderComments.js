@@ -11,7 +11,8 @@ export const renderComments = (app, isInitialLoading, isWaitingComment, comments
 
     const createDate = format(new Date(comment.date), 'dd/MM/yyyy HH:mm');
 
-    return `<li id="comment" class="comment" data-index="${index}">
+    return `
+    <li id="comment" class="comment" data-index="${index}">
       <div class="comment-header">
         <div id="name">${comment.author.name}</div>
         <div id="date">${createDate}</div>
@@ -23,8 +24,10 @@ export const renderComments = (app, isInitialLoading, isWaitingComment, comments
       </div>
       <div class="common-footer">
 
+        ${!user ? `` : `${user.name === comment.author.name ? `
         <button data-id="${comment.id}" class="delete-button">Удалить комментарий</button>
-        
+        ` : ``}`}
+
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${comment.likes}</span>
@@ -37,6 +40,9 @@ export const renderComments = (app, isInitialLoading, isWaitingComment, comments
       </div>
     </li>`
   }).join("");
+
+  console.log(user.name);
+  console.log(comment.author.name);
 
   const appHtml = `
   <div class="container">
@@ -82,14 +88,6 @@ export const renderComments = (app, isInitialLoading, isWaitingComment, comments
 
 
   //Функция удаления комментария
-  if (!user) {
-    const deleteButtons = document.querySelectorAll(".delete-button");
-    for (const deleteButton of deleteButtons) {
-      deleteButton.setAttribute('disabled', '');
-      deleteButton.classList.add("disabled");
-    }
-  }
-
   if (user) {
     const deleteButtons = document.querySelectorAll(".delete-button");
 
@@ -99,7 +97,7 @@ export const renderComments = (app, isInitialLoading, isWaitingComment, comments
 
         const id = deleteButton.dataset.id;
 
-        deleteComment(id)
+        deleteComment(id, token)
         renderComments(app, isInitialLoading, isWaitingComment, comments, callback, user);
       })
     };
