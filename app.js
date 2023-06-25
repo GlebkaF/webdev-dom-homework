@@ -15,22 +15,16 @@ const commentsList = [
         currDate: '12.02.22 12:18',
         likeCounter: 3,
         isLike: false,
-        likeStatus: '',
         commentText: 'Это будет первый комментарий на этой странице',
-        editStatus: 'edit',
-        editButtonText: 'Редактировать',
-        isEdit: `<textarea class="comment-edit">Это будет первый комментарий на этой странице</textarea>`,
+        isEdit: false,
     } ,
     {
         userName: 'Варвара Н.',
         currDate: '13.02.22 19:22',
         likeCounter: 75,
         isLike: false,
-        likeStatus: '',
-        editStatus: 'edit',
-        editButtonText: 'Редактировать',
         commentText: 'Мне нравится как оформлена эта страница! ❤',
-        isEdit: `<textarea class="comment-edit">Мне нравится как оформлена эта страница! ❤</textarea>`,
+        isEdit: false,
     }
 ]
 
@@ -47,14 +41,14 @@ const renderCommentList = () => {
               </div>
               <div class="comment-body">
                 <div class="comment-text">
-                  ${comments.commentText}
+                  ${(comments.isEdit) ? `<textarea class="comment-edit">${comments.commentText}</textarea>` : `${comments.commentText}` }
                 </div>
-                <button id='edit-button' data-status=${comments.editStatus} data-index='${index}' class="add-form-button add-form-button_edit">${comments.editButtonText}</button>
+                <button id='edit-button' data-index='${index}' class="add-form-button">${comments.isEdit ? `Сохранить` : 'Редактировать'}</button>
               </div>
               <div class="comment-footer">
                 <div class="likes">
                   <span class="likes-counter">${comments.likeCounter}</span>
-                  <button data-like='${index}' class="like-button ${comments.likeStatus}"></button>
+                  <button data-like='${index}' class="like-button ${(comments.isLike) ? `-active-like` : ''}"></button>
                 </div>
               </div>
         </li>    
@@ -75,11 +69,10 @@ const initLikeButtonsListeners = () => {
             if (commentsList[index].isLike === false ) {
                 commentsList[index].isLike = true;
                 commentsList[index].likeCounter += 1
-                commentsList[index].likeStatus = '-active-like'
             } else {
                 commentsList[index].isLike = false;
                 commentsList[index].likeCounter -= 1
-                commentsList[index].likeStatus = ''
+                
             }
 
             renderCommentList()
@@ -90,31 +83,19 @@ const initLikeButtonsListeners = () => {
 //Так же логика измений кнопки с РЕДАКТИРОВАТЬ на СОХРАНИТЬ и обратно
 const initEditButtonsListeners = () => {
     const editButtons = document.querySelectorAll('#edit-button')
-    editButtons.forEach(editButton => {
+    editButtons.forEach((editButton, index) => {
         editButton.addEventListener('click', () => {
-           if (editButton.dataset.status === 'edit') {           
-            commentsList[editButton.dataset.index].editStatus = 'save'  //переписываю статус у дата атрибута чтоб он по разному отрабатывал
-            commentsList[editButton.dataset.index].editButtonText = 'Сохранить'  //так же меняю текст внутри кнопки
-            commentsList[editButton.dataset.index].commentText = commentsList[editButton.dataset.index].isEdit; // чтоб в поле редактирования появился наш ранее введеный комментарий
-            
-
-           } else {
             const editCommentText = document.querySelector('.comment-edit')
-            // Проверка на пустой коммент 
-            //(пытался отключить кнопку с помощью addEventListener('input', () => {} )
-            //для отслеживания изменений в editCommentText.value при значении '',  не вышло =\
+           if (commentsList[index].isEdit) {           
             if (!editCommentText.value == '') {
-                commentsList[editButton.dataset.index].editStatus = 'edit'  // возвращаю стаут edit для дата атрибута
-                commentsList[editButton.dataset.index].editButtonText = 'Редактировать'     // так же возвращаю текст кнопки            
-                commentsList[editButton.dataset.index].isEdit = `<textarea class="comment-edit">${editCommentText.value}</textarea>` // переписываю шаблон isEdit, иначе при втором редактировании подставлялся первый вариант
-                commentsList[editButton.dataset.index].commentText = editCommentText.value
+                commentsList[index].isEdit = false
+                commentsList[index].commentText = editCommentText.value
             } else {
-                commentsList[editButton.dataset.index].editStatus = 'edit'
-                commentsList[editButton.dataset.index].editButtonText = 'Редактировать'                
-                commentsList[editButton.dataset.index].isEdit = `<textarea class="comment-edit">${'Комментарий не может быть пустым'}</textarea>`
-                commentsList[editButton.dataset.index].commentText = 'Комментарий не может быть пустым' // заглушка на случай пустого коммента
+                commentsList[index].isEdit = false
+                commentsList[index].commentText = `Комментарий не может быть пустым`
             }
-            
+           } else {            
+            commentsList[index].isEdit = true
            }
            
            renderCommentList();
@@ -152,10 +133,8 @@ function addComment() {
         currDate: currentDate,
         likeCounter: 0,
         isLike: false,
-        editStatus: 'edit',
-        editButtonText: 'Редактировать',
         commentText: commentInput.value,
-        isEdit: `<textarea class="comment-edit">${commentInput.value}</textarea>`,
+        isEdit: false,
     })
 }
 
