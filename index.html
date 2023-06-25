@@ -43,13 +43,14 @@
   const buttonElement = document.getElementById("btn")
   const addFormElement = document.getElementById("addForm")
 
-  // Получаем список комментов с помощью GET
+  // Получаем список комментов с помощью метода запросов GET
   const fetchPromiseFunc = () => {
     const fetchPromise = fetch(
       'https://wedev-api.sky.pro/api/v1/rashid-abdulkhamidov/comments',
       {
         method: "GET",
       })
+      // Показываем пользователю сообщение о том, что происходит загрузка комментариев
       .then((response) => {
         listCommentElement.innerHTML = 'Идет загрузка';
         return response.json();
@@ -148,7 +149,6 @@
     initLikeButton();
     commentText();
   };
-
   renderUsers();
 
   // Добавляем коммент кнопкой написать
@@ -174,18 +174,15 @@
           text: enterCommentElement.value,
           name: enterNameElement.value,
         })
-          // .then((response) => {
-          //   users = appComments;
-          //   return response.json();
-          //   fetchPromiseFunc();
-          // }),
       });
+    fetchPromise.then(() => fetchPromiseFunc());
 
     addFormElement.disabled = false;
     addFormElement.innerHTML = oldAddFormElement.innerHTML;
 
     fetchPromiseFunc();
 
+    // Очищаем инпуты после успешного добавления комментария
     enterCommentElement.value = "";
     enterNameElement.value = "";
   });
