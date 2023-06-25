@@ -203,7 +203,8 @@
       loaderLi.style.display = 'flex';
       addFormElement.style.display = 'none';
 
-      fetch('https://wedev-api.sky.pro/api/v1/ulyana-korotkova/comments', {
+      
+        fetch('https://wedev-api.sky.pro/api/v1/ulyana-korotkova/comments', {
         method: "POST",
         body: JSON.stringify({
           name: nameInputElement.value
@@ -220,19 +221,47 @@
           likes: 0,
           activeLike: false,
           propertyColorLike: 'like-button -no-active-like',
+          //forceError: true,
         })
       })
       .then((response) => {
-       return getFetchPromise();
+
+        if (response.status === 500) {
+          throw new Error("Сервер сломался");
+        } else if (response.status === 400) {
+          throw new Error("Плохой запрос");
+        } else {
+          return response.json();
+        }
       })
       .then((response) => {
+
+        return getFetchPromise();
+      })
+      .then((response) => {
+
+        loaderLi.style.display = 'none';
+        addFormElement.style.display = 'flex';
+        nameInputElement.value = '';
+        textInputElement.value = '';
+      })
+      .catch((error) => {
+
+        if (error.message === "Сервер сломался") {
+          alert("Сервер сломался, попробуйте позже");
+
+        } else if (error.message === "Плохой запрос") {
+          alert("Имя и комментарий должны быть не короче 3 символов");
+
+        } else {
+          alert("Кажется, у вас сломался интернет, попробуйте позже");
+          console.log(error);
+        }
         loaderLi.style.display = 'none';
         addFormElement.style.display = 'flex';
       });
-
-        nameInputElement.value = '';
-        textInputElement.value = '';
     });
+
 
    
       
