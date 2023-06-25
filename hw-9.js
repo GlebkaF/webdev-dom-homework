@@ -3,7 +3,7 @@
 const writeButtonEl = document.getElementById("write-button");
 const nameInputEl = document.getElementById("name-input");
 const commentTextEl = document.getElementById("comment-text");
-const listEl = document.getElementById("comment-list");
+let listEl = document.getElementById("comment-list");
 let currentDate = new Date();
 const deleteButtonEl = document.getElementById("delete-button");
 
@@ -56,8 +56,6 @@ const addComment = () => {
   })  
 }
 
-getFetchPromise();
-
 const renderUsers = () =>{
   const usersHtml = users.map((user, index) =>{
     return  `<li class="comment" data-comment="${user.text}" data-name="${user.name}">
@@ -80,8 +78,20 @@ const renderUsers = () =>{
   }).join('');
   listEl.innerHTML = usersHtml;
 };
-
 renderUsers();
+
+//loader
+
+const showDownload = () => {
+  listEl.innerHTML = `<h3 style="font-family: Helvetica; color: #ffffff;">Список загружается...</h3>`;
+  deleteButtonEl.style.display = 'none';
+  return getFetchPromise()
+    .then(() => {
+      deleteButtonEl.style.display = 'flex';
+    });
+}
+showDownload();
+getFetchPromise()
 
 
 //date of comment
