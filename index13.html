@@ -261,3 +261,54 @@
     </script>
   </body>
 </html>
+
+
+
+// Example
+//   fetch("https://wedev-api.sky.pro/api/v1/dima-nosov/comments", {
+//     method: "POST",
+//     body: JSON.stringify({
+//       name: inputNameElement.value
+//         .replace(/</g, "&lt;")
+//         .replace(/>/g, "&gt;"),
+//       date: currentDate,
+//       likes: 0,
+//       text: inputTextElement.value
+//         .replace(/</g, "&lt;")
+//         .replace(/>/g, "&gt;"),
+//       isLiked: false,
+//     }),
+//   })
+//     .then((response) => {
+//       return response.json();
+//     })
+//     .then((responseData) => {
+//       return fetch(
+//         "https://wedev-api.sky.pro/api/v1/dima-nosov/comments",
+//         {
+//           method: "GET",
+//         }
+//       );
+//     })
+//     .then((response) => {
+//       return response.json();
+//     })
+//     .then((responseData) => {
+//       const appUsers = responseData.comments.map((comment, index) => {
+//         return {
+//           name: comment.author.name,
+//           date: currentDate(new Date(comment.date)),
+//           likes: comment.likes,
+//           text: comment.text,
+//           isLiked: false,
+//           id: index,
+//         };
+//       });
+
+//       users = appUsers;
+//       renderUsers();
+//     });
+
+//   attachLikeButtonListener(responseData);
+//   attachTextButtonListener();
+// });
