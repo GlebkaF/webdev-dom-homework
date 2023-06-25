@@ -1,5 +1,5 @@
 // формирование даты для внедрения в форму
-function dt() {
+function dateTime() {
   const date = new Date();
   const year = date.getFullYear().toString().slice(-2);
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -13,8 +13,8 @@ function dt() {
 
 // формирование констант из первых элементов коллекции (по индексу)
 // *getElementsByClassName() возвращает коллекцию элементов
-const nameInputElement = document.getElementsByClassName('add-form-name')[0];
-const commentsElement = document.getElementsByClassName('add-form-text')[0];
+const nameInputElement = document.querySelector('.add-form-name');
+const commentsElement = document.querySelector('.add-form-text');
 
 const buttonElement = document.getElementsByClassName('add-form-button')[0];
 //const listElement = document.getElementsByClassName('comments')[0];
@@ -46,13 +46,13 @@ const initLikeButtonsListeners = () => {
         likesCounterElement.textContent = likesCounter + 1;
         comment.likesElement = true;
         comment.likesCounter = likesCounter + 1;
-      }
-    });
+      }    });
   }
 };
 
 
 // массив с первоначальными комментариями
+
 const comments = [
   {
     nameElement: "Глеб, Фокин",
@@ -109,7 +109,7 @@ function addComment() {
     alert('не заполнено одно из обязательных полей!');
     return;
   }
-  const datetime = dt();
+  const datetime = dateTime();
 
   // создание и добавление нового комментария в список
   // const oldListHtml = listElement.innerHTML;
