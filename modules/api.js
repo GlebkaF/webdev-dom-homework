@@ -1,6 +1,6 @@
-  import { getDate, addErrors } from "./helper.js";
+  import { addErrors } from "./helper.js";
 import { renderCommentList } from "./render.js";
-import {formatDateToRu} from "./lib/formatDate/formatDate.js"
+import {formatDateToRu, formatDateToUs} from "./lib/formatDate/formatDate.js"
   
   
     const addingAComment = document.getElementById('adding');
@@ -32,7 +32,7 @@ export const getComments = () => {
           };
           return{
             name: comment.author.name,
-               date: formatDateToRu(comment.date),
+               date: formatDateToUs(comment.date),
                text: comment.text,
                likes: comment.likes,
                activeLike: comment.isLiked,
