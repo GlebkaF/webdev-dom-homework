@@ -4,15 +4,6 @@
 import { renderComments } from './render.js'
 import { fetchAndRenderComments, postComment } from './api.js';
 
-// Доступ к разметке html в JS
-// const elementName = document.getElementById('nameInput');
-// const elementComment = document.getElementById('commentInput');
-// const listElement = document.getElementById('listComments');
-// const buttonElement = document.getElementById('buttonComment');
-// const loadingListElement = document.getElementById('loadingList');
-// const loadingCommentElement = document.getElementById('loadingComment');
-// const addFormElement = document.getElementById('addForm')
-
 
 //  Массив в который будем рендерить полученные данные
 let comments = [];

@@ -4,19 +4,71 @@
 import {  DateFormatComment, comments } from './script.js'
 import { renderComments } from './render.js';
 
+
 // Адерес нового сервера (V2)
 // ссылка на иструкцию к апи комментов
 // https://github.com/GlebkaF/webdev-hw-api/blob/main/pages/api/v2/%5Bkey%5D/comments/README.md
-const host = 'https://wedev-api.sky.pro/api/v2/alexey-tsukanov/comments';
+const hostV1 = 'https://wedev-api.sky.pro/api';
+const hostV2 = 'https://wedev-api.sky.pro/api/v2/alexey-tsukanov/comments';
+
 
 let token = 'Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k';
+token = null;
+
+
+// Функция позволяющая изменять переменную токен в других модулях прилоения
+export const setToken = (newToken) => {
+   token = newToken;
+};
+
+export const getToken = () => {
+  return token
+};
+
+//Функция входа по логину 
+export const loginUser = (login, password) => {
+return fetch(
+  `${hostV1}/user/login`,
+  {
+    method: "POST",
+    body: JSON.stringify({
+      login: login,
+      password: password
+    })
+  }
+).then((response) => {
+  return response.json()
+})
+}
+
+// функция регитрации юзера
+export const regUser = (login, password, name) => {
+  return fetch(
+    `${hostV1}/user/login`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        login: login,
+        password: password,
+        name: name
+      })
+    }
+  ).then((response) => {
+    return response.json()
+  })
+  }
 
 //  Получаем данные из API(Сервера)
-function fetchAndRenderComments() {
+export const fetchAndRenderComments =() =>  {
+  const headers = token ? {
+    Authorization: `Bearer ${token}`,
+  } : {};
+
   return fetch(
-    host,
+    hostV2,
     {
       method: 'GET',
+      headers
     })
     .then((response) => {
       convertServer(response, comments)
@@ -53,16 +105,16 @@ const postComment = () => {
 
   // Добавляем новый комменрарий в API
   return fetch(
-    host,
+    hostV2,
     {
       method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify(
         {
           text: protectionHtml(elementComment.value),
           name: protectionHtml(elementName.value),
-          headers: {
-            Authorization: token,
-          }
         })
     })
     .then((response) => {
@@ -98,4 +150,4 @@ const postComment = () => {
 };
 
 // Экспорт данных в модули
-export { fetchAndRenderComments, postComment };
+export { postComment };

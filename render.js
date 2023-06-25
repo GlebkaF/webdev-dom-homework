@@ -1,5 +1,7 @@
 "use strict";
 
+import { fetchAndRenderComments, getToken, loginUser, setToken } from "./api.js";
+
 // Импорт данных из модулей
 
 import { like, initAnswer } from "./option.js"
@@ -8,6 +10,31 @@ import { like, initAnswer } from "./option.js"
 const renderComments = (commentsArr, appHtml) => {
 
   //  рендер списка комментариев Ul
+  const goToAuthHtml = `<div>
+<p class"auth-text">Чтобы добавить комментарий, 
+    <a href="#" id="toggleLink">авторизуйтесь</a></p>
+    </div>`
+
+  const authFormHtml = `<div class="login-form" id="addForm">
+    <h2>Авторизация</h2>
+    <input type="text" class="add-form-login-password" placeholder="Введите ваше имя" id="loginInput" value="" /> 
+    <input type="password" class="add-form-login-password" placeholder="Введите Ваш пароль" id="passwordInput" value=""/>
+    <div class="add-form-row">
+      <button class="inner-form-button" id="buttonLogin">Войти</button>
+  <p style="text-decoration: underline;" class="comment-text">Зарегистрироваться</p>
+    </div>
+    </div>`;
+    const commentFormHtml = `
+    <div class="add-form" id="addForm">
+  <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="nameInput" value="" />
+  <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
+    id="commentInput"></textarea>
+  <div class="add-form-row">
+    <button class="add-form-button" id="buttonComment">Написать</button>
+
+  </div>
+  </div>`
+
   const commentsHtml = commentsArr.map((comment, index) => {
     let likeActive = '';
     if (commentsArr[index].isActiveLike) {
@@ -32,35 +59,16 @@ const renderComments = (commentsArr, appHtml) => {
 
 
   // Разметка страницы HTML
-  
+
   const appEl = document.getElementById('app');
   appHtml = `<div class="container">
 <ul class="comments" id="listComments">
 ${commentsHtml}
 </ul>
-
-<div class="add-form" id="addForm">
-  <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="nameInput" value="" />
-  <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
-    id="commentInput"></textarea>
-  <div class="add-form-row">
-    <button class="add-form-button" id="buttonComment">Написать</button>
-
-  </div>
 </div>
 
-<div class="login-form" id="addForm">
-  <h2>Форма входа</h2>
-  <input type="text" class="add-form-login-password" placeholder="Введите ваше имя" id="loginInput" value="" /> 
-  <input type="password" class="add-form-login-password" placeholder="Введите Ваш пароль" id="passwordInput" />
-  <div class="add-form-row">
-    <button class="inner-form-button" id="buttonComment">Войти</button>
-     
-  </div>
-  <p style="text-decoration: underline;" class="comment-text preline">Зарегистрироваться</p>
-</div>
-<p class"auth-text">Чтобы добавить комментарий, 
-    <a href="#" id="toggleLink">автаризуйтесь</a> </p>`;
+ ${!getToken() ? goToAuthHtml : commentFormHtml}
+`;
 
   const elementName = document.getElementById('nameInput');
   const elementComment = document.getElementById('commentInput');
@@ -73,6 +81,23 @@ ${commentsHtml}
 
   appEl.innerHTML = appHtml;
 
+  const toggleButtonEl = document.getElementById('toggleLink')
+  toggleButtonEl?.addEventListener('click', () => {
+    appEl.innerHTML = authFormHtml;
+
+    const buttonLoginEl = document.getElementById('buttonLogin');
+    buttonLoginEl.addEventListener('click', () => {
+      const login = document.getElementById('loginInput').value
+      const password = document.getElementById('passwordInput').value;
+loginUser(login, password).then((response) => {
+  console.log(response.user);
+  setToken(response.user.token)
+  fetchAndRenderComments();
+})
+    })
+  })
+
+  
   // like(commentsArr);
   // initAnswer();
 
@@ -86,4 +111,9 @@ ${commentsHtml}
 };
 
 // Экспорт данных в модули
+
+
+
+
+
 export { renderComments }
