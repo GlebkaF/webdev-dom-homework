@@ -1,6 +1,6 @@
 import { getCurrentDate } from "./fullDate.js";
 import { getFetchPromise, postFetchPromise } from "./API.js";
-import { renderComment } from "./render.js";
+import { renderComments }  from "./render.js";
 import { listComments } from "./listComments.js"
     
     const commentsLoading = document.querySelector('.loader');
@@ -9,13 +9,13 @@ import { listComments } from "./listComments.js"
     const listElement = document.getElementById("list");
     export const nameInputElement = document.getElementById("input-name");
     export const textInputElement = document.getElementById("textarea-text");
-    export const commentElement = document.querySelectorAll('.comment');
+    
     
 
     let comments = [];
 
-    const getAPI = (fetch) => {
-      return fetch()
+    function getArr(modulFetch) {
+      return modulFetch()
       .then((responseDate) => {
         const appComments = responseDate.comments.map ((comment) => {
           return{
@@ -28,14 +28,14 @@ import { listComments } from "./listComments.js"
           }
         });
          comments = appComments;
-         return renderComment( comments, listComments );
+         return renderComments( listElement, comments, listComments );
       })
       .then(() => {
          commentsLoading.style.display = 'none';
       })
     };
     
-    getAPI(getFetchPromise);
+    getArr(getFetchPromise);
     
 
     export const replayToComment = () => {
@@ -79,7 +79,7 @@ import { listComments } from "./listComments.js"
           commentElement.propertyColorLike = 'like-button -active-like';
 
         }
-        renderComment( listComments, comments);
+        renderComments(listComments, comments);
 
       });
 
@@ -123,38 +123,7 @@ import { listComments } from "./listComments.js"
     //   replayToComment();
     // };
 
-    renderComment( listComments, comments);
-
-    const postData = (fetch) => {
-
-      return fetch()
-      .then((response) => {
-        return getAPI(getFetchPromise);
-      })
-      .then((data) => {
-        loaderLi.style.display = 'none';
-        addFormElement.style.display = 'flex';
-        nameInputElement.value = '';
-        textInputElement.value = '';
-      })
-      .catch((error) => {
-
-        if (error.message === "Сервер сломался") {
-          alert("Сервер сломался, попробуйте позже");
-
-        } else if (error.message === "Плохой запрос") {
-          alert("Имя и комментарий должны быть не короче 3 символов");
-
-        } else {
-          alert("Кажется, у вас сломался интернет, попробуйте позже");
-          console.log(error);
-        }
-        loaderLi.style.display = 'none';
-        addFormElement.style.display = 'flex';
-      });
-      
-    };
-
+    renderComments( listComments, comments);
     
 
     buttonElement.addEventListener("click", () => {
@@ -176,7 +145,38 @@ import { listComments } from "./listComments.js"
       loaderLi.style.display = 'flex';
       addFormElement.style.display = 'none';
 
+      function postData(modulFetch) {
+
+        return modulFetch()
+        .then((response) => {
+            return getArr(getFetchPromise);
+        })
+        .then(() => {
+          loaderLi.style.display = 'none';
+          addFormElement.style.display = 'flex';
+          nameInputElement.value = '';
+          textInputElement.value = '';
+        })
+        .catch((error) => {
+  
+          if (error.message === "Сервер сломался") {
+            alert("Сервер сломался, попробуйте позже");
+  
+          } else if (error.message === "Плохой запрос") {
+            alert("Имя и комментарий должны быть не короче 3 символов");
+  
+          } else {
+            alert("Кажется, у вас сломался интернет, попробуйте позже");
+            console.log(error);
+          }
+          loaderLi.style.display = 'none';
+          addFormElement.style.display = 'flex';
+        });
+        
+      };
+
       postData(postFetchPromise);
+
     });
     
     console.log("It works!");
