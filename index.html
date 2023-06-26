@@ -42,15 +42,12 @@ const addButton = document.querySelector('.add-form-button');
 const commentsList = document.querySelector('.comments');
 //const likeButtons = document.querySelectorAll('.like-button');
 
-
 let getComments = () => {
-  const fetchPromise = fetch ("https://wedev-api.sky.pro/api/v1/kristina-sapega/comments", 
-  {
+  fetch("https://wedev-api.sky.pro/api/v1/kristina-sapega/comments", {
     method: "GET",
-  });
-  fetchPromise.then((response) => {
-    const jsonPromise = response.json ();
-    jsonPromise.then((responseData) => {
+  })
+    .then((response) => response.json())
+    .then((responseData) => {
       const appComments = responseData.comments.map((comment) => {
         return {
           id: comment.id,
@@ -63,8 +60,7 @@ let getComments = () => {
       });
       comments = appComments;
       renderComments();
-    });
-  });
+    })
 };
 
 getComments();
@@ -149,6 +145,7 @@ let comments = [];
     commentsList.appendChild(newComment);
   });
 
+
     // Найти кнопку лайка внутри текущего комм
     const likeButtons = document.querySelectorAll('.like-button');
     likeButtons.forEach((button) => {
@@ -175,7 +172,6 @@ let comments = [];
   });
 };
 
-//renderComments();
 
 addButton.addEventListener('click', function() {
   if (nameInput.value.trim() === '' || commentInput.value.trim() === '') {
@@ -205,32 +201,34 @@ addButton.addEventListener('click', function() {
   //comments.push(newComment);
   //renderComments();
 
+  addButton.disabled = true;
+  addButton.textContent = "Элемент добавляется...";
+
   // Отправляем новый комментарий на сервер через POST-запрос
   function addComments() {
-    fetch("https://wedev-api.sky.pro/api/v1/kristina-sapega/comments", {
-      method: "POST",
-      body: JSON.stringify({
-        name: nameInput.value,
-        text: commentInput.value,
-      })
-    }).then((response) => {
-      response.json().then((responseData) => {
-        fetch("https://wedev-api.sky.pro/api/v1/kristina-sapega/comments").then((response) => {
-          response.json().then((responseData) => {
-            comments = responseData.comments;
-            //получаем все комментарии, включая новый
-            getComments();
-          });
-        });
-      });
+  fetch("https://wedev-api.sky.pro/api/v1/kristina-sapega/comments", {
+    method: "POST",
+    body: JSON.stringify({
+      name: nameInput.value,
+      text: commentInput.value,
+    }),
+  })
+    .then((response) => response.json())
+    .then((responseData) => {
+      return fetch("https://wedev-api.sky.pro/api/v1/kristina-sapega/comments");
+    })
+    .then((response) => response.json())
+    .then((responseData) => {
+      comments = responseData.comments;
+      getComments();
+      addButton.disabled = false;
+      addButton.textContent = "Добавить";
     });
   }
-  addComments();
-  
 
+addComments();
+renderComments();
 
-
-  
 
   // очищаем поля ввода
   nameInput.value = "";
