@@ -1,3 +1,5 @@
+"use strict";
+
 import { getCurrentDate } from "./fullDate.js";
 import { getFetchPromise, postFetchPromise } from "./API.js";
 import { renderComments }  from "./render.js";
@@ -9,7 +11,7 @@ import { listComments } from "./listComments.js"
     const listElement = document.getElementById("list");
     export const nameInputElement = document.getElementById("input-name");
     export const textInputElement = document.getElementById("textarea-text");
-    
+    export const commentsElement = document.querySelector('.comments');
     
 
     let comments = [];
@@ -28,7 +30,7 @@ import { listComments } from "./listComments.js"
           }
         });
          comments = appComments;
-         return renderComments( listElement, comments, listComments );
+         return renderComments( comments, listComments );
       })
       .then(() => {
          commentsLoading.style.display = 'none';
@@ -79,7 +81,7 @@ import { listComments } from "./listComments.js"
           commentElement.propertyColorLike = 'like-button -active-like';
 
         }
-        renderComments(listComments, comments);
+        renderComments( comments, listComments );
 
       });
 
@@ -123,8 +125,37 @@ import { listComments } from "./listComments.js"
     //   replayToComment();
     // };
 
-    renderComments( listComments, comments);
+    renderComments( comments, listComments );
     
+    function postData(modulFetch) {
+
+      return modulFetch()
+      .then((response) => {
+          return getArr(getFetchPromise);
+      })
+      .then(() => {
+        loaderLi.style.display = 'none';
+        addFormElement.style.display = 'flex';
+        nameInputElement.value = '';
+        textInputElement.value = '';
+      })
+      .catch((error) => {
+
+        if (error.message === "Сервер сломался") {
+          alert("Сервер сломался, попробуйте позже");
+          postData(postFetchPromise);
+        } else if (error.message === "Плохой запрос") {
+          alert("Имя и комментарий должны быть не короче 3 символов");
+
+        } else {
+          alert("Кажется, у вас сломался интернет, попробуйте позже");
+          console.log(error);
+        }
+        loaderLi.style.display = 'none';
+        addFormElement.style.display = 'flex';
+      });
+      
+    };
 
     buttonElement.addEventListener("click", () => {
     
@@ -145,38 +176,9 @@ import { listComments } from "./listComments.js"
       loaderLi.style.display = 'flex';
       addFormElement.style.display = 'none';
 
-      function postData(modulFetch) {
-
-        return modulFetch()
-        .then((response) => {
-            return getArr(getFetchPromise);
-        })
-        .then(() => {
-          loaderLi.style.display = 'none';
-          addFormElement.style.display = 'flex';
-          nameInputElement.value = '';
-          textInputElement.value = '';
-        })
-        .catch((error) => {
-  
-          if (error.message === "Сервер сломался") {
-            alert("Сервер сломался, попробуйте позже");
-  
-          } else if (error.message === "Плохой запрос") {
-            alert("Имя и комментарий должны быть не короче 3 символов");
-  
-          } else {
-            alert("Кажется, у вас сломался интернет, попробуйте позже");
-            console.log(error);
-          }
-          loaderLi.style.display = 'none';
-          addFormElement.style.display = 'flex';
-        });
-        
-      };
-
-      postData(postFetchPromise);
-
+      
+      postData(postFetchPromise)
+      renderComments( comments, listComments );
     });
     
     console.log("It works!");

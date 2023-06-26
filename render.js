@@ -1,12 +1,12 @@
-
+import { commentsElement } from "./main.js";
 import { initEventListeners, replayToComment } from "./main.js";
 
 
-const renderComments = ( element, comments, listComments ) => {
+const renderComments = ( comments, listComments ) => {
 
     const commentsHtml = comments.map((comment, index) => listComments(comment, index)).join('');
 
-    element.innerHTML = commentsHtml;
+    commentsElement.innerHTML = commentsHtml;
     initEventListeners(); 
     replayToComment();
 };
