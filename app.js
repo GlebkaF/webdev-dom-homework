@@ -4,10 +4,6 @@ const commentInput = document.querySelector('#comment-input')
 const addButton = document.querySelector('#add-button')
 const commentsBox = document.querySelector('#comments-box')
 const removeButton = document.querySelector('#delete-button')
-//переменные для даты
-const date = new Date()
-const optionsForDate = {month: 'numeric', day: 'numeric'}
-const currentDate = `${date.toLocaleDateString('ru-RU', optionsForDate)}.${String(date.getFullYear()).slice(2)} ${fullTime(date.getHours())}:${fullTime(date.getMinutes())}`;
 // переводим список комментов в массив
 const commentsList = [
     {
@@ -70,8 +66,9 @@ const initCommentAnswerListeners = () => {
     const commentAnswer = document.querySelectorAll(".comment-text")
     commentAnswer.forEach((answer, index) => {
         answer.addEventListener('click', () => {
-           if(answer.children.length == 0) {
+           if(answer.children.length == 0) { //Дополнительная проверка, чтоб не отрабатывал клик на редактируемый комментарий
             commentInput.value = `→${commentsList[index].userName}
+
 ${commentsList[index].commentText}←
             
 `
@@ -129,14 +126,6 @@ renderCommentList();
 
 //ВСЕ ОСТАЛЬНЫЕ ФУНКЦИИ НА СТАТИЧЕСКИХ ЭЛЕМЕНТАХ
 
-// функция подправки времени.
-function fullTime(number) {
-    if (String(number).length < 2) {
-       return number = `0${number}`
-    } else {
-       return number = number
-    }
-}
 // Выключение кнопки при не соблюдении условий
 function disableBtn() {
     if (!nameInput.value == '' && !commentInput.value == '') {
@@ -146,8 +135,20 @@ function disableBtn() {
     }
 }
 
+// функция подправки времени.
+function fullTime(number) {
+    if (String(number).length < 2) {
+       return number = `0${number}`
+    } else {
+       return number = number
+    }
+}
+
 // функция добавления нашего комментария в массив
 function addComment() {
+    const date = new Date()
+    const optionsForDate = {month: 'numeric', day: 'numeric'}
+    const currentDate = `${date.toLocaleDateString('ru-RU', optionsForDate)}.${String(date.getFullYear()).slice(2)} ${fullTime(date.getHours())}:${fullTime(date.getMinutes())}`;
     commentsList.push({
         userName: nameInput.value
         .replaceAll("&", "&amp;")
