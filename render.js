@@ -14,6 +14,7 @@ const sendComment = () => {
 // создаем рендер фукцию для добавления разметки html из JS
 export const renderComments = (commentsArr, appHtml, user) => {
   let isloginemode = true;
+  
   // переменная надписи об авторизации
   const goToAuthHtml = `<div>
 <p class"auth-text">Чтобы добавить комментарий, 
@@ -111,7 +112,7 @@ ${commentsHtml}
       if (isloginemode) {
         loginUser(login, password).then((response) => {
           setToken(response.user.token);
-          renderComments(commentsArr, appHtml, user);
+          renderComments(commentsArr, appHtml, response.user.name);
           sendComment()
         })
       } else {
@@ -119,8 +120,8 @@ ${commentsHtml}
         regUser(login, password, name)
           .then((response) => {
             setToken(response.user.token);
-            renderComments(commentsArr, appHtml, user);
-            sendComment()
+            renderComments(commentsArr, appHtml, response.user.name);
+            sendComment();
           })
       }
     })
