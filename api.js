@@ -1,5 +1,8 @@
 import { takeDate } from "./date.js";
-const fetchGet = fetch("https://wedev-api.sky.pro/api/v1/:sofia-iakovleva/comments", {
+import { nameInputElement, comentInputElement } from "./main.js";
+
+const fetchGet = () => {
+    return fetch("https://wedev-api.sky.pro/api/v1/:sofia-iakovleva/comments", {
     method: "GET"
 })
     // Подписываемся на успешное завершение запроса с помощью then
@@ -8,10 +11,10 @@ const fetchGet = fetch("https://wedev-api.sky.pro/api/v1/:sofia-iakovleva/commen
         //подписываемся на успешное завершение запроса с помощью then:
         return response.json();
     })
+};
 
 
-
-const fetchPOST = (nameInputElement, comentInputElement) => {
+const fetchPOST = () => {
     return fetch("https://wedev-api.sky.pro/api/v1/:sofia-iakovleva/comments", {
     method: "POST",
     body: JSON.stringify({

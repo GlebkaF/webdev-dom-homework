@@ -19,8 +19,10 @@ const addFormElement = document.getElementById("add-form");
 const loadingElement = document.querySelector(".loading");
 let comments = [];
 
-function getArr() {
-    return fetchGet
+export { nameInputElement, comentInputElement };
+
+function getArr(modulFetch) {
+    return modulFetch()
         .then((responseData) => {
             const appComments = responseData.comments.map((comment) => {
                 return {
@@ -31,7 +33,7 @@ function getArr() {
                     currentLike: false,
                     classLike: 'like-button -no-active-like',
                     isEdit: false,
-                };
+                }
             });
             comments = appComments;
             return renderComments(listElement, getListComments, comments)
@@ -39,9 +41,9 @@ function getArr() {
         .then(() => {
             document.body.classList.add('loaded');
         });
-}
+};
 
-getArr();
+getArr(fetchGet);
 
 // Добавление возможности редактирования на каждый комент
 const initiateRedact = () => {
@@ -116,15 +118,41 @@ const redactComments = () => {
 }
 redactComments();
 
-export {initlikeButtonsListeners, redactComments, initiateRedact};
+export { initlikeButtonsListeners, redactComments, initiateRedact };
 
 // Рендерим из массива разметку
 renderComments(listElement, getListComments, comments);
 
 loadingElement.classList.add("display-none");
 
+//Добавляем новый коммент на сервер
+function postData(modulFetch) {
+    return modulFetch()
+        .then((response) => {
+            return getArr(fetchGet);
+        })
+        .then(() => {
+            addFormElement.classList.remove("display-none");
+            loadingElement.classList.add("display-none");
+            nameInputElement.value = "";
+            comentInputElement.value = "";
+        })
+        .catch((error) => {
+            if (error.message === "Сервер сломался") {
+                alert("Сервер сломался, попробуйте позже");
+                postData(fetchPOST);
+            } else if (error.message === "Плохой запрос") {
+                alert("Имя и комментарий должны быть не короче 3 символов");
+            } else {
+                alert("Кажется, у вас сломался интернет, попробуйте позже");
+                console.log(error);
+            }
+            addFormElement.classList.remove("display-none");
+            loadingElement.classList.add("display-none");
+        });
+};
+
 // Добавить обработчик клика для добавления элемента
-function clickButton() {
     addButtonElement.addEventListener("click", () => {
 
         //Добавляем валидацию
@@ -133,35 +161,11 @@ function clickButton() {
         }
         addFormElement.classList.add("display-none");
         loadingElement.classList.remove("display-none");
-        return fetchPOST(nameInputElement, comentInputElement)
-            .then(() => {
-                return getArr();
-            })
-            .then(() => {
-                addFormElement.classList.remove("display-none");
-                loadingElement.classList.add("display-none");
-                nameInputElement.value = "";
-                comentInputElement.value = "";
-            })
-            .catch((error) => {
-                if (error.message === "Сервер сломался") {
-                    alert("Сервер сломался, попробуйте позже");
-                    clickButton()
-                } else if (error.message === "Плохой запрос") {
-                    alert("Имя и комментарий должны быть не короче 3 символов");
-                } else {
-                    alert("Кажется, у вас сломался интернет, попробуйте позже");
-                    console.log(error);
-                }
-                addFormElement.classList.remove("display-none");
-                loadingElement.classList.add("display-none");
-            });
+        postData(fetchPOST);
 
         renderComments(listElement, getListComments, comments);
 
-    })
-};
-clickButton();
+    });
 
 
 // Добавление обработчика ввода для input
