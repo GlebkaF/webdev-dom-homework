@@ -73,7 +73,10 @@ isLiked: false,
 });
 comments = appComments;
 renderComments();
-})
+}).catch(() => {
+  alert ("Кажется что-то пошло не так, попробуйте позже");
+console.warn (error);
+});
 }
 fetchFunction();
 loaderComments ();
@@ -165,35 +168,57 @@ if (nameInputElement.value === "" ){
   nameInputElement.style.background = 'red';
   return;
  };
+
  textElement.style.background = '';
-if (textElement.value === ""){
-  textElement.style.background = 'red';
-  return;
+ if (textElement.value === ""){
+    textElement.style.background = 'red';
+    return;
  };
 
 
  fetch("https://wedev-api.sky.pro/api/v1/tanya-bulaeva/comments",
-{
-method: "POST",
-body: JSON.stringify({
-name:   nameInputElement.value,
-text: textElement.value,
-date: commentDate,
-likes: 0,
+ {
+  method: "POST",
+  body: JSON.stringify({
+        name:   nameInputElement.value,
+        text: textElement.value,
+        date: commentDate,
+        likes: 0,
+        forceError: true,
+      })
+    }).then((response) => {
+  if (response.status === 201){
+  addFormElement.classList.add('hide');
+  commentsElement.textContent = `Загрузка комментария`;
+  return response.json();
+  };
+  if (response.status === 500){
+    throw new Error ("Сервер сломался");
+  };
+  if  (response.status === 400){
+    throw new Error  ("Плохой запрос")
+  }; 
+
+   }).then((responseData) => {
+    return fetchFunction();
+}).then(() => {
+    nameInputElement.value = "";
+    textElement.value = ''; 
 })
-}).then((response) => {
-addFormElement.classList.add('hide');
-commentsElement.textContent = `Загрузка комментария`;
-return response.json();
-}).then((responseData) => {
+.catch((error) => {
+ if (error.message === "Сервер сломался" ){
+  alert ("Сервер сломался, попробуйте позже");
+  return;
+ };
+ if (error.message === "Плохой запрос" ){
+  alert ("Имя и комментарий должны быть не короче 3 символов");
+  return;
+ }; 
+ alert ("Кажется что-то пошло не так, попробуйте позже");
 
-return fetchFunction();
-      });
-nameInputElement.value = "";
-textElement.value = ''; 
-
+});
 renderComments();
-      });
+})
 
 renderComments();
 
