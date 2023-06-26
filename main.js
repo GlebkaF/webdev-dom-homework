@@ -1,24 +1,21 @@
-import { getCurrentDate } from "./fullDate.js";   
+import { getCurrentDate } from "./fullDate.js";
+import { getFetchPromise, postFetchPromise } from "./API.js";
+import { renderComment } from "./render.js";
+import { listComments } from "./listComments.js"
     
     const commentsLoading = document.querySelector('.loader');
     const addFormElement = document.querySelector('.add-form');
     const buttonElement = document.getElementById('add-button');
     const listElement = document.getElementById("list");
-    const nameInputElement = document.getElementById("input-name");
-    const textInputElement = document.getElementById("textarea-text");
-    const commentElement = document.querySelectorAll('.comment');
-    
+    export const nameInputElement = document.getElementById("input-name");
+    export const textInputElement = document.getElementById("textarea-text");
+    export const commentElement = document.querySelectorAll('.comment');
     
 
     let comments = [];
 
-    const getFetchPromise = () => {
-     return fetch('https://wedev-api.sky.pro/api/v1/ulyana-korotkova/comments',{
-       method: "GET"
-       })
-      .then((response) => {
-         return response.json()
-      })
+    const getAPI = (fetch) => {
+      return fetch()
       .then((responseDate) => {
         const appComments = responseDate.comments.map ((comment) => {
           return{
@@ -29,19 +26,19 @@ import { getCurrentDate } from "./fullDate.js";
            activeLike: false,
            propertyColorLike: 'like-button -no-active-like',
           }
-        })
+        });
          comments = appComments;
-         renderComment();
+         return renderComment( comments, listComments );
       })
       .then(() => {
          commentsLoading.style.display = 'none';
       })
     };
-  
-    getFetchPromise();
+    
+    getAPI(getFetchPromise);
     
 
-    const replayToComment = () => {
+    export const replayToComment = () => {
 
       const oldComments = document.querySelectorAll('.comment');
       
@@ -59,7 +56,7 @@ import { getCurrentDate } from "./fullDate.js";
 
     replayToComment();
 
-    const initEventListeners = () => {
+    export const initEventListeners = () => {
 
     const likeBtn = document.querySelectorAll('.like-button');
 
@@ -82,7 +79,7 @@ import { getCurrentDate } from "./fullDate.js";
           commentElement.propertyColorLike = 'like-button -active-like';
 
         }
-        renderComment();
+        renderComment( listComments, comments);
 
       });
 
@@ -91,102 +88,50 @@ import { getCurrentDate } from "./fullDate.js";
   };
     initEventListeners(); 
 
-    const renderComment = () => {
-      const commentsHtml = comments.map((comment, index) => {
-        return `<li class="comment" data-index="${index}">
-        <div class="comment-header">
-          <div>${comment.name
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;")}
-          </div>
-          <div>${comment.date}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${comment.text
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;")}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">${comment.likes}</span>
-            <button class="like-button ${comment.propertyColorLike}" data-index="${index}"></button>
-          </div>
-        </div>
-      </li>`
-      }).join('');
+    // const renderComment = () => {
+    //   const commentsHtml = comments.map((comment, index) => {
+    //     return `<li class="comment" data-index="${index}">
+    //     <div class="comment-header">
+    //       <div>${comment.name
+    //       .replaceAll("&", "&amp;")
+    //       .replaceAll("<", "&lt;")
+    //       .replaceAll(">", "&gt;")
+    //       .replaceAll('"', "&quot;")}
+    //       </div>
+    //       <div>${comment.date}</div>
+    //     </div>
+    //     <div class="comment-body">
+    //       <div class="comment-text">
+    //         ${comment.text
+    //       .replaceAll("&", "&amp;")
+    //       .replaceAll("<", "&lt;")
+    //       .replaceAll(">", "&gt;")
+    //       .replaceAll('"', "&quot;")}
+    //       </div>
+    //     </div>
+    //     <div class="comment-footer">
+    //       <div class="likes">
+    //         <span class="likes-counter">${comment.likes}</span>
+    //         <button class="like-button ${comment.propertyColorLike}" data-index="${index}"></button>
+    //       </div>
+    //     </div>
+    //   </li>`
+    //   }).join('');
 
-      listElement.innerHTML = commentsHtml;
-      initEventListeners(); 
-      replayToComment();
-    };
+    //   listElement.innerHTML = commentsHtml;
+    //   initEventListeners(); 
+    //   replayToComment();
+    // };
 
-    renderComment();
+    renderComment( listComments, comments);
 
-    
+    const postData = (fetch) => {
 
-    buttonElement.addEventListener("click", () => {
-    
-      const oldListHtml = listElement.innerHTML;
-    
-      nameInputElement.style.backgroundColor = '';
-      if (nameInputElement.value === "") {
-        nameInputElement.style.backgroundColor = 'red';
-        return;
-      }
-    
-      textInputElement.style.backgroundColor = '';
-      if (textInputElement.value === "") {
-        textInputElement.style.backgroundColor = 'red';
-        return;
-      };
-
-      const loaderLi = document.querySelector('.loader-li');
-      loaderLi.style.display = 'flex';
-      addFormElement.style.display = 'none';
-
-      
-        fetch('https://wedev-api.sky.pro/api/v1/ulyana-korotkova/comments', {
-        method: "POST",
-        body: JSON.stringify({
-          name: nameInputElement.value
-           .replaceAll("&", "&amp;")
-           .replaceAll("<", "&lt;")
-           .replaceAll(">", "&gt;")
-           .replaceAll('"', "&quot;"),
-          text: textInputElement.value
-           .replaceAll("&", "&amp;")
-           .replaceAll("<", "&lt;")
-           .replaceAll(">", "&gt;")
-           .replaceAll('"', "&quot;"),
-          date: getCurrentDate(new Date()),
-          likes: 0,
-          activeLike: false,
-          propertyColorLike: 'like-button -no-active-like',
-          //forceError: true,
-        })
-      })
+      return fetch()
       .then((response) => {
-
-        if (response.status === 500) {
-          throw new Error("Сервер сломался");
-        } else if (response.status === 400) {
-          throw new Error("Плохой запрос");
-        } else {
-          return response.json();
-        }
+        return getAPI(getFetchPromise);
       })
-      .then((response) => {
-
-        return getFetchPromise();
-      })
-      .then((response) => {
-
+      .then((data) => {
         loaderLi.style.display = 'none';
         addFormElement.style.display = 'flex';
         nameInputElement.value = '';
@@ -207,7 +152,31 @@ import { getCurrentDate } from "./fullDate.js";
         loaderLi.style.display = 'none';
         addFormElement.style.display = 'flex';
       });
-    });
-
       
+    };
+
+    
+
+    buttonElement.addEventListener("click", () => {
+    
+    
+      nameInputElement.style.backgroundColor = '';
+      if (nameInputElement.value === "") {
+        nameInputElement.style.backgroundColor = 'red';
+        return;
+      }
+    
+      textInputElement.style.backgroundColor = '';
+      if (textInputElement.value === "") {
+        textInputElement.style.backgroundColor = 'red';
+        return;
+      };
+
+      const loaderLi = document.querySelector('.loader-li');
+      loaderLi.style.display = 'flex';
+      addFormElement.style.display = 'none';
+
+      postData(postFetchPromise);
+    });
+    
     console.log("It works!");
