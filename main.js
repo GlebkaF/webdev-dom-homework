@@ -127,35 +127,7 @@ import { listComments } from "./listComments.js"
 
     renderComments( comments, listComments );
     
-    function postData(modulFetch) {
-
-      return modulFetch()
-      .then((response) => {
-          return getArr(getFetchPromise);
-      })
-      .then(() => {
-        loaderLi.style.display = 'none';
-        addFormElement.style.display = 'flex';
-        nameInputElement.value = '';
-        textInputElement.value = '';
-      })
-      .catch((error) => {
-
-        if (error.message === "Сервер сломался") {
-          alert("Сервер сломался, попробуйте позже");
-          postData(postFetchPromise);
-        } else if (error.message === "Плохой запрос") {
-          alert("Имя и комментарий должны быть не короче 3 символов");
-
-        } else {
-          alert("Кажется, у вас сломался интернет, попробуйте позже");
-          console.log(error);
-        }
-        loaderLi.style.display = 'none';
-        addFormElement.style.display = 'flex';
-      });
-      
-    };
+    
 
     buttonElement.addEventListener("click", () => {
     
@@ -176,8 +148,36 @@ import { listComments } from "./listComments.js"
       loaderLi.style.display = 'flex';
       addFormElement.style.display = 'none';
 
-      
-      postData(postFetchPromise)
+      function postData(modulFetch) {
+
+        return modulFetch()
+        .then(() => {
+            return getArr(getFetchPromise);
+        })
+        .then(() => {
+          loaderLi.style.display = 'none';
+          addFormElement.style.display = 'flex';
+          nameInputElement.value = '';
+          textInputElement.value = '';
+        })
+        .catch((error) => {
+  
+          if (error.message === "Сервер сломался") {
+            alert("Сервер сломался, попробуйте позже");
+            postData(postFetchPromise);
+          } else if (error.message === "Плохой запрос") {
+            alert("Имя и комментарий должны быть не короче 3 символов");
+  
+          } else {
+            alert("Кажется, у вас сломался интернет, попробуйте позже");
+            console.log(error);
+          }
+          loaderLi.style.display = 'none';
+          addFormElement.style.display = 'flex';
+        });
+        
+      };
+      postData(postFetchPromise);
       renderComments( comments, listComments );
     });
     
