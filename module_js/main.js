@@ -1,14 +1,7 @@
-import { renderComments } from "./render.js";
-import { getPromise, getPost } from "./api.js";
-import {
-  textInputElement,
-  nameInputElement,
-  buttonElement,
-} from "./variables.js";
+import { getPromise } from "./api.js";
+import { buttonElement } from "./variables.js";
 
 getPromise();
-
-
 
 // buttonElement.addEventListener("click", () => {
 //   buttonElement.classList.remove("add-form-button-error");
@@ -41,5 +34,3 @@ document.addEventListener("keyup", (event) => {
     buttonElement.click();
   }
 });
-
-console.log("It works!");

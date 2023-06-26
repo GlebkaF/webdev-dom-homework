@@ -1,35 +1,25 @@
-import { comments, buttonElement, textInputElement } from "./variables.js";
-import { token, getPromise } from "./api.js";
+import { textInputElement } from "./variables.js";
+import { renderLoginComponents } from "./components/login-components.js";
+
+export let token ="Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+
+token = null;
 
 export function renderComments(array) {
   const appEl = document.getElementById("app");
 
   if (!token) {
-    const appHtml = `
-    <div class="container">
-      <div class="add-form" id="form">
-        <h2>Форма для авторизации</h2>
-        <input
-          type="text"
-          class="user__login"
-          placeholder="Введите логин"
-          id="login" />
-        <textarea
-          type="password"
-          class="user__password"
-          placeholder="Введите пароль"
-          rows=""
-          id="password"></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button" id="login-button">Войти</button>
-        </div>
-      `;
-    appEl.innerHTML = appHtml;
+    renderLoginComponents({
+      appEl,
+      setToken: (newToken) => {
+        token = newToken;
+      },
+      renderComments,
+    });
     return;
   }
 
-  const commentsHtml = array
-    .map((comment, index) => {
+  const commentsHtml = array.map((comment, index) => {
       let activeLike = "";
       if (array[index].isLiked) {
         activeLike = "-active-like";

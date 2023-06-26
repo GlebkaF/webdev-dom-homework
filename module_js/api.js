@@ -7,11 +7,6 @@ import {
   buttonElement,
 } from "./variables.js";
 
-export let token =
-  "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
-
-token = null;
-
 const host = "https://wedev-api.sky.pro/api/v2/aleksey-bateha/comments";
 
 const getAppComments = (response, array) => {
@@ -27,15 +22,10 @@ const getAppComments = (response, array) => {
       };
     });
     renderComments(array);
-    document.getElementById("login-button").addEventListener("click", () => {
-      token =
-        "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
-      getPromise();
-    });
   });
 };
 
-function getPromise() {
+function getPromise(token) {
   fetch(host, {
     method: "GET",
     headers: {
@@ -46,13 +36,16 @@ function getPromise() {
   });
 }
 
-function getPost() {
+function getPost(token) {
   fetch(host, {
     method: "POST",
     body: JSON.stringify({
       name: nameInputElement.value,
       text: textInputElement.value,
     }),
+    headers: {
+      Authorization: token,
+    },
   })
     .then((response) => {
       if (response.status === 201) {
@@ -84,6 +77,21 @@ function getPost() {
         getPromise();
       }
     });
+}
+
+export function addLogin(login, password) {
+  return fetch("https://wedev-api.sky.pro/api/user/login", {
+    method: "POST",
+    body: JSON.stringify({
+      login,
+      password,
+    }),
+  }).then((response) => {
+    if(response.status === 400) {
+      throw new Error('Неверный логин или пароль')
+    }
+    return response.json();
+  });
 }
 
 export { getPromise, getPost };
