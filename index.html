@@ -32,14 +32,16 @@
     </div>
   </body>
 
-  <script>
+  <!-- <script>
     
-    const butttonWriteElement = document.getElementById('add-form-button');
+const butttonWriteElement = document.getElementById('add-form-button');
 const commentsLinkElement = document.getElementById('comments');
 const commentNameElevent = document.getElementById('add-form-name');
 const commentTextElement = document.getElementById('add-form-text');
 const commentLikeCounterElements = document.querySelectorAll('.likes-counter');
 const likebuttonElements = document.querySelectorAll('.like-button');
+
+
 
 const comments =[
     {
@@ -74,7 +76,7 @@ const renderComments = () => {
         <div class="comment-footer">
           <div class="likes">
             <span  data-el="${el}" class="likes-counter">${comment.likesNum}</span>
-            <button data-el="${el}" class="like-button">${comment.like}</button>
+            <button data-el="${el}" class="like-button ${comment.like ? "-active-like" : ""}">${comment.like}</button>
           </div>
         </div>
       </li>`
@@ -88,32 +90,39 @@ renderComments();
 
 
 
+// const colorLikeSum = () => {
+//     const likebuttonElements = document.querySelectorAll('.like-button');
 
+//     for (const likebuttonElement of likebuttonElements){
+//          likebuttonElement.addEventListener('click', () => {
+//           likebuttonElement.classList.add('click-btn') 
+        
+//          });
+//      };           
+// };
+// colorLikeSum()
 
 const calculLikeSum = () => {
     const likebuttonElements = document.querySelectorAll('.like-button');
   
     for (const likebuttonElement of likebuttonElements){
-         likebuttonElement.addEventListener('click', () => {
+         likebuttonElement.addEventListener('click', (avent) => {
+          avent.stopPropagation();
+                   
+         if(comments[el].like){
           const el =  likebuttonElement.dataset.el;
-          comments[el].likesNum ++;
-       
+        comments[el].likesNum ++;
+         } else {
+          comments[el].likesNum --
+         }
         renderComments(); 
          });
-     };           
-};
 
-const colorLikeSum = () => {
-    const likebuttonElements = document.querySelectorAll('.like-button');
-
-    for (const likebuttonElement of likebuttonElements){
-         likebuttonElement.addEventListener('click', () => {
-          likebuttonElement.classList.add('click-btn') 
          
-         });
      };           
 };
-colorLikeSum();
+
+calculLikeSum();
 
 
 
@@ -158,7 +167,7 @@ butttonWriteElement.addEventListener('click', () => {
 
 
 renderComments();
-colorLikeSum();
+// colorLikeSum();
 calculLikeSum()
 
 
@@ -166,6 +175,9 @@ calculLikeSum()
 commentTextElement.value = '';
 });
 
-  </script>
-  <script src="new.js"></script>
+
+
+
+  </script> -->
+ <script src="new.js"></script>
 </html>
