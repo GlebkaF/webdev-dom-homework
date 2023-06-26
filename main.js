@@ -1,3 +1,5 @@
+import { getCurrentDate } from "./fullDate.js";   
+    
     const commentsLoading = document.querySelector('.loader');
     const addFormElement = document.querySelector('.add-form');
     const buttonElement = document.getElementById('add-button');
@@ -6,9 +8,7 @@
     const textInputElement = document.getElementById("textarea-text");
     const commentElement = document.querySelectorAll('.comment');
     
-    const getCurrentDate = (newDate) => {
-        return (newDate.getDate() < 10 ? '0' : '') + newDate.getDate() + '.' + (newDate.getMonth() < 10 ? '0' : '') + newDate.getMonth() + '.' + `${newDate.getFullYear() - 2000} ${newDate.getHours()}:${newDate.getMinutes()}`
-    }
+    
 
     let comments = [];
 
