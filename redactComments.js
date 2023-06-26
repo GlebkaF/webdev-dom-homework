@@ -1,4 +1,3 @@
-import {commentsElements} from "./main.js";
 
 const redactComments = (commentsElements) => {
     for (const commentElement of commentsElements) {
@@ -10,4 +9,4 @@ const redactComments = (commentsElements) => {
         })
     }
 }
-export {redactComments};
+//export {redactComments};

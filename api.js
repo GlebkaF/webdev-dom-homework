@@ -11,7 +11,8 @@ const fetchGet = fetch("https://wedev-api.sky.pro/api/v1/:sofia-iakovleva/commen
 
 
 
-const fetchPOST = (nameInputElement, comentInputElement) => {fetch("https://wedev-api.sky.pro/api/v1/:sofia-iakovleva/comments", {
+const fetchPOST = (nameInputElement, comentInputElement) => {
+    return fetch("https://wedev-api.sky.pro/api/v1/:sofia-iakovleva/comments", {
     method: "POST",
     body: JSON.stringify({
         name: nameInputElement.value

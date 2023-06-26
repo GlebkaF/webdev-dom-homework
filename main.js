@@ -6,7 +6,7 @@ import { fetchGet } from "./api.js";
 import { fetchPOST } from "./api.js";
 import renderComments from "./render.js";
 import { getListComments } from "./listComments.js";
-import { redactComments } from "./redactComments.js";
+
 
 
 //  Поиск элментов
@@ -17,8 +17,6 @@ const listElement = document.getElementById("list");
 const endDeleteButtonElement = document.getElementById("end-delete-button");
 const addFormElement = document.getElementById("add-form");
 const loadingElement = document.querySelector(".loading");
-const commentsElements = document.querySelectorAll(".comment");
-export {commentsElements};
 let comments = [];
 
 function getArr() {
@@ -105,7 +103,18 @@ const initlikeButtonsListeners = () => {
 };
 
 //Функция редактирования коментов
-redactComments(commentsElements);
+const redactComments = () => {
+    const commentsElements = document.querySelectorAll(".comment");
+    for (const commentElement of commentsElements) {
+        commentElement.addEventListener("click", () => {
+            const index = commentElement.dataset.index;
+            console.log(comments[index].text);
+            comentInputElement.value = `QUOTE_BEGIN${comments[index].name}:\n${comments[index].text}QUOTE_END`;
+
+        })
+    }
+}
+redactComments();
 
 export {initlikeButtonsListeners, redactComments, initiateRedact};
 
