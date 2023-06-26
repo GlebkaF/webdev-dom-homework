@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="comment">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -49,23 +49,87 @@
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          id="nameCommentUser"
         />
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+          id="textComment"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="write-comment">Написать</button>
         </div>
       </div>
     </div>
   </body>
 
+  <style>
+    .error{
+      background-color: rgb(250, 97, 97);
+    }
+  </style>
   <script>
     "use strict";
     // Код писать здесь
+    const nameCommentUser = document.getElementById('nameCommentUser');
+    const textComment = document.getElementById('textComment');
+    const buttonWriteComment = document.getElementById('write-comment');
+    const comment = document.getElementById('comment');
+    let currentDate = new Date();
+    let day = currentDate.getDate();
+    if (day < 10) {
+      day = "0" + day;
+    }
+    let month = currentDate.getMonth() + 1;
+    if (month < 10) {
+      month = "0" + month;
+    }
+    let year = currentDate.getYear() + 1900;
+    let hours = currentDate.getHours();
+    if (hours < 10) { hours = '0' + hours}
+    let minutes = currentDate.getMinutes();
+	  if (minutes < 10) {minutes = '0' + currentDate.getMinutes()}
+
+    //console.log(`${day}/${month}/${year} ${hours}:${minutes}`);
+
+    buttonWriteComment.addEventListener("click", () => {
+      nameCommentUser.classList.remove('error');
+      textComment.classList.remove(".error");
+      if (nameCommentUser.value === "" || textComment.value === "") {
+        if (nameCommentUser.value === "") {
+          nameCommentUser.classList.add('error');
+        }
+        if (textComment.value === "") {
+          textComment.classList.add('error');
+        }
+        return;
+      }
+
+      const oldListHtml = comment.innerHTML;
+      comment.innerHTML = oldListHtml + `
+      <li class="comment">
+          <div class="comment-header">
+            <div>${nameCommentUser.value}</div>
+            <div>${`${day}.${month}.${year} ${hours}:${minutes}`}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textComment.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+      </li>
+      `
+
+    })
+
     console.log("It works!");
   </script>
 </html>
