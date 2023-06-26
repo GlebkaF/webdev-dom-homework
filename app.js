@@ -40,7 +40,7 @@ const renderCommentList = () => {
                 <div>${comments.currDate}</div>
               </div>
               <div class="comment-body">
-                <div class="comment-text">
+                <div data-answer='${index}' class="comment-text">
                   ${(comments.isEdit) ? `<textarea class="comment-edit">${comments.commentText}</textarea>` : `${comments.commentText}` }
                 </div>
                 <button id='edit-button' data-index='${index}' class="add-form-button">${comments.isEdit ? `Сохранить` : 'Редактировать'}</button>
@@ -54,12 +54,32 @@ const renderCommentList = () => {
         </li>    
         `
     }).join('')
+    
 
-    commentsBox.innerHTML = commentsHtml;
+    commentsBox.innerHTML = commentsHtml.replaceAll("→", "<div class='quote'>").replaceAll("←", "</div class='quote'>");
+    
 
     initLikeButtonsListeners();
     initEditButtonsListeners();
+    initCommentAnswerListeners();
 }
+
+
+// Функция создания ответа на комментарий
+const initCommentAnswerListeners = () => {
+    const commentAnswer = document.querySelectorAll(".comment-text")
+    commentAnswer.forEach((answer, index) => {
+        answer.addEventListener('click', () => {
+           if(answer.children.length == 0) {
+            commentInput.value = `→${commentsList[index].userName}
+${commentsList[index].commentText}←
+            
+`
+           }
+        })
+    })
+}
+
 
 // Функция создания коллекции и навешивания ивентов на все кнопки Like
 const initLikeButtonsListeners = () => {
@@ -129,11 +149,19 @@ function disableBtn() {
 // функция добавления нашего комментария в массив
 function addComment() {
     commentsList.push({
-        userName: nameInput.value,
+        userName: nameInput.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
         currDate: currentDate,
         likeCounter: 0,
         isLike: false,
-        commentText: commentInput.value,
+        commentText: commentInput.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
         isEdit: false,
     })
 }
