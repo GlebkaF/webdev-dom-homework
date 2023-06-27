@@ -2,6 +2,7 @@
 import renderComments from "./render.js";
 import {getCommentsList } from "./getCommentsList.js";
 import {getFetch, postFetch} from "./api.js";
+import { commentDate } from "./date.js";
 const buttonElement = document.getElementById('add-form-button');
 export const commentsElement = document.querySelector('.comments');
 export const nameInputElement = document.getElementById('input-name');
@@ -19,9 +20,8 @@ export function loaderComments (){
 export let  comments = [];
 
 function fetchFunction (){
-    return getFetch().then((responseData) => {
-    
-     const appComments  = responseData.comments.map ((comment) => {
+     getFetch().then((responseData) => {
+        const appComments  = responseData.comments.map ((comment) => {
         return {
     name: comment.author.name,
     dateCreation: commentDate,
@@ -31,10 +31,10 @@ function fetchFunction (){
        };
     });
     comments = appComments;
-   return  renderComments(commentsElement, getCommentsList);
-     }).catch(() => {
-       alert ("Кажется что-то пошло не так, попробуйте позже");
-    //console.warn (error);
+  renderComments();
+     }).catch((error) => {
+   //   alert ("Кажется что-то пошло не так, попробуйте позже");
+    console.log (error);
      });
      };
 

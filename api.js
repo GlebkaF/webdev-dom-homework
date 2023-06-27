@@ -1,4 +1,7 @@
+
 import { loaderComments , commentsElement, nameInputElement, textElement } from "./index.js";
+
+import { commentDate } from "./date.js";
 
 export const getFetch = () => {
     return fetch("https://wedev-api.sky.pro/api/v1/tanya-bulaeva/comments",{
@@ -6,7 +9,8 @@ export const getFetch = () => {
     })
     .then((response) => {
      loaderComments();
-    return  response.json()})
+    return  response.json();
+})
     }
     
 
@@ -19,7 +23,7 @@ export const postFetch = () => {
         text: textElement.value,
        date: commentDate,
        likes: 0,
-       forceError: true,
+   //    forceError: true,
       })
     }).then((response) => {
   if (response.status === 201){
