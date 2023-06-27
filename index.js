@@ -31,7 +31,7 @@ function fetchFunction (){
        };
     });
     comments = appComments;
-  renderComments();
+    renderComments(commentsElement, getCommentsList);
      }).catch((error) => {
    //   alert ("Кажется что-то пошло не так, попробуйте позже");
     console.log (error);

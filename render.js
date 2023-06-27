@@ -1,4 +1,5 @@
-import{ likeCommentButton, quotation} from "./index.js";
+import { getCommentsList } from "./getCommentsList.js";
+import{ commentsElement, likeCommentButton, quotation} from "./index.js";
 import {addFormElement} from "./index.js";
 import {comments} from "./index.js"
 
@@ -11,8 +12,6 @@ import {comments} from "./index.js"
     addFormElement.classList.remove('hide');
     likeCommentButton();
      quotation();
-
      } 
-   
 export default renderComments;
 
