@@ -5,25 +5,6 @@ const commentUser = document.querySelector(".add-form-text");
 const form = document.querySelector(".add-form");
 const del = document.querySelector(".remove-form-button");
 
-
-//! Работа с временем
-let date = new Date();
-let day = date.getDate();
-let month = date.getMonth() + 1;
-let year = date.getFullYear() - 2000;
-let hour = date.getHours();
-let minute = date.getMinutes();
-if (month < 10) {
-  month = "0" + month;
-}
-if (hour < 10) {
-  hour = "0" + hour;
-}
-if (minute < 10) {
-  minute = "0" + minute;
-}
-date = day + "." + month + "." + year + "  " + hour + ":" + minute;
-
 //! Массив с комментариями
 const userComments = document.querySelector('.comments');
 let userComment = [];
@@ -35,14 +16,37 @@ function apiGet() {
   }).then((response) => {
   response.json().then((responseData) => {
     userComment = responseData.comments.map((comment) => {
+      //! Работа с временем
+      let date = new Date(comment.date);
+      let day = date.getDate();
+      let month = date.getMonth() + 1;
+      let year = date.getFullYear() - 2000;
+      let hour = date.getHours();
+      let minute = date.getMinutes();
+      if (month < 10) {
+        month = "0" + month;
+      }
+      if (day < 10) {
+        day = "0" + day;
+      }
+      if (hour < 10) {
+        hour = "0" + hour;
+      }
+      if (minute < 10) {
+        minute = "0" + minute;
+      }
+      date = day + "." + month + "." + year + "  " + hour + ":" + minute;
+
+      //! Возвращаем список комментариев из API
       return {
         id: comment.id,
         name: comment.author.name,
-        date: new Date(comment.date),
+        date: date,
         comment: comment.text,
         likes: comment.likes,
         isLike: true,
       }
+      
     })
     renderUserComments();
   });
@@ -84,7 +88,7 @@ function addComment() {
   renderUserComments();
   //! Делаем отправку некликабельной, если у нас не заполнены поля
   checkFields();
-  //! 
+  //! Вызываем новый список комментариев после добавления нового коммента в список API
   apiGet();
 }
 
