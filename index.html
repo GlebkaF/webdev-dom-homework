@@ -53,7 +53,7 @@
         <textarea
           type="textarea"
           class="add-form-text"
-          placeholder="Введите ваш коментарий"
+          placeholder="Введите ваш комментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
@@ -64,8 +64,59 @@
   </body>
 
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+ "use strict";
+// Код писать здесь
+const addButton = document.getElementsByClassName("add-form-button")[0];
+const nameInput = document.getElementsByClassName("add-form-name")[0];
+const commentInput = document.getElementsByClassName("add-form-text")[0];
+const commentsList = document.getElementsByClassName("comments")[0];
+
+addButton.addEventListener("click", () => {
+  const name = nameInput.value;
+  const comment = commentInput.value;
+
+  if (name === "" || comment === "") {
+    return; // Validation failed, do not add the comment
+  }
+
+  const currentDate = new Date();
+  const formattedDate = currentDate.toLocaleString("ru-RU", {
+    day: "numeric",
+    month: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+  });
+
+  const oldListHtml = commentsList.innerHTML;
+  commentsList.innerHTML =
+    oldListHtml +
+    `<li class="comment">
+      <div class="comment-header">
+        <div>${name}</div>
+        <div>${formattedDate}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">${comment}</div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">0</span>
+          <button class="like-button"></button>
+        </div>
+      </div>
+    </li>`;
+
+  // Clear input
+  nameInput.value = "";
+  commentInput.value = "";
+
+  // Disable fieds
+  // addButton.disabled = true;
+  // nameInput.disabled = true;
+  // commentInput.disabled = true;
+});
+
   </script>
 </html>
+
