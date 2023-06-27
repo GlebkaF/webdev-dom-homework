@@ -1,5 +1,5 @@
 
-import { loaderComments , commentsElement, nameInputElement, textElement } from "./index.js";
+import { loaderComments , commentsElement, nameInputElement, textElement, addFormElement } from "./index.js";
 
 import { commentDate } from "./date.js";
 
@@ -30,6 +30,7 @@ export const postFetch = () => {
   if (response.status === 201){
   addFormElement.classList.add('hide');
  commentsElement.textContent = `Загрузка комментария`;
+
   return response.json();
  };
  if (response.status === 500){
@@ -38,7 +39,6 @@ export const postFetch = () => {
  if  (response.status === 400){
    throw new Error  ("Плохой запрос")
  }; 
-
    }).then((responseData) => {
    return getFetch();
 }).then(() => {
@@ -55,7 +55,7 @@ if (error.message === "Плохой запрос" ){
  return;
 }; 
 alert ("Кажется что-то пошло не так, попробуйте позже");
-
+console.log (error)
 });
 }
  //fetch("https://wedev-api.sky.pro/api/v1/tanya-bulaeva/comments",
