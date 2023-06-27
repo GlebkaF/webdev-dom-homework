@@ -5,6 +5,7 @@ const commentUser = document.querySelector(".add-form-text");
 const form = document.querySelector(".add-form");
 const del = document.querySelector(".remove-form-button");
 
+
 //! Работа с временем
 let date = new Date();
 let day = date.getDate();
@@ -28,23 +29,26 @@ const userComments = document.querySelector('.comments');
 let userComment = [];
 
 //? Работаем с API GET
-fetch("https://wedev-api.sky.pro/api/v1/nikita-zhvalik/comments", {
+function apiGet() {
+  fetch("https://wedev-api.sky.pro/api/v1/nikitazhvalik/comments", {
       method: "GET"
 }).then((response) => {
-  const jsonPromise = response.json();
-  jsonPromise.then((responseData) => {
+  response.json().then((responseData) => {
     userComment = responseData.comments.map((comment) => {
       return {
+        id: comment.id,
         name: comment.author.name,
         date: new Date(comment.date),
         comment: comment.text,
         likes: comment.likes,
-        isLike: false,
+        isLike: true,
       }
     })
     renderUserComments();
   });
 });
+}
+apiGet();
 
 //! создание нового комментария
 function addComment() {
@@ -57,7 +61,7 @@ function addComment() {
   //   isEdit: false,
   // });
     //? Работаем с API POST
-    fetch("https://wedev-api.sky.pro/api/v1/nikita-zhvalik/comments", {
+    fetch("https://wedev-api.sky.pro/api/v1/nikitazhvalik/comments", {
       method: "POST",
       body: JSON.stringify({
         text: commentUser.value,
@@ -66,15 +70,17 @@ function addComment() {
     }).then((response) => {
     const jsonPromise = response.json();
     jsonPromise.then((responseData) => {
-    userComment = responseData.comments.map((comment) => {
-      return {
-        name: comment.author.name,
-        date: new Date(comment.date),
-        comment: comment.text,
-        likes: comment.likes,
-        isLike: false,
-      }
-    })
+    // userComment = responseData.comments.map((comment) => {
+    //   return {
+    //     id: comment.id,
+    //     name: comment.author.name,
+    //     date: new Date(comment.date),
+    //     comment: comment.text,
+    //     likes: comment.likes,
+    //     isLike: false,
+    //   }
+    // })
+    //! Вызываем список из API
     renderUserComments();
     });
     });
@@ -88,9 +94,10 @@ function addComment() {
   renderUserComments();
   //! Делаем отправку некликабельной, если у нас не заполнены поля
   checkFields();
-
-
+  //! 
+  apiGet();
 }
+
 
 //! Обходим массив лайков до и после добавления комментариев
 const initLikesBtn = () => {
@@ -144,15 +151,15 @@ const findTextarea = () => {
 }
 
 //! Ответ на комментарий
-function commentComment() {
-  const comments = document.querySelectorAll(".comment");
-  for (const comment of comments) {
-    comment.addEventListener('click', () => {
-      const index = comment.dataset.index;
-      commentUser.value =`QUOTE_BEGIN ${userComment[index].name + ':' + ' ' + userComment[index].comment} QUOTE_END`;
-    });
-  };
-}
+// function commentComment() {
+//   const comments = document.querySelectorAll(".comment");
+//   for (const comment of comments) {
+//     comment.addEventListener('click', () => {
+//       const index = comment.dataset.index;
+//       commentUser.value =`QUOTE_BEGIN ${userComment[index].name + ':' + ' ' + userComment[index].comment} QUOTE_END`;
+//     });
+//   };
+// }
 
 //! Срабатывание добавления комментария при нажатии на кнопку 'Написать'
 btn.addEventListener("click", () => {
@@ -169,7 +176,47 @@ form.addEventListener("keyup", (e) => {
 //! Удаление последнего коммента
 del.addEventListener("click", () => {
   ul.lastElementChild.remove();
+      // //? Работаем с API POST
+      // const id = del.dataset.id;
+      // fetch("https://wedev-api.sky.pro/api/v1/nikita-zhvalik/comments/" + id, {
+      //   method: "DELETE",
+      // }).then((response) => {
+      // const jsonPromise = response.json();
+      // jsonPromise.then((responseData) => {
+      // userComment = responseData.comments.map((comment) => {
+      //   return {
+      //     id: comment.id,
+      //     name: comment.author.name,
+      //     date: new Date(comment.date),
+      //     comment: comment.text,
+      //     likes: comment.likes,
+      //     isLike: false,
+      //   }
+      // })
+      // renderUserComments();
+      // });
+      // });
 });
+
+//! Удаление коммента
+function delBtn1() {
+  const delBtns = document.querySelectorAll('.delete-button');
+  for (const delBtn of delBtns) {
+    delBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          //? Работаем с API DELETE
+          const id = delBtn.dataset.id;
+          console.log(id);
+          fetch("https://wedev-api.sky.pro/api/v1/nikitazhvalik/comments/" + id, {
+            method: "DELETE",
+          }).then((response) => {
+            response.json().then((responseData) => {
+          renderUserComments();
+          });
+          });
+    });
+  }
+}
 
 //! Делаем отправку некликабельной, если у нас не заполнены поля
 function checkFields() {
@@ -193,7 +240,7 @@ const renderUserComments = () => {
     const btnTextChange = comments.isEdit === true ? `Сохранить` : `Редактировать`;
 
     return `
-    <li class="comment" data-index=${index}>
+    <li class="comment">
     <div class="comment-header">
       <div>${comments.name}</div>
       <div>${comments.date}</div>
@@ -209,24 +256,32 @@ const renderUserComments = () => {
         <button class="change-button" data-index=${index}>${btnTextChange}</button>
       </div>
 
+      <div class="delete">
+      <button class="delete-button" data-id=${comments.id}>Удалить</button>
+      </div>
+
       <div class="likes">
         <span class="likes-counter">${comments.likes}</span>
         <button class="like-button ${comments.isLike ? "" : "-active-like"}" data-index=${index} data-like=${comments.isLike}></button>
       </div>
     </div>
   </li>`
-  }).join('');
+}).join('');
   
   //! Добавляем рендер лайка после добавления комментария
   initLikesBtn();
   //! Добавляем рендер кнопки 'редактировать'
   changeComment();
   //! Добавляем рендер ответа на комментарий
-  commentComment();
+  // commentComment();
   //! Добавляем рендер ответа на комментарий для нахождения textarea
   findTextarea();
+  //! Добавляем рендер кнопки 'удалить'
+  delBtn1();
 };
 renderUserComments();
+
+
 
 
 
