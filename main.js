@@ -25,7 +25,7 @@ date = day + "." + month + "." + year + "  " + hour + ":" + minute;
 
 //! Массив с комментариями
 const userComments = document.querySelector('.comments');
-const userComment = [
+let userComment = [
   {  name: 'Глеб Фокин',
     date: '12.02.22 12:18',
     comment: 'Это будет первый комментарий на этой странице',
@@ -42,8 +42,31 @@ const userComment = [
   },
 ];
 
+//? Работаем с API
+const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/nikita-zhvalik/comments", {
+      method: "GET"
+})
+
+fetchPromise.then((response) => {
+  const jsonPromise = response.json();
+  jsonPromise.then((responseData) => {
+    userComment = responseData.comments.map((comment) => {
+      return {
+        name: comment.author.name,
+        date: new Date(comment.date),
+        comment: comment.text,
+        likes: comment.likes,
+        isLike: false,
+      }
+    })
+    renderUserComments();
+  });
+});
+
+
+
+//! создание нового комментария
 function addComment() {
-  //! создание нового комментария
   userComment.push({
     name: nameUser.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
     date: date,
