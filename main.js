@@ -189,24 +189,24 @@ del.addEventListener("click", () => {
 });
 
 //! Удаление коммента
-function delBtn1() {
-  const delBtns = document.querySelectorAll('.delete-button');
-  for (const delBtn of delBtns) {
-    delBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          //? Работаем с API DELETE
-          const id = delBtn.dataset.id;
-          console.log(id);
-          fetch("https://wedev-api.sky.pro/api/v1/nikita--zhvalik/comments/" + id, {
-            method: "DELETE",
-          }).then((response) => {
-            response.json().then((responseData) => {
-          renderUserComments();
-          });
-          });
-    });
-  }
-}
+// function delBtn1() {
+//   const delBtns = document.querySelectorAll('.delete-button');
+//   for (const delBtn of delBtns) {
+//     delBtn.addEventListener("click", (e) => {
+//           e.stopPropagation();
+//           //? Работаем с API DELETE
+//           const id = delBtn.dataset.id;
+//           console.log(id);
+//           fetch("https://wedev-api.sky.pro/api/v1/nikita--zhvalik/comments/" + id, {
+//             method: "DELETE",
+//           }).then((response) => {
+//             response.json().then((responseData) => {
+//           renderUserComments();
+//           });
+//           });
+//     });
+//   }
+// }
 
 //! Делаем отправку некликабельной, если у нас не заполнены поля
 function checkFields() {
@@ -266,13 +266,8 @@ const renderUserComments = () => {
   // commentComment();
   //! Добавляем рендер ответа на комментарий для нахождения textarea
   findTextarea();
-  //! Добавляем рендер кнопки 'удалить'
-  delBtn1();
 };
 renderUserComments();
-
-
-
 
 
 
