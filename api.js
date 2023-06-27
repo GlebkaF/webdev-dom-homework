@@ -1,4 +1,7 @@
+import renderUserComments from "./renderComments.js";
 
+const commentInputElement = document.getElementById("comment-input");
+const nameInputElement = document.getElementById("name-input");
 
 const fetchComments = () => {
     return fetch("https://webdev-hw-api.vercel.app/api/v1/mariia-goppa/comments", {

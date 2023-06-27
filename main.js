@@ -96,8 +96,6 @@ import { fetchComments, postComment } from "./api.js";
       }
     };
 
-
-
     renderUserComments();
   
 
