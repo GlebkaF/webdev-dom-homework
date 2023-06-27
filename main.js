@@ -1,4 +1,4 @@
-"use strict";
+
 
 import { getCurrentDate } from "./fullDate.js";
 import { getFetchPromise, postFetchPromise } from "./API.js";
