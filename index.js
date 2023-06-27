@@ -98,6 +98,7 @@ if (nameInputElement.value === "" ){
     return;
  };
 postFetch();
+
  //fetch("https://wedev-api.sky.pro/api/v1/tanya-bulaeva/comments",
  //{
   //method: "POST",
@@ -139,7 +140,6 @@ postFetch();
  //alert ("Кажется что-то пошло не так, попробуйте позже");
 
 //});
-
 
 renderComments(commentsElement, getCommentsList);
 })

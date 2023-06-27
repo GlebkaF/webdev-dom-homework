@@ -26,6 +26,7 @@ export const postFetch = () => {
    //    forceError: true,
       })
     }).then((response) => {
+
   if (response.status === 201){
   addFormElement.classList.add('hide');
  commentsElement.textContent = `Загрузка комментария`;
