@@ -25,29 +25,12 @@ date = day + "." + month + "." + year + "  " + hour + ":" + minute;
 
 //! Массив с комментариями
 const userComments = document.querySelector('.comments');
-let userComment = [
-  {  name: 'Глеб Фокин',
-    date: '12.02.22 12:18',
-    comment: 'Это будет первый комментарий на этой странице',
-    likes: 3,
-    isLike: false,
-    isEdit: false,
-  },
-  {  name: 'Варвара Н.',
-    date: '13.02.22 19:22',
-    comment: 'Мне нравится как оформлена эта страница! ❤',
-    likes: 75,
-    isLike: true,
-    isEdit: false,
-  },
-];
+let userComment = [];
 
-//? Работаем с API
-const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/nikita-zhvalik/comments", {
+//? Работаем с API GET
+fetch("https://wedev-api.sky.pro/api/v1/nikita-zhvalik/comments", {
       method: "GET"
-})
-
-fetchPromise.then((response) => {
+}).then((response) => {
   const jsonPromise = response.json();
   jsonPromise.then((responseData) => {
     userComment = responseData.comments.map((comment) => {
@@ -63,18 +46,39 @@ fetchPromise.then((response) => {
   });
 });
 
-
-
 //! создание нового комментария
 function addComment() {
-  userComment.push({
-    name: nameUser.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
-    date: date,
-    comment: commentUser.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
-    likes: 0,
-    isLike: false,
-    isEdit: false,
-  });
+  // userComment.push({
+  //   name: nameUser.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
+  //   date: date,
+  //   comment: commentUser.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
+  //   likes: 0,
+  //   isLike: false,
+  //   isEdit: false,
+  // });
+    //? Работаем с API POST
+    fetch("https://wedev-api.sky.pro/api/v1/nikita-zhvalik/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        text: commentUser.value,
+        name: nameUser.value,
+      }),
+    }).then((response) => {
+    const jsonPromise = response.json();
+    jsonPromise.then((responseData) => {
+    userComment = responseData.comments.map((comment) => {
+      return {
+        name: comment.author.name,
+        date: new Date(comment.date),
+        comment: comment.text,
+        likes: comment.likes,
+        isLike: false,
+      }
+    })
+    renderUserComments();
+    });
+    });
+
   //! Добавляем чтение клика по лайку
   initLikesBtn();
   //! Чистка текстовых полей формы после отправки
@@ -84,6 +88,8 @@ function addComment() {
   renderUserComments();
   //! Делаем отправку некликабельной, если у нас не заполнены поля
   checkFields();
+
+
 }
 
 //! Обходим массив лайков до и после добавления комментариев
