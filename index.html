@@ -9,7 +9,7 @@
   <body>
     <div class="container">
       <ul id="list" class="comments">
-        <li class="comment">
+        <!-- <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -20,9 +20,9 @@
             </div>
           </div>
           <div class="comment-footer">
-            <div class="likes">
+            <div class="likes" data-name="Глеб Фокин" data-like="3" data-status="inactive">
               <span class="likes-counter">3</span>
-              <button class="like-button"></button>
+              <button id="like-button" class="like-button"></button>
             </div>
           </div>
         </li>
@@ -37,12 +37,12 @@
             </div>
           </div>
           <div class="comment-footer">
-            <div class="likes">
+            <div class="likes" data-name="Варвара Н." data-like="75" data-status="active">
               <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
+              <button id="like-button" class="like-button -active-like"></button> 
             </div>
           </div>
-        </li>
+        </li>-->
       </ul>
       <div class="add-form">
         <input
@@ -58,13 +58,20 @@
           placeholder="Введите ваш коментарий"
           rows="4"
           id="comment-input"
+          value=""
         ></textarea>
         <div class="add-form-row">
-          <button id="add-button" class="add-form-button">Написать</button>
+          <button id="add-button" class="add-form-button add-form-button_disable">Написать</button>
         </div>
       </div>
     </div>
   </body>
+
+  <style>
+    .error {
+      background-color: grey;
+    }
+  </style>
 
   <script>
     "use strict";
@@ -72,34 +79,132 @@
       const listElement = document.getElementById('list');
       const nameInputElement = document.getElementById('name-input');
       const commentInputElement = document.getElementById('comment-input');
-      let myDate = new Date();
-      let fullDate = (myDate.getDate().toString().padStart(2, "0")) + "." + (myDate.getMonth() + 1).toString().padStart(2, "0") + "." + (myDate.getFullYear() - 2000) + " " + (myDate.getHours().toString().padStart(2, "0")) + ":" + (myDate.getMinutes().toString().padStart(2, "0"));
 
-      buttonElement.addEventListener('click', () => {
-        if (nameInputElement.value === "" || commentInputElement.value === "") {
-          return;
-        }
+      const comments = [
+        {
+          name: "Глеб Фокин",
+          date: "12.02.22 12:18",
+          text: "Это будет первый комментарий на этой странице",
+          like: 3,
+          status: false,
+        },
+        {
+          name: "Варвара Н.",
+          date: "13.02.22 19:22",
+          text: "Мне нравится как оформлена эта страница! ❤",
+          like: 75,
+          status: true,
+        },
+      ]
 
-        const oldListHTML = listElement.innerHTML;
-        listElement.innerHTML = oldListHTML + `<li class="comment">
+      const initEventListeners = () => {
+        
+        const likeElements = document.querySelectorAll(".like-button");
+        // console.log(likeElements);
+          likeElements.forEach((element, index) => {
+            element.addEventListener('click', () => {
+              if (comments[index].status) {
+                comments[index].status = false;
+                comments[index].like -= 1;
+              } else {
+                comments[index].status = true;
+                comments[index].like += 1;
+              }
+              renderComments();
+            })
+          }) 
+      }
+      
+
+      const renderComments = () => {
+        const commentsHtml = comments.map((comment) => {
+          return `<li class="comment">
           <div class="comment-header">
-            <div id="name-input">${nameInputElement.value}</div>
-              <div>${fullDate}</div>
+            <div id="name-input">${comment.name}</div>
+              <div>${comment.date}</div> 
           </div>
           <div class="comment-body">
             <div id="comment-input" class="comment-text">
-              ${commentInputElement.value}
+              ${comment.text}
             </div>
           </div>
           <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
+            <div class="likes" data-name="${comment.name}" data-like="${comment.like}" data-status="${comment.status}">
+              <span class="likes-counter">${comment.like}</span>
+              <button id="like-button" class="like-button ${(comment.status)? "-active-like": ""}"></button>
             </div>
           </div>
-        </li>`;
+        </li>`
+        }).join(""); 
+
+        listElement.innerHTML = commentsHtml;
+        initEventListeners();
+      }
+      renderComments();
+
+      buttonElement.addEventListener('click', () => {
+
+        // buttonElement.classList.remove("error")
+        // if (nameInputElement.value === "" || commentInputElement.value === "") {
+        //   buttonElement.classList.add("error");
+        //   return;
+        // }
+
+        let myDate = new Date();
+        let fullDate = (myDate.getDate().toString().padStart(2, "0")) + "." + (myDate.getMonth() + 1).toString().padStart(2, "0") + "." + (myDate.getFullYear() - 2000) + " " + (myDate.getHours().toString().padStart(2, "0")) + ":" + (myDate.getMinutes().toString().padStart(2, "0"));
+        
+        comments.push({
+          name: nameInputElement.value,
+          date: fullDate,
+          text: commentInputElement.value,
+          like: 0,
+          status: false,
+        })
+
+        renderComments();
+
+        nameInputElement.value = "";
+        commentInputElement.value = "";
       })
-    console.log("It works!");
+      console.log("It works!");
+      
+      // nameInputElement.addEventListener('input', () => {
+      //   console.log(nameInputElement.value);
+      // })
+
+              nameInputElement.addEventListener('input', () => {
+            disableBtn()
+            nameInputElement.classList.remove('add-form-name_error')
+        })
+
+        nameInputElement.addEventListener('blur', () => {
+            if (nameInputElement.value == '') {
+                nameInputElement.classList.add('add-form-name_error')
+            } else {
+                nameInputElement.classList.remove('add-form-name_error')
+            }
+        })
+
+        // Перекрашиваем поле и включаем/отлючаем кнопку в инпуте комментариев
+        commentInputElement.addEventListener('input', () => {
+            disableBtn()
+            commentInputElement.classList.remove('add-form-comment_error')
+        })
+
+        commentInputElement.addEventListener('blur', () => {
+            if (commentInputElement.value == '') {
+                commentInputElement.classList.add('add-form-comment_error')
+            } else {
+                commentInputElement.classList.remove('add-form-comment_error')
+            }
+        })
+            function disableBtn() {
+        if (!nameInputElement.value == '' && !commentInputElement.value == '') {
+            buttonElement.classList.remove('add-form-button_disable')
+        } else {
+            buttonElement.classList.add('add-form-button_disable')
+        }
+}
+
   </script>
 </html>
-<!-- 13.02.22 19:22 -->
