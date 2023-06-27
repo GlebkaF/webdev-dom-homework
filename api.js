@@ -1,3 +1,5 @@
+
+
 const fetchComments = () => {
     return fetch("https://webdev-hw-api.vercel.app/api/v1/mariia-goppa/comments", {
     method: "GET",
@@ -79,5 +81,6 @@ const fetchComments = () => {
 
     renderUserComments();
     
+    export { fetchComments, postComment };
 
   

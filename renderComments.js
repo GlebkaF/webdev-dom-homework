@@ -1,3 +1,6 @@
+const listElement = document.getElementById("list");
+
+
 const renderUserComments = () => {
     const userCommentsHtml = userComments.map((userComment, index) => {
       if (!userComments[index].isEdit) {
@@ -47,3 +50,5 @@ const renderUserComments = () => {
     initEditButton();
     replyToComment();
   };
+
+  export default renderUserComments;

@@ -1,4 +1,8 @@
-const buttonElement = document.getElementById("add-button");
+
+import renderUserComments from "./renderComments.js";
+import { fetchComments, postComment } from "./api.js";
+
+    const buttonElement = document.getElementById("add-button");
     const deleteButtonElement = document.getElementById("delete-button");
     const listElement = document.getElementById("list");
     const nameInputElement = document.getElementById("name-input");
@@ -35,33 +39,6 @@ const buttonElement = document.getElementById("add-button");
 
 
       // Data from API
-
-      // import { fetchComments } from "./api.js";
-
-      const fetchComments = () => {
-        return fetch("https://webdev-hw-api.vercel.app/api/v1/mariia-goppa/comments", {
-        method: "GET",
-      }).then((response) => {
-        let loadingComments = document.getElementById('comments-loader');
-        loadingComments.style.display = 'none';
-      return response.json();
-      })
-      .then((responseData) => {
-          userComments = responseData.comments.map((comment) => {
-          return {
-            name: comment.author.name,
-            date: new Date(comment.date).toLocaleString().slice(0, -3),
-            comment: comment.text,
-            likeCounter: 0,
-            isLiked: false,
-            active: "",
-            isEdit: false,
-            };
-        });
-    
-          renderUserComments();
-        });
-      };
     
       fetchComments();
         
@@ -120,56 +97,6 @@ const buttonElement = document.getElementById("add-button");
     };
 
 
-    const renderUserComments = () => {
-      const userCommentsHtml = userComments.map((userComment, index) => {
-        if (!userComments[index].isEdit) {
-          userComments.isEdit = true;
-          return `<li class="comment" data-index="${index}" data-name="${userComment.name}" data-text="${userComment.comment}">
-          <div class="comment-header">
-            <div>${userComment.name}</div>
-            <div>${userComment.date}</div>
-          </div>
-          <div class="comment-body">
-            <div style="white-space: pre-line" class="comment-text">
-              ${userComment.comment}
-            </div>
-          </div>
-          <button data-index="${index}" class="edit-button" type="button">Редактировать</button>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">${userComment.likeCounter}</span>
-              <button data-index="${index}" class="like-button ${userComment.active}"></button>
-            </div>
-          </div>
-        </li>`;
-        } else {
-          userComments.isEdit = false;
-          return `<li class="comment">
-          <div class="comment-header">
-            <div>${userComment.name}</div>
-            <div>${userComment.date}</div>
-          </div>
-          <div class="comment-body">
-            <div style="white-space: pre-line" class="comment-text">
-              <textarea class="comment-text-edit">${userComment.comment}</textarea>
-            </div>
-          </div>
-          <button data-index="${index}" class="edit-button" type="button">Сохранить</button>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">${userComment.likeCounter}</span>
-              <button data-index="${index}" class="like-button ${userComment.active}"></button>
-            </div>
-          </div>
-        </li>`;
-        }
-      }).join('');
-      listElement.innerHTML = userCommentsHtml;
-      initLikeButton();
-      initEditButton();
-      replyToComment();
-    };
-  
 
     renderUserComments();
   
@@ -201,68 +128,7 @@ const buttonElement = document.getElementById("add-button");
         return;
       }
 
-      // Adding new comment
-
-    //  userComments.push({
-    //    name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-    //    date: time (),
-    //    comment: commentInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-    //    likeCounter: 0,
-    //    isLiked: false,
-    //    active: "",
-    //    isEdit: false,
-    //  });
-
       // Post from API
-      
-
-      const postComment = () => {
-        let loadingComments = document.getElementById('new-comment-loader');
-        loadingComments.classList.remove('hidden');
-        let newComment = document.getElementById('new-comment-section');
-        newComment.style.display = 'none';
-          fetch("https://webdev-hw-api.vercel.app/api/v1/mariia-goppa/comments", {
-            method: "POST",
-            body: JSON.stringify({ 
-              text: commentInputElement.value, 
-              name: nameInputElement.value,
-              forceError: false,
-            }),
-          })
-          .then((response) => {
-            if (response.status === 500) {
-              alert("Сервер сломался, попробуй позже");
-              throw new Error("Сервер сломался, попробуй позже");
-            } 
-            else if (response.status === 400) {
-              alert("Имя и комментарий должны быть не короче 3 символов"); 
-              throw new Error("Имя и комментарий должны быть не короче 3 символов"); 
-            } else {
-              return response.json();
-            };
-          })
-          .then((response) => {
-            return fetchComments();
-          })
-          .then((response) => {
-            let loadingComments = document.getElementById('new-comment-loader');
-            loadingComments.classList.add('hidden');
-            let newComment = document.getElementById('new-comment-section');
-            newComment.style.display = '';
-            nameInputElement.value = "";
-            commentInputElement.value = "";
-          })
-          .catch((error) => {
-            if (error.message !== "Сервер сломался, попробуй позже" && error.message !== "Имя и комментарий должны быть не короче 3 символов") 
-            {
-              alert("Кажется, у вас сломался интернет, попробуйте позже");
-            }
-            let loadingComments = document.getElementById('new-comment-loader');
-            loadingComments.classList.add('hidden');
-            let newComment = document.getElementById('new-comment-section');
-            newComment.style.display = '';
-          });
-        };
 
         postComment();
 
