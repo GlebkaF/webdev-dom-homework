@@ -10,8 +10,8 @@
 <body>
   <div class="container">
     <ul class="comments">
-
-      <li class="comment">
+      <!-- Рендеринг в JS -->
+      <!-- <li class="comment">
         <div class="comment-header">
           <div>Глеб Фокин</div>
           <div>12.02.22 12:18</div>
@@ -46,7 +46,7 @@
           </div>
         </div>
 
-      </li>
+      </li> -->
     </ul>
     <div class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
@@ -60,9 +60,12 @@
 
 <style>
   .error {
-
     background-color: red;
   }
+
+  /* .active-like {
+    background-image: url(data:image/svg+xml,%3Csvg width='22' height='20' viewBox='0 0 22 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15.95 0C14.036 0 12.199 0.882834 11 2.26703C9.801 0.882834 7.964 0 6.05 0C2.662 0 0 2.6267 0 5.99455C0 10.1035 3.74 13.4714 9.405 18.5613L11 20L12.595 18.5613C18.26 13.4714 22 10.1035 22 5.99455C22 2.6267 19.338 0 15.95 0Z' fill='%23BCEC30'/%3E%3C/svg%3E);
+  } */
 </style>
 
 
@@ -72,11 +75,80 @@
   const nameElement = document.querySelector('.add-form-name');
   const textElement = document.querySelector('.add-form-text');
   const commentsElement = document.querySelector('.comments');
+  const likesElements = document.querySelectorAll(".like-button");
 
-  console.log(commentsElement);
-  console.log(commentsElement.innerHTML);
+  const comments = [
+    {
+      name: "Глеб Фокин",
+      time: "12.02.22 12:18",
+      text: "Это будет первый комментарий на этой странице",
+      likes: 3,
+      icon: false
+    },
+    {
+      name: "Варвара Н.",
+      time: "13.02.22 19:22",
+      text: "Мне нравится как оформлена эта страница! ❤",
+      likes: 75,
+      icon: true
+    }
+  ];
 
+  // Функция Обработка кликов лайков в комментарии
 
+  const likeElementfunction = () => {
+    const likesElements = document.querySelectorAll(".like-button");
+    for (const likeElement of likesElements) {
+
+      likeElement.addEventListener("click", () => {
+        const index = likeElement.dataset.index;
+        console.log(index);
+        if (comments[index].icon === false) {
+          comments[index].icon = true;
+          comments[index].likes += 1;
+        }
+        else {
+          comments[index].icon = false;
+          comments[index].likes -= 1;
+        }
+        console.log(comments[index].icon);
+        console.log(comments[index].likes);
+
+        renderComments();
+      });
+    };
+  };
+
+  const renderComments = () => {
+    const commentsHtml = comments.map((comment, index) => {
+      return `<li class="comment">
+        <div class="comment-header">
+          <div>${comment.name}</div>
+          <div>${comment.time}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${comment.text}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${comment.likes}</span>
+            <button data-index="${index}" class="like-button ${(comment.icon) ? "-active-like" : ""}" ></button>
+          </div>
+        </div>
+      </li>`;
+    }).join("");
+    // console.log(commentsHtml);
+
+    commentsElement.innerHTML = commentsHtml;
+
+    likeElementfunction();
+  };
+
+  renderComments();
+
+  // Форма добавления нового комментария в ленту
   buttonElement.addEventListener('click', () => {
     // Проверка на заполнение данных формы
     nameElement.classList.remove('error');
@@ -91,7 +163,7 @@
     }
     // Добавление комментария в ленту
 
-    const oldcommentsElementHtml = commentsElement.innerHTML;
+    // Определение даты и времени
     const commentData = new Date;
     let comHours = commentData.getHours();
     let comMinuts = commentData.getMinutes();
@@ -103,28 +175,17 @@
     if (comMinuts < 10) { // если минут будет меньше 10,
       comMinuts = "0" + comMinuts; // то перед ними поставим 0
     }
-
     const resultDate = `${commentData.toLocaleDateString()}  ${comHours}:${comMinuts}`;
 
-    commentsElement.innerHTML = oldcommentsElementHtml +
-
-      `<li class="comment">
-        <div class="comment-header">
-          <div>${nameElement.value}</div>
-          <div>${resultDate}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${textElement.value}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>`;
+    comments.push({
+      name: nameElement.value,
+      time: resultDate,
+      text: textElement.value,
+      likes: 0,
+      icon: false
+    });
+    likeElementfunction();
+    renderComments();
 
     // Очистка формы
     nameElement.value = "";
