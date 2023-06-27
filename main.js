@@ -6,19 +6,19 @@ import { renderComments }  from "./render.js";
 import { listComments } from "./listComments.js"
     
     const commentsLoading = document.querySelector('.loader');
-    const addFormElement = document.querySelector('.add-form');
+    export const addFormElement = document.querySelector('.add-form');
     const buttonElement = document.getElementById('add-button');
     const listElement = document.getElementById("list");
     export const nameInputElement = document.getElementById("input-name");
     export const textInputElement = document.getElementById("textarea-text");
     export const commentsElement = document.querySelector('.comments');
+    export const loaderLi = document.querySelector('.loader-li');
     
 
     let comments = [];
 
-    function getArr(modulFetch) {
-      return modulFetch()
-      .then((responseDate) => {
+    export function getFetchFunction() {
+      getFetchPromise().then((responseDate) => {
         const appComments = responseDate.comments.map ((comment) => {
           return{
            name: comment.author.name,
@@ -30,14 +30,14 @@ import { listComments } from "./listComments.js"
           }
         });
          comments = appComments;
-         return renderComments( comments, listComments );
+         renderComments( comments, listComments );
       })
       .then(() => {
          commentsLoading.style.display = 'none';
       })
     };
     
-    getArr(getFetchPromise);
+    getFetchFunction();
     
 
     export const replayToComment = () => {
@@ -144,40 +144,11 @@ import { listComments } from "./listComments.js"
         return;
       };
 
-      const loaderLi = document.querySelector('.loader-li');
+      
       loaderLi.style.display = 'flex';
       addFormElement.style.display = 'none';
 
-      function postData(modulFetch) {
-
-        return modulFetch()
-        .then(() => {
-            return getArr(getFetchPromise);
-        })
-        .then(() => {
-          loaderLi.style.display = 'none';
-          addFormElement.style.display = 'flex';
-          nameInputElement.value = '';
-          textInputElement.value = '';
-        })
-        .catch((error) => {
-  
-          if (error.message === "Сервер сломался") {
-            alert("Сервер сломался, попробуйте позже");
-            postData(postFetchPromise);
-          } else if (error.message === "Плохой запрос") {
-            alert("Имя и комментарий должны быть не короче 3 символов");
-  
-          } else {
-            alert("Кажется, у вас сломался интернет, попробуйте позже");
-            console.log(error);
-          }
-          loaderLi.style.display = 'none';
-          addFormElement.style.display = 'flex';
-        });
-        
-      };
-      postData(postFetchPromise);
+      postFetchPromise();
       renderComments( comments, listComments );
     });
     

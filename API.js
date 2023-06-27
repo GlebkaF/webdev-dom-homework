@@ -1,5 +1,5 @@
 import { getCurrentDate } from "./fullDate.js";
-import { nameInputElement, textInputElement } from "./main.js";
+import { getFetchFunction, nameInputElement, textInputElement, loaderLi, addFormElement } from "./main.js";
 
 
 const getFetchPromise = () => {
@@ -11,7 +11,7 @@ const getFetchPromise = () => {
         return response.json()
      })
     
-};
+}
 
 const postFetchPromise = () => {
 
@@ -45,6 +45,31 @@ const postFetchPromise = () => {
       return response.json();
     }
   })
-};
+    .then(() => {
+        return getFetchFunction();
+    })
+    .then(() => {
+      loaderLi.style.display = 'none';
+      addFormElement.style.display = 'flex';
+      nameInputElement.value = '';
+      textInputElement.value = '';
+    })
+    .catch((error) => {
+
+      if (error.message === "Сервер сломался") {
+        alert("Сервер сломался, попробуйте позже");
+        postData(postFetchPromise);
+      } else if (error.message === "Плохой запрос") {
+        alert("Имя и комментарий должны быть не короче 3 символов");
+
+      } else {
+        alert("Кажется, у вас сломался интернет, попробуйте позже");
+        console.log(error);
+      }
+      loaderLi.style.display = 'none';
+      addFormElement.style.display = 'flex';
+    });
+    
+}
 
 export { getFetchPromise, postFetchPromise };
