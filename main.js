@@ -30,9 +30,9 @@ let userComment = [];
 
 //? Работаем с API GET
 function apiGet() {
-  fetch("https://wedev-api.sky.pro/api/v1/nikitazhvalik/comments", {
+  fetch("https://wedev-api.sky.pro/api/v1/nikita--zhvalik/comments", {
       method: "GET"
-}).then((response) => {
+  }).then((response) => {
   response.json().then((responseData) => {
     userComment = responseData.comments.map((comment) => {
       return {
@@ -61,7 +61,7 @@ function addComment() {
   //   isEdit: false,
   // });
     //? Работаем с API POST
-    fetch("https://wedev-api.sky.pro/api/v1/nikitazhvalik/comments", {
+    fetch("https://wedev-api.sky.pro/api/v1/nikita--zhvalik/comments", {
       method: "POST",
       body: JSON.stringify({
         text: commentUser.value,
@@ -70,16 +70,6 @@ function addComment() {
     }).then((response) => {
     const jsonPromise = response.json();
     jsonPromise.then((responseData) => {
-    // userComment = responseData.comments.map((comment) => {
-    //   return {
-    //     id: comment.id,
-    //     name: comment.author.name,
-    //     date: new Date(comment.date),
-    //     comment: comment.text,
-    //     likes: comment.likes,
-    //     isLike: false,
-    //   }
-    // })
     //! Вызываем список из API
     renderUserComments();
     });
@@ -207,7 +197,7 @@ function delBtn1() {
           //? Работаем с API DELETE
           const id = delBtn.dataset.id;
           console.log(id);
-          fetch("https://wedev-api.sky.pro/api/v1/nikitazhvalik/comments/" + id, {
+          fetch("https://wedev-api.sky.pro/api/v1/nikita--zhvalik/comments/" + id, {
             method: "DELETE",
           }).then((response) => {
             response.json().then((responseData) => {
