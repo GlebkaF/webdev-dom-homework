@@ -11,8 +11,6 @@ function dateTime() {
   return datetime;
 }
 
-// формирование констант из первых элементов коллекции (по индексу)
-// *getElementsByClassName() возвращает коллекцию элементов
 const nameInputElement = document.querySelector('.add-form-name');
 const commentsElement = document.querySelector('.add-form-text');
 
@@ -21,38 +19,26 @@ const buttonElement = document.getElementsByClassName('add-form-button')[0];
 const listElement = document.getElementById("list");
 
 // обработка нажатия на кнопку like
-// В этом коде мы используем метод closest для нахождения ближайшего
-// элемента с классом comment от кнопки likeButton
-// Затем мы находим индекс этого элемента в родительском элементе,
-// используя метод indexOf
-// После этого мы можем обновить соответствующие поля объекта комментария
-// из массива comments
-const initLikeButtonsListeners = () => {
-  const likeButtons = document.querySelectorAll(".like-button");
+function initLikeButtonsListeners() {
+  const likeButtons = document.querySelectorAll('.like-button');
+
   for (const likeButton of likeButtons) {
-    likeButton.addEventListener("click", () => {
-      const likesCounterElement = likeButton.previousElementSibling;
-      const likesCounter = parseInt(likesCounterElement.textContent);
-      const commentElement = likeButton.closest(".comment");
-      const commentIndex = Array.from(commentElement.parentNode.children).indexOf(commentElement);
-      const comment = comments[commentIndex];
-      if (likeButton.classList.contains("-active-like")) {
-        likeButton.classList.remove("-active-like");
-        likesCounterElement.textContent = likesCounter - 1;
-        comment.likesElement = false;
-        comment.likesCounter = likesCounter - 1;
+    likeButton.addEventListener('click', () => {
+      const index = likeButton.dataset.index;
+      if (comments[index].likesElement === true) {
+        comments[index].likesElement = false;
+        comments[index].likesCounter--;
       } else {
-        likeButton.classList.add("-active-like");
-        likesCounterElement.textContent = likesCounter + 1;
-        comment.likesElement = true;
-        comment.likesCounter = likesCounter + 1;
-      }    });
+        comments[index].likesElement = true;
+        comments[index].likesCounter++;
+      }
+      renderComments();
+    })
   }
-};
+}
 
 
 // массив с первоначальными комментариями
-
 const comments = [
   {
     nameElement: "Глеб, Фокин",
