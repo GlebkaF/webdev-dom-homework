@@ -52,20 +52,177 @@
         <textarea
           type="textarea"
           class="add-form-text"
-          placeholder="Введите ваш коментарий"
+          placeholder="Введите ваш комментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
           <button class="add-form-button">Написать</button>
-          <button class="add-form-button delete-button">Удалить последний комментарий</button>
+          <button class="add-form-button delete-button">
+            Удалить последний комментарий
+          </button>
         </div>
       </div>
     </div>
-  </body>
+    <script>
+      "use strict";
 
-  <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
-  </script>
+      // Массив комментов
+      const commentsData = [
+        {
+          author: 'Глеб Фокин',
+          date: '12.02.22 12:18',
+          text: 'Это будет первый комментарий на этой странице',
+          likes: 0,
+          isLiked: false
+        },
+        {
+          author: 'Варвара Н.',
+          date: '13.02.22 19:22',
+          text: 'Мне нравится как оформлена эта страница! ❤',
+          likes: 75,
+          isLiked: true
+        }
+      ];
+
+      // Отрисовка списка комментариев
+      function renderComments() {
+        const commentsList = document.querySelector('.comments');
+        commentsList.innerHTML = '';
+
+        commentsData.forEach((comment, index) => {
+          const newComment = document.createElement('li');
+          newComment.classList.add('comment');
+
+          const likeButtonClass = comment.isLiked ? 'like-button -active-like' : 'like-button';
+          const commentTemplate = `
+            <div class="comment-header">
+              <div>${comment.author}</div>
+              <div>${comment.date}</div>
+            </div>
+            <div class="comment-body">
+              <div class="comment-text">${comment.text}</div>
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">${comment.likes}</span>
+                <button class="${likeButtonClass}" data-index="${index}"></button>
+              </div>
+            </div>
+          `;
+
+          newComment.innerHTML = commentTemplate;
+
+          // Текст без применения HTML-тегов
+          const commentAuthor = newComment.querySelector('.comment-header div:first-child');
+          const commentText = newComment.querySelector('.comment-text');
+          commentAuthor.textContent = comment.author;
+          commentText.textContent = comment.text;
+
+          commentsList.appendChild(newComment);
+        });
+
+        const commentTextElements = document.querySelectorAll('.comment-text');
+        commentTextElements.forEach((element, index) => {
+          element.addEventListener('click', () => handleReply(index));
+        });
+      }
+
+      // Добавление комментария
+      const nameInput = document.querySelector('.add-form-name');
+      const commentInput = document.querySelector('.add-form-text');
+      const addButton = document.querySelector('.add-form-button');
+
+      function addComment() {
+        const name = nameInput.value.trim();
+        const comment = commentInput.value.trim();
+
+        if (name === '') {
+          alert('Пожалуйста, укажите ваше имя.');
+          return;
+        }
+        if (comment === '') {
+          alert('Пожалуйста, напишите комментарий.');
+          return;
+        }
+
+        const newComment = {
+          author: name,
+          date: getCurrentDateTime(),
+          text: comment,
+          likes: 0,
+          isLiked: false
+        };
+
+        commentsData.push(newComment);
+        renderComments();
+
+        nameInput.value = '';
+        commentInput.value = '';
+      }
+
+      function getCurrentDateTime() {
+        const now = new Date();
+        const day = now.getDate().toString().padStart(2, '0');
+        const month = (now.getMonth() + 1).toString().padStart(2, '0');
+        const year = now.getFullYear().toString().slice(-2);
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        return `${day}.${month}.${year} ${hours}:${minutes}`;
+      }
+
+      function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          addComment();
+        }
+      }
+
+      document.addEventListener('keyup', handleKeyPress);
+      addButton.addEventListener('click', addComment);
+
+      // Удаление последнего комментария
+      const deleteButton = document.querySelector('.delete-button');
+
+      function deleteLastComment() {
+        commentsData.pop();
+        renderComments();
+      }
+
+      deleteButton.addEventListener('click', deleteLastComment);
+
+      // Лайки
+      function handleLike(event) {
+        const index = event.target.dataset.index;
+        const comment = commentsData[index];
+
+        if (comment.isLiked) {
+          comment.likes--;
+          comment.isLiked = false;
+        } else {
+          comment.likes++;
+          comment.isLiked = true;
+        }
+
+        renderComments();
+      }
+
+      document.addEventListener('click', function (event) {
+        if (event.target.classList.contains('like-button')) {
+          handleLike(event);
+        }
+      });
+
+      // Ответ на комментарий
+      function handleReply(index) {
+        const comment = commentsData[index];
+        const replyText = `>${comment.text}\n@${comment.author}, `;
+        commentInput.value += replyText;
+        commentInput.focus();
+      }
+
+      renderComments();
+
+      console.log('It works!');
+    </script>
+  </body>
 </html>
