@@ -107,12 +107,12 @@ let oldComments = comments.innerHTML
 const dateNow = new Date();
 let newComments = `<li class="comment">
 <div class="comment-header">
-  <div>${newName.value}</div>
+  <div>${newName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;")}</div>
   <div>${formatDate(dateNow)}</div>
 </div>
 <div class="comment-body">
   <div class="comment-text">
-    ${newComment.value}
+    ${textComment.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;")}
   </div>
 </div>
 <div class="comment-footer">
@@ -123,8 +123,9 @@ let newComments = `<li class="comment">
 </div>
 </li>`
 comments.innerHTML = oldComments + newComments
-newName.value='';
-newComment.value='';
+textComment.value = "";
+newName.value = "";
+button.setAttribute('disabled', '');
 });
 
 function formatDate(date) {
@@ -217,17 +218,6 @@ renderComments()
 addCommentListener()
 
 // comment
-
-      usersComments.push({
-        name: newName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-        date: `${("0" + date.getDate()).slice(-2)}.${("0" + (date.getMonth() + 1)).slice(-2)}.${date.getFullYear().toString().slice(-2)} ${("0" + date.getHours()).slice(-2)}:${("0" + date.getMinutes()).slice(-2)}`,
-        comment: textComment.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-        likes: 0,
-      });
-      renderComments();
-      textComment.value = "";
-      newName.value = "";
-      button.setAttribute('disabled', '');
 
 function addCommentListener() {
     const comments = document.querySelectorAll('.comment');
