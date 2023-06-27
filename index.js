@@ -19,7 +19,7 @@ export function loaderComments (){
 //получить из хранилища данных 
 export let  comments = [];
 
-function fetchFunction (){
+export function fetchFunction (){
      getFetch().then((responseData) => {
         const appComments  = responseData.comments.map ((comment) => {
         return {
@@ -54,6 +54,7 @@ textElement.value =  `"${comments[index].name}:  ${comments[index].textElement}"
 
 };
 quotation ();
+
 renderComments(commentsElement, getCommentsList);
 
 //лайки
@@ -98,56 +99,13 @@ if (nameInputElement.value === "" ){
     return;
  };
 postFetch();
-
- //fetch("https://wedev-api.sky.pro/api/v1/tanya-bulaeva/comments",
- //{
-  //method: "POST",
-  //body: JSON.stringify({
-  //      name:   nameInputElement.value,
-  //      text: textElement.value,
-   //     date: commentDate,
-   //     likes: 0,
-  //      forceError: true,
-  //    })
-  //  }).then((response) => {
-  //if (response.status === 201){
-  //addFormElement.classList.add('hide');
- // commentsElement.textContent = `Загрузка комментария`;
- // return response.json();
-  //};
-  //if (response.status === 500){
-  //  throw new Error ("Сервер сломался");
-  //};
-  //if  (response.status === 400){
-  //  throw new Error  ("Плохой запрос")
-  //}; 
-
- //  }).then((responseData) => {
- //   return getFetch();
-//}).then(() => {
-//    nameInputElement.value = "";
- //   textElement.value = ''; 
-//})
-//.catch((error) => {
- //if (error.message === "Сервер сломался" ){
- // alert ("Сервер сломался, попробуйте позже");
- // return;
- //};
- //if (error.message === "Плохой запрос" ){
- // alert ("Имя и комментарий должны быть не короче 3 символов");
- // return;
- //}; 
- //alert ("Кажется что-то пошло не так, попробуйте позже");
-
-//});
-
 renderComments(commentsElement, getCommentsList);
+
 })
 
 renderComments(commentsElement, getCommentsList);
 
 quotation();
-
 
 
 
