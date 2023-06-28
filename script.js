@@ -71,6 +71,7 @@ buttonElement.addEventListener("click", () => {
   nameInputElement.value = "";
   textInputElement.value = "";
 });
+
 const initLikeButtonListeners = () => {
   for (const likeButton of document.querySelectorAll(".like-button")) {
     likeButton.addEventListener("click", () => {
@@ -82,14 +83,12 @@ const initLikeButtonListeners = () => {
       } else {
         comment.likes = true;
         comment.numberLikes++;
-      }
+      };
 
-      likeButton.classList.toggle("-active-like", comment.likes);
-      const likesCounter = likeButton.previousElementSibling;
-      likesCounter.textContent = comment.numberLikes;
+      renderComments();
     });
-  }
-}
+  };
+};
 
 const renderComments = () => {
   const commentsHtml = comments
