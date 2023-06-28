@@ -140,7 +140,6 @@
       };
 
       const renderUsers = () => {
-        fetchAndRender();
         listElement.innerHTML = "";
         users.forEach((user) => {
           const listItem = document.createElement("li");
@@ -220,33 +219,25 @@
           }),
         })
           .then((response) => {
-            console.log("Время: " + (Date.now() - startAt));
-            return response;
-          })
-          .then((response) => {
             return response.json();
-          })
-          .then((response) => {
-            console.log("Время: " + (Date.now() - startAt));
-            return response;
           })
           .then(() => {
             return fetchAndRender();
           })
-
           .then(() => {
             buttonElement.disabled = false;
             buttonElement.textContent = "Написать";
+            inputNameElement.value = "";
+            inputTextElement.value = "";
           });
         renderUsers();
         attachLikeButtonListener(responseData);
         attachTextButtonListener();
 
-        inputNameElement.value = "";
-        inputTextElement.value = "";
         buttonElement.disabled = true;
         buttonElement.classList.add("disabled");
       });
+      fetchAndRender();
 
       inputTextElement.addEventListener("keyup", (event) => {
         if (event.keyCode === 13) {
@@ -259,12 +250,6 @@
           }
         }
       });
-
-      //
-
-      // fetchPromise.then(() => {
-      //   renderUsers();
-      // });
     </script>
   </body>
 </html>

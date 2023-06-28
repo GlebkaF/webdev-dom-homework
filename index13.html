@@ -48,37 +48,99 @@
         });
       }
 
+      // const users = [
+      //   {
+      //     id: 0,
+      //     name: "Глеб Фокин",
+      //     date: "12.02.22 12:18",
+      //     likes: 3,
+      //     text: "Это будет первый комментарий на этой странице",
+      //     isLiked: false,
+      //   },
+      //   {
+      //     id: 1,
+      //     name: "Варвара Н.",
+      //     date: "13.02.22 19:22",
+      //     likes: 75,
+      //     text: "Мне нравится как оформлена эта страница! ❤",
+      //     isLiked: false,
+      //   },
+      // ];
       let users = [];
-      let fetchPromise;
+
+      // function fetchPromiseArray() {
+      //   fetchPromise = fetch(
+      //     "https://wedev-api.sky.pro/api/v1/dima-nosov/comments",
+      //     {
+      //       method: "GET",
+      //     }
+      //   );
+      //   fetchPromise
+      //     .then((response) => response.json())
+      //     .then((responseData) => {
+      //       const appUsers = responseData.comments.map((comment, index) => {
+      //         return {
+      //           name: comment.author.name,
+      //           date: currentDate(new Date(comment.date)),
+      //           likes: comment.likes,
+      //           text: comment.text,
+      //           isLiked: false,
+      //           id: index,
+      //         };
+      //       });
+      //       users = appUsers;
+      //       renderUsers();
+      //     });
+      // }
+      const fetchAndRender = () => {
+        return fetch("https://wedev-api.sky.pro/api/v1/dima-nosov/comments", {
+          method: "GET",
+        })
+          .then((response) => {
+            return response.json();
+          })
+          .then((responseData) => {
+            const appUsers = responseData.comments.map((comment, index) => {
+              return {
+                name: comment.author.name,
+                date: currentDate(new Date(comment.date)),
+                likes: comment.likes,
+                text: comment.text,
+                isLiked: false,
+                id: index,
+              };
+            });
+
+            users = appUsers;
+            renderUsers();
+          });
+      };
 
       const attachLikeButtonListener = (user) => {
         const likesButton = document.getElementById(`like-button-${user.id}`);
-        if (likesButton) {
-          likesButton.addEventListener("click", (event) => {
-            event.stopPropagation();
-            if (user.isLiked) {
-              user.likes -= 1;
-            } else {
-              user.likes += 1;
-            }
-            user.isLiked = !user.isLiked;
-            renderUsers();
-          });
-        }
+        likesButton.addEventListener("click", (event) => {
+          event.stopPropagation();
+          if (user.isLiked) {
+            user.likes -= 1;
+          } else {
+            user.likes += 1;
+          }
+          user.isLiked = !user.isLiked;
+          renderUsers();
+        });
       };
 
       const attachTextButtonListener = (user) => {
         const commentElement = document.getElementById(`comment-${user.id}`);
-        if (commentElement) {
-          commentElement.addEventListener("click", (event) => {
-            event.stopPropagation();
-            inputTextElement.value = user.name + "\n" + user.text;
-            inputTextElement.style.whiteSpace = "pre-line";
-          });
-        }
+        commentElement.addEventListener("click", (event) => {
+          event.stopPropagation();
+          inputTextElement.value = user.name + "\n" + user.text;
+          inputTextElement.style.whiteSpace = "pre-line";
+        });
       };
 
       const renderUsers = () => {
+        fetchAndRender();
         listElement.innerHTML = "";
         users.forEach((user) => {
           const listItem = document.createElement("li");
@@ -138,111 +200,61 @@
           return;
         }
 
-        // let fetchPromise = fetch(
-        //   "https://wedev-api.sky.pro/api/v1/dima-nosov/comments",
-        //   {
-        //     method: "POST",
-        //     body: JSON.stringify({
-        //       name: inputNameElement.value
-        //         .replace(/</g, "&lt;")
-        //         .replace(/>/g, "&gt;"),
-        //       date: currentDate,
-        //       likes: 0,
-        //       text: inputTextElement.value
-        //         .replace(/</g, "&lt;")
-        //         .replace(/>/g, "&gt;"),
-        //       isLiked: false,
-        //     }),
-        //   }
-        // ).then((response) => {
-        //   response
-        //     .json()
-        //     .then((responseData) => {
-        //       function fetchPromiseArray() {
-        //         fetchPromise = fetch(
-        //           "https://wedev-api.sky.pro/api/v1/dima-nosov/comments",
-        //           {
-        //             method: "GET",
-        //           }
-        //         )
-        //           .then((response) => response.json())
-        //           .then((responseData) => {
-        //             //
-        //             const appUsers = responseData.comments.map(
-        //               (comment, index) => {
-        //                 return {
-        //                   name: comment.author.name,
-        //                   date: currentDate(new Date(comment.date)),
-        //                   likes: comment.likes,
-        //                   text: comment.text,
-        //                   isLiked: false,
-        //                   id: index,
-        //                 };
-        //               }
-        //             );
-        //             users = appUsers;
-        //             renderUsers();
-        //           });
-        //       }
-        //       fetchPromiseArray();
-        //       attachLikeButtonListener(responseData);
-        //       attachTextButtonListener(responseData);
-        //     })
-        //     .then(() => {
-        //       renderUsers();
-        //     });
-        // });
+        const startAt = Date.now();
+        console.log("Начинаем делать запрос");
+        buttonElement.disabled = true;
+        buttonElement.textContent = "Ваш комментарий добавляется...";
 
-        // Example
-
-        let fetchPromise = fetch(
-          "https://wedev-api.sky.pro/api/v1/dima-nosov/comments",
-          {
-            method: "POST",
-            body: JSON.stringify({
-              name: inputNameElement.value
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;"),
-              date: currentDate(new Date()),
-              likes: 0,
-              text: inputTextElement.value
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;"),
-              isLiked: false,
-            }),
-          }
-        )
-          .then((response) => response.json())
-          .then((responseData) => {
-            attachLikeButtonListener(responseData);
-            attachTextButtonListener(responseData);
-            return fetch(
-              "https://wedev-api.sky.pro/api/v1/dima-nosov/comments",
-              {
-                method: "GET",
-              }
-            ).then((response) => response.json());
+        fetch("https://wedev-api.sky.pro/api/v1/dima-nosov/comments", {
+          method: "POST",
+          body: JSON.stringify({
+            name: inputNameElement.value
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;"),
+            date: currentDate,
+            likes: 0,
+            text: inputTextElement.value
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;"),
+            isLiked: false,
+          }),
+        })
+          .then((response) => {
+            console.log("Время: " + (Date.now() - startAt));
+            return response;
           })
-          .then((responseData) => {
-            const appUsers = responseData.comments.map((comment, index) => {
-              return {
-                name: comment.author.name,
-                date: currentDate(new Date(comment.date)),
-                likes: comment.likes,
-                text: comment.text,
-                isLiked: false,
-                id: index,
-              };
-            });
-            users = appUsers;
-            renderUsers();
+          .then((response) => {
+            if (response.status === 201) {
+              return response.json();
+            } else {
+              // throw new Error("The server has failed");
+              return Promise.reject("The server has failed");
+            }
+          })
+          .then((response) => {
+            console.log("Время: " + (Date.now() - startAt));
+            return response;
           })
           .then(() => {
-            renderUsers();
-          });
+            return fetchAndRender();
+          })
 
-        inputNameElement.value = "";
-        inputTextElement.value = "";
+          .then(() => {
+            buttonElement.disabled = false;
+            buttonElement.textContent = "Написать";
+            inputNameElement.value = "";
+            inputTextElement.value = "";
+          })
+          .catch((error) => {
+            buttonElement.disabled = false;
+            buttonElement.textContent = "Написать";
+            alert("Error");
+            console.warn(error);
+          });
+        renderUsers();
+        attachLikeButtonListener(responseData);
+        attachTextButtonListener();
+
         buttonElement.disabled = true;
         buttonElement.classList.add("disabled");
       });
@@ -258,57 +270,12 @@
           }
         }
       });
+
+      //
+
+      // fetchPromise.then(() => {
+      //   renderUsers();
+      // });
     </script>
   </body>
 </html>
-
-
-
-// Example
-//   fetch("https://wedev-api.sky.pro/api/v1/dima-nosov/comments", {
-//     method: "POST",
-//     body: JSON.stringify({
-//       name: inputNameElement.value
-//         .replace(/</g, "&lt;")
-//         .replace(/>/g, "&gt;"),
-//       date: currentDate,
-//       likes: 0,
-//       text: inputTextElement.value
-//         .replace(/</g, "&lt;")
-//         .replace(/>/g, "&gt;"),
-//       isLiked: false,
-//     }),
-//   })
-//     .then((response) => {
-//       return response.json();
-//     })
-//     .then((responseData) => {
-//       return fetch(
-//         "https://wedev-api.sky.pro/api/v1/dima-nosov/comments",
-//         {
-//           method: "GET",
-//         }
-//       );
-//     })
-//     .then((response) => {
-//       return response.json();
-//     })
-//     .then((responseData) => {
-//       const appUsers = responseData.comments.map((comment, index) => {
-//         return {
-//           name: comment.author.name,
-//           date: currentDate(new Date(comment.date)),
-//           likes: comment.likes,
-//           text: comment.text,
-//           isLiked: false,
-//           id: index,
-//         };
-//       });
-
-//       users = appUsers;
-//       renderUsers();
-//     });
-
-//   attachLikeButtonListener(responseData);
-//   attachTextButtonListener();
-// });
