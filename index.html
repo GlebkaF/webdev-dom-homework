@@ -25,6 +25,9 @@
         ></textarea>
         <div class="add-form-row">
           <button class="add-form-button">Написать</button>
+
+          <div class="loading-message"></div>
+          <ul class="comments"></ul>
           
 
         </div>
@@ -40,7 +43,11 @@ const nameInput = document.querySelector('#name-input');
 const commentInput = document.querySelector('#comment-input');
 const addButton = document.querySelector('.add-form-button');
 const commentsList = document.querySelector('.comments');
+const loadingMessage = document.querySelector('.loading-message');
+let isLoading = true;
 //const likeButtons = document.querySelectorAll('.like-button');
+
+let comments = [];
 
 let getComments = () => {
   fetch("https://wedev-api.sky.pro/api/v1/kristina-sapega/comments", {
@@ -59,6 +66,7 @@ let getComments = () => {
         };
       });
       comments = appComments;
+      isLoading = false;
       renderComments();
     })
 };
@@ -66,10 +74,15 @@ let getComments = () => {
 getComments();
 
 
-let comments = [];
 
   const renderComments = () => {
   commentsList.innerHTML = "";
+
+  if (isLoading) {
+    loadingMessage.textContent = "Пожалуйста, подождите, загружаю комментарии...";
+    return;
+  }
+  
 
     comments.forEach((comment) => {
     const newComment = document.createElement("li");
@@ -146,6 +159,8 @@ let comments = [];
   });
 
 
+
+
     // Найти кнопку лайка внутри текущего комм
     const likeButtons = document.querySelectorAll('.like-button');
     likeButtons.forEach((button) => {
@@ -178,6 +193,13 @@ addButton.addEventListener('click', function() {
     alert('Заполните все поля ввода!');
     return;
   }
+// Скрытие формы добавления комментария и отображение сообщения "Комментарий добавляется ..."
+  nameInput.disabled = true;
+  commentInput.disabled = true;
+  addButton.disabled = true;
+  loadingMessage.textContent = "Комментарий добавляется...";
+  
+
   const now = new Date();
   const dateString = `${now.getDate()}.${now.getMonth() + 1}.${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`;
 
