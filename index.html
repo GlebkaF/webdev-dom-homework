@@ -213,12 +213,20 @@
       });
 
       // Ответ на комментарий
-      function handleReply(index) {
+      function handleReply(event) {
+        const commentElement = event.target.closest('.comment');
+        const index = Array.from(commentElement.parentNode.children).indexOf(commentElement);
         const comment = commentsData[index];
         const replyText = `>${comment.text}\n@${comment.author}, `;
         commentInput.value += replyText;
         commentInput.focus();
       }
+
+      document.addEventListener('click', function (event) {
+        if (event.target.classList.contains('comment') || event.target.closest('.comment')) {
+          handleReply(event);
+        }
+      });
 
       renderComments();
 
