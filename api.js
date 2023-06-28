@@ -1,5 +1,5 @@
 
-import { loaderComments , commentsElement, nameInputElement, textElement, addFormElement, likeCommentButton } from "./index.js";
+import { loaderComments , commentsElement, nameInputElement, textElement, addFormElement } from "./index.js";
 import { fetchFunction } from "./index.js";
 import { commentDate } from "./date.js";
 
@@ -41,11 +41,10 @@ export const postFetch = () => {
  }; 
    }).then((responseData) => {
    return fetchFunction();
+
 }).then(() => {
     nameInputElement.value = "";
    textElement.value = ''; 
-
-
 })
 .catch((error) => {
 if (error.message === "Сервер сломался" ){

@@ -28,6 +28,7 @@ export function fetchFunction (){
      textElement: comment.text,
      likesNumber: comment.likes,
      isLiked: false,
+     propertyColorLike: '',
        };
     });
     comments = appComments;
@@ -46,7 +47,8 @@ loaderComments ();
 export const quotation = () => {
 let commentElements  = document.querySelectorAll ('.comment');
 for (const commentElement of commentElements){
-commentElement.addEventListener('click', () => {
+commentElement.addEventListener('click', (event) => {
+//  event.stopPropagation();
 const index = commentElement.dataset.index;
 textElement.value =  `"${comments[index].name}:  ${comments[index].textElement}"\n`
     });
@@ -54,35 +56,6 @@ textElement.value =  `"${comments[index].name}:  ${comments[index].textElement}"
 
 };
 quotation ();
-
-
-
-//лайки
-export function likeCommentButton() {    
-const likesButton = document.querySelectorAll('.like-button');
-
-for (const like of likesButton) {
-    like.addEventListener("click", (event) => {
-    event.stopPropagation();
-  
-    const likeIndex = like.dataset.index;
-    const commentsElement = comments[likeIndex];
-            
-    if (commentsElement.likeComment) {
-      commentsElement.likesNumber -= 1;
-      commentsElement.likeComment = false;
-      commentsElement.propertyColorLike = 'like-button -no-active-like';           
-    } else {
-      commentsElement.likesNumber += 1;
-      commentsElement.likeComment = true;
-      commentsElement.propertyColorLike = 'like-button -active-like';                  
-    }
-     
-  })
-}
-console.log (2)
-};
-//likeCommentButton();
 
 //добавление новых комментариев по кнопке с сохранением в api
 buttonElement.addEventListener ("click", () => {
@@ -98,7 +71,7 @@ if (nameInputElement.value === "" ){
     return;
  };
 postFetch();
-likeCommentButton()
+
 })
 
 
