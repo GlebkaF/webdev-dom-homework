@@ -42,7 +42,8 @@ function initLikeButtonsListeners() {
   const likeButtons = document.querySelectorAll('.like-button');
 
   for (const likeButton of likeButtons) {
-    likeButton.addEventListener('click', () => {
+    likeButton.addEventListener('click', (event) => {
+      event.stopPropagation(); // Предотвращает всплытие события
       const index = likeButton.dataset.index;
 
       console.log("index", index);
@@ -60,18 +61,18 @@ function initLikeButtonsListeners() {
   }
 }
 
-
 // функция рендерит список комментариев из массива
-
 function renderComments() {
   const commentsHtml = comments.map((comment, index) => {
-    return `<li class="comment">
+    const commentTextWithQuotes = comment.commentElement.replaceAll("QUOTE_BEGIN", "<div class='quote'>").replaceAll("QUOTE_END", "</div>");
+    const commentTextSafe = comment.nameElement.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return `<li class="comment" data-index="${index}">
         <div class="comment-header">
-          <div>${comment.nameElement}</div>
+          <div>${commentTextSafe}</div>
           <div>${comment.timeElement}</div>
         </div>
         <div class="comment-body">
-          <div class="comment-text">${comment.commentElement}</div>
+        <div class="comment-text" style="white-space: pre-line;">${commentTextWithQuotes}</div>
         </div>
         <div class="comment-footer">
           <div class="likes">
@@ -88,7 +89,21 @@ function renderComments() {
   nameInputElement.value = '';
   initLikeButtonsListeners();
   console.log(comments);
-};
+
+  // Добавляем обработчик события клика для каждого элемента комментария
+  const commentElements = document.querySelectorAll('.comment');
+  for (const commentElement of commentElements) {
+    commentElement.addEventListener('click', () => {
+      const indexComment = commentElement.dataset.index;
+      const { nameElement, commentElement: commentText } = comments[indexComment];
+
+      // Предзаполняем форму добавления комментария
+      // commentsElement.value = '"' + nameElement + '" ' + commentText + ': ';
+      commentsElement.value = 'QUOTE_BEGIN' + ' (' + nameElement + ') ...' + commentText + '... ' + 'QUOTE_END' + ' ';
+    });
+  }
+}
+
 renderComments();
 // функция для добавления комментария
 function addComment() {
@@ -101,13 +116,14 @@ function addComment() {
     buttonElement.classList.add('disabled');
     alert('не заполнено одно из обязательных полей!');
     return;
+
   }
   const datetime = dateTime();
 
   // запись нового комментария в массив
   const newComment = {
     nameElement: nameInputElement.value,
-    commentElement: commentsElement.value,
+    commentElement: commentsElement.value.replace(/</g, '&lt;').replace(/>/g, '&gt;'),
     timeElement: datetime,
     likesElement: false,
     likesCounter: 0
@@ -116,8 +132,6 @@ function addComment() {
   renderComments();
 
 }
-
-
 
 // обработка нажатия на кнопку "Добавить"
 buttonElement.addEventListener('click', addComment);
@@ -132,15 +146,3 @@ commentsElement.addEventListener('keydown', (event) => {
     addComment();
   }
 });
-
-// console.log(comments);
-
-// обработка нажатия на кнопку "Удалить последний комментарий"
-// deleteButtonElement.addEventListener('click', () => {
-//   const lastCommentIndex = listElement.innerHTML.lastIndexOf('<li class="comment">');
-//   if (lastCommentIndex >= 0) {
-//     listElement.innerHTML = listElement.innerHTML.substring(0, lastCommentIndex);
-//   }
-// });
-
-// добавление кнопки "Удалить последний комментарий" на страницу в HTML
