@@ -178,4 +178,4 @@ import { fetchComments, postComment } from "./api.js";
       initEditButton();
     });
     
-    export { initLikeButton, initEditButton, replyToComment, time  };
+    export { initLikeButton, initEditButton, replyToComment, time };
