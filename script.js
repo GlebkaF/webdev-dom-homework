@@ -85,6 +85,7 @@ const initLikeButtonListeners = () => {
         comment.numberLikes++;
       };
 
+      
       renderComments();
     });
   };
