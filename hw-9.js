@@ -60,7 +60,7 @@ const renderUsers = () =>{
     return  `<li class="comment" data-comment="${user.text}" data-name="${user.name}">
     <div class="comment-header">
       <div>${user.name}</div>
-      <div>${getCommentDate(getCommentDate(user.date))}</div>
+      <div>${user.date}</div>
     </div>
     <div class="comment-body">
       <div class="comment-text">
@@ -94,8 +94,8 @@ getFetchPromise()
 
 
 //date of comment
-const getCommentDate = () => {
-  let currentDate = new Date();
+const getCommentDate = (date) => {
+  let currentDate = new Date(date);
   let day = currentDate.getDate();
   let month = currentDate.getMonth() + 1;
   let year = String(currentDate.getFullYear()).split('').slice(2).join('');
