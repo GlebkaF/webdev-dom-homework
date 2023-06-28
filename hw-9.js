@@ -3,24 +3,24 @@
 const writeButtonEl = document.getElementById("write-button");
 const nameInputEl = document.getElementById("name-input");
 const commentTextEl = document.getElementById("comment-text");
-const listEl = document.getElementById("comment-list");
-let currentDate = new Date();
+let listEl = document.getElementById("comment-list");
 const deleteButtonEl = document.getElementById("delete-button");
 
 let users = [];
 //Получить список комментариев
 
 const getFetchPromise = () => {
-    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/NastyaTsyf/comments", {
+   return fetch("https://wedev-api.sky.pro/api/v1/NastyaTsyf/comments", {
   method: "GET"
-  });
-
-  fetchPromise.then((response) => {
-    response.json().then((responseData) => {
+  })
+    .then((response) => {
+    return response.json()
+  })
+    .then((responseData) => {
       const appComments = responseData.comments.map((comment) => {
         return {
           name: comment.author.name,
-          date: new Date(comment.date),
+          date: getCommentDate(comment.date),
           text: comment.text,
           likes: comment.likes,
           isLiked: comment.isLiked,
@@ -32,19 +32,35 @@ const getFetchPromise = () => {
       initLikeButton();
       replyТoСomment();
     });
-  });
 }
 
-getFetchPromise();
-
-
+const addComment = () => {
+  return fetch("https://wedev-api.sky.pro/api/v1/NastyaTsyf/comments", {
+    method: "POST",
+    body: JSON.stringify({
+      name: nameInputEl.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
+      date: new Date(),
+      text: commentTextEl.value
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;"),
+      likes: 0,
+      isLiked: false
+    })
+  })  
+}
 
 const renderUsers = () =>{
   const usersHtml = users.map((user, index) =>{
     return  `<li class="comment" data-comment="${user.text}" data-name="${user.name}">
     <div class="comment-header">
       <div>${user.name}</div>
-      <div>${getCommentDate(new Date(user.date))}</div>
+      <div>${user.date}</div>
     </div>
     <div class="comment-body">
       <div class="comment-text">
@@ -61,12 +77,25 @@ const renderUsers = () =>{
   }).join('');
   listEl.innerHTML = usersHtml;
 };
-
 renderUsers();
+
+//loader
+
+const showDownload = () => {
+  listEl.innerHTML = `<h3 style="font-family: Helvetica; color: #ffffff;">Пожалуйста подождите. Загружаю комментарии...</h3>`;
+  deleteButtonEl.style.display = 'none';
+  return getFetchPromise()
+    .then(() => {
+      deleteButtonEl.style.display = 'flex';
+    });
+}
+showDownload();
+getFetchPromise()
 
 
 //date of comment
-const getCommentDate = () => {
+const getCommentDate = (date) => {
+  let currentDate = new Date(date);
   let day = currentDate.getDate();
   let month = currentDate.getMonth() + 1;
   let year = String(currentDate.getFullYear()).split('').slice(2).join('');
@@ -132,26 +161,36 @@ writeButtonEl.addEventListener("click", () => {
         commentTextEl.classList.add("error");
         return;
       } else {
-        fetch("https://wedev-api.sky.pro/api/v1/NastyaTsyf/comments", {
-          method: "POST",
-          body: JSON.stringify({
-            name: nameInputEl.value
-              .replaceAll("&", "&amp;")
-              .replaceAll("<", "&lt;")
-              .replaceAll(">", "&gt;")
-              .replaceAll('"', "&quot;"),
-            date: new Date(),
-            text: commentTextEl.value
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;"),
-            likes: 0,
-            isLiked: false
+        document.getElementById("add").innerHTML = `<h3 style="font-family: Helvetica; color: #ffffff;">Комментарий добавляется...</h3>`
+        addComment()
+          .then((response) => {
+          return response.json();
           })
-        }).then((response) => {
-          response.json().then(() => getFetchPromise());
-        });
+          .then(() => {
+            return getFetchPromise();
+          })
+          .then(() => {
+            document.getElementById("add").innerHTML = `
+            <div class="add-form">
+            <input
+              id="name-input"
+              type="text"
+              class="add-form-name"
+              placeholder="Введите ваше имя"
+            />
+            <textarea
+              id="comment-text"
+              type="textarea"
+              class="add-form-text"
+              placeholder="Введите ваш коментарий"
+              rows="4"
+            ></textarea>
+            <div class="add-form-row">
+              <button class="add-form-button" id="write-button">Написать</button>
+            </div>
+          </div>
+          `;
+          });
     };
     nameInputEl.value = "";
     commentTextEl.value = "";
