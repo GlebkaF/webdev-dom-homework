@@ -44,7 +44,7 @@ export const postFetch = () => {
 }).then(() => {
     nameInputElement.value = "";
    textElement.value = ''; 
-likeCommentButton();
+
 
 })
 .catch((error) => {

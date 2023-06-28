@@ -53,7 +53,7 @@ textElement.value =  `"${comments[index].name}:  ${comments[index].textElement}"
   };
 
 };
-//quotation ();
+quotation ();
 
 
 
@@ -80,7 +80,7 @@ for (const like of likesButton) {
      
   })
 }
-
+console.log (2)
 };
 //likeCommentButton();
 
@@ -98,7 +98,7 @@ if (nameInputElement.value === "" ){
     return;
  };
 postFetch();
-
+likeCommentButton()
 })
 
 
