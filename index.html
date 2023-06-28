@@ -33,9 +33,6 @@
 
 <script>
   "use strict";
-  const oldAddFormElement = document.getElementById("addForm")
-
-  console.log(oldAddFormElement.innerHTML);
 
   const listCommentElement = document.getElementById("list-comment")
   const enterNameElement = document.getElementById("enter-name")
@@ -49,6 +46,7 @@
       'https://wedev-api.sky.pro/api/v1/rashid-abdulkhamidov/comments',
       {
         method: "GET",
+        forceError: true,
       })
       // Показываем пользователю сообщение о том, что происходит загрузка комментариев
       .then((response) => {
@@ -56,7 +54,7 @@
         return response.json();
       })
       .then((responseData) => {
-        console.log(responseData);
+        // console.log(responseData);
         //Преобразовываем данные из формата API в формат приложения
         const currentDate = new Date()
         let newDate = currentDate.getDate() + '.' + currentDate.getMonth() + '.' + currentDate.getFullYear() + ' ' + currentDate.getHours() + ':' + currentDate.getMinutes()
@@ -75,9 +73,13 @@
         });
         users = appComments;
         renderUsers();
-      });
+      })
+    // .then((response) => {
+    //   if (response.status === 500) {
+    //     alert("Метод GET Alert 500")
+    //   }
+    // })
   };
-
   fetchPromiseFunc();
 
   // Массив с комменами
@@ -153,41 +155,74 @@
 
   // Добавляем коммент кнопкой написать
   buttonElement.addEventListener("click", () => {
-    // Подсвечивает поле Name если оно пусто
+    // Удалем класс error который навешивается при пустом инпуте
     enterNameElement.classList.remove('error');
+    // Подсвечивает поле Name если оно пусто
     if (enterNameElement.value === "") {
       enterNameElement.classList.add('error');
       return;
     }
-    // Подсвечивает поле коммента если оно пусто
+    // Удалем класс error который навешивается при пустом инпуте
     enterCommentElement.classList.remove('error');
+    // Подсвечивает поле коммента если оно пусто
     if (enterCommentElement.value === "") {
       enterCommentElement.classList.add('error');
       return;
     }
 
+    addFormElement.classList.add('hidden') // установить невидимость 
+
+    // Установка текущей даты и времени коммента
+    const currentDate = new Date()
+    let newDate = currentDate.getDate() + '.' + currentDate.getMonth() + '.' + currentDate.getFullYear() + ' ' + currentDate.getHours() + ':' + currentDate.getMinutes()
+
+    // Добавляем коммент и имя в API с помошью метода POST
     const fetchPromise = fetch(
       'https://wedev-api.sky.pro/api/v1/rashid-abdulkhamidov/comments',
       {
         method: "POST",
-        body: JSON.stringify({
-          text: enterCommentElement.value,
-          name: enterNameElement.value,
-        })
-      });
+        body: JSON.stringify({     // Преобразование объекта в JSON строку(иначе будет приходить ошибка 400)
+          text: enterCommentElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),     //Добавляем коммент с заменой < и > в целях безопасности
+          name: enterNameElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),     //Добавляем имя с заменой < и > в целях безопасности
+          date: newDate,
+          forceError: true, //Параметр при котором POST-запрос будет в половине случаев отвечать 500-й ошибкой
+        }),
+      })
+      .then((response) => {
+        if (response.status === 400) {     //Проверяем ответ от API на наличие ошибки 400
+          alert("Имя и комментарий должны быть не короче 3 символов")     //Сообщение для пользователя если пришел ответ с ошибкой 400
+          throw new Error("Я остановил цепочку так как ошибка 400")     //прерывает then функцию, после чего выполняется условие if в функции catch
+        } if (response.status === 500) {     //Проверяем ответ от API на наличие ошибки 500
+          alert("Сервер сломался, попробуй позже")     //Сообщение для пользователя если пришел ответ с ошибкой 500
+          throw new Error("Я остановил цепочку так как ошибка 500")   //прерывает then функцию, после чего выполняется условие if в функции catch
+        } else {
+          return response.json();     //иначе, если никаких ошибок нет, то декодируем ответ в формате JSON и переходим на выполнение следующего then
+        }
+      })
+      .then(() => {
+        enterCommentElement.value = "";     // Очищаем инпут с комментарием после успешного добавления комментария
+        enterNameElement.value = "";     // Очищаем инпут с именем после успешного добавления комментария
+        fetchPromiseFunc();     //Получаем НОВЫЙ список комментов с помощью метода запросов GET
+        renderUsers();     // Рендерим НОВЫЙ список комментов
+      })
+      .catch((error) => {
+        if (error.message === "Я остановил цепочку так как ошибка 400") {
+          return;
+        }
+        if (error.message === "Я остановил цепочку так как ошибка 500") {
+          return;
+        }
+        alert("Кажется, у вас сломался интернет, попробуйте позже");
+      })
+    // После добавления коммента снова получаем список комментов с помощью функции с методом GET
     fetchPromise.then(() => fetchPromiseFunc());
 
-    addFormElement.disabled = false;
-    addFormElement.innerHTML = oldAddFormElement.innerHTML;
+    addFormElement.classList.remove('hidden') // убрать невидимость
 
-    fetchPromiseFunc();
 
-    // Очищаем инпуты после успешного добавления комментария
-    enterCommentElement.value = "";
-    enterNameElement.value = "";
+
+
   });
-
-  renderUsers();
 
   console.log("It works!");
 </script>
