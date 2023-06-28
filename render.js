@@ -9,9 +9,10 @@ import {comments} from "./index.js"
      .map((comment, index) => getCommentsList (comment, index)).join('');
      element.innerHTML = commentsHTML;
     addFormElement.classList.remove('hide');
-    likeCommentButton();
-     quotation();
      likeCommentButton();
+     quotation();
+
+
      } 
 export default renderComments;
 

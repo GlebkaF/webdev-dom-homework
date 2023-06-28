@@ -53,18 +53,18 @@ textElement.value =  `"${comments[index].name}:  ${comments[index].textElement}"
   };
 
 };
-quotation ();
+//quotation ();
 
-renderComments(commentsElement, getCommentsList);
+
 
 //лайки
 export function likeCommentButton() {    
-
 const likesButton = document.querySelectorAll('.like-button');
 
 for (const like of likesButton) {
     like.addEventListener("click", (event) => {
     event.stopPropagation();
+  
     const likeIndex = like.dataset.index;
     const commentsElement = comments[likeIndex];
             
@@ -77,13 +77,12 @@ for (const like of likesButton) {
       commentsElement.likeComment = true;
       commentsElement.propertyColorLike = 'like-button -active-like';                  
     }
-    renderComments(commentsElement, getCommentsList);
      
   })
 }
 
 };
-likeCommentButton();
+//likeCommentButton();
 
 //добавление новых комментариев по кнопке с сохранением в api
 buttonElement.addEventListener ("click", () => {
@@ -99,13 +98,12 @@ if (nameInputElement.value === "" ){
     return;
  };
 postFetch();
-renderComments(commentsElement, getCommentsList);
 
 })
 
-renderComments(commentsElement, getCommentsList);
 
-quotation();
+
+
 
 
 
