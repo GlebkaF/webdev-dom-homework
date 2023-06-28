@@ -5,26 +5,7 @@ const commentTextElement = document.getElementById('add-form-text');
 const commentLikeCounterElements = document.querySelectorAll('.likes-counter');
 const likebuttonElements = document.querySelectorAll('.like-button');
 
-// inputElement.classList.remove('bord');
-// textElement.classList.remove('bord')
 
-// textElement.addEventListener('keyup', enterVal) 
-// inputElement.addEventListener('keyup', enterVal)
-
-// function enterVal(el) {
-//     if(el.key === 'Enter' && inputElement.value !== '' && textElement.value !== ''){
-//         buttonElement.click();
-//     }
-//     if(inputElement.value === '' ){
-//         inputElement.classList.add('bord');
-       
-                   
-//       } if (textElement.value === ''){
-//         textElement.classList.add('bord');
-//         return;
-//       } 
-      
-// }
 
 const comments =[
     {
@@ -49,7 +30,9 @@ const calculLikeSum = () => {
      
   for (const likebutton of likebuttons){
        likebutton.addEventListener('click', () => { 
-         const el =  likebutton.dataset.el;       
+       
+         const el =  likebutton.dataset.el;  
+
         if(!comments[el].isLike){  
           comments[el].likesNum ++;
           comments[el].isLike = true;  
@@ -61,6 +44,27 @@ const calculLikeSum = () => {
        });  
    }; 
 };
+// ответ на комметтарий
+   
+const answerComment = () => {
+
+  const textComments = document.querySelectorAll('.comment-body')
+   
+  for (const textComment of textComments){
+    textComment.addEventListener('click', () => {
+      
+      const el = textComment.dataset.el;
+      commentTextElement.value = `${'>' + ' ' + comments[el].comment + '   ' + comments[el].name + ':' + ' '}`;
+     
+    })
+  }
+}
+
+document.addEventListener('keyup', (e) => {
+  if ( e.key === 'Enter')
+  
+  butttonWriteElement.click()
+}) 
 
 const renderComments = () => {
     const commentsHtml = comments.map((comment, el) => {
@@ -69,8 +73,8 @@ const renderComments = () => {
           <div>${comment.name}</div>
           <div>${comment.data}</div>
         </div>
-        <div class="comment-body">
-          <div class="comment-text">
+        <div data-el="${el}" class="comment-body"  style = "white-space: pre-line">
+          <div   class="comment-text"  type ="form">
            ${comment.comment}
           </div>
         </div>
@@ -85,10 +89,11 @@ const renderComments = () => {
 
     commentsLinkElement.innerHTML = commentsHtml;
     calculLikeSum()
+    answerComment();
+  
 };
 
 renderComments();
-
 
 
 butttonWriteElement.addEventListener('click', () => {
@@ -101,6 +106,9 @@ butttonWriteElement.addEventListener('click', () => {
         return;
     
     } 
+
+    
+    
 
    comments.push({
     name:commentNameElevent.value
@@ -137,6 +145,7 @@ butttonWriteElement.addEventListener('click', () => {
 
 
 renderComments();
+
 
   commentNameElevent.value = '';
 commentTextElement.value = '';
