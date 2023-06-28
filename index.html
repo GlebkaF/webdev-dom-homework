@@ -173,7 +173,10 @@
       };
 
       const toggleButton = () => {
-        if (inputNameElement.value && inputTextElement.value) {
+        if (
+          inputNameElement.value.trim().length >= 3 &&
+          inputTextElement.value.trim().length >= 3
+        ) {
           buttonElement.disabled = false;
           buttonElement.classList.remove("disabled");
         } else {
@@ -198,6 +201,15 @@
           inputTextElement.classList.add("error");
           return;
         }
+        if (inputNameElement.value.trim().length < 3) {
+          inputNameElement.classList.add("error");
+          return alert("Введенное имя слишком короткое");
+        }
+
+        if (inputTextElement.value.trim().length < 3) {
+          inputTextElement.classList.add("error");
+          return alert("Ваш комментарий слишком короткий");
+        }
 
         const startAt = Date.now();
         console.log("Начинаем делать запрос");
@@ -216,10 +228,16 @@
               .replace(/</g, "&lt;")
               .replace(/>/g, "&gt;"),
             isLiked: false,
+            forceError: true,
           }),
         })
           .then((response) => {
-            return response.json();
+            if (response.status === 201) {
+              return response.json();
+            } else {
+              // throw new Error("The server has failed");
+              return Promise.reject("The server has failed");
+            }
           })
           .then(() => {
             return fetchAndRender();
@@ -229,6 +247,12 @@
             buttonElement.textContent = "Написать";
             inputNameElement.value = "";
             inputTextElement.value = "";
+          })
+          .catch((error) => {
+            buttonElement.disabled = false;
+            buttonElement.textContent = "Написать";
+            alert("Произошла ошибка, повторите попытку позже");
+            console.warn(error);
           });
         renderUsers();
         attachLikeButtonListener(responseData);
