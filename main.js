@@ -1,5 +1,4 @@
 const btn = document.querySelector(".add-form-button");
-const ul = document.querySelector(".comments");
 const nameUser = document.querySelector(".add-form-name");
 const commentUser = document.querySelector(".add-form-text");
 const form = document.querySelector(".add-form");
@@ -8,13 +7,19 @@ const del = document.querySelector(".remove-form-button");
 //! Массив с комментариями
 const userComments = document.querySelector('.comments');
 let userComment = [];
+let isLoading = true;
+
+//! Рендерим загрузку комментария
+// console.log(ul);
+// const loadingDiv = userComments.insertAdjacentHTML("afterend", `<li class="comment">Идет загрузка ...</li>`);
 
 //? Работаем с API GET
 function apiGet() {
-  fetch("https://wedev-api.sky.pro/api/v1/nikita-zhvalik/comments", {
+  fetch("https://wedev-api.sky.pro/api/v1/nikitazhvalik/comments", {
       method: "GET"
-  }).then((response) => {
-  response.json().then((responseData) => {
+    }).then((response) => {
+    response.json().then((responseData) => {
+    isLoading = false;
     userComment = responseData.comments.map((comment) => {
       //! Работа с временем
       let date = new Date(comment.date);
@@ -45,8 +50,7 @@ function apiGet() {
         comment: comment.text,
         likes: comment.likes,
         isLike: true,
-      }
-      
+      };
     })
     renderUserComments();
   });
@@ -65,7 +69,7 @@ function addComment() {
   //   isEdit: false,
   // });
     //? Работаем с API POST
-    fetch("https://wedev-api.sky.pro/api/v1/nikita-zhvalik/comments", {
+    fetch("https://wedev-api.sky.pro/api/v1/nikitazhvalik/comments", {
       method: "POST",
       body: JSON.stringify({
         text: commentUser.value,
@@ -74,7 +78,7 @@ function addComment() {
     }).then((response) => {
     const jsonPromise = response.json();
     jsonPromise.then((responseData) => {
-    //! Вызываем список из API
+    //! Вызываем список из API 
     renderUserComments();
     });
     });
@@ -91,7 +95,6 @@ function addComment() {
   //! Вызываем новый список комментариев после добавления нового коммента в список API
   apiGet();
 }
-
 
 //! Обходим массив лайков до и после добавления комментариев
 const initLikesBtn = () => {
@@ -232,6 +235,7 @@ const renderUserComments = () => {
   userComments.innerHTML = userComment.map((comments, index) => {
     const commentText = comments.isEdit === true ? `<textarea type="form" class="add-form-text_comment" id="changedText" data-index=${index} rows="4">${comments.comment}</textarea>` : `${comments.comment}`;
     const btnTextChange = comments.isEdit === true ? `Сохранить` : `Редактировать`;
+    const divLoading = isLoading === true ? `<li class="comment">Идет загрузка ...</li>` : ``;
 
     return `
     <li class="comment">
@@ -259,7 +263,8 @@ const renderUserComments = () => {
         <button class="like-button ${comments.isLike ? "" : "-active-like"}" data-index=${index} data-like=${comments.isLike}></button>
       </div>
     </div>
-  </li>`
+  </li>
+  ${divLoading}`
 }).join('');
   
   //! Добавляем рендер лайка после добавления комментария
