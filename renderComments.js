@@ -47,9 +47,9 @@ const renderUserComments = (userComments) => {
       }
     }).join('');
     listElement.innerHTML = userCommentsHtml;
-    initLikeButton();
-    initEditButton();
-    replyToComment();
+    initLikeButton(userComments);
+    initEditButton(userComments);
+    replyToComment(userComments);
   };
 
   export default renderUserComments;

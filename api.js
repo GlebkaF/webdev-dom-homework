@@ -1,9 +1,10 @@
 import renderUserComments from "./renderComments.js";
 import { userComments } from "./main.js";
-import { initLikeButton, initEditButton, replyToComment } from "./main.js";
 
-const commentInputElement = document.getElementById("comment-input");
+
+
 const nameInputElement = document.getElementById("name-input");
+const commentInputElement = document.getElementById("comment-input");
 
 const fetchComments = () => {
     return fetch("https://webdev-hw-api.vercel.app/api/v1/mariia-goppa/comments", {
@@ -30,9 +31,9 @@ const fetchComments = () => {
     });
   };
 
-  fetchComments();
+   fetchComments();
 
-
+   import { initLikeButton, initEditButton, replyToComment } from "./main.js";
 
   const postComment = () => {
     let loadingComments = document.getElementById('new-comment-loader');
@@ -84,7 +85,6 @@ const fetchComments = () => {
 
     postComment();
 
-    renderUserComments();
     
     export { fetchComments, postComment };
 

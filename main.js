@@ -1,16 +1,16 @@
 
+export { initLikeButton, initEditButton, replyToComment, time };
 import renderUserComments from "./renderComments.js";
 import { fetchComments, postComment } from "./api.js";
 
-
-    const buttonElement = document.getElementById("add-button");
-    const deleteButtonElement = document.getElementById("delete-button");
-    const listElement = document.getElementById("list");
-    const nameInputElement = document.getElementById("name-input");
-    const commentInputElement = document.getElementById("comment-input");
-    const likeButtonElements = document.querySelectorAll(".like-button");
-    const editButtonElements = document.querySelectorAll(".edit-button");
-    const commentElements = document.querySelectorAll(".comment");
+   export const buttonElement = document.getElementById("add-button");
+   export  const deleteButtonElement = document.getElementById("delete-button");
+   export  const listElement = document.getElementById("list");
+   export  const nameInputElement = document.getElementById("name-input");
+   export  const commentInputElement = document.getElementById("comment-input");
+   export  const likeButtonElements = document.querySelectorAll(".like-button");
+   export  const editButtonElements = document.querySelectorAll(".edit-button");
+   export  const commentElements = document.querySelectorAll(".comment");
 
 
 
@@ -19,33 +19,32 @@ import { fetchComments, postComment } from "./api.js";
 
    export let userComments = [];
 
+         // Like button
+
+         const initLikeButton = (userComments) => {
+          const likeButtonElements = document.querySelectorAll(".like-button");
+          for (const likeButtonElement of likeButtonElements) {
+            const index = likeButtonElement.dataset.index;
+            likeButtonElement.addEventListener("click", (event) => {
+              event.stopPropagation();
+              if (!userComments[index].isLiked) {
+                userComments[index].isLiked = true;
+                userComments[index].active = "-active-like";
+                userComments[index].likeCounter += 1;
+              } else {
+                userComments[index].isLiked = false;
+                userComments[index].active = "";
+                userComments[index].likeCounter -= 1;
+              }
+              renderUserComments(userComments);
+            });
+          }
+        };
 
       // Data from API
     
-      fetchComments();
-        
+     // fetchComments();
 
-      // Like button
-
-      const initLikeButton = (userComments) => {
-      const likeButtonElements = document.querySelectorAll(".like-button");
-      for (const likeButtonElement of likeButtonElements) {
-        const index = likeButtonElement.dataset.index;
-        likeButtonElement.addEventListener("click", (event) => {
-          event.stopPropagation();
-          if (!userComments[index].isLiked) {
-            userComments[index].isLiked = true;
-            userComments[index].active = "-active-like";
-            userComments[index].likeCounter += 1;
-          } else {
-            userComments[index].isLiked = false;
-            userComments[index].active = "";
-            userComments[index].likeCounter -= 1;
-          }
-          renderUserComments(userComments);
-        });
-      }
-    };
 
      // Edit button
 
@@ -78,7 +77,7 @@ import { fetchComments, postComment } from "./api.js";
       }
     };
 
-    renderUserComments();
+    renderUserComments(userComments);
   
 
     // Time function
@@ -160,4 +159,4 @@ import { fetchComments, postComment } from "./api.js";
       initEditButton();
     });
     
-    export { initLikeButton, initEditButton, replyToComment, time };
+   
