@@ -8,28 +8,19 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
-        
-      </ul>
+      <ul class="comments"></ul>
+      <div class="loading-message"></div>
       <div class="add-form">
-        <input
-          type="text" id="name-input"
-          class="add-form-name"
-          placeholder="Введите ваше имя" 
-        />
-        <textarea id="comment-input"
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
+        <input type="text" id="name-input" class="add-form-name" placeholder="Введите ваше имя"/>
+        <textarea 
+        id="comment-input"
+        type="textarea"
+        class="add-form-text"
+        placeholder="Введите ваш коментарий"
+        rows="4"
         ></textarea>
         <div class="add-form-row">
           <button class="add-form-button">Написать</button>
-
-          <div class="loading-message"></div>
-          <ul class="comments"></ul>
-          
-
         </div>
       </div>
     </div>
@@ -45,7 +36,6 @@ const addButton = document.querySelector('.add-form-button');
 const commentsList = document.querySelector('.comments');
 const loadingMessage = document.querySelector('.loading-message');
 let isLoading = true;
-//const likeButtons = document.querySelectorAll('.like-button');
 
 let comments = [];
 
@@ -74,19 +64,23 @@ let getComments = () => {
 getComments();
 
 
+function showLoadingMessage() {
+  if (isLoading) {
+    loadingMessage.textContent = "Пожалуйста, подождите, загружаю комментарии...";
+    loadingMessage.style.display = 'block';
+  } else {
+    loadingMessage.style.display = 'none';
+  }
+}
 
   const renderComments = () => {
   commentsList.innerHTML = "";
-
-  if (isLoading) {
-    loadingMessage.textContent = "Пожалуйста, подождите, загружаю комментарии...";
-    return;
-  }
+  showLoadingMessage();
   
 
-    comments.forEach((comment) => {
-    const newComment = document.createElement("li");
-    newComment.classList.add("comment");
+  comments.forEach((comment) => {
+  const newComment = document.createElement("li");
+  newComment.classList.add("comment");
   
   const likeButtonClass = comment.liked ? "like-button -active-like" : "like-button";
 
@@ -157,9 +151,6 @@ getComments();
     });
     commentsList.appendChild(newComment);
   });
-
-
-
 
     // Найти кнопку лайка внутри текущего комм
     const likeButtons = document.querySelectorAll('.like-button');
@@ -243,20 +234,25 @@ addButton.addEventListener('click', function() {
     .then((responseData) => {
       comments = responseData.comments;
       getComments();
+      //не забываем вернуть возможность оставлять комментарий
+      nameInput.disabled = false;
+      commentInput.disabled = false;
       addButton.disabled = false;
-      addButton.textContent = "Добавить";
+      addButton.textContent = 'Добавить';
+      loadingMessage.style.display = 'none';
     });
   }
 
 addComments();
 renderComments();
 
-
-  // очищаем поля ввода
-  nameInput.value = "";
-  commentInput.value = "";
+// очищаем поля ввода
+nameInput.value = "";
+commentInput.value = "";
 });
 
+//TODO: Рендерим комментарий впервые, чтобы показать надпись "Загружаю комментарии"
+renderComments();
 
   
     //console.log("It works!");
