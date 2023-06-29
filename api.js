@@ -28,7 +28,7 @@ const fetchComments = () => {
     });
   };
 
-   fetchComments();
+   // fetchComments();
 
 
   const postComment = () => {
