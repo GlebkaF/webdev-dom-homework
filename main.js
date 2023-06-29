@@ -3,14 +3,14 @@ export { initLikeButton, initEditButton, replyToComment, time };
 import renderUserComments from "./renderComments.js";
 import { fetchComments, postComment } from "./api.js";
 
-   export const buttonElement = document.getElementById("add-button");
-   export  const deleteButtonElement = document.getElementById("delete-button");
-   export  const listElement = document.getElementById("list");
-   export  const nameInputElement = document.getElementById("name-input");
-   export  const commentInputElement = document.getElementById("comment-input");
-   export  const likeButtonElements = document.querySelectorAll(".like-button");
-   export  const editButtonElements = document.querySelectorAll(".edit-button");
-   export  const commentElements = document.querySelectorAll(".comment");
+export const buttonElement = document.getElementById("add-button");
+export const deleteButtonElement = document.getElementById("delete-button");
+export const listElement = document.getElementById("list");
+export const nameInputElement = document.getElementById("name-input");
+export const commentInputElement = document.getElementById("comment-input");
+export  const likeButtonElements = document.querySelectorAll(".like-button");
+export  const editButtonElements = document.querySelectorAll(".edit-button");
+export  const commentElements = document.querySelectorAll(".comment");
 
 
 
@@ -43,7 +43,7 @@ import { fetchComments, postComment } from "./api.js";
 
       // Data from API
     
-     // fetchComments();
+      fetchComments();
 
 
      // Edit button
