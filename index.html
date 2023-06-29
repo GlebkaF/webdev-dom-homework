@@ -9,7 +9,8 @@
   <body>
     <div class="container">
       <ul id="container" class="comments">
-        <li class="comment" data-likeNumb="3">
+        <li class="comment" data-likeNumb="3" data-comment-text=" <Это будет первый комментарий на этой странице
+  Глеб Фокин">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div id="date">12.02.22 12:18</div>
@@ -26,7 +27,8 @@
             </div>
           </div>
         </li>
-        <li class="comment" data-likeNumb="75">
+        <li class="comment" data-likeNumb="75" data-comment-text="< Мне нравится как оформлена эта страница! ❤
+  Варвара Н.">
           <div class="comment-header">
             <div>Варвара Н.</div>
             <div>13.02.22 19:22</div>
@@ -72,10 +74,39 @@
     const inputNameElement = document.getElementById("add-form-name");
     const commentsElement = document.getElementById("add-form-text");
 
+
+/*/ редактирование коментария  дз-11 (попытка не удалась)
+  const commentsEvents = document.querySelectorAll('.comment-body');
+  const initCommentsEvents = () => {
+    for (const commentEvent of commentsEvents) {
+      const commentText = commentEvent.querySelector('.comment-text');
+
+      commentEvent.addEventListener("click", (event) => {
+        let textItem = event.target.closest('.comment-text');
+        if (textItem) {
+        document.querySelector('#add-form-text').value = textItem.textContent;
+      }
+    });
+  }
+};
+
+initCommentsEvents();/*/
+
+
     const commentElements = document.querySelectorAll(".comment");
     const initEventListeners = () => {
       const commentElements = document.querySelectorAll(".comment");
       for (const commentElement of commentElements) {
+        commentElement.addEventListener("click", () => {
+     
+          // редактирование коментария дз-11
+          let textItem = commentElement.dataset.commentText;
+        if (textItem) {
+        document.querySelector('#add-form-text').value = textItem;
+      };
+        });
+
+        // активация лайка
         const likeButton = commentElement.querySelector(".like-button");
         const likesCounter = commentElement.querySelector(".likes-counter");
         const dataLikeNumb = parseInt(commentElement.getAttribute("data-likeNumb"));
@@ -87,7 +118,8 @@
           liked = true;
         }
 
-        likeButton.addEventListener("click", () => {
+        likeButton.addEventListener("click", (event) => {
+          event.stopPropagation();
           if (liked) {
             likes--;
           } else {
@@ -102,6 +134,7 @@
     };
     initEventListeners();
 
+//формат даты
     const dateElement = document.getElementById("date");
     const myDate = new Date();
     const formatDate = (date) => {
@@ -123,53 +156,27 @@
     };
     dateElement.textContent = formatDate(myDate);
 
-    buttonElement.addEventListener("click", () => {
-      if (inputNameElement.value === "" || commentsElement.value === "") {
-        return false;
-      }
-
-      const oldListHtml = newCommentElement.innerHTML;
-      newCommentElement.innerHTML =
-        oldListHtml +
-        `<li class="comment" data-likeNumb="0">
-          <div class="comment-header">
-            <div>${inputNameElement.value}</div>
-            <div>${formatDate(myDate)}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${commentsElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
-      initEventListeners();
-    });
+    
     const users = [
       {
         name:"Глеб Фокин",
         coment: "Это будет первый комментарий на этой странице", 
         data: "12.02.22 12:18",
-        likesCounter:"3",
+        likesCounter:3,
         likesElement : false
       },
       {
         name:"Варвара Н.",
-        coment: "Мне нравится как оформлена эта страница! ❤", 
+        coment: "Мне нравится как оформлена эта страница! ❤",
         data: "13.02.22 19:22",
-        likesCounter:"75",
+        likesCounter:75,
         likesElement : true
       },
     ];
 
     const renderUsers = () => {
          const usersHtml = users.map((user)=>{
-          return`<li  class="comment"  data-likeNumb="${user.likesCounter}" >
+          return`<li  class="comment"  data-likeNumb="${user.likesCounter}"  data-comment-text="${user.coment}">
           <div class="comment-header">
             <div>${user.name}</div>
             <div>${user.data}</div>
@@ -188,13 +195,39 @@
         </li>`
         })
         .join("");
-       
+
          newCommentElement.innerHTML = usersHtml;
          initEventListeners();
       };
-       
+
+      // добавление нового коментария
+    buttonElement.addEventListener("click", () => {
+  
+      if (inputNameElement.value === "" || commentsElement.value === "") {
+        return false;
+      };
+   
+         users.push( {
+        name:inputNameElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
+        coment: commentsElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"), 
+        data: "12.02.22 12:18",
+        likesCounter:0,
+        likesElement : false
+      });
+
       renderUsers();
-      
+
+      inputNameElement.value = "";
+
+    });
 
     console.log("It works!");
   </script>
