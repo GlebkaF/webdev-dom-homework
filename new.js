@@ -16,7 +16,7 @@ const comments =[
         isLike: false,
         },
         {
-          name:'Варвара Н.',
+        name:'Варвара Н.',
         data: `13.02.22 19:22`,
         comment: 'Мне нравится как оформлена эта страница! ❤',
         likesNum: '75',
@@ -24,7 +24,7 @@ const comments =[
         },  
     
 ];
-
+// счетчик лайков
 const calculLikeSum = () => {
   const likebuttons = document.querySelectorAll('.like-button');
      
@@ -44,26 +44,35 @@ const calculLikeSum = () => {
        });  
    }; 
 };
-// ответ на комметтарий
+// commentNameElevent.value = '';
+// commentTextElement.value = '';
+
+// не активная кнопка
+const ButtonEctiv = () => {
+ if (commentNameElevent.value && commentTextElement.value){
+  butttonWriteElement.disabled = false;
+ } else {
+  butttonWriteElement.disabled = true;
+ };
+ };
+
+// ответ на комметарий
    
 const answerComment = () => {
-
   const textComments = document.querySelectorAll('.comment-body')
-   
-  for (const textComment of textComments){
+    for (const textComment of textComments){
     textComment.addEventListener('click', () => {
-      
       const el = textComment.dataset.el;
-      commentTextElement.value = `${'>' + ' ' + comments[el].comment + '   ' + comments[el].name + ':' + ' '}`;
+      commentTextElement.value = `${'>' + ' ' + comments[el].comment + '  ' + comments[el].name + ':' + '  '}`;
      
-    })
+    }) 
   }
 }
 
+// enter вместо клика
 document.addEventListener('keyup', (e) => {
-  if ( e.key === 'Enter')
-  
-  butttonWriteElement.click()
+  if ( e.key === 'Enter');  
+  butttonWriteElement.click();
 }) 
 
 const renderComments = () => {
@@ -73,7 +82,7 @@ const renderComments = () => {
           <div>${comment.name}</div>
           <div>${comment.data}</div>
         </div>
-        <div data-el="${el}" class="comment-body"  style = "white-space: pre-line">
+        <div data-el="${el}" class="comment-body" >
           <div   class="comment-text"  type ="form">
            ${comment.comment}
           </div>
@@ -88,8 +97,9 @@ const renderComments = () => {
     }).join('');
 
     commentsLinkElement.innerHTML = commentsHtml;
-    calculLikeSum()
+    calculLikeSum();
     answerComment();
+    ButtonEctiv();
   
 };
 
@@ -97,19 +107,7 @@ renderComments();
 
 
 butttonWriteElement.addEventListener('click', () => {
-    commentNameElevent.classList.remove('bord');
-    commentTextElement.classList.remove('bord');
-
-    if (commentNameElevent.value === '' || commentTextElement.value === ''){
-        commentNameElevent.classList.add('bord');
-        commentTextElement.classList.add('bord');
-        return;
-    
-    } 
-
-    
-    
-
+   
    comments.push({
     name:commentNameElevent.value
     .replace('<', '&lt')
@@ -119,7 +117,6 @@ butttonWriteElement.addEventListener('click', () => {
         likesNum: 0,
         isLike: false,
    })
-
 //    commentsLinkElement.innerHTML = commentsLinkElement.innerHTML + `<li id="comment" class="comment">
 //             <div class="comment-header">
 //             <div>${commentNameElevent.value}</div>
@@ -142,12 +139,14 @@ butttonWriteElement.addEventListener('click', () => {
 
 
 // colorLikeSum();
-
+butttonWriteElement.disabled = true;
 
 renderComments();
 
 
   commentNameElevent.value = '';
-commentTextElement.value = '';
+  commentTextElement.value = '';
 });
 
+commentNameElevent.addEventListener('input', ButtonEctiv);
+commentTextElement.addEventListener('input', ButtonEctiv);
