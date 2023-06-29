@@ -232,7 +232,6 @@ const renderUserComments = () => {
   userComments.innerHTML = userComment.map((comments, index) => {
     const commentText = comments.isEdit === true ? `<textarea type="form" class="add-form-text_comment" id="changedText" data-index=${index} rows="4">${comments.comment}</textarea>` : `${comments.comment}`;
     const btnTextChange = comments.isEdit === true ? `Сохранить` : `Редактировать`;
-    const loadingText = comments.isLoading === true ? `<li class="comment"><div class="comment-body"><div class="comment-text">Загрузка</div></div><div class="comment-footer">` : ``;
 
     return `
     <li class="comment">
@@ -260,7 +259,6 @@ const renderUserComments = () => {
         <button class="like-button ${comments.isLike ? "" : "-active-like"}" data-index=${index} data-like=${comments.isLike}></button>
       </div>
     </div>
-    ${loadingText}
   </li>`
 }).join('');
   
