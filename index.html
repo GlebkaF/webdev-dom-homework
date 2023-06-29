@@ -7,65 +7,51 @@
   </head>
 
   <body>
-    <div class="container">
-      <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+    
+    <div class="container"> 
+      <div class="box-load" id="boxLoad">
+        <p class="text-load">Пожалуйста подождите комментарии загружаются ...</p>
+      </div>
+        
+        
+      <ul class="comments" id="list">
+
+       
+
+        <!-- Список ренедерится из API -->
+
       </ul>
+      <div class="box-load-new">
+        <p class="text-load-new">Комментарий загружается ...</p>
+      </div>
       <div class="add-form">
         <input
           type="text"
           class="add-form-name"
-          placeholder="Введите ваше имя"
+          placeholder="Введите ваше имя" 
+          id="name-input"
         />
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+          id="comment-input"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="addButton">Написать</button>
         </div>
       </div>
     </div>
+    <style>
+      .error {
+        background-color: rgb(244, 215, 215);
+      }
+    </style>
   </body>
 
-  <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
-  </script>
-</html>
+  <script src="script.js"></script>
+  <script type="module" src="./render.js"></script>
+  <script type="module" src="./api.js"></script>
+ 
+\</html>
