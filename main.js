@@ -2,6 +2,7 @@
 import renderUserComments from "./renderComments.js";
 import { fetchComments, postComment } from "./api.js";
 
+
     const buttonElement = document.getElementById("add-button");
     const deleteButtonElement = document.getElementById("delete-button");
     const listElement = document.getElementById("list");
@@ -16,7 +17,7 @@ import { fetchComments, postComment } from "./api.js";
     // Data in array
 
 
-     let userComments = [
+     export let userComments = [
      //  {
      //    name: "Глеб Фокин",
      //    date: "12.02.22 12:18",

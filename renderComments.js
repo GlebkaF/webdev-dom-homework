@@ -1,5 +1,6 @@
 const listElement = document.getElementById("list");
 import { initLikeButton, initEditButton, replyToComment } from "./main.js";
+import { userComments } from "./main.js";
 
 const renderUserComments = () => {
     const userCommentsHtml = userComments.map((userComment, index) => {

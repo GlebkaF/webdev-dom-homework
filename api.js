@@ -1,4 +1,5 @@
 import renderUserComments from "./renderComments.js";
+import { userComments } from "./main.js";
 
 const commentInputElement = document.getElementById("comment-input");
 const nameInputElement = document.getElementById("name-input");
