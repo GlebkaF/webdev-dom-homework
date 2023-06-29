@@ -103,7 +103,6 @@ const renderComments = () => {
 
 renderComments();
 
-
 butttonWriteElement.addEventListener('click', () => {
    
    comments.push({
