@@ -11,7 +11,7 @@ let userComment = [];
 
 //? Работаем с API GET
 function apiGet() {
-  fetch("https://wedev-api.sky.pro/api/v1/nikita--zhvalik/comments", {
+  fetch("https://wedev-api.sky.pro/api/v1/nikita-zhvalik/comments", {
       method: "GET"
   }).then((response) => {
   response.json().then((responseData) => {
@@ -65,7 +65,7 @@ function addComment() {
   //   isEdit: false,
   // });
     //? Работаем с API POST
-    fetch("https://wedev-api.sky.pro/api/v1/nikita--zhvalik/comments", {
+    fetch("https://wedev-api.sky.pro/api/v1/nikita-zhvalik/comments", {
       method: "POST",
       body: JSON.stringify({
         text: commentUser.value,
@@ -232,6 +232,7 @@ const renderUserComments = () => {
   userComments.innerHTML = userComment.map((comments, index) => {
     const commentText = comments.isEdit === true ? `<textarea type="form" class="add-form-text_comment" id="changedText" data-index=${index} rows="4">${comments.comment}</textarea>` : `${comments.comment}`;
     const btnTextChange = comments.isEdit === true ? `Сохранить` : `Редактировать`;
+    const loadingText = comments.isLoading === true ? `<li class="comment"><div class="comment-body"><div class="comment-text">Загрузка</div></div><div class="comment-footer">` : ``;
 
     return `
     <li class="comment">
@@ -259,6 +260,7 @@ const renderUserComments = () => {
         <button class="like-button ${comments.isLike ? "" : "-active-like"}" data-index=${index} data-like=${comments.isLike}></button>
       </div>
     </div>
+    ${loadingText}
   </li>`
 }).join('');
   
