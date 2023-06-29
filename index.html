@@ -17,7 +17,7 @@
       <textarea id="comment-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
         rows="4"></textarea>
       <div class="add-form-row">
-        <button id="add-button" class="add-form-button">Написать</button>
+        <button id="add-button" class="add-form-button" disabled>Написать</button>
       </div>
     </div>
   </div>
@@ -45,21 +45,37 @@
 
   const commentElements = document.querySelectorAll(".comment");
 
+  //кнопка Написать тухнет 
+  const disableButton = () => {
+    if (nameInputElement.value && commentTextElement.value) {
+      buttonElement.disabled = false;
+    } else {
+      buttonElement.disabled = true;
+    }
+  };
+  nameInputElement.addEventListener("input", disableButton);
+  commentTextElement.addEventListener("input", disableButton);
+
+
+
   const comments = [
     {
       name: "Глеб Фокин",
       date: "12.02.22 12:18",
       text: "Это будет первый комментарий на этой странице",
       like: 3,
+      isLiked: false,
     },
     {
       name: "Варвара Н.",
       date: "13.02.22 19:22",
       text: "Мне нравится как оформлена эта страница! ❤",
       like: 75,
+      isLiked: false,
     }
   ];
 
+  console.log(comments);
   // Добавляет обработчики кликов ко всем элементам с классом comment
   const initEventListeners = () => {
     // Находит все элементы с классом comment в разметке
@@ -73,24 +89,42 @@
       });
     }
   };
+
+  /*
+  //кнопка с полем ввода изменить комментарий
+ 
+  const changeButtonElementsFunc = () => {
+     const changeButtonElements = document.querySelectorAll(".edit-form-button");
+     for (const changeButtonElement of changeButtonElements) {
+       changeButtonElement.addEventListener("click", () => {
+ 
+       });  
+     }
+   }
+ */
+
+
+  // кнопка лайк с подсчетом
   const initLikeButtonsListeners = () => {
     const likeButtonsElements = document.querySelectorAll('.like-button');//кнопка
     const iconButtonsElements = document.querySelectorAll('.likes-counter');// счет лайков
-    console.log(likeButtonsElements);
-    console.log(iconButtonsElements);
 
-    likeButtonsElements.forEach((button, index) => {
-      button.addEventListener("click", () => {
-        button.classList.toggle("active");
-        const current = Number(iconButtonsElements[index].innerHTML);
-        console.log(current);
-        const inc = button.classList.contains("active") ? 1 : -1;
-        console.log(inc);
-        iconButtonsElements[index].innerHTML = current + inc;
-        console.log(iconButtonsElements[index].innerHTML = current + inc);
+    for (const likeButtonsElement of likeButtonsElements) {
+      likeButtonsElement.addEventListener("click", () => {
+        const index = likeButtonsElement.dataset.index;
+        if (comments[index].isLiked === false) {
+          comments[index].isLiked = true;
+          comments[index].like += 1;
+        } else {
+          comments[index].isLiked = false;
+          comments[index].like -= 1;
+        }
+        console.log(comments[index].isLiked);
+        console.log(comments[index].like);
+
+        renderComments()
       });
-    });
-
+    }
   };
 
   const renderComments = () => {
@@ -103,12 +137,14 @@
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${comment.text}</div>
-          </div>
+              ${comment.text}
+              </div>
+              <button class="edit-form-button"> Изменить </button>
+          </div>         
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${comment.like}</span>
-              <button data-index="${index}" class="like-button"></button>
+              <button data-index="${index}" class="like-button ${(comment.isLiked) ? "active":""}" ></button>
             </div>
           </div>
         </li>`;
@@ -123,6 +159,8 @@
 
   renderComments();
 
+
+  //красит поля если пустые
   buttonElement.addEventListener("click", () => {
     nameInputElement.classList.remove("error");
     if (nameInputElement.value === "") {
@@ -139,6 +177,8 @@
       name: nameInputElement.value,
       date: currentDate.toLocaleDateString('ru-RU', optins),
       text: commentTextElement.value,
+      like: 0,
+      isLiked: false
     });
 
     renderComments();
