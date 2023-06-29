@@ -111,7 +111,7 @@ export  const commentElements = document.querySelectorAll(".comment");
 
         postComment();
 
-        renderUserComments();
+      //  renderUserComments();
         
      };
 

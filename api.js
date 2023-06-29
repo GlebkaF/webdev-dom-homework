@@ -36,7 +36,7 @@ const fetchComments = () => {
     loadingComments.classList.remove('hidden');
     let newComment = document.getElementById('new-comment-section');
     newComment.style.display = 'none';
-       fetch("https://webdev-hw-api.vercel.app/api/v1/mariia-goppa/comments", {
+       return fetch("https://webdev-hw-api.vercel.app/api/v1/mariia-goppa/comments", {
         method: "POST",
         body: JSON.stringify({ 
           text: commentInputElement.value, 
@@ -78,8 +78,6 @@ const fetchComments = () => {
         newComment.style.display = '';
       });
     };
-
-    postComment();
 
     
     export { fetchComments, postComment };
