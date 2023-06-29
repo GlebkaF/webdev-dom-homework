@@ -21,7 +21,7 @@ const comments =[
         comment: 'Мне нравится как оформлена эта страница! ❤',
         likesNum: '75',
         isLike: false,
-        },  
+        } 
     
 ];
 // счетчик лайков
