@@ -44,8 +44,6 @@ const calculLikeSum = () => {
        });  
    }; 
 };
-// commentNameElevent.value = '';
-// commentTextElement.value = '';
 
 // не активная кнопка
 const ButtonEctiv = () => {
