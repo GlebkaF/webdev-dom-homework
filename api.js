@@ -13,7 +13,7 @@ const fetchComments = () => {
   return response.json();
   })
   .then((responseData) => {
-      userComments = responseData.comments.map((comment) => {
+      let userComments = responseData.comments.map((comment) => {
       return {
         name: comment.author.name,
         date: new Date(comment.date).toLocaleString().slice(0, -3),
@@ -25,7 +25,7 @@ const fetchComments = () => {
         };
     });
 
-      renderUserComments();
+      renderUserComments(userComments);
     });
   };
 

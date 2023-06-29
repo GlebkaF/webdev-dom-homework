@@ -17,7 +17,7 @@ import { fetchComments, postComment } from "./api.js";
     // Data in array
 
 
-     export let userComments = [
+   export let userComments = [
      //  {
      //    name: "Глеб Фокин",
      //    date: "12.02.22 12:18",
@@ -41,7 +41,7 @@ import { fetchComments, postComment } from "./api.js";
 
       // Data from API
     
-      fetchComments();
+      fetchComments(userComments);
         
 
       // Like button
