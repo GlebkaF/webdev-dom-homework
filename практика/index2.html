@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <ul class="comments">
+
+      <!-- Список рендерится из JS -->
+
+    </ul>
+    <div class="add-form">
+      <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
+      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
+      <div class="add-form-row">
+        <button class="delete-button">Удалить комментарий</button>
+        <button class="add-form-button">Написать</button>
+      </div>
+    </div>
+
+  </div>
+</body>
+
+<script>
+
+  "use strict";
+
+  const inputNameElement = document.querySelector('.add-form-name');
+  const inputTextElement = document.querySelector('.add-form-text');
+  const buttonElement = document.querySelector('.add-form-button');
+  const commentsElement = document.querySelector('.comments');
+  const buttonElementDel = document.querySelector('.delete-button');
+  const currentDate = new Date().toLocaleDateString('default', { day: '2-digit', month: '2-digit', year: '2-digit' }) + " " + new Date().toLocaleTimeString().slice(0, -3);
+
+  let comments = [];
+
+function fetchTotal(){
+  const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/:ol-shinka/comments", {
+    method: "GET"
+  });
+
+  fetchPromise.then((response) => {
+    const jsonPromise = response.json();
+    jsonPromise.then((responseData) => {
+      const appComments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          dateLast: currentDate,
+          text: comment.text,
+          likesQuantity: comment.likes,
+          likeColor: "like-button -no-active-like",
+          commentLike: false
+        }
+      });
+      comments = appComments;
+      //comments = responseData.comments;
+      renderComments();
+    })
+  });
+}
+fetchTotal();
+
+  function initButtonLike() {
+
+    const buttonLikes = document.querySelectorAll('.like-button');
+
+    for (const like of buttonLikes) {
+      like.addEventListener("click", (event) => {
+        const likeIndex = like.dataset.index;
+        const commentsElement = comments[likeIndex];
+        event.stopPropagation();
+
+        if (commentsElement.commentLike) {
+          commentsElement.likesQuantity -= 1;
+          commentsElement.commentLike = false;
+          commentsElement.likeColor = "like-button -no-active-like";
+
+        } else {
+          commentsElement.likesQuantity += 1;
+          commentsElement.commentLike = true;
+          commentsElement.likeColor = "like-button -active-like";
+          renderComments();
+        }
+      })
+    }
+  };
+
+  initButtonLike();
+
+  const replyComment = () => {
+    const commentElement = document.querySelectorAll(".comment");
+
+    for (const comment of commentElement) {
+      comment.addEventListener("click", () => {
+        const index = comment.dataset.index;
+        inputTextElement.value = `QUOTE_BEGIN ${comments[index].text}\n${comments[index].name} QUOTE_END`;
+      });
+    };
+  };
+  fetchTotal();
+  replyComment();
+
+  const renderComments = () => {
+    const commentsHtml = comments.map((comment, index) => {
+      return `<li class="comment" data-index="${index}">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.dateLast}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter"> ${comment.likesQuantity}</span>
+              <button data-index="${index}" class="${comment.likeColor}"></button>
+            </div>
+          </div>
+      
+        </li>`;
+    }).join("");
+
+    commentsElement.innerHTML = commentsHtml;
+    initButtonLike();
+    replyComment();
+    
+  };
+
+  renderComments();
+
+  buttonElement.setAttribute('disabled', true);
+
+  inputNameElement.addEventListener("input", () => {
+    buttonElement.setAttribute('disabled', true);
+
+    if ((inputNameElement.value.length > 0) && (inputTextElement.value.length > 0)) {
+      buttonElement.removeAttribute('disabled');
+    }
+  });
+
+  inputTextElement.addEventListener("input", () => {
+
+    buttonElement.setAttribute('disabled', true);
+    if ((inputNameElement.value.length > 0) && (inputTextElement.value.length > 0)) {
+      buttonElement.removeAttribute('disabled');
+    }
+  });
+
+  buttonElement.addEventListener("click", () => {
+    buttonElement.setAttribute('disabled', true);
+
+    fetch("https://wedev-api.sky.pro/api/v1/:ol-shinka/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        name: inputNameElement.value,
+        text: inputTextElement.value
+      })
+    });
+    .then((response) => {
+      response.json().then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          dateLast: currentDate,
+          text: comment.text,
+          likesQuantity: comment.likes,
+          likeColor: "like-button -no-active-like",
+          commentLike: false
+        }
+      });
+        comments = responseData.comments;
+        renderComments();
+      });
+    });
+    renderComments();
+    fetchTotal();
+    inputNameElement.value = "";
+    inputTextElement.value = "";
+  });
+
+
+  document.addEventListener("keyup", function (enter) {
+    if (enter.keyCode == 13) {
+      buttonElement.click();
+    }
+  });
+
+  buttonElementDel.addEventListener("click", () => {
+
+    //const lastElement = commentsElement.lastIndexOf(commentElement)
+    comments.pop();
+
+    renderComments();
+
+    //const lastElement = commentsElement.lastElementChild;
+    //lastElement.remove();
+  });
+
+</script>
+
+</html>
