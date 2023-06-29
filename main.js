@@ -17,36 +17,17 @@ import { fetchComments, postComment } from "./api.js";
     // Data in array
 
 
-   export let userComments = [
-     //  {
-     //    name: "Глеб Фокин",
-     //    date: "12.02.22 12:18",
-     //    comment: "Это будет первый комментарий на этой странице",
-     //    likeCounter: 3,
-     //    isLiked: false,
-     //    active: "",
-     //    isEdit: false,
-     //  },
-     //  {
-     //    name: "Варвара Н.",
-     //    date: "13.02.22 19:22",
-     //    comment: "Мне нравится как оформлена эта страница! ❤",
-     //    likeCounter: 75,
-     //    isLiked: false,
-     //    active: "",
-     //    isEdit: false,
-     //  },
-     ];
+   export let userComments = [];
 
 
       // Data from API
     
-      fetchComments(userComments);
+      fetchComments();
         
 
       // Like button
 
-      const initLikeButton = () => {
+      const initLikeButton = (userComments) => {
       const likeButtonElements = document.querySelectorAll(".like-button");
       for (const likeButtonElement of likeButtonElements) {
         const index = likeButtonElement.dataset.index;
@@ -61,14 +42,14 @@ import { fetchComments, postComment } from "./api.js";
             userComments[index].active = "";
             userComments[index].likeCounter -= 1;
           }
-          renderUserComments();
+          renderUserComments(userComments);
         });
       }
     };
 
      // Edit button
 
-     const initEditButton = () => {
+     const initEditButton = (userComments) => {
       const editButtonElements = document.querySelectorAll(".edit-button");
       for (const editButtonElement of editButtonElements) {
         const index = editButtonElement.dataset.index;
@@ -79,14 +60,14 @@ import { fetchComments, postComment } from "./api.js";
           } else {
             userComments[index].isEdit = false;
           }
-          renderUserComments();
+          renderUserComments(userComments);
         });
       }
     };
 
      // Reply to a comment
 
-     const replyToComment = () => {
+     const replyToComment = (userComments) => {
       const commentElements = document.querySelectorAll(".comment");
       for (const commentElement of commentElements) {
         commentElement.addEventListener("click", () => {

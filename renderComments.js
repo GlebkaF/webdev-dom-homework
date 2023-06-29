@@ -3,7 +3,7 @@ import { initLikeButton, initEditButton, replyToComment } from "./main.js";
 import { userComments } from "./main.js";
 
 const renderUserComments = (userComments) => {
-    const userCommentsHtml = userComments.map((userComment, index) => {
+    let userCommentsHtml = userComments.map((userComment, index) => {
       if (!userComments[index].isEdit) {
         userComments.isEdit = true;
         return `<li class="comment" data-index="${index}" data-name="${userComment.name}" data-text="${userComment.comment}">
