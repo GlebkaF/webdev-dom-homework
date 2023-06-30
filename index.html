@@ -18,8 +18,8 @@
                 rows="4"></textarea>
             <div class="add-form-row">
                 <button id="add-form-button" class="add-form-button">Написать</button>
-                <button id="delete-form-button" class="add-form-button delete-form-button">Удалить последний
-                    комментарий</button>
+                <!-- <button id="delete-form-button" class="add-form-button delete-form-button">Удалить последний
+                    комментарий</button> -->
             </div>
         </div>
     </div>
@@ -84,31 +84,66 @@
 
     //Функция добавления коментария клавишей Enter
     function addCommentEnter(key) {
-        if (key.code === "Enter") {
-            if (nameInputElement.value && commentInputElement.value) {
+        if (nameInputElement.value && commentInputElement.value) {
+            if (key.code === "Enter") {
                 addComment();
             }
         }
     }
 
-    //Функция удаления последнего комментария
-    function deleteLastComment() {
-        userComments.pop();
-        renderComments();
-    }
+    // //Функция удаления последнего комментария
+    // function deleteLastComment() {
+    //     userComments.pop();
+    //     renderComments();
+    // }
 
     //Функция добавления объекта комментария в массив
     function addComment() {
-        userComments.push({
-            name: nameInputElement.value,
-            time: getDate(),
-            comment: commentInputElement.value,
-            numberOfLike: 0,
-            like: false,
-            isEdit: false
-        });
+        if (nameInputElement.value && commentInputElement.value) {
+            userComments.push({
+                name: nameInputElement.value.replaceAll('>', '&gt').replaceAll('<', '&lt'),
+                time: getDate(),
+                comment: commentInputElement.value.replaceAll('>', '&gt').replaceAll('<', '&lt').replaceAll('QUOTE_BEGIN', "<div class='quote'>").replaceAll('QUOTE_END', "</div>"),
+                numberOfLike: 0,
+                like: false,
+                isEdit: false
+            })
+        };
 
         renderComments()
+    }
+    // //Функция сохранения измененного комментария
+    // function saveCommentFunction() {
+    //     const saveCommentsButtonsElements = document.querySelectorAll('.save-comment-button');
+    //     const saveCommentElements = document.querySelectorAll('.save-comment');
+    //     console.log(saveCommentElements);
+
+    //     for (const saveCommentButtonElement of saveCommentsButtonsElements) {
+    //         saveCommentButtonElement.addEventListener('click', () => {
+    //             // Создаем переменную с индексом 
+    //             const index = saveCommentButtonElement.dataset.index;
+
+    //             //При клике на кнопку редактировать присваиваем значение false
+    //             userComments[index].isEdit = false;
+    //             //Присваиваем значение из формф в объект
+    //             console.log(userComments[index]);
+    //             console.log(saveCommentElements[index]);
+    //             userComments[index].comment = saveCommentElements[index].value;
+    //             //Рендерим страницу
+    //             renderComments();
+    //         })
+    //     }
+    // }
+
+    //Функция ответа на комментарий
+    const replyToComment = () => {
+        const commentsCardElements = document.querySelectorAll('.comment');
+        for (const commentCardElement of commentsCardElements) {
+            commentCardElement.addEventListener('click', () => {
+                const index = commentCardElement.dataset.index;
+                commentInputElement.value =`QUOTE_BEGIN ${userComments[index].name}:\n ${userComments[index].comment}QUOTE_END \n`;
+            })
+        }
     }
 
     //Функция рендера
@@ -120,13 +155,13 @@
                 commentСhange = `<div class="comment-text">
                         ${userComment.comment}
                     </div>
-                    <button data-index="${index}" class="edit-comment-button"}">Редактировать</button>`
+                    <!-- <button data-index="${index}" class="edit-comment-button"}">Редактировать</button> -->`
             } else {
-                commentСhange = `<textarea data-index="${index}" id='edit-comment' type="textarea" class="add-form-text edit-comment" 
+                commentСhange = `<textarea data-index="${index}" id='save-comment' type="textarea" class="add-form-text save-comment" 
                 rows="4">${userComment.comment}</textarea>
-                <button data-index="${index}" class="edit-comment-button"}">Сохранить</button>`
+              <!--  <button data-index="${index}" class="save-comment-button"}">Сохранить</button> -->`
             }
-            return ` <li class="comment">
+            return ` <li class="comment" data-index="${index}">
                 <div class="comment-header">
                     <div>${userComment.name}</div>
                     <div>${userComment.time}</div>
@@ -168,55 +203,55 @@
         nameInputElement.addEventListener("keyup", addCommentEnter);
         commentInputElement.addEventListener("keyup", addCommentEnter);
 
-        //Удаление последнего комментария
-        buttonDeleteElement.addEventListener('click', deleteLastComment);
+        // //Удаление последнего комментария
+        // buttonDeleteElement.addEventListener('click', deleteLastComment);
         putLike();
-        editComments();
+        // editComments();
+        replyToComment();
     }
 
-    //Функция редактирования комментария 
-    const editComments = () => {
-        const editCommentsButtonsElements = document.querySelectorAll('.edit-comment-button');
-        for (const editCommentButtonElement of editCommentsButtonsElements) {
-            const index = editCommentButtonElement.dataset.index;
-            editCommentButtonElement.addEventListener('click', () => {
-                if (userComments[index].isEdit === false) {
-                    userComments[index].isEdit = true;
-                    renderComments();
-                } else {
-                    userComments[index].isEdit = false;
-                    userComments[index].comment = document.querySelectorAll('.edit-comment')[index].value;
-                }
-                renderComments();
-
-
-            }
-            )
-        }
-    };
+    // //Функция редактирования комментария 
+    // const editComments = () => {
+    //     const editCommentsButtonsElements = document.querySelectorAll('.edit-comment-button');
+    //     console.log(editCommentsButtonsElements);
+    //     for (const editCommentButtonElement of editCommentsButtonsElements) {
+    //         editCommentButtonElement.addEventListener('click', () => {
+    //             // Создаем переменную с индексом
+    //             const index = editCommentButtonElement.dataset.index;
+    //             //При клике на кнопку редактировать присваиваем значение тру
+    //             userComments[index].isEdit = true;
+    //             //Рендерим страницу
+    //             renderComments();
+    //             saveCommentFunction();
+    //         }
+    //         )
+    //     }
+    // };
 
     renderComments();
-    editComments();
+    // editComments();
 
     //Функция активации лайка
     function putLike() {
         const likeButtonElements = document.querySelectorAll('.like-button');
 
         for (const likeButtonElement of likeButtonElements) {
-            likeButtonElement.addEventListener('click', () => {
+            likeButtonElement.addEventListener('click', (event) => {
                 const index = likeButtonElement.dataset.index;
                 if (userComments[index].like === true) {
                     userComments[index].like = false;
                     userComments[index].numberOfLike--;
-                    renderComments();
                 } else {
                     userComments[index].like = true;
                     userComments[index].numberOfLike++;
-                    renderComments();
                 }
+                renderComments();
+                event.stopPropagation();
             })
         }
     }
+
+
 
 
 
