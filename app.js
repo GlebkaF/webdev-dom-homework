@@ -4,10 +4,6 @@ const commentInput = document.querySelector('#comment-input')
 const addButton = document.querySelector('#add-button')
 const commentsBox = document.querySelector('#comments-box')
 const removeButton = document.querySelector('#delete-button')
-//переменные для даты
-const date = new Date()
-const optionsForDate = {month: 'numeric', day: 'numeric'}
-const currentDate = `${date.toLocaleDateString('ru-RU', optionsForDate)}.${String(date.getFullYear()).slice(2)} ${fullTime(date.getHours())}:${fullTime(date.getMinutes())}`;
 // переводим список комментов в массив
 const commentsList = [
     {
@@ -40,7 +36,7 @@ const renderCommentList = () => {
                 <div>${comments.currDate}</div>
               </div>
               <div class="comment-body">
-                <div class="comment-text">
+                <div data-answer='${index}' class="comment-text">
                   ${(comments.isEdit) ? `<textarea class="comment-edit">${comments.commentText}</textarea>` : `${comments.commentText}` }
                 </div>
                 <button id='edit-button' data-index='${index}' class="add-form-button">${comments.isEdit ? `Сохранить` : 'Редактировать'}</button>
@@ -54,12 +50,33 @@ const renderCommentList = () => {
         </li>    
         `
     }).join('')
+    
 
-    commentsBox.innerHTML = commentsHtml;
+    commentsBox.innerHTML = commentsHtml.replaceAll("→", "<div class='quote'>").replaceAll("←", "</div class='quote'>");
+    
 
     initLikeButtonsListeners();
     initEditButtonsListeners();
+    initCommentAnswerListeners();
 }
+
+
+// Функция создания ответа на комментарий
+const initCommentAnswerListeners = () => {
+    const commentAnswer = document.querySelectorAll(".comment-text")
+    commentAnswer.forEach((answer, index) => {
+        answer.addEventListener('click', () => {
+           if(answer.children.length == 0) { //Дополнительная проверка, чтоб не отрабатывал клик на редактируемый комментарий
+            commentInput.value = `→${commentsList[index].userName}
+
+${commentsList[index].commentText}←
+            
+`
+           }
+        })
+    })
+}
+
 
 // Функция создания коллекции и навешивания ивентов на все кнопки Like
 const initLikeButtonsListeners = () => {
@@ -109,14 +126,6 @@ renderCommentList();
 
 //ВСЕ ОСТАЛЬНЫЕ ФУНКЦИИ НА СТАТИЧЕСКИХ ЭЛЕМЕНТАХ
 
-// функция подправки времени.
-function fullTime(number) {
-    if (String(number).length < 2) {
-       return number = `0${number}`
-    } else {
-       return number = number
-    }
-}
 // Выключение кнопки при не соблюдении условий
 function disableBtn() {
     if (!nameInput.value == '' && !commentInput.value == '') {
@@ -126,14 +135,34 @@ function disableBtn() {
     }
 }
 
+// функция подправки времени.
+function fullTime(number) {
+    if (String(number).length < 2) {
+       return number = `0${number}`
+    } else {
+       return number = number
+    }
+}
+
 // функция добавления нашего комментария в массив
 function addComment() {
+    const date = new Date()
+    const optionsForDate = {month: 'numeric', day: 'numeric'}
+    const currentDate = `${date.toLocaleDateString('ru-RU', optionsForDate)}.${String(date.getFullYear()).slice(2)} ${fullTime(date.getHours())}:${fullTime(date.getMinutes())}`;
     commentsList.push({
-        userName: nameInput.value,
+        userName: nameInput.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
         currDate: currentDate,
         likeCounter: 0,
         isLike: false,
-        commentText: commentInput.value,
+        commentText: commentInput.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
         isEdit: false,
     })
 }
