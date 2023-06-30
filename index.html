@@ -82,38 +82,85 @@
     } else {
        return number = number
     }
-}
+};
 
-function addComment() {
-    const textHtml = 
-    `
+    const comments = [
+  {
+    name: "Глеб Фокин",
+    time: "12.02.22 12:18",
+    text: "Это будет первый комментарий на этой странице",
+    like: 3,
+    icon: false,
+
+  },
+  {
+    name: "Варвара Н.",
+    time: "13.02.22 19:22",
+    text: "Мне нравится как оформлена эта страница! ❤",
+    like: 75,
+    icon: true,
+  }
+];
+
+const likeElementfunction = () =>{
+  const likeElements = document.querySelectorAll(".like-button");
+  for( const likeElement of likesElements){
+likeElement.addEventListener("click",() =>{
+  const index = likeElement.dataset.index;
+  console.log(index);
+  if(comments[index].icon ===false){
+    comments[index].icon= true;
+    comments[index].like +=1;
+  }
+  else{
+  comments[index].icon= false;
+  comments[index].like -=1;
+  }
+console.log(comments[index].icon);
+console.log(comments[index].like);
+renderComments();
+    });
+  };
+};
+   
+const renderComments= () => {
+    const textHtml = comments.map((comment,index) =>{
+    return  `
     <li class="comment">
           <div class="comment-header">
-            <div>${nameElement.value}</div>
-            <div>${currentDate}</div>
+            <div>${comment.name}</div>
+            <div>${comment.time}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${commentElement.value}
+              ${comment.text}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
+              <span class="likes-counter"> ${comment.like}</span>
+              <button data-index="${index}" class="like-button "></button>
             </div>
           </div>
-    </li>    
-    `
-    listElement.insertAdjacentHTML('beforeend', textHtml)
-
-}
-    buttonElement.addEventListener('click', ()=>{
-    addComment()
-    nameElement.value = ''
-    commentElement.value = ''
-    buttonElement.classList.add('add-form-button_disable')
-    });
+    </li>`;
+    }).join('')
     
+    listElement.innerHTML = textHtml;
+}
+renderComments ();
+
+    buttonElement.addEventListener('click', ()=>{
+    comments.push({
+    name: nameElement.value,
+    time: currentDate.value,
+    text: commentElement.value,
+
+  });
+renderComments ();
+nameElement.value= "";
+commentElement.value= "";
+currentDate.value="";
+    });
+    renderComments ();
   </script>
 </html>
