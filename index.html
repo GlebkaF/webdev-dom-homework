@@ -102,7 +102,8 @@
         const likeElements = document.querySelectorAll(".like-button");
         // console.log(likeElements);
           likeElements.forEach((element, index) => {
-            element.addEventListener('click', () => {
+            element.addEventListener('click', (event) => {
+              event.stopPropagation();
               if (comments[index].status) {
                 comments[index].status = false;
                 comments[index].like -= 1;
@@ -111,10 +112,31 @@
                 comments[index].like += 1;
               }
               renderComments();
+              initCommentingListeners();
             })
           }) 
       }
+
+      const initCommentingListeners = () => {
+        
+        const CommentingElements = document.querySelectorAll(".comment");
+
+        CommentingElements.forEach((element, index) => {
+            element.addEventListener('click', () => {
+              //console.log( "> " + comments[index].text +" "+ comments[index].name);
+              commentInputElement.value = "> " + comments[index].text +" "+ comments[index].name +", ";
+            })
+          }) 
+      }
+      initCommentingListeners();
+
       
+      
+      
+
+        
+
+        
 
       const renderComments = () => {
         const commentsHtml = comments.map((comment) => {
@@ -139,6 +161,7 @@
 
         listElement.innerHTML = commentsHtml;
         initEventListeners();
+        initCommentingListeners();
       }
       renderComments();
 
@@ -154,9 +177,9 @@
         let fullDate = (myDate.getDate().toString().padStart(2, "0")) + "." + (myDate.getMonth() + 1).toString().padStart(2, "0") + "." + (myDate.getFullYear() - 2000) + " " + (myDate.getHours().toString().padStart(2, "0")) + ":" + (myDate.getMinutes().toString().padStart(2, "0"));
         
         comments.push({
-          name: nameInputElement.value,
+          name: nameInputElement.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
           date: fullDate,
-          text: commentInputElement.value,
+          text: commentInputElement.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
           like: 0,
           status: false,
         })
