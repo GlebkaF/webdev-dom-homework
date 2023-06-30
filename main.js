@@ -10,13 +10,11 @@ import { getListComments } from "./listComments.js";
 
 
 //  Поиск элментов
-const nameInputElement = document.getElementById("name-input");
-const comentInputElement = document.getElementById("coment-input");
-const addButtonElement = document.getElementById("add-button");
+
+
 const listElement = document.getElementById("list");
-const endDeleteButtonElement = document.getElementById("end-delete-button");
 const addFormElement = document.getElementById("add-form");
-const loadingElement = document.querySelector(".loading");
+const appEL = document.getElementById("app")
 let comments = [];
 
 export { nameInputElement, comentInputElement };
@@ -36,7 +34,7 @@ function getArr(modulFetch) {
                 }
             });
             comments = appComments;
-            return renderComments(listElement, getListComments, comments)
+            return renderComments(appEL, getListComments, comments)
         })
         .then(() => {
             document.body.classList.add('loaded');
@@ -53,7 +51,7 @@ const initiateRedact = () => {
             event.stopPropagation();
             const index = redactButton.dataset.index;
             comments[index].isEdit = !comments[index].isEdit;
-            renderComments(listElement, getListComments, comments);
+            renderComments(appEL, getListComments, comments);
         });
 
     }
@@ -64,7 +62,7 @@ const initiateRedact = () => {
             const index = saveButton.dataset.index;
             comments[index].isEdit = !comments[index].isEdit;
             comments[index].text = saveButton.closest('.comment').querySelector('textarea').value
-            renderComments(listElement, getListComments, comments);
+            renderComments(appEL, getListComments, comments);
         });
 
     }
@@ -95,7 +93,7 @@ const initlikeButtonsListeners = () => {
                     --comments[index].like;
                     comments[index].classLike = 'like-button -no-active-like';
                 }
-                renderComments(listElement, getListComments, comments);
+                renderComments(appEL, getListComments, comments);
             })
                 .then((data) => {
                     likeButtonElement.classList.remove('-loading-like');
@@ -121,8 +119,10 @@ redactComments();
 export { initlikeButtonsListeners, redactComments, initiateRedact };
 
 // Рендерим из массива разметку
-renderComments(listElement, getListComments, comments);
+renderComments(appEL, getListComments, comments);
 
+const loadingElement = document.querySelector(".loading");
+console.log(loadingElement);
 loadingElement.classList.add("display-none");
 
 //Добавляем новый коммент на сервер
@@ -132,8 +132,8 @@ function postData(modulFetch) {
             return getArr(fetchGet);
         })
         .then(() => {
-            addFormElement.classList.remove("display-none");
-            loadingElement.classList.add("display-none");
+            addFormElement.classList.add("display-none");
+            loadingElement.classList.remove("display-none");
             nameInputElement.value = "";
             comentInputElement.value = "";
         })
@@ -152,6 +152,9 @@ function postData(modulFetch) {
         });
 };
 
+const addButtonElement = document.getElementById("add-button");
+const nameInputElement = document.getElementById("name-input");
+const comentInputElement = document.getElementById("coment-input");
 // Добавить обработчик клика для добавления элемента
     addButtonElement.addEventListener("click", () => {
 
@@ -163,7 +166,7 @@ function postData(modulFetch) {
         loadingElement.classList.remove("display-none");
         postData(fetchPOST);
 
-        renderComments(listElement, getListComments, comments);
+        renderComments(appEL, getListComments, comments);
 
     });
 
@@ -184,6 +187,7 @@ document.addEventListener("keypress", function (event) {
 });
 
 // Удаление последнего комментари
+const endDeleteButtonElement = document.getElementById("end-delete-button");
 endDeleteButtonElement.addEventListener("click", () => {
 
     const lastElement = listElement.lastElementChild;
