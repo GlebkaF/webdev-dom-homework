@@ -1,4 +1,4 @@
-import { getPromise, addLogin } from "../api.js";
+import { getPromise, addLogin, registerUser } from "../api.js";
 
 export function renderLoginComponents({ appEl, setToken }) {
   let isLoginMode = true;
@@ -45,28 +45,59 @@ export function renderLoginComponents({ appEl, setToken }) {
     appEl.innerHTML = appHtml;
 
     document.getElementById("login-button").addEventListener("click", () => {
-      const login = document.getElementById("login").value;
-      const password = document.getElementById("password").value;
+      if (isLoginMode) {
+        const login = document.getElementById("login").value;
+        const password = document.getElementById("password").value;
 
-      if (!login) {
-        alert("Введите логин");
-        return;
-      }
+        if (!login) {
+          alert("Введите логин");
+          return;
+        }
 
-      if (!password) {
-        alert("Введите пароль");
-        return;
+        if (!password) {
+          alert("Введите пароль");
+          return;
+        }
+        addLogin(login, password)
+          .then((user) => {
+            console.log(user);
+            console.log(user.user);
+            setToken(`Bearer ${user.user.token}`);
+            getPromise();
+          })
+          .catch((error) => {
+            alert(error.massage);
+          });
+      } else {
+        if (isLoginMode) {
+          const login = document.getElementById("login").value;
+          const name = document.getElementById("username").value;
+          const password = document.getElementById("password").value;
+          if (!name) {
+            alert("Введите имя");
+            return;
+          }
+
+          if (!login) {
+            alert("Введите логин");
+            return;
+          }
+
+          if (!password) {
+            alert("Введите пароль");
+            return;
+          }
+          registerUser(login, password, name)
+            .then((user) => {
+              console.log(user.user);
+              setToken(`Bearer ${user.user.token}`);
+              getPromise();
+            })
+            .catch((error) => {
+              alert(error.massage);
+            });
+        }
       }
-      addLogin(login, password)
-        .then((user) => {
-          console.log(user);
-          console.log(user.user);
-          setToken(`Bearer ${user.user.token}`);
-          getPromise();
-        })
-        .catch((error) => {
-          alert(error.massage);
-        });
     });
 
     document.getElementById("toggle-button").addEventListener("click", () => {

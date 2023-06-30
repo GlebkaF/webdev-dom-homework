@@ -40,7 +40,6 @@ function getPost(token) {
   fetch(host, {
     method: "POST",
     body: JSON.stringify({
-      name: nameInputElement.value,
       text: textInputElement.value,
     }),
     headers: {
@@ -87,8 +86,24 @@ export function addLogin(login, password) {
       password,
     }),
   }).then((response) => {
-    if(response.status === 400) {
-      throw new Error('Неверный логин или пароль')
+    if (response.status === 400) {
+      throw new Error("Неверный логин или пароль");
+    }
+    return response.json();
+  });
+}
+
+export function registerUser(login, password, name) {
+  return fetch("https://wedev-api.sky.pro/api/user", {
+    method: "POST",
+    body: JSON.stringify({
+      login,
+      password,
+      name,
+    }),
+  }).then((response) => {
+    if (response.status === 400) {
+      throw new Error("Такой пользователь уже существует");
     }
     return response.json();
   });
