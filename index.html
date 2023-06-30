@@ -9,40 +9,7 @@
   <body>
     <div class="container">
       <ul id="list" class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+       
       </ul>
       <div class="add-form">
         <input id="name-input"
@@ -104,7 +71,7 @@
 
 const likeElementfunction = () =>{
   const likeElements = document.querySelectorAll(".like-button");
-  for( const likeElement of likesElements){
+  for( const likeElement of likeElements){
 likeElement.addEventListener("click",() =>{
   const index = likeElement.dataset.index;
   console.log(index);
@@ -122,7 +89,7 @@ renderComments();
     });
   };
 };
-   
+likeElementfunction (); 
 const renderComments= () => {
     const textHtml = comments.map((comment,index) =>{
     return  `
@@ -139,28 +106,31 @@ const renderComments= () => {
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter"> ${comment.like}</span>
-              <button data-index="${index}" class="like-button "></button>
+              <button data-index="${index}" class="like-button ${(comment.icon) ? "-active-like": ""}" ></button>
             </div>
           </div>
     </li>`;
     }).join('')
     
     listElement.innerHTML = textHtml;
+    likeElementfunction ();
 }
 renderComments ();
 
     buttonElement.addEventListener('click', ()=>{
     comments.push({
     name: nameElement.value,
-    time: currentDate.value,
+    time: currentDate,
     text: commentElement.value,
-
+    like:0,
+    icon: false,
   });
 renderComments ();
 nameElement.value= "";
 commentElement.value= "";
 currentDate.value="";
     });
+    likeElementfunction ();
     renderComments ();
   </script>
 </html>
