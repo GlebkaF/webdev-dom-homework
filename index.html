@@ -74,7 +74,7 @@
           text: 'Это будет первый комментарий на этой странице',
           likes: 0,
           isLiked: false
-        },
+          },
         {
           author: 'Варвара Н.',
           date: '13.02.22 19:22',
@@ -93,41 +93,40 @@
           const newComment = document.createElement('li');
           newComment.classList.add('comment');
 
-          const likeButtonClass = comment.isLiked ? 'like-button -active-like' : 'like-button';
+          const likeButtonClass = comment.isLiked ? 'like-button active-like' : 'like-button';
           const commentTemplate = `
             <div class="comment-header">
               <div>${comment.author}</div>
               <div>${comment.date}</div>
-            </div>
-            <div class="comment-body">
-              <div class="comment-text">${comment.text}</div>
-            </div>
-            <div class="comment-footer">
-              <div class="likes">
-                <span class="likes-counter">${comment.likes}</span>
+              </div>
+                <div class="comment-body">
+                  <div class="comment-text">${comment.text}</div>
+                </div>
+                <div class="comment-footer">
+                <div class="likes">
+                  <span class="likes-counter">${comment.likes}</span>
                 <button class="${likeButtonClass}" data-index="${index}"></button>
               </div>
             </div>
           `;
-
           newComment.innerHTML = commentTemplate;
 
-          // Текст без применения HTML-тегов
+      // Текст без применения HTML-тегов
           const commentAuthor = newComment.querySelector('.comment-header div:first-child');
           const commentText = newComment.querySelector('.comment-text');
           commentAuthor.textContent = comment.author;
           commentText.textContent = comment.text;
 
           commentsList.appendChild(newComment);
-        });
+      });
 
-        const commentTextElements = document.querySelectorAll('.comment-text');
-        commentTextElements.forEach((element, index) => {
-          element.addEventListener('click', () => handleReply(index));
-        });
-      }
+      const commentTextElements = document.querySelectorAll('.comment-text');
+      commentTextElements.forEach((element, index) => {
+        element.addEventListener('click', () => handleReply(index));
+      });
+    }
 
-      // Добавление комментария
+    // Добавление комментария
       const nameInput = document.querySelector('.add-form-name');
       const commentInput = document.querySelector('.add-form-text');
       const addButton = document.querySelector('.add-form-button');
@@ -180,17 +179,16 @@
       document.addEventListener('keyup', handleKeyPress);
       addButton.addEventListener('click', addComment);
 
-      // Удаление последнего комментария
+    // Удаление последнего комментария
       const deleteButton = document.querySelector('.delete-button');
 
       function deleteLastComment() {
         commentsData.pop();
         renderComments();
       }
-
       deleteButton.addEventListener('click', deleteLastComment);
 
-      // Лайки
+    // Лайки
       function handleLike(event) {
         const index = event.target.dataset.index;
         const comment = commentsData[index];
@@ -202,7 +200,6 @@
           comment.likes++;
           comment.isLiked = true;
         }
-
         renderComments();
       }
 
@@ -212,15 +209,35 @@
         }
       });
 
-      // Ответ на комментарий
+    // Ответ на комментарий
       function handleReply(index) {
         const comment = commentsData[index];
         const replyText = `>${comment.text}\n@${comment.author}, `;
-        commentInput.value += replyText;
+        commentInput.value = replyText;
         commentInput.focus();
       }
 
+    // Навешивание обработчиков на комментарии при ответе
+      function addReplyHandlers() {
+        const commentElements = document.querySelectorAll('.comment');
+
+        commentElements.forEach((element, index) => {
+          const likeButton = element.querySelector('.like-button');
+          likeButton.addEventListener('click', (event) => {
+            event.stopPropagation();
+            handleLike(event);
+          });
+          element.addEventListener('click', (event) => {
+            const isLikeButton = event.target.classList.contains('like-button');
+            if (!isLikeButton) {
+              handleReply(index);
+            }
+          });
+        });
+      }
+
       renderComments();
+      addReplyHandlers();
 
       console.log('It works!');
     </script>
