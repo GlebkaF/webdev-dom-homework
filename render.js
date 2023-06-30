@@ -1,35 +1,21 @@
 //import { getListComments } from "./listComments.js";
 import { getArr } from "./main.js";
 import { fetchPOST } from "./api.js";
-import { token } from "./main.js";
+import { renderLoginComponent } from "./components/login-component.js";
 
 
 
 // Рендерим из массива разметку
-function renderAPP(getListComments, comments) {
+function renderAPP(getListComments, comments, token) {
     const appEL = document.getElementById("app");
     if (!token) {
-        const appHtml = `
-<form class="login-form" id="enter-form">
-Форма входа
-<br>
-<input type="text" class="login-form-input" placeholder="Введите логин" id="enter-form-login" />
-<input type="password" class="login-form-input" placeholder="Введите пароль" id="enter-form-password" />
-<div class="login-form-row">
-  <button class="login-form-button" id="enter-button-enter">Войти</button>
-  <button class="login-form-button-reg" id="enter-button-reg">Зарегистрироваться</button>
-</div>
-</form>
-`;
-        appEL.innerHTML = appHtml;
-        const enterButton = document.getElementById("enter-button-enter");
-        console.log(enterButton);
-        enterButton.addEventListener("click", () => {
-            console.log("всё работает");
-            token = "Bearer bgc0b8awbwas6g5g5k5o5s5w606g37w3cc3bo3b83k39s3co3c83c03ck";
-            console.log(token);
-            renderAPP(getListComments, comments);
-        });
+        renderLoginComponent({
+            appEL,
+            setToken: (newToken) => {
+              token = newToken;
+            },
+            getArr,
+          });
         return;
 
     };
