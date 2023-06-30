@@ -1,8 +1,8 @@
 //import { getListComments } from "./listComments.js";
 import { getArr } from "./main.js";
 import { fetchPOST } from "./api.js";
-import { token } from "./api.js";
-console.log(token);
+import { token } from "./main.js";
+
 
 
 // Рендерим из массива разметку
@@ -25,7 +25,7 @@ function renderAPP(getListComments, comments) {
         const enterButton = document.getElementById("enter-button-enter");
         console.log(enterButton);
         enterButton.addEventListener("click", () => {
-            console.log("jr");
+            console.log("всё работает");
             token = "Bearer bgc0b8awbwas6g5g5k5o5s5w606g37w3cc3bo3b83k39s3co3c83c03ck";
             console.log(token);
             renderAPP(getListComments, comments);
@@ -157,7 +157,7 @@ function renderAPP(getListComments, comments) {
 
     //Добавляем новый коммент на сервер
     function postData() {
-        return fetchPOST(nameInputElement, comentInputElement)
+        return fetchPOST(nameInputElement, comentInputElement, token)
             .then((response) => {
                 return getArr();
             })
