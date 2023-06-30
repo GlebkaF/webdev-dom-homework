@@ -1,4 +1,4 @@
-import { getArr } from "../main.js";
+import { loginUser, registerUser } from "../api.js";
 
 export function renderLoginComponent({appEL, setToken,getArr}) {
     const appHtml = `
@@ -19,6 +19,16 @@ export function renderLoginComponent({appEL, setToken,getArr}) {
             enterButton.addEventListener("click", () => {
                 console.log("всё работает");
                 setToken ("Bearer bgc0b8awbwas6g5g5k5o5s5w606g37w3cc3bo3b83k39s3co3c83c03ck");
-                getArr();
+
+                loginUser({
+                    login: "glebka",
+                    password: "123456",
+                  })
+                  .then ((user) => {
+                    console.log(user);
+                    setToken(`Bearer ${user.user.token}`);
+                    getArr();
+                  })
+                
             });
 }
