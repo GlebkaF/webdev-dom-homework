@@ -40,6 +40,7 @@ const calculLikeSum = () => {
           comments[el].likesNum --;
           comments[el].isLike = false;
         }
+        
      renderComments()
        });  
    }; 
