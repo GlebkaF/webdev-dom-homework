@@ -32,15 +32,15 @@ const calculLikeSum = () => {
        likebutton.addEventListener('click', () => { 
        
          const el =  likebutton.dataset.el;  
-
-        if(!comments[el].isLike){  
+ 
+         if(!comments[el].isLike){  
           comments[el].likesNum ++;
           comments[el].isLike = true;  
         } else {
           comments[el].likesNum --;
           comments[el].isLike = false;
         }
-        
+
      renderComments()
        });  
    }; 
