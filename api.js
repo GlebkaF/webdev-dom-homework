@@ -1,21 +1,32 @@
 
-import { loaderComments , commentsElement, nameInputElement, textElement, addFormElement } from "./index.js";
+import {  commentsElement, nameInputElement, textElement, addFormElement } from "./index.js";
 import { fetchFunction } from "./index.js";
 import { commentDate } from "./date.js";
+//import { loaderComments } from "./index.js";
+const host = "https://wedev-api.sky.pro/api/v2/tanya-bulaeva/comments";
+let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
 
 export const getFetch = () => {
-    return fetch("https://wedev-api.sky.pro/api/v1/tanya-bulaeva/comments",{
-    method: "GET"
+    return fetch(host,{
+    method: "GET",
+    headers: {
+      Authorization: token
+    }
     })
     .then((response) => {
-     loaderComments();
+      if (response.status === 401)
+      {token = prompt ("Введите верный пароль")
+    getFetch();
+    throw new Error ("Нет авторизации")
+    }
+  //   loaderComments();
     return  response.json();
 })
     }
     
 
 export const postFetch = () => {
-    return fetch("https://wedev-api.sky.pro/api/v1/tanya-bulaeva/comments",
+    return fetch(host,
  {
   method: "POST",
   body: JSON.stringify({
@@ -24,7 +35,10 @@ export const postFetch = () => {
        date: commentDate,
        likes: 0,
    //    forceError: true,
-      })
+      }),
+      headers: {
+        Authorization: token
+      }
     }).then((response) => {
 
   if (response.status === 201){
@@ -58,4 +72,35 @@ if (error.message === "Плохой запрос" ){
 alert ("Кажется что-то пошло не так, попробуйте позже");
 console.log (error)
 });
+}
+
+export function loginUser({ login, password }) {
+  return fetch("", {
+    method: "POST",
+    body: JSON.stringify({
+      login,
+      password,
+    }),
+  }).then((response) => {
+    if (response.status === 400) {
+      throw new Error("Неверный логин или пароль");
+    }
+    return response.json();
+  });
+};
+
+export function registerUser({ login, password, name }) {
+  return fetch("", {
+    method: "POST",
+    body: JSON.stringify({
+      login,
+      password,
+      name,
+    }),
+  }).then((response) => {
+    if (response.status === 400) {
+      throw new Error("Такой пользователь уже существует");
+    }
+    return response.json();
+  });
 }

@@ -1,5 +1,8 @@
  const getCommentsList = (comment, index) => {
-    return   `<li class = 'comment' class = 'whiteSpace'   data-index ="${index}"> <div class = 'comment-header'>
+    return   `
+    
+    
+    <li class = 'comment' class = 'whiteSpace'   data-index ="${index}"> <div class = 'comment-header'>
         <div>${comment.name}</div> 
         <div>${comment.dateCreation}</div>
        </div>  
@@ -18,4 +21,6 @@
                    </div> 
        </div>`;
  };
-export {getCommentsList};
+
+ 
+export {getCommentsList};  

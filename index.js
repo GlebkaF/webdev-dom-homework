@@ -3,7 +3,8 @@ import renderComments from "./render.js";
 import {getCommentsList } from "./getCommentsList.js";
 import {getFetch, postFetch} from "./api.js";
 import { commentDate } from "./date.js";
-const buttonElement = document.getElementById('add-form-button');
+
+//export const buttonElement = document.getElementById('add-form-button');
 export const commentsElement = document.querySelector('.comments');
 export const nameInputElement = document.getElementById('input-name');
 export const textElement = document.querySelector('.add-form-text');
@@ -11,10 +12,7 @@ export const addFormElement = document.getElementById('add-form');
 
 
 
-export function loaderComments (){
-  commentsElement.textContent = "Подождите, лента коммментариев загружается"; 
-}
-
+renderComments()
 
 //получить из хранилища данных 
 export let  comments = [];
@@ -39,8 +37,8 @@ export function fetchFunction (){
      });
      };
 
-fetchFunction();
-loaderComments ();
+//fetchFunction();
+//loaderComments ();
 
 
 //цитирование
@@ -57,22 +55,6 @@ textElement.value =  `"${comments[index].name}:  ${comments[index].textElement}"
 };
 quotation ();
 
-//добавление новых комментариев по кнопке с сохранением в api
-buttonElement.addEventListener ("click", () => {
-  nameInputElement.style.background = '';
-if (nameInputElement.value === "" ){
-  nameInputElement.style.background = 'red';
-  return;
- };
-
- textElement.style.background = '';
- if (textElement.value === ""){
-    textElement.style.background = 'red';
-    return;
- };
-postFetch();
-
-})
 
 
 
