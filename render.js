@@ -10,6 +10,7 @@ function renderAPP(getListComments, comments, token) {
     const appEL = document.getElementById("app");
     if (!token) {
         renderLoginComponent({
+            comments,
             appEL,
             setToken: (newToken) => {
               token = newToken;
@@ -28,18 +29,6 @@ function renderAPP(getListComments, comments, token) {
     <ul class="comments" id="list">
     ${commentsHTML}
     </ul>
-
-    <form class="login-form" id="login-form">
-      Форма регистрации
-      <br>
-      <input type="text" class="login-form-input" placeholder="Введите имя" id="login-form-name" />
-      <input type="text" class="login-form-input" placeholder="Введите логин" id="login-form-login" />
-      <input type="password" class="login-form-input" placeholder="Введите пароль" id="login-form-password" />
-      <div class="login-form-row">
-        <button class="login-form-button" id="login-button-reg">Зарегистрироваться</button>
-        <button class="login-form-button-reg" id="login-button-enter">Войти</button>
-      </div>
-    </form>
 
     <form class="add-form" id="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input" />

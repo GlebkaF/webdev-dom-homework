@@ -41,7 +41,7 @@ export function getArr() {
 
             if (error.message === "Сервер сломался") {
               alert("Сервер сломался, попробуйте позже");
-              getAPI();
+              getArr();
             } else if (error.message === "Нет авторизации") {          
                 console.log(error);
               } else {
@@ -53,7 +53,6 @@ export function getArr() {
 };
 
 getArr();
-renderAPP (getListComments, comments);
 
 
 console.log("It works!");
