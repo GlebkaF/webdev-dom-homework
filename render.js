@@ -23,7 +23,7 @@ function renderAPP(getListComments, comments, token) {
 
     const commentsHTML = comments.map((comment, index) => getListComments(comment, index)).join('');
     const appHtml = `<div class="preloader">
-    <p class="preloader-text">Пожалуйста, подождите, комментарии загружаются...</p>
+    <p class="text">Пожалуйста, подождите, комментарии загружаются...</p>
   </div>
   <div class="container">
     <ul class="comments" id="list">

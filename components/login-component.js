@@ -35,7 +35,7 @@ export function renderLoginComponent({ comments, appEL, setToken, getArr }) {
     </div>
   </li>    
   </ul>
-  <div>Чтобы добавить комментарий, <a  id="login-link" class="form-link" href="#">авторизуйтесь</a></div>
+  <div class ="text" >Чтобы добавить комментарий, <a  id="login-link" class="form-link" href="#">авторизуйтесь</a></div>
   </div>`;
     }).join("");
 
@@ -44,6 +44,7 @@ export function renderLoginComponent({ comments, appEL, setToken, getArr }) {
     document.getElementById('login-link').addEventListener('click', () => {
         const renderForm = () => {
             const appHtml = `
+            <div class="container">
     <div class="login-form" id="login-form">
     <h3 class="form-title">Форма ${isLoginMode ? "входа" : "регистрации"}</h3>
     <br>
@@ -53,6 +54,7 @@ export function renderLoginComponent({ comments, appEL, setToken, getArr }) {
     <div class="login-form-row">
       <button class="login-form-button" id="enter-button">${isLoginMode ? "Войти" : "Зарегистрироваться"}</button>
       <a  class="register-link" href="#">${isLoginMode ? "Зарегистрироваться" : "Войти"}</a>  
+    </div>
     </div>
     </div>`;
             appEL.innerHTML = appHtml;
@@ -142,7 +144,5 @@ export function renderLoginComponent({ comments, appEL, setToken, getArr }) {
         renderForm();
 
     });
-
-    renderForm();
 
 }
