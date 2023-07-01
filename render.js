@@ -12,8 +12,6 @@ token = null;
 
  const renderComments  = (element, getCommentsList) => {
  const appEl = document.getElementById("app");
-
-
   if(!token){
         const appHtml = `   <div class="container" id = "container">
     <div class = 'comment'>
@@ -46,20 +44,9 @@ return;
   }
   const commentsHTML = comments
      .map((comment, index) => getCommentsList (comment, index)).join('');
-
-
     const appHtml = `   <div class="container" id = "container">
     <div >
-        Логин 
-          <input type="text"  id="login-input"class="input"
-        placeholder="Введите логин" />
-        <br/>
-        <br/>
-        Пароль
-        <input  type="password"  id="password-input"class="input"
-        placeholder="Введите пароль"/>
-        <br/> 
-        <button class="">Войти</button> 
+
     <ul class="comments" id="comments">
     ${commentsHTML}
     </ul>
