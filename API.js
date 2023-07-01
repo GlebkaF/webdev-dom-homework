@@ -1,5 +1,6 @@
 import { getCurrentDate } from "./fullDate.js";
-import { getFetchFunction, nameInputElement, textInputElement, loaderLi, addFormElement } from "./main.js";
+import { getFetchFunction} from "./main.js";
+
 
 
 const getFetchPromise = () => {
@@ -14,7 +15,12 @@ const getFetchPromise = () => {
 }
 
 const postFetchPromise = () => {
+  const nameInputElement = document.getElementById("input-name");
+  const textInputElement = document.getElementById("textarea-text");
+  const loaderLi = document.querySelector('.loader-li');
+  const addFormElement = document.querySelector('.add-form');
 
+  
     fetch('https://wedev-api.sky.pro/api/v1/ulyana-korotkova/comments', {
     method: "POST",
     body: JSON.stringify({
