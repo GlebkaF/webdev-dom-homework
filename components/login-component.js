@@ -4,10 +4,9 @@ export function renderLoginComponent({ comments, appEL, setToken, getArr }) {
 
     let isLoginMode = true
 
-    const appHtml = comments.map((comment, index) => {
+    const commentHtml = comments.map((comment, index) => {
 
-        return `<div class="container">
-        <ul class="comments" id="list">
+        return `
         <li class="comment" data-index="${index}">
     <div class="comment-header">
       <div>${comment.name}</div>
@@ -33,11 +32,15 @@ export function renderLoginComponent({ comments, appEL, setToken, getArr }) {
         <button class="${comment.classLike}" data-index="${index}"></button>
       </div>
     </div>
-  </li>    
-  </ul>
-  <div class ="text" >Чтобы добавить комментарий, <a  id="login-link" class="form-link" href="#">авторизуйтесь</a></div>
-  </div>`;
+  </li>`;
     }).join("");
+
+    const appHtml =  `<div class="container">
+    <ul class="comments" id="list">
+    ${commentHtml}
+    </ul>
+    <div class ="text" >Чтобы добавить комментарий, <a  id="login-link" class="form-link" href="#">авторизуйтесь</a></div>
+    </div>`;
 
     appEL.innerHTML = appHtml;
 
