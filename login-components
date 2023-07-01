@@ -1,0 +1,30 @@
+export function renderLoginComponent ({appEl, setToken, fetchFunction}){
+    const appHtml = `   <div class="container" id = "container">
+    <div class = 'comment'>
+      <br/>
+      Логин 
+        <input type="text" class = "add-form-name" id="login-input"class="input"
+      placeholder="Введите логин" />
+      <br/>
+      <br/>
+      Пароль
+      <input  type="password"class = "add-form-name"  id="password-input"class="input"
+      placeholder="Введите пароль"/>
+      <br/> 
+      <br/> 
+      <br/> 
+      <button class ="add-form-button" id="login-button">Войти</button>
+      <br/> 
+      <br/> 
+      <button class ="add-form-button" id="toggle-button"> Перейти к регистрации</button>
+      </div>`
+      
+    appEl.innerHTML = appHtml;
+
+ document.getElementById("login-button").addEventListener('click', () => {
+    setToken("Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k");
+   fetchFunction();
+ })
+
+
+} 
