@@ -1,7 +1,7 @@
 
 import { getCurrentDate } from "./fullDate.js";
 import { getFetchPromise} from "./API.js";
-import { renderComments }  from "./render.js";
+import { renderApp }  from "./render.js";
 import { listComments } from "./listComments.js"
     
 
@@ -9,27 +9,26 @@ import { listComments } from "./listComments.js"
 
     export function getFetchFunction() {
       getFetchPromise().then((responseDate) => {
-        const appComments = responseDate.comments.map ((comment) => {
-          return{
-           name: comment.author.name,
-           text: comment.text,
-           date: getCurrentDate(new Date(comment.date)),
-           likes: comment.likes,
-           activeLike: false,
-           propertyColorLike: 'like-button -no-active-like',
-          }
-        });
-         comments = appComments;
-         renderComments( {comments, listComments} );
-      })
-      .then(() => {
-        const commentsLoading = document.querySelector('.loader');
-        commentsLoading.style.display = 'none';
-      })
+         const appComments = responseDate.comments.map ((comment) => {
+           return{
+            name: comment.author.name,
+            text: comment.text,
+            date: getCurrentDate(new Date(comment.date)),
+            likes: comment.likes,
+            activeLike: false,
+            propertyColorLike: 'like-button -no-active-like',
+           }
+         });
+          comments = appComments;
+          renderApp( {comments, listComments} );
+       })
+       .then(() => {
+         // const commentsLoading = document.querySelector('.loader');
+         // commentsLoading.style.display = 'none';
+       })
     };
     
     getFetchFunction();
-    
 
     export const replayToComment = () => {
 
@@ -72,7 +71,8 @@ import { listComments } from "./listComments.js"
             commentElement.propertyColorLike = 'like-button -active-like';
 
           }
-          renderComments( {comments, listComments} );
+          
+          renderApp( {comments, listComments} );
           
         });
 
@@ -82,9 +82,7 @@ import { listComments } from "./listComments.js"
     initEventListeners(); 
 
     
-
-    renderComments( {comments, listComments} );
-    
+    renderApp( {comments, listComments} );
     
     
     console.log("It works!");

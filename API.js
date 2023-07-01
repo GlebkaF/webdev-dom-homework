@@ -1,27 +1,37 @@
 import { getCurrentDate } from "./fullDate.js";
-import { getFetchFunction} from "./main.js";
+import { getFetchFunction } from "./main.js";
+//import { getFetchFunction} from "./main.js";
+import { renderApp } from "./render.js";
 
+const host = "https://wedev-api.sky.pro/api/v2/ulyana-korotkova/comments";
+let token = "Bearer c8bobwbo6g5g5k5o5s5w606gc8bobwbo";
+//token = null;
 
 
 const getFetchPromise = () => {
 
-    return fetch('https://wedev-api.sky.pro/api/v1/ulyana-korotkova/comments',{
-      method: "GET",
-      })
-     .then((response) => {
-        return response.json()
+    return fetch(host,{
+        method: "GET",
+        headers: {
+          Authorization: token,
+        },
      })
-    
+     .then((response) => {
+      if (response.status === 401) {
+        throw new Error('Нет авторизации');
+      }
+      return response.json()
+     })
+
 }
 
 const postFetchPromise = () => {
-  const nameInputElement = document.getElementById("input-name");
-  const textInputElement = document.getElementById("textarea-text");
-  const loaderLi = document.querySelector('.loader-li');
-  const addFormElement = document.querySelector('.add-form');
-
+    const nameInputElement = document.getElementById("input-name");
+    const textInputElement = document.getElementById("textarea-text");
+    const loaderLi = document.querySelector('.loader-li');
+    const addFormElement = document.querySelector('.add-form');
   
-    fetch('https://wedev-api.sky.pro/api/v1/ulyana-korotkova/comments', {
+    fetch(host, {
     method: "POST",
     body: JSON.stringify({
       name: nameInputElement.value
@@ -39,7 +49,10 @@ const postFetchPromise = () => {
       activeLike: false,
       propertyColorLike: 'like-button -no-active-like',
       //forceError: true,
-    })
+    }),
+    headers: {
+      Authorization: token,
+    },
   })
   .then((response) => {
 
@@ -78,4 +91,4 @@ const postFetchPromise = () => {
     
 }
 
-export { getFetchPromise, postFetchPromise };
+export {getFetchPromise, postFetchPromise };
