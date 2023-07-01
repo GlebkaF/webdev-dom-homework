@@ -5,8 +5,6 @@ import { renderApp } from "./render.js";
 
 const host = "https://wedev-api.sky.pro/api/v2/ulyana-korotkova/comments";
 
-
-
 export function getFetchPromise ({token}) {
 
     return fetch(host,{
@@ -87,4 +85,17 @@ export function postFetchPromise ({token}) {
       addFormElement.style.display = 'flex';
     });
     
+}
+
+export function loginUser ({login, password}) {
+  return fetch("https://wedev-api.sky.pro/api/user/login", {
+    method: "POST",
+    body: JSON.stringify({
+      login,
+      password,
+    }),
+  })
+  .then((response) => {
+      return response.json();
+  })
 }

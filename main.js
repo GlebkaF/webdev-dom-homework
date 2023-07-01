@@ -25,7 +25,7 @@ import { listComments } from "./listComments.js"
        })
        .then(() => {
          // const commentsLoading = document.querySelector('.loader');
-         // commentsLoading.style.display = 'none';
+         //commentsLoading.style.display = 'none';
        })
     };
     
