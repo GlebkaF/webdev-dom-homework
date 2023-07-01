@@ -1,6 +1,7 @@
   import { addErrors } from "./helper.js";
 import { renderCommentList } from "./render.js";
 import {formatDateToRu, formatDateToUs} from "./lib/formatDate/formatDate.js"
+import { format } from "date-fns"
   
   
     const addingAComment = document.getElementById('adding');
