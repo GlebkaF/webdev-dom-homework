@@ -1,14 +1,15 @@
 
 import { getCurrentDate } from "./fullDate.js";
-import { getFetchPromise} from "./API.js";
+import  {getFetchPromise} from "./API.js";
 import { renderApp }  from "./render.js";
 import { listComments } from "./listComments.js"
     
 
     let comments = [];
+    let token = null;
 
     export function getFetchFunction() {
-      getFetchPromise().then((responseDate) => {
+      getFetchPromise({token}).then((responseDate) => {
          const appComments = responseDate.comments.map ((comment) => {
            return{
             name: comment.author.name,

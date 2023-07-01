@@ -4,11 +4,10 @@ import { getFetchFunction } from "./main.js";
 import { renderApp } from "./render.js";
 
 const host = "https://wedev-api.sky.pro/api/v2/ulyana-korotkova/comments";
-let token = "Bearer c8bobwbo6g5g5k5o5s5w606gc8bobwbo";
-//token = null;
 
 
-const getFetchPromise = () => {
+
+export function getFetchPromise ({token}) {
 
     return fetch(host,{
         method: "GET",
@@ -22,16 +21,15 @@ const getFetchPromise = () => {
       }
       return response.json()
      })
-
 }
 
-const postFetchPromise = () => {
+export function postFetchPromise ({token}) {
     const nameInputElement = document.getElementById("input-name");
     const textInputElement = document.getElementById("textarea-text");
     const loaderLi = document.querySelector('.loader-li');
     const addFormElement = document.querySelector('.add-form');
   
-    fetch(host, {
+    return fetch(host, {
     method: "POST",
     body: JSON.stringify({
       name: nameInputElement.value
@@ -77,7 +75,7 @@ const postFetchPromise = () => {
 
       if (error.message === "Сервер сломался") {
         alert("Сервер сломался, попробуйте позже");
-        postData(postFetchPromise);
+        postData(postFetchPromise({token}));
       } else if (error.message === "Плохой запрос") {
         alert("Имя и комментарий должны быть не короче 3 символов");
 
@@ -90,5 +88,3 @@ const postFetchPromise = () => {
     });
     
 }
-
-export {getFetchPromise, postFetchPromise };
