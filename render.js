@@ -1,16 +1,17 @@
-import{quotation} from "./index.js";
+import{fetchFunction, quotation} from "./index.js";
 import {addFormElement} from "./index.js";
 import {comments} from "./index.js"
 import { nameInputElement, textElement} from "./index.js";
 import { postFetch } from "./api.js";
 //import { likeCommentButton } from "./index.js";
-const host = "https://wedev-api.sky.pro/api/v2/tanya-bulaeva/comments";
+
 let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
 token = null;
   
  const renderComments  = (element, getCommentsList) => {
  const appEl = document.getElementById("app");
- 
+  const commentsHTML = comments
+     .map((comment, index) => getCommentsList (comment, index)).join('');
   if(!token){
         const appHtml = `   <div class="container" id = "container">
     <div class = 'comment'>
@@ -26,33 +27,20 @@ token = null;
         <br/> 
         <br/> 
         <button id="login-button">Войти</button>`
+
         appEl.innerHTML = appHtml;
 
-  //    document
-   //   .getElementById("login-button")
-   //   .addEventListener(('click') => {
-   //     token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
-    //   renderComments();
- //     })
+    document.getElementById("login-button").addEventListener('click', () => {
+      token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+      fetchFunction();
+      })
 return;
   }
 
-     const commentsHTML = comments
-     .map((comment, index) => getCommentsList (comment, index)).join('');
+ 
 
     const appHtml = `   <div class="container" id = "container">
     <div >
-        Логин 
-          <input type="text"  id="login-input"class="input"
-        placeholder="Введите логин" />
-        <br/>
-        <br/>
-        Пароль
-        <input  type="password"  id="password-input"class="input"
-        placeholder="Введите пароль"/>
-        <br/> 
-        <button class="">Войти</button> 
-
     <ul class="comments" id="comments">
     ${commentsHTML}
     </ul>

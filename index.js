@@ -12,7 +12,7 @@ export const addFormElement = document.getElementById('add-form');
 
 
 
-renderComments()
+
 
 //получить из хранилища данных 
 export let  comments = [];
@@ -37,7 +37,7 @@ export function fetchFunction (){
      });
      };
 
-//fetchFunction();
+fetchFunction();
 //loaderComments ();
 
 
