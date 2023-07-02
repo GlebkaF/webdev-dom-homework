@@ -40,7 +40,7 @@ import { listComments } from "./listComments.js"
           
           const indexComment = oldElement.dataset.index;
           
-          textInputElement.value = `${comments[indexComment].name}: ${comments[indexComment].text}`;
+          document.getElementById("textarea-text").value = `${comments[indexComment].name}: ${comments[indexComment].text}`;
           
         });
       };

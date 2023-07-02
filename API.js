@@ -28,11 +28,12 @@ export function postFetchPromise ({token}) {
     return fetch(host, {
     method: "POST",
     body: JSON.stringify({
-      name:nameInputElement.value
+      name:nameInputElement,
+      /*.value
        .replaceAll("&", "&amp;")
        .replaceAll("<", "&lt;")
        .replaceAll(">", "&gt;")
-       .replaceAll('"', "&quot;"),
+       .replaceAll('"', "&quot;"),*/
       text: textInputElement.value
        .replaceAll("&", "&amp;")
        .replaceAll("<", "&lt;")
@@ -43,6 +44,7 @@ export function postFetchPromise ({token}) {
       activeLike: false,
       propertyColorLike: 'like-button -no-active-like',
       //forceError: true,
+      
     }),
     headers: {
       Authorization: token,

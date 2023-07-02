@@ -23,7 +23,7 @@ export function renderLoginComponent({comments, appEl, setToken, getFetchFunctio
             </div>
           </div>
         </li>`;
-    }).join("");
+        }).join("");
 
       const appHTML = `<div class="container">
 
@@ -34,8 +34,6 @@ export function renderLoginComponent({comments, appEl, setToken, getFetchFunctio
       </div>`;
     
       appEl.innerHTML = appHTML;
-
-
 
       document.getElementById('login-link').addEventListener('click', () => {
         const renderForm = () =>{
@@ -101,11 +99,11 @@ export function renderLoginComponent({comments, appEl, setToken, getFetchFunctio
                         alert(error.message);
                     }); 
                 } else {
-                    const name = document.getElementById('name-input').value;
+                    const nameInputElement = document.getElementById('name-input').value;
                     const login = document.getElementById('login-input').value;
                     const password = document.getElementById('password-input').value;
         
-                    if (!name) {
+                    if (!nameInputElement) {
                         alert("Введите имя");
                         return;
                     }
@@ -121,7 +119,7 @@ export function renderLoginComponent({comments, appEl, setToken, getFetchFunctio
                     }
                 
                     registerUser({
-                        name: name,
+                        name: nameInputElement,
                         login: login,
                         password: password,
                     })
@@ -145,7 +143,6 @@ export function renderLoginComponent({comments, appEl, setToken, getFetchFunctio
         
         renderForm();
       }) ;
-
     
 }
 
