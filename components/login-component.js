@@ -1,6 +1,6 @@
 import { loginUser, registerUser } from "../API.js";
 
-export function renderLoginComponent({comments, appEl, setToken, getFetchFunction}) {
+export function renderLoginComponent({comments, appEl, setToken, setName, getFetchFunction}) {
     let isLoginMode = true;
  
     const commentsHtmlNotEdit = comments.map((comment, index) => {
@@ -92,6 +92,7 @@ export function renderLoginComponent({comments, appEl, setToken, getFetchFunctio
                     })
                     .then((user) => {
                         setToken(`Bearer ${user.user.token}`);
+                        setName(`${user.user.name}`);
                         getFetchFunction();
                     })
                     .catch((error) => {

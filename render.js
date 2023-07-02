@@ -4,6 +4,7 @@ import { postFetchPromise, registerUser } from "./API.js";
 import {renderLoginComponent} from "./components/login-component.js"
 
 let token = null;
+let name = null;
 
 const renderApp = ( {comments, listComments} ) => {
 
@@ -15,6 +16,9 @@ const renderApp = ( {comments, listComments} ) => {
             appEl, 
             setToken: (newToken) => {
             token = newToken;
+            },
+            setName: (newName) => {
+            name = newName;
             },
             getFetchFunction,
         });
@@ -35,9 +39,9 @@ const renderApp = ( {comments, listComments} ) => {
                 <input
                 type="text"
                 id ="name-input"
-                value=""
+                value="${name}"
                 class="add-form-name"
-                placeholder="Введите ваше имя"
+
                 />
                 <textarea
                 type="textarea"
