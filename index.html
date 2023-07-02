@@ -44,8 +44,9 @@
   const optins = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' };
 
   const commentElements = document.querySelectorAll(".comment");
+  
 
-  //кнопка Написать тухнет 
+  //кнопка Написать тухнет если нет текста и имени
   const disableButton = () => {
     if (nameInputElement.value && commentTextElement.value) {
       buttonElement.disabled = false;
@@ -65,6 +66,7 @@
       text: "Это будет первый комментарий на этой странице",
       like: 3,
       isLiked: false,
+      isEdit: false,
     },
     {
       name: "Варвара Н.",
@@ -72,10 +74,12 @@
       text: "Мне нравится как оформлена эта страница! ❤",
       like: 75,
       isLiked: false,
+      isEdit: false,
     }
   ];
 
   console.log(comments);
+
   // Добавляет обработчики кликов ко всем элементам с классом comment
   const initEventListeners = () => {
     // Находит все элементы с классом comment в разметке
@@ -90,18 +94,32 @@
     }
   };
 
-  /*
-  //кнопка с полем ввода изменить комментарий
+  
+  //кнопка с полем ввода изменить комментарий ДОДеЛАТЬ
  
   const changeButtonElementsFunc = () => {
      const changeButtonElements = document.querySelectorAll(".edit-form-button");
+     console.log(changeButtonElements);
      for (const changeButtonElement of changeButtonElements) {
        changeButtonElement.addEventListener("click", () => {
- 
+        const index = changeButtonElement.dataset.index;
+        console.log(index);
+        if (comments[index].isEdit === false) {
+          comments[index].isEdit = true;
+            } else {
+          comments[index].isEdit = false;
+          //добавить изменение свойства coment.text сделать что бы в массиве свойство перезаписывалось
+          coment.text = comments[index].text //??;
+        }
+
+      
+        
+        
+        renderComments()
        });  
      }
    }
- */
+
 
 
   // кнопка лайк с подсчетом
@@ -127,6 +145,24 @@
     }
   };
 
+  /*
+  // нажатие клавиши Enter ДОДеЛАТЬ
+  
+  const keyupButton = () => {
+  const input = document.getElementById('add-button');
+  const logList = document.getElementById('list');
+  const logName = document.getElementById('name-input');
+
+  input.addEventListener("keyup", () => {
+    
+
+  });
+  };
+  keyupButton()
+ 
+ // 
+*/
+
   const renderComments = () => {
     const commentsHtml = comments
       .map((comment, index) => {
@@ -136,15 +172,19 @@
             <div>${currentDate.toLocaleDateString('ru-RU', optins)}</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
+            ${(comment.isEdit) 
+              ? `<textarea id="comment-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+        rows="4">${comment.text}</textarea>`
+               : `<div class="comment-text">
               ${comment.text}
-              </div>
-              <button class="edit-form-button"> Изменить </button>
+              </div>`}
+
+              <button class="add-form-button edit-form-button" data-index="${index}" > ${(comment.isEdit) ? `Сохранить` : `Изменить`} </button>
           </div>         
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${comment.like}</span>
-              <button data-index="${index}" class="like-button ${(comment.isLiked) ? "active":""}" ></button>
+              <button data-index="${index}" class="like-button ${(comment.isLiked) ? "active" : ""}" ></button>
             </div>
           </div>
         </li>`;
@@ -155,6 +195,7 @@
 
     initEventListeners();
     initLikeButtonsListeners();
+    changeButtonElementsFunc();
   };
 
   renderComments();
@@ -173,16 +214,19 @@
       return
     };
 
+    // пушит новый массив
     comments.push({
-      name: nameInputElement.value,
+      name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"), 
       date: currentDate.toLocaleDateString('ru-RU', optins),
-      text: commentTextElement.value,
+      text: commentTextElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
       like: 0,
-      isLiked: false
+      isLiked: false,
+      isEdit: false,
     });
 
     renderComments();
 
+    //возвращает белые поля ввода текста и имени
     nameInputElement.value = "";
     commentTextElement.value = "";
   });
