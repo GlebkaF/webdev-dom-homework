@@ -5,8 +5,8 @@ import {getFetch, postFetch} from "./api.js";
 import { commentDate } from "./date.js";
 //export const buttonElement = document.getElementById('add-form-button');
 export const commentsElement = document.querySelector('.comments');
-export const nameInputElement = document.getElementById('input-name');
-export const textElement = document.querySelector('.add-form-text');
+//export const nameInputElement = document.getElementById('input-name');
+//export const textElement = document.querySelector('.add-form-text');
 export const addFormElement = document.getElementById('add-form');
 
 

@@ -67,6 +67,8 @@ return;
   //     addFormElement.classList.remove('hide');
         appEl.innerHTML = appHtml;
     const buttonElement = document.getElementById('add-form-button');
+  const nameInputElement = document.getElementById('input-name');
+const textElement = document.querySelector('.add-form-text');
 //добавление новых комментариев по кнопке
 buttonElement.addEventListener ("click", () => {
   nameInputElement.style.background = '';
@@ -79,10 +81,15 @@ if (nameInputElement.value === "" ){
     textElement.style.background = 'red';
     return;
  };
-postFetch();
-})
+ console.log(22)
+
 appEl.innerHTML = appHtml;
-//addFormElement.classList.remove('hide');
+ postFetch();
+ const addFormElement = document.getElementById('add-form');
+addFormElement.classList.remove('hide');
+
+})
+
     
 function likeCommentButton() {    
  const likesButton = document.querySelectorAll('.like-button');
