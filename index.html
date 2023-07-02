@@ -99,7 +99,7 @@ const renderComments= () => {
             <div>${comment.time}</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
+            <div data-answer='${index}' class="comment-text">
               ${comment.text}
             </div>
           </div>
@@ -112,25 +112,51 @@ const renderComments= () => {
     </li>`;
     }).join('')
     
-    listElement.innerHTML = textHtml;
+    listElement.innerHTML = textHtml.replaceAll("→", "<div class='quote'>").replaceAll("←", "</div class='quote'>");
     likeElementfunction ();
 }
 renderComments ();
 
+
+const initCommentAnswerListeners = () => {
+    const commentAnswer = document.querySelectorAll(".comment-text")
+    commentAnswer.forEach((answer, index) => {
+        answer.addEventListener('click', () => {
+           if(answer.children.length == 0) { //Дополнительная проверка, чтоб не отрабатывал клик на редактируемый комментарий
+            commentElement.value = `→${comments[index].name}
+${comments[index].text}←
+            
+`
+           }
+        })
+    })
+    
+}
+initCommentAnswerListeners ();
+
     buttonElement.addEventListener('click', ()=>{
     comments.push({
-    name: nameElement.value,
+    name: nameElement.value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;"),
     time: currentDate,
-    text: commentElement.value,
+    text: commentElement.value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;"),
     like:0,
     icon: false,
+    
   });
 renderComments ();
 nameElement.value= "";
 commentElement.value= "";
-currentDate.value="";
     });
     likeElementfunction ();
+    initCommentAnswerListeners ();
     renderComments ();
   </script>
 </html>
