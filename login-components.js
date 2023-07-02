@@ -3,8 +3,9 @@ export function renderLoginComponent ({appEl, setToken, fetchFunction}){
   let isLoginMode = true;
    // 
   const renderForm = () => {
-  
-           const appHtml = `   <div class="container" id = "container">
+
+    
+             const appHtml = `   <div class="container" id = "container">
            <h3> Форма ${isLoginMode ? "входа" : "регистрации" }  </h3>
       <div class = 'comment'>
       ${isLoginMode ? "" :  ` Имя

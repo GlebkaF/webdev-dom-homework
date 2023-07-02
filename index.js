@@ -36,12 +36,10 @@ export function fetchFunction (){
     console.log (error);
      });
      };
-
 //fetchFunction();
-fetchFunction();
 //loaderComments ();
 
-
+/*
 //цитирование
 export const quotation = () => {
 
@@ -55,3 +53,4 @@ textElement.value =  `"${comments[index].name}:  ${comments[index].textElement}"
   };
 };
 quotation ();
+*/

@@ -1,91 +1,29 @@
-import{quotation} from "./index.js";
-import{fetchFunction} from "./index.js";
-//import {addFormElement} from "./index.js";
-import {comments} from "./index.js"
-//import { nameInputElement, textElement} from "./index.js";
-import { postFetch } from "./api.js";
-//import { likeCommentButton } from "./index.js";
-import {renderLoginComponent} from "./login-components.js";
 
-const host = "https://wedev-api.sky.pro/api/v2/tanya-bulaeva/comments";
+import{fetchFunction} from "./index.js";
+import {comments} from "./index.js"
+import { postFetch } from "./api.js";
+import {renderLoginComponent} from "./login-components.js";
 export const buttonElement = document.getElementById('add-form-button');
 export const nameInputElement = document.getElementById('input-name');
 export const textElement = document.querySelector('.add-form-text');
 
 let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
 token = null;
+
+
  const renderComments  = (element, getCommentsList) => {
  const appEl = document.getElementById("app");
   if(!token){
-    renderLoginComponent({
+
+   renderLoginComponent({
       appEl,
-      setToken: (newToken) => {
+     setToken: (newToken) => {
         token = newToken;
-      },
+     },
       fetchFunction,
-    });
+   });
 
-    //надо вытащить этот текст в рендер логин компонент. начало
-   /* let isLoginMode = false;
-    
-const renderForm = () => {
-
-         const appHtml = `   <div class="container" id = "container">
-         <h3> Форма ${isLoginMode ? "входа" : "регистрации" }  </h3>
-    <div class = 'comment'>
-    ${isLoginMode ? "" :  ` Имя
-    <input type="text"class = "add-form-name" id="name-input"class="input"
-  placeholder="Введите имя" />
-  <br/>
-  <br/>  `}
- 
-        Логин 
-          <input type="text"class = "add-form-name"  id="login-input"class="input"
-        placeholder="Введите логин" />
-        <br/>
-        <br/>
-        Пароль
-        <input  type="password" class = "add-form-name"  id="password-input"class="input"
-        placeholder="Введите пароль"/>
-        <br/> 
-        <br/> 
-        <br/> 
-        <button id="login-button"  class ="add-form-button"> ${isLoginMode ? "Войти" : "Перейти к регистрации"}</button>
-        <button id="toggle-button"class ="add-form-button" >Перейти  ${isLoginMode ? "к регистрации" : " ко входу"}</button>`
-
-        appEl.innerHTML = appHtml;
-       document.getElementById("login-button").addEventListener('click', () => {
-       const login = document.getElementById('login-input').value;
-       const password = document.getElementById('password-input').value;
-if (!login){
-  alert ("Введите логин");
-}
-if (!password){
-  alert ("Введите пароль");
-}
-      token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
-      loginUser({
-        login: login,
-        password: password}).then ((user) => {
-        console.log(user);
-  //     setToken(`Bearer ${user.user.token}`) не видит сет токен
-    fetchFunction();
-      }).catch ((error) => {
-        //TODO выводить алерт красиво
-        alert (error.message)
-      })      
-  
-      } 
-      )
-
-      document.getElementById("toggle-button").addEventListener('click', () => {
-isLoginMode = !isLoginMode;
-renderForm();
-      })
-
-}
-renderForm();
-  */
+   
 return;
   }
 
@@ -117,9 +55,10 @@ return;
         const nameInputElement = document.getElementById('input-name');
          const textElement = document.querySelector('.add-form-text');
          const buttonElement = document.getElementById('add-form-button');
-
+//nameInputElement.setAttribute('disabled', "disabled");  
 //добавление новых комментариев по кнопке
 buttonElement.addEventListener ("click", () => {
+
   nameInputElement.style.background = '';
 if (nameInputElement.value === "" ){
   nameInputElement.style.background = 'red';
@@ -138,7 +77,18 @@ addFormElement.classList.remove('hide');
 renderComments (getCommentsList, comments)
 
 })
+ const quotation = () => {
 
+  let commentElements  = document.querySelectorAll ('.comment');
+  for (const commentElement of commentElements){
+  commentElement.addEventListener('click', (event) => {
+  //  event.stopPropagation();
+  const index = commentElement.dataset.index;
+  textElement.value =  `"${comments[index].name}:  ${comments[index].textElement}"\n`
+      });
+    };
+  };
+  quotation ();
     
 function likeCommentButton() {    
  const likesButton = document.querySelectorAll('.like-button');
@@ -162,6 +112,6 @@ renderComments(element, getCommentsList);
 }
 };
    likeCommentButton();
-     quotation();
+ //    quotation();
      } 
 export default renderComments;
