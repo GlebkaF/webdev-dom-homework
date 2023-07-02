@@ -24,8 +24,8 @@ import { listComments } from "./listComments.js"
           renderApp( {comments, listComments} );
        })
        .then(() => {
-         // const commentsLoading = document.querySelector('.loader');
-         //commentsLoading.style.display = 'none';
+           document.querySelector('.loader').style.display = 'none';
+           document.querySelector('.add-form').style.display = 'none';
        })
     };
     
@@ -48,6 +48,8 @@ import { listComments } from "./listComments.js"
     };
 
     replayToComment();
+
+    // Реализация лайков
 
     export const initEventListeners = () => {
 
@@ -74,7 +76,7 @@ import { listComments } from "./listComments.js"
           }
           
           renderApp( {comments, listComments} );
-          
+
         });
 
       };

@@ -1,7 +1,8 @@
 import { loginUser, registerUser } from "../API.js";
 
-export function renderLoginComponent({appEl, setToken, getFetchFunction}) {
+export function renderLoginComponent({ appEl, setToken, getFetchFunction}) {
     let isLoginMode = true;
+ 
     const renderForm = () =>{
         const appHtml =
         `<div class="container">
@@ -106,6 +107,8 @@ export function renderLoginComponent({appEl, setToken, getFetchFunction}) {
             renderForm();
         });
     };
-
     renderForm();
 }
+
+ 
+

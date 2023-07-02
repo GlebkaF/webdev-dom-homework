@@ -1,7 +1,5 @@
 import { getCurrentDate } from "./fullDate.js";
 import { getFetchFunction } from "./main.js";
-//import { getFetchFunction} from "./main.js";
-import { renderApp } from "./render.js";
 
 const host = "https://wedev-api.sky.pro/api/v2/ulyana-korotkova/comments";
 
@@ -66,6 +64,7 @@ export function postFetchPromise ({token}) {
     .then(() => {
       loaderLi.style.display = 'none';
       addFormElement.style.display = 'flex';
+      
       nameInputElement.value = '';
       textInputElement.value = '';
     })
@@ -73,7 +72,7 @@ export function postFetchPromise ({token}) {
 
       if (error.message === "Сервер сломался") {
         alert("Сервер сломался, попробуйте позже");
-        postData(postFetchPromise({token}));
+        
       } else if (error.message === "Плохой запрос") {
         alert("Имя и комментарий должны быть не короче 3 символов");
 
