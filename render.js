@@ -5,7 +5,11 @@ import {comments} from "./index.js"
 //import { nameInputElement, textElement} from "./index.js";
 import { postFetch } from "./api.js";
 //import { likeCommentButton } from "./index.js";
+import { renderLoginComponent } from "./login-components";
 const host = "https://wedev-api.sky.pro/api/v2/tanya-bulaeva/comments";
+export const buttonElement = document.getElementById('add-form-button');
+export const nameInputElement = document.getElementById('input-name');
+export const textElement = document.querySelector('.add-form-text');
 
 let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
 token = null;
@@ -13,7 +17,14 @@ token = null;
  const renderComments  = (element, getCommentsList) => {
  const appEl = document.getElementById("app");
   if(!token){
-        const appHtml = `   <div class="container" id = "container">
+    renderLoginComponent({
+      appEl,
+      setToken: (newToken) => {
+        token = newToken;
+      },
+      fetchFunction,
+    });
+    /*     const appHtml = `   <div class="container" id = "container">
     <div class = 'comment'>
         Логин 
           <input type="text"  id="login-input"class="input"
@@ -29,17 +40,17 @@ token = null;
         <button id="login-button">Войти</button>`
 
         appEl.innerHTML = appHtml;
-
+*/
   //    document
    //   .getElementById("login-button")
    //   .addEventListener(('click') => {
    //     token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
     //   renderComments();
  //     })
-    document.getElementById("login-button").addEventListener('click', () => {
+   /* document.getElementById("login-button").addEventListener('click', () => {
       token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
       fetchFunction();
-      })
+      })*/
 return;
   }
   const commentsHTML = comments
@@ -66,9 +77,10 @@ return;
         <button class="add-form-button" id = 'add-form-button'>Написать</button> `
   //     addFormElement.classList.remove('hide');
         appEl.innerHTML = appHtml;
-    const buttonElement = document.getElementById('add-form-button');
-  const nameInputElement = document.getElementById('input-name');
-const textElement = document.querySelector('.add-form-text');
+        const nameInputElement = document.getElementById('input-name');
+         const textElement = document.querySelector('.add-form-text');
+         const buttonElement = document.getElementById('add-form-button');
+
 //добавление новых комментариев по кнопке
 buttonElement.addEventListener ("click", () => {
   nameInputElement.style.background = '';
@@ -82,11 +94,11 @@ if (nameInputElement.value === "" ){
     return;
  };
  console.log(22)
-
-appEl.innerHTML = appHtml;
- postFetch();
  const addFormElement = document.getElementById('add-form');
 addFormElement.classList.remove('hide');
+
+ postFetch();
+renderComments (getCommentsList, comments)
 
 })
 

@@ -1,4 +1,5 @@
-function renderLoginComponent ({appEl, setToken, getFetch}){
+
+export function renderLoginComponent ({appEl, setToken, fetchFunction}){
     const appHtml =   `   <div class="container" id = "container">
     <div class = 'comment'>
       <br/>
@@ -21,10 +22,10 @@ function renderLoginComponent ({appEl, setToken, getFetch}){
       
     appEl.innerHTML = appHtml;
 
- /*document.getElementById("login-button").addEventListener('click', () => {
- //  setToken("Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k");
-   getFetch();
+ document.getElementById("login-button").addEventListener('click', () => {
+  setToken("Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k");
+   fetchFunction();
  })
-*/
+
 
 } 

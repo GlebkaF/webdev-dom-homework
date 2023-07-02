@@ -1,5 +1,5 @@
 import {  commentsElement, fetchFunction} from "./index.js";
-//import { nameInputElement, textElement} from "./render.js";
+import { nameInputElement, textElement} from "./render.js";
 //import { fetchFunction } from "./index.js";
 //import { commentDate } from "./date.js";
 //import { token } from "./index.js";
@@ -7,9 +7,9 @@ import {  commentsElement, fetchFunction} from "./index.js";
 //import { addFormElement } from "./index.js";
 const host = "https://wedev-api.sky.pro/api/v2/tanya-bulaeva/comments";
 
-let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+//let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
 
-export const getFetch = () => {
+export const getFetch = (token) => {
     return fetch(host,{
     method: "GET",
     headers: {
@@ -29,7 +29,7 @@ export const getFetch = () => {
     
 
 
-export const postFetch = () => {
+export const postFetch = (token, nameInputElement, textElement) => {
     return fetch(host,
  {
   method: "POST",
@@ -58,7 +58,7 @@ export const postFetch = () => {
    throw new Error  ("Плохой запрос")
  }; 
    }).then((responseData) => {
-   return fetchFuncgettion();
+   return fetchFunction();
 
 }).then(() => {
   nameInputElement.value = "";
@@ -77,6 +77,10 @@ alert ("Кажется что-то пошло не так, попробуйте 
 console.log (error)
 });
 }
+
+
+
+
 
 /*export function loginUser({ login, password }) {
   return fetch("", {
