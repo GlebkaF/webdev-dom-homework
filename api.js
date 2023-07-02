@@ -79,11 +79,11 @@ console.log (error)
 }
 
 
+//https://github.com/GlebkaF/webdev-hw-api/blob/main/pages/api/user/README.md
 
 
-
-/*export function loginUser({ login, password }) {
-  return fetch("", {
+export function loginUser({ login, password }) {
+  return fetch("https://wedev-api.sky.pro/api/user/login", {
     method: "POST",
     body: JSON.stringify({
       login,
@@ -98,7 +98,7 @@ console.log (error)
 };
 
 export function registerUser({ login, password, name }) {
-  return fetch("", {
+  return fetch("https://wedev-api.sky.pro/api/user", {
     method: "POST",
     body: JSON.stringify({
       login,
@@ -112,6 +112,6 @@ export function registerUser({ login, password, name }) {
     return response.json();
   });
 }
-*/
+
 
 

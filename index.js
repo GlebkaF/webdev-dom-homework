@@ -3,6 +3,7 @@ import renderComments from "./render.js";
 import {getCommentsList } from "./getCommentsList.js";
 import {getFetch, postFetch} from "./api.js";
 import { commentDate } from "./date.js";
+import { textElement } from "./render.js";
 //export const buttonElement = document.getElementById('add-form-button');
 export const commentsElement = document.querySelector('.comments');
 //export const nameInputElement = document.getElementById('input-name');
@@ -43,6 +44,7 @@ fetchFunction();
 
 //цитирование
 export const quotation = () => {
+
 let commentElements  = document.querySelectorAll ('.comment');
 for (const commentElement of commentElements){
 commentElement.addEventListener('click', (event) => {

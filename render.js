@@ -3,9 +3,9 @@ import{fetchFunction} from "./index.js";
 //import {addFormElement} from "./index.js";
 import {comments} from "./index.js"
 //import { nameInputElement, textElement} from "./index.js";
-import { postFetch } from "./api.js";
+import { loginUser, postFetch } from "./api.js";
 //import { likeCommentButton } from "./index.js";
-import { renderLoginComponent } from "./login-components";
+//import { renderLoginComponent } from "./login-components";
 const host = "https://wedev-api.sky.pro/api/v2/tanya-bulaeva/comments";
 export const buttonElement = document.getElementById('add-form-button');
 export const nameInputElement = document.getElementById('input-name');
@@ -13,18 +13,19 @@ export const textElement = document.querySelector('.add-form-text');
 
 let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
 token = null;
-
  const renderComments  = (element, getCommentsList) => {
  const appEl = document.getElementById("app");
   if(!token){
-    renderLoginComponent({
+ /*   renderLoginComponent({
       appEl,
       setToken: (newToken) => {
         token = newToken;
       },
       fetchFunction,
-    });
-    /*     const appHtml = `   <div class="container" id = "container">
+    });*/
+
+    //надо вытащить этот текст в рендер логин компонент. начало
+         const appHtml = `   <div class="container" id = "container">
     <div class = 'comment'>
         Логин 
           <input type="text"  id="login-input"class="input"
@@ -40,17 +41,25 @@ token = null;
         <button id="login-button">Войти</button>`
 
         appEl.innerHTML = appHtml;
-*/
-  //    document
-   //   .getElementById("login-button")
-   //   .addEventListener(('click') => {
-   //     token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
-    //   renderComments();
- //     })
-   /* document.getElementById("login-button").addEventListener('click', () => {
+       document.getElementById("login-button").addEventListener('click', () => {
+       const login = document.getElementById('login-input').value;
+       const password = document.getElementById('password-input').value;
+if (!login){
+  alert ("Введите логин");
+}
+if (!password){
+  alert ("Введите пароль");
+}
       token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
-      fetchFunction();
-      })*/
+      loginUser({
+        login: login,
+        password: password}). then ((user) => {
+        console.log(user);
+  //     setToken(`Bearer ${user.user.token}`) не видит сет токен
+    fetchFunction();
+      })
+    //надо вытащить этот текст в рендер логин компонент. конец  
+      })
 return;
   }
   const commentsHTML = comments

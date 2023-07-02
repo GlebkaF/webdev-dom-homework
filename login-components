@@ -1,5 +1,5 @@
 
-export function renderLoginComponent ({appEl, setToken, fetchFunction}){
+function renderLoginComponent ({appEl, setToken, fetchFunction}){
     const appHtml =   `   <div class="container" id = "container">
     <div class = 'comment'>
       <br/>
@@ -22,7 +22,7 @@ export function renderLoginComponent ({appEl, setToken, fetchFunction}){
       
     appEl.innerHTML = appHtml;
 
- document.getElementById("login-button").addEventListener('click', () => {
+ document.getElementById("login-button").addEventListener('click', () => { 
   setToken("Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k");
    fetchFunction();
  })
