@@ -3,9 +3,10 @@ import{fetchFunction} from "./index.js";
 //import {addFormElement} from "./index.js";
 import {comments} from "./index.js"
 //import { nameInputElement, textElement} from "./index.js";
-import { loginUser, postFetch } from "./api.js";
+import { postFetch } from "./api.js";
 //import { likeCommentButton } from "./index.js";
-//import { renderLoginComponent } from "./login-components";
+import {renderLoginComponent} from "./login-components.js";
+
 const host = "https://wedev-api.sky.pro/api/v2/tanya-bulaeva/comments";
 export const buttonElement = document.getElementById('add-form-button');
 export const nameInputElement = document.getElementById('input-name');
@@ -16,16 +17,17 @@ token = null;
  const renderComments  = (element, getCommentsList) => {
  const appEl = document.getElementById("app");
   if(!token){
- /*   renderLoginComponent({
+    renderLoginComponent({
       appEl,
       setToken: (newToken) => {
         token = newToken;
       },
       fetchFunction,
-    });*/
+    });
 
     //надо вытащить этот текст в рендер логин компонент. начало
-    let isLoginMode = false;
+   /* let isLoginMode = false;
+    
 const renderForm = () => {
 
          const appHtml = `   <div class="container" id = "container">
@@ -64,16 +66,17 @@ if (!password){
       token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
       loginUser({
         login: login,
-        password: password}). then ((user) => {
+        password: password}).then ((user) => {
         console.log(user);
   //     setToken(`Bearer ${user.user.token}`) не видит сет токен
     fetchFunction();
       }).catch ((error) => {
         //TODO выводить алерт красиво
         alert (error.message)
-      }) 
+      })      
   
-      })
+      } 
+      )
 
       document.getElementById("toggle-button").addEventListener('click', () => {
 isLoginMode = !isLoginMode;
@@ -82,9 +85,11 @@ renderForm();
 
 }
 renderForm();
-   //надо вытащить этот текст в рендер логин компонент. конец. ретерн оставить в рендере  
+  */
 return;
   }
+
+
   const commentsHTML = comments
      .map((comment, index) => getCommentsList (comment, index)).join('');
     const appHtml = `   <div class="container" id = "container">
