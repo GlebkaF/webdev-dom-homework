@@ -25,20 +25,31 @@ token = null;
     });*/
 
     //надо вытащить этот текст в рендер логин компонент. начало
+    let isLoginMode = false;
+const renderForm = () => {
+
          const appHtml = `   <div class="container" id = "container">
+         <h3> Форма ${isLoginMode ? "входа" : "регистрации" }  </h3>
     <div class = 'comment'>
+    ${isLoginMode ? "" :  ` Имя
+    <input type="text"class = "add-form-name" id="name-input"class="input"
+  placeholder="Введите имя" />
+  <br/>
+  <br/>  `}
+ 
         Логин 
-          <input type="text"  id="login-input"class="input"
+          <input type="text"class = "add-form-name"  id="login-input"class="input"
         placeholder="Введите логин" />
         <br/>
         <br/>
         Пароль
-        <input  type="password"  id="password-input"class="input"
+        <input  type="password" class = "add-form-name"  id="password-input"class="input"
         placeholder="Введите пароль"/>
         <br/> 
         <br/> 
         <br/> 
-        <button id="login-button">Войти</button>`
+        <button id="login-button"  class ="add-form-button"> ${isLoginMode ? "Войти" : "Перейти к регистрации"}</button>
+        <button id="toggle-button"class ="add-form-button" >Перейти  ${isLoginMode ? "к регистрации" : " ко входу"}</button>`
 
         appEl.innerHTML = appHtml;
        document.getElementById("login-button").addEventListener('click', () => {
@@ -57,9 +68,21 @@ if (!password){
         console.log(user);
   //     setToken(`Bearer ${user.user.token}`) не видит сет токен
     fetchFunction();
+      }).catch ((error) => {
+        //TODO выводить алерт красиво
+        alert (error.message)
+      }) 
+  
       })
-    //надо вытащить этот текст в рендер логин компонент. конец  
+
+      document.getElementById("toggle-button").addEventListener('click', () => {
+isLoginMode = !isLoginMode;
+renderForm();
       })
+
+}
+renderForm();
+   //надо вытащить этот текст в рендер логин компонент. конец. ретерн оставить в рендере  
 return;
   }
   const commentsHTML = comments

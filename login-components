@@ -3,6 +3,11 @@ function renderLoginComponent ({appEl, setToken, fetchFunction}){
     const appHtml =   `   <div class="container" id = "container">
     <div class = 'comment'>
       <br/>
+    Имя
+        <input type="text" class = "add-form-name" id="name-input"class="input"
+      placeholder="Введите имя" />
+      <br/>
+
       Логин 
         <input type="text" class = "add-form-name" id="login-input"class="input"
       placeholder="Введите логин" />
@@ -26,6 +31,4 @@ function renderLoginComponent ({appEl, setToken, fetchFunction}){
   setToken("Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k");
    fetchFunction();
  })
-
-
 } 
