@@ -9,6 +9,18 @@ const renderApp = ( {comments, listComments} ) => {
 
     const appEl = document.getElementById('app');
 
+    if (!token) {
+        renderLoginComponent({
+            comments,
+            appEl, 
+            setToken: (newToken) => {
+            token = newToken;
+            },
+            getFetchFunction,
+        });
+        
+   } else { 
+
     const commentsHtml = comments.map((comment, index) => listComments(comment, index)).join('');
     const appHtml = 
      `<div class="container">
@@ -20,8 +32,6 @@ const renderApp = ( {comments, listComments} ) => {
       </ul><br>
 
         <div class="loader-li">Комментарий добавляется...</div>
-
-        <div id = "login-link" class="login-link">Чтобы добавить комментарий, авторизуйтесь</div>
 
         <div class="add-form">
                 <input
@@ -47,30 +57,18 @@ const renderApp = ( {comments, listComments} ) => {
  
     appEl.innerHTML = appHtml;
  
-    const addFormElement = document.querySelector('.add-form');
+    
     const buttonElement = document.getElementById('add-button');
     const listElement = document.getElementById("list");
-    const nameInputElement = document.getElementById("input-name");
-    const textInputElement = document.getElementById("textarea-text");
     const commentsElement = document.querySelector('.comments');
     const loaderLi = document.querySelector('.loader-li');
 
-    document.getElementById('login-link').addEventListener('click', () => {
-        if (!token) {
-            renderLoginComponent({
-                appEl, 
-                setToken: (newToken) => {
-                token = newToken;
-                },
-                getFetchFunction,
-            });
-            return;
-       };  
-    }) ;
         
 
     buttonElement.addEventListener("click", () => {
-    
+        const nameInputElement = document.getElementById("name-input");
+        const textInputElement = document.getElementById("textarea-text");
+        const addFormElement = document.querySelector('.add-form');
     
         nameInputElement.style.backgroundColor = '';
         if (nameInputElement.value === "") {
@@ -96,6 +94,6 @@ const renderApp = ( {comments, listComments} ) => {
     replayToComment();
 
     
-};
+}} ;
 
 export {renderApp};

@@ -24,8 +24,7 @@ import { listComments } from "./listComments.js"
           renderApp( {comments, listComments} );
        })
        .then(() => {
-           document.querySelector('.loader').style.display = 'none';
-           document.querySelector('.add-form').style.display = 'none';
+          //document.querySelector('.loader').style.display = 'none';
        })
     };
     
@@ -76,7 +75,7 @@ import { listComments } from "./listComments.js"
           }
           
           renderApp( {comments, listComments} );
-          document.getElementById('login-link').style.display = 'none';
+
         });
 
       };

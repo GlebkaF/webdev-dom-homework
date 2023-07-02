@@ -20,7 +20,7 @@ export function getFetchPromise ({token}) {
 }
 
 export function postFetchPromise ({token}) {
-    const nameInputElement = document.getElementById("input-name");
+    const nameInputElement = document.getElementById("name-input");
     const textInputElement = document.getElementById("textarea-text");
     const loaderLi = document.querySelector('.loader-li');
     const addFormElement = document.querySelector('.add-form');
@@ -28,7 +28,7 @@ export function postFetchPromise ({token}) {
     return fetch(host, {
     method: "POST",
     body: JSON.stringify({
-      name: nameInputElement.value
+      name:nameInputElement.value
        .replaceAll("&", "&amp;")
        .replaceAll("<", "&lt;")
        .replaceAll(">", "&gt;")
