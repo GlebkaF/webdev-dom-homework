@@ -14,8 +14,7 @@ import { getListComments } from "./listComments.js";
 
 let comments = [];
 
-export let token ="Bearer bgc0b8awbwas6g5g5k5o5s5w606g37w3cc3bo3b83k39s3co3c83c03ck";
-token = null;
+
 
 export function getArr() {
     return fetchGet()

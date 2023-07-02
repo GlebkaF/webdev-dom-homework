@@ -4,7 +4,8 @@ import { fetchPOST } from "./api.js";
 import { renderLoginComponent } from "./components/login-component.js";
 
 
-
+export let token ="Bearer bgc0b8awbwas6g5g5k5o5s5w606g37w3cc3bo3b83k39s3co3c83c03ck";
+token = null;
 // Рендерим из массива разметку
 function renderAPP(getListComments, comments, token) {
     const appEL = document.getElementById("app");
