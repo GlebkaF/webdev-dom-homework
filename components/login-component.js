@@ -1,4 +1,5 @@
 import { loginUser, registerUser } from "../API.js";
+import { renderApp } from "../render.js";
 
 export function renderLoginComponent({ appEl, setToken, getFetchFunction}) {
     let isLoginMode = true;
@@ -107,6 +108,7 @@ export function renderLoginComponent({ appEl, setToken, getFetchFunction}) {
             renderForm();
         });
     };
+    
     renderForm();
 }
 

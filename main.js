@@ -76,7 +76,7 @@ import { listComments } from "./listComments.js"
           }
           
           renderApp( {comments, listComments} );
-
+          document.getElementById('login-link').style.display = 'none';
         });
 
       };
