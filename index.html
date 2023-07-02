@@ -45,12 +45,14 @@
       date: '12.02.22 12:18',
       comment: 'Это будет первый комментарий на этой странице',
       like: false,
+      likeNumber: 0,
     },
     {
       name: 'Варвара Н.',
       date: '13.02.22 19:22',
       comment: 'Мне нравится как оформлена эта страница! ❤',
       like: false,
+      likeNumber: 0,
     }
   ]
 
@@ -69,7 +71,7 @@
             </div>
             <div class="comment-footer">
               <div class="likes">
-                <span class="likes-counter">${Number(element.like)}</span>
+                <span class="likes-counter">${(element.likeNumber)}</span>
                 <button class="like-button ${(element.like) ? "-active-like" : ""}" data-index=${index}></button>
               </div>
               <div class="redactor">
@@ -87,8 +89,14 @@
     for (const likeButton of document.querySelectorAll('.like-button')) {
       likeButton.addEventListener('click', () => {
         const index = likeButton.dataset.index;
-        listElementData[index].like === false ? listElementData[index].like = true : listElementData[index].like = false;
-
+        if (listElementData[index].like === false) {
+          listElementData[index].like = true;
+          listElementData[index].likeNumber += 1;
+        } else {
+          listElementData[index].like = false;
+          listElementData[index].likeNumber -= 1;
+        }
+        
         renderListElement();
       })
     }
@@ -146,6 +154,7 @@
       date: myDate,
       comment: commentTextareaElement.value,
       like: false,
+      likeNumber: 0,
     });
 
     renderListElement();
