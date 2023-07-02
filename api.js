@@ -4,17 +4,17 @@ import { enterCommentElement } from "./main.js";
 import { enterNameElement } from "./main.js";
 import { renderUsers } from "./renderComments.js";
 
-
 // Получаем список комментов с помощью функции fetch и метода запросов GET
 const fetchPromiseFuncGet = () => {
     return fetch(
         'https://wedev-api.sky.pro/api/v1/rashid-abdulkhamidov/comments',
         {
             method: "GET",
-            forceError: true,
+            // forceError: true, 
         })
         // Показываем пользователю сообщение о том, что происходит загрузка комментариев
         .then((response) => {
+            console.log(response);
             listCommentElement.innerHTML = 'Идет загрузка';
             return response.json();     //декодируем ответ в формате JSON и переходим на выполнение следующего then
         })
@@ -32,7 +32,7 @@ const fetchPromiseFuncGet = () => {
                     likes: comment.likes,
                     // В API пока нет признака лайкнутости
                     // Поэтому пока добавляем заглушку
-                    isLiked: 'like-button -no-active-like',
+                    isLiked: comment.isLiked,
                 };
             });
             updateUsers(appComments);

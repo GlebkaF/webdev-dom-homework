@@ -21,7 +21,7 @@ export const renderUsers = () => {
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter" >${user.likes}</span>
-            <button data-index="${index}" class='${user.isLiked}'></button>
+            <button data-index="${index}" class='like-button ${user.colorLike}'></button>
           </div>
         </div>
       </li>`;

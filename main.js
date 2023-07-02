@@ -28,14 +28,14 @@ export const initLikeButton = () => {
             const likeButtonIndex = likeButtonElement.dataset.index;
             const listElement = users[likeButtonIndex];
   
-            if (listElement.like) {
-                listElement.likeNumber -= 1;
-                listElement.like = false;
-                listElement.colorLike = 'like-button no-active-like';
+            if (listElement.isLiked) {
+                listElement.likes -= 1;
+                listElement.isLiked = false;
+                listElement.colorLike = 'no-active-like';
             } else {
-                listElement.likeNumber += 1;
-                listElement.like = true;
-                listElement.colorLike = 'like-button -active-like';
+                listElement.likes += 1;
+                listElement.isLiked = true;
+                listElement.colorLike = '-active-like';
             }
             renderUsers();
         });

@@ -9,28 +9,29 @@
 
 <body>
   <div class="container">
-
     <ul class="comments" id="list-comment">
       <!-- Список рендерится из JS -->
     </ul>
-
     <div class="add-form" id="addForm">
+      <!-- Инпут для имени пользователя -->
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="enter-name" />
+      <!-- Инпут для комментария пользователя  -->
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
         id="enter-comment"></textarea>
       <div class="add-form-row">
+        <!-- Кнопка написать -->
         <button class="add-form-button" id="btn">Написать</button>
       </div>
     </div>
   </div>
 </body>
-
 <style>
   .error {
     background-color: red;
   }
 </style>
 
+<!-- Подключение основного скрипта main.js -->
 <script type="module" src="./main.js"></script>
 
 </html>
