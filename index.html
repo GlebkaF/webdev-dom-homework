@@ -97,20 +97,35 @@
     //     renderComments();
     // }
 
+    //Функция санитайзер
+    const sanitizeHTML = (htmlString) => {
+        return htmlString
+            .replaceAll('>', '&gt')
+            .replaceAll('<', '&lt')
+            .replaceAll('/Начало цитаты/', "<div class='quote'>")
+            .replaceAll('/конец цитаты/', "</div>");
+
+    }
+
+
+
     //Функция добавления объекта комментария в массив
     function addComment() {
         if (nameInputElement.value && commentInputElement.value) {
             userComments.push({
-                name: nameInputElement.value.replaceAll('>', '&gt').replaceAll('<', '&lt'),
+                name: sanitizeHTML(nameInputElement.value),
                 time: getDate(),
-                comment: commentInputElement.value.replaceAll('>', '&gt').replaceAll('<', '&lt').replaceAll('QUOTE_BEGIN', "<div class='quote'>").replaceAll('QUOTE_END', "</div>"),
+                comment: sanitizeHTML(commentInputElement.value),
                 numberOfLike: 0,
                 like: false,
                 isEdit: false
             })
         };
+        nameInputElement.value = '';
+        commentInputElement.value = '';
 
         renderComments()
+        activeButton();
     }
     // //Функция сохранения измененного комментария
     // function saveCommentFunction() {
@@ -141,7 +156,8 @@
         for (const commentCardElement of commentsCardElements) {
             commentCardElement.addEventListener('click', () => {
                 const index = commentCardElement.dataset.index;
-                commentInputElement.value =`QUOTE_BEGIN ${userComments[index].name}:\n ${userComments[index].comment}QUOTE_END \n`;
+                const quote = `/Начало цитаты/${userComments[index].name}:\n ${userComments[index].comment}/конец цитаты/ \n`;
+                commentInputElement.value = quote.replace("<div class='quote'>", '').replace('</div>', '');
             })
         }
     }
@@ -179,35 +195,22 @@
         })
             .join('');
         commentsElement.innerHTML = userCommentsHtml;
-        nameInputElement.value = '';
-        commentInputElement.value = '';
-
-        //Выключение кнопки
-        buttonElement.classList.add("inactive-button");
-        buttonElement.disabled = true;
 
         //Проверка полей ввода на наличие введенных данных
         nameInputElement.addEventListener('input', activeButton);
         commentInputElement.addEventListener('input', activeButton);
 
-        //Выключение кнопки
-        buttonElement.disabled = true;
-        buttonElement.classList.add("inactive-button");
-
-        //Добавление комментария кнопкой "Написать"
-        buttonElement.addEventListener("click", () => {
-            addComment();
-        })
-
-        //Добавление комментария клавишей Enter
-        nameInputElement.addEventListener("keyup", addCommentEnter);
-        commentInputElement.addEventListener("keyup", addCommentEnter);
 
         // //Удаление последнего комментария
         // buttonDeleteElement.addEventListener('click', deleteLastComment);
+
         putLike();
+
         // editComments();
+
         replyToComment();
+
+        console.log(userComments);
     }
 
     // //Функция редактирования комментария 
@@ -228,8 +231,6 @@
     //     }
     // };
 
-    renderComments();
-    // editComments();
 
     //Функция активации лайка
     function putLike() {
@@ -251,10 +252,21 @@
         }
     }
 
+    //Добавление комментария кнопкой "Написать"
+    buttonElement.addEventListener("click", () => {
+        addComment();
+    })
 
+    renderComments();
+    // editComments();
 
+    //Добавление комментария клавишей Enter
+    nameInputElement.addEventListener("keyup", addCommentEnter);
+    commentInputElement.addEventListener("keyup", addCommentEnter);
 
-
+    // Выключение кнопки
+    buttonElement.classList.add("inactive-button");
+    buttonElement.disabled = true;
 </script>
 
 </html>
