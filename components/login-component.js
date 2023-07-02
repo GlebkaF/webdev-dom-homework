@@ -87,7 +87,8 @@ export function renderLoginComponent({ comments, appEL, setToken, getArr }) {
                         .then((user) => {
                             console.log(user);
                             setToken(`Bearer ${user.user.token}`);
-                            console.log(setToken);
+                            let control = setToken(`Bearer ${user.user.token}`);
+                            console.log(control);
                             getArr();
                         })
                         .catch((error) => {
