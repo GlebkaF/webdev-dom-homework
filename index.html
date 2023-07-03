@@ -17,7 +17,8 @@
       <textarea id="comment-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
         rows="4"></textarea>
       <div class="add-form-row">
-        <button id="add-button" class="add-form-button" disabled>Написать</button>
+        <button id="add-button" class="add-form-button" data-index="${index}" disabled> Написать</button>
+
       </div>
     </div>
   </div>
@@ -40,13 +41,16 @@
   const listElement = document.getElementById('list');
   const nameInputElement = document.getElementById('name-input');
   const commentTextElement = document.getElementById('comment-text');
+
+  const commentElements = document.querySelectorAll(".comment");
+
+
+  //Дата
   const currentDate = new Date();
   const optins = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' };
 
-  const commentElements = document.querySelectorAll(".comment");
-  
 
-  //кнопка Написать тухнет если нет текста и имени
+  //кнопка тухнет если нет текста и имени
   const disableButton = () => {
     if (nameInputElement.value && commentTextElement.value) {
       buttonElement.disabled = false;
@@ -58,7 +62,7 @@
   commentTextElement.addEventListener("input", disableButton);
 
 
-
+//массив
   const comments = [
     {
       name: "Глеб Фокин",
@@ -80,6 +84,7 @@
 
   console.log(comments);
 
+
   // Добавляет обработчики кликов ко всем элементам с классом comment
   const initEventListeners = () => {
     // Находит все элементы с классом comment в разметке
@@ -94,32 +99,47 @@
     }
   };
 
-  
+
   //кнопка с полем ввода изменить комментарий ДОДеЛАТЬ
- 
+
   const changeButtonElementsFunc = () => {
-     const changeButtonElements = document.querySelectorAll(".edit-form-button");
-     console.log(changeButtonElements);
-     for (const changeButtonElement of changeButtonElements) {
-       changeButtonElement.addEventListener("click", () => {
+    const changeButtonElements = document.querySelectorAll(".edit-form-button");
+    for (const changeButtonElement of changeButtonElements) {
+      changeButtonElement.addEventListener("click", (event) => {
         const index = changeButtonElement.dataset.index;
-        console.log(index);
         if (comments[index].isEdit === false) {
           comments[index].isEdit = true;
-            } else {
+        } else {
           comments[index].isEdit = false;
           //добавить изменение свойства coment.text сделать что бы в массиве свойство перезаписывалось
-          coment.text = comments[index].text //??;
+          if (element.children.length == 0) {
+            commentTextElement.value = `${comments[index].text}`;//???непонятно
+          }
+          
         }
-
-      
-        
-        
         renderComments()
-       });  
-     }
-   }
+      });
+    }
+  }
 
+
+
+  //кнопка с полем ввода добавление отзыва к комменту ДОДеЛАТЬ
+  const reviewButtonElements = () => {
+    const reviewElements = document.querySelectorAll(".comment-text");
+    reviewElements.forEach((element, index) => {
+      element.addEventListener("click", (event) => {
+        if (element.children.length == 0) {
+          commentTextElement.value = `> ${comments[index].text}
+${comments[index].name} 
+
+
+        `
+        };
+        renderComments();
+      });
+    });
+  };
 
 
   // кнопка лайк с подсчетом
@@ -128,7 +148,7 @@
     const iconButtonsElements = document.querySelectorAll('.likes-counter');// счет лайков
 
     for (const likeButtonsElement of likeButtonsElements) {
-      likeButtonsElement.addEventListener("click", () => {
+      likeButtonsElement.addEventListener("click", (event) => {
         const index = likeButtonsElement.dataset.index;
         if (comments[index].isLiked === false) {
           comments[index].isLiked = true;
@@ -145,23 +165,21 @@
     }
   };
 
-  /*
+
   // нажатие клавиши Enter ДОДеЛАТЬ
-  
-  const keyupButton = () => {
-  const input = document.getElementById('add-button');
-  const logList = document.getElementById('list');
-  const logName = document.getElementById('name-input');
 
-  input.addEventListener("keyup", () => {
-    
+  document.addEventListener('keyup', (e) => {
+    if (e.code == 'Enter' || e.code == 'NumpadEnter') {
+      if (!nameInputElement.value == "" && !commentTextElement.value == "") {
 
+        renderComments();
+        nameInputElement.value = "";
+        commentTextElement.value = "";
+        buttonElement.classList.add("add-form-button");
+      }
+    };
   });
-  };
-  keyupButton()
- 
- // 
-*/
+
 
   const renderComments = () => {
     const commentsHtml = comments
@@ -171,16 +189,19 @@
             <div>${comment.name}</div>
             <div>${currentDate.toLocaleDateString('ru-RU', optins)}</div>
           </div>
+
           <div class="comment-body">
-            ${(comment.isEdit) 
-              ? `<textarea id="comment-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+            ${(comment.isEdit)
+            ? `<textarea id="comment-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
         rows="4">${comment.text}</textarea>`
-               : `<div class="comment-text">
+            : `<div class="comment-text">
               ${comment.text}
               </div>`}
 
-              <button class="add-form-button edit-form-button" data-index="${index}" > ${(comment.isEdit) ? `Сохранить` : `Изменить`} </button>
-          </div>         
+              <button class="add-form-button edit-form-button" data-index="${index}" > ${(comment.isEdit)
+            ? `Сохранить` : `Изменить`} </button>
+          </div>      
+             
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${comment.like}</span>
@@ -196,6 +217,7 @@
     initEventListeners();
     initLikeButtonsListeners();
     changeButtonElementsFunc();
+    reviewButtonElements();
   };
 
   renderComments();
@@ -214,11 +236,16 @@
       return
     };
 
+
     // пушит новый массив
     comments.push({
-      name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"), 
+      name: nameInputElement.value
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;"),
       date: currentDate.toLocaleDateString('ru-RU', optins),
-      text: commentTextElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+      text: commentTextElement.value
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;"),
       like: 0,
       isLiked: false,
       isEdit: false,
