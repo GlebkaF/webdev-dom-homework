@@ -130,8 +130,10 @@ renderCommentList();
 function disableBtn() {
     if (!nameInput.value == '' && !commentInput.value == '') {
         addButton.classList.remove('add-form-button_disable')
+        addButton.disabled = false
     } else {
         addButton.classList.add('add-form-button_disable')
+        addButton.disabled = true
     }
 }
 
@@ -202,6 +204,7 @@ addButton.addEventListener('click', () => {
     nameInput.value = ''
     commentInput.value = ''
     addButton.classList.add('add-form-button_disable')
+    addButton.blur()
 })
 
 // Обработка нажатия на enter
