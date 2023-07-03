@@ -1,88 +1,132 @@
 
 import{fetchFunction} from "./index.js";
 import {comments} from "./index.js"
-import { postFetch } from "./api.js";
+import { getFetch, postFetch } from "./api.js";
 import {renderLoginComponent} from "./login-components.js";
+
 export const buttonElement = document.getElementById('add-form-button');
 export const nameInputElement = document.getElementById('input-name');
 export const textElement = document.querySelector('.add-form-text');
+export const commentsElement = document.querySelector('.comments');
+export const addFormElement = document.getElementById('add-form');
+ let token = null;
+let name = null;
 
-let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
-token = null;
-
-
- const renderComments  = (element, getCommentsList) => {
+ const renderComments  = ({element, getCommentsList}) => {
  const appEl = document.getElementById("app");
-  if(!token){
-
-   renderLoginComponent({
-      appEl,
-     setToken: (newToken) => {
-        token = newToken;
-     },
+ if (!token) {
+  renderLoginComponent({
+      comments,
+      appEl, 
+      setToken: (newToken) => {
+      token = newToken;
+      },
+      setName: (newName) => {
+      name = newName;
+      },
       fetchFunction,
-   });
+  });
+  
+}
+  
+  else {
+    const commentsHTML = comments
+     .map((comment, index) => getCommentsList (comment, index)).join(''); 
+    
+     const appHtml = `   <div class="container" id = "container">
+     <div >
+ 
+     <ul class="comments" id="comments">
+     ${commentsHTML}
+     </ul>
+     <div class="add-form" id = 'add-form'>
+       <input
+         type="text"
+         class="add-form-name"
+         placeholder="Введите ваше имя"
+         id = 'input-name' value = "${name}"
+       />
+       <textarea
+         type="textarea"
+         class="add-form-text"
+         placeholder="Введите ваш коментарий"
+         rows="4" id ="new-text"
+       ></textarea> 
+       <div class="add-form-row">
+         <button class="add-form-button" id = 'add-form-button'>Написать</button> 
+        </div> 
+        </div>
+        </div> 
+      </div> `
+    
+    
+         appEl.innerHTML = appHtml;
+    
+        
 
-   
-return;
-  }
+  // return;
+  //      addFormElement.classList.remove('hide');
+        
 
-
-  const commentsHTML = comments
-     .map((comment, index) => getCommentsList (comment, index)).join('');
-    const appHtml = `   <div class="container" id = "container">
-    <div >
-
-    <ul class="comments" id="comments">
-    ${commentsHTML}
-    </ul>
-    <div class="add-form" id = 'add-form'>
-      <input
-        type="text"
-        class="add-form-name"
-        placeholder="Введите ваше имя" id = 'input-name'
-      />
-      <textarea
-        type="textarea"
-        class="add-form-text"
-        placeholder="Введите ваш коментарий"
-        rows="4" id ="new-text"
-      ></textarea>
-      <div class="add-form-row">
-        <button class="add-form-button" id = 'add-form-button'>Написать</button> `
-  //     addFormElement.classList.remove('hide');
-        appEl.innerHTML = appHtml;
         const nameInputElement = document.getElementById('input-name');
          const textElement = document.querySelector('.add-form-text');
          const buttonElement = document.getElementById('add-form-button');
-//nameInputElement.setAttribute('disabled', "disabled");  
+        nameInputElement.setAttribute('disabled', 'disabled');
+
+
+//добавление комментария
+function  commentPost (){
+   return postFetch(nameInputElement, textElement, token)
+    .then((response) => {
+     return getFetch();
+    })
+    .then(() => {
+     nameInputElement.value = "";
+     textElement.value = "";
+     })
+    .catch((error) => {
+     if (error.message === "Сервер сломался") {
+     alert("Сервер сломался, попробуйте позже");
+       
+     commentPost ();
+     } else if (error.message === "Плохой запрос") {
+     alert("Имя и комментарий должны быть не короче 3 символов");
+     } else {
+     alert("Кажется, у вас сломался интернет, попробуйте позже");
+    console.log(error);
+     }
+    });
+}
+
+
 //добавление новых комментариев по кнопке
 buttonElement.addEventListener ("click", () => {
+  //nameInputElement.style.background = '';
+ // if (nameInputElement.value === "" ){
+//    nameInputElement.style.background = 'red';
+//    return;
+//   };
+   textElement.style.background = '';
+   if (textElement.value === ""){
+      textElement.style.background = 'red';
+      return;
+   };
 
-  nameInputElement.style.background = '';
-if (nameInputElement.value === "" ){
-  nameInputElement.style.background = 'red';
-  return;
- };
- textElement.style.background = '';
- if (textElement.value === ""){
-    textElement.style.background = 'red';
-    return;
- };
- console.log(22)
+   console.log(22)
  const addFormElement = document.getElementById('add-form');
 addFormElement.classList.remove('hide');
 
- postFetch();
-renderComments (getCommentsList, comments)
+commentPost();
+renderComments ( comments, getCommentsList, )
 
 })
+//цитирование
  const quotation = () => {
 
   let commentElements  = document.querySelectorAll ('.comment');
+
   for (const commentElement of commentElements){
-  commentElement.addEventListener('click', (event) => {
-  //  event.stopPropagation();
+  commentElement.addEventListener('click', () => {
   const index = commentElement.dataset.index;
   textElement.value =  `"${comments[index].name}:  ${comments[index].textElement}"\n`
       });
@@ -112,6 +156,7 @@ renderComments(element, getCommentsList);
 }
 };
    likeCommentButton();
- //    quotation();
-     } 
+
+     }
+ }
 export default renderComments;

@@ -2,7 +2,8 @@
     return   `
     
     
-    <li class = 'comment' class = 'whiteSpace'   data-index ="${index}"> <div class = 'comment-header'>
+    <li class = 'comment' class = 'whiteSpace'   data-index ="${index}"> 
+    <div class = 'comment-header'>
         <div>${comment.name}</div> 
         <div>${comment.dateCreation}</div>
        </div>  
@@ -19,7 +20,10 @@
                <span class="likes-counter">${comment.likesNumber}</span>
            <button data-index = '${index}' class=" like-button ${comment.propertyColorLike}"></button>
                    </div> 
-       </div>`;
+       </div>
+
+    </li>
+           `;
  };
 
  

@@ -1,10 +1,44 @@
 import { loginUser, registerUser } from "./api.js";
-export function renderLoginComponent ({appEl, setToken, fetchFunction}){
+export function renderLoginComponent ({appEl, setToken, fetchFunction, setName, comments}){
   let isLoginMode = true;
-   // 
-  const renderForm = () => {
+   
+const commentsHtmlNotEdit = comments.map ((comment, index) => {
+  return `    <li class = 'comment' class = 'whiteSpace'   data-index ="${index}"> 
+  <div class = 'comment-header'>
+      <div>${comment.name}</div> 
+      <div>${comment.dateCreation}</div>
+     </div>  
+     
+         <div class = 'comment-body'>
+       <div class = "comment-text">
+       ${comment.textElement}
+       </div>
+       </div>
+     
+     
+       <div class = "comment-footer" >
+         <div class = 'likes'>      
+             <span class="likes-counter">${comment.likesNumber}</span>
+         <button data-index = '${index}' class=" like-button ${comment.propertyColorLike}"></button>
+                 </div> 
+     </div>
 
+  </li>`
+}).join('');
+
+
+const appHTML = `<div class="container">
+
+      <ul class="comments">
+       ${commentsHtmlNotEdit}
+      </ul> <br>   
+      <div>Чтобы добавить комментарий, <a  id="login-link" style = "color: red" href="#">нужно авторизоваться</a></div>
+      </div>`;
     
+      appEl.innerHTML = appHTML;
+
+document.getElementById('login-link').addEventListener('click', () => {
+  const renderForm = () => {
              const appHtml = `   <div class="container" id = "container">
            <h3> Форма ${isLoginMode ? "входа" : "регистрации" }  </h3>
       <div class = 'comment'>
@@ -47,10 +81,11 @@ export function renderLoginComponent ({appEl, setToken, fetchFunction}){
           password: password})
           .then ((user) => {
           console.log(user);
-       setToken(`Bearer ${user.user.token}`) 
+       setToken(`Bearer ${user.user.token}`);
+       setName(user.user.name);
+       console.log(user.user.name)
       fetchFunction();
         }).catch ((error) => {
-          //TODO выводить алерт красиво
           alert (error.message)
         })    
       } else {
@@ -66,7 +101,8 @@ export function renderLoginComponent ({appEl, setToken, fetchFunction}){
           if (!password){
             alert ("Введите пароль");
           }
-                //token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+      
+          //token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
                 registerUser({
                   login: login,
                   password: password,
@@ -91,6 +127,9 @@ export function renderLoginComponent ({appEl, setToken, fetchFunction}){
         })
   
   }
-  //
+  
   renderForm();
 }
+
+ 
+)}

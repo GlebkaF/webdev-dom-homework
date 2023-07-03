@@ -1,10 +1,8 @@
-import {  commentsElement, fetchFunction} from "./index.js";
-import { nameInputElement, textElement} from "./render.js";
-//import { fetchFunction } from "./index.js";
-//import { commentDate } from "./date.js";
-//import { token } from "./index.js";
-//import { loaderComments } from "./index.js";
-//import { addFormElement } from "./index.js";
+import { fetchFunction} from "./index.js";
+import { commentDate } from "./date.js";
+//import { nameInputElement, textElement} from "./render.js";
+//import { addFormElement } from "./render.js"
+//import {  commentsElement} from "./render.js";
 const host = "https://wedev-api.sky.pro/api/v2/tanya-bulaeva/comments";
 
 //let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
@@ -22,14 +20,17 @@ export const getFetch = (token) => {
   //  getFetch();
     throw new Error ("Нет авторизации")
     }
-   //  loaderComments();
+
+   //   commentsElement.textContent = "Подождите, лента коммментариев загружается"; 
     return  response.json();
 })
     }
     
 
 
-export const postFetch = (token, nameInputElement, textElement) => {
+export const postFetch = (nameInputElement, textElement,token,) => {
+  const addFormElement = document.querySelector('.add-form');
+
     return fetch(host,
  {
   method: "POST",
@@ -46,8 +47,9 @@ export const postFetch = (token, nameInputElement, textElement) => {
       }
     }).then((response) => {
   if (response.status === 201){
- // addFormElement.classList.add('hide');
- commentsElement.textContent = `Загрузка комментария`;
+    addFormElement = document.getElementById('add-form');
+  addFormElement.classList.add('hide');
+ //commentsElement.textContent = `Загрузка комментария`;
 
   return response.json();
  };
