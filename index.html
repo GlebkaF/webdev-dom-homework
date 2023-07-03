@@ -10,7 +10,7 @@
     <div class="container">
       <ul id="container" class="comments">
         <li class="comment" data-likeNumb="3" data-comment-text=" <Это будет первый комментарий на этой странице
-  Глеб Фокин">
+  (Глеб Фокин)">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div id="date">12.02.22 12:18</div>
@@ -28,7 +28,7 @@
           </div>
         </li>
         <li class="comment" data-likeNumb="75" data-comment-text="< Мне нравится как оформлена эта страница! ❤
-  Варвара Н.">
+  (Варвара Н.)">
           <div class="comment-header">
             <div>Варвара Н.</div>
             <div>13.02.22 19:22</div>
@@ -75,30 +75,11 @@
     const commentsElement = document.getElementById("add-form-text");
 
 
-/*/ редактирование коментария  дз-11 (попытка не удалась)
-  const commentsEvents = document.querySelectorAll('.comment-body');
-  const initCommentsEvents = () => {
-    for (const commentEvent of commentsEvents) {
-      const commentText = commentEvent.querySelector('.comment-text');
-
-      commentEvent.addEventListener("click", (event) => {
-        let textItem = event.target.closest('.comment-text');
-        if (textItem) {
-        document.querySelector('#add-form-text').value = textItem.textContent;
-      }
-    });
-  }
-};
-
-initCommentsEvents();/*/
-
-
     const commentElements = document.querySelectorAll(".comment");
     const initEventListeners = () => {
       const commentElements = document.querySelectorAll(".comment");
       for (const commentElement of commentElements) {
-        commentElement.addEventListener("click", () => {
-     
+        commentElement.addEventListener("click", (event) => {
           // редактирование коментария дз-11
           let textItem = commentElement.dataset.commentText;
         if (textItem) {
@@ -157,38 +138,66 @@ initCommentsEvents();/*/
     dateElement.textContent = formatDate(myDate);
 
     
-    const users = [
+    let comments = [
       {
         name:"Глеб Фокин",
-        coment: "Это будет первый комментарий на этой странице", 
+        text: "Это будет первый комментарий на этой странице", 
         data: "12.02.22 12:18",
         likesCounter:3,
         likesElement : false
       },
       {
         name:"Варвара Н.",
-        coment: "Мне нравится как оформлена эта страница! ❤",
+        text: "Мне нравится как оформлена эта страница! ❤",
         data: "13.02.22 19:22",
         likesCounter:75,
         likesElement : true
       },
     ];
 
-    const renderUsers = () => {
-         const usersHtml = users.map((user)=>{
-          return`<li  class="comment"  data-likeNumb="${user.likesCounter}"  data-comment-text="${user.coment}">
+
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/:aleksey-ivanov/comments", {
+      method: "GET"
+    });
+
+    // подписываемся на успешное завершение запроса с помощью then
+    fetchPromise.then((response) => {
+      // Запускаем преобразовываем "сырые" данные от API в json формат
+      const jsonPromise = response.json();
+
+      // Подписываемся на результат преобразования
+      jsonPromise.then((responseData) => {
+        const appComments = responseData.comments.map((comment) =>{
+            return{
+              name:comment.author.name,
+              date: new Date(comment.date),
+              text: comment.text,
+              likes: comment.likes,
+              isLiked: false
+            }
+          });
+          comments = appComments;
+        // получили данные и рендерим их в приложении
+        comments = responseData.comments;
+      });
+    });
+
+    const renderUser = () => {
+         const usersHtml = comments.map((comment)=>{
+          return`<li  class="comment"  data-likeNumb="${comment.likesCounter}"  data-comment-text="<${comment. text}
+  (${comment.name})">
           <div class="comment-header">
-            <div>${user.name}</div>
-            <div>${user.data}</div>
+            <div>${comment.name}</div>
+            <div>${comment.data}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${user.coment}
+              ${comment. text}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">${user.likesCounter}</span>
+              <span class="likes-counter">${comment.likesCounter}</span>
               <button class="like-button"></button>
             </div>
           </div>
@@ -196,7 +205,7 @@ initCommentsEvents();/*/
         })
         .join("");
 
-         newCommentElement.innerHTML = usersHtml;
+         newCommentElement.innerHTML = commentsHtml;
          initEventListeners();
       };
 
@@ -206,29 +215,23 @@ initCommentsEvents();/*/
       if (inputNameElement.value === "" || commentsElement.value === "") {
         return false;
       };
-   
-         users.push( {
-        name:inputNameElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-        coment: commentsElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"), 
-        data: "12.02.22 12:18",
-        likesCounter:0,
-        likesElement : false
+
+      fetch("https://wedev-api.sky.pro/api/v1/:aleksey-ivanov/comments", {
+        method: "POST",
+        body: JSON.stringify({
+          text: commentsElement.value,
+          name:inputNameElement.value
+        })
+      }).then((response) => {
+        response.json().then((responseData) => {
+          // получили данные и рендерим их в приложении
+          comments = responseData.comments;
+        });
       });
-
-      renderUsers();
-
+    
       inputNameElement.value = "";
-
+     
     });
-
     console.log("It works!");
   </script>
 </html>
