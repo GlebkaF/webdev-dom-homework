@@ -1,24 +1,46 @@
 "use strict";
 
-const comments = [
-    {
-        name: 'Глеб Фокин',
-        date: '12.02.22 12:18',
-        text: 'Это будет первый комментарий на этой странице',
-        counter: 3,
-        isLiked: true,
-        isEdit: false,
-    },
-    {
-        name: 'Варвара Н.',
-        date: '13.02.22 19:22',
-        text: 'Мне нравится как оформлена эта страница! ❤',
-        counter: 75,
-        isLiked: false,  
-        isEdit: false,
-    },
-];
-// Код писать здесь
+let comments = [];
+
+//Берем комментарии из API
+fetch('https://wedev-api.sky.pro/api/v1/AnnaIllarionova/comments', {
+  method: "GET"
+}).then((answer) => {
+  answer.json().then((answerData) => {
+    //Преобразовываем данные из формата API в формат ленты
+    const appComments = answerData.comments.map((comment) => {
+      const apiDate = new Date(comment.date);
+      let day = apiDate.getDate();
+      let month = apiDate.getMonth() + 1;
+      let year = apiDate.getFullYear();
+      let hour = apiDate.getHours();
+      let minutes= apiDate.getMinutes();
+      if (day < 10 ) {
+        day = '0' + day;
+      }
+      if (month < 10 ) {
+        month = '0' + month;
+      }
+      if (hour < 10 ) {
+        hour = '0' + hour;
+      }
+      if (minutes < 10 ) {
+        minutes = '0' + minutes;
+      }
+      const userDate = day + '.' + month + '.' + year + ' ' + hour + ':' + minutes
+      return {
+      name: comment.author.name,
+      date: userDate,
+      text: comment.text,
+      counter: comment.likes,
+      isLiked: false,
+      isEdit: false,
+      };
+    });
+    comments = appComments;
+    renderComments();
+  });
+});
 
 const buttonElement = document.getElementById('write-button');
 const nameElement = document.getElementById('name-input');
@@ -52,8 +74,8 @@ const getCorrectComments = () => {
 
   for (const correctButton of correctButtons) {
     
-    correctButton.addEventListener('click', () => {
-     
+    correctButton.addEventListener('click', (event) => {
+     event.stopPropagation();
         const correctIndex = parseInt(correctButton.dataset.index);
         //console.log(correctIndex);
   
@@ -69,7 +91,8 @@ const getCorrectComments = () => {
         correctButton.innerHTML = 'Редактировать';
         comment.isEdit = false;
         const newCommentText = document.getElementById('correct-textarea');
-        comment.text = newCommentText.value;
+        comment.text = newCommentText.value;   
+
       }
     
       console.log('paботает!');
@@ -108,7 +131,7 @@ const getLikes = () => {
 }
 
 const renderComments = () => {
-    const commentsHTML = comments.map((comment, index) => {
+    let commentsHTML = comments.map((comment, index) => {
         return ` <li id="comment-list" class="comment" data-index="${index}">
       <div class="comment-header">
         <div>${comment.name}</div>
@@ -121,7 +144,7 @@ const renderComments = () => {
           type="textarea"
           class="add-form-text"
           rows="4"
-        >${comment.text}</textarea>` : comment.text}
+        >${comment.text}</textarea>` : `${comment.text}` }
         </div>
       </div>
       <div class="comment-footer">
@@ -146,7 +169,7 @@ const renderComments = () => {
   commentElement.value = '';
   buttonElement.disabled = true;
 
-  //клик на комментарий, ответ на комментарий
+  // Клик на комментарий, ответ на комментарий
   const commentItems = document.querySelectorAll('.comment');
   
   for (const commentItem of commentItems) {
@@ -154,8 +177,7 @@ const renderComments = () => {
       const index = commentItem.dataset.index;
       //console.log(index);
       const comment = comments[index];
-      commentElement.value = ">" + comment.text + '\n' + comment.name;
-
+      commentElement.value = `${comment.text}\n${comment.name}`;
     })
     
   }
@@ -195,18 +217,66 @@ buttonElement.addEventListener('click', () => {
     return;
   }    
 
-  comments.push({
+
+fetch('https://wedev-api.sky.pro/api/v1/AnnaIllarionova/comments', {
+  method: "POST",
+  body: JSON.stringify({
+    text: commentElement.value
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;"),
     name: nameElement.value
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;"),
-        date: day + '.' + month + '.' + year + ' ' + hour + ':' + minutes,
-        text: commentElement.value
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;"),
-        counter: 0,
-        isLiked: 'false',
-        isEdit: 'false',
+    date: day + '.' + month + '.' + year + ' ' + hour + ':' + minutes,
+    counter: 0,
+    isLiked: false,
+    isEdit: false,
+  })
+}).then((response) => {
+  response.json().then((responseData) => {
+    comments = responseData.comments;
+    renderComments();
+  })
 })
+
+fetch('https://wedev-api.sky.pro/api/v1/AnnaIllarionova/comments', {
+  method: "GET"
+}).then((answer) => {
+  answer.json().then((answerData) => {
+    //Преобразовываем данные из формата API в формат ленты
+    const appComments = answerData.comments.map((comment) => {
+      const apiDate = new Date(comment.date);
+      let day = apiDate.getDate();
+      let month = apiDate.getMonth() + 1;
+      let year = apiDate.getFullYear();
+      let hour = apiDate.getHours();
+      let minutes= apiDate.getMinutes();
+      if (day < 10 ) {
+        day = '0' + day;
+      }
+      if (month < 10 ) {
+        month = '0' + month;
+      }
+      if (hour < 10 ) {
+        hour = '0' + hour;
+      }
+      if (minutes < 10 ) {
+        minutes = '0' + minutes;
+      }
+      const userDate = day + '.' + month + '.' + year + ' ' + hour + ':' + minutes
+      return {
+      name: comment.author.name,
+      date: userDate,
+      text: comment.text,
+      counter: comment.likes,
+      isLiked: false,
+      isEdit: false,
+      };
+    });
+    comments = appComments;
+    renderComments();
+  });
+});
 
 renderComments();
 
