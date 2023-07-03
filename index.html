@@ -73,6 +73,15 @@
   const commentsElement = document.querySelector('.comments');
   const likesElements = document.querySelectorAll(".like-button");
 
+  // Функция очистки вводимых данных от спец символов
+  const sanitizeHtml = (htmlString) => {
+    return htmlString
+      .replaceAll("<", "&lt")
+      .replaceAll(">", "&gt")
+      .replaceAll("&", "&amp")
+      .replaceAll('"', "&quot")
+  };
+
 
   const disableButton = () => {
     if (nameElement.value && textElement.value) {
@@ -122,9 +131,11 @@
           comments[index].likes -= 1;
         }
         renderComments();
+        answerFunction();
       });
     };
   };
+
 
 
   const changeElementfunction = () => {
@@ -165,7 +176,7 @@
         </div>
         <div class="comment-body"> 
           ${(comment.isEdit)
-          ? `<textarea type="textarea" class="add-form-text change-comment" data-textarea="${comment.text}" placeholder="Введите ваш коментарий" rows="4">${comment.text}</textarea>`
+          ? `<textarea type="textarea" class="add-form-text change-comment"  placeholder="Введите ваш коментарий" rows="4">${comment.text}</textarea>`
           : `<div class="comment-text" data-index="${index}">
             ${comment.text}
           </div>`}
@@ -187,7 +198,7 @@
 
     likeElementfunction();
     changeElementfunction();
-
+    
   };
 
   renderComments();
@@ -223,19 +234,16 @@
     const resultDate = `${commentData.toLocaleDateString()}  ${comHours}:${comMinuts}`;
 
     comments.push({
-      name: nameElement.value
-        .replaceAll("<", "&lt")
-        .replaceAll(">", "&gt"),
+      name: sanitizeHtml(nameElement.value),
       time: resultDate,
-      text: textElement.value
-        .replaceAll("<", "&lt")
-        .replaceAll(">", "&gt"),
+      text: sanitizeHtml(textElement.value),
       likes: 0,
       icon: false,
       isEdit: false,
     });
     likeElementfunction();
     renderComments();
+    answerFunction();
 
     // Очистка формы
     nameElement.value = "";
@@ -257,10 +265,9 @@
 
       });
     };
+
   };
   answerFunction();
-
-
 
 
 
