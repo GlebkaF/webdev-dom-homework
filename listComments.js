@@ -1,4 +1,4 @@
-const listComments = (comment, index) => {
+export const listComments = (comment, index) => {
 
   return `<li class="comment" data-index="${index}">
     <div class="comment-header">
@@ -25,7 +25,5 @@ const listComments = (comment, index) => {
         <button class="like-button ${comment.propertyColorLike}" data-index="${index}"></button>
       </div>
     </div>
-  </li>`
+  </li>`;
 };
-
-export {listComments} ;

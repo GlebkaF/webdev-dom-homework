@@ -1,28 +1,39 @@
 import { getCurrentDate } from "./fullDate.js";
-import { getFetchFunction, nameInputElement, textInputElement, loaderLi, addFormElement } from "./main.js";
+import { getFetchFunction } from "./main.js";
 
+const host = "https://wedev-api.sky.pro/api/v2/ulyana-korotkova/comments";
 
-const getFetchPromise = () => {
+export function getFetchPromise ({token}) {
 
-    return fetch('https://wedev-api.sky.pro/api/v1/ulyana-korotkova/comments',{
-      method: "GET",
-      })
-     .then((response) => {
-        return response.json()
+    return fetch(host,{
+        method: "GET",
+        headers: {
+          Authorization: token,
+        },
      })
-    
+     .then((response) => {
+      if (response.status === 401) {
+        throw new Error('Нет авторизации');
+      }
+      return response.json()
+     })
 }
 
-const postFetchPromise = () => {
-
-    fetch('https://wedev-api.sky.pro/api/v1/ulyana-korotkova/comments', {
+export function postFetchPromise ({token}) {
+    const nameInputElement = document.getElementById("name-input");
+    const textInputElement = document.getElementById("textarea-text");
+    const loaderLi = document.querySelector('.loader-li');
+    const addFormElement = document.querySelector('.add-form');
+  
+    return fetch(host, {
     method: "POST",
     body: JSON.stringify({
-      name: nameInputElement.value
+      name:nameInputElement,
+      /*.value
        .replaceAll("&", "&amp;")
        .replaceAll("<", "&lt;")
        .replaceAll(">", "&gt;")
-       .replaceAll('"', "&quot;"),
+       .replaceAll('"', "&quot;"),*/
       text: textInputElement.value
        .replaceAll("&", "&amp;")
        .replaceAll("<", "&lt;")
@@ -33,7 +44,11 @@ const postFetchPromise = () => {
       activeLike: false,
       propertyColorLike: 'like-button -no-active-like',
       //forceError: true,
-    })
+      
+    }),
+    headers: {
+      Authorization: token,
+    },
   })
   .then((response) => {
 
@@ -51,6 +66,7 @@ const postFetchPromise = () => {
     .then(() => {
       loaderLi.style.display = 'none';
       addFormElement.style.display = 'flex';
+      
       nameInputElement.value = '';
       textInputElement.value = '';
     })
@@ -58,7 +74,7 @@ const postFetchPromise = () => {
 
       if (error.message === "Сервер сломался") {
         alert("Сервер сломался, попробуйте позже");
-        postData(postFetchPromise);
+        
       } else if (error.message === "Плохой запрос") {
         alert("Имя и комментарий должны быть не короче 3 символов");
 
@@ -72,4 +88,35 @@ const postFetchPromise = () => {
     
 }
 
-export { getFetchPromise, postFetchPromise };
+export function loginUser ({login, password}) {
+  return fetch("https://wedev-api.sky.pro/api/user/login", {
+    method: "POST",
+    body: JSON.stringify({
+      login,
+      password,
+    }),
+  })
+  .then((response) => {
+    if (response.status === 400) {
+      throw new Error('Неверный логин или пароль');
+    }
+    return response.json();
+  })
+};
+
+export function registerUser ({name, login, password}) {
+  return fetch("https://wedev-api.sky.pro/api/user", {
+    method: "POST",
+    body: JSON.stringify({
+      name,
+      login,
+      password,
+    }),
+  })
+  .then((response) => {
+    if (response.status === 400) {
+      throw new Error('Такой пользователь уже существует');
+    }
+      return response.json();
+  })
+}
