@@ -106,5 +106,9 @@ export function renderLoginComponents({ appEl, setToken }) {
     });
   };
 
+  
+
   renderForm();
+
+  
 }

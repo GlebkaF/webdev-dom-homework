@@ -1,10 +1,9 @@
 export const listElement = document.getElementById("comments-list");
-export const buttonElement = document.getElementById("button-form");
 export const nameInputElement = document.getElementById("user-name");
 export const textInputElement = document.getElementById("user-text");
 export const formElement = document.getElementById("form");
+export const buttonElement = document.getElementById("button-form");
 export const deleteButtonElement = document.getElementById("delete-button");
-export const toggleButton = document.getElementById("toggle-button");
 export const userName = document.getElementById("username");
 export const userLogin = document.getElementById("login");
 export const userPassword = document.getElementById("password"); 
