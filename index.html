@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
+
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="list">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -49,23 +50,105 @@
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          id="name"
         />
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+          id="comment"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="add-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
-
+  <style>
+    .button-off{
+      color: #d2d5db;
+      background: #6c7589;
+      cursor: not-allowed;
+    }
+    .error{
+      background-color: #df6262;
+    }
+  </style>
   <script>
     "use strict";
+    const listElement = document.getElementById('list');
+    const buttonElement = document.getElementById('add-button');
+    const nameInputElement = document.getElementById('name');
+    const commentTextareaElement = document.getElementById('comment');
     
+    document.addEventListener('mouseover', () => {
+      if (nameInputElement.value === '' || commentTextareaElement.value === '') {
+        buttonElement.classList.add('button-off');
+        buttonElement.disabled = true;        
+      }
+    })
+
+    document.addEventListener('keyup', () => {
+      if (nameInputElement.value !== '' && commentTextareaElement.value !== '') {
+        buttonElement.classList.remove('button-off');
+        buttonElement.disabled = false; 
+      }
+    })
+
+    const enterComment = () => {
+      nameInputElement.classList.remove('error');
+        commentTextareaElement.classList.remove('error');
+
+        if (nameInputElement.value === '' && commentTextareaElement.value === '') {
+          nameInputElement.classList.add('error');
+          commentTextareaElement.classList.add('error');
+          return;
+        }
+        else if (commentTextareaElement.value === ''){
+          commentTextareaElement.classList.add('error');
+          return;
+        }
+        else if (nameInputElement.value === '') {
+          nameInputElement.classList.add('error');
+          return;
+        }
+        
+        const oldListElement = listElement.innerHTML;
+        let currentDate = new Date();
+        let myDate = currentDate.toLocaleDateString('ru-RU', {day: 'numeric', month: 'numeric', year: '2-digit'}) + ' ' + currentDate.toLocaleTimeString('ru-RU', {hour: 'numeric', minute: 'numeric'});
+
+        listElement.innerHTML = oldListElement + `<li class="comment">
+            <div class="comment-header">
+              <div>${nameInputElement.value}</div>
+              <div>${myDate}</div>
+            </div>
+            <div class="comment-body">
+              <div class="comment-text">
+                ${commentTextareaElement.value}
+              </div>
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">0</span>
+                <button class="like-button"></button>
+              </div>
+            </div>
+          </li>`
+        
+        nameInputElement.value = '';
+        commentTextareaElement.value = '';
+    }
+
+    document.addEventListener('keyup', function(e) {
+      if (e.key === 'Enter') {
+        enterComment();
+      }
+    });
+
+    buttonElement.addEventListener('click', () => {
+      enterComment();
+    });
     console.log("It works!");
     
     </script>
