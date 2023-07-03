@@ -45,28 +45,31 @@
       date: '12.02.22 12:18',
       comment: 'Это будет первый комментарий на этой странице',
       like: false,
-      likeNumber: 0,
+      likeNumber: 73,
     },
     {
       name: 'Варвара Н.',
       date: '13.02.22 19:22',
       comment: 'Мне нравится как оформлена эта страница! ❤',
       like: false,
-      likeNumber: 0,
+      likeNumber: 24,
     }
   ]
 
   const renderListElement = () => {
     listElement.innerHTML = listElementData
       .map((element, index) => {
-        return `<li class="comment">
+        return `
+          <li class="comment" data-index=${index}>
             <div class="comment-header">
               <div>${element.name}</div>
               <div>${element.date}</div>
             </div>
             <div class="comment-body">
               <div class="comment-text">
-                ${element.comment}
+                ${element.comment
+                .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+                .replaceAll("QUOTE_END", "</div>")}
               </div>
             </div>
             <div class="comment-footer">
@@ -76,18 +79,35 @@
               </div>
               <div class="redactor">
                 <button class="redactor-button" data-index=${index}>Реадактировать</button>
+                <button class="delete-button" data-index=${index}>Удалить</button>
               </div>
             </div>
           </li>`
       }).join('');
-
+      
     initLikeEvent();
     initRedactorEvent();
+    initDeleteEvent();
+    initAnsverEvent();
+  }
+
+  const initAnsverEvent = () => {
+    for (const comment of document.querySelectorAll('.comment')) {
+      comment.addEventListener('click', () => {
+        const index = comment.dataset.index;
+        const commentText = `${listElementData[index].name}: "${listElementData[index].comment}"`;
+// commentText
+        commentTextareaElement.value = `QUOTE_BEGIN ${commentText} QUOTE_END`; 
+        
+        renderListElement();
+      })
+    }
   }
 
   const initLikeEvent = () => {
     for (const likeButton of document.querySelectorAll('.like-button')) {
       likeButton.addEventListener('click', () => {
+        event.stopPropagation();
         const index = likeButton.dataset.index;
         if (listElementData[index].like === false) {
           listElementData[index].like = true;
@@ -105,8 +125,23 @@
   const initRedactorEvent = () => {
     for (const redactorButton of document.querySelectorAll('.redactor-button')) {
       redactorButton.addEventListener('click', () => {
+        event.stopPropagation();
         const index = redactorButton.dataset.index;
+        console.log(index);
         
+        renderListElement();
+      })      
+    }
+  }
+
+  const initDeleteEvent = () => {
+    for (const deleteButton of document.querySelectorAll('.delete-button')) {
+      deleteButton.addEventListener('click', () => {
+        event.stopPropagation();
+        const index = deleteButton.dataset.index;
+        listElementData.splice(index, 1);
+        
+        renderListElement();
       })      
     }
   }
@@ -120,39 +155,47 @@
     }
   })
 
-    document.addEventListener('keyup', () => {
-      if (nameInputElement.value !== '' && commentTextareaElement.value !== '') {
-        buttonElement.classList.remove('button-off');
-        buttonElement.disabled = false; 
-      }
-    })
+  document.addEventListener('keyup', () => {
+    if (nameInputElement.value !== '' && commentTextareaElement.value !== '') {
+      buttonElement.classList.remove('button-off');
+      buttonElement.disabled = false;
+    }
+  })
 
-    const enterComment = () => {
-      nameInputElement.classList.remove('error');
-        commentTextareaElement.classList.remove('error');
+  const enterComment = () => {
+    nameInputElement.classList.remove('error');
+    commentTextareaElement.classList.remove('error');
 
-        if (nameInputElement.value === '' && commentTextareaElement.value === '') {
-          nameInputElement.classList.add('error');
-          commentTextareaElement.classList.add('error');
-          return;
-        }
-        else if (commentTextareaElement.value === ''){
-          commentTextareaElement.classList.add('error');
-          return;
-        }
-        else if (nameInputElement.value === '') {
-          nameInputElement.classList.add('error');
-          return;
-        }
-        
-        const oldListElement = listElement.innerHTML;
-        let currentDate = new Date();
-        let myDate = currentDate.toLocaleDateString('ru-RU', {day: 'numeric', month: 'numeric', year: '2-digit'}) + ' ' + currentDate.toLocaleTimeString('ru-RU', {hour: 'numeric', minute: 'numeric'});
+    if (nameInputElement.value === '' && commentTextareaElement.value === '') {
+      nameInputElement.classList.add('error');
+      commentTextareaElement.classList.add('error');
+      return;
+    }
+    else if (commentTextareaElement.value === '') {
+      commentTextareaElement.classList.add('error');
+      return;
+    }
+    else if (nameInputElement.value === '') {
+      nameInputElement.classList.add('error');
+      return;
+    }
+
+    const oldListElement = listElement.innerHTML;
+    let currentDate = new Date();
+    let myDate = currentDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'numeric', year: '2-digit' }) + ' ' + currentDate.toLocaleTimeString('ru-RU', { hour: 'numeric', minute: 'numeric' });
 
     listElementData.push({
-      name: nameInputElement.value,
+      name: nameInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       date: myDate,
-      comment: commentTextareaElement.value,
+      comment: commentTextareaElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       like: false,
       likeNumber: 0,
     });
@@ -164,16 +207,17 @@
     commentTextareaElement.value = '';
   }
 
-  document.addEventListener('keyup', function (e) {
-    if (e.key === 'Enter') {
+  document.addEventListener('keyup', function (e,l) {
+    if (e.ctrlKey & e.key === 'Enter') {
       enterComment();
     }
   });
 
-    buttonElement.addEventListener('click', () => {
-      enterComment();
-    });
-    console.log("It works!");
-    
-    </script>
+  buttonElement.addEventListener('click', () => {
+    enterComment();
+  });
+  console.log("It works!");
+
+</script>
+
 </html>
