@@ -80,10 +80,10 @@ document.getElementById('login-link').addEventListener('click', () => {
           login: login,
           password: password})
           .then ((user) => {
-          console.log(user);
+   
        setToken(`Bearer ${user.user.token}`);
        setName(user.user.name);
-       console.log(user.user.name)
+      
       fetchFunction();
         }).catch ((error) => {
           alert (error.message)
@@ -109,7 +109,6 @@ document.getElementById('login-link').addEventListener('click', () => {
                   name: name,
                 })
                   .then ((user) => {
-                  console.log(user);
                 setToken(`Bearer ${user.user.token}`) 
               fetchFunction();
                 }).catch ((error) => {

@@ -12,7 +12,7 @@ export const addFormElement = document.getElementById('add-form');
  let token = null;
 let name = null;
 
- const renderComments  = ({element, getCommentsList}) => {
+ const renderComments  = ({ getCommentsList}) => {
  const appEl = document.getElementById("app");
  if (!token) {
   renderLoginComponent({
@@ -65,7 +65,8 @@ let name = null;
         
 
   // return;
-  //      addFormElement.classList.remove('hide');
+  const addFormElement = document.getElementById('add-form');
+       addFormElement.classList.remove('hide');
         
 
         const nameInputElement = document.getElementById('input-name');
@@ -112,12 +113,11 @@ buttonElement.addEventListener ("click", () => {
       return;
    };
 
-   console.log(22)
  const addFormElement = document.getElementById('add-form');
-addFormElement.classList.remove('hide');
+ addFormElement.classList.remove('hide');
 
 commentPost();
-renderComments ( comments, getCommentsList, )
+renderComments ({ comments, getCommentsList} )
 
 })
 //цитирование
@@ -151,7 +151,7 @@ for (const like of likesButton) {
    commentsElement.likeComment = true;
     commentsElement.propertyColorLike = 'like-button -active-like';                  
     }
-renderComments(element, getCommentsList);
+renderComments({ comments, getCommentsList} );
  })
 }
 };

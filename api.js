@@ -29,7 +29,7 @@ export const getFetch = (token) => {
 
 
 export const postFetch = (nameInputElement, textElement,token,) => {
-  const addFormElement = document.querySelector('.add-form');
+ // const addFormElement = document.querySelector('.add-form');
 
     return fetch(host,
  {
@@ -47,8 +47,8 @@ export const postFetch = (nameInputElement, textElement,token,) => {
       }
     }).then((response) => {
   if (response.status === 201){
-    addFormElement = document.getElementById('add-form');
-  addFormElement.classList.add('hide');
+ //   addFormElement = document.getElementById('add-form');
+ // addFormElement.classList.add('hide');
  //commentsElement.textContent = `Загрузка комментария`;
 
   return response.json();
