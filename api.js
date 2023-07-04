@@ -1,11 +1,7 @@
 import { fetchFunction} from "./index.js";
 import { commentDate } from "./date.js";
-//import { nameInputElement, textElement} from "./render.js";
-//import { addFormElement } from "./render.js"
-//import {  commentsElement} from "./render.js";
 const host = "https://wedev-api.sky.pro/api/v2/tanya-bulaeva/comments";
 
-//let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
 
 export const getFetch = (token) => {
     return fetch(host,{
@@ -35,8 +31,8 @@ export const postFetch = (nameInputElement, textElement,token,) => {
  {
   method: "POST",
   body: JSON.stringify({
-    name:   nameInputElement.value,
-    text: textElement.value,
+  name:   nameInputElement.value,
+  text: textElement.value,
    date: commentDate,
    likes: 0,
    token,

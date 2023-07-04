@@ -1,22 +1,20 @@
 "use strict";
 import renderComments from "./render.js";
 import {getCommentsList } from "./getCommentsList.js";
-import {getFetch, postFetch} from "./api.js";
+import {getFetch} from "./api.js";
 import { commentDate } from "./date.js";
-import { textElement } from "./render.js";
-
 import { commentsElement } from "./render.js";
 
 
 //получить из хранилища данных 
 export let  comments = [];
-let token = null;
+
 export function fetchFunction (){
      getFetch().then((responseData) => {
         const appComments  = responseData.comments.map ((comment) => {
         return {
     name: comment.author.name,
-    dateCreation: commentDate,
+    date: commentDate,
      textElement: comment.text,
      likesNumber: comment.likes,
      isLiked: false,

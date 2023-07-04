@@ -1,12 +1,20 @@
 import { loginUser, registerUser } from "./api.js";
+//import { formatDateToRu, formatDateToUs } from "./lib/formarDate/formatDate.js";
+import { format } from "date-fns";
+
+//const formatDate = (date) => {
+ // return `${date.getDate() < 10 ? '0' + date.getDate() : date.getDate()}/${date.getMonth() < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)}/${date.getFullYear()} ${date.getHours() < 10 ? '0' + date.getHours() : date.getHours()}:${date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()}` }
+
+ //${formatDate(new Date(comment.date))}
 export function renderLoginComponent ({appEl, setToken, fetchFunction, setName, comments}){
   let isLoginMode = true;
-   
+
 const commentsHtmlNotEdit = comments.map ((comment, index) => {
+  const createDate = format(new Date(comment.date), "yyyy-MM-dd hh.mm.ss");
   return `    <li class = 'comment' class = 'whiteSpace'   data-index ="${index}"> 
   <div class = 'comment-header'>
       <div>${comment.name}</div> 
-      <div>${comment.dateCreation}</div>
+      <div>${createDate}</div>
      </div>  
      
          <div class = 'comment-body'>
@@ -75,7 +83,6 @@ document.getElementById('login-link').addEventListener('click', () => {
   if (!password){
     alert ("Введите пароль");
   }
-        //token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
         loginUser({
           login: login,
           password: password})
@@ -102,7 +109,6 @@ document.getElementById('login-link').addEventListener('click', () => {
             alert ("Введите пароль");
           }
       
-          //token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
                 registerUser({
                   login: login,
                   password: password,

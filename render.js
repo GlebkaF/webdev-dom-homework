@@ -28,7 +28,7 @@ let name = null;
   });
   
 }
-  
+//    <p> <i>Комментарий создан: ${new Date(comments.date)} </i> </p> 
   else {
     const commentsHTML = comments
      .map((comment, index) => getCommentsList (comment, index)).join(''); 
@@ -38,7 +38,7 @@ let name = null;
  
      <ul class="comments" id="comments">
      ${commentsHTML}
-     </ul>
+        </ul>
      <div class="add-form" id = 'add-form'>
        <input
          type="text"
