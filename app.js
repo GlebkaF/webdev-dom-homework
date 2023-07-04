@@ -37,32 +37,42 @@ function enableLoading(boolean) {
 //ВСЕ ЧТО СВЯЗАННО С API
 
 // Получение списка комментариев с API
-const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/georgi-silanyev/comments", {
+//завернутый в функцию GET запрос
+function getCommentList() {
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/georgi-silanyev/comments", {
     method: "GET",
-});
-
-fetchPromise.then((response) => {
-    // Запускаем, преобразовываем сырые данные от API в JSON-формат
-    const jsonPromise = response.json();
-
-    // Подписываемся на результат преобразования
-    jsonPromise.then((responseData) => {
-        const rightResponse = responseData.comments.map((comment) => {
-            return {
-                userName: comment.author.name,
-                currDate: `${new Date(comment.date).toLocaleDateString('ru-RU', {month: 'numeric', day: 'numeric'})}.${String(new Date(comment.date).getFullYear()).slice(2)} ${fullTime(new Date(comment.date).getHours())}:${fullTime(new Date(comment.date).getMinutes())}` ,
-                likes: comment.likes,
-                isLiked: comment.isLiked,
-                text: comment.text,
-            }
-        })
-
-        commentsList = rightResponse
-
-        
-        renderCommentList()
     });
-});
+
+    fetchPromise.then((response) => {
+        // Запускаем, преобразовываем сырые данные от API в JSON-формат
+        const jsonPromise = response.json();
+    
+        // Подписываемся на результат преобразования
+        jsonPromise.then((responseData) => {
+            const rightResponse = responseData.comments.map((comment) => {
+                return {
+                    userName: comment.author.name,
+                    currDate: `${new Date(comment.date).toLocaleDateString('ru-RU', {month: 'numeric', day: 'numeric'})}.${String(new Date(comment.date).getFullYear()).slice(2)} ${fullTime(new Date(comment.date).getHours())}:${fullTime(new Date(comment.date).getMinutes())}` ,
+                    likes: comment.likes,
+                    isLiked: comment.isLiked,
+                    text: comment.text,
+                }
+            })
+    
+            commentsList = rightResponse
+    
+            isLoading = false
+            renderCommentList()
+            
+        });
+    });
+
+
+}
+
+getCommentList();
+
+
 
 //Добавление нового комментария в список комментариев в API
 //Функция замены тегов
@@ -85,26 +95,10 @@ function addComment() {
             likes: 0,
             isLiked: false
         })
-    });
+    })
+    
+    getCommentList();
     renderCommentList()
-    fetch("https://wedev-api.sky.pro/api/v1/georgi-silanyev/comments", {
-    method: "GET",
-    }).then((response) => {
-        response.json().then((responseData) => {
-            const rightResponse = responseData.comments.map((comment) => {
-            return {
-                userName: comment.author.name,
-                currDate: `${new Date(comment.date).toLocaleDateString('ru-RU', {month: 'numeric', day: 'numeric'})}.${String(new Date(comment.date).getFullYear()).slice(2)} ${fullTime(new Date(comment.date).getHours())}:${fullTime(new Date(comment.date).getMinutes())}` ,
-                likes: comment.likes,
-                isLiked: comment.isLiked,
-                text: comment.text,
-            }
-        })
-        commentsList = rightResponse
-        isLoading = false
-        renderCommentList()       
-        })
-    })  
 }
 
 
