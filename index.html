@@ -64,7 +64,216 @@
       </div>
     </div>
     <script>
+     "use strict";
+
+// Массив комментов
+let commentsData = [];
+
+// Отрисовка списка комментариев
+function renderComments() {
+  const commentsList = document.querySelector(".comments");
+  commentsList.innerHTML = "";
+
+  commentsData.forEach((comment, index) => {
+    const newComment = document.createElement("li");
+    newComment.classList.add("comment");
+
+    const likeButtonClass = comment.isLiked
+      ? "like-button active-like"
+      : "like-button";
+    const commentTemplate = `
+      <div class="comment-header">
+        <div>${comment.author}</div>
+        <div>${comment.date}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">${comment.text}</div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">${comment.likes}</span>
+          <button class="${likeButtonClass}" data-index="${index}"></button>
+        </div>
+      </div>
+    `;
+    newComment.innerHTML = commentTemplate;
+
+    // Текст без применения HTML-тегов
+    const commentAuthor = newComment.querySelector(".comment-header div:first-child");
+    const commentText = newComment.querySelector(".comment-text");
+    commentAuthor.textContent = comment.author;
+    commentText.textContent = comment.text;
+
+    commentsList.appendChild(newComment);
+  });
+
+  addReplyHandlers(); // Навешивание обработчиков на комментарии при ответе
+}
+
+// Получение списка комментариев из API
+async function getCommentsFromAPI() {
+  try {
+    const response = await fetch("https://wedev-api.sky.pro/api/v1/Maksim-Bersenev/comments");
+    const data = await response.json();
+    commentsData = data.comments;
+    renderComments();
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Добавление комментария через API
+async function addCommentViaAPI(comment) {
+  try {
+    const resp = await fetch("https://wedev-api.sky.pro/api/v1/Maksim-Bersenev/comments", {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      },
+        body: JSON.stringify(comment),
+    });
+
+    if (!resp?.ok) {
+      throw new Error("Ошибка при добавлении комментария.");
+    }
+
+    const data = await resp.json();
     
+    if (data.result === "ok") {
+      console.log("Комментарий успешно добавлен.");
+    }
+  } catch (error) {
+    console.error(error);
+    throw new Error();
+  }
+}
+
+// Отрисовка списка комментариев из API
+async function renderCommentsFromAPI() {
+  try {
+    await getCommentsFromAPI();
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Добавление комментария
+const nameInput = document.querySelector(".add-form-name");
+const commentInput = document.querySelector(".add-form-text");
+const addButton = document.querySelector(".add-form-button");
+
+async function addCommentViaAPIWrapper() {
+  const name = nameInput.value.trim();
+  const text = commentInput.value.trim();
+
+  if (!name) {
+    alert("Пожалуйста, укажите ваше имя.");
+    return;
+  }
+  if (!text) {
+    alert("Пожалуйста, напишите комментарий.");
+    return;
+  }
+
+  try {
+    const newComment = {
+      text,
+      name,
+    };
+
+    await addCommentViaAPI(newComment);
+    console.log('here')
+    nameInput.value = "";
+    commentInput.value = "";
+    await renderCommentsFromAPI();
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+function getCurrentDateTime() {
+  const now = new Date();
+  const day = now.getDate().toString().padStart(2, "0");
+  const month = (now.getMonth() + 1).toString().padStart(2, "0");
+  const year = now.getFullYear().toString().slice(-2);
+  const hours = now.getHours().toString().padStart(2, "0");
+  const minutes = now.getMinutes().toString().padStart(2, "0");
+  return `${day}.${month}.${year} ${hours}:${minutes}`;
+}
+
+function handleKeyPress(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    addCommentViaAPIWrapper();
+  }
+}
+
+document.addEventListener("keyup", handleKeyPress);
+addButton.addEventListener("click", addCommentViaAPIWrapper);
+
+// Удаление последнего комментария
+const deleteButton = document.querySelector(".delete-button");
+
+function deleteLastComment() {
+  commentsData.pop();
+  renderComments();
+}
+
+deleteButton.addEventListener("click", deleteLastComment);
+
+// Лайки
+function handleLike(event) {
+  const index = event.target.dataset.index;
+  const comment = commentsData[index];
+
+  if (comment.isLiked) {
+    comment.likes--;
+    comment.isLiked = false;
+  } else {
+    comment.likes++;
+    comment.isLiked = true;
+  }
+  renderComments();
+}
+
+document.addEventListener("click", function (event) {
+  if (event.target.classList.contains("like-button")) {
+    handleLike(event);
+  }
+});
+
+// Ответ на комментарий
+function handleReply(index) {
+  const comment = commentsData[index];
+  const replyText = `>${comment.text}\n@${comment.author}, `;
+  commentInput.value = replyText;
+  commentInput.focus();
+}
+
+// Навешивание обработчиков на комментарии при ответе
+function addReplyHandlers() {
+  const commentElements = document.querySelectorAll(".comment");
+
+  commentElements.forEach((element, index) => {
+    const likeButton = element.querySelector(".like-button");
+    likeButton.addEventListener("click", (event) => {
+      event.stopPropagation();
+      handleLike(event);
+    });
+    element.addEventListener("click", (event) => {
+      const isLikeButton = event.target.classList.contains("like-button");
+      if (!isLikeButton) {
+        handleReply(index);
+      }
+    });
+  });
+}
+
+// Запуск отрисовки комментариев из API при загрузке страницы
+renderCommentsFromAPI();
+
+console.log("It works!");
+
 
     </script>
   </body>
