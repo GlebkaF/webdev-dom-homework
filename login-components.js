@@ -10,7 +10,7 @@ export function renderLoginComponent ({appEl, setToken, fetchFunction, setName, 
   let isLoginMode = true;
 
 const commentsHtmlNotEdit = comments.map ((comment, index) => {
-  const createDate = format(new Date(comment.date), "yyyy-MM-dd hh.mm.ss");
+  const createDate = format(new Date(comment.date), "yyyy-MM-dd HH.mm.ss");
   return `    <li class = 'comment' class = 'whiteSpace'   data-index ="${index}"> 
   <div class = 'comment-header'>
       <div>${comment.name}</div> 

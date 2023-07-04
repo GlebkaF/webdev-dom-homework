@@ -3,10 +3,10 @@
  //const formatDate = (date) => {
 //  return `${date.getDate() < 10 ? '0' + date.getDate() : date.getDate()}/${date.getMonth() < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)}/${date.getFullYear()} ${date.getHours() < 10 ? '0' + date.getHours() : date.getHours()}:${date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()}` }
  // const country = "ru";
-
+ import { format } from "date-fns";
 
  const getCommentsList = (comment, index) => {
-  const createDate = format(new Date(comment.date), "yyyy-mm-dd hh.mm.ss");
+  const createDate = format(new Date(comment.date), "yyyy-MM-dd HH.mm.ss");
     return   `
     
     
