@@ -14,8 +14,12 @@ const getFetchPromise = () => {
   method: "GET"
   })
     .then((response) => {
-    return response.json()
-  })
+      if (response.status === 500) {
+        throw new Error("Сервер сломался");
+      } else {
+        return response.json();
+      }
+    })
     .then((responseData) => {
       const appComments = responseData.comments.map((comment) => {
         return {
@@ -31,6 +35,17 @@ const getFetchPromise = () => {
       renderUsers();
       initLikeButton();
       replyТoСomment();
+    })
+    .catch((error) => {
+      if (error.message === "Сервер сломался") {
+        alert("Сервер сломался, попробуй позже");
+        console.log(error);
+        return;
+      } else {
+        alert("Кажется, у вас сломался интернет, попробуйте позже");
+        console.log(error);
+        return;
+      }
     });
 }
 
@@ -90,7 +105,6 @@ const showDownload = () => {
     });
 }
 showDownload();
-getFetchPromise()
 
 
 //date of comment
@@ -161,41 +175,50 @@ writeButtonEl.addEventListener("click", () => {
         commentTextEl.classList.add("error");
         return;
       } else {
-        document.getElementById("add").innerHTML = `<h3 style="font-family: Helvetica; color: #ffffff;">Комментарий добавляется...</h3>`
         addComment()
           .then((response) => {
-          return response.json();
+            if (response.status === 500) {
+              throw new Error("Сервер сломался");
+            } else if (response.status === 400) {
+              throw new Error("Плохой запрос");
+            } else {
+              document.getElementById("load").classList.remove('hidden');
+              document.getElementById("add").classList.add('hidden');
+              return response.json();
+            }
           })
           .then(() => {
             return getFetchPromise();
           })
           .then(() => {
-            document.getElementById("add").innerHTML = `
-            <div class="add-form">
-            <input
-              id="name-input"
-              type="text"
-              class="add-form-name"
-              placeholder="Введите ваше имя"
-            />
-            <textarea
-              id="comment-text"
-              type="textarea"
-              class="add-form-text"
-              placeholder="Введите ваш коментарий"
-              rows="4"
-            ></textarea>
-            <div class="add-form-row">
-              <button class="add-form-button" id="write-button">Написать</button>
-            </div>
-          </div>
-          `;
+            document.getElementById("add").classList.remove('hidden');
+            document.getElementById("load").classList.add('hidden');
+          })
+          .then(() => {
+            nameInputEl.value = "";
+            commentTextEl.value = "";
+            writeButtonEl.setAttribute("disabled", true);
+            writeButtonEl.classList.add("error-btn");
+          })
+          .catch((error) => {
+            if (error.message === "Сервер сломался") {
+              alert("Сервер сломался, попробуй позже");
+              console.log(error);
+              return;
+            } else if (error.message === "Плохой запрос") {
+              alert("Имя и комментарий должны быть не короче 3 символов");
+              document.getElementById("add").classList.remove('hidden');
+              document.getElementById("load").classList.add('hidden');
+              nameInputEl.classList.add("error");
+              commentTextEl.classList.add("error");
+              return;
+            } else {
+              alert("Кажется, у вас сломался интернет, попробуйте позже");
+              console.log(error);;
+              return;
+            }
           });
     };
-    nameInputEl.value = "";
-    commentTextEl.value = "";
-    writeButtonEl.setAttribute("disabled", true);
-    writeButtonEl.classList.add("error-btn");
 
 });
 
