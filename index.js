@@ -1,5 +1,5 @@
 
-import { getCurrentDate } from "./fullDate.js";
+import { format } from "date-fns";
 import  {getFetchPromise} from "./API.js";
 import { renderApp }  from "./render.js";
 import { listComments } from "./listComments.js"
@@ -14,7 +14,7 @@ import { listComments } from "./listComments.js"
            return{
             name: comment.author.name,
             text: comment.text,
-            date: getCurrentDate(new Date(comment.date)),
+            date: format(new Date(comment.date), 'yyyy-MM-dd hh.mm.ss'),
             likes: comment.likes,
             activeLike: false,
             propertyColorLike: 'like-button -no-active-like',

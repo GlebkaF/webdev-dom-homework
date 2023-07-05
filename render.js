@@ -1,5 +1,5 @@
 
-import { getFetchFunction, initEventListeners, replayToComment } from "./main.js";
+import { getFetchFunction, initEventListeners, replayToComment } from "./index.js";
 import { postFetchPromise, registerUser } from "./API.js";
 import {renderLoginComponent} from "./components/login-component.js"
 

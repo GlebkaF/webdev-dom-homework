@@ -1,5 +1,5 @@
 import { getCurrentDate } from "./fullDate.js";
-import { getFetchFunction } from "./main.js";
+import { getFetchFunction } from "./index.js";
 
 const host = "https://wedev-api.sky.pro/api/v2/ulyana-korotkova/comments";
 
