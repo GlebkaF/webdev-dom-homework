@@ -45,21 +45,21 @@ export function initLike(array) {
   }
 }
 
-export const formatDate = (commentDate) => {
-  let date = new Date();
-  const formattedDate =
-    date.getDate().toString().padStart(2, "0") +
-    "." +
-    (date.getMonth() + 1).toString().padStart(2, "0") +
-    "." +
-    date.getFullYear().toString().slice(-2) +
-    " " +
-    date.getHours().toString().padStart(2, "0") +
-    ":" +
-    date.getMinutes().toString().padStart(2, "0");
+// export const formatDate = (commentDate) => {
+//   let date = new Date();
+//   const formattedDate =
+//     date.getDate().toString().padStart(2, "0") +
+//     "." +
+//     (date.getMonth() + 1).toString().padStart(2, "0") +
+//     "." +
+//     date.getFullYear().toString().slice(-2) +
+//     " " +
+//     date.getHours().toString().padStart(2, "0") +
+//     ":" +
+//     date.getMinutes().toString().padStart(2, "0");
 
-  return formattedDate;
-};
+//   return formattedDate;
+// };
 
 export const sendComment = () => {
   const nameInputElement = document.getElementById("user-name");
