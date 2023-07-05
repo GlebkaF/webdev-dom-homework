@@ -11,10 +11,15 @@ const loadElement = document.querySelector('.load-text');
 console.log(loadElement);
 
 //Берем комментарии из API
-const getTodo = () => {
+const getTodo = (showLoading = true) => {
   nameElement.disabled = true;
   commentElement.disabled = true;
-  loadElement.textContent = 'Подождите, комментарии загружаются...';
+
+  if (showLoading) {
+    loadElement.textContent = 'Подождите, комментарии загружаются...';
+  } else {
+    loadElement.textContent = '';
+  };
   
 return fetch('https://wedev-api.sky.pro/api/v1/AnnaIllarionova/comments', {
   method: "GET"
@@ -259,7 +264,7 @@ const addTodo = () => {
   return response.json()
 }) 
   .then((responseData) => {
-    return getTodo();
+    return getTodo(false);
   })
   .then((data) => {
     // buttonElement.disabled = false;
