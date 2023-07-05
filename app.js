@@ -46,7 +46,7 @@ function getCommentList() {
     fetchPromise.then((response) => {
         // Запускаем, преобразовываем сырые данные от API в JSON-формат
         const jsonPromise = response.json();
-    
+
         // Подписываемся на результат преобразования
         jsonPromise.then((responseData) => {
             const rightResponse = responseData.comments.map((comment) => {
@@ -58,12 +58,12 @@ function getCommentList() {
                     text: comment.text,
                 }
             })
-    
+
             commentsList = rightResponse
-    
+
             isLoading = false
             renderCommentList()
-            
+
         });
     });
 
@@ -72,7 +72,25 @@ function getCommentList() {
 
 getCommentList();
 
+function addComment() {
+    isLoading = true
+    const postComments =  fetch("https://wedev-api.sky.pro/api/v1/georgi-silanyev/comments", {
+        method: "POST",
+        body : JSON.stringify({
+            text: secureReplace(commentInput.value),
+            name: secureReplace(nameInput.value),
+            date: new Date(),
+            likes: 0,
+            isLiked: false
+        })
+    })
 
+    postComments.then(() => {
+        getCommentList();
+    })
+
+    
+}
 
 //Добавление нового комментария в список комментариев в API
 //Функция замены тегов
@@ -84,22 +102,7 @@ function secureReplace(string) {
     .replaceAll('"', "&quot;")
 }
 
-function addComment() {
-    isLoading = true
-    fetch("https://wedev-api.sky.pro/api/v1/georgi-silanyev/comments", {
-        method: "POST",
-        body : JSON.stringify({
-            text: secureReplace(commentInput.value),
-            name: secureReplace(nameInput.value),
-            date: new Date(),
-            likes: 0,
-            isLiked: false
-        })
-    })
-    
-    getCommentList();
-    renderCommentList()
-}
+
 
 
 //ВСЕ ЧТО СВЯЗАНО С РЕНДЕРОМ И СОЗДАНИЕМ КОЛЛЕКЦИЙ В ДИНАМИЧЕСКИХ ЭЛЕМЕНТАХ
