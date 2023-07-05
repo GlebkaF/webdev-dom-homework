@@ -22,8 +22,6 @@ const comments = [
 }
 ]
 
-
-
 buttonElement.addEventListener("click", () => {
   nameInputElement.classList.remove("error")
   if (nameInputElement.value === "") {
@@ -60,7 +58,7 @@ buttonElement.addEventListener("click", () => {
    comments.push({
     name: nameInputElement.value,
     data: formatDate(new Date()),
-    comment: textInputElement.value,
+    comment: textInputElement.value.replace(/</g, '&lt;').replace(/>/g, '&gt;'),
     likes: false,
     numberLikes: 0
    })
@@ -68,13 +66,12 @@ buttonElement.addEventListener("click", () => {
 
   renderComments(); 
 
-  nameInputElement.value = "";
-  textInputElement.value = "";
 });
 
 const initLikeButtonListeners = () => {
   for (const likeButton of document.querySelectorAll(".like-button")) {
-    likeButton.addEventListener("click", () => {
+    likeButton.addEventListener("click", (event) => {
+      event.stopPropagation();
       const index = likeButton.dataset.index;
       const comment = comments[index];
       if (comment.likes) {
@@ -84,26 +81,23 @@ const initLikeButtonListeners = () => {
         comment.likes = true;
         comment.numberLikes++;
       };
-
-      
       renderComments();
     });
   };
 };
 
 const renderComments = () => {
-  const commentsHtml = comments
-  .map((comment, index) => {
+  const commentsHtml = comments.map((comment, index) => {
+    const commentTextQuotes = comment.comment.replaceAll("QUOTE_BEGIN", "<div class='quote'>").replaceAll("QUOTE_END", "</div>");
+    const commentNameSafe = comment.name.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     return `
-    <li class="comment">
+    <li class="comment" data-index=${index}>
       <div class="comment-header">
-          <div>${comment.name}</div>
+          <div>${commentNameSafe}</div>
           <div>${comment.data}</div>
         </div>
         <div class="comment-body">
-          <div class="comment-text">
-            ${comment.comment}
-          </div>
+          <div class="comment-text" >${commentTextQuotes}</div>
         </div>
         <div class="comment-footer">
           <div class="likes">
@@ -112,11 +106,22 @@ const renderComments = () => {
           </div>
         </div>
       </li>`
-  })
-  .join("")
+  }).join("");
 
-  commentElement.innerHTML = commentsHtml
+  commentElement.innerHTML = commentsHtml;
+  nameInputElement.value = "";
+   textInputElement.value = "";
   initLikeButtonListeners();
+
+  const commentElements = document.querySelectorAll('.comment');
+  for (const commentElement of commentElements) {
+    const index = commentElement.dataset.index;
+    commentElement.addEventListener('click', () => {
+      const {name, comment} = comments[index];
+      textInputElement.value = 'QUOTE_BEGIN' + ' (' + name + ') ...' + comment + '... ' + 'QUOTE_END' + ' ';
+        });
+  };
+
 }
 
 renderComments();
