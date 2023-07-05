@@ -1,6 +1,6 @@
 
 import { getFetchFunction, initEventListeners, replayToComment } from "./index.js";
-import { postFetchPromise, registerUser } from "./API.js";
+import { postFetchPromise} from "./API.js";
 import {renderLoginComponent} from "./components/login-component.js"
 
 let token = null;
@@ -59,9 +59,7 @@ const renderApp = ( {comments, listComments} ) => {
  
     appEl.innerHTML = appHtml;
  
-    const buttonElement = document.getElementById('add-button');
-    const listElement = document.getElementById("list");
-    const commentsElement = document.querySelector('.comments');
+    const buttonElement = document.getElementById('add-button');  
     const loaderLi = document.querySelector('.loader-li');
     const textInputElement = document.getElementById("textarea-text");
     

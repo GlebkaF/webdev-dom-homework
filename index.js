@@ -14,7 +14,7 @@ import { listComments } from "./listComments.js"
            return{
             name: comment.author.name,
             text: comment.text,
-            date: format(new Date(comment.date), 'yyyy-MM-dd hh.mm.ss'),
+            date: format(new Date(comment.date), 'yyyy-MM-dd hh.mm.ss'), //новый формат даты
             likes: comment.likes,
             activeLike: false,
             propertyColorLike: 'like-button -no-active-like',

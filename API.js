@@ -29,11 +29,6 @@ export function postFetchPromise ({token}) {
     method: "POST",
     body: JSON.stringify({
       name:nameInputElement,
-      /*.value
-       .replaceAll("&", "&amp;")
-       .replaceAll("<", "&lt;")
-       .replaceAll(">", "&gt;")
-       .replaceAll('"', "&quot;"),*/
       text: textInputElement.value
        .replaceAll("&", "&amp;")
        .replaceAll("<", "&lt;")
