@@ -1,12 +1,12 @@
-const getList = (comment, index)=>{
+export const getList = (comment, index)=>{
   return `<li class="comment" data-index='${index}'>
     <div class="comment-header">
       <div>${comment.name}</div>
-      <div>${comment.date}</div>
+      <div>${comment.dateСreation}</div>
     </div>
     <div class="comment-body">
       <div class="comment-text">
-        ${comment.textComment}
+        ${comment.text}
       </div>
     </div>
     <div class="comment-footer">
@@ -17,6 +17,6 @@ const getList = (comment, index)=>{
     </div>
   </li>`;
 }
-export {getList};
+// export {getList};
 
  

@@ -1,3 +1,4 @@
+
 body {
     margin: 0;
   }
@@ -20,6 +21,44 @@ body {
     padding: 0;
     list-style: none;
   }
+  .form-add-login {
+    padding: 20px;
+  }
+  .form-add-login,
+  .comment,
+  .add-form {
+    width: 596px;
+    box-sizing: border-box;
+    background: radial-gradient(
+      75.42% 75.42% at 50% 42.37%,
+      rgba(53, 53, 53, 0) 22.92%,
+      #7334ea 100%
+    );
+    filter: drop-shadow(0px 20px 67px rgba(0, 0, 0, 0.08));
+    border-radius: 20px;
+  }
+  .comments {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .comment {
+    padding: 48px;
+  }
+  .comment-header {
+    font-size: 16px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .comment-footer {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .comment-body {
+    margin-top: 32px;
+    margin-bottom: 32px;
+  }
+
 
   .comment,
   .add-form {
@@ -34,41 +73,15 @@ body {
     border-radius: 20px;
   }
 
-  .comments {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-
-  .comment {
-    padding: 48px;
-  }
-
-  .comment-header {
-    font-size: 16px;
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .comment-footer {
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  .comment-body {
-    margin-top: 32px;
-    margin-bottom: 32px;
-  }
-
   .comment-text {
     font-size: 32px;
+    white-space: pre-line;
+    /* word-break: break-all; */
   }
-
   .likes {
     display: flex;
     align-items: center;
   }
-
   .like-button {
     all: unset;
     cursor: pointer;
@@ -133,10 +146,42 @@ body {
     border-radius: 18px;
     cursor: pointer;
   }
-
+  .register-link {
+    display: block; 
+    color:#ffffff;
+    align-self: center;
+    height: 40px;  
+  }
+  .form-add-login {
+    display:flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .form-row {
+    display:flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .input {
+    border-radius: 10px;
+    padding: 5px 20px;
+    border: none;
+    height: 40px;
+    font-size: 15px;
+  }
   .add-form-button:hover {
     opacity: 0.9;
   }
     .comment-loading {
     display: none;
   }
+  .form-link {
+    color: #ffffff;
+  }
+  
+
+ 
+ 
+
+ 
+  
