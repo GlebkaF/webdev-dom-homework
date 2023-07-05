@@ -1,12 +1,27 @@
 "use strict";
+const buttonElement = document.getElementById('write-button');
+const nameElement = document.getElementById('name-input');
+const commentElement = document.getElementById('comment-input');
+const listElement = document.getElementById('comment-list');
+const cancelElement = document.getElementById('cancel-button');
 
 let comments = [];
 
+const loadElement = document.querySelector('.load-text');
+console.log(loadElement);
+
 //Берем комментарии из API
-fetch('https://wedev-api.sky.pro/api/v1/AnnaIllarionova/comments', {
+const getTodo = () => {
+  nameElement.disabled = true;
+  commentElement.disabled = true;
+  loadElement.textContent = 'Подождите, комментарии загружаются...';
+  
+return fetch('https://wedev-api.sky.pro/api/v1/AnnaIllarionova/comments', {
   method: "GET"
-}).then((answer) => {
-  answer.json().then((answerData) => {
+})
+.then((answer) => {
+  return answer.json();
+}).then((answerData) => {
     //Преобразовываем данные из формата API в формат ленты
     const appComments = answerData.comments.map((comment) => {
       const apiDate = new Date(comment.date);
@@ -39,14 +54,16 @@ fetch('https://wedev-api.sky.pro/api/v1/AnnaIllarionova/comments', {
     });
     comments = appComments;
     renderComments();
-  });
-});
+  })
+  .then((data) => {
+    nameElement.disabled = false;
+    commentElement.disabled = false;
+    loadElement.textContent = '';
+  })
+};
 
-const buttonElement = document.getElementById('write-button');
-const nameElement = document.getElementById('name-input');
-const commentElement = document.getElementById('comment-input');
-const listElement = document.getElementById('comment-list');
-const cancelElement = document.getElementById('cancel-button');
+
+
 
 let currentDate = new Date();
 let day = currentDate.getDate();
@@ -102,6 +119,14 @@ const getCorrectComments = () => {
  
 };
 
+//Функция для имитации запросов в API для кнопки лайка
+function delay(interval = 300) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, interval);
+  });
+}
 
 // Добавление лайка
 const getLikes = () => {
@@ -110,26 +135,31 @@ const getLikes = () => {
     for (const likeButton of likeButtons) {
         likeButton.addEventListener('click', (event) => {
           event.stopPropagation();
+          likeButton.style.animation = 'rotating 2s linear infinite';
                       
         const commentIndex = parseInt(likeButton.dataset.index);
        // console.log(commentIndex);
         const comment = comments[commentIndex];
 
-        if (!comment.isLiked) {
-          comment.counter += 1;
-          comment.isLiked = true;
+        delay(2000).then(() => {
+          comment.likes = comment.isLiked
+          if (!comment.isLiked) {
+            comment.counter += 1;
+            comment.isLiked = true;
+  
+          } else {
+            comment.counter -= 1;
+            comment.isLiked = false
+          }
+          renderComments();
+        });
 
-        } else {
-          comment.counter -= 1;
-          comment.isLiked = false
-
-        }      
-            renderComments();
         });
     }
 
 }
 
+//Ренден функция
 const renderComments = () => {
     let commentsHTML = comments.map((comment, index) => {
         return ` <li id="comment-list" class="comment" data-index="${index}">
@@ -164,10 +194,6 @@ const renderComments = () => {
     listElement.innerHTML = commentsHTML;
 
     
-  //     После нажатия на кнопку поля становятся пустыми, кнопка не активна.
-  nameElement.value = '';
-  commentElement.value = '';
-  buttonElement.disabled = true;
 
   // Клик на комментарий, ответ на комментарий
   const commentItems = document.querySelectorAll('.comment');
@@ -202,6 +228,48 @@ function checkFields() {
 nameElement.addEventListener('input', checkFields);
 commentElement.addEventListener('input', checkFields);
 
+const commentBodyElement = document.querySelector('.comment-body');
+const loadBodyElement = document.querySelector('.comment-body-text');
+console.log(loadBodyElement);
+
+//Добавляет комментарий, функция с цепочкой промиссов
+const addTodo = () => {
+  // buttonElement.disabled = true;
+  // buttonElement.textContent = 'Загружаем комментарий...';
+
+  commentBodyElement.style.display = 'none';
+  loadBodyElement.textContent = 'Загружаем комментарий...';
+
+  return fetch('https://wedev-api.sky.pro/api/v1/AnnaIllarionova/comments', {
+  method: "POST",
+  body: JSON.stringify({
+    text: commentElement.value
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;"),
+    name: nameElement.value
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;"),
+    date: day + '.' + month + '.' + year + ' ' + hour + ':' + minutes,
+    counter: 0,
+    isLiked: false,
+    isEdit: false,
+  })
+})
+.then((response) => {
+  return response.json()
+}) 
+  .then((responseData) => {
+    return getTodo();
+  })
+  .then((data) => {
+    // buttonElement.disabled = false;
+    // buttonElement.textContent = 'Написать';
+
+    commentBodyElement.style.display = '';
+    loadBodyElement.textContent = '';
+    
+  })
+};
 
 //Поля ввода подкрашиваются красным, если одно из полей не заполнено
 //Добавляем новый комментарий 
@@ -217,69 +285,15 @@ buttonElement.addEventListener('click', () => {
     return;
   }    
 
-
-fetch('https://wedev-api.sky.pro/api/v1/AnnaIllarionova/comments', {
-  method: "POST",
-  body: JSON.stringify({
-    text: commentElement.value
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;"),
-    name: nameElement.value
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;"),
-    date: day + '.' + month + '.' + year + ' ' + hour + ':' + minutes,
-    counter: 0,
-    isLiked: false,
-    isEdit: false,
-  })
-}).then((response) => {
-  response.json().then((responseData) => {
-    comments = responseData.comments;
-    renderComments();
-  })
-})
-
-fetch('https://wedev-api.sky.pro/api/v1/AnnaIllarionova/comments', {
-  method: "GET"
-}).then((answer) => {
-  answer.json().then((answerData) => {
-    //Преобразовываем данные из формата API в формат ленты
-    const appComments = answerData.comments.map((comment) => {
-      const apiDate = new Date(comment.date);
-      let day = apiDate.getDate();
-      let month = apiDate.getMonth() + 1;
-      let year = apiDate.getFullYear();
-      let hour = apiDate.getHours();
-      let minutes= apiDate.getMinutes();
-      if (day < 10 ) {
-        day = '0' + day;
-      }
-      if (month < 10 ) {
-        month = '0' + month;
-      }
-      if (hour < 10 ) {
-        hour = '0' + hour;
-      }
-      if (minutes < 10 ) {
-        minutes = '0' + minutes;
-      }
-      const userDate = day + '.' + month + '.' + year + ' ' + hour + ':' + minutes
-      return {
-      name: comment.author.name,
-      date: userDate,
-      text: comment.text,
-      counter: comment.likes,
-      isLiked: false,
-      isEdit: false,
-      };
-    });
-    comments = appComments;
+  addTodo()
+  .then((data) => {
     renderComments();
   });
-});
 
-renderComments();
-
+  //     После нажатия на кнопку поля становятся пустыми, кнопка не активна.
+  nameElement.value = '';
+  commentElement.value = '';
+  buttonElement.disabled = true;
 });
 
 //Комментарий добавляется при нажатии на Enter
@@ -304,4 +318,5 @@ cancelElement.addEventListener('click', () => {
 
 
 console.log("It works!");
+getTodo();
 renderComments();
