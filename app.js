@@ -4,7 +4,9 @@ const commentInput = document.querySelector('#comment-input')
 const addButton = document.querySelector('#add-button')
 const commentsBox = document.querySelector('#comments-box')
 const removeButton = document.querySelector('#delete-button')
-const loadingBox = document.querySelector('.loading')
+const loadingCommentsBox = document.querySelector('#loading-comments')
+const loadingHeadBox = document.querySelector('#loading-head')
+const inputsBox = document.querySelector('.add-form')
 
 
 
@@ -13,7 +15,18 @@ const loadingBox = document.querySelector('.loading')
 let commentsList = []
 
 //переменная включающая или отключающая загрузку
-let isLoading = false
+let isLoadingToComments = false
+let isLoadingToStartApp = true
+
+
+// Функция для имитации запросов в API
+function delay(interval = 300) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, interval);
+    });
+}
 
 // функция подправки времени.
 function fullTime(number) {
@@ -24,13 +37,24 @@ function fullTime(number) {
     }
 }
 
-//функция скрытия или отображения загрузки
-function enableLoading(boolean) {
+//функция скрытия или отображения загрузки для нового коммента
+function enableLoadingToNewComment(boolean) {
   if (boolean) {
-    loadingBox.classList.remove('loading_hidden')
+    loadingCommentsBox.classList.remove('loading_hidden')
+    inputsBox.classList.add('loading_hidden')
   } else {
-    loadingBox.classList.add('loading_hidden')
+    loadingCommentsBox.classList.add('loading_hidden')
+    inputsBox.classList.remove('loading_hidden')
   }
+}
+
+//функция скрытия или отображения загрузки при старте приложения
+function enableLoadingToStartApp(boolean) {
+    if (boolean) {
+      loadingHeadBox.classList.remove('loading_hidden')      
+    } else {
+      loadingHeadBox.classList.add('loading_hidden')      
+    }
 }
 
 
@@ -39,16 +63,12 @@ function enableLoading(boolean) {
 // Получение списка комментариев с API
 //завернутый в функцию GET запрос
 function getCommentList() {
-    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/georgi-silanyev/comments", {
-    method: "GET",
-    });
-
-    fetchPromise.then((response) => {
-        // Запускаем, преобразовываем сырые данные от API в JSON-формат
-        const jsonPromise = response.json();
-
-        // Подписываемся на результат преобразования
-        jsonPromise.then((responseData) => {
+    enableLoadingToStartApp(isLoadingToStartApp)
+    return fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/georgi-silanyev/comments", {
+        method: "GET",
+    })
+    .then((response) => response.json())        
+    .then((responseData) => {
             const rightResponse = responseData.comments.map((comment) => {
                 return {
                     userName: comment.author.name,
@@ -58,23 +78,22 @@ function getCommentList() {
                     text: comment.text,
                 }
             })
-
             commentsList = rightResponse
-
-            isLoading = false
+            isLoadingToStartApp = false
+            enableLoadingToStartApp(isLoadingToStartApp)
             renderCommentList()
-
-        });
     });
-
 
 }
 
 getCommentList();
 
+//функция добавления комментария на страиницу и в список API 
 function addComment() {
-    isLoading = true
-    const postComments =  fetch("https://wedev-api.sky.pro/api/v1/georgi-silanyev/comments", {
+    isLoadingToComments = true
+    enableLoadingToNewComment(isLoadingToComments)
+    addButton.classList.add('add-form-button_disable')
+    fetch("https://wedev-api.sky.pro/api/v1/georgi-silanyev/comments", {
         method: "POST",
         body : JSON.stringify({
             text: secureReplace(commentInput.value),
@@ -84,15 +103,17 @@ function addComment() {
             isLiked: false
         })
     })
-
-    postComments.then(() => {
-        getCommentList();
+    .then(() => getCommentList())
+    .then(() => {
+        isLoadingToComments = false
+        enableLoadingToNewComment(isLoadingToComments)
+        addButton.classList.remove('add-form-button_disable')
     })
+
 
     
 }
 
-//Добавление нового комментария в список комментариев в API
 //Функция замены тегов
 function secureReplace(string) {
     return string
@@ -138,7 +159,6 @@ const renderCommentList = () => {
     initLikeButtonsListeners();
     initEditButtonsListeners();
     initCommentAnswerListeners();
-    enableLoading(isLoading)
 }
 
 // Функция создания ответа на комментарий
@@ -162,16 +182,20 @@ const initLikeButtonsListeners = () => {
     const likeButtons = document.querySelectorAll('.like-button')
     likeButtons.forEach((likeButton, index) => {
         likeButton.addEventListener('click', () => {
-            if (commentsList[index].isLiked === false ) {
-                commentsList[index].isLiked = true;
-                commentsList[index].likes += 1
-            } else {
-                commentsList[index].isLiked = false;
-                commentsList[index].likes -= 1
-                
-            }
-
-            renderCommentList()
+            likeButton.classList.add('-loading-like')
+            delay(2000).then(() => {
+                if (commentsList[index].isLiked === false ) {
+                    commentsList[index].isLiked = true;
+                    commentsList[index].likes += 1
+                } else {
+                    commentsList[index].isLiked = false;
+                    commentsList[index].likes -= 1
+                    
+                }
+                likeButton.classList.remove('-loading-like')
+                renderCommentList()
+            })
+           
         })
     })
 }
@@ -200,8 +224,6 @@ const initEditButtonsListeners = () => {
     })
 }
 
-//РЕНДЕРИМ НАШ СПИСОК КОММЕНТАРИЕВ
-renderCommentList();
 
 
 //ВСЕ ОСТАЛЬНЫЕ ФУНКЦИИ НА СТАТИЧЕСКИХ ЭЛЕМЕНТАХ
@@ -210,10 +232,8 @@ renderCommentList();
 function disableBtn() {
     if (!nameInput.value == '' && !commentInput.value == '') {
         addButton.classList.remove('add-form-button_disable')
-        addButton.disabled = false
     } else {
         addButton.classList.add('add-form-button_disable')
-        addButton.disabled = true
     }
 }
 
