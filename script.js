@@ -4,22 +4,22 @@ const boxComments = document.querySelector('.comments');
 const inputName = document.querySelector('.add-form-name');
 const textAreaComment = document.querySelector('.add-form-text');
 const boxCommentsTexts = boxComments.querySelectorAll('.comment');
+const formBox = document.querySelector('.add-form');
 let now = new Date();
 
 let userComments = [];
 
 function getApi() {
-    const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/alex-zasimov/comments", {
+    return fetch("https://webdev-hw-api.vercel.app/api/v1/alex-zasimov/comments", {
     method: "GET"
-  });
-    
-  fetchPromise.then((response) => {
-    const jsonPromise = response.json();
+  })
 
-    // Подписываемся на результат преобразования
-    jsonPromise.then((responseData) => {
-      // получили данные и рендерим их в приложении
-      const appComments = responseData.comments.map((comment) => {
+  .then((response) => {
+    return response.json();
+  })
+
+  .then((responseData) => {
+    const appComments = responseData.comments.map((comment) => {
         return {
           name: comment.author.name,
           date: new Date(comment.date).toLocaleString().slice(0,-3),
@@ -31,8 +31,7 @@ function getApi() {
       userComments = appComments;
       console.log(userComments);
       renderComments();
-    });
-  });
+  })
 }
 
 getApi();
@@ -60,7 +59,7 @@ const initLikeClick = () => {
   }
 }
 
-// Первый вариант ответа на коммент
+// Первый вариан ответа на коммент
 const answerComment = () => {
   const boxCommentsTexts = document.querySelectorAll('.comment');
   boxCommentsTexts.forEach((comment) => {
@@ -103,6 +102,13 @@ const renderComments = () => {
 renderComments();
 
 const addComment = () => {
+  const container = document.querySelector('.container')
+  formBox.classList.add('hidden');
+  let loader = document.createElement('p');
+  loader.className = "loader";
+  loader.textContent = 'Комментарии загружаются...';
+  container.appendChild(loader);
+
   const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/v1/alex-zasimov/comments", {
     method: "POST",
     body: JSON.stringify({
@@ -117,17 +123,25 @@ const addComment = () => {
       .replaceAll('<', '&lt;')
       .replaceAll('<', '&gt;'), 
       })
-    });
-  
-  fetchPromise.then((response) => {
-    const jsonPromise = response.json();
+    })
 
-    // Подписываемся на результат преобразования
-    jsonPromise.then((responseData) => {
-      // получили данные и рендерим их в приложении
-      userComments = responseData.comments;
+    .then((response) => {
+      return response.json();
+    })
+
+    .then((responseData) => {
+      return userComments = responseData.comments;
+    })
+
+    .then(() => {
+      return getApi();
+      return renderComments();
+    })
+
+    .then((data) => {
+      loader.classList.add('hidden');
+      formBox.classList.remove('hidden');
     });
-  });
 
   getApi();
   renderComments();
