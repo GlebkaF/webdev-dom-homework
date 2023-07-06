@@ -33,29 +33,35 @@
     let commentsElement = document.getElementById('comments');
     const nameInputElement = document.getElementById('name-input');
     const commentInputElement = document.getElementById('comment-input');
-    const userComments = [
+    let userComments = [];
+
+    //Получение данных из API при загрузке страницы
+    fetch(
+        'https://wedev-api.sky.pro/api/v1/sivozhelezov/comments',
         {
-            name: 'Глеб Фокин',
-            time: '12.02.22 12:18',
-            comment: 'Это будет первый комментарий на этой странице',
-            numberOfLike: 3,
-            like: false,
-            isEdit: false
-        },
-        {
-            name: 'Варвара Н.',
-            time: '13.02.22 19:22',
-            comment: 'Мне нравится как оформлена эта страница! ❤',
-            numberOfLike: 75,
-            like: true,
-            isEdit: false
-        }
-    ]
+            method: 'GET'
+        }).then((response) => {
+            response.json().then((responseData) => {
+                const appComments = responseData.comments.map((comment) => {
+                    return {
+                        name: comment.author.name,
+                        date: getDate(comment.date),
+                        text: comment.text,
+                        likes: comment.likes,
+                        isLiked: false
+                    };
+                });
+
+                userComments = appComments;
+                renderComments();
+            })
+        });
 
 
-    //Функция определения текущей даты
-    function getDate() {
-        let currentDate = new Date();
+    // Функция определения текущей даты
+    function getDate(date) {
+        let currentDate = new Date(date);
+        let day = currentDate.getDate();
         let month = currentDate.getMonth() + 1;
         let hour = currentDate.getHours();
         let minute = currentDate.getMinutes();
@@ -64,9 +70,10 @@
         if (hour < 10) hour = "0" + hour;
         if (minute < 10) minute = "0" + minute;
         if (second < 10) second = "0" + second;
+        if (day < 10) day = "0" + day;
         if (month < 10) month = "0" + month;
 
-        currentDate = currentDate.getDate() + "." + month + "." + String(currentDate.getFullYear()).split('').slice(2).join('') + " " + hour + ":" + minute;
+        currentDate = day + "." + month + "." + String(currentDate.getFullYear()).split('').slice(2).join('') + " " + hour + ":" + minute;
 
         return currentDate;
     }
@@ -91,12 +98,6 @@
         }
     }
 
-    // //Функция удаления последнего комментария
-    // function deleteLastComment() {
-    //     userComments.pop();
-    //     renderComments();
-    // }
-
     //Функция санитайзер
     const sanitizeHTML = (htmlString) => {
         return htmlString
@@ -107,26 +108,54 @@
 
     }
 
-
-
     //Функция добавления объекта комментария в массив
     function addComment() {
         if (nameInputElement.value && commentInputElement.value) {
-            userComments.push({
-                name: sanitizeHTML(nameInputElement.value),
-                time: getDate(),
-                comment: sanitizeHTML(commentInputElement.value),
-                numberOfLike: 0,
-                like: false,
-                isEdit: false
-            })
+            //Добавление данных в API
+            const fetchPromise = fetch(
+                'https://wedev-api.sky.pro/api/v1/sivozhelezov/comments',
+                {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        text: sanitizeHTML(commentInputElement.value),
+                        name: sanitizeHTML(nameInputElement.value)
+                    })
+                });
         };
+
+        //Получение обновленных данных из API
+        const fetchPromise = fetch(
+            'https://wedev-api.sky.pro/api/v1/sivozhelezov/comments',
+            {
+                method: 'GET'
+            });
+
+        fetch(
+            'https://wedev-api.sky.pro/api/v1/sivozhelezov/comments',
+            {
+                method: 'GET'
+            }).then((response) => {
+                response.json().then((responseData) => {
+                    const appComments = responseData.comments.map((comment) => {
+                        return {
+                            name: comment.author.name,
+                            date: getDate(comment.date),
+                            text: comment.text,
+                            likes: comment.likes,
+                            isLiked: false
+                        };
+                    });
+
+                    userComments = appComments;
+                    renderComments();
+                })
+            });
+
         nameInputElement.value = '';
         commentInputElement.value = '';
-
-        renderComments()
         activeButton();
     }
+
     // //Функция сохранения измененного комментария
     // function saveCommentFunction() {
     //     const saveCommentsButtonsElements = document.querySelectorAll('.save-comment-button');
@@ -156,7 +185,7 @@
         for (const commentCardElement of commentsCardElements) {
             commentCardElement.addEventListener('click', () => {
                 const index = commentCardElement.dataset.index;
-                const quote = `/Начало цитаты/${userComments[index].name}:\n ${userComments[index].comment}/конец цитаты/ \n`;
+                const quote = `/Начало цитаты/${userComments[index].name}:\n ${userComments[index].text}/конец цитаты/ \n`;
                 commentInputElement.value = quote.replace("<div class='quote'>", '').replace('</div>', '');
             })
         }
@@ -164,30 +193,32 @@
 
     //Функция рендера
     function renderComments() {
+
         //Рендер комментариев из массива
         const userCommentsHtml = userComments.map((userComment, index) => {
-            let commentСhange = ``
-            if (userComment.isEdit === false) {
+
+            let commentСhange = ``;
+            if (userComment.isEdit === undefined) {
                 commentСhange = `<div class="comment-text">
-                        ${userComment.comment}
+                        ${userComment.text}
                     </div>
                     <!-- <button data-index="${index}" class="edit-comment-button"}">Редактировать</button> -->`
             } else {
                 commentСhange = `<textarea data-index="${index}" id='save-comment' type="textarea" class="add-form-text save-comment" 
-                rows="4">${userComment.comment}</textarea>
+                rows="4">${userComment.text}</textarea>
               <!--  <button data-index="${index}" class="save-comment-button"}">Сохранить</button> -->`
             }
             return ` <li class="comment" data-index="${index}">
                 <div class="comment-header">
                     <div>${userComment.name}</div>
-                    <div>${userComment.time}</div>
+                    <div>${userComment.date}</div>
                 </div>
                 <div class="comment-body">
                     ${commentСhange}
                 </div>
                 <div class="comment-footer">
                     <div class="likes">
-                        <span class="likes-counter">${userComment.numberOfLike}</span>
+                        <span class="likes-counter">${userComment.likes}</span>
                         <button data-index="${index}" id="like-button" class="like-button ${userComment.like === true ? '-active-like' : ''}"></button>
                     </div>
                 </div>
@@ -209,8 +240,6 @@
         // editComments();
 
         replyToComment();
-
-        console.log(userComments);
     }
 
     // //Функция редактирования комментария 
@@ -241,10 +270,10 @@
                 const index = likeButtonElement.dataset.index;
                 if (userComments[index].like === true) {
                     userComments[index].like = false;
-                    userComments[index].numberOfLike--;
+                    userComments[index].likes--;
                 } else {
                     userComments[index].like = true;
-                    userComments[index].numberOfLike++;
+                    userComments[index].likes++;
                 }
                 renderComments();
                 event.stopPropagation();
@@ -256,9 +285,6 @@
     buttonElement.addEventListener("click", () => {
         addComment();
     })
-
-    renderComments();
-    // editComments();
 
     //Добавление комментария клавишей Enter
     nameInputElement.addEventListener("keyup", addCommentEnter);
