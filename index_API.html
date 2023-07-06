@@ -74,21 +74,41 @@
     const likesElements = document.querySelectorAll(".like-button");
     let comments = [];
 
+// Функция преобразования даты, получаемой из API
+    const dataFormat = (date) => {
+        let comHours = (new Date(date)).getHours();
+        let comMinuts = (new Date(date)).getMinutes();
+       
+        if (comHours < 10) { // если минут будет меньше 10,
+            comHours = "0" + comHours; // то перед ними поставим 0
+        }
+
+        if (comMinuts < 10) { // если минут будет меньше 10,
+            comMinuts = "0" + comMinuts; // то перед ними поставим 0
+        }
+        const outputDate = `${(new Date(date)).toLocaleDateString()}  ${comHours}:${comMinuts}`;
+
+
+        // let outputDate = `${(new Date(date)).toDateString()}`
+        return (outputDate);
+    };
+
     const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/aleks-karmanov/comments", {
         method: "GET",
     });
 
-
+    // ${(new Date (comment.date)).toTimeString()
     fetchPromise.then((response) => {
         // Запускаем, преобразовываем сырые данные от API в JSON-формат
         const jsonPromise = response.json().then((responseData) => {
             // Преобразование данных из формата api в формат приложения
             const appComments = responseData.comments.map((comment) => {
+                
                 return {
                     // Достаем имя автора
                     name: comment.author.name,
                     // Преобразовываем дату-строку в Date
-                    time: comment.date,
+                    time: dataFormat(comment.date),
                     text: comment.text,
                     likes: comment.likes,
                     // Заглушка для признака лайкнутости
@@ -231,32 +251,32 @@
 
     // Форма добавления нового комментария в ленту
     buttonElement.addEventListener('click', () => {
-        // Проверка на заполнение данных формы
-        nameElement.classList.remove('error');
-        textElement.classList.remove('error');
-        if (nameElement.value === '') {
-            nameElement.classList.add('error');
-            return;
-        }
-        if (textElement.value === '') {
-            textElement.classList.add('error');
-            return;
-        }
+        // // Проверка на заполнение данных формы
+        // nameElement.classList.remove('error');
+        // textElement.classList.remove('error');
+        // if (nameElement.value === '') {
+        //     nameElement.classList.add('error');
+        //     return;
+        // }
+        // if (textElement.value === '') {
+        //     textElement.classList.add('error');
+        //     return;
+        // }
         // Добавление комментария в ленту
 
-        // Определение даты и времени
-        const commentData = new Date;
-        let comHours = commentData.getHours();
-        let comMinuts = commentData.getMinutes();
+        // // Определение даты и времени
+        // const commentData = new Date;
+        // let comHours = commentData.getHours();
+        // let comMinuts = commentData.getMinutes();
 
-        if (comHours < 10) { // если минут будет меньше 10,
-            comHours = "0" + comHours; // то перед ними поставим 0
-        }
+        // if (comHours < 10) { // если минут будет меньше 10,
+        //     comHours = "0" + comHours; // то перед ними поставим 0
+        // }
 
-        if (comMinuts < 10) { // если минут будет меньше 10,
-            comMinuts = "0" + comMinuts; // то перед ними поставим 0
-        }
-        const resultDate = `${commentData.toLocaleDateString()}  ${comHours}:${comMinuts}`;
+        // if (comMinuts < 10) { // если минут будет меньше 10,
+        //     comMinuts = "0" + comMinuts; // то перед ними поставим 0
+        // }
+        // const resultDate = `${commentData.toLocaleDateString()}  ${comHours}:${comMinuts}`;
 
         // comments.push({
         //     name: sanitizeHtml(nameElement.value),
@@ -266,9 +286,9 @@
         //     icon: false,
         //     isEdit: false,
         // });
-        likeElementfunction();
-        renderComments();
-        answerFunction();
+        // likeElementfunction();
+        // renderComments();
+        // answerFunction();
 
         const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/aleks-karmanov/comments", {
             method: "POST",
@@ -280,26 +300,27 @@
         }).then((response) => {
             fetch("https://wedev-api.sky.pro/api/v1/aleks-karmanov/comments", {
                 method: "GET",
-            }).then((response) => {
-                // Запускаем, преобразовываем сырые данные от API в JSON-формат
-                const jsonPromise = response.json().then((responseData) => {
-                    // Преобразование данных из формата api в формат приложения
-                    const appComments = responseData.comments.map((comment) => {
-                        return {
-                            // Достаем имя автора
-                            name: comment.author.name,
-                            // Преобразовываем дату-строку в Date
-                            time: comment.date,
-                            text: comment.text,
-                            likes: comment.likes,
-                            // Заглушка для признака лайкнутости
-                            icon: false,
-                        };
+            })
+                .then((response) => {
+                    // Запускаем, преобразовываем сырые данные от API в JSON-формат
+                    const jsonPromise = response.json().then((responseData) => {
+                        // Преобразование данных из формата api в формат приложения
+                        const appComments = responseData.comments.map((comment) => {
+                            return {
+                                // Достаем имя автора
+                                name: comment.author.name,
+                                // Преобразовываем дату-строку в Date
+                                time: dataFormat(comment.date),
+                                text: comment.text,
+                                likes: comment.likes,
+                                // Заглушка для признака лайкнутости
+                                icon: false,
+                            };
+                        });
+                        comments = appComments;
+                        renderComments();
                     });
-                    comments = appComments;
-                    renderComments();
                 });
-            });
         });
 
         // Очистка формы
