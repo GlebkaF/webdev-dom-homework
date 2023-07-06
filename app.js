@@ -37,7 +37,7 @@ function fullTime(number) {
     }
 }
 
-//функция скрытия или отображения загрузки
+//функция скрытия или отображения загрузки для нового коммента
 function enableLoadingToNewComment(boolean) {
   if (boolean) {
     loadingCommentsBox.classList.remove('loading_hidden')
@@ -48,13 +48,14 @@ function enableLoadingToNewComment(boolean) {
   }
 }
 
+//функция скрытия или отображения загрузки при старте приложения
 function enableLoadingToStartApp(boolean) {
     if (boolean) {
       loadingHeadBox.classList.remove('loading_hidden')      
     } else {
       loadingHeadBox.classList.add('loading_hidden')      
     }
-  }
+}
 
 
 //ВСЕ ЧТО СВЯЗАННО С API
@@ -87,6 +88,7 @@ function getCommentList() {
 
 getCommentList();
 
+//функция добавления комментария на страиницу и в список API 
 function addComment() {
     isLoadingToComments = true
     enableLoadingToNewComment(isLoadingToComments)
@@ -112,7 +114,6 @@ function addComment() {
     
 }
 
-//Добавление нового комментария в список комментариев в API
 //Функция замены тегов
 function secureReplace(string) {
     return string
@@ -222,6 +223,8 @@ const initEditButtonsListeners = () => {
         })
     })
 }
+
+
 
 //ВСЕ ОСТАЛЬНЫЕ ФУНКЦИИ НА СТАТИЧЕСКИХ ЭЛЕМЕНТАХ
 
