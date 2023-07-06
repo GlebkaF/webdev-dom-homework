@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 let token = null;
 let comments = [];
 let loadingComments = true;
@@ -13,7 +14,7 @@ return getComments({ token })
     const appComments = responseData.comments.map((comment) => {
         return {
         name: comment.author.name,
-        date: new Date(comment.date).toLocaleString('ru'),
+        date: format(new Date(comment.date), "yyyy-MM-dd hh.mm.ss"),
         text: comment.text,
         likes: comment.likes,
         isLiked: comment.isLiked,
