@@ -91,7 +91,6 @@ function addComment() {
     isLoadingToComments = true
     enableLoadingToNewComment(isLoadingToComments)
     addButton.classList.add('add-form-button_disable')
-    addButton.disabled = true
     fetch("https://wedev-api.sky.pro/api/v1/georgi-silanyev/comments", {
         method: "POST",
         body : JSON.stringify({
@@ -107,7 +106,6 @@ function addComment() {
         isLoadingToComments = false
         enableLoadingToNewComment(isLoadingToComments)
         addButton.classList.remove('add-form-button_disable')
-        addButton.disabled = false
     })
 
 
@@ -231,10 +229,8 @@ const initEditButtonsListeners = () => {
 function disableBtn() {
     if (!nameInput.value == '' && !commentInput.value == '') {
         addButton.classList.remove('add-form-button_disable')
-        addButton.disabled = false
     } else {
         addButton.classList.add('add-form-button_disable')
-        addButton.disabled = true
     }
 }
 
