@@ -175,7 +175,7 @@ async function addCommentViaAPIWrapper() {
   try {
     const newComment = {
       text,
-      author: { name: author }, // Update property name to 'author'
+      name: author, 
     };
 
     await addCommentViaAPI(newComment);
