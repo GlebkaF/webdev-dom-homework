@@ -51,8 +51,7 @@
 
 
   // Функция текущая дата
-  const currentDate = () => {
-    const date = new Date();
+  function currentDate(date) {
     let dateZero = date.getDate(),
       monthsZero = date.getMonth(),
       hour = date.getHours(),
@@ -72,52 +71,38 @@
     return `${dateZero}.${monthsZero}.${date.getFullYear().toString().substr(-2)} ${hour}:${minute}`;
   }
 
-  const comments = [
-    {
-      userName: 'Глеб Фокин',
-      userComment: 'Это будет первый комментарий на этой странице',
-      timeElement: '12.02.22 12:18',
-      likes: 3,
-      likesElement: false,
-    },
-    {
-      userName: 'Варвара Н.',
-      userComment: 'Мне нравится как оформлена эта страница! ❤',
-      timeElement: '13.02.22 19:22',
-      likes: 75,
-      likesElement: true,
-    }
-  ]
+  let comments = [];
 
   const renderComments = () => {
-    const commentsHtml = comments.map((comment) => {
-      return `<li id="comment-item" class="comment">
+    const commentsHtml = comments.map((comment, index) => {
+
+      return `<li id="comment-item" class="comment" data-index="${index}">
         <div class="comment-header">
-          <div>${comment.userName}</div>
-          <div>${comment.timeElement}</div>
+          <div>${comment.name}</div>
+          <div>${comment.date}</div>
         </div>
-        <div class="comment-body">
-          <div class="comment-text" data-editing="${comment.userComment}">
-            ${comment.userComment}
+        <div class="comment-body" >
+          <div class="comment-text">
+            ${comment.text} 
           </div>
         </div>
         <div class="comment-footer">
-          <button class="edit-button add-form-button">Редактировать комментарий</button>
           <div class="likes" >
             <span class="likes-counter" data-count="${comment.likes}">${comment.likes}</span>
-            <button class="like-button" data-active-like="${comment.likesElement}"></button>
+            <button class="like-button" data-active-like="${comment.isLiked}"></button>
           </div>
         </div>
         </li>`;
     }).join('');
 
     lastComments.innerHTML = commentsHtml;
+
     nameInput.value = '';
     commentTextarea.value = '';
-    initAddLikesListener()
-    initCommentEditing()
-  };
 
+    initAddLikesListener()
+    initAddUserComments()
+  };
 
   // Изменить цвет кнопки "лайка" и + / - "1 лайк"
   function initAddLikesListener() {
@@ -125,7 +110,8 @@
 
     for (const likesButton of likesButtons) {
 
-      likesButton.addEventListener('click', () => {
+      likesButton.addEventListener('click', (event) => {
+        event.stopPropagation()
         const likesCounterElement = likesButton.previousElementSibling; // Находим предыдущий элемент родителя
         const likesCounter = parseInt(likesCounterElement.textContent); // Считываем содержимое элемента и превращаем в число и храним в переменной
         if (likesButton.dataset.activeLike === 'false') {
@@ -136,6 +122,45 @@
           likesButton.dataset.activeLike = 'false';
           likesCounterElement.textContent = likesCounter - 1;
         }
+      })
+    }
+  }
+
+
+  // Возвращаем данные из сервера и API
+
+  const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/Igor-Yurin/comments", { // Функцией fetch делаем асинхронный запрос в API и возращаем promise в переменную fetchPromise
+    method: "GET"
+  });
+
+  fetchPromise.then((response) => { // методом then подписываемся на завершение promise (выполненный запрос или отклоненный запрос (запрос хранится в параметре функции))
+    const jsonPromise = response.json().then((responseData) => { // через метод json() преобразовываю данные от API в JSON-формат. Методом then подписываюсь на преобразование результата
+
+      const appComments = responseData.comments.map((comment) => { // перебираем и возвращаем новый массив
+        return {
+          name: comment.author.name,
+          date: currentDate(new Date(comment.date)),
+          text: comment.text,
+          likes: comment.likes,
+          isLiked: false
+        };
+      });
+      comments = appComments;
+      renderComments()
+    });
+  });
+
+  // По клику на комментарий можно добавить к нему свои комментарии
+  function initAddUserComments() {
+    const commentTexts = document.querySelectorAll('.comment');
+
+    for (const commentText of commentTexts) {
+      commentText.addEventListener('click', () => {
+
+        let index = commentText.dataset.index;
+
+        commentTextarea.value = ` > ${comments[index].text} 
+      ${comments[index].name}, `
       })
     }
   }
@@ -157,20 +182,60 @@
       return;
     }
 
-    comments.push({
-      userName: nameInput.value,
-      userComment: commentTextarea.value,
-      timeElement: currentDate(),
-      likes: 0,
-      likesElement: false
-    })
+    // Отправка и сохранение данных в хранилище
+    // Функция оповещения клиента о пустом или минимальном вводе символов в поле для имени
+    function shortOrEmptyName() {
+      if (nameInput.value.length < 3 || nameInput.value === '') {
+        alert('Необходимо ввести минимум 3 символа')
+      } else {
+        return nameInput.value
+      }
+    }
+    // Функция оповещения клиента о пустом или минимальном вводе символов в поле для комментария
+    function shortOrEmptyText() {
+      if (commentTextarea.value.length < 3 || commentTextarea.value === '') {
+        alert('Необходимо ввести минимум 3 символа')
+      } else {
+        return commentTextarea.value
+      }
+    }
 
+    // Отправляем на сервер данные которые вводи в name и text 
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/Igor-Yurin/comments", {
+      method: "POST",
+      body: JSON.stringify({ // Преобразуем данные в JSON формат
+        text: shortOrEmptyText(), // Вызов функции оповещения клиента о пустом или минимальном вводе символов в поле для комментария
+        name: shortOrEmptyName(), // Вызов функции оповещения клиента о пустом или минимальном вводе символов в поле для имени
+      })
+    });
+
+
+    // Повторно возвращаем данные из сервера и API - функционал описан выше
+    const fetchPromiseOdj = fetch("https://wedev-api.sky.pro/api/v1/Igor-Yurin/comments", {
+      method: "GET"
+    });
+    fetchPromiseOdj.then((response) => {
+      const jsonPromise = response.json().then((responseData) => {
+
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: currentDate(new Date(comment.date)),
+            text: comment.text,
+            likes: comment.likes,
+            isLiked: false,
+          };
+        });
+        comments = appComments;
+        renderComments()
+      });
+    });
     renderComments();
-
   });
 
 
-  // Дополнительные задания
+
+  // Дополнительные задания - старые задания
 
   // Ввод текста через Enter & NumpadEnter
   // Обработчик события на нажатие клавиш Enter & NumpadEnter - при нажатии на Enter & NumpadEnter срабатывает "button - Написать комментарий" и добавляется новый комментарий
@@ -192,11 +257,17 @@
     // При нажатии на "Enter" добавляется новый массив
     if (event.code === 'Enter') {
       comments.push({
-        userName: nameInput.value,
-        userComment: commentTextarea.value,
-        timeElement: currentDate(),
+        name: nameInput.value
+          .replaceAll('>', '&gt;')
+          .replaceAll('<', '&lt;'),
+        text: commentTextarea.value
+          .replaceAll('>', '&gt;')
+          .replaceAll('<', '&lt;')
+          .replaceAll("BEGIN_QUOTE", "<div class='quote'>")
+          .replaceAll("BEGIN_END", "</div>"),
+        date: currentDate(comments.date),
         likes: 0,
-        likesElement: false
+        isLiked: false
       })
 
       renderComments();
@@ -205,11 +276,15 @@
     } else if (event.code === 'NumpadEnter') {
 
       comments.push({
-        userName: nameInput.value,
-        userComment: commentTextarea.value,
-        timeElement: currentDate(),
+        name: nameInput.value
+          .replaceAll('>', '&gt;')
+          .replaceAll('<', '&lt;'),
+        text: commentTextarea.value
+          .replaceAll('>', '&gt;')
+          .replaceAll('<', '&lt;'),
+        date: currentDate(comments.date),
         likes: 0,
-        likesElement: false
+        isLiked: false
       })
 
       renderComments();
@@ -253,21 +328,6 @@
     buttonElement.classList.remove('error-button');
   })
 
-
-  // При нажатии на конопку "Редактировать комментарии" она меняется на кнопку "Сохранить"
-  function initCommentEditing() {
-    const editButtons = document.querySelectorAll('.edit-button');
-
-    for (const editButton of editButtons) {
-
-      editButton.addEventListener('click', (event) => {
-        const readEditButton = editButton.textContent;
-        if (readEditButton) {
-          editButton.textContent = 'Сохранить'
-        }
-      })
-    }
-  }
 </script>
 
 </html>
