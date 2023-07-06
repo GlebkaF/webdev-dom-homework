@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Проект "Комменты"</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <div class="container">
+        <ul class="comments">
+            <!-- Рендеринг в JS -->
+            <!-- <li class="comment">
+        <div class="comment-header">
+          <div>Глеб Фокин</div>
+          <div>12.02.22 12:18</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Это будет первый комментарий на этой странице
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">3</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>
+
+      <li class="comment">
+        <div class="comment-header">
+          <div>Варвара Н.</div>
+          <div>13.02.22 19:22</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Мне нравится как оформлена эта страница! ❤
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">75</span>
+            <button class="like-button -active-like"></button>
+          </div>
+        </div>
+
+      </li> -->
+        </ul>
+        <div class="add-form">
+            <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
+            <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
+            <div class="add-form-row">
+                <button class="add-form-button" disabled>Написать</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+<style>
+    .error {
+        background-color: red;
+    }
+</style>
+
+
+<script>
+    "use strict";
+    const buttonElement = document.querySelector('.add-form-button');
+    const nameElement = document.querySelector('.add-form-name');
+    const textElement = document.querySelector('.add-form-text');
+    const commentsElement = document.querySelector('.comments');
+    const likesElements = document.querySelectorAll(".like-button");
+    let comments = [];
+
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/aleks-karmanov/comments", {
+        method: "GET",
+    });
+
+
+    fetchPromise.then((response) => {
+        // Запускаем, преобразовываем сырые данные от API в JSON-формат
+        const jsonPromise = response.json().then((responseData) => {
+            // Преобразование данных из формата api в формат приложения
+            const appComments = responseData.comments.map((comment) => {
+                return {
+                    // Достаем имя автора
+                    name: comment.author.name,
+                    // Преобразовываем дату-строку в Date
+                    time: comment.date,
+                    text: comment.text,
+                    likes: comment.likes,
+                    // Заглушка для признака лайкнутости
+                    icon: false,
+                };
+            });
+            comments = appComments;
+            renderComments();
+        });
+    });
+
+
+    // Функция очистки вводимых данных от спец символов
+    const sanitizeHtml = (htmlString) => {
+        return htmlString
+            .replaceAll("<", "&lt")
+            .replaceAll(">", "&gt")
+            .replaceAll("&", "&amp")
+            .replaceAll('"', "&quot")
+    };
+
+    // Деактивация кнопки если значения не введены
+    const disableButton = () => {
+        if (nameElement.value && textElement.value) {
+            buttonElement.disabled = false;
+        }
+        else {
+            buttonElement.disabled = true;
+        }
+    };
+
+    nameElement.addEventListener("input", disableButton);
+    textElement.addEventListener("input", disableButton);
+
+    // const comments = [
+    //     {
+    //         name: "Глеб Фокин",
+    //         time: "12.02.22 12:18",
+    //         text: "Это будет первый комментарий на этой странице",
+    //         likes: 3,
+    //         icon: false,
+    //         isEdit: false,
+    //     },
+    //     {
+    //         name: "Варвара Н.",
+    //         time: "13.02.22 19:22",
+    //         text: "Мне нравится как оформлена эта страница! ❤",
+    //         likes: 75,
+    //         icon: true,
+    //         isEdit: false,
+    //     }
+    // ];
+
+    // Функция Обработка кликов лайков в комментарии
+    const likeElementfunction = () => {
+        const likesElements = document.querySelectorAll(".like-button");
+        for (const likeElement of likesElements) {
+
+            likeElement.addEventListener("click", () => {
+                const index = likeElement.dataset.index;
+                if (comments[index].icon === false) {
+                    comments[index].icon = true;
+                    comments[index].likes += 1;
+                }
+                else {
+                    comments[index].icon = false;
+                    comments[index].likes -= 1;
+                }
+                renderComments();
+                answerFunction();
+            });
+        };
+    };
+
+
+
+    const changeElementfunction = () => {
+        const changeButtonElements = document.querySelectorAll(".edit-form-button");
+        const textareaText = document.querySelectorAll('.change-comment');
+
+        for (const changeButtonElement of changeButtonElements) {
+
+            changeButtonElement.addEventListener("click", () => {
+                const index = changeButtonElement.dataset.index;
+
+
+                if (comments[index].isEdit === false) {
+                    comments[index].isEdit = true;
+                }
+                else {
+                    comments[index].isEdit = false;
+                    // Добавить изменение данных свойства comment.text
+                    const input = document.querySelector(".change-comment");
+
+                    comments[index].text = input.value;
+                }
+
+                renderComments();
+            });
+        };
+    };
+
+
+    const renderComments = () => {
+        const commentsHtml = comments.map((comment, index) => {
+            return `<li class="comment">
+        <div class="comment-header" data-index="${index}">
+          <div>${comment.name}</div>
+          <div>${comment.time}</div>
+        </div>
+        <div class="comment-body"> 
+          ${(comment.isEdit)
+                    ? `<textarea type="textarea" class="add-form-text change-comment"  placeholder="Введите ваш коментарий" rows="4">${comment.text}</textarea>`
+                    : `<div class="comment-text" data-index="${index}">
+            ${comment.text}
+          </div>`}
+          
+          <button class="add-form-button edit-form-button" data-index="${index}" > ${(comment.isEdit) ? `Сохранить` : `Изменить`} </button>
+       
+          </div>
+         
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${comment.likes}</span>
+            <button data-index="${index}" class="like-button ${(comment.icon) ? "-active-like" : ""}" ></button>
+          </div>
+        </div>
+      </li>`;
+        }).join("");
+
+        commentsElement.innerHTML = commentsHtml;
+
+        likeElementfunction();
+        changeElementfunction();
+
+    };
+
+    renderComments();
+
+
+    // Форма добавления нового комментария в ленту
+    buttonElement.addEventListener('click', () => {
+        // Проверка на заполнение данных формы
+        nameElement.classList.remove('error');
+        textElement.classList.remove('error');
+        if (nameElement.value === '') {
+            nameElement.classList.add('error');
+            return;
+        }
+        if (textElement.value === '') {
+            textElement.classList.add('error');
+            return;
+        }
+        // Добавление комментария в ленту
+
+        // Определение даты и времени
+        const commentData = new Date;
+        let comHours = commentData.getHours();
+        let comMinuts = commentData.getMinutes();
+
+        if (comHours < 10) { // если минут будет меньше 10,
+            comHours = "0" + comHours; // то перед ними поставим 0
+        }
+
+        if (comMinuts < 10) { // если минут будет меньше 10,
+            comMinuts = "0" + comMinuts; // то перед ними поставим 0
+        }
+        const resultDate = `${commentData.toLocaleDateString()}  ${comHours}:${comMinuts}`;
+
+        // comments.push({
+        //     name: sanitizeHtml(nameElement.value),
+        //     time: resultDate,
+        //     text: sanitizeHtml(textElement.value),
+        //     likes: 0,
+        //     icon: false,
+        //     isEdit: false,
+        // });
+        likeElementfunction();
+        renderComments();
+        answerFunction();
+
+        const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/aleks-karmanov/comments", {
+            method: "POST",
+            body: JSON.stringify({
+                text: textElement.value,
+                name: nameElement.value
+            })
+
+        }).then((response) => {
+            fetch("https://wedev-api.sky.pro/api/v1/aleks-karmanov/comments", {
+                method: "GET",
+            }).then((response) => {
+                // Запускаем, преобразовываем сырые данные от API в JSON-формат
+                const jsonPromise = response.json().then((responseData) => {
+                    // Преобразование данных из формата api в формат приложения
+                    const appComments = responseData.comments.map((comment) => {
+                        return {
+                            // Достаем имя автора
+                            name: comment.author.name,
+                            // Преобразовываем дату-строку в Date
+                            time: comment.date,
+                            text: comment.text,
+                            likes: comment.likes,
+                            // Заглушка для признака лайкнутости
+                            icon: false,
+                        };
+                    });
+                    comments = appComments;
+                    renderComments();
+                });
+            });
+        });
+
+        // Очистка формы
+        nameElement.value = "";
+        textElement.value = "";
+    });
+
+    // ДЗ 2.11 Добавление нового комментария ответом на существующий
+
+    const answerFunction = () => {
+        const commentTextElements = document.querySelectorAll('.comment-text');
+
+        for (const commentTextElement of commentTextElements) {
+            const index = commentTextElement.dataset.index;
+
+            commentTextElement.addEventListener("click", () => {
+
+                textElement.value = `> ${comments[index].text} 
+        ${comments[index].name},`;
+
+            });
+        };
+
+    };
+    answerFunction();
+
+
+
+</script>
+
+</html>
