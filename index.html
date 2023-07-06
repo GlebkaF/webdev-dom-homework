@@ -1,23 +1,18 @@
 <!DOCTYPE html>
-<html lang="ru-RU">
+<html>
 
 <head>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta charset="utf-8"/>
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="style.css"/>
-  <title>Лента комментариев</title>
+  <title>Проект "Комменты"</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
   <div class="container">
     <ul class="comments">
-
       <li class="comment">
         <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
+          <div class="comment-user-name">Глеб Фокин</div>
+          <div class="comment-date">12.02.22 12:18</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
@@ -27,14 +22,13 @@
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">3</span>
-            <button class="like-button"></button>
+            <button data-like="0" class="like-button"></button>
           </div>
         </div>
       </li>
-
       <li class="comment">
         <div class="comment-header">
-          <div>Варвара Н.</div>
+          <div class="comment-user-name">Варвара Н.</div>
           <div>13.02.22 19:22</div>
         </div>
         <div class="comment-body">
@@ -45,24 +39,28 @@
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
+            <button data-like="0" class="like-button -active-like"></button>
           </div>
         </div>
       </li>
-
     </ul>
     <div class="add-form">
-      <input type="text" class="add-form-name" placeholder="Введите ваше имя" required />
-      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш комментарий" rows="4"
-        required></textarea>
+      <input
+        type="text"
+        class="add-form-name"
+        placeholder="Введите ваше имя"
+      />
+      <textarea
+        type="textarea"
+        class="add-form-text"
+        placeholder="Введите ваш коментарий"
+        rows="4"
+      ></textarea>
       <div class="add-form-row">
-        <button class="add-form-button add-form-button-disabled">Написать</button>
+        <button class="add-form-button">Написать</button>
       </div>
-
     </div>
   </div>
+  <script src="/script.js"></script>
 </body>
-
-<script src="script.js"></script>
-
 </html>

@@ -14,6 +14,10 @@ body {
   min-height: 100vh;
 }
 
+.error {
+  background-color: red;
+}
+
 .comments,
 .comment {
   margin: 0;
@@ -42,7 +46,6 @@ body {
 
 .comment {
   padding: 48px;
-  cursor: pointer;
 }
 
 .comment-header {
@@ -135,20 +138,4 @@ body {
 
 .add-form-button:hover {
   opacity: 0.9;
-}
-
-.error {
-  border: 3px solid red;
-}
-.error::placeholder {
-  color: red;
-}
-.add-form-button-disabled {
-  margin-top: 24px;
-  font-size: 24px;
-  padding: 10px 20px;
-  background-color: #606060;
-  color: #ffffff;
-  border: none;
-  border-radius: 18px;
 }
