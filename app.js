@@ -64,7 +64,7 @@ function enableLoadingToStartApp(boolean) {
 //завернутый в функцию GET запрос
 function getCommentList() {
     enableLoadingToStartApp(isLoadingToStartApp)
-    return fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/georgi-silanyev/comments", {
+    return fetch("https://wedev-api.sky.pro/api/v1/georgi-silanyev/comments", {
         method: "GET",
     })
     .then((response) => response.json())        
