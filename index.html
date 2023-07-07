@@ -57,15 +57,54 @@
           rows="4"
         ></textarea>
         <div class="add-form-row">
+          <button class="remove-form-button">
+            Удалить последний комментарий
+          </button>
           <button class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
-
+  <script src="./helpers.js"></script>
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    'use strict';
+    const commentsElement = document.querySelector('.comments');
+    const button = document.querySelector('.add-form-button');
+    const removeButton = document.querySelector('.remove-form-button');
+    const formElement = document.querySelector('.add-form');
+    const formTextElement = formElement.querySelector('.add-form-text');
+    const formNameElement = formElement.querySelector('.add-form-name');
+
+    button.classList.add('disabled');
+    button.setAttribute('disabled', true);
+
+    formElement.addEventListener('keyup', (event) => {
+      createComment(formNameElement, formTextElement, event);
+    });
+
+    removeButton.addEventListener('click', (event) => {
+      const oldComments = commentsElement.innerHTML;
+      const index = oldComments.lastIndexOf('<li class="comment">');
+
+      if (index !== -1) {
+        const elem = oldComments.slice(index);
+        commentsElement.innerHTML = oldComments.substr(0, index);
+      }
+    });
+
+    formElement.addEventListener('input', () => {
+      if (
+        (formTextElement.value !== '' &&
+          !formTextElement.value.match(/^\s*$/)) ||
+        formNameElement.value !== ''
+      ) {
+        button.classList.remove('disabled');
+        button.removeAttribute('disabled');
+      }
+    });
+
+    button.addEventListener('click', () => {
+      createComment(formNameElement, formTextElement);
+    });
   </script>
 </html>
