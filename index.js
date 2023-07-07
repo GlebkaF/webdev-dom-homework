@@ -8,7 +8,6 @@ const cancelElement = document.getElementById('cancel-button');
 let comments = [];
 
 const loadElement = document.querySelector('.load-text');
-console.log(loadElement);
 
 //Берем комментарии из API
 const getTodo = (showLoading = true) => {
@@ -65,10 +64,11 @@ return fetch('https://wedev-api.sky.pro/api/v1/AnnaIllarionova/comments', {
     commentElement.disabled = false;
     loadElement.textContent = '';
   })
+  .catch((error) => {
+    console.log(error);
+    alert("Проверьте Ваше подключение к интернету")
+  })
 };
-
-
-
 
 let currentDate = new Date();
 let day = currentDate.getDate();
@@ -233,9 +233,52 @@ function checkFields() {
 nameElement.addEventListener('input', checkFields);
 commentElement.addEventListener('input', checkFields);
 
+//Функция для повторной отправки комментария при ошибке 500
+const repeatAddTodo = () => {
+  return fetch('https://wedev-api.sky.pro/api/v1/AnnaIllarionova/comments', {
+    method: "POST",
+    body: JSON.stringify({
+      text: commentElement.value
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;"),
+      name: nameElement.value
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;"),
+      date: day + '.' + month + '.' + year + ' ' + hour + ':' + minutes,
+      counter: 0,
+      isLiked: false,
+      isEdit: false,
+      forceError: false,
+    })
+  })
+  .then((response) => {
+    if (response.status === 500) {
+      return Promise.reject(new Error('Сервер сломался'));
+    } else {
+      return response.json()
+    }
+  }) 
+    .then((responseData) => {
+      return getTodo(false);
+    })
+    .then((data) => {
+    //После нажатия на кнопку поля становятся пустыми, кнопка не активна.
+    nameElement.value = '';
+    commentElement.value = '';
+    buttonElement.disabled = true;
+  
+      commentBodyElement.style.display = '';
+      loadBodyElement.textContent = '';   
+    })
+    .catch((error) => {
+      commentBodyElement.style.display = 'block';
+      loadBodyElement.textContent = '';
+    })
+}
+
+
 const commentBodyElement = document.querySelector('.comment-body');
 const loadBodyElement = document.querySelector('.comment-body-text');
-console.log(loadBodyElement);
 
 //Добавляет комментарий, функция с цепочкой промиссов
 const addTodo = () => {
@@ -258,21 +301,47 @@ const addTodo = () => {
     counter: 0,
     isLiked: false,
     isEdit: false,
+    forceError: true,
   })
 })
 .then((response) => {
-  return response.json()
+  if (response.status === 201) {
+    return response.json()
+  } else if (response.status === 400) {
+    return Promise.reject(new Error('Неправильный ввод'));
+  } else if (response.status === 500) {
+    return Promise.reject(new Error('Сервер сломался'));
+  } else {
+    return Promise.reject(new Error('Нет интернета'));
+  }
 }) 
   .then((responseData) => {
     return getTodo(false);
   })
   .then((data) => {
+  //После нажатия на кнопку поля становятся пустыми, кнопка не активна.
+  nameElement.value = '';
+  commentElement.value = '';
+  buttonElement.disabled = true;
+
     // buttonElement.disabled = false;
     // buttonElement.textContent = 'Написать';
 
     commentBodyElement.style.display = '';
     loadBodyElement.textContent = '';
     
+  })
+  .catch((error) => {
+    commentBodyElement.style.display = 'block';
+    loadBodyElement.textContent = '';
+    console.log(error);
+    if (error.message === 'Неправильный ввод') {
+      alert('Имя и комментарий должны содержать минимум 3 символа')
+    } else if (error.message === 'Сервер сломался') {
+      repeatAddTodo();
+    } else {
+      alert('Что-то пошло не так...')
+    }
   })
 };
 
@@ -295,10 +364,6 @@ buttonElement.addEventListener('click', () => {
     renderComments();
   });
 
-  //     После нажатия на кнопку поля становятся пустыми, кнопка не активна.
-  nameElement.value = '';
-  commentElement.value = '';
-  buttonElement.disabled = true;
 });
 
 //Комментарий добавляется при нажатии на Enter
