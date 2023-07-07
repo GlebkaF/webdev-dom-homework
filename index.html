@@ -82,13 +82,13 @@ const initEventListeners = () => {
         // Unlike the comment
         comments[index].likes--;
         likesCounter.textContent = comments[index].likes;
-        likeButton.classList.remove('liked');
       } else {
         // Like the comment
         comments[index].likes++;
         likesCounter.textContent = comments[index].likes;
-        likeButton.classList.add('liked');
       }
+
+      likeButton.classList.toggle('liked');
     });
   }
 };
