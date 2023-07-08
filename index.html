@@ -35,28 +35,28 @@
     const commentInputElement = document.getElementById('comment-input');
     let userComments = [];
 
-    //Получение данных из API при загрузке страницы
-    fetch(
-        'https://wedev-api.sky.pro/api/v1/sivozhelezov/comments',
-        {
-            method: 'GET'
-        }).then((response) => {
-            response.json().then((responseData) => {
-                const appComments = responseData.comments.map((comment) => {
-                    return {
-                        name: comment.author.name,
-                        date: getDate(comment.date),
-                        text: comment.text,
-                        likes: comment.likes,
-                        isLiked: false
-                    };
-                });
-
-                userComments = appComments;
-                renderComments();
-            })
-        });
-
+    //Функция получения данных из API при загрузке страницы
+    function getData() {
+        fetch(
+            'https://wedev-api.sky.pro/api/v1/sivozhelezov/comments',
+            {
+                method: 'GET'
+            }).then((response) => {
+                response.json().then((responseData) => {
+                    const appComments = responseData.comments.map((comment) => {
+                        return {
+                            name: comment.author.name,
+                            date: getDate(comment.date),
+                            text: comment.text,
+                            likes: comment.likes,
+                            isLiked: false
+                        };
+                    });
+                    userComments = appComments;
+                    renderComments();
+                })
+            });
+    }
 
     // Функция определения текущей даты
     function getDate(date) {
@@ -120,36 +120,13 @@
                         text: sanitizeHTML(commentInputElement.value),
                         name: sanitizeHTML(nameInputElement.value)
                     })
+                }).then(() => {
+
+                    //Получение обновленных данных из API
+                    getData();
                 });
         };
 
-        //Получение обновленных данных из API
-        const fetchPromise = fetch(
-            'https://wedev-api.sky.pro/api/v1/sivozhelezov/comments',
-            {
-                method: 'GET'
-            });
-
-        fetch(
-            'https://wedev-api.sky.pro/api/v1/sivozhelezov/comments',
-            {
-                method: 'GET'
-            }).then((response) => {
-                response.json().then((responseData) => {
-                    const appComments = responseData.comments.map((comment) => {
-                        return {
-                            name: comment.author.name,
-                            date: getDate(comment.date),
-                            text: comment.text,
-                            likes: comment.likes,
-                            isLiked: false
-                        };
-                    });
-
-                    userComments = appComments;
-                    renderComments();
-                })
-            });
 
         nameInputElement.value = '';
         commentInputElement.value = '';
@@ -280,6 +257,8 @@
             })
         }
     }
+
+    getData();
 
     //Добавление комментария кнопкой "Написать"
     buttonElement.addEventListener("click", () => {
