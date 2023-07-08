@@ -43,7 +43,12 @@ let getComments = () => {
   fetch("https://wedev-api.sky.pro/api/v1/kristina-sapega/comments", {
     method: "GET",
   })
-    .then((response) => response.json())
+    .then((response) => {
+      if (!response) {
+        throw new Error("Ошибка при получении комментариев");
+      }
+      return response.json();
+    })
     .then((responseData) => {
       const appComments = responseData.comments.map((comment) => {
         return {
@@ -59,6 +64,12 @@ let getComments = () => {
       isLoading = false;
       renderComments();
     })
+    .catch((error) => {
+      console.error(error);
+      alert("Кажется что-то пошло не так, попробуйте позже.");
+      isLoading = false;
+      renderComments();
+    });
 };
 
 getComments();
@@ -76,31 +87,13 @@ function showLoadingMessage() {
   const renderComments = () => {
   commentsList.innerHTML = "";
   showLoadingMessage();
-  
+
 
   comments.forEach((comment) => {
   const newComment = document.createElement("li");
   newComment.classList.add("comment");
   
   const likeButtonClass = comment.liked ? "like-button -active-like" : "like-button";
-
-   
-    
-    // Добавление кнопки "Редактировать" и "Сохранить"
-    const editButton = document.createElement("button");
-    editButton.classList.add("edit-button");
-    editButton.textContent = "Редактировать";
-
-    const saveButton = document.createElement("button");
-    saveButton.classList.add("save-button");
-    saveButton.textContent = "Сохранить";
-    saveButton.style.display = "none"; // Изначально скрываем кнопку "Сохранить"
-
-    // Добавление поля ввода (textarea) для редактирования текста комментария
-    const textarea = document.createElement("textarea");
-    textarea.classList.add("edit-textarea");
-    textarea.value = comment.text;
-    textarea.style.display = "none"; // Изначально скрываем поле ввода
 
     const dateAndTime = `${comment.date.toLocaleDateString()} ${comment.date.toLocaleTimeString()}`;
     newComment.innerHTML = `
@@ -122,26 +115,6 @@ function showLoadingMessage() {
         </div>
       </div>
     `;
-
-    // Добавление обработчиков событий для кнопок редактирования и сохранения
-    editButton.addEventListener("click", () => {
-      comment.isEdit = true; // Изменяем значение isEdit на true
-      editButton.style.display = "none"; // Скрываем кнопку "Редактировать"
-      saveButton.style.display = "inline-block"; // Показываем кнопку "Сохранить"
-      textarea.style.display = "block"; // Показываем поле ввода
-    });
-
-    saveButton.addEventListener("click", () => {
-      const updatedText = textarea.value;
-      comment.text = updatedText; // Обновляем текст комментария
-      comment.isEdit = false; // Изменяем значение isEdit на false
-      editButton.style.display = "inline-block"; // Показываем кнопку "Редактировать"
-      saveButton.style.display = "none"; // Скрываем кнопку "Сохранить"
-      textarea.style.display = "none"; // Скрываем поле ввода
-      renderComments(); // Перерисовываем комментарии для отображения изменений
-    });
-
-    commentsList.appendChild(newComment);
 
     newComment.addEventListener("click", () => {
     // При клике на комментарий, заполняем поля формы добавления комментария данными комментария
@@ -179,17 +152,23 @@ function showLoadingMessage() {
 };
 
 
-addButton.addEventListener('click', function() {
-  if (nameInput.value.trim() === '' || commentInput.value.trim() === '') {
-    alert('Заполните все поля ввода!');
+//addButton.addEventListener('click', function() {
+  //if (nameInput.value.trim() === '' || commentInput.value.trim() === '') {
+  //alert('Заполните все поля ввода!');
+  //return;
+  //}
+  addButton.addEventListener("click", function () {
+  if (nameInput.value.trim().length < 3 || commentInput.value.trim().length < 3) {
+    alert("Имя и комментарий должны содержать хотя бы 3 символа!");
     return;
   }
-// Скрытие формы добавления комментария и отображение сообщения "Комментарий добавляется ..."
+ 
+//Скрытие формы добавления комментария и отображение сообщения "Комментарий добавляется ..."
   nameInput.disabled = true;
   commentInput.disabled = true;
   addButton.disabled = true;
   loadingMessage.textContent = "Комментарий добавляется...";
-  
+
 
   const now = new Date();
   const dateString = `${now.getDate()}.${now.getMonth() + 1}.${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`;
@@ -211,51 +190,86 @@ addButton.addEventListener('click', function() {
     liked: false
   };
 
-  //comments.push(newComment);
-  //renderComments();
+  // Сохраняем значения полей формы перед отправкой запроса
+  const nameValue = nameInput.value;
+  const commentValue = commentInput.value;
 
   addButton.disabled = true;
   addButton.textContent = "Элемент добавляется...";
 
   // Отправляем новый комментарий на сервер через POST-запрос
-  function addComments() {
+  function addCommentRequest() {
+    const newComment = {
+    name: nameInput.value,
+    text: commentInput.value,
+  };
+
   fetch("https://wedev-api.sky.pro/api/v1/kristina-sapega/comments", {
     method: "POST",
-    body: JSON.stringify({
-      name: nameInput.value,
-      text: commentInput.value,
-    }),
+    body: JSON.stringify(newComment),
   })
-    .then((response) => response.json())
+    .then((response) => {
+    if (response.status === 400) {
+        throw new Error("Ошибка: имя и комментарий должны быть не короче 3 символов"); 
+      } else if (response.status === 500) {
+        throw new Error("Ошибка сервера: попробуйте позже");
+      }
+      return response.json();
+    })
     .then((responseData) => {
       return fetch("https://wedev-api.sky.pro/api/v1/kristina-sapega/comments");
     })
-    .then((response) => response.json())
+    //.then((response) => response.json())
+    .then((response) => {
+  if (!response.ok) {
+    throw new Error("Ошибка при получении комментариев");
+  }
+  return response.json();
+})
     .then((responseData) => {
-      comments = responseData.comments;
-      getComments();
-      //не забываем вернуть возможность оставлять комментарий
+      //Обновление массива коммениариев
+      comments.push(responseData);
+      //comments = responseData.comments;
+      renderComments();
+      
+      // Очистка полей ввода
+      nameInput.value = " ";
+      commentInput.value = " ";
+      //Включение элементов формы
       nameInput.disabled = false;
       commentInput.disabled = false;
       addButton.disabled = false;
-      addButton.textContent = 'Добавить';
-      loadingMessage.style.display = 'none';
+      addButton.textContent = "Добавить";
+      loadingMessage.style.display = "none";
+    })
+
+    .catch((error) => {
+      console.error(error);
+      alert("Произошла ошибка при добавлении комментария");
+      nameInput.disabled = false;
+      commentInput.disabled = false;
+      addButton.disabled = false;
+      addButton.textContent = "Добавить";
+      loadingMessage.style.display = "none";
     });
   }
 
-addComments();
-renderComments();
+  nameInput.disabled = true;
+  commentInput.disabled = true;
+  addButton.disabled = true;
+  loadingMessage.textContent = "Комментарий добавляется...";
+  getComments();
+  renderComments();
 
-// очищаем поля ввода
-nameInput.value = "";
-commentInput.value = "";
+  addCommentRequest();
+
 });
+
 
 //TODO: Рендерим комментарий впервые, чтобы показать надпись "Загружаю комментарии"
 renderComments();
-
   
-    //console.log("It works!");
+
   </script>
 </html>
 
