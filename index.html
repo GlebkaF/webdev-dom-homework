@@ -39,7 +39,8 @@
   const nameInputElement = document.getElementById('name');
   const commentTextareaElement = document.getElementById('comment');
 
-  fetch("https://wedev-api.sky.pro/api/v1/Volkov_Pavel/comments", {
+  const fetchGet = () => {
+    fetch("https://wedev-api.sky.pro/api/v1/Volkov_Pavel/comments", {
     method: "GET"
   }).then((response) => {
     response.json().then((responseData) => {
@@ -62,25 +63,13 @@
       renderListElement();
     });
   });
+  } 
+
+  fetchGet();
 
 
 
-  let listElementData = [
-    //   {
-    //     name: 'Глеб Фокин',
-    //     date: '12.02.22 12:18',
-    //     comment: 'Это будет первый комментарий на этой странице',
-    //     like: false,
-    //     likeNumber: 73,
-    //   },
-    //   {
-    //     name: 'Варвара Н.',
-    //     date: '13.02.22 19:22',
-    //     comment: 'Мне нравится как оформлена эта страница! ❤',
-    //     like: false,
-    //     likeNumber: 24,
-    //   }
-  ]
+  let listElementData = [];
 
   const renderListElement = () => {
     listElement.innerHTML = listElementData
@@ -207,26 +196,6 @@
       return;
     }
 
-    // const oldListElement = listElement.innerHTML;
-    // let currentDate = new Date();
-    // let myDate = currentDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'numeric', year: '2-digit' }) + ' ' + currentDate.toLocaleTimeString('ru-RU', { hour: 'numeric', minute: 'numeric' });
-
-    // listElementData.push({
-    //   name: nameInputElement.value
-    //     .replaceAll("&", "&amp;")
-    //     .replaceAll("<", "&lt;")
-    //     .replaceAll(">", "&gt;")
-    //     .replaceAll('"', "&quot;"),
-    //   date: myDate,
-    //   comment: commentTextareaElement.value
-    //     .replaceAll("&", "&amp;")
-    //     .replaceAll("<", "&lt;")
-    //     .replaceAll(">", "&gt;")
-    //     .replaceAll('"', "&quot;"),
-    //   like: false,
-    //   likeNumber: 0,
-    // });
-
     fetch("https://wedev-api.sky.pro/api/v1/Volkov_Pavel/comments", {
       method: "POST",
       body: JSON.stringify({
@@ -237,33 +206,10 @@
       response.json().then((responseData) => {
         console.log(responseData);
 
-        const appComments = responseData.comments
-        listElementData = appComments;
+        // const appComments = responseData.comments
+        // listElementData = appComments;
 
-        fetch("https://wedev-api.sky.pro/api/v1/Volkov_Pavel/comments", {
-          method: "GET"
-        }).then((response) => {
-          response.json().then((responseData) => {
-            console.log(responseData);
-
-            const appComments = responseData.comments
-              .map((comment) => {
-                let currentDate = new Date(comment.date);
-                let myDate = currentDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'numeric', year: '2-digit' }) + ' ' + currentDate.toLocaleTimeString('ru-RU', { hour: 'numeric', minute: 'numeric' });
-                return {
-                  name: comment.author.name,
-                  date: myDate,
-                  comment: comment.text,
-                  like: comment.isLiked,
-                  likeNumber: comment.likes,
-                  id: comment.id,
-                }
-              })
-
-            listElementData = appComments;
-            renderListElement();
-          });
-        });
+        fetchGet();
       });
     });
 
