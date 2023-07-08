@@ -62,7 +62,9 @@ buttonElement.addEventListener("click", () => {
     likes: false,
     numberLikes: 0
    })
-
+   
+   nameInputElement.value = "";
+   textInputElement.value = "";
 
   renderComments(); 
 
@@ -109,8 +111,6 @@ const renderComments = () => {
   }).join("");
 
   commentElement.innerHTML = commentsHtml;
-  nameInputElement.value = "";
-   textInputElement.value = "";
   initLikeButtonListeners();
 
   const commentElements = document.querySelectorAll('.comment');
