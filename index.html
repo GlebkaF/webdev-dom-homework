@@ -32,59 +32,91 @@
   </body>
 
   <script>
+
 const btn = document.querySelector(".add-form-button");
-const ul = document.querySelector(".comments");
+const userComments = document.querySelector('.comments');
 const nameUser = document.querySelector(".add-form-name");
 const commentUser = document.querySelector(".add-form-text");
 const form = document.querySelector(".add-form");
 const del = document.querySelector(".remove-form-button");
 
-let date = new Date();
-let day = date.getDate();
-let month = date.getMonth() + 1;
-let year = date.getFullYear() - 2000;
-let hour = date.getHours();
-let minute = date.getMinutes();
-if (month < 10) {
-  month = "0" + month;
-}
-if (hour < 10) {
-  hour = "0" + hour;
-}
-if (minute < 10) {
-  minute = "0" + minute;
-}
-date = day + "." + month + "." + year + "  " + hour + ":" + minute;
+let userComment = [];
 
+function formatCommentDate(date) {
+  let day = date.getDate();
+  let month = date.getMonth() + 1;
+  let year = date.getFullYear() - 2000;
+  let hour = date.getHours();
+  let minute = date.getMinutes();
+  if (month < 10) {
+    month = "0" + month;
+  }
+  if (day < 10) {
+    day = "0" + day;
+  }
+  if (hour < 10) {
+    hour = "0" + hour;
+  }
+  if (minute < 10) {
+    minute = "0" + minute;
+  }
+  return day + "." + month + "." + year + "  " + hour + ":" + minute;
+}
 
-const userComments = document.querySelector('.comments');
-const userComment = [
+isLoadingAllComments = true;
+function apiGet() {
+  fetch("https://wedev-api.sky.pro/api/v1/nkvereshch/comments", {
+    method: "GET"
+  })
+  .then((response) => {
+    return response.json();
+  })
+  .then((responseData) => {
+    isLoading = false;
 
-  {  name: 'Глеб Фокин',
-    date: '12.02.22 12:18',
-    comment: 'Это будет первый комментарий на этой странице',
-    likes: 3,
-    isLike: false,
-    isEdit: false,
-  },
-  {  name: 'Варвара Н.',
-    date: '13.02.22 19:22',
-    comment: 'Мне нравится как оформлена эта страница! ❤',
-    likes: 75,
-    isLike: true,
-    isEdit: false,
-  },
-];
+isLoadingAllComments = false;
+    userComment = responseData.comments.map((comment) => {
+    let date = new Date(comment.date);
+    date = formatCommentDate(date);
+
+    return {
+      id: comment.id,
+      name: comment.author.name,
+      date: date,
+      comment: comment.text,
+      likes: comment.likes,
+      isLike: true,
+    };
+    })
+    renderUserComments();
+  });
+};
+apiGet();
 
 function addComment() {
-  userComment.push({
-    name: nameUser.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
-    date: date,
-    comment: commentUser.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
-    likes: 0,
-    isLike: true,
-    isEdit: false,
-  });
+
+    isLoading = true;
+    fetch("https://wedev-api.sky.pro/api/v1/nkvereshch/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        text: commentUser.value,
+        name: nameUser.value,
+      }),
+    })
+    .then((response) => {
+      return response.json();
+    })
+    .then((responseData) => {
+      return fetch("https://wedev-api.sky.pro/api/v1/nkvereshch/comments", {
+        method: "GET",
+      });
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
+      renderUserComments();
+});
 
   initLikesBtn();
 
@@ -92,7 +124,10 @@ function addComment() {
   commentUser.value = "";
 
   renderUserComments();
+
   checkFields();
+
+  apiGet();
 }
 
 const initLikesBtn = () => {
@@ -106,13 +141,12 @@ const initLikesBtn = () => {
           userComment[index].likes = userComment[index].likes += 1;
           userComment[index].isLike = false;
         }
+        
         else if (userComment[index].isLike === false) {
           userComment[index].likes = userComment[index].likes -= 1;
           userComment[index].isLike = true;
         }
-
       renderUserComments();
-
     });
   }
 }
@@ -124,6 +158,7 @@ const changeComment = () => {
     changeBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       const index = changeBtn.dataset.index;
+
       let findComment = document.getElementById('changedText');
         if (userComment[index].isEdit === true) {
           userComment[index].comment = findComment.value;
@@ -132,9 +167,7 @@ const changeComment = () => {
         else if (userComment[index].isEdit === false) {
           userComment[index].isEdit = true;
         }
-
       renderUserComments();
-
       });
   }
 }
@@ -148,34 +181,41 @@ const findTextarea = () => {
   }
 }
 
-function commentComment() {
-  const comments = document.querySelectorAll(".comment");
-  for (const comment of comments) {
-    comment.addEventListener('click', () => {
-      const index = comment.dataset.index;
-      commentUser.value =`QUOTE_BEGIN ${userComment[index].name + ':' + ' ' + userComment[index].comment} QUOTE_END`;
-    });
-  };
-}
-
 btn.addEventListener("click", () => {
   addComment();
 });
 
 form.addEventListener("keyup", (e) => {
-
   if (e.key == "Enter") {
     addComment();
   }
 });
 
-
 del.addEventListener("click", () => {
   ul.lastElementChild.remove();
+
 });
 
-function checkFields() {
+function delBtn1() {
+  const delBtns = document.querySelectorAll('.delete-button');
+  for (const delBtn of delBtns) {
+    delBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
 
+          const id = delBtn.dataset.id;
+          console.log(id);
+          fetch("https://wedev-api.sky.pro/api/v1/nkvereshch/comments/" + id, {
+            method: "DELETE",
+          }).then((response) => {
+            response.json().then((responseData) => {
+          renderUserComments();
+          });
+          });
+    });
+  }
+}
+
+function checkFields() {
   if (nameUser.value && commentUser.value) {
     btn.disabled = false;
     btn.classList.remove('btn-gray');
@@ -185,16 +225,32 @@ function checkFields() {
   }
 }
 checkFields();
-
 nameUser.addEventListener('input', checkFields);
 commentUser.addEventListener('input', checkFields);
+
+const renderLoadingAllComments = () => {
+  if (isLoadingAllComments === true) {
+    userComments.innerHTML = `<li class="comment">Идет загрузка комментариев...</li>`
+  }
+  else {
+    renderUserComments;
+  }
+};
+apiGet();
+
+renderLoadingAllComments();
+
+const renderLoadingLastComment = () => {
+  const html = isLoading === true ? `<li class="comment">Идет загрузка комментария...</li>` : ``;
+  userComments.insertAdjacentHTML("beforeend", html);
+};
 
 const renderUserComments = () => {
   userComments.innerHTML = userComment.map((comments, index) => {
     const commentText = comments.isEdit === true ? `<textarea type="form" class="add-form-text_comment" id="changedText" data-index=${index} rows="4">${comments.comment}</textarea>` : `${comments.comment}`;
     const btnTextChange = comments.isEdit === true ? `Сохранить` : `Редактировать`;
     return `
-    <li class="comment" data-index=${index}>
+    <li class="comment">
     <div class="comment-header">
       <div>${comments.name}</div>
       <div>${comments.date}</div>
@@ -205,25 +261,29 @@ const renderUserComments = () => {
       </div>
     </div>
     <div class="comment-footer">
-
       <div class="change">
         <button class="change-button" data-index=${index}>${btnTextChange}</button>
       </div>
-
+      <div class="delete">
+      <button class="delete-button" data-id=${comments.id}>Удалить</button>
+      </div>
       <div class="likes">
         <span class="likes-counter">${comments.likes}</span>
         <button class="like-button ${comments.isLike ? "" : "-active-like"}" data-index=${index} data-like=${comments.isLike}></button>
       </div>
     </div>
   </li>`
-  }).join('');
+}).join('');
   
   initLikesBtn();
-  changeComment();
-  commentComment();
-  findTextarea();
-};
-renderUserComments();
 
+  changeComment();
+
+  findTextarea();
+
+  renderLoadingLastComment();
+
+  renderLoadingAllComments();
+};
 </script>
 </html>
