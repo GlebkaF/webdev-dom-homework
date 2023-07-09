@@ -20,7 +20,7 @@
         <button id="add-button" class="add-form-button">Написать</button>
       </div>
     </div>
-    <div class="add-form">
+    <div class="add-form-delete">
       <button id="delete-comment" class="add-form-button">
         Удалить последний комментарий
       </button>
@@ -47,7 +47,9 @@
     commentTextarea = document.getElementById('comment-textarea'),    // Находит первый элемент Textarea для ввода комментария
     likes = document.getElementById('like'),                          // Находит первый элемент Кнопка лайка (сердечко)
     deleteComment = document.getElementById('delete-comment'),        // Находит первый элемент Button "удалить последний комментарий"
-    lastComments = document.querySelector('.comments');               // Находит все элементы Контейнер со одним комментарием
+    lastComments = document.querySelector('.comments'),
+    renderCommentsLi = document.querySelectorAll('.comment'),
+    addForm = document.querySelector('.add-form');               // Находит все элементы Контейнер со одним комментарием
 
 
   // Функция текущая дата
@@ -102,8 +104,105 @@
 
     initAddLikesListener()
     initAddUserComments()
+
   };
 
+
+
+
+
+  // Возвращаем данные из сервера и API
+  function fetchPromiseFunctionGet() {
+
+    const fetchPromiseGet = fetch("https://wedev-api.sky.pro/api/v1/Igor-Yurin/comments", { // Функцией fetch делаем асинхронный запрос в API и возращаем promise в переменную fetchPromise
+      method: "GET"
+    })
+      .then((response) => { // методом then подписываемся на завершение promise (выполненный запрос или отклоненный запрос (запрос хранится в параметре функции))
+        return response.json() // Возвращаем данные от API и через метод json() преобразовываю в JSON-формат.
+      })
+      .then((responseData) => { //  Методом then подписываюсь на преобразование результата
+
+        const appComments = responseData.comments.map((comment) => { // перебираем и возвращаем новый массив
+          return {
+            name: comment.author.name,
+            date: currentDate(new Date(comment.date)),
+            text: comment.text,
+            likes: comment.likes,
+            isLiked: false
+          };
+        });
+        comments = appComments;
+        renderComments()
+      })
+  
+  }
+
+  fetchPromiseFunctionGet()
+
+  // Обработчик события клика - при клике на "button (add-button) - Написать комментарий" добавляется новый комментарий
+   buttonElement.addEventListener('click', () => {
+    // Удаление валидации input и textarea от красного поля
+    nameInput.classList.remove('error-input');
+    commentTextarea.classList.remove('error-input');
+
+    // Добавление валидации красного поля input и textarea если поле не заполнено текстом
+    if (nameInput.value === '') {
+      nameInput.classList.add('error-input');
+      return;
+    } else if (commentTextarea.value === '') {
+      commentTextarea.classList.add('error-input');
+      return;
+    }
+
+    // Отправка и сохранение данных в хранилище
+    // Функция оповещения клиента о пустом или минимальном вводе символов в поле для имени
+    function shortOrEmptyName() {
+      if (nameInput.value.trim().length > 2) {
+        return nameInput.value
+      } else {
+        return alert('Необходимо ввести минимум 3 символа') && nameInput.value
+      }
+    }
+    // Функция оповещения клиента о пустом или минимальном вводе символов в поле для комментария
+    function shortOrEmptyText() {
+      if (commentTextarea.value.trim().length > 2) {
+        return commentTextarea.value
+      } else {
+        return alert('Необходимо ввести минимум 3 символа') && commentTextarea.value
+      }
+    }
+
+     addForm.innerText = "Элемент добавлятся...";
+
+    // Отправляем на сервер данные которые вводи в name и text 
+    const fetchPromisePost = fetch("https://wedev-api.sky.pro/api/v1/Igor-Yurin/comments", {
+      method: "POST",
+      body: JSON.stringify({ // Преобразуем данные в JSON формат
+        text: shortOrEmptyText(), // Вызов функции оповещения клиента о пустом или минимальном вводе символов в поле для комментария
+        name: shortOrEmptyName(), // Вызов функции оповещения клиента о пустом или минимальном вводе символов в поле для имени
+      })
+    })
+    .then((response) => {
+        // addForm.disabled = false
+       return addForm.innerHTML = `<input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input" />
+      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
+        id="comment-textarea"></textarea>
+      <div class="add-form-row">
+        <button id="add-button" class="add-form-button">Написать</button>
+      </div>`
+      console.log(addForm.innerHTML);
+      })
+
+      
+    // Вызов функции запроса GET (функционал описан выше)
+    fetchPromiseFunctionGet()
+
+    renderComments();
+
+    
+    
+  });
+  
   // Изменить цвет кнопки "лайка" и + / - "1 лайк"
   function initAddLikesListener() {
     const likesButtons = document.querySelectorAll('.like-button');
@@ -126,30 +225,6 @@
     }
   }
 
-
-  // Возвращаем данные из сервера и API
-
-  const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/Igor-Yurin/comments", { // Функцией fetch делаем асинхронный запрос в API и возращаем promise в переменную fetchPromise
-    method: "GET"
-  });
-
-  fetchPromise.then((response) => { // методом then подписываемся на завершение promise (выполненный запрос или отклоненный запрос (запрос хранится в параметре функции))
-    const jsonPromise = response.json().then((responseData) => { // через метод json() преобразовываю данные от API в JSON-формат. Методом then подписываюсь на преобразование результата
-
-      const appComments = responseData.comments.map((comment) => { // перебираем и возвращаем новый массив
-        return {
-          name: comment.author.name,
-          date: currentDate(new Date(comment.date)),
-          text: comment.text,
-          likes: comment.likes,
-          isLiked: false
-        };
-      });
-      comments = appComments;
-      renderComments()
-    });
-  });
-
   // По клику на комментарий можно добавить к нему свои комментарии
   function initAddUserComments() {
     const commentTexts = document.querySelectorAll('.comment');
@@ -164,132 +239,66 @@
       })
     }
   }
-
+  
+ 
   renderComments()
-
-  // Обработчик события клика - при клике на "button (add-button) - Написать комментарий" добавляется новый комментарий
-  buttonElement.addEventListener('click', () => {
-    // Удаление валидации input и textarea от красного поля
-    nameInput.classList.remove('error-input');
-    commentTextarea.classList.remove('error-input');
-
-    // Добавление валидации красного поля input и textarea если поле не заполнено текстом
-    if (nameInput.value === '') {
-      nameInput.classList.add('error-input');
-      return;
-    } else if (commentTextarea.value === '') {
-      commentTextarea.classList.add('error-input');
-      return;
-    }
-
-    // Отправка и сохранение данных в хранилище
-    // Функция оповещения клиента о пустом или минимальном вводе символов в поле для имени
-    function shortOrEmptyName() {
-      if (nameInput.value.length < 3 || nameInput.value === '') {
-        alert('Необходимо ввести минимум 3 символа')
-      } else {
-        return nameInput.value
-      }
-    }
-    // Функция оповещения клиента о пустом или минимальном вводе символов в поле для комментария
-    function shortOrEmptyText() {
-      if (commentTextarea.value.length < 3 || commentTextarea.value === '') {
-        alert('Необходимо ввести минимум 3 символа')
-      } else {
-        return commentTextarea.value
-      }
-    }
-
-    
-    // Отправляем на сервер данные которые вводи в name и text 
-    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/Igor-Yurin/comments", {
-      method: "POST",
-      body: JSON.stringify({ // Преобразуем данные в JSON формат
-        text: shortOrEmptyText(), // Вызов функции оповещения клиента о пустом или минимальном вводе символов в поле для комментария
-        name: shortOrEmptyName(), // Вызов функции оповещения клиента о пустом или минимальном вводе символов в поле для имени
-      })
-    });
-
-    // Повторно возвращаем данные из сервера и API - функционал описан выше
-    const fetchPromiseOdj = fetch("https://wedev-api.sky.pro/api/v1/Igor-Yurin/comments", {
-      method: "GET"
-    });
-    fetchPromiseOdj.then((response) => {
-      const jsonPromise = response.json().then((responseData) => {
-
-        const appComments = responseData.comments.map((comment) => {
-          return {
-            name: comment.author.name,
-            date: currentDate(new Date(comment.date)),
-            text: comment.text,
-            likes: comment.likes,
-            isLiked: false,
-          };
-        });
-        comments = appComments;
-        renderComments()
-      });
-    });
-    renderComments();
-  });
-
 
 
   // Дополнительные задания - старые задания
 
-  // Ввод текста через Enter & NumpadEnter
-  // Обработчик события на нажатие клавиш Enter & NumpadEnter - при нажатии на Enter & NumpadEnter срабатывает "button - Написать комментарий" и добавляется новый комментарий
-  commentTextarea.addEventListener('keyup', (event) => {
+  // // Ввод текста через Enter & NumpadEnter
+  // // Обработчик события на нажатие клавиш Enter & NumpadEnter - при нажатии на Enter & NumpadEnter срабатывает "button - Написать комментарий" и добавляется новый комментарий
+  // commentTextarea.addEventListener('keyup', (event) => {
 
-    // Удаление валидации input и textarea от красного поля
-    nameInput.classList.remove('error-input');
-    commentTextarea.classList.remove('error-input');
+  //   // Удаление валидации input и textarea от красного поля
+  //   nameInput.classList.remove('error-input');
+  //   commentTextarea.classList.remove('error-input');
 
-    // Добавление валидации красного поля input и textarea
-    if (nameInput.value === '') {
-      nameInput.classList.add('error-input');
-      return;
-    } else if (commentTextarea.value === '') {
-      commentTextarea.classList.add('error-input');
-      return;
-    }
+  //   // Добавление валидации красного поля input и textarea
+  //   if (nameInput.value === '') {
+  //     nameInput.classList.add('error-input');
+  //     return;
+  //   } else if (commentTextarea.value === '') {
+  //     commentTextarea.classList.add('error-input');
+  //     return;
+  //   }
 
-    // При нажатии на "Enter" добавляется новый массив
-    if (event.code === 'Enter') {
-      comments.push({
-        name: nameInput.value
-          .replaceAll('>', '&gt;')
-          .replaceAll('<', '&lt;'),
-        text: commentTextarea.value
-          .replaceAll('>', '&gt;')
-          .replaceAll('<', '&lt;')
-          .replaceAll("BEGIN_QUOTE", "<div class='quote'>")
-          .replaceAll("BEGIN_END", "</div>"),
-        date: currentDate(comments.date),
-        likes: 0,
-        isLiked: false
-      })
+  //   // При нажатии на "Enter" добавляется новый массив
+  //   if (event.code === 'Enter') {
+  //     comments.push({
+  //       name: nameInput.value
+  //         .replaceAll('>', '&gt;')
+  //         .replaceAll('<', '&lt;'),
+  //       text: commentTextarea.value
+  //         .replaceAll('>', '&gt;')
+  //         .replaceAll('<', '&lt;')
+  //         .replaceAll("BEGIN_QUOTE", "<div class='quote'>")
+  //         .replaceAll("BEGIN_END", "</div>"),
+  //       date: currentDate(fetchPromise.date),
+  //       likes: 0,
+  //       isLiked: false
+  //     })
 
-      renderComments();
+  //     renderComments();
 
-      // При нажатии на "NumpadEnter" добавляется новый массив
-    } else if (event.code === 'NumpadEnter') {
+  //     // При нажатии на "NumpadEnter" добавляется новый массив
+  //   } else if (event.code === 'NumpadEnter') {
 
-      comments.push({
-        name: nameInput.value
-          .replaceAll('>', '&gt;')
-          .replaceAll('<', '&lt;'),
-        text: commentTextarea.value
-          .replaceAll('>', '&gt;')
-          .replaceAll('<', '&lt;'),
-        date: currentDate(comments.date),
-        likes: 0,
-        isLiked: false
-      })
+  //     comments.push({
+  //       name: nameInput.value
+  //         .replaceAll('>', '&gt;')
+  //         .replaceAll('<', '&lt;'),
+  //       text: commentTextarea.value
+  //         .replaceAll('>', '&gt;')
+  //         .replaceAll('<', '&lt;'),
+  //       date: currentDate(fetchPromise.date),
+  //       likes: 0,
+  //       isLiked: false
+  //     })
 
-      renderComments();
-    }
-  });
+  //     renderComments();
+  //   }
+  // });
 
   // Удаление последнего комменатрия
   // Обработчик события клика - при клики на "button (delete-comment)" удаляется последний контейнер с комментариес
