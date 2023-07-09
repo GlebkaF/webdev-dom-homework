@@ -105,8 +105,6 @@ buttonElement.addEventListener("click", () => {
   const userData = formatDate(new Date());
 
   appComment(userName, userComment, userData);
-  nameInputElement.value = "";
-  textInputElement.value = "";
 });
 
 const initLikeButtonListeners = () => {
