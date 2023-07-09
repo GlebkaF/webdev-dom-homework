@@ -26,7 +26,7 @@ fetchPromise.then((response) => {
         date = "0" + date;
       }
       if (month < 10) {
-        month = "0" + (month + 1);
+        month = "0" + (month + 1); 
       }
       if (hour < 10) {
         hour = "0" + hour;
