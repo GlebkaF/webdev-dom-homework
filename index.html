@@ -9,9 +9,11 @@
 
 <body>
   <div class="container">
+    <div class="loader" id="loader-list">Пожалуйста подождите, загружаю комментарии...</div>
     <ul class="comments" id="list">
     </ul>
-    <div class="add-form">
+    <div class="loader" id="loader-comment">Комментарий добавляется...</div>
+    <div class="add-form" id="form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name" />
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
         id="comment"></textarea>
@@ -38,6 +40,9 @@
   const buttonElement = document.getElementById('add-button');
   const nameInputElement = document.getElementById('name');
   const commentTextareaElement = document.getElementById('comment');
+  const formElement = document.getElementById('form');
+  const loaderListElement = document.getElementById('loader-list');
+  const loaderCommentElement = document.getElementById('loader-comment');
 
   const fetchGet = () => {
     return fetch("https://wedev-api.sky.pro/api/v1/Volkov_Pavel/comments", {
@@ -64,12 +69,13 @@
 
       listElementData = appComments;
       renderListElement();
+      loaderListElement.style.display = 'none';
     });
   } 
-
+  
+  loaderCommentElement.style.display = 'none';
+  
   fetchGet();
-
-
 
   let listElementData = [];
 
@@ -183,6 +189,8 @@
   const enterComment = () => {
     nameInputElement.classList.remove('error');
     commentTextareaElement.classList.remove('error');
+    loaderCommentElement.style.display = 'block';
+    formElement.style.display = 'none';
 
     if (nameInputElement.value === '' && commentTextareaElement.value === '') {
       nameInputElement.classList.add('error');
@@ -198,6 +206,8 @@
       return;
     }
 
+    
+
     fetch("https://wedev-api.sky.pro/api/v1/Volkov_Pavel/comments", {
       method: "POST",
       body: JSON.stringify({
@@ -211,6 +221,10 @@
       console.log(responseData);
 
       return fetchGet();
+    })
+    .then((data) => {
+      formElement.style.display = 'block';
+      loaderCommentElement.style.display = 'none';
     });
 
     renderListElement();
