@@ -40,29 +40,29 @@
   const commentTextareaElement = document.getElementById('comment');
 
   const fetchGet = () => {
-    fetch("https://wedev-api.sky.pro/api/v1/Volkov_Pavel/comments", {
+    return fetch("https://wedev-api.sky.pro/api/v1/Volkov_Pavel/comments", {
     method: "GET"
-  }).then((response) => {
-    response.json().then((responseData) => {
-      console.log(responseData);
+    }).then((response) => {
+      response.json().then((responseData) => {
+        console.log(responseData);
 
-      const appComments = responseData.comments.map((comment) => {
-        let currentDate = new Date(comment.date);
-        let myDate = currentDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'numeric', year: '2-digit' }) + ' ' + currentDate.toLocaleTimeString('ru-RU', { hour: 'numeric', minute: 'numeric' });
-        return {
-          name: comment.author.name,
-          date: myDate,
-          comment: comment.text,
-          like: comment.isLiked,
-          likeNumber: comment.likes,
-          id: comment.id,
-        }
-      })
+        const appComments = responseData.comments.map((comment) => {
+          let currentDate = new Date(comment.date);
+          let myDate = currentDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'numeric', year: '2-digit' }) + ' ' + currentDate.toLocaleTimeString('ru-RU', { hour: 'numeric', minute: 'numeric' });
+          return {
+            name: comment.author.name,
+            date: myDate,
+            comment: comment.text,
+            like: comment.isLiked,
+            likeNumber: comment.likes,
+            id: comment.id,
+          }
+        })
 
-      listElementData = appComments;
-      renderListElement();
+        listElementData = appComments;
+        renderListElement();
+      });
     });
-  });
   } 
 
   fetchGet();
@@ -209,7 +209,7 @@
         // const appComments = responseData.comments
         // listElementData = appComments;
 
-        fetchGet();
+        return fetchGet();
       });
     });
 
