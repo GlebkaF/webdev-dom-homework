@@ -26,29 +26,33 @@
   "use strict";
   // Код писать здесь
   const addButton = document.querySelector('.add-form-button');
-const nameInput = document.querySelector('.add-form-name');
-const commentInput = document.querySelector('.add-form-text');
-const commentsList = document.querySelector('.comments');
+  const nameInput = document.querySelector('.add-form-name');
+  const commentInput = document.querySelector('.add-form-text');
+  const commentsList = document.querySelector('.comments');
 
-const comments = [
-  {
-    name: "Глеб Фокин",
-    date: "12.02.22 12:18",
-    comment: "Это будет первый комментарий на этой странице",
-    likes: 3,
-  },
-  {
-    name: "Варвара Н.",
-    date: "13.02.22 19:22",
-    comment: "Мне нравится как оформлена эта страница! ❤",
-    likes: 75,
-  },
-];
+  const comments = [
+    {
+      name: "Глеб Фокин",
+      date: "12.02.22 12:18",
+      comment: "Это будет первый комментарий на этой странице",
+      likes: 3,
+      like: false,
+    },
+    {
+      name: "Варвара Н.",
+      date: "13.02.22 19:22",
+      comment: "Мне нравится как оформлена эта страница! ❤",
+      likes: 75,
+      like: false,
+    },
+  ];
 
-const renderComments = () => {
-  const commentsListHtml = comments
-    .map((comment, index) => {
-      return `<li class="comment">
+
+  const renderComments = () => {
+    const commentsListHtml = comments
+      .map((comment, index) => {
+        const likeButtonClass = comment.like ? 'like-button liked' : 'like-button';
+        return `<li class="comment">
         <div class="comment-header">
           <div>${comment.name}</div>
           <div>${comment.date}</div>
@@ -59,74 +63,72 @@ const renderComments = () => {
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${comment.likes}</span>
-            <button class="like-button" data-index="${index}"></button>
+            <button class="${likeButtonClass}" data-index="${index}"></button>
           </div>
         </div>
       </li>`;
-    })
-    .join('');
-  commentsList.innerHTML = commentsListHtml;
+      })
+      .join('');
+    commentsList.innerHTML = commentsListHtml;
 
-  initEventListeners();
-};
+    putLike();
+  };
 
-const initEventListeners = () => {
-  const likeButtons = document.querySelectorAll('.like-button');
 
-  for (const likeButton of likeButtons) {
-    likeButton.addEventListener('click', () => {
-      const index = likeButton.dataset.index;
-      const likesCounter = document.querySelectorAll('.likes-counter')[index];
+  const putLike = () => {
+    const likeButtonElements = document.querySelectorAll('.like-button');
 
-      if (likeButton.classList.contains('liked')) {
-        // Unlike the comment
-        comments[index].likes--;
-        likesCounter.textContent = comments[index].likes;
-      } else {
-        // Like the comment
-        comments[index].likes++;
-        likesCounter.textContent = comments[index].likes;
-      }
+    for (const likeButtonElement of likeButtonElements) {
+      likeButtonElement.addEventListener('click', () => {
+        const index = likeButtonElement.dataset.index;
 
-      likeButton.classList.toggle('liked');
+        if (comments[index].like === true) {
+          comments[index].like = false;
+          comments[index].likes--;
+        } else {
+          comments[index].like = true;
+          comments[index].likes++;
+        }
+        renderComments();
+      });
+    }
+  };
+
+  const addComment = () => {
+    const name = nameInput.value;
+    const comment = commentInput.value;
+
+    if (name === '' || comment === '') {
+      return; // Validation failed, do not add the comment
+    }
+
+    const currentDate = new Date();
+    const formattedDate = currentDate.toLocaleString('ru-RU', {
+      day: 'numeric',
+      month: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
     });
-  }
-};
 
-const addComment = () => {
-  const name = nameInput.value;
-  const comment = commentInput.value;
+    comments.push({
+      name: nameInput.value,
+      date: formattedDate,
+      comment: commentInput.value,
+      likes: 0,
+      like: false,
+    });
 
-  if (name === '' || comment === '') {
-    return; // Validation failed, do not add the comment
-  }
+    renderComments();
 
-  const currentDate = new Date();
-  const formattedDate = currentDate.toLocaleString('ru-RU', {
-    day: 'numeric',
-    month: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-  });
+    // Clear input
+    nameInput.value = '';
+    commentInput.value = '';
+  };
 
-  comments.push({
-    name: nameInput.value,
-    date: formattedDate,
-    comment: commentInput.value,
-    likes: 0,
-  });
+  addButton.addEventListener('click', addComment);
 
   renderComments();
-
-  // Clear input
-  nameInput.value = '';
-  commentInput.value = '';
-};
-
-addButton.addEventListener('click', addComment);
-
-renderComments();
 
 
 </script>
