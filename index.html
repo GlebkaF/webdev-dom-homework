@@ -202,6 +202,7 @@ function showLoadingMessage() {
     const newComment = {
     name: nameInput.value,
     text: commentInput.value,
+    //forceError: true,
   };
 
   fetch("https://wedev-api.sky.pro/api/v1/kristina-sapega/comments", {
@@ -210,9 +211,9 @@ function showLoadingMessage() {
   })
     .then((response) => {
     if (response.status === 400) {
-        throw new Error("Ошибка: имя и комментарий должны быть не короче 3 символов"); 
+        throw new Error("Неверный запрос"); 
       } else if (response.status === 500) {
-        throw new Error("Ошибка сервера: попробуйте позже");
+        throw new Error("Ошибка сервера");
       }
       return response.json();
     })
@@ -227,10 +228,10 @@ function showLoadingMessage() {
   return response.json();
 })
     .then((responseData) => {
+      getComments();
       //Обновление массива коммениариев
-      comments.push(responseData);
-      //comments = responseData.comments;
-      renderComments();
+      //comments.push(responseData);
+      //renderComments();
       
       // Очистка полей ввода
       nameInput.value = " ";
@@ -244,13 +245,23 @@ function showLoadingMessage() {
     })
 
     .catch((error) => {
-      console.error(error);
-      alert("Произошла ошибка при добавлении комментария");
+      console.log(error);
+      
       nameInput.disabled = false;
       commentInput.disabled = false;
       addButton.disabled = false;
       addButton.textContent = "Добавить";
       loadingMessage.style.display = "none";
+
+      if (error.message === "Ошибка сервера") {
+        alert("Сервер сломался, попробуй позже");
+        return;
+      }
+      if (error.message === "Неверный запрос") {
+        alert("Имя и коммертарий должны быть не короче трех символов");
+        return;
+      }
+      alert("Отсутсвует инетрнет-соединение");
     });
   }
 
@@ -260,7 +271,6 @@ function showLoadingMessage() {
   loadingMessage.textContent = "Комментарий добавляется...";
   getComments();
   renderComments();
-
   addCommentRequest();
 
 });
