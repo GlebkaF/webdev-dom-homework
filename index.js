@@ -253,7 +253,7 @@ const repeatAddTodo = () => {
   })
   .then((response) => {
     if (response.status === 500) {
-      return Promise.reject(new Error('Сервер сломался'));
+      throw new Error('Сервер сломался');
     } else {
       return response.json()
     }
@@ -308,11 +308,11 @@ const addTodo = () => {
   if (response.status === 201) {
     return response.json()
   } else if (response.status === 400) {
-    return Promise.reject(new Error('Неправильный ввод'));
+    throw new Error('Неправильный ввод');
   } else if (response.status === 500) {
-    return Promise.reject(new Error('Сервер сломался'));
+    throw new Error('Сервер сломался');
   } else {
-    return Promise.reject(new Error('Нет интернета'));
+    throw new Error('Нет интернета');
   }
 }) 
   .then((responseData) => {
