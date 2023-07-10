@@ -9,6 +9,9 @@
 
 <body>
   <div class="container">
+    <div id="comment-loading">
+      <p>Пожалуйста подождите, загружаю комментарии...</p>
+    </div>
     <ul id="list" class="comments">
       <!-- <li class="comment">
           <div class="comment-header">
@@ -28,7 +31,10 @@
           </div>
         </li>-->
     </ul>
-    <div class="add-form">
+    <div id="comment-render">
+      <p>Комментарий добавляется...</p>
+    </div>
+    <div class="add-form" id="add-form-disable">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input" value="" />
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4" id="comment-input"
         value=""></textarea>
@@ -58,6 +64,7 @@
       method: "GET"
     });
       fetchPromise.then((response) => {
+        document.getElementById('comment-loading').style.display = 'flex'; 
         const jsonPromise = response.json();
           jsonPromise.then((responseData) => {
             console.log(responseData);
@@ -70,12 +77,12 @@
               name: comment.author.name,
             };
           });
+          document.getElementById('comment-loading').style.display = 'none'; 
           comments = appComments;
-          //isLoading = false;
           renderComments();
         });
       });
-  }
+  } 
   getCommentList(); 
 
   let comments = []
@@ -144,8 +151,8 @@
 
   // Ответ на комментарий 
   const initCommentingListeners = () => {
-    const CommentingElements = document.querySelectorAll(".comment");
-    CommentingElements.forEach((element, index) => {
+    const commentingElements = document.querySelectorAll(".comment");
+    commentingElements.forEach((element, index) => {
       element.addEventListener('click', () => {
         commentInputElement.value = "> " + comments[index].text + " " + comments[index].name + ", ";
       })
@@ -209,6 +216,8 @@
     buttonElement.blur();
   })
 
+  document.getElementById('comment-render').style.display = 'none'; 
+  
   const sendingComment = () => {
     const sanitizeHtml = (htmlString) => {
       return htmlString
@@ -220,9 +229,9 @@
 
     getCommentList();
 
-    function addComment() {
-      //isLoading = true;
-
+    function addComment() { 
+      document.getElementById('comment-render').style.display = 'flex';
+      document.getElementById('add-form-disable').style.display = 'none';
       const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/anton-shlyapkin/comments", {
         method: "POST",
         body: JSON.stringify({
@@ -233,18 +242,21 @@
           name: sanitizeHtml(nameInputElement.value),
         }),
         }).then((response) => {
-          response.json().then((responseData) => { 
-            // console.log(responseData);        
-          getCommentList();      
-          });
-        }
-      );
+          return response.json();     
+        }).then((responseData) => {
+          document.getElementById('comment-loading').style.display = 'none'; 
+          return getCommentList();
+        }).then((data) => {
+          document.getElementById('add-form-disable').style.display = 'flex';
+          document.getElementById('comment-render').style.display = 'none';
+
+        });
       renderComments();
     }
     addComment();
     nameInputElement.value = "";
     commentInputElement.value = "";
-  }  
+  } 
   console.log("It works!");
 </script>
 </html>
