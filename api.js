@@ -4,13 +4,15 @@ import { enterCommentElement } from "./main.js";
 import { enterNameElement } from "./main.js";
 import { renderUsers } from "./renderComments.js";
 
+//Кладем ссылку в переменную так как она везде общая, так будет ее проще менять, можно одинарные, а можно и двойные кавычки, разницы нет
+const host = "https://wedev-api.sky.pro/api/v2/rashid-abdulkhamidov/comments";
+
 // Получаем список комментов с помощью функции fetch и метода запросов GET
 const fetchPromiseFuncGet = () => {
     return fetch(
-        'https://wedev-api.sky.pro/api/v1/rashid-abdulkhamidov/comments',
+        host,
         {
             method: "GET",
-            // forceError: true, 
         })
         // Показываем пользователю сообщение о том, что происходит загрузка комментариев
         .then((response) => {
@@ -19,6 +21,7 @@ const fetchPromiseFuncGet = () => {
             return response.json();     //декодируем ответ в формате JSON и переходим на выполнение следующего then
         })
         .then((responseData) => {
+            console.log(responseData);
             //Преобразовываем данные из формата API в формат приложения
             const currentDate = new Date()
             let newDate = currentDate.getDate() + '.' + currentDate.getMonth() + '.' + currentDate.getFullYear() + ' ' + currentDate.getHours() + ':' + currentDate.getMinutes()
@@ -45,9 +48,11 @@ const fetchPromiseFuncPost = () => {
     const currentDate = new Date()
     let newDate = currentDate.getDate() + '.' + currentDate.getMonth() + '.' + currentDate.getFullYear() + ' ' + currentDate.getHours() + ':' + currentDate.getMinutes()
     return fetch(
-        'https://wedev-api.sky.pro/api/v1/rashid-abdulkhamidov/comments',
+        host,
         {
             method: "POST",
+            login: "rashid",
+            password: "123456",
             body: JSON.stringify({     // Преобразование объекта в JSON строку(иначе будет приходить ошибка 400)
                 text: enterCommentElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),     //Добавляем коммент с заменой < и > в целях безопасности
                 name: enterNameElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),     //Добавляем имя с заменой < и > в целях безопасности

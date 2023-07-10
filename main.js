@@ -2,6 +2,11 @@ import { fetchPromiseFuncGet } from "./api.js";
 import { renderUsers } from "./renderComments.js";
 import { fetchPromiseFuncPost } from "./api.js";
 
+let token = "Bearer coascsbkbob46g5g5k5o5s5w606g39c3b43ds3c03bk";
+let _id = "64ac5347d1fc4a78ac012ed4";
+
+token = null;
+
 export const listCommentElement = document.getElementById("list-comment")
 export const enterNameElement = document.getElementById("enter-name")
 export const enterCommentElement = document.getElementById("enter-comment")
@@ -86,5 +91,3 @@ buttonElement.addEventListener("click", () => {
 
     addFormElement.classList.remove('hidden') // убрать невидимость
 });
-
-console.log("It works!");
