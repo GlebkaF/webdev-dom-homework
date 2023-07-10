@@ -1,5 +1,5 @@
-import { getComments, postComment, getUsers, postRegistration, postLogIn, setToken} from "./api.js";
-import { renderAddingList, renderName } from "./render.js"
+import { getComments, postComment, getUsers, postRegistration, postLogIn, setToken} from "./modules/api.js";
+import { renderAddingList, renderName } from "./modules/render.js"
 
 
     const buttonElement = document.getElementById('add-button');

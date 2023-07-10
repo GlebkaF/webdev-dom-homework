@@ -1,4 +1,4 @@
-import { renderCommentList } from "./render.js";
+import { renderCommentList } from "./modules/render.js";
 
 
 const nameElement = document.getElementById('name');
