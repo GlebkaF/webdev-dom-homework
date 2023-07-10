@@ -230,7 +230,7 @@ commentUser.addEventListener('input', checkFields);
 
 const renderLoadingAllComments = () => {
   if (isLoadingAllComments === true) {
-    userComments.innerHTML = `<li class="comment">Идет загрузка комментариев...</li>`
+    userComments.innerHTML = `<li class="comment">Пожалуйста подождите, комментарии загружаются...</li>`
   }
   else {
     renderUserComments;
@@ -241,7 +241,7 @@ apiGet();
 renderLoadingAllComments();
 
 const renderLoadingLastComment = () => {
-  const html = isLoading === true ? `<li class="comment">Идет загрузка комментария...</li>` : ``;
+  const html = isLoading === true ? `<li class="comment">Комментарий добавляется...</li>` : ``;
   userComments.insertAdjacentHTML("beforeend", html);
 };
 
