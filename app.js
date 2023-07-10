@@ -18,7 +18,15 @@ let commentsList = []
 let isLoadingToComments = false
 let isLoadingToStartApp = true
 
-
+// Функция повторного отправки, если статус 500
+function tryPostAgain(error) {
+    if (error.message === 'Сервер упал') {
+        addComment()
+    //В ином случае алертим сообщение об ошибке
+    } else {
+        alert(error)
+    }
+}
 // Функция для имитации запросов в API
 function delay(interval = 300) {
     return new Promise((resolve) => {
@@ -82,7 +90,15 @@ function getCommentList() {
             isLoadingToStartApp = false
             enableLoadingToStartApp(isLoadingToStartApp)
             renderCommentList()
-    });
+    })
+    .catch(() => {
+        //Если что-то пойдет не так при получении списка комментариев
+        if (navigator.onLine) {
+            alert('Что-то пошло не так')
+        } else {
+            alert('Похоже у Вас пропал интернет =(')
+        }
+    }) 
 
 }
 
@@ -100,11 +116,42 @@ function addComment() {
             name: secureReplace(nameInput.value),
             date: new Date(),
             likes: 0,
-            isLiked: false
+            isLiked: false,
+            forceError: true
         })
+    })
+    .then((response) => {
+        //если статус 201 просто продолжаем цепочку промисов
+        if (response.status === 201) {
+            return response.json()
+        // в ином случае проверяем код статуса и по разному обрабатываем
+        } else {
+            //просто попробовать на практике switch/case
+            switch (response.status) {
+                case 400: throw new Error('Имя и комментарий не могут быть меньше 3-х символов')
+                case 500: throw new Error('Сервер упал')
+                default: throw new Error('Что-то пошло не так, попробуйте позже')
+            }
+        }
+        
     })
     .then(() => getCommentList())
     .then(() => {
+        isLoadingToComments = false
+        enableLoadingToNewComment(isLoadingToComments)
+        addButton.classList.remove('add-form-button_disable')
+        nameInput.value = ''
+        commentInput.value = ''
+    })
+    .catch((error) => {
+        // проверяем находимся ли мы в сети (обработка выключенного интернета)
+        if (navigator.onLine) {
+            //если был код ошибки 500 т.е выключенного сервера (повторяем запрос)
+            tryPostAgain(error)
+        // алертим сообщение что интернет отсутствует
+        } else {
+            alert('похоже у Вас пропал интернет =(')
+        }        
         isLoadingToComments = false
         enableLoadingToNewComment(isLoadingToComments)
         addButton.classList.remove('add-form-button_disable')
@@ -269,8 +316,6 @@ commentInput.addEventListener('blur', () => {
 addButton.addEventListener('click', () => {
     addComment()
     renderCommentList()
-    nameInput.value = ''
-    commentInput.value = ''
     addButton.classList.add('add-form-button_disable')
     addButton.blur()
 })
