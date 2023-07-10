@@ -215,14 +215,14 @@
         name: nameInputElement.value,
       }),
     }).then((response) => {
-      response.json();
+      return response.json();
     })
     .then((responseData) => {
       console.log(responseData);
 
       return fetchGet();
     })
-    .then((data) => {
+    .then(() => {
       formElement.style.display = 'block';
       loaderCommentElement.style.display = 'none';
     });
