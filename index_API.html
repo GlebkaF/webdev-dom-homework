@@ -9,7 +9,9 @@
 
 <body>
     <div class="container">
+        <div class="loader">Пожалуйста подождите, лента загружается... </div>
         <ul class="comments">
+
             <!-- Рендеринг в JS -->
             <!-- <li class="comment">
         <div class="comment-header">
@@ -55,12 +57,17 @@
                 <button class="add-form-button" disabled>Написать</button>
             </div>
         </div>
+        <div class="comment-loader add-form disableLoader">Комментарий добавляется...</div>
     </div>
 </body>
 
 <style>
     .error {
         background-color: red;
+    }
+
+    .disableLoader {
+        display: none;
     }
 </style>
 
@@ -72,13 +79,19 @@
     const textElement = document.querySelector('.add-form-text');
     const commentsElement = document.querySelector('.comments');
     const likesElements = document.querySelectorAll(".like-button");
-    let comments = [];
+    const addFormElement = document.querySelector('.add-form');
+    const hederLoadElement = document.querySelector('.loader');
+    
 
-// Функция преобразования даты, получаемой из API
+    let comments = [];
+    const serverAdress = "https://wedev-api.sky.pro/api/v1/aleks-karmanov/comments";
+    let i = 0;
+
+    // Функция преобразования даты, получаемой из API
     const dataFormat = (date) => {
         let comHours = (new Date(date)).getHours();
         let comMinuts = (new Date(date)).getMinutes();
-       
+
         if (comHours < 10) { // если минут будет меньше 10,
             comHours = "0" + comHours; // то перед ними поставим 0
         }
@@ -93,32 +106,46 @@
         return (outputDate);
     };
 
-    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/aleks-karmanov/comments", {
-        method: "GET",
-    });
 
-    // ${(new Date (comment.date)).toTimeString()
-    fetchPromise.then((response) => {
-        // Запускаем, преобразовываем сырые данные от API в JSON-формат
-        const jsonPromise = response.json().then((responseData) => {
-            // Преобразование данных из формата api в формат приложения
-            const appComments = responseData.comments.map((comment) => {
-                
-                return {
-                    // Достаем имя автора
-                    name: comment.author.name,
-                    // Преобразовываем дату-строку в Date
-                    time: dataFormat(comment.date),
-                    text: comment.text,
-                    likes: comment.likes,
-                    // Заглушка для признака лайкнутости
-                    icon: false,
-                };
+
+    // Функция GET для API
+
+    const fetchAndRenderComments = () => {
+
+
+        const fetchPromise = fetch(serverAdress, {
+            method: "GET",
+        })
+            .then((response) => {
+
+                return response.json();
+            })
+
+            .then((responseData) => {
+                // Преобразование данных из формата api в формат приложения
+
+                const appComments = responseData.comments.map((comment) => {
+
+                    return {
+                        // Достаем имя автора
+                        name: comment.author.name,
+                        // Преобразовываем дату-строку в Date
+                        time: dataFormat(comment.date),
+                        text: comment.text,
+                        likes: comment.likes,
+                        // Заглушка для признака лайкнутости
+                        icon: false,
+                    };
+                });
+                comments = appComments;
+                hederLoadElement.classList.add('disableLoader');
+                renderComments();
+
             });
-            comments = appComments;
-            renderComments();
-        });
-    });
+    };
+
+
+    fetchAndRenderComments();
 
 
     // Функция очистки вводимых данных от спец символов
@@ -251,77 +278,39 @@
 
     // Форма добавления нового комментария в ленту
     buttonElement.addEventListener('click', () => {
-        // // Проверка на заполнение данных формы
-        // nameElement.classList.remove('error');
-        // textElement.classList.remove('error');
-        // if (nameElement.value === '') {
-        //     nameElement.classList.add('error');
-        //     return;
-        // }
-        // if (textElement.value === '') {
-        //     textElement.classList.add('error');
-        //     return;
-        // }
-        // Добавление комментария в ленту
+        const commentLoadElement = document.querySelector('.comment-loader');
+        addFormElement.classList.add('disableLoader');
+        commentLoadElement.classList.remove('disableLoader');
 
-        // // Определение даты и времени
-        // const commentData = new Date;
-        // let comHours = commentData.getHours();
-        // let comMinuts = commentData.getMinutes();
-
-        // if (comHours < 10) { // если минут будет меньше 10,
-        //     comHours = "0" + comHours; // то перед ними поставим 0
-        // }
-
-        // if (comMinuts < 10) { // если минут будет меньше 10,
-        //     comMinuts = "0" + comMinuts; // то перед ними поставим 0
-        // }
-        // const resultDate = `${commentData.toLocaleDateString()}  ${comHours}:${comMinuts}`;
-
-        // comments.push({
-        //     name: sanitizeHtml(nameElement.value),
-        //     time: resultDate,
-        //     text: sanitizeHtml(textElement.value),
-        //     likes: 0,
-        //     icon: false,
-        //     isEdit: false,
-        // });
-        // likeElementfunction();
-        // renderComments();
-        // answerFunction();
-
-        const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/aleks-karmanov/comments", {
+        const fetchPromise = fetch(serverAdress, {
             method: "POST",
             body: JSON.stringify({
                 text: textElement.value,
                 name: nameElement.value
             })
-
-        }).then((response) => {
-            fetch("https://wedev-api.sky.pro/api/v1/aleks-karmanov/comments", {
-                method: "GET",
+        })
+        .then((data) => {
+                
+                commentLoadElement.classList.add('disableLoader');
+               return data;
+               
+           })
+           .then((data) => {
+                
+                addFormElement.classList.remove('disableLoader');
+                return data;
+           })
+            .then((data) => {
+             
+                  fetchAndRenderComments();
+                 return data;
             })
-                .then((response) => {
-                    // Запускаем, преобразовываем сырые данные от API в JSON-формат
-                    const jsonPromise = response.json().then((responseData) => {
-                        // Преобразование данных из формата api в формат приложения
-                        const appComments = responseData.comments.map((comment) => {
-                            return {
-                                // Достаем имя автора
-                                name: comment.author.name,
-                                // Преобразовываем дату-строку в Date
-                                time: dataFormat(comment.date),
-                                text: comment.text,
-                                likes: comment.likes,
-                                // Заглушка для признака лайкнутости
-                                icon: false,
-                            };
-                        });
-                        comments = appComments;
-                        renderComments();
-                    });
-                });
-        });
+            
+            
+            
+        
+
+
 
         // Очистка формы
         nameElement.value = "";
