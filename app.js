@@ -139,7 +139,7 @@ function addComment() {
     .then(() => {
         isLoadingToComments = false
         enableLoadingToNewComment(isLoadingToComments)
-        addButton.classList.remove('add-form-button_disable')
+        addButton.classList.add('add-form-button_disable')
         nameInput.value = ''
         commentInput.value = ''
     })
