@@ -1,5 +1,7 @@
 "use strict";
 
+import renderUsers from "./render.js";
+
 const writeButtonEl = document.getElementById("write-button");
 const nameInputEl = document.getElementById("name-input");
 const commentTextEl = document.getElementById("comment-text");
@@ -9,7 +11,7 @@ const deleteButtonEl = document.getElementById("delete-button");
 let users = [];
 //Получить список комментариев
 
-const getFetchPromise = () => {
+const getFetchPromise = (object) => {
    return fetch("https://wedev-api.sky.pro/api/v1/NastyaTsyf/comments", {
   method: "GET"
   })
@@ -30,11 +32,9 @@ const getFetchPromise = () => {
           isLiked: comment.isLiked,
         }
       })
-      users = appComments;
-      console.log(users);
-      renderUsers();
-      initLikeButton();
-      replyТoСomment();
+      object = appComments;
+      console.log(object);
+      renderUsers(listEl, getListUsers, object, commentTextEl);
     })
     .catch((error) => {
       if (error.message === "Сервер сломался") {
@@ -49,17 +49,17 @@ const getFetchPromise = () => {
     });
 }
 
-const addComment = () => {
+const addComment = (nameText, commentText) => {
   return fetch("https://wedev-api.sky.pro/api/v1/NastyaTsyf/comments", {
     method: "POST",
     body: JSON.stringify({
-      name: nameInputEl.value
+      name: nameText.value
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;"),
       date: new Date(),
-      text: commentTextEl.value
+      text: commentText.value
       .replaceAll("&", "&amp;")
       .replaceAll("<", "&lt;")
       .replaceAll(">", "&gt;")
@@ -70,36 +70,34 @@ const addComment = () => {
   })  
 }
 
-const renderUsers = () =>{
-  const usersHtml = users.map((user, index) =>{
-    return  `<li class="comment" data-comment="${user.text}" data-name="${user.name}">
-    <div class="comment-header">
-      <div>${user.name}</div>
-      <div>${user.date}</div>
+const getListUsers = (obj, index) => {
+  {return  `<li class="comment" data-comment="${obj.text}" data-name="${obj.name}">
+  <div class="comment-header">
+    <div>${obj.name}</div>
+    <div>${obj.date}</div>
+  </div>
+  <div class="comment-body">
+    <div class="comment-text">
+      ${obj.text}
     </div>
-    <div class="comment-body">
-      <div class="comment-text">
-        ${user.text}
-      </div>
+  </div>
+  <div class="comment-footer">
+    <div class="likes">
+      <span class="likes-counter">${obj.likes}</span>
+      <button class="like-button ${obj.isLiked ? '-active-like' : ''}" data-index="${index}"></button>
     </div>
-    <div class="comment-footer">
-      <div class="likes">
-        <span class="likes-counter">${user.likes}</span>
-        <button class="like-button ${user.isLiked ? '-active-like' : ''}" data-index="${index}"></button>
-      </div>
-    </div>
-    </li>`
-  }).join('');
-  listEl.innerHTML = usersHtml;
+  </div>
+  </li>`
 };
-renderUsers();
+};
+//renderUsers(listEl, getListUsers, users);
 
 //loader
 
 const showDownload = () => {
   listEl.innerHTML = `<h3 style="font-family: Helvetica; color: #ffffff;">Пожалуйста подождите. Загружаю комментарии...</h3>`;
   deleteButtonEl.style.display = 'none';
-  return getFetchPromise()
+  return getFetchPromise(users)
     .then(() => {
       deleteButtonEl.style.display = 'flex';
     });
@@ -131,8 +129,6 @@ const getCommentDate = (date) => {
   let commentDate = day + '.' + month + '.' + year + ' ' + hour + ':' + minute;
   return commentDate;
 }
-
-
 
 document.addEventListener("keyup", (e) => {
     if (e.code === "Enter") {
@@ -175,7 +171,7 @@ writeButtonEl.addEventListener("click", () => {
         commentTextEl.classList.add("error");
         return;
       } else {
-        addComment()
+        addComment(nameInputEl, commentTextEl)
           .then((response) => {
             if (response.status === 500) {
               throw new Error("Сервер сломался");
@@ -188,7 +184,7 @@ writeButtonEl.addEventListener("click", () => {
             }
           })
           .then(() => {
-            return getFetchPromise();
+            return getFetchPromise(users);
           })
           .then(() => {
             document.getElementById("add").classList.remove('hidden');
@@ -225,50 +221,7 @@ writeButtonEl.addEventListener("click", () => {
 deleteButtonEl.addEventListener("click", () => {
    users.splice(-1, 1);
     renderUsers();
-    initLikeButton();
-    replyТoСomment();
 });
-
-
-// кнопка лайка
-const initLikeButton = () =>{
-  const likeButtonElements = document.querySelectorAll(".like-button");
-  for (const likeButtonElement of likeButtonElements){
-    likeButtonElement.addEventListener("click", (event) => {
-      event.stopPropagation();
-      const index = likeButtonElement.dataset.index;
-      if (users[index].isLiked === false) {
-        users[index].likes = users[index].likes + 1;
-        users[index].isLiked = true;
-      } else {
-        users[index].likes = users[index].likes - 1;
-        users[index].isLiked = false;
-      }
-      renderUsers();
-      initLikeButton();
-      replyТoСomment();
-      }
-    )
-  }
-}
-initLikeButton();
-
-//Ответы на комментарии
-
-const replyТoСomment = () =>{
-  const listElements = document.querySelectorAll(".comment");
-  for (const listElement of listElements){
-    listElement.addEventListener("click", () => {
-      const commentText = listElement.dataset.comment;
-      const userName = listElement.dataset.name;
-      commentTextEl.value = ">" + " "  + commentText + " " + userName;
-      renderUsers();
-      initLikeButton();
-      replyТoСomment();
-    });
-  }
-}
-replyТoСomment();
 
 console.log("It works!");
 
