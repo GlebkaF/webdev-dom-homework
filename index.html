@@ -8,11 +8,11 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="commentsId">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
+            <div>12.02.2022 12:18</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -29,7 +29,7 @@
         <li class="comment">
           <div class="comment-header">
             <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
+            <div>13.02.2022 19:22</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -37,6 +37,7 @@
             </div>
           </div>
           <div class="comment-footer">
+
             <div class="likes">
               <span class="likes-counter">75</span>
               <button class="like-button -active-like"></button>
@@ -49,23 +50,154 @@
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          id="nameTextId"
         />
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+          id="commentTextId"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="btnId">Написать</button>
         </div>
       </div>
     </div>
   </body>
 
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const {log} = console;
+    // ------------------
+    "use strict"
+    const cardElements = document.getElementById("commentsId");
+    const btnElement = document.getElementById("btnId");
+    const inputName = document.getElementById("nameTextId");
+    const inputText = document.getElementById("commentTextId");
+    const likeElement = document.getElementsByClassName("like-button");
+    // log(cardElements)
+    const commentDellAnimation = () => {
+        const cardElement =  cardElements.children;
+        Array.from(cardElement).forEach(el => {
+            el.classList.remove('comment_animation')
+        })
+    }
+
+    let time = {
+      hour: 'numeric',
+      minute: 'numeric',
+    };
+    let year = {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+    }
+
+
+    const btnErrAdd = () => {
+        btnElement.classList.add("btn-error");
+    }
+
+    const btnErrRemove = () => {
+      btnElement.classList.remove("btn-error");
+    }
+
+    function search () {
+      Array.from(likeElement).forEach((element) => {
+        element.addEventListener('click', () => {
+          const condition = element.className.split(" ")
+          if (condition.includes("-active-like")){
+            element.classList.remove("-active-like");
+            const parent = element.parentElement;
+            const number = parent.firstElementChild;
+            let counter = +(number.innerText);
+            number.innerHTML = counter - 1;
+
+
+          } else {
+            element.classList.add("-active-like")
+            const parent = element.parentElement;
+            const number = parent.firstElementChild;
+            let counter = +(number.innerText);
+            number.innerHTML = counter + 1;
+          }
+
+        })
+      })
+    }
+    search()
+
+    const clickEvent = () => {
+        commentDellAnimation();
+
+        const date = new Date()
+        inputText.classList.remove("error");
+        inputName.classList.remove("error");
+
+        if (inputText.value.length === 0 && inputName.value.length === 0) {
+            inputName.classList.add("error");
+            inputText.classList.add("error");
+            btnErrRemove()
+            btnErrAdd()
+            return;
+        }
+
+        if (inputName.value.length === 0) {
+            inputName.classList.add("error");
+            btnErrRemove()
+            btnErrAdd()
+            return;
+        }
+
+        if (inputText.value.length === 0) {
+            inputText.classList.add("error");
+            btnErrRemove()
+            btnErrAdd()
+            return;
+        }
+        const textHtml = `<li class="comment comment_animation">
+      <div class="comment-header">
+        <div>${inputName.value}</div>
+        <div>${date.toLocaleString("ru", year) + " " + date.toLocaleString('ru', time)}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">
+          ${inputText.value}
+        </div>
+      </div>
+      <div class="comment-footer comment-footer_new">
+      <button class="add-form-button del">Удалить</button>
+        <div class="likes">
+          <span class="likes-counter">0</span>
+          <button class="like-button"></button>
+        </div>
+      </div>
+    </li>`
+        cardElements.innerHTML += textHtml;
+        document.getElementById("nameTextId").value = '';
+        document.getElementById("commentTextId").value = '';
+        const btnFormElement = document.querySelectorAll(".del");
+        btnFormElement.forEach((element) => {
+            element.addEventListener('click', () => {
+                element.parentElement.parentElement.remove();
+        })
+
+        })
+        btnErrRemove()
+        search()
+    }
+
+
+
+
+
+    document.addEventListener('keyup', (key) => {
+        if(key.code === 'Enter'){
+            clickEvent()
+        }
+    })
+
+    btnElement.addEventListener( 'click', () => clickEvent())
+    log("It works!");
   </script>
 </html>
