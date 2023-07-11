@@ -113,18 +113,30 @@ function renderComments() {
 // Получение списка комментариев из API
 async function getCommentsFromAPI() {
   try {
+    // Display loading message
+    const commentsList = document.querySelector(".comments");
+    commentsList.innerHTML = "Загрузка комментариев...";
+
     const response = await fetch("https://wedev-api.sky.pro/api/v1/Maksim-Bersenev/comments");
     const data = await response.json();
     commentsData = data.comments;
     renderComments();
   } catch (error) {
     console.error(error);
+    // Display error message
+    const commentsList = document.querySelector(".comments");
+    commentsList.innerHTML = "Ошибка при загрузке комментариев.";
   }
 }
 
 // Добавление комментария через API
 async function addCommentViaAPI(comment) {
   try {
+    // Display loading message
+    const addButton = document.querySelector(".add-form-button");
+    addButton.disabled = true;
+    addButton.textContent = "Комментарий добавляется...";
+
     const resp = await fetch("https://wedev-api.sky.pro/api/v1/Maksim-Bersenev/comments", {
       method: 'POST',
       body: JSON.stringify(comment),
@@ -141,7 +153,10 @@ async function addCommentViaAPI(comment) {
     }
   } catch (error) {
     console.error(error);
-    throw new Error();
+    // Display error message or handle error
+  } finally {
+    addButton.disabled = false;
+    addButton.textContent = "Добавить комментарий";
   }
 }
 
