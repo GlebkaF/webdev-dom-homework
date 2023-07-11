@@ -49,10 +49,10 @@
 
 
   const renderComments = () => {
-  const commentsListHtml = comments
-    .map((comment, index) => {
-      const likeButtonClass = comment.like ? 'like-button liked' : 'like-button';
-      return `<li class="comment">
+    const commentsListHtml = comments
+      .map((comment, index) => {
+        const likeButtonClass = comment.like ? 'like-button liked' : 'like-button';
+        return `<li class="comment">
         <div class="comment-header">
           <div class="commentator-name" data-name='${comment.name}'>${comment.name}</div>
           <div>${comment.date}</div>
@@ -67,34 +67,35 @@
           </div>
         </div>
       </li>`;
-    })
-    .join('');
-  commentsList.innerHTML = commentsListHtml;
+      })
+      .join('');
+    commentsList.innerHTML = commentsListHtml;
 
-  const commentElements = document.querySelectorAll('.comment');
+    const commentElements = document.querySelectorAll('.comment');
 
-for (const commentElement of commentElements) {
-  const commentTextElement = commentElement.querySelector('.comment-text');
-  const commentatorNameElement = commentElement.querySelector('.commentator-name');
+    for (const commentElement of commentElements) {
+      const commentTextElement = commentElement.querySelector('.comment-text');
+      const commentatorNameElement = commentElement.querySelector('.commentator-name');
 
-  commentTextElement.addEventListener('click', () => {
-    const comment = commentTextElement.dataset.text;
-    const name = commentatorNameElement.dataset.name;
+      commentTextElement.addEventListener('click', () => {
+        const comment = commentTextElement.dataset.text;
+        const name = commentatorNameElement.dataset.name;
 
-    commentInput.value = `${comment}\n> ${name}`;
-  });
-};
+        commentInput.value = `${comment}\n> ${name}`;
+      });
+    };
 
 
-  putLike();
-};
+    putLike();
+  };
 
 
   const putLike = () => {
     const likeButtonElements = document.querySelectorAll('.like-button');
 
     for (const likeButtonElement of likeButtonElements) {
-      likeButtonElement.addEventListener('click', () => {
+      likeButtonElement.addEventListener('click', (event) => {
+        event.stopPropagation();
         const index = likeButtonElement.dataset.index;
 
         if (comments[index].like === true) {
@@ -114,6 +115,7 @@ for (const commentElement of commentElements) {
 
 
   const addComment = () => {
+
     const name = nameInput.value;
     const comment = commentInput.value;
 
@@ -132,10 +134,10 @@ for (const commentElement of commentElements) {
 
     comments.push({
       name: nameInput.value
-      .replaceAll('<', '&lt').replaceAll('>', '&gt'),
+        .replaceAll('<', '&lt').replaceAll('>', '&gt'),
       date: formattedDate,
       comment: commentInput.value
-      .replaceAll('<', '&lt').replaceAll('>', '&gt'),
+        .replaceAll('<', '&lt').replaceAll('>', '&gt'),
       likes: 0,
       like: false,
     });
