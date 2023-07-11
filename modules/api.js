@@ -1,6 +1,6 @@
-  import { addErrors } from "./modules/helper.js";
-import { renderCommentList } from "./modules/render.js";
-import {formatDateToRu, formatDateToUs} from "./modules/lib/formatDate/formatDate.js"
+  import { addErrors } from "./helper.js";
+import { renderCommentList } from "./render.js";
+import {formatDateToRu, formatDateToUs, } from "./lib/formatDate/formatDate.js"
 import { format } from "date-fns"
   
   

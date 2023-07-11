@@ -21,4 +21,7 @@ export const formatDateToRu = (startDate) => {
     
       return `${month}.${day}.${year} ${hours}:${minutes}`;
     };
+
+    
+  
   

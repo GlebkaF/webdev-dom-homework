@@ -1,5 +1,5 @@
 
-import { addLikeButton, replyComment } from "./modules/helper.js";
+import { addLikeButton, replyComment } from "./helper.js";
 
   const listElement = document.getElementById('list'); 
   // const addingAComment = document.getElementById('adding');
