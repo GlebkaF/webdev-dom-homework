@@ -4,6 +4,8 @@ const buttonElement = document.getElementById("add-button");
 const commentElement = document.getElementById("list");
 const nameInputElement = document.getElementById("name-input");
 const textInputElement = document.getElementById("text-input");
+const container = document.querySelector(".container");
+const addForm = document.querySelector(".add-form");
 
 // Подключаем приложение комментариев к API
 // fetch - запускает выполнение запроса к api
@@ -62,7 +64,12 @@ let comments = [
 
 function appComment(userName, userComment, userData) {
 
-  commentElement.textContent = "Добавляем комментарий..."
+  addForm.classList.add("hidden");
+
+  let elem = document.createElement("p"); // Добавляем созданный элемент
+  elem.textContent = "Пожалуйста подождите, комментарий добавляется..."; // Добавляем текст в созданный элемент
+  elem.classList.add("commentElem");
+  container.appendChild(elem);
 
   const url = 'https://wedev-api.sky.pro/api/v1/nadya-terleeva/comments';
   fetch(url, {
@@ -72,22 +79,29 @@ function appComment(userName, userComment, userData) {
       text: userComment,
       data: userData
     }),
+  })   
+   .then((response) => {
+    return response.json();
   })
-    .then((response) => {
-      return response.json();
-    })
     .then(() => {
       fetchPromise();
+    })
+    .then(() => {
+      return elem.parentNode.removeChild(elem);
+    })
+    .then(() => {
+      return addForm.classList.remove("hidden");
     })
     .then(() => {
       // обработка успешного выполнения запроса
       nameInputElement.value = '';
       textInputElement.value = '';
-      renderComments();
-    })
+    });
+  renderComments();
 }
 
 buttonElement.addEventListener("click", () => {
+
   nameInputElement.classList.remove("error")
   if (nameInputElement.value === "") {
     nameInputElement.classList.add("error");
@@ -107,23 +121,34 @@ buttonElement.addEventListener("click", () => {
   appComment(userName, userComment, userData);
 });
 
+const delay = (ms) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+};
+
 const initLikeButtonListeners = () => {
   for (const likeButton of document.querySelectorAll(".like-button")) {
     likeButton.addEventListener("click", (event) => {
+      console.log(likeButton);
       event.stopPropagation();
       const index = likeButton.dataset.index;
       const comment = comments[index];
-      if (comment.likes) {
+
+      delay(2000).then(() => {
+       if (comment.likes) {
         comment.likes = false;
         comment.numberLikes--;
-      } else {
-        comment.likes = true;
-        comment.numberLikes++;
+     } else { 
+      comment.likes = true;
+      comment.numberLikes++;
       };
-      renderComments();
+        renderComments();
+    })
     });
   };
 };
+
 
 const renderComments = () => {
   if (comments.length === 0) {
@@ -135,21 +160,21 @@ const renderComments = () => {
     const commentTextQuotes = comment.comment.replaceAll("QUOTE_BEGIN", "<div class='quote'>").replaceAll("QUOTE_END", "</div>");
     const commentNameSafe = comment.name.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     return `
-    <li class="comment" data-index=${index}>
+    <li class="comment" id="comment-add" data-index=${index}>
       <div class="comment-header">
-          <div>${commentNameSafe}</div>
-          <div>${comment.data}</div>
+        <div>${commentNameSafe}</div>
+        <div>${comment.data}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text" >${commentTextQuotes}</div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter" data-index=${index}>${comment.numberLikes}</span>
+          <button class="like-button${comment.likes ? " -active-like" : ""}" data-index=${index}></button>
         </div>
-        <div class="comment-body">
-          <div class="comment-text" >${commentTextQuotes}</div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter" data-index=${index}>${comment.numberLikes}</span>
-            <button class="like-button${comment.likes ? " -active-like" : ""}" data-index=${index}></button>
-          </div>
-        </div>
-      </li>`
+      </div>
+    </li>`
   }).join("");
 
   commentElement.innerHTML = commentsHtml;
@@ -166,3 +191,51 @@ const renderComments = () => {
 
 renderComments();
 fetchPromise();
+
+// const initLikeButtonListeners = () => {
+//   for (const likeButton of document.querySelectorAll(".like-button")) {
+//     likeButton.addEventListener("click", (event) => {
+//       console.log(likeButton);
+//       event.stopPropagation();
+//       const index = likeButton.dataset.index;
+//       const comment = comments[index];
+
+//        if (comment.likes) {
+//        delay().then(() => {
+//         likeButton.classList.add('-loading-like');
+//         return delay(1000);
+//       })
+//       .then(() => {
+//         likeButton.classList.remove('-loading-like');
+//         return delay(0);
+//       })
+//       .then (() => {
+//         comment.likes = false;
+//         return delay(0);
+//       })
+//       .then (() => {
+//         comment.numberLikes--;
+//         return delay(0);
+//       })
+//      } else { 
+//       delay().then(() => {
+//       likeButton.classList.add('-loading-like');
+//       return delay(0);
+//     })
+//     .then(() => {
+//       likeButton.classList.remove('-loading-like');
+//       return delay(0);
+//     })
+//     .then (() => {
+//       comment.likes = true;
+//       return delay(0);
+//     })
+//     .then (() => {
+//       comment.numberLikes++;
+//       return delay(0);
+//     })
+//       };
+//         renderComments();
+//     });
+//   };
+// };
