@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="commentsListId">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -44,20 +44,22 @@
           </div>
         </li>
       </ul>
-      <div class="add-form">
+      <div class="add-form" id="add-formListId">
         <input
+        id="commentName"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
+        id="commentText"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+        <div class="add-form-row" id="add-form-rowListId">
+          <button class="add-form-button" id="add-form-buttonListId">Написать</button>
         </div>
       </div>
     </div>
@@ -65,7 +67,53 @@
 
   <script>
     "use strict";
-    // Код писать здесь
+    const list = document.getElementById("commentsListId")
+    const listButton = document.getElementById(`add-form-buttonListId`)
+    const commentText = document.getElementById(`commentText`)
+    const commentName = document.getElementById(`commentName`)
+    let currentDate = new Date();
+    
+    console.log(currentDate);
+
+
+
+    listButton.addEventListener(`click`, ()=>{
+      commentName.classList.remove('error');
+      commentText.classList.remove('error');
+      const oldList = list.innerHTML 
+    if (commentName.value ===""){
+    
+    commentName.classList.add('error');
+    
+    return;
+  }
+  else if(commentText.value ===""){
+    commentText.classList.add('error');
+    return;
+  }
+
+    list.innerHTML=oldList+`<li class="comment">
+          <div class="comment-header">
+            <div>${commentName.value}</div>
+            <div>${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString()}</div>
+            
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${commentText.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button -active-like"></button>
+            </div>
+          </div>
+        </li>`
+    commentText.value=``
+    commentName.value=``  
+      })
+     // Код писать здесь
     console.log("It works!");
   </script>
 </html>
