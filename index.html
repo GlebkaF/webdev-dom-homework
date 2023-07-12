@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="listComment">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -46,26 +46,161 @@
       </ul>
       <div class="add-form">
         <input
+          id = "inputGetName"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
+          id = "inputGetComment"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id = "buttonDeleteLast" class="add-form-button">Удалить</button>
+          <button id = "buttonSend" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
-
+  <style>
+    .error {
+        background-color: rgb(83, 83, 83);
+    }
+  </style>
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+
+/* ------------------------------------------------------------------
+*
+                            DATE
+*
+__________________________________________________________________ */
+
+    let myDate = new Date();
+    let year = myDate.getFullYear() % 100;
+    if (year < 10) year = '0' + year;
+
+    let fullDate = myDate.getDate() + '.' + myDate.getMonth() + '.' + year + ' ' + myDate.getHours() + ':' + myDate.getMinutes();
+    
+/* ------------------------------------------------------------------
+*
+                            getElementById
+*
+__________________________________________________________________ */
+
+    const sendButton = document.getElementById("buttonSend");
+    const deleteButton = document.getElementById("buttonDeleteLast");
+    const getListComment = document.getElementById("listComment");
+    const getName = document.getElementById("inputGetName");
+    const getComment = document.getElementById("inputGetComment");
+
+/* ------------------------------------------------------------------
+*
+                            check input => grey
+*
+__________________________________________________________________ */
+
+    sendButton.classList.add("error")
+
+    const res = addEventListener("input", () => {
+      if (getName.value != '' && getComment.value != '') {
+          return sendButton.classList.remove("error");
+      } else {
+          return sendButton.classList.add("error"); 
+      }
+    })
+
+    getComment.res;
+    getName.res;
+
+/* ------------------------------------------------------------------
+*
+                            IF
+*
+__________________________________________________________________ */
+
+    sendButton.addEventListener("click", () => {
+      
+      if (getName.value != '' && getComment.value != '') {
+        const getOldListComment = getListComment.innerHTML;
+        getListComment.innerHTML = getOldListComment + 
+        `      
+          <li class="comment">
+            <div class="comment-header">
+              <div>${getName.value}</div>
+              <div>${fullDate}</div>
+            </div>
+            <div class="comment-body">
+              <div class="comment-text">
+                ${getComment.value}
+              </div>
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">0</span>
+                <button class="like-button"></button>
+              </div>
+            </div>
+          </li>
+        `
+      }
+    });
+
+/* ------------------------------------------------------------------
+*
+                            Enter
+*
+__________________________________________________________________ */
+
+        const input = document.querySelector('input');
+
+        getName.addEventListener('keyup', logKey);
+        getComment.addEventListener('keyup', logKey);
+
+        function logKey(e) {
+          if (`${e.code}` === 'Enter'){
+            const getOldListComment = getListComment.innerHTML;
+            getListComment.innerHTML = getOldListComment + 
+            `      
+              <li class="comment">
+                <div class="comment-header">
+                  <div>${getName.value}</div>
+                  <div>${fullDate}</div>
+                </div>
+                <div class="comment-body">
+                  <div class="comment-text">
+                    ${getComment.value}
+                  </div>
+                </div>
+                <div class="comment-footer">
+                  <div class="likes">
+                    <span class="likes-counter">0</span>
+                    <button class="like-button"></button>
+                  </div>
+                </div>
+              </li>
+            `
+            }
+          }
+
+/* ------------------------------------------------------------------
+*
+                            delete
+*
+__________________________________________________________________ */
+
+    deleteButton.addEventListener("click", () => {
+          
+      const numbers = getListComment.innerHTML.lastIndexOf('<li class="comment">');
+
+      for (i = 0; i < getListComment.innerHTML.length; i++){}
+
+      const result = i - (i - numbers);
+      const deleteLastComment = getListComment.innerHTML.slice(0, result);
+      getListComment.innerHTML = deleteLastComment;
+    });
+        
   </script>
 </html>
