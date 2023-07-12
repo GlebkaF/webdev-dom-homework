@@ -59,6 +59,15 @@
 <script>
   "use strict";
   // Код писать здесь
+  let date = new Date();
+  let year = date.getFullYear();
+  let month = date.getMonth();
+  let day = date.getDay();
+
+  let hour = date.getHours();
+  let minutes = date.getMinutes()
+  let currentDate = (day + '.' + month + '.' + year + ' ' + hour + ':' + minutes)
+
   const buttonElement = document.getElementById("add-button");
   const listElement = document.getElementById("list");
   const nameInputElement = document.getElementById("name-input");
@@ -74,13 +83,13 @@
       commentInputElement.classList.add('error');
       return;
     }
-  
+
     const oldListElement = listElement.innerHTML;
-  listElement.innerHTML = oldListElement +
-    `<li class="comment">
+    listElement.innerHTML = oldListElement +
+      `<li class="comment">
         <div class="comment-header">
           <div>${nameInputElement.value}</div>
-          <div>13.02.22 19:22</div>
+          <div>${currentDate}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
@@ -93,7 +102,7 @@
             <button class="like-button -active-like"></button>
           </div>
         </div>
-      </li>`  
+      </li>`
   })
 </script>
 
