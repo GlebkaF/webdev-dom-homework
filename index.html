@@ -67,7 +67,7 @@
   <style>
 
     .error {
-      background-color: rgb(211, 89, 89);
+      background: linear-gradient(to right, rgb(189, 91, 91), rgb(229, 20, 55));
     }
 
   </style>
@@ -80,19 +80,22 @@
     const nameInputElement = document.getElementById("name-input");
     const commentInputElement = document.getElementById("comment-input");
 
-    // let commentDate = new Date();
-    //   let currentDate = currentDate.getDate() + " " + currentDate.getMonth() + " " + currentDate.getFullYear();
-    //   let hour = myDate.getHours();
-    //   let minute = myDate.getMinutes();
-    //   let second = myDate.getSeconds();
-    //     if (minute < 10) {
-    //       minute = "0" + minute;
-    //     }
-    //     let currentTime = hour + ":" + minute;
+    const date = function () {
+    const months = ["01", "02", "03", "04", "05", "06",
+    "07", "08", "09", "10", "11", "12"];
+    let commentDate = new Date();
+      let currentDate = commentDate.getDate() + "." + months[commentDate.getMonth()] + "." + commentDate.getFullYear();
+      let hour = commentDate.getHours();
+      let minute = commentDate.getMinutes();
+      let second = commentDate.getSeconds();
+        if (minute < 10) {
+          minute = "0" + minute;
+        }
+        let currentTime = hour + ":" + minute;
 
-    //     let fullDate = `${currentDate} ${currentTime}`;
-    
-    // fullDate = document.getElementById("current-date");
+        let fullDate = `${currentDate} ${currentTime}`;
+        return fullDate
+    }
 
     buttonElement.addEventListener("click", () => {
       nameInputElement.classList.remove("error");
@@ -109,7 +112,7 @@
 
         <div class="comment-header">
             <div>${nameInputElement.value}</div>
-            <div></div>
+            <div>${date()}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
