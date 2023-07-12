@@ -89,11 +89,11 @@
               <div>${element.date}</div>
             </div>
             <div class="comment-body">
-              <div class="comment-text">
-                ${element.comment
+              <div class="comment-text"> QUOTE_BEGIN
+                ${element.comment 
             .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
             .replaceAll("QUOTE_END", "</div>")
-          }
+          } QUOTE_END
               </div>
             </div>
             <div class="comment-footer">
@@ -223,7 +223,7 @@
       return fetchGet();
     })
     .then(() => {
-      formElement.style.display = 'block';
+      formElement.style.display = 'flex';
       loaderCommentElement.style.display = 'none';
     });
 
