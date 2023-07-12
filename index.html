@@ -64,6 +64,13 @@
       </div>
     </div>
   </body>
+  <style>
+
+    .error {
+      background-color: rgb(211, 89, 89);
+    }
+
+  </style>
 
   <script>
     "use strict";
@@ -73,9 +80,29 @@
     const nameInputElement = document.getElementById("name-input");
     const commentInputElement = document.getElementById("comment-input");
 
+    // let commentDate = new Date();
+    //   let currentDate = currentDate.getDate() + " " + currentDate.getMonth() + " " + currentDate.getFullYear();
+    //   let hour = myDate.getHours();
+    //   let minute = myDate.getMinutes();
+    //   let second = myDate.getSeconds();
+    //     if (minute < 10) {
+    //       minute = "0" + minute;
+    //     }
+    //     let currentTime = hour + ":" + minute;
+
+    //     let fullDate = `${currentDate} ${currentTime}`;
     
+    // fullDate = document.getElementById("current-date");
 
     buttonElement.addEventListener("click", () => {
+      nameInputElement.classList.remove("error");
+      commentInputElement.classList.remove("error");
+      if (nameInputElement.value === "" && commentInputElement.value === "") {
+        nameInputElement.classList.add("error");
+        commentInputElement.classList.add("error");
+        return;
+      }
+
       const oldComments = commentsElement.innerHTML;
       commentsElement.innerHTML = oldComments + 
       `<li class="comment">
@@ -97,6 +124,9 @@
           </div>
 
       </li>`;
+
+      nameInputElement.value = "";
+      commentInputElement.value = "";
     });
 
     console.log("It works!");
