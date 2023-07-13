@@ -44,6 +44,10 @@ body {
     padding: 48px;
   }
 
+  .comment_animation{
+    animation: upp 0.7s ease;
+  }
+
   .comment-header {
     font-size: 16px;
     display: flex;
@@ -55,6 +59,10 @@ body {
     justify-content: flex-end;
   }
 
+  .comment-footer_new{
+    justify-content: space-between;
+  }
+
   .comment-body {
     margin-top: 32px;
     margin-bottom: 32px;
@@ -62,6 +70,7 @@ body {
 
   .comment-text {
     font-size: 32px;
+
   }
 
   .likes {
@@ -122,6 +131,7 @@ body {
     justify-content: flex-end;
   }
 
+
   .add-form-button {
     margin-top: 24px;
     font-size: 24px;
@@ -132,6 +142,60 @@ body {
     cursor: pointer;
   }
 
+
   .add-form-button:hover {
     opacity: 0.9;
+  }
+
+  .error {
+    background: linear-gradient(90deg, rgb(183, 46, 62), #7334ea) !important;;
+    color: white;
+  }
+
+  .btn-error {
+    background: #544f4f;
+    color: rgba(0, 0, 0, 0.21);
+    animation: btn-null .6s ease;
+  }
+
+  .del-card{
+    animation: remove 0.6s ease;
+  }
+
+  @keyframes btn-color {
+    0% {
+      background: #544f4f;
+    }
+
+    100% {
+      background: rgba(176, 17, 17, 0.46);
+    }
+  }
+
+  @keyframes btn-null {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(5deg); }
+    50% { transform: rotate(0deg); }
+    75% { transform: rotate(-5deg); }
+    100% { transform: rotate(0deg); }
+  }
+
+  @keyframes upp {
+    0%{
+      transform: rotate(-100deg);
+      opacity: 0;
+    }
+    100%{
+      transform: rotate(0deg);
+      opacity: 100;
+    }
+  }
+  
+  @keyframes remove {
+    0%{
+      opacity: 100;
+    }
+    100%{
+      opacity: 0;
+    }
   }
