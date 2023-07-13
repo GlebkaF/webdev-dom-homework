@@ -60,6 +60,7 @@
         ></textarea>
         <div class="add-form-row">
           <button id="add-button" class="add-form-button">Написать</button>
+          <button id="add-button-delete" class="add-form-button">Удалить последний комментарий</button>
         </div>
       </div>
     </div>
@@ -80,7 +81,8 @@
     "use strict";
 
     const buttonElement = document.getElementById("add-button");
-    const commentsElement = document.getElementById ("comments")
+    const buttonElementDelete = document.getElementById("add-button-delete");
+    const commentsElement = document.getElementById ("comments");
     const nameInputElement = document.getElementById("name-input");
     const commentInputElement = document.getElementById("comment-input");
 
@@ -102,7 +104,7 @@
         return fullDate
     }
 
-    //
+    // Функция клика
     buttonElement.addEventListener("click", () => {
       nameInputElement.classList.remove("error");
       commentInputElement.classList.remove("error");
@@ -117,7 +119,7 @@
     
       const oldComments = commentsElement.innerHTML;
       commentsElement.innerHTML = oldComments + 
-      `<li class="comment">
+      `<li id="last-element" class="comment">
 
         <div class="comment-header">
             <div>${nameInputElement.value}</div>
@@ -139,6 +141,13 @@
 
       nameInputElement.value = "";
       commentInputElement.value = "";
+    });
+
+    // Удалить последний комментарий
+    buttonElementDelete.addEventListener("click", () => {
+      commentsElement.innerHTML.lastIndexOf("li");
+      document.getElementById("last-element").remove();
+      return;
     });
 
     // Добавление комментрия клавишей Enter
