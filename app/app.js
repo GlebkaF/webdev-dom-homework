@@ -1,13 +1,13 @@
-import { getCommentList, postNewComment } from "./modules/api.js"
-import { secureReplace } from "./modules/sanitizeHtml.js"
-import { enableLoadingToNewComment, enableLoadingToStartApp } from "./modules/loadingFunctions.js"
-import { renderCommentList } from "./modules/renderCommentList.js"
-import { fullTime, rightDateFormat } from "./modules/editAndGetTimeFunctions.js"
-import { disableBtn } from "./modules/disableBtn.js"
-import { delay } from "./modules/delay.js"
-import { tryPostAgain } from "./modules/tryPostAgain.js"
+import { getCommentList, postNewComment } from "./modules/api.js" // GET and POST запросы
+import { secureReplace } from "./modules/sanitizeHtml.js" // Реплейсы тегов
+import { enableLoadingToNewComment, enableLoadingToStartApp } from "./modules/loadingFunctions.js" // Функции лоадинг-баров (отобразить/скрыть)
+import { renderCommentList } from "./modules/renderCommentList.js" // Отрисовка полученного списка комментов
+import { fullTime, rightDateFormat } from "./modules/editAndGetTimeFunctions.js" // Функция подправки времени и получения правильного формата времени/даты
+import { disableBtn } from "./modules/disableBtn.js" // Отключение/включение кнопки
+import { delay } from "./modules/delay.js" // Иммитация API для лайков(либо просто контролируемый дилэй)
+import { tryPostAgain } from "./modules/tryPostAgain.js" // Повторный POST при получении 500 статуса
 
-//переменные элементов
+// Переменные элементов
 const nameInput = document.querySelector('#name-input')
 const commentInput = document.querySelector('#comment-input')
 const addButton = document.querySelector('#add-button')
@@ -16,17 +16,14 @@ const loadingCommentsBox = document.querySelector('#loading-comments')
 const loadingHeadBox = document.querySelector('#loading-head')
 const inputsBox = document.querySelector('.add-form')
 
-
-
-
-//создаем массив для хранения списка комментариев
+// Создаем массив для хранения списка комментариев
 let commentsList = []
 
-//переменные включающие или отключающие загрузку
+// Переменные включающие или отключающие загрузку
 let isLoadingToComments = false
 let isLoadingToStartApp = true
 
-// Получение списка комментариев с API
+// Получение и рендер списка комментариев с API
 function getAndRenderCommentList() {
     enableLoadingToStartApp(isLoadingToStartApp, loadingHeadBox)        
     getCommentList()
@@ -58,7 +55,7 @@ function getAndRenderCommentList() {
 
 getAndRenderCommentList();
 
-//функция добавления комментария на страиницу и в список API 
+// Функция добавления комментария на страиницу и в список API 
 function addComment() {
     isLoadingToComments = true
     enableLoadingToNewComment(isLoadingToComments, loadingCommentsBox, inputsBox)
@@ -129,7 +126,7 @@ const initLikeButtonsListeners = () => {
     })
 }
 
-//Функция создания коллекции и навешивания ивентов на все кнопки РЕДАКТИРОВАТЬ и СОХРАНИТЬ
+// Функция создания коллекции и навешивания ивентов на все кнопки РЕДАКТИРОВАТЬ и СОХРАНИТЬ
 const initEditButtonsListeners = () => {
     const editButtons = document.querySelectorAll('#edit-button')
     editButtons.forEach((editButton, index) => {
@@ -152,7 +149,7 @@ const initEditButtonsListeners = () => {
     })
 }
 
-//ВАЛИДАЦИЯ ФОРМЫ
+// ВАЛИДАЦИЯ ФОРМЫ
 
 // Перекрашиваем поле и включаем/отлючаем кнопку в инпуте имени
 nameInput.addEventListener('input', () => {
@@ -182,7 +179,7 @@ commentInput.addEventListener('blur', () => {
     }
 })
 
-//логика кнопки добавления комментария
+// Логика кнопки добавления комментария
 addButton.addEventListener('click', () => {
     addComment()
     renderCommentList(commentsList, commentsBox, initLikeButtonsListeners, initEditButtonsListeners, initCommentAnswerListeners)
