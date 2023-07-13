@@ -28,19 +28,19 @@ function getAndRenderCommentList() {
     enableLoadingToStartApp(isLoadingToStartApp, loadingHeadBox)        
     getCommentList()
     .then((responseData) => {
-            const rightResponse = responseData.comments.map((comment) => {
-                return {
-                    userName: comment.author.name,
-                    currDate: rightDateFormat(fullTime, comment.date),
-                    likes: comment.likes,
-                    isLiked: comment.isLiked,
-                    text: comment.text,
-                }
-            })
-            commentsList = rightResponse
-            isLoadingToStartApp = false
-            enableLoadingToStartApp(isLoadingToStartApp, loadingHeadBox)
-            renderCommentList(commentsList, commentsBox, initLikeButtonsListeners, initEditButtonsListeners, initCommentAnswerListeners)
+        const rightResponse = responseData.comments.map((comment) => {
+            return {
+                userName: comment.author.name,
+                currDate: rightDateFormat(fullTime, comment.date),
+                likes: comment.likes,
+                isLiked: comment.isLiked,
+                text: comment.text,
+            }
+        })
+        commentsList = rightResponse
+        isLoadingToStartApp = false
+        enableLoadingToStartApp(isLoadingToStartApp, loadingHeadBox)
+        renderCommentList(commentsList, commentsBox, initLikeButtonsListeners, initEditButtonsListeners, initCommentAnswerListeners)
     })
     .catch(() => {
         //Если что-то пойдет не так при получении списка комментариев
