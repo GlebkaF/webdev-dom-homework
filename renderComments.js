@@ -1,10 +1,11 @@
-//const listElement = document.getElementById("list");
-import { initLikeButton, initEditButton, replyToComment } from "./main.js";
+const listElement = document.getElementById("list");
+import { initLikeButton, initEditButton } from "./main.js";
+import { postComment } from "./api.js";
 
 
 const renderUserComments = (userComments) => {
 
-  const appEl = document.getElementById("app");
+const appEl = document.getElementById("app");
 
   let userCommentsHtml = userComments.map((userComment, index) => {
     if (!userComments[index].isEdit) {
@@ -103,6 +104,105 @@ ${userCommentsHtml}
 
 
     appEl.innerHTML = appHtml;
+
+const buttonElement = document.getElementById("add-button");
+const deleteButtonElement = document.getElementById("delete-button");
+const nameInputElement = document.getElementById("name-input");
+const commentInputElement = document.getElementById("comment-input");
+
+   // Reply to a comment
+
+   const replyToComment = (userComments) => {
+    const commentElements = document.querySelectorAll(".comment");
+    for (const commentElement of commentElements) {
+      commentElement.addEventListener("click", () => {
+          let userName = commentElement.dataset.name;
+          let textComment = commentElement.dataset.text;
+          commentInputElement.value = userName +"\n" + textComment;
+      });
+    }
+  };
+
+  renderUserComments(userComments);
+
+
+  // Time function
+  
+  function time () {
+  let myDate = new Date();
+  const months = ["01", "02", "03", "04", "05", "06","07", "08", "09", "10", "11", "12"];
+  let fullDate = myDate.getDate() + "." + months[myDate.getMonth()] + "." + myDate.getFullYear() + " " + myDate.getHours() +":" + myDate.getMinutes();
+  return fullDate;
+  }
+
+  
+
+   const addNewElementToList = () => {
+
+
+    // Validation data check
+
+    nameInputElement.classList.remove('error');
+     if (nameInputElement.value === "") {
+      nameInputElement.classList.add('error');
+      return;
+    }
+    commentInputElement.classList.remove('error');
+    if (commentInputElement.value === "") {
+      commentInputElement.classList.add('error');
+      return;
+    }
+
+    // Post from API
+
+      postComment();
+
+      
+   };
+
+
+   buttonElement.addEventListener("click", addNewElementToList);
+
+  // Validation form check for the button
+
+  const validateForm = () => {
+    if (nameInputElement.value === "") {
+      buttonElement.disabled = true;
+      return;
+    }
+
+    if (commentInputElement.value === "") {
+      buttonElement.disabled = true;
+      return;
+    }
+
+    buttonElement.disabled = false;
+  };
+
+  nameInputElement.addEventListener("input", validateForm);
+  commentInputElement.addEventListener("input", validateForm);
+
+  // Enter button
+
+  document.addEventListener("keyup", (event) => {
+    console.log("keyup", `${event.code}`);
+    if (event.code === 'Enter') {
+      addNewElementToList();
+    }
+  });
+
+  // Delete button
+
+  deleteButtonElement.addEventListener("click", () => {
+    // const listComments = document.getElementById("list");
+    // listComments.lastChild.remove();
+
+    const comments = document.getElementById("list");
+    const lastIndex = comments.innerHTML.lastIndexOf('<li class="comment"');
+    comments.innerHTML = comments.innerHTML.slice(0, lastIndex);
+    initLikeButton();
+    initEditButton();
+  });
 
     initLikeButton(userComments);
     initEditButton(userComments);
