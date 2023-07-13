@@ -65,27 +65,32 @@
     } else {
       document.getElementById('comment-loading').style.display = 'none';
     };
+
     const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/anton-shlyapkin/comments", {
       method: "GET"
     });
-      fetchPromise.then((response) => {
-        const jsonPromise = response.json();
-          jsonPromise.then((responseData) => {
-            console.log(responseData);
-            const appComments = responseData.comments.map((comment) => {
-            return {
-              date: `${(new Date(comment.date).getDate().toString().padStart(2, "0")) + "." + (new Date(comment.date).getMonth() + 1).toString().padStart(2, "0") + "." + (new Date(comment.date).getFullYear() - 2000) + " " + (new Date(comment.date).getHours().toString().padStart(2, "0")) + ":" + (new Date(comment.date).getMinutes().toString().padStart(2, "0"))}`,
-              likes: comment.likes,
-              isLiked: false,
-              text: comment.text,
-              name: comment.author.name,
-            };
-          });
-          document.getElementById('comment-loading').style.display = 'none'; 
-          comments = appComments;
-          renderComments();
-        });
+    fetchPromise.then((response) => {
+      const jsonPromise = response.json();
+        jsonPromise.then((responseData) => {
+          console.log(responseData);
+          const appComments = responseData.comments.map((comment) => {
+          return {
+            date: `${(new Date(comment.date).getDate().toString().padStart(2, "0")) + "." + (new Date(comment.date).getMonth() + 1).toString().padStart(2, "0") + "." + (new Date(comment.date).getFullYear() - 2000) + " " + (new Date(comment.date).getHours().toString().padStart(2, "0")) + ":" + (new Date(comment.date).getMinutes().toString().padStart(2, "0"))}`,
+            likes: comment.likes,
+            isLiked: false,
+            text: comment.text,
+            name: comment.author.name,
+          };
+        })
+        document.getElementById('comment-loading').style.display = 'none'; 
+        comments = appComments;
+        renderComments();
       });
+    })
+    .catch((error) => {
+      alert("Кажется что-то пошло не так, попробуйте позже");
+      console.warn(error);
+    })
   } 
   getCommentList(true); 
 
@@ -242,23 +247,20 @@
         }),
       })
         .then((response) => {
-          //console.log('1');
           if (response.status === 400) {
-            alert('Имя и комментарий должен быть не короче 3х символов'); 
+            return Promise.reject('Имя и комментарий должен быть не короче 3х символов');
           } else {
             return response; 
           }    
         })
         .then((response) => {
-          //console.log('2');
           if (response.status === 500) {
-            alert('Сервер сломался, попробуйте позже'); 
+            return Promise.reject('Сервер сломался, попробуйте позже');
           } else {
             return response; 
           }    
         })
         .then((response) => {
-          //console.log('3');
           return response.json();     
         })
         // .then((response) => {
@@ -273,26 +275,28 @@
         //   }    
         // })
         .then(() => {
-          //console.log('4');
           return getCommentList(false);
         })
         .then(() => {
-          //console.log('5');
           document.getElementById('add-form-disable').style.display = 'flex';
           document.getElementById('comment-render').style.display = 'none';
           nameInputElement.value = "";
           commentInputElement.value = "";
         })
         .catch((error) => {
-          //console.log('6');
           document.getElementById('add-form-disable').style.display = 'flex'; // Скрыть поле ввода
           document.getElementById('comment-render').style.display = 'none'; // Комментарий добавляется..
-          //console.warn(error);
+          console.warn(error);
           console.log(error.message);
-          if (error.message === "Cannot read properties of undefined (reading 'json')") {
+          if (error === "Имя и комментарий должен быть не короче 3х символов") {
+            alert('Имя и комментарий должен быть не короче 3х символов'); 
+          } else if (error === 'Сервер сломался, попробуйте позже') {
+            alert('Сервер сломался, попробуйте позже'); 
+          } else if (error.message === "Cannot read properties of undefined (reading 'json')") {
             sendingComment();
-            //console.log('500=>201');
-          }
+          } else {
+            alert("Кажется что-то пошло не так, попробуйте позже");
+          }         
         });
       renderComments();
     }
