@@ -70,6 +70,10 @@
       background: linear-gradient(to right, rgb(189, 91, 91), rgb(229, 20, 55));
     }
 
+    .disabled-button {
+      background-color: #ffffffbe;
+    }
+
   </style>
 
   <script>
@@ -80,6 +84,7 @@
     const nameInputElement = document.getElementById("name-input");
     const commentInputElement = document.getElementById("comment-input");
 
+    // Установка формата даты ДД.ММ.ГГГГ ЧЧ:ММ
     const date = function () {
     const months = ["01", "02", "03", "04", "05", "06",
     "07", "08", "09", "10", "11", "12"];
@@ -97,15 +102,19 @@
         return fullDate
     }
 
+    //
     buttonElement.addEventListener("click", () => {
       nameInputElement.classList.remove("error");
       commentInputElement.classList.remove("error");
-      if (nameInputElement.value === "" && commentInputElement.value === "") {
+      if (nameInputElement.value === "" || commentInputElement.value === "") {
         nameInputElement.classList.add("error");
         commentInputElement.classList.add("error");
+        buttonElement.classList.add("disabled-button");
         return;
+      } else {
+        buttonElement.classList.remove("disabled-button")
       }
-
+    
       const oldComments = commentsElement.innerHTML;
       commentsElement.innerHTML = oldComments + 
       `<li class="comment">
@@ -131,6 +140,14 @@
       nameInputElement.value = "";
       commentInputElement.value = "";
     });
+
+    // Добавление комментрия клавишей Enter
+    document.addEventListener("keyup", (event) => {
+        if (event.code === 'Enter') {
+          document.getElementById("add-button").click();
+          return;
+        }
+      });
 
     console.log("It works!");
   </script>
