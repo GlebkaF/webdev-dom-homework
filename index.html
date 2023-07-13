@@ -12,15 +12,13 @@
         <ul id="comments" class="comments">
             <!-- Список рендерится из JS -->
         </ul>
-        <div class="add-form">
-            <input id='name-input' type="text" class="add-form-name" placeholder="Введите ваше имя" />
+        <div id="add-form" class="add-form">
+            <!-- <input id='name-input' type="text" class="add-form-name" placeholder="Введите ваше имя" />
             <textarea id='comment-input' type="textarea" class="add-form-text" placeholder="Введите ваш комментарий"
                 rows="4"></textarea>
             <div class="add-form-row">
                 <button id="add-form-button" class="add-form-button">Написать</button>
-                <!-- <button id="delete-form-button" class="add-form-button delete-form-button">Удалить последний
-                    комментарий</button> -->
-            </div>
+            </div> -->
         </div>
     </div>
 </body>
@@ -28,34 +26,65 @@
 <script>
     "use strict";
     // Код писать здесь
-    const buttonElement = document.getElementById('add-form-button');
-    const buttonDeleteElement = document.getElementById('delete-form-button');
     let commentsElement = document.getElementById('comments');
-    const nameInputElement = document.getElementById('name-input');
-    const commentInputElement = document.getElementById('comment-input');
+    let nameInputElement = document.getElementById('name-input');
+    let commentInputElement = document.getElementById('comment-input');
+    const inputFormElement = document.getElementById('add-form')
+    let buttonElement = document.getElementById('add-form-button');
+
     let userComments = [];
+    let isLoading = 'firstLoad';
 
     //Функция получения данных из API при загрузке страницы
     function getData() {
+        renderComments();
         fetch(
             'https://wedev-api.sky.pro/api/v1/sivozhelezov/comments',
             {
                 method: 'GET'
-            }).then((response) => {
-                response.json().then((responseData) => {
-                    const appComments = responseData.comments.map((comment) => {
-                        return {
-                            name: comment.author.name,
-                            date: getDate(comment.date),
-                            text: comment.text,
-                            likes: comment.likes,
-                            isLiked: false
-                        };
-                    });
-                    userComments = appComments;
-                    renderComments();
+            })
+            .then((response) => {
+                return response.json();
+            })
+            .then((responseData) => {
+                userComments = responseData.comments.map((comment) => {
+                    return {
+                        name: comment.author.name,
+                        date: getDate(comment.date),
+                        text: comment.text,
+                        likes: comment.likes,
+                        isLiked: false
+                    };
                 })
-            });
+                return responseData
+            })
+            .then((response) => {
+                isLoading = 'render';
+                renderComments();
+                nameInputElement = document.getElementById('name-input');
+                commentInputElement = document.getElementById('comment-input');
+                buttonElement = document.getElementById('add-form-button');
+
+                // Выключение кнопки
+                buttonElement.classList.add("inactive-button");
+                buttonElement.disabled = true;
+
+                //Проверка полей ввода на наличие введенных данных
+                nameInputElement.addEventListener('input', activeButton);
+                commentInputElement.addEventListener('input', activeButton);
+
+                // Добавление комментария кнопкой "Написать"
+                buttonElement.addEventListener("click", () => {
+                    addComment();
+                })
+
+                //Добавление комментария клавишей Enter
+                nameInputElement.addEventListener("keyup", addCommentEnter);
+                commentInputElement.addEventListener("keyup", addCommentEnter);
+
+                putLike();
+                replyToComment();
+            })
     }
 
     // Функция определения текущей даты
@@ -111,50 +140,26 @@
     //Функция добавления объекта комментария в массив
     function addComment() {
         if (nameInputElement.value && commentInputElement.value) {
+            isLoading = 'addComment';
+            renderComments();
+
             //Добавление данных в API
-            const fetchPromise = fetch(
-                'https://wedev-api.sky.pro/api/v1/sivozhelezov/comments',
+            fetch('https://wedev-api.sky.pro/api/v1/sivozhelezov/comments',
                 {
                     method: 'POST',
                     body: JSON.stringify({
                         text: sanitizeHTML(commentInputElement.value),
                         name: sanitizeHTML(nameInputElement.value)
                     })
-                }).then(() => {
-
-                    //Получение обновленных данных из API
+                })
+                .then((response) => {
                     getData();
+                    activeButton();
                 });
         };
-
-
         nameInputElement.value = '';
         commentInputElement.value = '';
-        activeButton();
     }
-
-    // //Функция сохранения измененного комментария
-    // function saveCommentFunction() {
-    //     const saveCommentsButtonsElements = document.querySelectorAll('.save-comment-button');
-    //     const saveCommentElements = document.querySelectorAll('.save-comment');
-    //     console.log(saveCommentElements);
-
-    //     for (const saveCommentButtonElement of saveCommentsButtonsElements) {
-    //         saveCommentButtonElement.addEventListener('click', () => {
-    //             // Создаем переменную с индексом 
-    //             const index = saveCommentButtonElement.dataset.index;
-
-    //             //При клике на кнопку редактировать присваиваем значение false
-    //             userComments[index].isEdit = false;
-    //             //Присваиваем значение из формф в объект
-    //             console.log(userComments[index]);
-    //             console.log(saveCommentElements[index]);
-    //             userComments[index].comment = saveCommentElements[index].value;
-    //             //Рендерим страницу
-    //             renderComments();
-    //         })
-    //     }
-    // }
 
     //Функция ответа на комментарий
     const replyToComment = () => {
@@ -170,51 +175,69 @@
 
     //Функция рендера
     function renderComments() {
+        if (isLoading === 'firstLoad') {
+            inputFormElement.innerHTML = `<h3>Идет загрузка комментариев...</h3>`;
+        }
+        else if (isLoading === 'render') {
+            //Рендер комментариев из массива
+            const userCommentsHtml = userComments.map((userComment, index) => {
 
-        //Рендер комментариев из массива
-        const userCommentsHtml = userComments.map((userComment, index) => {
-
-            let commentСhange = ``;
-            if (userComment.isEdit === undefined) {
-                commentСhange = `<div class="comment-text">
-                        ${userComment.text}
-                    </div>
-                    <!-- <button data-index="${index}" class="edit-comment-button"}">Редактировать</button> -->`
-            } else {
-                commentСhange = `<textarea data-index="${index}" id='save-comment' type="textarea" class="add-form-text save-comment" 
-                rows="4">${userComment.text}</textarea>
-              <!--  <button data-index="${index}" class="save-comment-button"}">Сохранить</button> -->`
-            }
-            return ` <li class="comment" data-index="${index}">
+                return ` <li class="comment" data-index="${index}">
                 <div class="comment-header">
                     <div>${userComment.name}</div>
                     <div>${userComment.date}</div>
                 </div>
                 <div class="comment-body">
-                    ${commentСhange}
+                    <div class="comment-text">
+                        ${userComment.text}
+                    </div>                
                 </div>
                 <div class="comment-footer">
                     <div class="likes">
                         <span class="likes-counter">${userComment.likes}</span>
-                        <button data-index="${index}" id="like-button" class="like-button ${userComment.like === true ? '-active-like' : ''}"></button>
+                        <button data-index="${index}" id="like-button" class="like-button ${userComment.isLiked === true ? '-active-like' : ''}"></button>
                     </div>
                 </div>
             </li>`;
-        })
-            .join('');
-        commentsElement.innerHTML = userCommentsHtml;
+            })
+                .join('');
 
-        //Проверка полей ввода на наличие введенных данных
-        nameInputElement.addEventListener('input', activeButton);
-        commentInputElement.addEventListener('input', activeButton);
+            commentsElement.innerHTML = userCommentsHtml;
+            inputFormElement.innerHTML = `<input id='name-input' type="text" class="add-form-name" placeholder="Введите ваше имя" />
+                    <textarea id='comment-input' type="textarea" class="add-form-text" placeholder="Введите ваш комментарий"
+                    rows="4"></textarea>
+                    <div class="add-form-row">
+                        <button id="add-form-button" class="add-form-button">Написать</button>
+                     </div>`;
+        }
+        else if (isLoading === 'addComment') {
+            inputFormElement.innerHTML = `<h3>Комментарий добавляется...</h3>`;
+        }
+        else if (isLoading === 'likeСhange') {
+            const userCommentsHtml = userComments.map((userComment, index) => {
+                return ` <li class="comment" data-index="${index}">
+                <div class="comment-header">
+                    <div>${userComment.name}</div>
+                    <div>${userComment.date}</div>
+                </div>
+                <div class="comment-body">
+                    <div class="comment-text">
+                        ${userComment.text}
+                    </div>                
+                </div>
+                <div class="comment-footer">
+                    <div class="likes">
+                        <span class="likes-counter">${userComment.likes}</span>
+                        <button data-index="${index}" id="like-button" class="like-button ${userComment.isLiked === true ? '-active-like' : ''}"></button>
+                    </div>
+                </div>
+            </li>`;
 
-
-        // //Удаление последнего комментария
-        // buttonDeleteElement.addEventListener('click', deleteLastComment);
-
-        putLike();
-
-        // editComments();
+            })
+                .join('');
+                commentsElement.innerHTML = userCommentsHtml;
+                putLike();
+        }
 
         replyToComment();
     }
@@ -241,15 +264,15 @@
     //Функция активации лайка
     function putLike() {
         const likeButtonElements = document.querySelectorAll('.like-button');
-
         for (const likeButtonElement of likeButtonElements) {
             likeButtonElement.addEventListener('click', (event) => {
+                isLoading = 'likeСhange';
                 const index = likeButtonElement.dataset.index;
-                if (userComments[index].like === true) {
-                    userComments[index].like = false;
+                if (userComments[index].isLiked === true) {
+                    userComments[index].isLiked = false;
                     userComments[index].likes--;
                 } else {
-                    userComments[index].like = true;
+                    userComments[index].isLiked = true;
                     userComments[index].likes++;
                 }
                 renderComments();
@@ -257,21 +280,7 @@
             })
         }
     }
-
     getData();
-
-    //Добавление комментария кнопкой "Написать"
-    buttonElement.addEventListener("click", () => {
-        addComment();
-    })
-
-    //Добавление комментария клавишей Enter
-    nameInputElement.addEventListener("keyup", addCommentEnter);
-    commentInputElement.addEventListener("keyup", addCommentEnter);
-
-    // Выключение кнопки
-    buttonElement.classList.add("inactive-button");
-    buttonElement.disabled = true;
 </script>
 
 </html>
