@@ -70,12 +70,14 @@
     const {log} = console;
     // ------------------
     "use strict"
+    // Добавляем ДОМ элементы
     const cardElements = document.getElementById("commentsId");
     const btnElement = document.getElementById("btnId");
     const inputName = document.getElementById("nameTextId");
     const inputText = document.getElementById("commentTextId");
     const likeElement = document.getElementsByClassName("like-button");
-    // log(cardElements)
+
+    // Вспомогательные функции
     const commentDellAnimation = () => {
         const cardElement =  cardElements.children;
         Array.from(cardElement).forEach(el => {
@@ -83,17 +85,22 @@
         })
     }
 
-    let time = {
-      hour: 'numeric',
-      minute: 'numeric',
-    };
-    let year = {
-      year: 'numeric',
-      month: 'numeric',
-      day: 'numeric',
+    const addDate = () => {
+      const date = new Date();
+      let time = {
+        hour: 'numeric',
+        minute: 'numeric',
+      };
+      let year = {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+      }
+
+      return  date.toLocaleString("ru", year) + " " + date.toLocaleString('ru', time);
     }
 
-
+    const delCardAddAnimation = (element) => element.parentElement.parentElement.classList.add('del-card')
     const btnErrAdd = () => {
         btnElement.classList.add("btn-error");
     }
@@ -102,6 +109,8 @@
       btnElement.classList.remove("btn-error");
     }
 
+
+    // Функция добавления лайка
     function search () {
       Array.from(likeElement).forEach((element) => {
         element.addEventListener('click', () => {
@@ -127,10 +136,11 @@
     }
     search()
 
+    // Функция добавления нового комментария
+
     const clickEvent = () => {
         commentDellAnimation();
 
-        const date = new Date()
         inputText.classList.remove("error");
         inputName.classList.remove("error");
 
@@ -158,7 +168,7 @@
         const textHtml = `<li class="comment comment_animation">
       <div class="comment-header">
         <div>${inputName.value}</div>
-        <div>${date.toLocaleString("ru", year) + " " + date.toLocaleString('ru', time)}</div>
+        <div>${addDate()}</div>
       </div>
       <div class="comment-body">
         <div class="comment-text">
@@ -172,16 +182,22 @@
           <button class="like-button"></button>
         </div>
       </div>
-    </li>`
+    </li>`;
         cardElements.innerHTML += textHtml;
         document.getElementById("nameTextId").value = '';
         document.getElementById("commentTextId").value = '';
+        // Вспомогательная функция для удаления комментария
+
         const btnFormElement = document.querySelectorAll(".del");
         btnFormElement.forEach((element) => {
             element.addEventListener('click', () => {
-                element.parentElement.parentElement.remove();
-        })
 
+                delCardAddAnimation(element)
+                log(element)
+                setTimeout(() => {
+                  element.parentElement.parentElement.remove();
+                },500)
+            })
         })
         btnErrRemove()
         search()
