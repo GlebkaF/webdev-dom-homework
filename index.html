@@ -59,12 +59,16 @@
   const commentInputElement = document.getElementById('comment-input');
 
   // Получение списка комментариев из API завернутый в функцию GET запрос 
-  function getCommentList() {
+  function getCommentList(showLoading) {
+    if (showLoading == true) {
+      document.getElementById('comment-loading').style.display = 'flex'; 
+    } else {
+      document.getElementById('comment-loading').style.display = 'none';
+    };
     const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/anton-shlyapkin/comments", {
       method: "GET"
     });
       fetchPromise.then((response) => {
-        document.getElementById('comment-loading').style.display = 'flex'; 
         const jsonPromise = response.json();
           jsonPromise.then((responseData) => {
             console.log(responseData);
@@ -83,7 +87,7 @@
         });
       });
   } 
-  getCommentList(); 
+  getCommentList(true); 
 
   let comments = []
 
@@ -188,7 +192,7 @@
     initEventListeners();
     initCommentingListeners();
   }
-  renderComments();
+  //renderComments();
 
   // Отправка комментария с клавиши Enter на клавиатуре 
   document.addEventListener('keyup', (e) => {
@@ -199,8 +203,6 @@
         sendingComment();
         renderComments();
         buttonElement.classList.add('add-form-button_disable')
-        nameInputElement.value = "";
-        commentInputElement.value = "";
       }
     };
   });
@@ -211,8 +213,6 @@
     checkInput();
     sendingComment();
     buttonElement.classList.add('add-form-button_disable')
-    nameInputElement.value = "";
-    commentInputElement.value = "";
     buttonElement.blur();
   })
 
@@ -227,8 +227,6 @@
       .replaceAll('"', "&quot;");
     };
 
-    getCommentList();
-
     function addComment() { 
       document.getElementById('comment-render').style.display = 'flex';
       document.getElementById('add-form-disable').style.display = 'none';
@@ -240,22 +238,65 @@
           isLiked: false,
           text: sanitizeHtml(commentInputElement.value),
           name: sanitizeHtml(nameInputElement.value),
+          forceError: true,
         }),
-        }).then((response) => {
+      })
+        .then((response) => {
+          //console.log('1');
+          if (response.status === 400) {
+            alert('Имя и комментарий должен быть не короче 3х символов'); 
+          } else {
+            return response; 
+          }    
+        })
+        .then((response) => {
+          //console.log('2');
+          if (response.status === 500) {
+            alert('Сервер сломался, попробуйте позже'); 
+          } else {
+            return response; 
+          }    
+        })
+        .then((response) => {
+          //console.log('3');
           return response.json();     
-        }).then((responseData) => {
-          document.getElementById('comment-loading').style.display = 'none'; 
-          return getCommentList();
-        }).then((data) => {
+        })
+        // .then((response) => {
+        //   console.log('1');
+        //   if (response.status === 400) {
+        //     alert('Имя и комментарий должен быть не короче 3х символов');
+        //   } else if (response.status === 500) {
+        //     throw new Error('Some error');
+        //     alert('Сервер сломался, попробуйте позже');
+        //   } else {
+        //     return response.json(); 
+        //   }    
+        // })
+        .then(() => {
+          //console.log('4');
+          return getCommentList(false);
+        })
+        .then(() => {
+          //console.log('5');
           document.getElementById('add-form-disable').style.display = 'flex';
           document.getElementById('comment-render').style.display = 'none';
-
+          nameInputElement.value = "";
+          commentInputElement.value = "";
+        })
+        .catch((error) => {
+          //console.log('6');
+          document.getElementById('add-form-disable').style.display = 'flex'; // Скрыть поле ввода
+          document.getElementById('comment-render').style.display = 'none'; // Комментарий добавляется..
+          //console.warn(error);
+          console.log(error.message);
+          if (error.message === "Cannot read properties of undefined (reading 'json')") {
+            sendingComment();
+            //console.log('500=>201');
+          }
         });
       renderComments();
     }
     addComment();
-    nameInputElement.value = "";
-    commentInputElement.value = "";
   } 
   console.log("It works!");
 </script>
