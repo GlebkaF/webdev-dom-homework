@@ -3,12 +3,24 @@ import renderUserComments from "./renderComments.js";
 const nameInputElement = document.getElementById("name-input");
 const commentInputElement = document.getElementById("comment-input");
 
+let token = 'Bearer bgc0b8awbwas6g5g5k5o5s5w606g37w3cc3bo3b83k39s3co3c83c03ck';
+
 const fetchComments = () => {
-    return fetch("https://webdev-hw-api.vercel.app/api/v1/mariia-goppa/comments", {
+    return fetch("https://wedev-api.sky.pro/api/v2/mariia-goppa/comments", {
     method: "GET",
+    headers: {
+      Authorization: token,
+    },
   }).then((response) => {
     let loadingComments = document.getElementById('comments-loader');
     loadingComments.style.display = 'none';
+
+    if(response.status === 401) {
+      //token = prompt('Type the correct password');
+      //fetchComments();
+      throw new Error('No authorization')
+    }
+
   return response.json();
   })
   .then((responseData) => {
@@ -36,8 +48,11 @@ const fetchComments = () => {
     loadingComments.classList.remove('hidden');
     let newComment = document.getElementById('new-comment-section');
     newComment.style.display = 'none';
-       return fetch("https://webdev-hw-api.vercel.app/api/v1/mariia-goppa/comments", {
+       return fetch("https://wedev-api.sky.pro/api/v2/mariia-goppa/comments", {
         method: "POST",
+        headers: {
+          Authorization: token,
+        },
         body: JSON.stringify({ 
           text: commentInputElement.value, 
           name: nameInputElement.value,

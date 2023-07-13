@@ -5,32 +5,8 @@
     <title>Проект "Комменты"</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
-
   <body>
-    <div class="container">
-      <p id="comments-loader">Пожалуйста, подождите, загружаю комментарии...</p>
-      <ul id="list" class="comments">
-        <!-- The list is rendering from JS --> 
-      </ul>
-      <p id="new-comment-loader" class="hidden">Комментарий добавляется...</p>
-      <div id="new-comment-section" class="add-form">
-        <input id="name-input" value=""
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea id="comment-input" value=""
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button disabled="true" id="add-button" class="add-form-button">Написать</button>
-          <button id="delete-button" class="add-form-button">Удалить последний</button>
-        </div>
-      </div>
-    </div>
+    <div id="app"></div>
   </body>
 
   <style>
