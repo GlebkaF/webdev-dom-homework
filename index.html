@@ -47,8 +47,8 @@
     },
   ];
 
+  const generateHtml = (comments) => {
 
-  const renderComments = () => {
     const commentsListHtml = comments
       .map((comment, index) => {
         const likeButtonClass = comment.like ? 'like-button liked' : 'like-button';
@@ -68,8 +68,12 @@
         </div>
       </li>`;
       })
-      .join('');
-    commentsList.innerHTML = commentsListHtml;
+      .join('')
+    return commentsListHtml;
+  }
+
+  const renderComments = () => {
+    commentsList.innerHTML = generateHtml(comments);
 
     const commentElements = document.querySelectorAll('.comment');
 
@@ -77,7 +81,7 @@
       const commentTextElement = commentElement.querySelector('.comment-text');
       const commentatorNameElement = commentElement.querySelector('.commentator-name');
 
-      commentTextElement.addEventListener('click', () => {
+      commentElement.addEventListener('click', () => {
         const comment = commentTextElement.dataset.text;
         const name = commentatorNameElement.dataset.name;
 
@@ -89,13 +93,12 @@
     putLike();
   };
 
-
   const putLike = () => {
     const likeButtonElements = document.querySelectorAll('.like-button');
 
     for (const likeButtonElement of likeButtonElements) {
       likeButtonElement.addEventListener('click', (event) => {
-        event.stopPropagation();
+      event.stopPropagation();  
         const index = likeButtonElement.dataset.index;
 
         if (comments[index].like === true) {
@@ -110,10 +113,7 @@
     }
   };
 
-  renderComments();
-
-
-
+ 
   const addComment = () => {
 
     const name = nameInput.value;
