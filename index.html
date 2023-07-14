@@ -77,12 +77,15 @@
     const textInputElement = document.getElementById("text-input");
     let date = new Date();
       buttonElement.addEventListener("click", () => {
-        nameInputElement.classList.remove('error');
+        nameInputElement.classList.remove('error');//если не ввели имя
+        textInputElement.classList.remove('error');//если не ввели комментарий
         if (nameInputElement.value === '') {
           nameInputElement.classList.add('error');
           return;
         }
-        textInputElement.classList.remove('error');
+          nameInputElement.classList.add('error');
+          return;
+
         if (textInputElement.value === '') {
           textInputElement.classList.add('error');
           return;
