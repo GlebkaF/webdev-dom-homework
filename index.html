@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id = "ListComments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -49,15 +49,17 @@
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          id = "NameInput"
         />
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+          id = "CommentInput"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id = "ButtonInput">Написать</button>
         </div>
       </div>
     </div>
@@ -65,7 +67,40 @@
 
   <script>
     "use strict";
-    // Код писать здесь
-    console.log("It works!");
-  </script>
+    const NameInputElement = document.getElementById("NameInput");
+    const CommentInputElement = document.getElementById("CommentInput");
+    const ButtonInputElement = document.getElementById("ButtonInput");
+    const ListCommentsElement = document.getElementById("ListComments");
+    const commentDate = new Date();
+    
+
+     ButtonInputElement.addEventListener("click", () => {
+      if (NameInputElement.value === "" || CommentInputElement.value === "") {
+       ButtonInputElement.disabled = true; 
+       return;
+      }  
+      
+      ListCommentsElement.innerHTML +=
+          `<li class="comment">
+        <div class="comment-header">
+          <div>${NameInputElement.value}</div>
+          <div>${commentDate.toLocaleDateString('numeric')} ${commentDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${CommentInputElement.value}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">0</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>`
+    NameInputElement.value = "";
+    CommentInputElement.value = "";
+  })
+       
+     </script>
 </html>
