@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="list" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -43,29 +43,71 @@
             </div>
           </div>
         </li>
-      </ul>
+      </ul >
       <div class="add-form">
-        <input
+        <input 
           type="text"
+          id="name-input" value=""
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
           type="textarea"
+          id="text-input" value=""
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="add-button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
-
+  <style>
+    .error {
+      background-color: gray;
+    }
+  </style>
   <script>
     "use strict";
     // Код писать здесь
-    console.log("It works!");
+    const buttonElement = document.getElementById("add-button");
+    const nameInputElement = document.getElementById("name-input");
+    const textInputElement = document.getElementById("text-input");
+    let date = new Date();
+      buttonElement.addEventListener("click", () => {
+        nameInputElement.classList.remove('error');
+        if (nameInputElement.value === '') {
+          nameInputElement.classList.add('error');
+          return;
+        }
+        textInputElement.classList.remove('error');
+        if (textInputElement.value === '') {
+          textInputElement.classList.add('error');
+          return;
+        }
+        const listElement = document.getElementById("list");
+        listElement.innerHTML =
+          listElement.innerHTML + `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${date.toLocaleString("ru")}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button -active-like"></button>
+            </div>
+          </div>
+        </li>`;
+
+  });
+  console.log("It works!");
   </script>
 </html>
