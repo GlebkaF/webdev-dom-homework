@@ -80,6 +80,7 @@ const replyТoСomment = (commentTextEl) =>{
 const renderApp = () =>{
   const appEl = document.getElementById("app");
 
+
   const usersHtml = users.map((user, index) =>{
     return  `<li class="comment" data-comment="${user.text}" data-name="${user.name}">
     <div class="comment-header">

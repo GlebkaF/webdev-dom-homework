@@ -1,4 +1,4 @@
-import { login } from "../api.js";
+import { loginUser } from "../api.js";
 
 export function renderLoginComponent({ appEl, setToken, fetchUsersAndRender, usersHtml }) {
     let appHtml = `
@@ -35,12 +35,28 @@ export function renderLoginComponent({ appEl, setToken, fetchUsersAndRender, use
     appEl.innerHTML = appHtml;
     document.getElementById("login-button").addEventListener("click", () => {
 
-        login({
-            login: "admin",
-            password: "admin"
+        const login = document.getElementById("login-input").value;
+        const password = document.getElementById("password-input").value;
+
+        if (!login) {
+            alert("Введите логин")
+            return
+        };
+
+        if (!password) {
+            alert("Введите пароль")
+            return
+        };
+
+
+        loginUser({
+            login: login,
+            password: password
         }).then((user) => {
             setToken(`Bearer ${user.user.token}`);
             fetchUsersAndRender();
+        }).catch(error => {
+            alert(error.message)
         })
     })
     });
