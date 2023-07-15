@@ -36,12 +36,12 @@
               Мне нравится как оформлена эта страница! ❤
             </div>
           </div>
-          <div class="comment-footer">
+          <uuidiv class="comment-footer">
             <div class="likes">
               <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
+              <button class="like-button"></button>
             </div>
-          </div>
+          </uuidiv>
         </li>
       </ul>
       <div class="add-form">
@@ -58,14 +58,112 @@
         ></textarea>
         <div class="add-form-row">
           <button class="add-form-button">Написать</button>
+          <button class="remove-form-button">Удалить</button>
         </div>
       </div>
     </div>
   </body>
-
+  <style>
+    .error {
+      background-color: rgb(249, 121, 121);
+    }
+  </style>
   <script>
     "use strict";
-    // Код писать здесь
-    console.log("It works!");
+
+    const likeIcon = document.querySelectorAll(".like-button");
+    const listElement = document.querySelector(".comments");
+    const buttonElement = document.querySelector(".add-form-button");
+    const buttonRemoveElement = document.querySelector(".remove-form-button");
+    const nameInputElement = document.querySelector(".add-form-name");
+    const textInputElement = document.querySelector(".add-form-text");
+
+    let nowDate = new Date();
+    let time = {
+      hour: "numeric",
+      minute: "numeric",
+    };
+    let date = {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+    };
+
+    function addLike() {
+      const likeIcon = document.querySelectorAll(".like-button");
+      likeIcon.forEach((button) => {
+        //Делаем цикл для перебора каждого элемента
+
+        button.addEventListener("click", () => {
+          //делаем обработчик события
+
+          button.classList.toggle("liked"); //добавляем класс с переключением
+
+          if (button.classList.contains("liked")) {
+            //Если класс был добавлен и есть в списке классов
+            button.classList.add("-active-like"); //добавляем лайкнутый класс
+          } else {
+            button.classList.remove("-active-like"); //нету класса liked убираем
+          }
+        });
+      });
+    }
+
+    function addComment() {
+      nameInputElement.classList.remove("error");
+      if (nameInputElement.value === "") {
+        nameInputElement.classList.add("error");
+        return;
+      }
+      textInputElement.classList.remove("error");
+      if (textInputElement.value === "") {
+        textInputElement.classList.add("error");
+        return;
+      }
+
+      const oldListHtml = listElement.innerHTML;
+      listElement.innerHTML =
+        oldListHtml +
+        `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${nowDate.toLocaleString("ru", date)} ${nowDate.toLocaleString(
+          "ru",
+          time
+        )}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textInputElement.value}
+            </div>
+          </div>
+          <uuidiv class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button "></button>
+            </div>
+          </uuidiv>
+        </li>`;
+      nameInputElement.value = "";
+      textInputElement.value = "";
+      addLike();
+    }
+
+    function removeComment() {
+      listElement.removeChild(listElement.lastElementChild);
+    }
+
+    addLike();
+    buttonElement.addEventListener("click", () => {
+      addComment();
+    });
+    buttonRemoveElement.addEventListener("click", () => {
+      removeComment();
+    });
+    textInputElement.addEventListener("keyup", (el) => {
+      if (el.keyCode === 13) {
+        addComment();
+      }
+    });
   </script>
 </html>
