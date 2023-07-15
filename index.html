@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="commentsId">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -48,24 +48,81 @@
         <input
           type="text"
           class="add-form-name"
+          id="name-input"
+          value=""
           placeholder="Введите ваше имя"
         />
         <textarea
           type="textarea"
           class="add-form-text"
+          id="text-input"
+          value=""
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="add-form-buttonId">Написать</button>
         </div>
       </div>
     </div>
   </body>
-
+  <style>
+    .error {
+      background-color: brown;
+    }
+  </style>
   <script>
     "use strict";
-    // Код писать здесь
+    const buttonElement = document.getElementById("add-form-buttonId");
+    const listElement = document.getElementById("commentsId");
+    const nameInputElement = document.getElementById("name-input");
+    const textInputElement = document.getElementById("text-input");
+
+    let newDate = new Date;
+    let time = {
+      hour: "numeric",
+      minute: "numeric"
+    };
+    let date = {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric"
+    };
+
+    buttonElement.addEventListener('click', () => {
+      nameInputElement.classList.remove('error');
+      textInputElement.classList.remove('error');
+      
+      if(nameInputElement.value === ''){
+        nameInputElement.classList.add('error');
+        return
+      } else if(textInputElement.value === '') {
+        textInputElement.classList.add('error');
+        return
+      }
+      
+      const oldListHtml = listElement.innerHTML;
+      listElement.innerHTML = oldListHtml + `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${newDate.toLocaleString("ru", date)} ${newDate.toLocaleString("ru", time)}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button -active-like"></button>
+            </div>
+          </div>
+        </li>`
+        nameInputElement.value = "";
+        textInputElement.value = "";
+    });
+    
     console.log("It works!");
   </script>
 </html>
