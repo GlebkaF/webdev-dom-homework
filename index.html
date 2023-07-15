@@ -8,8 +8,10 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="comment-block" class="comments">
+        <!--В этот список мы будем добавлять комментарии-->
         <li class="comment">
+          <!--Это сам комментарий,который надо копировать-->
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -46,18 +48,22 @@
       </ul>
       <div class="add-form">
         <input
+          id="name-input"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
+        <!--Сюда будет вводится ИМЯ-->
         <textarea
+          id="text-input"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
+        <!--Сюда будет вводится ТЕКСТ-->
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="form-button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
@@ -65,7 +71,64 @@
 
   <script>
     "use strict";
-    // Код писать здесь
+    const formButtonElement = document.getElementById("form-button");
+    const commentBlockElement = document.getElementById("comment-block");
+    const nameInputElement = document.getElementById("name-input");
+    const textInputElement = document.getElementById("text-input");
+
+    const myDate = new Date();
+    let day = myDate.getDate();
+    if (day < 10) {day = "0" + day};
+    let month = myDate.getMonth() + 1;
+    if (month < 10) {month = "0" + month};
+    let year = myDate.getFullYear() % 100;
+    let hours = myDate.getHours();
+    if (hours < 10) {hours = '0' + hours};
+    let minutes = myDate.getMinutes();
+    if (minutes < 10) {minutes = '0' + minutes};
+    let timeWithoutSeconds = hours + ":" + minutes;
+    const fullDate = day + "." + month + "." + year + " " + timeWithoutSeconds;
+
+    const like = 0;
+
+    formButtonElement.addEventListener("click", () => {
+      nameInputElement.classList.remove('error');
+      if (nameInputElement.value === '') {
+        nameInputElement.classList.add('error');
+        return
+      }
+      textInputElement.classList.remove('error');
+      if(textInputElement.value === '') {
+        textInputElement.classList.add('error');
+        return
+      }
+
+
+
+      const oldCommentBlockElement = commentBlockElement.innerHTML;
+      commentBlockElement.innerHTML =
+        oldCommentBlockElement +
+        `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${fullDate}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${like}</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`; /*Вопрос, почему большой текст вылазит за пределы блока, вроде стили одинаковые везде, у блоков, которые уже добавлены все работает, подскажите пожалуйста)*/
+    });
+
+
+
     console.log("It works!");
   </script>
 </html>
