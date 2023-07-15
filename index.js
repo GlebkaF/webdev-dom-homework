@@ -71,13 +71,8 @@ const commentDel = () => {
     })
 }
 
-// рендер
-
-
-
-
 // Функция добавления лайка
-function search () {
+function addLike () {
     Array.from(likeElement).forEach((element,index) => {
         element.addEventListener('click', () => {
             const condition = element.className.split(" ")
@@ -97,46 +92,7 @@ function search () {
     })
 }
 
-// function red () {
-//     const redButtonElement = document.querySelectorAll(".red");
-//     const delButtonElement = document.querySelectorAll(".del");
-//     const commentTextElement = document.querySelectorAll(".comment-text")
-//
-//     redButtonElement.forEach((element, index) => {
-//         element.addEventListener('click',() =>{
-//             const ok = delButtonElement[index];
-//             const myObject = commentators[index]
-//             log(myObject)
-//
-//             if (element.innerHTML === "Отмена"){
-//                 delButtonElement[index].innerHTML = "Удалить";
-//                 element.innerHTML = "Редактировать";
-//                 return;
-//             }
-//             ok.innerHTML = "Ок";
-//             element.innerHTML = "Отмена";
-//             const inputOnComment = commentTextElement[index];
-//             inputOnComment.innerHTML = `<input
-//             type="text"
-//             placeholder="Введите ваш коментарий"
-//             class="add-form-name"
-//             />`;
-//
-//
-//
-//             ok.addEventListener('click', () => {
-//                 const text  = inputOnComment.value
-//                 console.log(inputOnComment.value)
-//                 myObject.textComment = text
-//                 setTimeout(() => {
-//                     commentators.push(myObject);
-//                     renderComments()
-//                 },500)
-//             })
-//
-//         })
-//     })
-// }
+
 
 // Рендер
 
@@ -164,14 +120,14 @@ const renderComments = () => {
     cardElements.innerHTML = commentatorsHtml;
     // red()
     commentDel();
-    search();
+    addLike();
 }
 
 renderComments();
 
 // Функция добавления нового комментария
 
-const clickEvent = () => {
+const clickEventAddComment = () => {
     inputText.classList.remove("error");
     inputName.classList.remove("error");
 
@@ -206,8 +162,8 @@ const clickEvent = () => {
 
     // рендер
 
-    renderComments()
-    commentators[commentators.length - 1].animationClass = ""
+    renderComments();
+    commentators[commentators.length - 1].animationClass = "";
     document.getElementById("nameTextId").value = '';
     document.getElementById("commentTextId").value = '';
 }
@@ -218,9 +174,9 @@ const clickEvent = () => {
 
 document.addEventListener('keyup', (key) => {
     if(key.code === 'Enter'){
-        clickEvent()
+        clickEventAddComment()
     }
 })
 
-btnElement.addEventListener( 'click', () => clickEvent())
+btnElement.addEventListener( 'click', () => clickEventAddComment())
 log("It works!");
