@@ -1,5 +1,5 @@
 "use strict";
-const host = "https://wedev-api.sky.pro/api/v2/NastyaTsyf/comments";
+const host = "https://wedev-api.sky.pro/api/v2/Nastya-Tsyf/comments";
 export function getComments({ token }) {
     return fetch(host, {
         method: "GET",

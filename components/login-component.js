@@ -1,7 +1,12 @@
 import { loginUser } from "../api.js";
 
 export function renderLoginComponent({ appEl, setToken, fetchUsersAndRender, usersHtml }) {
-    let appHtml = `
+
+    let isLoginMode = true;
+
+    const renderForm = () => {
+
+        let appHtml = `
         <ul class="comments" id="comment-list">
         ${usersHtml}
         </ul>
@@ -13,7 +18,14 @@ export function renderLoginComponent({ appEl, setToken, fetchUsersAndRender, use
     document.getElementById("go-to-login").addEventListener("click", () => {
     appHtml = `<div id="login">
             <div class="add-form">
-            <h2 class="comment-header">Форма входа</h2>
+            <h2 class="">Форма ${isLoginMode ? "входа" : "регистрации"}</h2>
+            ${isLoginMode ? "" : `<input
+            id="name-input"
+            type="text"
+            class="add-form-name"
+            placeholder="Введите имя"/>
+            <br>`}
+            
             <input
                 id="login-input"
                 type="text"
@@ -27,8 +39,11 @@ export function renderLoginComponent({ appEl, setToken, fetchUsersAndRender, use
                 class="add-form-name"
                 placeholder="Введите пароль"
             />
-            <div class="add-form-row">
-                <button class="add-form-button" id="login-button">Войти</button>
+            <div class="">
+                <button class="add-form-button" id="login-button">${isLoginMode ? "Войти" : "Зарегистрироваться"}</button>
+            </div>
+            <div class="">
+            <h2 id="toggle-button">${isLoginMode ? "Зарегистрироваться" : "Войти"}</h2>
             </div>
         </div>
         </div>`
@@ -60,4 +75,13 @@ export function renderLoginComponent({ appEl, setToken, fetchUsersAndRender, use
         })
     })
     });
+
+    document.getElementById("toggle-button").addEventListener("click", () => {
+        isLoginMode = !isLoginMode;
+        renderForm();
+    })
+
+    };
+
+    renderForm()
 }

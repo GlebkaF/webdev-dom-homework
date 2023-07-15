@@ -4,6 +4,7 @@ import { addComment, getComments } from "./api.js";
 import { getCommentDate } from "./components/date-component.js";
 import { renderListComponent } from "./components/list-and-add-component.js";
 import { renderLoginComponent } from "./components/login-component.js";
+import { initLikeButton } from "./components/like-button-component";
 
 
 let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
@@ -41,27 +42,6 @@ const fetchUsersAndRender = () => {
     });
 }
 fetchUsersAndRender();
-
-
-// кнопка лайка
-const initLikeButton = (users) =>{
-  const likeButtonElements = document.querySelectorAll(".like-button");
-  for (const likeButtonElement of likeButtonElements){
-    likeButtonElement.addEventListener("click", (event) => {
-      event.stopPropagation();
-      const index = likeButtonElement.dataset.index;
-      if (users[index].isLiked === false) {
-        users[index].likes = users[index].likes + 1;
-        users[index].isLiked = true;
-      } else {
-        users[index].likes = users[index].likes - 1;
-        users[index].isLiked = false;
-      }
-      renderApp();
-      }
-    )
-  }
-}
 
 //Ответы на комментарии
 
@@ -218,7 +198,7 @@ const renderApp = () =>{
 
   deleteButtonEl.addEventListener("click", () => {
     users.splice(-1, 1);
-      //renderApp();
+      renderApp();
   });
 
   initLikeButton(users);
