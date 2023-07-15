@@ -1,6 +1,7 @@
 "use strict";
 
-const host = "https://wedev-api.sky.pro/api/v2/NastyaTsyf/comments";
+import { addComment, getComments } from "./api.js";
+
 
 let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
 
@@ -10,20 +11,7 @@ let users = [];
 //Получить список комментариев
 
 const fetchUsersAndRender = () => {
-   return fetch(host, {
-  method: "GET",
-  headers: {
-    Authorization: token
-  }
-  })
-    .then((response) => {
-      if (response.status === 500) {
-        throw new Error("Сервер сломался");
-      } else {
-        return response.json();
-      }
-    })
-    .then((responseData) => {
+   return getComments({ token }).then((responseData) => {
       const appComments = responseData.comments.map((comment) => {
         return {
           name: comment.author.name,
@@ -189,36 +177,12 @@ const renderApp = () =>{
   let listEl = document.getElementById("comment-list");
   const deleteButtonEl = document.getElementById("delete-button");
 
-  const addComment = () => {
-    return fetch(host, {
-      method: "POST",
-        headers: {
-        Authorization: token
-      },
-      body: JSON.stringify({
-        name: nameInputEl.value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;"),
-        date: new Date(),
-        text: commentTextEl.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-        likes: 0,
-        isLiked: false
-      })
-    })  
-  }
-
   //loader
 
   //const showDownload = () => {
   //  listEl.innerHTML = `<h3 style="font-family: Helvetica; color: #ffffff;">Пожалуйста подождите. Загружаю комментарии...</h3>`;
   //  deleteButtonEl.style.display = 'none';
-  //  return getFetchPromise()
+  //  return fetchUsersAndRender()
   //    .then(() => {
   //      deleteButtonEl.style.display = 'flex';
   //    });
@@ -266,18 +230,17 @@ const renderApp = () =>{
           commentTextEl.classList.add("error");
           return;
         } else {
-          addComment()
-            .then((response) => {
-              if (response.status === 500) {
-                throw new Error("Сервер сломался");
-              } else if (response.status === 400) {
-                throw new Error("Плохой запрос");
-              } else {
-                document.getElementById("load").classList.remove('hidden');
-                document.getElementById("add").classList.add('hidden');
-                return response.json();
-              }
-            })
+          addComment({ token, 
+            name: nameInputEl.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;"), 
+            text: commentTextEl.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;") })
             .then(() => {
               return fetchUsersAndRender();
             })
