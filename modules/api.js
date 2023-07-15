@@ -33,7 +33,7 @@ export const getComments = () => {
           };
           return{
             name: comment.author.name,
-               date: formatDateToUs(comment.date),
+               date: format (new Date(comment.date), `yyyy-MM-dd hh.mm`),
                text: comment.text,
                likes: comment.likes,
                activeLike: comment.isLiked,
