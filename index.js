@@ -4,6 +4,8 @@ const host = "https://wedev-api.sky.pro/api/v2/NastyaTsyf/comments";
 
 let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
 
+token = null;
+
 let users = [];
 //Получить список комментариев
 
@@ -86,6 +88,7 @@ const replyТoСomment = (commentTextEl) =>{
 
 const renderApp = () =>{
   const appEl = document.getElementById("app");
+
   const usersHtml = users.map((user, index) =>{
     return  `<li class="comment" data-comment="${user.text}" data-name="${user.name}">
     <div class="comment-header">
@@ -106,28 +109,48 @@ const renderApp = () =>{
     </li>`
   }).join('');
 
- const appHtml = `<div id="login">
-        <div class="add-form">
-          <h2 class="comment-header">Форма входа</h2>
-          <input
-            id="login-input"
-            type="text"
-            class="add-form-name"
-            placeholder="Введите логин"
-          />
-          <br>
-          <input
-            id="password-input"
-            type="password"
-            class="add-form-name"
-            placeholder="Введите пароль"
-          />
-          <div class="add-form-row">
-            <button class="add-form-button" id="login-button">Войти</button>
+  if (!token) {
+    let appHtml = `
+          <ul class="comments" id="comment-list">
+            ${usersHtml}
+          </ul>
+          <div class="" id="go-to-login">
+          <p>Чтобы добавить комментарий, <span>авторизуйтесь</span></p>
           </div>
-      </div>
-      </div>
+       `
+    appEl.innerHTML = appHtml;
+    document.getElementById("go-to-login").addEventListener("click", () => {
+      appHtml = `<div id="login">
+          <div class="add-form">
+            <h2 class="comment-header">Форма входа</h2>
+            <input
+              id="login-input"
+              type="text"
+              class="add-form-name"
+              placeholder="Введите логин"
+            />
+            <br>
+            <input
+              id="password-input"
+              type="password"
+              class="add-form-name"
+              placeholder="Введите пароль"
+            />
+            <div class="add-form-row">
+              <button class="add-form-button" id="login-button">Войти</button>
+            </div>
+        </div>
+        </div>`
+      appEl.innerHTML = appHtml;
+      document.getElementById("login-button").addEventListener("click", () => {
+        token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+        fetchUsersAndRender();
+      });
+    })
+    return;
+  }
 
+  let appHtml = `
         <ul class="comments" id="comment-list">
           ${usersHtml}
           </ul>
@@ -156,9 +179,9 @@ const renderApp = () =>{
       </div>
       <div id="load" class="hidden">
         <h3 style="font-family: Helvetica; color: #ffffff;">Комментарий добавляется...</h3>
-   </div>`
+      </div>`
+    appEl.innerHTML = appHtml;
 
-  appEl.innerHTML = appHtml;
 
   const writeButtonEl = document.getElementById("write-button");
   const nameInputEl = document.getElementById("name-input");
