@@ -1,6 +1,8 @@
 "use strict";
 
 import { addComment, getComments } from "./api.js";
+import { getCommentDate } from "./components/date-component.js";
+import { renderLoginComponent } from "./components/login-component.js";
 
 
 let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
@@ -98,43 +100,9 @@ const renderApp = () =>{
   }).join('');
 
   if (!token) {
-    let appHtml = `
-          <ul class="comments" id="comment-list">
-            ${usersHtml}
-          </ul>
-          <div class="" id="go-to-login">
-          <p>Чтобы добавить комментарий, <span>авторизуйтесь</span></p>
-          </div>
-       `
-    appEl.innerHTML = appHtml;
-    document.getElementById("go-to-login").addEventListener("click", () => {
-      appHtml = `<div id="login">
-          <div class="add-form">
-            <h2 class="comment-header">Форма входа</h2>
-            <input
-              id="login-input"
-              type="text"
-              class="add-form-name"
-              placeholder="Введите логин"
-            />
-            <br>
-            <input
-              id="password-input"
-              type="password"
-              class="add-form-name"
-              placeholder="Введите пароль"
-            />
-            <div class="add-form-row">
-              <button class="add-form-button" id="login-button">Войти</button>
-            </div>
-        </div>
-        </div>`
-      appEl.innerHTML = appHtml;
-      document.getElementById("login-button").addEventListener("click", () => {
-        token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
-        fetchUsersAndRender();
-      });
-    })
+    renderLoginComponent({ appEl, setToken: (newToken) => {
+      token = newToken;
+    }, fetchUsersAndRender, usersHtml });
     return;
   }
 
@@ -287,32 +255,5 @@ const renderApp = () =>{
 renderApp();
 
 
-
-//date of comment
-const getCommentDate = (date) => {
-  let currentDate = new Date(date);
-  let day = currentDate.getDate();
-  let month = currentDate.getMonth() + 1;
-  let year = String(currentDate.getFullYear()).split('').slice(2).join('');
-  let hour = currentDate.getHours();
-  let minute = currentDate.getMinutes()
-
-  if (day < 10) { 
-    day = "0" + day; 
-  }
-  if (month < 10) { 
-    month = "0" + month; 
-  }
-  if (hour < 10) { 
-    hour = "0" + hour;
-  };
-  if (minute < 10) { 
-    minute = "0" + minute; 
-  }
-  let commentDate = day + '.' + month + '.' + year + ' ' + hour + ':' + minute;
-  return commentDate;
-}
-
-console.log("It works!");
 
 
