@@ -1,271 +1,34 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-  <title>Проект "Комменты"</title>
-  <meta charset="utf-8" />
-  <link rel="stylesheet" href="styles.css" />
-</head>
-
-<body>
-  <div class="container">
-    <ul class="comments">
-
-    </ul>
-    <div class="add-form">
-      <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
-      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
-      <div class="add-form-row">
-        <button class="add-form-button" disabled='disabled'>Отправить</button>
-        <button class="remove-form-button">Удалить комментарий</button>
+  <head>
+    <title>Проект "Комменты"</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <ul class="comments">
+        <!-- список рендерится из JS -->
+      </ul>
+      <div class="add-form">
+        <input
+          type="text"
+          class="add-form-name"
+          placeholder="Введите ваше имя"
+        />
+        <textarea
+          type="textarea"
+          class="add-form-text"
+          placeholder="Введите ваш коментарий"
+          rows="4"
+        ></textarea>
+        <div class="add-form-row">
+          <button class="add-form-button" disabled = 'disabled'>Написать</button>
+          <button class="remove-form-button">Удалить последний комментарий</button>
+        </div>
       </div>
     </div>
-  </div>
-</body>
+  </body>
 
-<script>
-
-  const btn = document.querySelector(".add-form-button");
-  const userComments = document.querySelector('.comments');
-  const nameUser = document.querySelector(".add-form-name");
-  const commentUser = document.querySelector(".add-form-text");
-  const form = document.querySelector(".add-form");
-  const del = document.querySelector(".remove-form-button");
-
-  let userComment = [];
-
-  function formatCommentDate(date) {
-    let day = date.getDate();
-    let month = date.getMonth() + 1;
-    let year = date.getFullYear() - 2000;
-    let hour = date.getHours();
-    let minute = date.getMinutes();
-    if (month < 10) {
-      month = "0" + month;
-    }
-    if (day < 10) {
-      day = "0" + day;
-    }
-    if (hour < 10) {
-      hour = "0" + hour;
-    }
-    if (minute < 10) {
-      minute = "0" + minute;
-    }
-    return day + "." + month + "." + year + "  " + hour + ":" + minute;
-  }
-
-  isLoadingAllComments = true;
-  function apiGet() {
-    fetch("https://wedev-api.sky.pro/api/v1/nkvereshch/comments", {
-      method: "GET"
-    })
-      .then((response) => {
-        if (response.status === 500) {
-          alert("Сервер упал, попробуй позже");
-          addComment();
-          throw new Error("Сервер упал, попробуй позже");
-        }
-        if (response.status === 200) {
-          return response.json();
-        }
-      })
-      .then((responseData) => {
-        isLoading = false;
-        isLoadingAllComments = false;
-        userComment = responseData.comments.map((comment) => {
-          let date = new Date(comment.date);
-          date = formatCommentDate(date);
-          return {
-            id: comment.id,
-            name: comment.author.name,
-            date: date,
-            comment: comment.text,
-            likes: comment.likes,
-            isLike: true,
-            isEdit: false,
-          };
-        })
-        renderUserComments();
-      })
-  .catch ((error) => {
-      btn.disabled = false;
-      btn.textContent = "Отправить";
-      alert("Кажется, у вас нет интернета, попробуйте позже");
-      console.warn(error);
-    });
-  };
-  apiGet();
-
-  function addComment() {
-    isLoading = true;
-    fetch("https://wedev-api.sky.pro/api/v1/nkvereshch/comments", {
-      method: "POST",
-      body: JSON.stringify({
-        forceError: true,
-        text: commentUser.value,
-        name: nameUser.value,
-      }),
-    })
-      .then((response) => {
-        if (response.status === 500) {
-          alert("Сервер упал, попробуй позже");
-          addComment();
-          throw new Error("Сервер упал, попробуй позже");
-        }
-        if (nameUser.value.length < 3 || commentUser.value.length < 3) {
-          alert("Имя и комментарий должны быть не короче 3 символов");
-          return response.status = 400;
-        }
-        nameUser.value = "";
-        commentUser.value = "";
-        return response.json();
-      })
-      .then(() => {
-        return apiGet();
-      })
-      .catch((error) => {
-        btn.disabled = false;
-        btn.textContent = "Отправить";
-        alert("Кажется, у вас нет интернета, попробуйте позже");
-        console.warn(error);
-      });
-    renderUserComments();
-  }
-
-  const initLikesBtn = () => {
-    const likeBtns = document.querySelectorAll('.like-button');
-    for (const likeBtn of likeBtns) {
-      const index = likeBtn.dataset.index;
-      likeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (userComment[index].isLike === true) {
-          userComment[index].likes = userComment[index].likes += 1;
-          userComment[index].isLike = false;
-        }
-        else if (userComment[index].isLike === false) {
-          userComment[index].likes = userComment[index].likes -= 1;
-          userComment[index].isLike = true;
-        }
-        renderUserComments();
-      });
-    }
-  };
-
-  const changeComment = () => {
-    const changeBtns = document.querySelectorAll('.change-button');
-    for (const changeBtn of changeBtns) {
-      changeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const index = changeBtn.dataset.index;
-        let findComment = document.getElementById('changedText');
-        if (userComment[index].isEdit === true) {
-          userComment[index].comment = findComment.value;
-          userComment[index].isEdit = false;
-        }
-        else if (userComment[index].isEdit === false) {
-          userComment[index].isEdit = true;
-        }
-        renderUserComments();
-      });
-    }
-  }
-
-  const findTextarea = () => {
-    const textareas = document.querySelectorAll('.add-form-text_comment');
-    for (const textarea of textareas) {
-      textarea.addEventListener('click', (e) => {
-        e.stopPropagation();
-      });
-    }
-  }
-
-  function commentComment() {
-    const comments = document.querySelectorAll(".comment");
-    for (const comment of comments) {
-      comment.addEventListener('click', () => {
-        const index = comment.dataset.index;
-        commentUser.value = `QUOTE_BEGIN ${userComment[index].name + ':' + ' ' + userComment[index].comment} QUOTE_END`;
-      });
-    }
-  }
-
-  btn.addEventListener("click", () => {
-    addComment();
-  });
-
-  form.addEventListener("keyup", (e) => {
-    if (e.key == "Enter") {
-      addComment();
-    }
-  });
-
-  del.addEventListener("click", () => {
-  ul.lastElementChild.remove();
-});
-
-  function checkFields() {
-    if (nameUser.value && commentUser.value) {
-      btn.disabled = false;
-      btn.classList.remove('btn-gray');
-    } else {
-      btn.disabled = true;
-      btn.classList.add('btn-gray');
-    }
-  }
-  nameUser.addEventListener('input', checkFields);
-  commentUser.addEventListener('input', checkFields);
-
-  const renderLoadingAllComments = () => {
-    if (isLoadingAllComments === true) {
-      userComments.innerHTML = `<li class="comment">Пожалуйста подождите, комментарии загружаются...</li>`
-    }
-  };
-  renderLoadingAllComments();
-
-  const renderLoadingLastComment = () => {
-    const html = isLoading === true ? `<li class="comment">Комментарий добавляется...</li>` : ``;
-    userComments.insertAdjacentHTML("beforeend", html);
-  };
-
-  const renderUserComments = () => {
-    userComments.innerHTML = userComment.map((comments, index) => {
-      const commentText = comments.isEdit === true ? `<textarea type="form" class="add-form-text_comment" id="changedText" data-index=${index} rows="4">${comments.comment}</textarea>` : `${comments.comment}`;
-      const btnTextChange = comments.isEdit === true ? `Сохранить` : `Редактировать`;
-      return `
-      <li class="comment">
-      <div class="comment-header">
-        <div>${comments.name}</div>
-        <div>${comments.date}</div>
-      </div>
-      <div class="comment-body">
-        <div class="comment-text">
-          ${commentText.replaceAll(`QUOTE_BEGIN`, "<div class='quote'>").replaceAll(`QUOTE_END`, "</div>")}
-        </div>
-      </div>
-      <div class="comment-footer">
-        <div class="change">
-          <button class="change-button" data-index=${index}>${btnTextChange}</button>
-        </div>
-        <div class="delete">
-        <button class="delete-button" data-id=${comments.id}>Удалить</button>
-        </div>
-        <div class="likes">
-          <span class="likes-counter">${comments.likes}</span>
-          <button class="like-button ${comments.isLike ? "" : "-active-like"}" data-index=${index} data-like=${comments.isLike}></button>
-        </div>
-      </div>
-    </li>`
-    }).join('');
-
-    checkFields();
-    initLikesBtn();
-    changeComment();
-    findTextarea();
-    commentComment();
-    renderLoadingLastComment();
-    renderLoadingAllComments();
-  };
-</script>
-
+  <script src="main.js" type="module"></script>
 </html>
