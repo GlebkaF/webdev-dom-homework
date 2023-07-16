@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="comments" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -46,26 +46,118 @@
       </ul>
       <div class="add-form">
         <input
+          id="name-input"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
+          id="comment-input"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="add-button" class="add-form-button">Написать</button>
+          <button id="add-button-delete" class="add-form-button">Удалить последний комментарий</button>
         </div>
       </div>
     </div>
   </body>
+  <style>
+
+    .error {
+      background: linear-gradient(to right, rgb(189, 91, 91), rgb(229, 20, 55));
+    }
+
+    .disabled-button {
+      background-color: #ffffffbe;
+    }
+
+  </style>
 
   <script>
     "use strict";
-    // Код писать здесь
+
+    const buttonElement = document.getElementById("add-button");
+    const buttonElementDelete = document.getElementById("add-button-delete");
+    const commentsElement = document.getElementById ("comments");
+    const nameInputElement = document.getElementById("name-input");
+    const commentInputElement = document.getElementById("comment-input");
+
+    // Установка формата даты ДД.ММ.ГГГГ ЧЧ:ММ
+    const date = function () {
+    const months = ["01", "02", "03", "04", "05", "06",
+    "07", "08", "09", "10", "11", "12"];
+    let commentDate = new Date();
+      let currentDate = commentDate.getDate() + "." + months[commentDate.getMonth()] + "." + commentDate.getFullYear();
+      let hour = commentDate.getHours();
+      let minute = commentDate.getMinutes();
+      let second = commentDate.getSeconds();
+        if (minute < 10) {
+          minute = "0" + minute;
+        }
+        let currentTime = hour + ":" + minute;
+
+        let fullDate = `${currentDate} ${currentTime}`;
+        return fullDate
+    }
+
+    // Функция клика, валидация
+    buttonElement.addEventListener("click", () => {
+      nameInputElement.classList.remove("error");
+      commentInputElement.classList.remove("error");
+      if (nameInputElement.value === "" || commentInputElement.value === "") {
+        nameInputElement.classList.add("error");
+        commentInputElement.classList.add("error");
+        buttonElement.classList.add("disabled-button");
+        return;
+      } else {
+        buttonElement.classList.remove("disabled-button")
+      }
+    
+      const oldComments = commentsElement.innerHTML;
+      commentsElement.innerHTML = oldComments + 
+      `<li id="last-element" class="comment">
+
+        <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${date()}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${commentInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+
+      </li>`;
+
+      nameInputElement.value = "";
+      commentInputElement.value = "";
+    });
+
+    // Удалить последний комментарий
+    buttonElementDelete.addEventListener("click", () => {
+      commentsElement.innerHTML.lastIndexOf("li");
+      document.getElementById("last-element").remove();
+      return;
+    });
+
+    // Добавление комментрия клавишей Enter
+    document.addEventListener("keyup", (event) => {
+        if (event.code === 'Enter') {
+          document.getElementById("add-button").click();
+          return;
+        }
+      });
+
     console.log("It works!");
   </script>
 </html>
