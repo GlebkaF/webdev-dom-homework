@@ -9,7 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments" id="commentsListId">
-        <li class="comment">
+        <li class="comment" data-color=" #bcec30">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -23,10 +23,11 @@
             <div class="likes">
               <span class="likes-counter">3</span>
               <button class="like-button"></button>
+
             </div>
           </div>
         </li>
-        <li class="comment">
+        <li class="comment"data-color=" #bcec30">
           <div class="comment-header">
             <div>Варвара Н.</div>
             <div>13.02.22 19:22</div>
@@ -39,7 +40,7 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
+              <button class="like-button"></button>
             </div>
           </div>
         </li>
@@ -67,15 +68,65 @@
 
   <script>
     "use strict";
+
+    const likes =[
+      {counter: `0`,
+       button:`colorButtonElement`}
+
+
+  ] 
     const list = document.getElementById("commentsListId")
     const listButton = document.getElementById(`add-form-buttonListId`)
     const commentText = document.getElementById(`commentText`)
     const commentName = document.getElementById(`commentName`)
     let currentDate = new Date();
+    const likeButtonPush = document.querySelectorAll(`.comment-footer`)
+
+    const renderLikes = () =>{
+      
+      const likesHtml = likes.map((like)=> {return 
+      `<div class="likes">
+              <span class="likes-counter">111</span>
+              <button class="like-button"></button>
+            </div>`})
+          
+          console.log(likesHtml)}
+
+    renderLikes()
     
-    console.log(currentDate);
+    const initButtonColor =() =>{
+      
+      
+      const colorButton = document.querySelectorAll(`.like-button`)
+    for (const colorButtonElement of colorButton) {
+      
+      colorButtonElement.addEventListener(`click`, () =>{ colorButtonElement.classList.add('-active-like')
+      // colorButtonElement.classList.remove('-active-like')
+      
+    })
+    
+    }
+    }
+    
+    const initLikeButton = ()=>{
 
+   
+      const likeButtonPush = document.querySelectorAll(`.comment-footer`)
+      
+      for (const likeButton of likeButtonPush) {
+      console.log(likeButton.innerHTML)
+      
+      likeButton.addEventListener(`click`, ()=>{console.log(1)
+     
+              
+        
+      
+      
+      })
+    }}
 
+initLikeButton()
+initButtonColor()
 
     listButton.addEventListener(`click`, ()=>{
       commentName.classList.remove('error');
@@ -105,13 +156,18 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button -active-like"></button>
+              <span class="likes-counter"></span>
+              <button class="like-button"></button>
             </div>
           </div>
         </li>`
+        renderLikes()
+        initButtonColor()
+        initLikeButton()
     commentText.value=``
     commentName.value=``  
+    
+
       })
      // Код писать здесь
     console.log("It works!");
