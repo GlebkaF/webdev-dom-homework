@@ -8,11 +8,11 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="list" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
+            <div id="addDate">12.02.22 12:18</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -46,26 +46,88 @@
       </ul>
       <div class="add-form">
         <input
+          id="name-input"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
+          id="text-input"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="add-button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
+  <style>
+    .error {
+      background-color: rgb(211, 115, 115);
+    }
+  </style>
 
   <script>
     "use strict";
-    // Код писать здесь
-    console.log("It works!");
+
+    // Коммент
+
+    const buttonElement = document.getElementById("add-button");
+    const listElement = document.getElementById("list");
+    const textInputElement = document.getElementById("text-input");
+    const nameInputElement = document.getElementById("name-input");
+    const addDateElement = document.getElementById("addDate");
+
+    const addDate = () => {
+      const date = new Date();
+      let time = {
+        hour: "numeric",
+        minute: "numeric",
+      };
+      let year = {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+      };
+      return (
+        date.toLocaleString("ru", year) + " " + date.toLocaleString("ru", time)
+      );
+    };
+
+    buttonElement.addEventListener("click", () => {
+      nameInputElement.classList.remove("error");
+      if (nameInputElement.value === "") {
+        nameInputElement.classList.add("error");
+        return;
+      }
+      const oldListHtml = listElement.innerHTML;
+      listElement.innerHTML =
+        oldListHtml +
+        `<li id="list" class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${addDateElement.value}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+      nameInputElement.value = "";
+      textInputElement.value = "";
+    });
+    //  датa
+
+    // лайки
   </script>
 </html>
