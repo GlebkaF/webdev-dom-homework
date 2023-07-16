@@ -12,7 +12,7 @@
         <li  class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
-            <div id="date">12.02.22 12:18</div>
+            <div>12.02.22 12:18</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -62,17 +62,41 @@
       </div>
     </div>
   </body>
+  <style>
+    .error {
+      background-color: red;
+    }
+  </style>
 
   <script>
     "use strict";
     const buttonInputElement = document.querySelector('.add-form-button');
     const nameInputElement = document.getElementById("name_input");
     const commentInputElement = document.getElementById("comment_input");
-    const currentDateElement = document.getElementById("date");
     const listElement = document.querySelector(".comments");
- 
 
+    let years = {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+    };
+
+    let time = {
+      hour: 'numeric',
+      minute: 'numeric'
+    };
+
+    let currentDateElement = new Date();
+ 
     buttonInputElement.addEventListener("click", () => {
+      nameInputElement.classList.remove("error");
+      commentInputElement.classList.remove("error");
+      if(nameInputElement.value === "" && commentInputElement.value === "") {
+        nameInputElement.classList.add("error");
+        commentInputElement.classList.add("error");
+        return;
+      }
+
       const oldListHtml = listElement.innerHTML;
       
       listElement.innerHTML += `<li  class="comment">
@@ -80,7 +104,7 @@
             <div>
               ${nameInputElement.value}
             <div>
-              ${currentDateElement}
+              ${currentDateElement.toLocaleString("ru", years) + " " + currentDateElement.toLocaleString("ru", time)}
             </div>
             </div>
           </div>
@@ -97,6 +121,9 @@
             </div>
           </div>
         </li>`
+
+        nameInputElement.value = "";
+        commentInputElement.value = "";
       }); 
     // console.log("It works!");
   </script>
