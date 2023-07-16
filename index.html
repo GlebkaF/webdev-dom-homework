@@ -47,7 +47,7 @@
     "use strict";
 
     const buttonElement = document.getElementById("add-button");
-    const buttonElementDelete = document.getElementById("add-button-delete");
+    const buttonLike = document.getElementById("like");
     const commentsElement = document.getElementById ("comments");
     const nameInputElement = document.getElementById("name-input");
     const commentInputElement = document.getElementById("comment-input");
@@ -83,11 +83,12 @@
         buttonElement.classList.remove("disabled-button")
       }
     
+      // Добавляем новый комментарий
       users.push({
         name: nameInputElement.value,
         dateComment: date(),
         text: commentInputElement.value,
-        likes: 3
+        likes: 0 // Что сюда писать, чтобы счетчик работал?
       })
 
       renderUsers();
@@ -147,6 +148,15 @@
     };
 
     renderUsers();
+
+    // Лайки
+    const likeButton = document.querySelector('.like-button');
+    const likeCount = document.querySelector('.likes-counter');
+    buttonLike.addEventListener('click', () => {
+    const currentCount = parseInt(likeCount.textContent, 10);
+    likeCount.textContent = currentCount + 1;
+    return
+    });
 
     console.log("It works!");
   </script>
