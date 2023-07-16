@@ -2,7 +2,6 @@
 
 import { addComment, getComments } from "./api.js";
 import { getCommentDate } from "./components/date-component.js";
-import { renderListComponent } from "./components/list-and-add-component.js";
 import { renderLoginComponent } from "./components/login-component.js";
 import { initLikeButton } from "./components/like-button-component.js";
 import { replyТoСomment } from "./components/reply-component.js";
@@ -12,7 +11,7 @@ let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
 
 token = null;
 
-let users = [];
+export let users = [];
 //Получить список комментариев
 
 const fetchUsersAndRender = () => {
@@ -45,10 +44,8 @@ const fetchUsersAndRender = () => {
 fetchUsersAndRender();
 
 
-
 const renderApp = () =>{
   const appEl = document.getElementById("app");
-
 
   const usersHtml = users.map((user, index) =>{
     return  `<li class="comment" data-comment="${user.text}" data-name="${user.name}">
@@ -69,6 +66,42 @@ const renderApp = () =>{
     </div>
     </li>`
   }).join('');
+
+  const renderListComponent = ({ usersHtml, appEl }) => {
+    let appHtml = users.map((user) =>{
+      return `
+        <ul class="comments" id="comment-list">
+          ${usersHtml}
+          </ul>
+          <div class="add-form-row" style="justify-content: center" >
+            <button class="add-form-button" id="delete-button">Удалить комментарий</button>
+          </div>
+      <div id="add">
+        <div class="add-form">
+          <input
+            id="name-input"
+            type="text"
+            class="add-form-name"
+            value="${user.name}"
+            readonly="readonly"
+          />
+          <textarea
+            id="comment-text"
+            type="textarea"
+            class="add-form-text"
+            placeholder="Введите ваш коментарий"
+            rows="4"
+          ></textarea>
+          <div class="add-form-row">
+            <button class="add-form-button" id="write-button">Написать</button>
+          </div>
+        </div>
+      </div>
+      <div id="load" class="hidden">
+        <h3 style="font-family: Helvetica; color: #ffffff;">Комментарий добавляется...</h3>
+      </div>`  }).join('');
+    appEl.innerHTML = appHtml;
+}
 
   if (!token) {
     renderLoginComponent({ appEl, setToken: (newToken) => {
