@@ -9,40 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments" id="commentsId">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+        <!--Список рендерится из js -->
       </ul>
       <div class="add-form">
         <input
@@ -84,41 +51,112 @@
       minute: "numeric"
     };
     let date = {
-      year: "numeric",
+      year: "2-digit",
       month: "numeric",
       day: "numeric"
     };
+
+    let nowDate = newDate.toLocaleString("ru", date) + " " + newDate.toLocaleString("ru", time);
+    const userElements = document.querySelectorAll(".comment");
+
+    const users = [
+      {
+        name: "Глеб Фокин",
+        dateCom: "12.02.22 12:18",
+        text: "Это будет первый комментарий на этой странице",
+        likesQuantity: 3,
+        likeActive: false
+      },
+      {
+        name: "Варвара Н.",
+        dateCom: "13.02.22 19:22",
+        text: "Мне нравится как оформлена эта страница! ❤",
+        likesQuantity: 75,
+        likeActive: true
+      }
+    ];
+
+      const getLikeClass = (element) => {
+        return element ? "like-button -active-like" : "like-button";
+      }
+
+    function addLike() {
+      const likeElements = document.querySelectorAll(".like-button");
+      
+      likeElements.forEach((likeElement, index) => {
+        
+        likeElement.addEventListener("click", () => {
+          const user = users[index];
+          if(user.likeActive === true) {
+            user.likeActive = false;
+            user.likesQuantity -= 1;
+            renderUsers();
+          } else{
+            user.likeActive = true;
+            user.likesQuantity += 1;
+            renderUsers();
+          }; 
+        });
+      });
+    };
+    
+
+    const renderUsers = () => {
+      const usersHtml = users.map((user) => {
+        return `<li class="comment">
+          <div class="comment-header">
+            <div>${user.name}</div>
+            <div>${user.dateCom}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${user.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${user.likesQuantity}</span>
+              <button class="${getLikeClass(user.likeActive)}"></button>
+            </div>
+          </div>
+        </li>`
+      }).join("");
+      
+      listElement.innerHTML = usersHtml;
+      addLike();
+    };
+    renderUsers();
 
     buttonElement.addEventListener('click', () => {
       nameInputElement.classList.remove('error');
       textInputElement.classList.remove('error');
       
+      if(nameInputElement.value === '' && textInputElement.value === ''){
+        nameInputElement.classList.add('error');
+        textInputElement.classList.add('error');
+        return;
+      }
+
       if(nameInputElement.value === ''){
         nameInputElement.classList.add('error');
         return;
-      } else if(textInputElement.value === '') {
+      } 
+      if(textInputElement.value === '') {
           textInputElement.classList.add('error');
           return;
-      }
+      } 
+
+      users.push({
+        name: nameInputElement.value,
+        dateCom: nowDate,
+        text: textInputElement.value,
+        likesQuantity: 0,
+        likeActive: false
+      })
       
-      const oldListHtml = listElement.innerHTML;
-      listElement.innerHTML = oldListHtml + `<li class="comment">
-          <div class="comment-header">
-            <div>${nameInputElement.value}</div>
-            <div>${newDate.toLocaleString("ru", date)} ${newDate.toLocaleString("ru", time)}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${textInputElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>`
+      addLike();
+      renderUsers();
+      
         nameInputElement.value = "";
         textInputElement.value = "";
     });
