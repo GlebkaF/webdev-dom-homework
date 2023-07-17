@@ -11,44 +11,8 @@
     <div class="container">
         <div class="loader">Пожалуйста подождите, лента загружается... </div>
         <ul class="comments">
-
             <!-- Рендеринг в JS -->
-            <!-- <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
 
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-
-      </li> -->
         </ul>
         <div class="add-form">
             <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
@@ -59,6 +23,7 @@
         </div>
         <div class="comment-loader add-form disableLoader">Комментарий добавляется...</div>
     </div>
+    <script type="module" src="./main.js"> </script>
 </body>
 
 <style>
@@ -70,9 +35,9 @@
         display: none;
     }
 </style>
+<!-- <script type="module" src="./main.js"> </script> -->
 
-
-<script>
+<!-- <script>
     "use strict";
     const buttonElement = document.querySelector('.add-form-button');
     const nameElement = document.querySelector('.add-form-name');
@@ -301,7 +266,7 @@
             body: JSON.stringify({
                 text: textElement.value,
                 name: nameElement.value,
-                forceError: true,
+                forceError: false,
             })
         })
             .then((response) => {
@@ -367,6 +332,6 @@
 
 
 
-</script>
+</script> -->
 
 </html>
