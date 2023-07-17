@@ -22,6 +22,7 @@ let commentsList = []
 // Переменные включающие или отключающие загрузку
 let isLoadingToComments = false
 let isLoadingToStartApp = true
+let isLogin = false
 
 // Получение и рендер списка комментариев с API
 function getAndRenderCommentList() {
