@@ -9,40 +9,7 @@
   <body>
     <div class="container">
       <ul id="comments" class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+        <!-- Список рендерится из JS -->
       </ul>
       <div class="add-form">
         <input
@@ -60,7 +27,6 @@
         ></textarea>
         <div class="add-form-row">
           <button id="add-button" class="add-form-button">Написать</button>
-          <button id="add-button-delete" class="add-form-button">Удалить последний комментарий</button>
         </div>
       </div>
     </div>
@@ -78,86 +44,137 @@
   </style>
 
   <script>
-    "use strict";
+        "use strict";
 
-    const buttonElement = document.getElementById("add-button");
-    const buttonElementDelete = document.getElementById("add-button-delete");
-    const commentsElement = document.getElementById ("comments");
-    const nameInputElement = document.getElementById("name-input");
-    const commentInputElement = document.getElementById("comment-input");
+  const buttonElement = document.getElementById("add-button");
+  const buttonLike = document.getElementById("like");
+  const commentsElement = document.getElementById ("comments");
+  const nameInputElement = document.getElementById("name-input");
+  const commentInputElement = document.getElementById("comment-input");
 
-    // Установка формата даты ДД.ММ.ГГГГ ЧЧ:ММ
-    const date = function () {
-    const months = ["01", "02", "03", "04", "05", "06",
-    "07", "08", "09", "10", "11", "12"];
-    let commentDate = new Date();
-      let currentDate = commentDate.getDate() + "." + months[commentDate.getMonth()] + "." + commentDate.getFullYear();
-      let hour = commentDate.getHours();
-      let minute = commentDate.getMinutes();
-      let second = commentDate.getSeconds();
-        if (minute < 10) {
-          minute = "0" + minute;
-        }
-        let currentTime = hour + ":" + minute;
+    // Массив данных
+    const users = [
+  {
+    name: "Глеб Фокин",
+    dateComment: "12.02.22 12:18",
+    text: "Это будет первый комментарий на этой странице",
+    likes: 3,
+    likeActive: false
+  },
+  {
+    name: "Варвара Н.",
+    dateComment: "13.02.22 19:22",
+    text: "Мне нравится как оформлена эта страница! ❤",
+    likes: 75,
+    likeActive: true
+  }
+];
 
-        let fullDate = `${currentDate} ${currentTime}`;
-        return fullDate
+// Установка формата даты ДД.ММ.ГГГГ ЧЧ:ММ
+const date = function () {
+const months = ["01", "02", "03", "04", "05", "06",
+"07", "08", "09", "10", "11", "12"];
+let commentDate = new Date();
+  let currentDate = commentDate.getDate() + "." + months[commentDate.getMonth()] + "." + commentDate.getFullYear();
+  let hour = commentDate.getHours();
+  let minute = commentDate.getMinutes();
+  let second = commentDate.getSeconds();
+    if (minute < 10) {
+      minute = "0" + minute;
     }
+    let currentTime = hour + ":" + minute;
+
+    let fullDate = `${currentDate} ${currentTime}`;
+    return fullDate
+}
+
+// Добавление комментрия клавишей Enter
+document.addEventListener("keyup", (event) => {
+    if (event.code === 'Enter') {
+      document.getElementById("add-button").click();
+      return;
+    }
+  });
+
+// Кнопка лайка
+const getLikeClass = (element) => {
+  return element ? "like-button -active-like" : "like-button"
+}
+
+    // Добавить лайк
+function addLike () {
+  const likeElements = document.querySelectorAll('.like-button')
+  likeElements.forEach((element, index) => {
+    element.addEventListener('click', () => {
+      const user = users[index];
+      if (user.likeActive === true) {
+        user.likeActive = false;
+        user.likes -= 1;
+        renderUsers();
+      } else {
+        user.likeActive = true;
+        user.likes += 1;
+        renderUsers();
+      }
+    })
+  })
+}
+
+// Рендер функция
+const renderUsers = () => {
+  const userHtml = users.map((user, index) => {
+    return `<li id="last-element" class="comment">
+
+    <div class="comment-header">
+        <div>${user.name}</div>
+        <div>${user.dateComment}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">
+          ${user.text}
+        </div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">${user.likes}</span>
+          <button class="${getLikeClass(user.likeActive)}"></button>
+        </div>
+      </div>
+    </li>`
+  }).join("");
+  commentsElement.innerHTML = userHtml;
+  addLike()
+};
+
+renderUsers()
 
     // Функция клика, валидация
     buttonElement.addEventListener("click", () => {
-      nameInputElement.classList.remove("error");
-      commentInputElement.classList.remove("error");
-      if (nameInputElement.value === "" || commentInputElement.value === "") {
-        nameInputElement.classList.add("error");
-        commentInputElement.classList.add("error");
-        buttonElement.classList.add("disabled-button");
-        return;
-      } else {
-        buttonElement.classList.remove("disabled-button")
-      }
-    
-      const oldComments = commentsElement.innerHTML;
-      commentsElement.innerHTML = oldComments + 
-      `<li id="last-element" class="comment">
+  nameInputElement.classList.remove("error");
+  commentInputElement.classList.remove("error");
+  if (nameInputElement.value === "" || commentInputElement.value === "") {
+    nameInputElement.classList.add("error");
+    commentInputElement.classList.add("error");
+    buttonElement.classList.add("disabled-button");
+    return;
+  } else {
+    buttonElement.classList.remove("disabled-button");
+  }
 
-        <div class="comment-header">
-            <div>${nameInputElement.value}</div>
-            <div>${date()}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${commentInputElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
+  // Добавляем новый комментарий
+  users.push({
+    name: nameInputElement.value,
+    dateComment: date(),
+    text: commentInputElement.value,
+    likes: 0 // Что сюда писать, чтобы счетчик работал?
+  })
 
-      </li>`;
+  renderUsers();
 
-      nameInputElement.value = "";
-      commentInputElement.value = "";
-    });
+  nameInputElement.value = "";
+  commentInputElement.value = "";
+});
 
-    // Удалить последний комментарий
-    buttonElementDelete.addEventListener("click", () => {
-      commentsElement.innerHTML.lastIndexOf("li");
-      document.getElementById("last-element").remove();
-      return;
-    });
-
-    // Добавление комментрия клавишей Enter
-    document.addEventListener("keyup", (event) => {
-        if (event.code === 'Enter') {
-          document.getElementById("add-button").click();
-          return;
-        }
-      });
-
-    console.log("It works!");
+console.log("It works!");
   </script>
 </html>
