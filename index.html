@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="list">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -46,26 +46,71 @@
       </ul>
       <div class="add-form">
         <input
+          id="name-input"
+          value=" "
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
+          id="com-input"
+          value=" "
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="add-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
 
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    
+    const buttonElement = document.getElementById("add-button");
+    const listElement = document.getElementById("list");
+    const nameInputElement = document.getElementById("name-input");
+    const comInputElement = document.getElementById("com-input");
+
+    buttonElement.addEventListener('click' , () => {
+      
+      nameInputElement.classList.remove('error');
+      
+      if(nameInputElement.value === " " || comInputElement.value === "") {
+        comInputElement.classList.add('error');
+        nameInputElement.classList.add('error');
+        return;
+      } 
+      comInputElement.classList.remove('error');
+
+        function date(newDate) {
+          let fullHour = newDate.toLocaleDateString() + " " + newDate.getHours() + ":"+ newDate.getMinutes();
+          return fullHour;
+        }
+        date(new Date())
+
+        const oldListHtml = listElement.innerHTML;
+        listElement.innerHTML += 
+        `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${date(new Date())}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button -active-like"></button>
+            </div>
+          </div>
+        </li>`
+    });
+    
   </script>
 </html>
