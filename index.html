@@ -111,19 +111,26 @@
         name: "Глеб Фокин",
         dateComment: "12.02.22 12:18",
         text: "Это будет первый комментарий на этой странице",
-        likes: 3
+        likes: 3,
+        likeActive: false
       },
       {
         name: "Варвара Н.",
         dateComment: "13.02.22 19:22",
         text: "Мне нравится как оформлена эта страница! ❤",
-        likes: 75
+        likes: 75,
+        likeActive: true
       }
     ];
 
+    // Кнопка лайка
+    const getLikeClass = (element) => {
+      return element ? "like-button -active-like" : "like-button"
+    }
+
     // Рендер функция
     const renderUsers = () => {
-      const userHtml = users.map((user) => {
+      const userHtml = users.map((user, index) => {
         return `<li id="last-element" class="comment">
 
         <div class="comment-header">
@@ -138,7 +145,7 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${user.likes}</span>
-              <button class="like-button"></button>
+              <button class="${getLikeClass(user.likeActive)}"></button>
             </div>
           </div>
         </li>`
@@ -149,14 +156,22 @@
 
     renderUsers();
 
-    // Лайки
-    const likeButton = document.querySelector('.like-button');
-    const likeCount = document.querySelector('.likes-counter');
-    buttonLike.addEventListener('click', () => {
-    const currentCount = parseInt(likeCount.textContent, 10);
-    likeCount.textContent = currentCount + 1;
-    return
-    });
+    // Добавить лайк
+    function addLike () {
+      Array.from(likeElement).forEach((element, index) => {
+        element.addEventListener('click', () => {
+          const user = user[index];
+          if (user.likeActive === true) {
+            user.likeActive = false;
+            user.likes = user.likes - 1;
+            renderUsers();
+          } else {
+            user.likes = user.likes - 1;
+            renderUsers();
+          }
+        })
+      })
+    }
 
     console.log("It works!");
   </script>
