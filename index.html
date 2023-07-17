@@ -9,7 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments" id="commentsListId">
-        <li class="comment">
+        <!-- <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -43,7 +43,7 @@
               <button class="like-button"></button>
             </div>
           </div>
-        </li>
+        </li> -->
       </ul>
       <div class="add-form" id="add-formListId">
         <input
@@ -69,10 +69,11 @@
   <script>
     "use strict";
 
-    const comments =[
+
+    const comments = [
       {
-      name: `Глеб Фокин`,
-      date:`12.02.22 12:18`,
+      name: `Глеб Фокин vvv`,
+      date: `12.02.22 12:18`,
       comment: `first comment on page`,
       like: 3,
       isLiked: false
@@ -85,7 +86,10 @@
       isLiked: false
     }
   ]; 
+
   
+
+console.log(`${comments[0].name}`)
     const list = document.getElementById("commentsListId")
     const listButton = document.getElementById(`add-form-buttonListId`)
     const commentText = document.getElementById(`commentText`)
@@ -94,51 +98,64 @@
     const likeButtonPush = document.querySelectorAll(`.comment-footer`)
 
     const renderLikes = () =>{
+         
       
-      const likesHtml = comments.map((El)=> {return 
-        `<li class="comment">
+      const likesHtml = comments.map((i)=> {
+        return `<li class="comment">
           <div class="comment-header">
-            <div>${El.name}</div>
-            <div>${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString()}</div>
+            <div>${i.name}</div>
+            <div>${i.date}</div>
             
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${El.comment}
+              ${i.comment}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">${El.like}</span>
-              <button class="like-button">${El.isLiked}</button>
+              <span class="likes-counter">${i.like}</span>
+              <button class="like-button">${i.isLiked}</button>
             </div>
           </div>
-        </li>`})
+        </li> `
+      }).join(``);
+      list.innerHTML=likesHtml;
         console.log(likesHtml)
+        
       }
-          
-          
-
-    renderLikes()
+      renderLikes()
 
     
-      
-    const initLikeButton = ()=>{
-
+    
+const initLikeButton = ()=>{
    
-      const likeButtonPush = document.querySelectorAll(`.comment-footer`)
-      
-      for (const likeButton of likeButtonPush) {
-      console.log(likeButton.innerHTML)
-      
-      likeButton.addEventListener(`click`, ()=>{console.log(1)
+const likeButtonPush = document.querySelectorAll(`.comment-footer`)
+for (const likeButton of likeButtonPush) {
+
+likeButton.addEventListener(`click`, ()=>{
+
+  comments.map(function(element){
+
+
+let a = element.like
+if(element.isLiked===false)   {
+   element.isLiked=true
+   likeButton.classList.add('-active-like')
+   element.like=a+1
+   console.log(a+1)
+   console.log(element.isLiked)}
+
+})
+renderLikes()
+  })
+
+
      
-              
-        
-      
-      
-      })
-    }}
+
+
+}}
+initLikeButton ()
 
 
 
@@ -157,34 +174,46 @@
     return;
   }
 
-    list.innerHTML=oldList+`<li class="comment">
-          <div class="comment-header">
-            <div>${commentName.value}</div>
-            <div>${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString()}</div>
+comments.push({
+    name: commentName.value,
+    date: `${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString()}`,
+    comment: commentText.value,
+    like: 0,
+    isLiked: false
+  }
+)
+renderLikes()
+
+    // list.innerHTML=oldList+`<li class="comment">
+    //       <div class="comment-header">
+    //         <div>${commentName.value}</div>
+    //         <div>${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString()}</div>
             
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${commentText.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter"></span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`
-        renderLikes()
-        initButtonColor()
-        initLikeButton()
+    //       </div>
+    //       <div class="comment-body">
+    //         <div class="comment-text">
+    //           ${commentText.value}
+    //         </div>
+    //       </div>
+    //       <div class="comment-footer">
+    //         <div class="likes">
+    //           <span class="likes-counter"></span>
+    //           <button class="like-button"></button>
+    //         </div>
+    //       </div>
+    //     </li>`
+        
+        
+      
     commentText.value=``
     commentName.value=``  
     
 
       })
+
+
      // Код писать здесь
-    console.log("It works!");
+    console.log("It not works!");
   
   </script>
 </html>
