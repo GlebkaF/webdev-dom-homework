@@ -1,4 +1,4 @@
-import { getCommentList, postNewComment } from "./modules/api.js" // GET and POST запросы
+import { getCommentList, postNewComment, setToken } from "./modules/api.js" // GET and POST запросы
 import { secureReplace } from "./modules/sanitizeHtml.js" // Реплейсы тегов
 import { enableLoadingToNewComment, enableLoadingToStartApp } from "./modules/loadingFunctions.js" // Функции лоадинг-баров (отобразить/скрыть)
 import { renderCommentList } from "./modules/renderCommentList.js" // Отрисовка полученного списка комментов
@@ -6,23 +6,34 @@ import { fullTime, rightDateFormat } from "./modules/editAndGetTimeFunctions.js"
 import { disableBtn } from "./modules/disableBtn.js" // Отключение/включение кнопки
 import { delay } from "./modules/delay.js" // Иммитация API для лайков(либо просто контролируемый дилэй)
 import { tryPostAgain } from "./modules/tryPostAgain.js" // Повторный POST при получении 500 статуса
+import { renderApp } from "./modules/renderApp.js"
+import { loginPageRender } from "./modules/loginPage.js"
+import { checkToken } from "./modules/checkToken.js"
 
 // Переменные элементов
-const nameInput = document.querySelector('#name-input')
-const commentInput = document.querySelector('#comment-input')
-const addButton = document.querySelector('#add-button')
-const commentsBox = document.querySelector('#comments-box')
-const loadingCommentsBox = document.querySelector('#loading-comments')
-const loadingHeadBox = document.querySelector('#loading-head')
-const inputsBox = document.querySelector('.add-form')
+export const nameInput = document.querySelector('#name-input')
+export const commentInput = document.querySelector('#comment-input')
+export const addButton = document.querySelector('#add-button')
+export const commentsBox = document.querySelector('#comments-box')
+export const loadingCommentsBox = document.querySelector('#loading-comments')
+export const loadingHeadBox = document.querySelector('#loading-head')
+export const inputsBox = document.querySelector('.add-form')
+export const linkRow = document.querySelector('#login-row')
 
 // Создаем массив для хранения списка комментариев
-let commentsList = []
+export let commentsList = []
 
 // Переменные включающие или отключающие загрузку
-let isLoadingToComments = false
-let isLoadingToStartApp = true
-let isLogin = false
+export let isLoadingToComments = false
+export let isLoadingToStartApp = true
+
+//переменная показывающая авторизован ли пользователь
+export let isLogin = false
+
+//функция для измения статуса из других модулей
+export const setIsLogin = (newValue) => {
+    isLogin = newValue
+}
 
 // Получение и рендер списка комментариев с API
 function getAndRenderCommentList() {
@@ -54,7 +65,12 @@ function getAndRenderCommentList() {
 
 }
 
-getAndRenderCommentList();
+//Проверка на наличии токена
+checkToken(() => {
+    renderApp(isLogin, () => {   
+        getAndRenderCommentList()
+    })
+})
 
 // Функция добавления комментария на страиницу и в список API 
 function addComment() {
@@ -67,7 +83,6 @@ function addComment() {
         isLoadingToComments = false
         enableLoadingToNewComment(isLoadingToComments, loadingCommentsBox, inputsBox)
         addButton.classList.add('add-form-button_disable')
-        nameInput.value = ''
         commentInput.value = ''
     })
     .catch((error) => {
@@ -89,7 +104,7 @@ function addComment() {
 }
 
 // Функция создания ответа на комментарий
-const initCommentAnswerListeners = () => {
+export const initCommentAnswerListeners = () => {
     const commentAnswer = document.querySelectorAll(".comment-text")
     commentAnswer.forEach((answer, index) => {
         answer.addEventListener('click', () => {
@@ -105,7 +120,7 @@ ${commentsList[index].text}←
 }
 
 // Функция создания коллекции и навешивания ивентов на все кнопки Like
-const initLikeButtonsListeners = () => {
+export const initLikeButtonsListeners = () => {
     const likeButtons = document.querySelectorAll('.like-button')
     likeButtons.forEach((likeButton, index) => {
         likeButton.addEventListener('click', () => {
@@ -128,7 +143,7 @@ const initLikeButtonsListeners = () => {
 }
 
 // Функция создания коллекции и навешивания ивентов на все кнопки РЕДАКТИРОВАТЬ и СОХРАНИТЬ
-const initEditButtonsListeners = () => {
+export const initEditButtonsListeners = () => {
     const editButtons = document.querySelectorAll('#edit-button')
     editButtons.forEach((editButton, index) => {
         editButton.addEventListener('click', () => {
@@ -186,6 +201,13 @@ addButton.addEventListener('click', () => {
     renderCommentList(commentsList, commentsBox, initLikeButtonsListeners, initEditButtonsListeners, initCommentAnswerListeners)
     addButton.classList.add('add-form-button_disable')
     addButton.blur()
+})
+
+//Обработка клика на кнопку авторизации
+linkRow.addEventListener('click', () => {
+    loginPageRender(() => {
+        getAndRenderCommentList()
+    })
 })
 
 // Обработка нажатия на enter
