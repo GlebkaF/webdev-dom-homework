@@ -34,21 +34,36 @@ const comments = [
 //  console.log(comments)
 
 
- comments.map(function(element){
+//  comments.map(function(element){
 
 
-    let a =element.like
-    if(element.isLiked===false)   {
-       element.isLiked=true
-       element.like=a+1
-       console.log(a+1)
-       console.log(element.isLiked)}
-    else if(element.isLiked===true){
-       element.isLiked=false
-       element.like=a-1
-       console.log(a-1)}
+//     let a =element.like
+//     if(element.isLiked===false)   {
+//        element.isLiked=true
+//        element.like=a+1
+//        console.log(a+1)
+//        console.log(element.isLiked)}
+//     else if(element.isLiked===true){
+//        element.isLiked=false
+//        element.like=a-1
+//        console.log(a-1)}
 
-       return comments
- })
+//        return comments
+//  })
 
 
+console.log(comments[i])
+
+        let a =element.like
+        if(element.isLiked===false)   {
+           element.isLiked=true
+           element.like=a+1
+           console.log(a+1)
+           console.log(element.isLiked)}
+        else if(element.isLiked===true){
+           element.isLiked=false
+           element.like=a-1
+           console.log(a-1)}
+    
+           return comments
+     })
