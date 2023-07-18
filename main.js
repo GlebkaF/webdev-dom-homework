@@ -29,7 +29,7 @@ const listElement = document.getElementById('list');
       })
 
       listElementData = appComments;
-      renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent });
+      renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement });
       loaderListElement.style.display = 'none';
     })
     .catch((error) => {
@@ -69,7 +69,7 @@ const listElement = document.getElementById('list');
         }
         console.log(commentTextareaElement.value);
 
-        renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent });
+        renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement });
       })
     }
   }
@@ -82,7 +82,7 @@ const listElement = document.getElementById('list');
         const index = redactorButton.dataset.index;
         console.log(index);
 
-        renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent });
+        renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement });
       })
     }
   }
@@ -95,12 +95,12 @@ const listElement = document.getElementById('list');
         const index = deleteButton.dataset.index;
         listElementData.splice(index, 1);
 
-        renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent });
+        renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement });
       })
     }
   }
 
-  renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent });
+  renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement });
 
   //Событие выключения кнопки "Написать"
   document.addEventListener('mouseover', () => {
@@ -180,7 +180,7 @@ const listElement = document.getElementById('list');
     }
     
     fetchPost();
-    renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent });
+    renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement });
     initLikeEvent();
   }
 
