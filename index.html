@@ -9,7 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments" id = "ListComments">
-        <li class="comment">
+        <!-- <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -42,7 +42,7 @@
               <button class="like-button -active-like"></button>
             </div>
           </div>
-        </li>
+        </li> -->
       </ul>
       <div class="add-form">
         <input
@@ -73,34 +73,113 @@
     const ListCommentsElement = document.getElementById("ListComments");
     const commentDate = new Date();
     
+    
+    
+    
+    // NameInputElement.addEventListener('input', () => 
+    // ButtonInputElement.disabled = (NameInputElement.value === ''));
+    // CommentInputElement.addEventListener('input', () =>
+    //     ButtonInputElement.disabled = (CommentElement.value === ''));
 
-     ButtonInputElement.addEventListener("click", () => {
-      if (NameInputElement.value === "" || CommentInputElement.value === "") {
-       ButtonInputElement.disabled = true; 
-       return;
-      }  
-      
-      ListCommentsElement.innerHTML +=
-          `<li class="comment">
+    const users = [
+      {
+        name: 'Глеб Фокин',
+        date: '12.02.22 12:18',
+        comment: 'Это будет первый комментарий на этой странице',
+        countLikes: 3,
+        isLiked: false,
+
+      },
+      {
+        name: 'Варвара Н.',
+        date: '13.02.22 19:22',
+        comment: ' Мне нравится как оформлена эта страница! ❤',
+        countLikes: 75,
+        isLiked: false,
+
+      },
+    ]
+const renderUsers = () => {
+  const usersHTML = users.map((user,index) => {
+    return `<li class="comment">
         <div class="comment-header">
-          <div>${NameInputElement.value}</div>
-          <div>${commentDate.toLocaleDateString('numeric')} ${commentDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</div>
+          <div>${user.name}</div>
+          <div>${user.date}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
-            ${CommentInputElement.value}
+            ${user.comment}
           </div>
         </div>
         <div class="comment-footer">
           <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button"></button>
+            <span class="likes-counter">${user.countLikes}</span>
+            <button class="like-button ${user.isLiked ? '-active-like' : ''}" data-index='${index}'></button>
           </div>
         </div>
-      </li>`
+      </li>`;
+    })
+      .join("");
+      
+      ListCommentsElement.innerHTML = usersHTML;
+
+  };
+  renderUsers();
+
+
+  ButtonInputElement.addEventListener("click", () => {
+    
+    if (NameInputElement.value === "" || CommentInputElement.value === "") {
+      ButtonInputElement.disabled = true;
+      return;
+    }
+        
+      users.push({
+
+      name: NameInputElement.value,
+      date: `${commentDate.toLocaleDateString('numeric')} ${commentDate.toLocaleTimeString([], {hour: "2-digit", minute:"2-digit"})
+      }`,
+      comment: CommentInputElement.value,
+      countLikes: 0,
+      isLiked: false,
+    });
+    
+    renderUsers();
     NameInputElement.value = "";
     CommentInputElement.value = "";
-  })
-       
-     </script>
+
+});
+
+  const Initlikes = () => {
+    const likeButtons = document.querySelectorAll(".like-button");
+    for (const like of likeButtons){
+      like.addEventListener('click', () => {
+        const user = users[like.dataset.index]
+        console.log(user);
+        let a = user.countLikes
+        if (user.isLiked === false) {
+          user.isLiked = true;
+          likeButtons.classList.add("-active-like");
+          user.countLikes = a + 1
+          console.log(a + 1)
+          console.log(user.isLiked)
+        }
+        else if (user.isLiked === true) {
+          user.isLiked = false
+          user.countLikes = a - 1
+          console.log(a - 1)
+        }
+             renderUsers()
+            })
+      
+        }
+    }
+    
+    Initlikes();
+
+  
+  
+   </script>
 </html>
+
+
