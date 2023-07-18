@@ -1,6 +1,6 @@
 import { renderListElement } from "./renderListElement.js";
 
-export const initLikeEvent = ({ listElement, listElementData, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement }) => {
+export const initLikeEvent = ({ listElement, listElementData, loaderCommentElement, formElement, enterComment, nameInputElement, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement }) => {
     for (const likeButton of document.querySelectorAll('.like-button')) {
         likeButton.addEventListener('click', () => {
             event.stopPropagation();
@@ -13,7 +13,7 @@ export const initLikeEvent = ({ listElement, listElementData, initRedactorEvent,
                 listElementData[index].likeNumber -= 1;
             }
 
-            renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement });
+            renderListElement({ listElement, listElementData, loaderCommentElement, formElement, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, enterComment, nameInputElement });
         })
     }
 }

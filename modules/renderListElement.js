@@ -1,4 +1,4 @@
-export const renderListElement = ({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement }) => {
+export const renderListElement = ({ listElement, loaderCommentElement, formElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, enterComment, nameInputElement }) => {
     listElement.innerHTML = listElementData
       .map((element, index) => {
         return `
@@ -28,8 +28,9 @@ export const renderListElement = ({ listElement, listElementData, initLikeEvent,
           </li>`
       }).join('');
 
-    initLikeEvent({ listElement, listElementData, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, renderListElement });
-    initRedactorEvent({ listElement, listElementData, initLikeEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, renderListElement });
-    initDeleteEvent();
-    initAnsverEvent({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, commentTextareaElement, renderListElement });
+    initLikeEvent({ listElement, listElementData, loaderCommentElement, formElement, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, enterComment, nameInputElement, renderListElement });
+    initRedactorEvent({ listElement, listElementData, loaderCommentElement, formElement, initLikeEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, enterComment, nameInputElement, renderListElement });
+    initDeleteEvent({ listElement, listElementData, loaderCommentElement, formElement, initLikeEvent, initRedactorEvent, initAnsverEvent, commentTextareaElement, enterComment, nameInputElement, renderListElement });
+    initAnsverEvent({ listElement, listElementData, loaderCommentElement, formElement, initLikeEvent, initRedactorEvent, initDeleteEvent, commentTextareaElement, enterComment, nameInputElement, renderListElement });
+    enterComment({ listElement, listElementData, loaderCommentElement, formElement, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, nameInputElement, renderListElement });
   }

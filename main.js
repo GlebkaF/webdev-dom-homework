@@ -1,5 +1,7 @@
 import { getComments, postComment } from "./modules/api.js";
+import { enterComment } from "./modules/enterComment.js";
 import { initAnsverEvent } from "./modules/initAnsverEvent.js";
+import { initDeleteEvent } from "./modules/initDeleteEvent.js";
 import { initLikeEvent } from "./modules/initLikeEvent.js";
 import { initRedactorEvent } from "./modules/initRedactorEvent.js";
 import { renderListElement } from "./modules/renderListElement.js";
@@ -31,7 +33,7 @@ const listElement = document.getElementById('list');
       })
 
       listElementData = appComments;
-      renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement });
+      renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, enterComment, nameInputElement });
       loaderListElement.style.display = 'none';
     })
     .catch((error) => {
@@ -63,19 +65,9 @@ const listElement = document.getElementById('list');
   initRedactorEvent({ renderListElement });
 
   //Ф-ция удаления через кнопку
-  const initDeleteEvent = () => {
-    for (const deleteButton of document.querySelectorAll('.delete-button')) {
-      deleteButton.addEventListener('click', () => {
-        event.stopPropagation();
-        const index = deleteButton.dataset.index;
-        listElementData.splice(index, 1);
+  initDeleteEvent({ listElementData, renderListElement });
 
-        renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement });
-      })
-    }
-  }
-
-  renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement });
+  renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, enterComment, nameInputElement });
 
   //Событие выключения кнопки "Написать"
   document.addEventListener('mouseover', () => {
@@ -94,78 +86,15 @@ const listElement = document.getElementById('list');
   })
 
   //Ф-ция добавления комментария
-  const enterComment = () => {
-    nameInputElement.classList.remove('error');
-    commentTextareaElement.classList.remove('error');
-
-    if (nameInputElement.value === '' && commentTextareaElement.value === '') {
-      nameInputElement.classList.add('error');
-      commentTextareaElement.classList.add('error');
-      return;
-    }
-    else if (commentTextareaElement.value === '') {
-      commentTextareaElement.classList.add('error');
-      return;
-    }
-    else if (nameInputElement.value === '') {
-      nameInputElement.classList.add('error');
-      return;
-    }
-    else {
-      loaderCommentElement.style.display = 'block';
-      formElement.style.display = 'none';
-    }
-
-    
-    //Добавляем комментарий в список комментариев (fetch POST)
-    const fetchPost = () => {
-      postComment({
-        text: commentTextareaElement.value,
-        name: nameInputElement.value,
-      }).then((responseData) => {
-        console.log(responseData);
-
-        return fetchGet();
-      })
-      .then(() => {
-        formElement.style.display = 'flex';
-        loaderCommentElement.style.display = 'none';
-        nameInputElement.value = '';
-        commentTextareaElement.value = '';
-      })
-      .catch((error, typeError) => {
-        if (error.message === 'Имя и комментарий должны быть не короче 3 символов') {
-          alert ('Имя и комментарий должны быть не короче 3 символов');
-          console.log(3);
-        } 
-        else if(error.message === 'Сервер сломался, попробуй позже') {   
-          console.log(4);       
-          fetchPost();
-          // (Основная часть ДЗ. Закомменчена, чтобы не конфликтовать с дополнительной частью.)  
-          // alert('Сервер сломался, попробуй позже');      
-        }
-        else {
-          console.log(5);
-          alert("Кажется, у вас сломался интернет, попробуйте позже");   
-        }        
-        console.warn(error);
-        formElement.style.display = 'flex';
-        loaderCommentElement.style.display = 'none';
-      });
-    }
-    
-    fetchPost();
-    renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement });
-    initLikeEvent();
-  }
+  enterComment({ nameInputElement, commentTextareaElement,listElement, loaderCommentElement, formElement, listElementData, renderListElement });
 
   //Вызываем функцию добавления комментария через комбинацию клавиш Ctrl + Enter
   document.addEventListener('keyup', function (e, l) {
     if (e.ctrlKey & e.key === 'Enter') {
-      enterComment();
+      enterComment({ nameInputElement, commentTextareaElement,listElement, loaderCommentElement, formElement, listElementData, renderListElement });
     }
   });
   //Вызываем функцию добавления комментария через клие по кнопке "Написать"
   buttonElement.addEventListener('click', () => {
-    enterComment();
+    enterComment({ nameInputElement, commentTextareaElement,listElement, loaderCommentElement, formElement, listElementData, renderListElement });
   });
