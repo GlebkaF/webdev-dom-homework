@@ -1,6 +1,4 @@
-import { initAnsverEvent } from "./initAnsverEvent.js";
-
-export const renderListElement = ({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, commentTextareaElement }) => {
+export const renderListElement = ({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement }) => {
     listElement.innerHTML = listElementData
       .map((element, index) => {
         return `
@@ -30,8 +28,8 @@ export const renderListElement = ({ listElement, listElementData, initLikeEvent,
           </li>`
       }).join('');
 
-    initLikeEvent();
+    initLikeEvent({ listElement, listElementData, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, renderListElement });
     initRedactorEvent();
     initDeleteEvent();
-    initAnsverEvent({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, commentTextareaElement });
+    initAnsverEvent({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, commentTextareaElement, renderListElement });
   }

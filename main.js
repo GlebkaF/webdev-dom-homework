@@ -1,5 +1,6 @@
 import { getComments, postComment } from "./modules/api.js";
 import { initAnsverEvent } from "./modules/initAnsverEvent.js";
+import { initLikeEvent } from "./modules/initLikeEvent.js";
 import { renderListElement } from "./modules/renderListElement.js";
 
 const listElement = document.getElementById('list');
@@ -52,27 +53,10 @@ const listElement = document.getElementById('list');
   fetchGet();
 
   //Ф-ция цитаты
-  initAnsverEvent({ listElementData, commentTextareaElement, listElement });
+  initAnsverEvent({ listElementData, commentTextareaElement, renderListElement });
 
   //Ф-ция лайков
-  const initLikeEvent = () => {
-    for (const likeButton of document.querySelectorAll('.like-button')) {
-      likeButton.addEventListener('click', () => {
-        event.stopPropagation();
-        const index = likeButton.dataset.index;
-        if (listElementData[index].like === false) {
-          listElementData[index].like = true;
-          listElementData[index].likeNumber += 1;
-        } else {
-          listElementData[index].like = false;
-          listElementData[index].likeNumber -= 1;
-        }
-        console.log(commentTextareaElement.value);
-
-        renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement });
-      })
-    }
-  }
+  initLikeEvent({ listElementData, renderListElement });
 
   //Ф-ция редактирования через кнопку (не доработано)
   const initRedactorEvent = () => {
