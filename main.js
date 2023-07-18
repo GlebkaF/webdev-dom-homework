@@ -1,6 +1,7 @@
 import { getComments, postComment } from "./modules/api.js";
 import { initAnsverEvent } from "./modules/initAnsverEvent.js";
 import { initLikeEvent } from "./modules/initLikeEvent.js";
+import { initRedactorEvent } from "./modules/initRedactorEvent.js";
 import { renderListElement } from "./modules/renderListElement.js";
 
 const listElement = document.getElementById('list');
@@ -59,17 +60,7 @@ const listElement = document.getElementById('list');
   initLikeEvent({ listElementData, renderListElement });
 
   //Ф-ция редактирования через кнопку (не доработано)
-  const initRedactorEvent = () => {
-    for (const redactorButton of document.querySelectorAll('.redactor-button')) {
-      redactorButton.addEventListener('click', () => {
-        event.stopPropagation();
-        const index = redactorButton.dataset.index;
-        console.log(index);
-
-        renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement });
-      })
-    }
-  }
+  initRedactorEvent({ renderListElement });
 
   //Ф-ция удаления через кнопку
   const initDeleteEvent = () => {

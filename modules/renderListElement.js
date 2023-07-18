@@ -29,7 +29,7 @@ export const renderListElement = ({ listElement, listElementData, initLikeEvent,
       }).join('');
 
     initLikeEvent({ listElement, listElementData, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, renderListElement });
-    initRedactorEvent();
+    initRedactorEvent({ listElement, listElementData, initLikeEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, renderListElement });
     initDeleteEvent();
     initAnsverEvent({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, commentTextareaElement, renderListElement });
   }
