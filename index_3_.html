@@ -131,35 +131,38 @@
 const initLikeButton = ()=>{
    
 const likeButtonPush = document.querySelectorAll(`.comment-footer`)
-
 for (const likeButton of likeButtonPush) {
-
 likeButton.addEventListener(`click`, () => {
 const comment = comments[likeButton.dataset.index]
- 
-
-
-
-renderlikes()
-
-comments.map(function(i, index){
-let a = i.like
-if(i.isLiked===false)   {
-   i.isLiked=true
-   i.like=a+1
+let a = comment.like
+if(comment.isLiked===false)   {
+   comment.isLiked=true
+   comment.like=a+1
+   comments.isLiked=comment.isLiked
+   comments.like=comment.like
    console.log(a+1)
-   console.log(i.isLiked)}
-else if(i.isLiked===true){
-   i.isLiked=false
-   i.like=a-1
-   console.log(a-1)}
-   return comments
-})    
-renderLikes()
-})
-
-}}
+   console.log(comment.isLiked)
+   }
+else if(comment.isLiked===true)
+{
+    comment.isLiked=false
+    comment.like=a-1
+   console.log(a-1)
+   console.log(comment.isLiked)
+   comments.isLiked=comment.isLiked
+   comments.like=comment.like
+   console.log(`ggg${comments.isLiked}`)
+  
+  }
+  renderLikes() 
+  
+}
+)
+}
+}
+ 
 initLikeButton()
+
 
 
 
@@ -186,28 +189,6 @@ comments.push({
     isLiked: false
   }
 )
-
-    // list.innerHTML=oldList+`<li class="comment">
-    //       <div class="comment-header">
-    //         <div>${commentName.value}</div>
-    //         <div>${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString()}</div>
-            
-    //       </div>
-    //       <div class="comment-body">
-    //         <div class="comment-text">
-    //           ${commentText.value}
-    //         </div>
-    //       </div>
-    //       <div class="comment-footer">
-    //         <div class="likes">
-    //           <span class="likes-counter"></span>
-    //           <button class="like-button"></button>
-    //         </div>
-    //       </div>
-    //     </li>`
-        
-        
-      
     commentText.value=``
     commentName.value=``  
     
