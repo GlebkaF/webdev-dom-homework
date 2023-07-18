@@ -140,27 +140,28 @@ if(comment.isLiked===false)   {
    comment.like=a+1
    comments.isLiked=comment.isLiked
    comments.like=comment.like
-   console.log(a+1)
-   console.log(comment.isLiked)
+  console.log(a+1)
+  console.log(comment.isLiked)
    }
 else if(comment.isLiked===true)
 {
-    comment.isLiked=false
-    comment.like=a-1
+   comment.isLiked=false
+   comment.like=a-1
    console.log(a-1)
    console.log(comment.isLiked)
    comments.isLiked=comment.isLiked
    comments.like=comment.like
-   console.log(`ggg${comments.isLiked}`)
+  console.log(`ggg${comments.isLiked}`)
   
   }
-  renderLikes() 
+  
   
 }
+
 )
 }
 }
- 
+renderLikes()
 initLikeButton()
 
 
@@ -192,8 +193,9 @@ comments.push({
     commentText.value=``
     commentName.value=``  
     
-
+    renderLikes()
       })
+      
 
 
      // Код писать здесь
