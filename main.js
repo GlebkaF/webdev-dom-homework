@@ -1,4 +1,6 @@
-import { getComments } from "./api.js";
+import { getComments, postComment } from "./modules/api.js";
+import { initAnsverEvent } from "./modules/initAnsverEvent.js";
+import { renderListElement } from "./modules/renderListElement.js";
 
 const listElement = document.getElementById('list');
   const buttonElement = document.getElementById('add-button');
@@ -27,7 +29,7 @@ const listElement = document.getElementById('list');
       })
 
       listElementData = appComments;
-      renderListElement();
+      renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent });
       loaderListElement.style.display = 'none';
     })
     .catch((error) => {
@@ -45,60 +47,12 @@ const listElement = document.getElementById('list');
   
   loaderCommentElement.style.display = 'none';
   
-  fetchGet();
-
   let listElementData = [];
 
-  //Рендерим данные из массива listElementData
-  const renderListElement = () => {
-    listElement.innerHTML = listElementData
-      .map((element, index) => {
-        return `
-          <li class="comment" data-index=${index}>
-            <div class="comment-header">
-              <div>${element.name}</div>
-              <div>${element.date}</div>
-            </div>
-            <div class="comment-body">
-              <div class="comment-text">
-                ${element.comment 
-            .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
-            .replaceAll("QUOTE_END", "</div>")
-                } 
-              </div>
-            </div>
-            <div class="comment-footer">
-              <div class="likes">
-                <span class="likes-counter">${(element.likeNumber)}</span>
-                <button class="like-button ${(element.like) ? "-active-like" : ""}" data-index=${index}></button>
-              </div>
-              <div class="redactor">
-                <button class="redactor-button" data-index=${index}>Реадактировать</button>
-                <button class="delete-button" data-index=${index}>Удалить</button>
-              </div>
-            </div>
-          </li>`
-      }).join('');
-
-    initLikeEvent();
-    initRedactorEvent();
-    initDeleteEvent();
-    initAnsverEvent();
-  }
+  fetchGet();
 
   //Ф-ция цитаты
-  const initAnsverEvent = () => {
-    for (const comment of document.querySelectorAll('.comment')) {
-      comment.addEventListener('click', () => {
-        const index = comment.dataset.index;
-        const commentText = `${listElementData[index].name}: "${listElementData[index].comment}"`;
-        // commentText
-        commentTextareaElement.value = `QUOTE_BEGIN ${commentText} QUOTE_END`;
 
-        renderListElement();
-      })
-    }
-  }
 
   //Ф-ция лайков
   const initLikeEvent = () => {
@@ -114,7 +68,7 @@ const listElement = document.getElementById('list');
           listElementData[index].likeNumber -= 1;
         }
 
-        renderListElement();
+        renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent });
       })
     }
   }
@@ -127,7 +81,7 @@ const listElement = document.getElementById('list');
         const index = redactorButton.dataset.index;
         console.log(index);
 
-        renderListElement();
+        renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent });
       })
     }
   }
@@ -140,12 +94,14 @@ const listElement = document.getElementById('list');
         const index = deleteButton.dataset.index;
         listElementData.splice(index, 1);
 
-        renderListElement();
+        renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent });
       })
     }
   }
 
-  renderListElement();
+  renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent });
+
+  initAnsverEvent({ listElementData, text: commentTextareaElement.value });
 
   //Событие выключения кнопки "Написать"
   document.addEventListener('mouseover', () => {
@@ -189,27 +145,10 @@ const listElement = document.getElementById('list');
     
     //Добавляем комментарий в список комментариев (fetch POST)
     const fetchPost = () => {
-      return fetch("https://wedev-api.sky.pro/api/v1/Volkov_Pavel/comments", {
-        method: "POST",
-        body: JSON.stringify({
-          text: commentTextareaElement.value,
-          name: nameInputElement.value,
-          forceError: true,
-        }),
-      }).then((response) => {
-        if (response.status === 400) {   
-          console.log(1);       
-          throw new Error('Имя и комментарий должны быть не короче 3 символов');          
-        }
-        else if (response.status === 500) {    
-          console.log(2);      
-          throw new Error('Сервер сломался, попробуй позже');          
-        }
-        else {
-        return response.json();
-        }
-      })
-      .then((responseData) => {
+      postComment({
+        text: commentTextareaElement.value,
+        name: nameInputElement.value,
+      }).then((responseData) => {
         console.log(responseData);
 
         return fetchGet();
@@ -242,7 +181,7 @@ const listElement = document.getElementById('list');
     }
     
     fetchPost();
-    renderListElement();
+    renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent });
     initLikeEvent();
   }
 
