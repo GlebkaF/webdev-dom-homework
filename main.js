@@ -52,7 +52,7 @@ const listElement = document.getElementById('list');
   fetchGet();
 
   //Ф-ция цитаты
-
+  initAnsverEvent({ listElementData, commentTextareaElement, listElement });
 
   //Ф-ция лайков
   const initLikeEvent = () => {
@@ -67,6 +67,7 @@ const listElement = document.getElementById('list');
           listElementData[index].like = false;
           listElementData[index].likeNumber -= 1;
         }
+        console.log(commentTextareaElement.value);
 
         renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent });
       })
@@ -100,8 +101,6 @@ const listElement = document.getElementById('list');
   }
 
   renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent });
-
-  initAnsverEvent({ listElementData, text: commentTextareaElement.value });
 
   //Событие выключения кнопки "Написать"
   document.addEventListener('mouseover', () => {

@@ -1,4 +1,6 @@
-export const renderListElement = ({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent }) => {
+import { initAnsverEvent } from "./initAnsverEvent.js";
+
+export const renderListElement = ({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent }) => {
     listElement.innerHTML = listElementData
       .map((element, index) => {
         return `
@@ -31,5 +33,5 @@ export const renderListElement = ({ listElement, listElementData, initLikeEvent,
     initLikeEvent();
     initRedactorEvent();
     initDeleteEvent();
-    initAnsverEvent();
+    initAnsverEvent({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent });
   }
