@@ -5,22 +5,17 @@ import { checkFields } from "./checkFields.js";
 import { clickForAnswer } from "./clickForAnswer.js";
 import { getCorrectComments } from "./getCorrectComments.js";
 import { getLikes } from "./getLikes.js";
+//import { renderLogin } from "./renderLogin.js";
 import { renderComments } from "./renderComments.js";
-
-export const buttonElement = document.getElementById('write-button');
-export const nameElement = document.getElementById('name-input');
-export const commentElement = document.getElementById('comment-input');
-export const listElement = document.getElementById('comment-list');
-const commentBodyElement = document.querySelector('.comment-body');
-const loadBodyElement = document.querySelector('.comment-body-text');
-const loadElement = document.querySelector('.load-text');
 
 let comments = [];
 
 //Берем комментарии из API
-const getTodo = (showLoading = true) => {
-  nameElement.disabled = true;
-  commentElement.disabled = true;
+export const getTodo = (showLoading = true) => {
+
+  const loadElement = document.querySelector('.load-text');
+  // nameElement.disabled = true;
+  // commentElement.disabled = true;
 
   if (showLoading) {
     loadElement.textContent = 'Подождите, комментарии загружаются...';
@@ -31,6 +26,7 @@ const getTodo = (showLoading = true) => {
   getComments().then((answerData) => {
     //Преобразовываем данные из формата API в формат ленты
     const appComments = answerData.comments.map((comment) => {
+      
       const apiDate = new Date(comment.date);
       let day = apiDate.getDate();
       let month = apiDate.getMonth() + 1;
@@ -63,12 +59,12 @@ const getTodo = (showLoading = true) => {
     renderComments({ comments });
   })
   .then((data) => {
-    nameElement.disabled = false;
-    commentElement.disabled = false;
+    // nameElement.disabled = false;
+    // commentElement.disabled = false;
     loadElement.textContent = '';
   })
   .catch((error) => {
-    console.log(error);
+    console.error(error);
     alert("Проверьте Ваше подключение к интернету")
   })
 };
@@ -77,16 +73,17 @@ renderComments({ comments });
 clickForAnswer({ comments, renderComments });
 getCorrectComments({ comments, renderComments });
 getLikes({ comments, renderComments });
-
-//Если поля не заполнены, кнопка не активна
 checkFields();
-nameElement.addEventListener('input', checkFields);
-commentElement.addEventListener('input', checkFields);
+
 
 //Функция для повторной отправки комментария при ошибке 500
-const repeatAddTodo = () => {
-  repeatPostComments({ text: commentElement.value, name: nameElement.value })
+const repeatAddTodo = ({ commentElement, nameElement, commentBodyElement, loadBodyElement, buttonElement }) => {
+  repeatPostComments({ 
+    text: commentElement.value, 
+    name: nameElement.value 
+  })
     .then((responseData) => {
+      console.log(responseData);
       return getTodo(false);
     })
     .then((data) => {
@@ -94,9 +91,9 @@ const repeatAddTodo = () => {
     nameElement.value = '';
     commentElement.value = '';
     buttonElement.disabled = true;
-  
-      commentBodyElement.style.display = '';
-      loadBodyElement.textContent = '';   
+
+    commentBodyElement.style.display = '';
+    loadBodyElement.textContent = '';   
     })
     .catch((error) => {
       commentBodyElement.style.display = 'block';
@@ -105,7 +102,7 @@ const repeatAddTodo = () => {
 }
 
 //Добавляет комментарий, функция с цепочкой промиссов
-const addTodo = () => {
+export const addTodo = ({ commentElement, nameElement, commentBodyElement, loadBodyElement, buttonElement }) => {
   // buttonElement.disabled = true;
   // buttonElement.textContent = 'Загружаем комментарий...';
 
@@ -113,31 +110,33 @@ const addTodo = () => {
   loadBodyElement.textContent = 'Загружаем комментарий...';
 
   postComments({ 
-    text: commentElement.value, name: nameElement.value 
+    text: commentElement.value,
+     name: nameElement.value 
   }) 
   .then((responseData) => {
+    console.log(responseData);
     return getTodo(false);
   })
   .then((data) => {
   //После нажатия на кнопку поля становятся пустыми, кнопка не активна.
   nameElement.value = '';
-  commentElement.value = '';
+  //commentElement.value = '';
   buttonElement.disabled = true;
 
     // buttonElement.disabled = false;
     // buttonElement.textContent = 'Написать';
 
-    commentBodyElement.style.display = '';
-    loadBodyElement.textContent = '';
+  commentBodyElement.style.display = '';
+  loadBodyElement.textContent = '';
   })
   .catch((error) => {
     commentBodyElement.style.display = 'block';
     loadBodyElement.textContent = '';
-    console.log(error);
+    console.error(error);
     if (error.message === 'Неправильный ввод') {
       alert('Имя и комментарий должны содержать минимум 3 символа')
     } else if (error.message === 'Сервер сломался') {
-      repeatAddTodo();
+      repeatAddTodo({ commentElement, nameElement, commentBodyElement, loadBodyElement, buttonElement });
     } else {
       alert('Что-то пошло не так...')
     }
@@ -145,26 +144,8 @@ const addTodo = () => {
 };
 
 
-//Добавляем новый комментарий 
-buttonElement.addEventListener('click', () => {
-//Поля ввода подкрашиваются красным, если одно из полей не заполнено
-  nameElement.classList.remove('error');
-  commentElement.classList.remove('error');
-  if (nameElement.value === '' || commentElement.value === '') {
-    nameElement.classList.add('error');
-    commentElement.classList.add('error');
-    alert('Заполните оба поля (имя и комментарий)!');
-    return;
-  }    
-
-  addTodo()
-  .then((data) => {
-    renderComments({ comments });
-  });
-
-});
-
 
 console.log("It works!");
 getTodo();
 renderComments({ comments });
+//renderLogin({ getTodo });

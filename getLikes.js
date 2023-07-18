@@ -6,10 +6,12 @@ function delay(interval = 300) {
       }, interval);
     });
   }
+
+ 
   
   // Добавление лайка
   export const getLikes = ({ comments, renderComments }) => {
-      const likeButtons = document.querySelectorAll('.like-button');
+    const likeButtons = document.querySelectorAll('.like-button');
   
       for (const likeButton of likeButtons) {
           likeButton.addEventListener('click', (event) => {
@@ -33,7 +35,7 @@ function delay(interval = 300) {
             renderComments({ comments });
           });
   
-          });
+        });
       }
   
   }

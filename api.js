@@ -18,18 +18,41 @@ if (minutes < 10 ) {
   minutes = '0' + minutes;
 }
 
+const baseURL = "https://wedev-api.sky.pro/api/v2/AnnaIllarionova/comments";
+const registerURL = "https://wedev-api.sky.pro/api/user";
+const authorizedURL = "https://wedev-api.sky.pro/api/user/login";
+
+export let userName;
+
+export const setUserName = (newUserName) => {
+  userName = newUserName;
+}
+
+export let token;
+
+export const setToken = (newToken) => {
+  token = newToken;
+}
+
 export function getComments() {
-    return fetch('https://wedev-api.sky.pro/api/v1/AnnaIllarionova/comments', {
-    method: "GET"
+    return fetch(baseURL, {
+    method: "GET",
+    headers: {
+    //   Authorization: `Bearer ${token}`
+    },
     })
     .then((answer) => {
     return answer.json();
-    })
+    });
 }
 
+
 export function postComments({ text, name }) {
-    return fetch('https://wedev-api.sky.pro/api/v1/AnnaIllarionova/comments', {
+    return fetch(baseURL, {
   method: "POST",
+  headers: {
+    Authorization: `Bearer ${token}`
+  },
   body: JSON.stringify({
     text: text
     .replaceAll("<", "&lt;")
@@ -58,8 +81,11 @@ export function postComments({ text, name }) {
 }
 
 export function repeatPostComments({ text, name }) {
-    return fetch('https://wedev-api.sky.pro/api/v1/AnnaIllarionova/comments', {
+    return fetch(baseURL, {
     method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
     body: JSON.stringify({
       text: text
       .replaceAll("<", "&lt;")
@@ -81,4 +107,21 @@ export function repeatPostComments({ text, name }) {
       return response.json();
     }
   }); 
+}
+
+export function login({ login, password }) {
+  return fetch(authorizedURL, {
+method: "POST",
+body: JSON.stringify({
+  login,
+  password,
+})
+})
+.then((response) => {
+if (response.status === 400) {
+  alert("Неправильно введен логин или пароль, попробуйте ещё раз")
+  throw new Error('Неправильный ввод');
+} 
+return response.json();
+})
 }

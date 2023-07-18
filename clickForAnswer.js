@@ -1,4 +1,4 @@
-import { commentElement } from "./main.js";
+//import { commentElement } from "./main.js";
 
 // Клик на комментарий, ответ на комментарий
 export function clickForAnswer({ comments, renderComments }) {
