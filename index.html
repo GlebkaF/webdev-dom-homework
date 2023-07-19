@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="listComment">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -49,23 +49,96 @@
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          id="name"
         />
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+          id="comm"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="addbtn">Написать</button>
         </div>
       </div>
     </div>
   </body>
 
   <script>
+
     "use strict";
-    // Код писать здесь 
+    let arrLike = document.querySelectorAll(".like-button");
+    const commentList = document.getElementById("listComment");
+    const btnAdd = document.getElementById("addbtn");
+    const userName = document.getElementById("name");
+    const userComment = document.getElementById("comm");
+
+    function addDate() {
+      const date = new Date(); 
+        let time = { 
+          hour: 'numeric', 
+          minute: 'numeric', 
+        }; 
+        let options = { 
+          year: 'numeric', 
+          month: 'numeric', 
+          day: 'numeric', 
+        } 
+        return date.toLocaleString('ru', options) + " " + date.toLocaleString('ru', time) 
+    }
+
+    function addLike() {
+      arrLike = document.querySelectorAll(".like-button");
+      arrLike
+    .forEach(el => el.addEventListener("click",  function(e){ 
+    if (this.classList.contains("-active-like")) {
+      this.previousSibling.previousSibling.innerHTML = parseInt(this.previousSibling.previousSibling.innerHTML) - 1
+    } else {
+      this.previousSibling.previousSibling.innerHTML = parseInt(this.previousSibling.previousSibling.innerHTML) + 1
+    }
+    this.classList.toggle("-active-like");
+    }
+    ))
+    }
+
+    function addCom() {
+      btnAdd.addEventListener("click", () => {
+        if (userName.value === '' || userComment.value === '') {
+          userName.classList.add('err')
+          userComment.classList.add('err')
+        } else {
+          commentList.innerHTML +=  
+      `<li class="comment">
+          <div class="comment-header">
+            <div>${userName.value}</div>
+            <div>${addDate()}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${userComment.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>
+      `;
+      userName.classList.remove('err')
+          userComment.classList.remove('err')
+      // arrLike = document.querySelectorAll(".like-button");
+        }
+      addLike();
+      console.log(userComment.value)
+    })
+    }
+    
+    addCom();
+    addLike();
+    
     console.log("It works!");
   </script>
 </html>
