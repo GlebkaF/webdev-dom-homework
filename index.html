@@ -95,10 +95,12 @@
     const commentName = document.getElementById(`commentName`)
     let currentDate = new Date();
     const likeButtonPush = document.querySelectorAll(`.comment-footer`)
-    const buttonOfLikes = document.querySelectorAll(`likes`)
+    const buttonOfLikes = document.querySelectorAll(`.likes`)
+    const button = document.querySelectorAll(`.like-button`)
+    
     
     const renderLikes = () =>{
-         
+        
       
       const likesHtml = comments.map((i, index)=> {
         return `<li class="comment">
@@ -112,28 +114,31 @@
               ${i.comment}
             </div>
           </div>
-          <div class="comment-footer" data-index="${index}">
+          <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${i.like}</span>
-              <button class="like-button ${i.isLiked ? `-active-like`:''}"></button>
+              <button class="like-button ${i.isLiked ? `-active-like`:''}"data-index="${index}"></button>
             </div>
           </div>
         </li>`
       }).join(``);
       list.innerHTML=likesHtml;
         console.log(likesHtml)
-        
+        initLikeButton() 
       }
       renderLikes()
 
 //  Лайки   
     
-const initLikeButton = ()=>{
+function initLikeButton(){
    
-const likeButtonPush = document.querySelectorAll(`.comment-footer`)
-for (const likeButton of likeButtonPush) {
+const button = document.querySelectorAll(`.like-button`)
+
+for (const likeButton of button) {
+  
 likeButton.addEventListener(`click`, () => {
 const comment = comments[likeButton.dataset.index]
+console.log(`www ${likeButton}`)
 let a = comment.like
 if(comment.isLiked===false)   {
    comment.isLiked=true
@@ -141,9 +146,9 @@ if(comment.isLiked===false)   {
    comments.isLiked=comment.isLiked
    comments.like=comment.like
   console.log(a+1)
-  console.log(comment.isLiked)
-   }
-else if(comment.isLiked===true)
+  console.log(comments.isLiked)
+  renderLikes()}
+else if(comments.isLiked===true)
 {
    comment.isLiked=false
    comment.like=a-1
@@ -152,11 +157,11 @@ else if(comment.isLiked===true)
    comments.isLiked=comment.isLiked
    comments.like=comment.like
   console.log(`ggg${comments.isLiked}`)
-  
+  renderLikes()
   }
   
   
-  renderLikes()}
+  }
 
 
 )
