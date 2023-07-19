@@ -1,6 +1,8 @@
 import { postComment } from "./api.js";
+import { fetchGet } from "./fetchGet.js";
+import { renderListElement } from "./renderListElement.js";
 
-export const enterComment = ({ listElement, listElementData, loaderCommentElement, formElement, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, nameInputElement, renderListElement }) => {
+export const enterComment = ({ listElement, listElementData, loaderCommentElement, loaderListElement, formElement, commentTextareaElement, nameInputElement }) => {
     nameInputElement.classList.remove('error');
     commentTextareaElement.classList.remove('error');
 
@@ -31,7 +33,7 @@ export const enterComment = ({ listElement, listElementData, loaderCommentElemen
         }).then((responseData) => {
             console.log(responseData);
 
-            return fetchGet();
+            return fetchGet({ listElement, listElementData, commentTextareaElement, nameInputElement, loaderListElement });
         })
             .then(() => {
                 formElement.style.display = 'flex';
@@ -61,5 +63,5 @@ export const enterComment = ({ listElement, listElementData, loaderCommentElemen
     }
 
     fetchPost();
-    renderListElement({ listElement, listElementData, loaderCommentElement, formElement, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, nameInputElement });
+    renderListElement({ listElement, listElementData, loaderCommentElement, formElement, commentTextareaElement, nameInputElement });
 }

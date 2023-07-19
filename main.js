@@ -1,5 +1,5 @@
-import { getComments, postComment } from "./modules/api.js";
 import { enterComment } from "./modules/enterComment.js";
+import { fetchGet } from "./modules/fetchGet.js";
 import { initAnsverEvent } from "./modules/initAnsverEvent.js";
 import { initDeleteEvent } from "./modules/initDeleteEvent.js";
 import { initLikeEvent } from "./modules/initLikeEvent.js";
@@ -7,92 +7,60 @@ import { initRedactorEvent } from "./modules/initRedactorEvent.js";
 import { renderListElement } from "./modules/renderListElement.js";
 
 const listElement = document.getElementById('list');
-  const buttonElement = document.getElementById('add-button');
-  const nameInputElement = document.getElementById('name');
-  const commentTextareaElement = document.getElementById('comment');
-  const formElement = document.getElementById('form');
-  const loaderListElement = document.getElementById('loader-list');
-  const loaderCommentElement = document.getElementById('loader-comment');
+const buttonElement = document.getElementById('add-button');
+const nameInputElement = document.getElementById('name');
+const commentTextareaElement = document.getElementById('comment');
+const formElement = document.getElementById('form');
+const loaderListElement = document.getElementById('loader-list');
+const loaderCommentElement = document.getElementById('loader-comment');
 
-  //Запрашиваем список комментариев (fetch GET)
-  const fetchGet = () => {
-    getComments().then((responseData) => {
-      console.log(responseData)
-      
-      const appComments = responseData.comments.map((comment) => {
-        let currentDate = new Date(comment.date);
-        let myDate = currentDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'numeric', year: '2-digit' }) + ' ' + currentDate.toLocaleTimeString('ru-RU', { hour: 'numeric', minute: 'numeric' });
-        return {
-          name: comment.author.name,
-          date: myDate,
-          comment: comment.text,
-          like: comment.isLiked,
-          likeNumber: comment.likes,
-          id: comment.id,
-        }
-      })
+//Запрашиваем список комментариев (fetch GET)
 
-      listElementData = appComments;
-      renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, nameInputElement });
-      loaderListElement.style.display = 'none';
-    })
-    .catch((error) => {
-      if (error === 'Сервер сломался, попробуй позже') {
-        alert('Сервер сломался, попробуй позже')
-      }
-      else {
-        alert("Кажется, у вас сломался интернет, попробуйте позже");
-      }
-      console.warn(error);
-      formElement.style.display = 'flex';
-      loaderCommentElement.style.display = 'none';
-    });;
-  } 
-  
-  loaderCommentElement.style.display = 'none';
-  
-  let listElementData = [];
+loaderCommentElement.style.display = 'none';
 
-  fetchGet();
+let listElementData = [];
 
-  //Ф-ция цитаты
-  initAnsverEvent({ listElementData, commentTextareaElement, renderListElement });
+fetchGet({ listElement, listElementData, commentTextareaElement, nameInputElement, loaderListElement });
 
-  //Ф-ция лайков
-  initLikeEvent({ listElementData, renderListElement });
+//Ф-ция цитаты
+initAnsverEvent({ listElementData, commentTextareaElement });
 
-  //Ф-ция редактирования через кнопку (не доработано)
-  initRedactorEvent({ renderListElement });
+//Ф-ция лайков
+initLikeEvent({ listElementData });
 
-  //Ф-ция удаления через кнопку
-  initDeleteEvent({ listElementData, renderListElement });
+//Ф-ция редактирования через кнопку (не доработано)
+initRedactorEvent({});
 
-  renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, nameInputElement });
+//Ф-ция удаления через кнопку
+initDeleteEvent({ listElementData });
 
-  //Событие выключения кнопки "Написать"
-  document.addEventListener('mouseover', () => {
-    if (nameInputElement.value === '' || commentTextareaElement.value === '') {
-      buttonElement.classList.add('button-off');
-      buttonElement.disabled = true;
-    }
-  })
+//Ф-ция рендера
+renderListElement({ listElement, listElementData, commentTextareaElement, nameInputElement });
 
-  //Событие включения кнопки "Написать"
-  document.addEventListener('keyup', () => {
-    if (nameInputElement.value !== '' && commentTextareaElement.value !== '') {
-      buttonElement.classList.remove('button-off');
-      buttonElement.disabled = false;
-    }
-  })
+//Событие выключения кнопки "Написать"
+document.addEventListener('mouseover', () => {
+  if (nameInputElement.value === '' || commentTextareaElement.value === '') {
+    buttonElement.classList.add('button-off');
+    buttonElement.disabled = true;
+  }
+})
 
-  //Ф-ция добавления комментария
+//Событие включения кнопки "Написать"
+document.addEventListener('keyup', () => {
+  if (nameInputElement.value !== '' && commentTextareaElement.value !== '') {
+    buttonElement.classList.remove('button-off');
+    buttonElement.disabled = false;
+  }
+})
+
+//Ф-ция добавления комментария:
   //Вызываем функцию добавления комментария через комбинацию клавиш Ctrl + Enter
-  document.addEventListener('keyup', function (e, l) {
+  document.addEventListener('keyup', function (e) {
     if (e.ctrlKey & e.key === 'Enter') {
-      enterComment({ nameInputElement, commentTextareaElement,listElement, loaderCommentElement, formElement, listElementData });
+      enterComment({ nameInputElement, commentTextareaElement, listElement, loaderCommentElement, loaderListElement, formElement, listElementData });
     }
   });
   //Вызываем функцию добавления комментария через клие по кнопке "Написать"
   buttonElement.addEventListener('click', () => {
-    enterComment({ nameInputElement, commentTextareaElement,listElement, loaderCommentElement, formElement, listElementData });
+    enterComment({ nameInputElement, commentTextareaElement, listElement, loaderCommentElement, loaderListElement, formElement, listElementData });
   });
