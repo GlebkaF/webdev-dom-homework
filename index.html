@@ -86,7 +86,7 @@
       isLiked: false
     }
   ]; 
-
+  
   
 
     const list = document.getElementById("commentsListId")
@@ -126,6 +126,7 @@
         console.log(likesHtml)
         initLikeButton() 
       }
+      initLikeButton()
       renderLikes()
 
 //  Лайки   
@@ -147,8 +148,8 @@ if(comment.isLiked===false)   {
    comments.like=comment.like
   console.log(a+1)
   console.log(comments.isLiked)
-  renderLikes()}
-else if(comments.isLiked===true)
+  }
+else if(comment.isLiked===true)
 {
    comment.isLiked=false
    comment.like=a-1
@@ -157,10 +158,10 @@ else if(comments.isLiked===true)
    comments.isLiked=comment.isLiked
    comments.like=comment.like
   console.log(`ggg${comments.isLiked}`)
-  renderLikes()
+  
   }
   
-  
+  renderLikes()
   }
 
 
@@ -169,7 +170,7 @@ else if(comments.isLiked===true)
 
 }
 
-initLikeButton()
+// initLikeButton()
 
 
 
