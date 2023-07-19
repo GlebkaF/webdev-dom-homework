@@ -8,7 +8,7 @@ export const getCorrectComments = ({ comments, renderComments }) => {
       correctButton.addEventListener('click', (event) => {
        event.stopPropagation();
           const correctIndex = parseInt(correctButton.dataset.index);
-          //console.log(correctIndex);
+          console.log(correctIndex);
     
           const comment = comments[correctIndex];
         
@@ -20,7 +20,9 @@ export const getCorrectComments = ({ comments, renderComments }) => {
           correctButton.innerHTML = 'Редактировать';
           comment.isEdit = false;
           
-          const newCommentText = document.getElementById('correct-textarea');
+          //const newCommentText = document.getElementById('correct-textarea');
+          const newCommentText = document.querySelector('.correct-form-text');
+          console.log(newCommentText);
           comment.text = newCommentText.value;   
         }
         console.log('paботает!');

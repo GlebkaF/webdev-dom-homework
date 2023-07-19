@@ -10,6 +10,7 @@ import { renderComments } from "./renderComments.js";
 
 let comments = [];
 
+
 //Берем комментарии из API
 export const getTodo = (showLoading = true) => {
 
@@ -148,4 +149,5 @@ export const addTodo = ({ commentElement, nameElement, commentBodyElement, loadB
 console.log("It works!");
 getTodo();
 renderComments({ comments });
+// deleteComment({ id })
 //renderLogin({ getTodo });

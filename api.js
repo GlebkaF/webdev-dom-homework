@@ -109,6 +109,19 @@ export function repeatPostComments({ text, name }) {
   }); 
 }
 
+export function deleteComment({ id }) {
+  console.log(id);
+  return fetch(`${baseURL}/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+  })
+  .then((response) => {
+    return response.json();
+  });
+}
+
 export function login({ login, password }) {
   return fetch(authorizedURL, {
 method: "POST",
