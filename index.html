@@ -163,10 +163,14 @@ renderUsers()
 
   // Добавляем новый комментарий
   users.push({
-    name: nameInputElement.value,
+    name: nameInputElement.value
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;"),
     dateComment: date(),
-    text: commentInputElement.value,
-    likes: 0 // Что сюда писать, чтобы счетчик работал?
+    text: commentInputElement.value
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;"),
+    likes: 0
   })
 
   renderUsers();
