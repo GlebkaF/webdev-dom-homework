@@ -1,4 +1,4 @@
-export const renderListElement = ({ listElement, loaderCommentElement, formElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, enterComment, nameInputElement }) => {
+export const renderListElement = ({ listElement, loaderCommentElement, formElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, nameInputElement }) => {
     listElement.innerHTML = listElementData
       .map((element, index) => {
         return `
@@ -28,9 +28,8 @@ export const renderListElement = ({ listElement, loaderCommentElement, formEleme
           </li>`
       }).join('');
 
-    initLikeEvent({ listElement, listElementData, loaderCommentElement, formElement, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, enterComment, nameInputElement, renderListElement });
-    initRedactorEvent({ listElement, listElementData, loaderCommentElement, formElement, initLikeEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, enterComment, nameInputElement, renderListElement });
-    initDeleteEvent({ listElement, listElementData, loaderCommentElement, formElement, initLikeEvent, initRedactorEvent, initAnsverEvent, commentTextareaElement, enterComment, nameInputElement, renderListElement });
-    initAnsverEvent({ listElement, listElementData, loaderCommentElement, formElement, initLikeEvent, initRedactorEvent, initDeleteEvent, commentTextareaElement, enterComment, nameInputElement, renderListElement });
-    enterComment({ listElement, listElementData, loaderCommentElement, formElement, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, nameInputElement, renderListElement });
-  }
+    initLikeEvent({ listElement, listElementData, loaderCommentElement, formElement, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, nameInputElement, renderListElement });
+    initRedactorEvent({ listElement, listElementData, loaderCommentElement, formElement, initLikeEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, nameInputElement, renderListElement });
+    initDeleteEvent({ listElement, listElementData, loaderCommentElement, formElement, initLikeEvent, initRedactorEvent, initAnsverEvent, commentTextareaElement, nameInputElement, renderListElement });
+    initAnsverEvent({ listElement, listElementData, loaderCommentElement, formElement, initLikeEvent, initRedactorEvent, initDeleteEvent, commentTextareaElement, nameInputElement, renderListElement });
+}

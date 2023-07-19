@@ -33,7 +33,7 @@ const listElement = document.getElementById('list');
       })
 
       listElementData = appComments;
-      renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, enterComment, nameInputElement });
+      renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, nameInputElement });
       loaderListElement.style.display = 'none';
     })
     .catch((error) => {
@@ -67,7 +67,7 @@ const listElement = document.getElementById('list');
   //Ф-ция удаления через кнопку
   initDeleteEvent({ listElementData, renderListElement });
 
-  renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, enterComment, nameInputElement });
+  renderListElement({ listElement, listElementData, initLikeEvent, initRedactorEvent, initDeleteEvent, initAnsverEvent, commentTextareaElement, nameInputElement });
 
   //Событие выключения кнопки "Написать"
   document.addEventListener('mouseover', () => {
@@ -86,15 +86,13 @@ const listElement = document.getElementById('list');
   })
 
   //Ф-ция добавления комментария
-  enterComment({ nameInputElement, commentTextareaElement,listElement, loaderCommentElement, formElement, listElementData, renderListElement });
-
   //Вызываем функцию добавления комментария через комбинацию клавиш Ctrl + Enter
   document.addEventListener('keyup', function (e, l) {
     if (e.ctrlKey & e.key === 'Enter') {
-      enterComment({ nameInputElement, commentTextareaElement,listElement, loaderCommentElement, formElement, listElementData, renderListElement });
+      enterComment({ nameInputElement, commentTextareaElement,listElement, loaderCommentElement, formElement, listElementData });
     }
   });
   //Вызываем функцию добавления комментария через клие по кнопке "Написать"
   buttonElement.addEventListener('click', () => {
-    enterComment({ nameInputElement, commentTextareaElement,listElement, loaderCommentElement, formElement, listElementData, renderListElement });
+    enterComment({ nameInputElement, commentTextareaElement,listElement, loaderCommentElement, formElement, listElementData });
   });
