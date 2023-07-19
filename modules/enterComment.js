@@ -33,7 +33,7 @@ export const enterComment = ({ listElement, listElementData, loaderCommentElemen
         }).then((responseData) => {
             console.log(responseData);
 
-            return fetchGet({ listElement, listElementData, commentTextareaElement, nameInputElement, loaderListElement });
+            return fetchGet({ listElement, listElementData, commentTextareaElement, nameInputElement, loaderListElement, formElement, loaderCommentElement });
         })
             .then(() => {
                 formElement.style.display = 'flex';

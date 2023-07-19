@@ -20,7 +20,7 @@ loaderCommentElement.style.display = 'none';
 
 let listElementData = [];
 
-fetchGet({ listElement, listElementData, commentTextareaElement, nameInputElement, loaderListElement });
+fetchGet({ listElement, listElementData, commentTextareaElement, nameInputElement, loaderListElement, formElement, loaderCommentElement });
 
 //Ф-ция цитаты
 initAnsverEvent({ listElementData, commentTextareaElement });

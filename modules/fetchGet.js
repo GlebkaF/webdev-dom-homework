@@ -1,7 +1,7 @@
 import { getComments } from "./api.js";
 import { renderListElement } from "./renderListElement.js";
 
-export const fetchGet = ({ listElement, listElementData, commentTextareaElement, nameInputElement, loaderListElement }) => {
+export const fetchGet = ({ listElement, listElementData, commentTextareaElement, nameInputElement, loaderListElement, formElement, loaderCommentElement }) => {
     getComments().then((responseData) => {
       console.log(responseData)
       
