@@ -125,7 +125,7 @@ const renderUsers = () => {
 
   };
   renderUsers();
-
+  
 
   ButtonInputElement.addEventListener("click", () => {
     
@@ -153,32 +153,28 @@ const renderUsers = () => {
   const Initlikes = () => {
     const likeButtons = document.querySelectorAll(".like-button");
     for (const like of likeButtons){
-      like.addEventListener('click', () => {
+       like.addEventListener('click', () => {
         const user = users[like.dataset.index]
-        console.log(user);
         let a = user.countLikes
         if (user.isLiked === false) {
           user.isLiked = true;
-          likeButtons.classList.add("-active-like");
-          user.countLikes = a + 1
-          console.log(a + 1)
-          console.log(user.isLiked)
-        }
+          like.classList.add("-active-like")
+          user.countLikes = a + 1;
+          }
+          
         else if (user.isLiked === true) {
           user.isLiked = false
-          user.countLikes = a - 1
-          console.log(a - 1)
-        }
-             renderUsers()
-            })
-      
-        }
+          user.countLikes = a - 1;
+          }
+           
+                          
+      });
     }
+    };
+    renderUsers();
+    Initlikes(); 
     
-    Initlikes();
-
-  
-  
+ 
    </script>
 </html>
 
