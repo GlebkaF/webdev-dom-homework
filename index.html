@@ -180,11 +180,14 @@ renderUsers()
 });
 
 // Ответ на комментарий
-const commentAnswer = document.querySelectorAll('.comment-text');
-
-
-
-
+const commentAnswers = document.querySelectorAll('.comment-text');
+for (let commentAnswer of commentAnswers) {
+  commentAnswer.addEventListener('click', () => {
+    
+    commentInputElement.value = `${user.name}, ${user.text}`
+    return
+  });
+}
 
 console.log("It works!");
   </script>
