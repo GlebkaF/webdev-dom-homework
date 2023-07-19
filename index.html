@@ -149,7 +149,7 @@ const renderUsers = () => {
 renderUsers()
 
     // Функция клика, валидация
-    buttonElement.addEventListener("click", () => {
+  buttonElement.addEventListener("click", () => {
   nameInputElement.classList.remove("error");
   commentInputElement.classList.remove("error");
   if (nameInputElement.value === "" || commentInputElement.value === "") {
@@ -178,6 +178,13 @@ renderUsers()
   nameInputElement.value = "";
   commentInputElement.value = "";
 });
+
+// Ответ на комментарий
+const commentAnswer = document.querySelectorAll('.comment-text');
+
+
+
+
 
 console.log("It works!");
   </script>
