@@ -29,7 +29,7 @@ initAnsverEvent({ listElementData, commentTextareaElement });
 initLikeEvent({ listElementData });
 
 //Ф-ция редактирования через кнопку (не доработано)
-initRedactorEvent({});
+initRedactorEvent();
 
 //Ф-ция удаления через кнопку
 initDeleteEvent({ listElementData });

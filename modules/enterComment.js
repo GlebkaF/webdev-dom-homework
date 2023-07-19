@@ -46,14 +46,11 @@ export const enterComment = ({ listElement, listElementData, loaderCommentElemen
             .catch((error, typeError) => {
                 if (error.message === 'Имя и комментарий должны быть не короче 3 символов') {
                     alert('Имя и комментарий должны быть не короче 3 символов');
-                    console.log(3);
                 }
                 else if (error.message === 'Сервер сломался, попробуй позже') {
-                    console.log(4);
                     fetchPost();
                 }
                 else {
-                    console.log(5);
                     alert("Кажется, у вас сломался интернет, попробуйте позже");
                 }
                 console.warn(error);
