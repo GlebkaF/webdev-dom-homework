@@ -1,3 +1,4 @@
+import { renderLogin } from "./loginPage.js";
 import { enterComment } from "./modules/enterComment.js";
 import { fetchGet } from "./modules/fetchGet.js";
 import { initAnsverEvent } from "./modules/initAnsverEvent.js";
@@ -15,7 +16,7 @@ const loaderListElement = document.getElementById('loader-list');
 const loaderCommentElement = document.getElementById('loader-comment');
 
 //Запрашиваем список комментариев (fetch GET)
-
+formElement.style.display = 'none';
 loaderCommentElement.style.display = 'none';
 
 let listElementData = [];
@@ -29,13 +30,15 @@ initAnsverEvent({ listElementData, commentTextareaElement });
 initLikeEvent({ listElementData });
 
 //Ф-ция редактирования через кнопку (не доработано)
-initRedactorEvent();
+initRedactorEvent({});
 
 //Ф-ция удаления через кнопку
 initDeleteEvent({ listElementData });
 
 //Ф-ция рендера
-renderListElement({ listElement, listElementData, commentTextareaElement, nameInputElement });
+// renderListElement({ listElement, listElementData, commentTextareaElement, nameInputElement });
+    
+renderLogin();
 
 //Событие выключения кнопки "Написать"
 document.addEventListener('mouseover', () => {
