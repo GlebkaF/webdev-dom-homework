@@ -25,7 +25,7 @@ export const fetchGet = ({ listElementData }) => {
     })
     .catch((error) => {
       if (error === 'Сервер сломался, попробуй позже') {
-        alert('Сервер сломался, попробуй позже')
+        alert('Сервер сломался, попробуй позже');
       }
       else {
         alert("Кажется, у вас сломался интернет, попробуйте позже");
@@ -33,5 +33,5 @@ export const fetchGet = ({ listElementData }) => {
       console.warn(error);
       formElement.style.display = 'flex';
       loaderCommentElement.style.display = 'none';
-    });;
+    });
   } 

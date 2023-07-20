@@ -33,7 +33,7 @@ export const enterComment = ({ listElement, listElementData, loaderCommentElemen
         }).then((responseData) => {
             console.log(responseData);
 
-            return fetchGet({ listElement, listElementData, commentTextareaElement, nameInputElement, loaderListElement, formElement, loaderCommentElement });
+            return fetchGet({ listElementData });
         })
         .then(() => {
             formElement.style.display = 'flex';
@@ -43,7 +43,7 @@ export const enterComment = ({ listElement, listElementData, loaderCommentElemen
             nameInputElement.classList.remove('error');
             commentTextareaElement.classList.remove('error');
         })
-        .catch((error, typeError) => {
+        .catch((error) => {
             if (error.message === 'Имя и комментарий должны быть не короче 3 символов') {
                 alert('Имя и комментарий должны быть не короче 3 символов');
             }
@@ -60,5 +60,5 @@ export const enterComment = ({ listElement, listElementData, loaderCommentElemen
     }
 
     fetchPost();
-    renderListElement({ listElement, listElementData, loaderCommentElement, formElement, commentTextareaElement, nameInputElement });
+    renderListElement({ listElementData });
 }

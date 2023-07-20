@@ -1,13 +1,30 @@
+import { deleteComment } from "./api.js";
+import { fetchGet } from "./fetchGet.js";
 import { renderListElement } from "./renderListElement.js";
 
-export const initDeleteEvent = ({ listElement, listElementData, commentTextareaElement, nameInputElement }) => {
+export const initDeleteEvent = ({ listElementData }) => {
     for (const deleteButton of document.querySelectorAll('.delete-button')) {
         deleteButton.addEventListener('click', () => {
             event.stopPropagation();
-            const index = deleteButton.dataset.index;
-            listElementData.splice(index, 1);
+            const id = deleteButton.dataset.id;
 
-            renderListElement({ listElement, listElementData, commentTextareaElement, nameInputElement });
+            deleteComment({ id })
+            .then((responseData) => {
+                console.log(responseData);
+    
+                return fetchGet({ listElementData });
+            })
+            .catch((error) => {
+                if (error.message === 'Неавторизованные пользователи не могут удалять комментарии') {
+                  alert('Неавторизованные пользователи не могут удалять комментарии');
+                }
+                else {
+                  alert("Кажется, у вас сломался интернет, попробуйте позже");
+                }
+                console.warn(error);
+              });
+
+            renderListElement({ listElementData });
         })
     }
 }

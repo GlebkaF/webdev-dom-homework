@@ -1,19 +1,31 @@
+import { likeComment } from "./api.js";
+import { fetchGet } from "./fetchGet.js";
 import { renderListElement } from "./renderListElement.js";
 
-export const initLikeEvent = ({ listElement, listElementData, loaderCommentElement, formElement, nameInputElement, commentTextareaElement }) => {
+export const initLikeEvent = ({ listElementData }) => {
     for (const likeButton of document.querySelectorAll('.like-button')) {
         likeButton.addEventListener('click', () => {
             event.stopPropagation();
-            const index = likeButton.dataset.index;
-            if (listElementData[index].like === false) {
-                listElementData[index].like = true;
-                listElementData[index].likeNumber += 1;
-            } else {
-                listElementData[index].like = false;
-                listElementData[index].likeNumber -= 1;
-            }
 
-            renderListElement({ listElement, listElementData, loaderCommentElement, formElement, commentTextareaElement,  nameInputElement });
+            const id = likeButton.dataset.id;
+
+            likeComment({id})
+            .then((responseData) => {
+                console.log(responseData);
+    
+                return fetchGet({ listElementData });
+            })
+            .catch((error) => {
+                if (error.message === 'Неавторизованные пользователи не могут ставить лайки') {
+                  alert('Неавторизованные пользователи не могут ставить лайки');
+                }
+                else {
+                  alert("Кажется, у вас сломался интернет, попробуйте позже");
+                }
+                console.warn(error);
+              });
+            
+            renderListElement({ listElementData });
         })
     }
 }

@@ -1,5 +1,5 @@
-import { appElement, formElement } from "../main.js";
-import { login, setToken, token } from "./api.js";
+import { appElement, formElement, nameInputElement } from "../main.js";
+import { login, setToken } from "./api.js";
 import { fetchGet } from "./fetchGet.js";
 import { renderRegistration } from "./registrationPage.js";
 
@@ -32,22 +32,33 @@ export const renderLogin = ({ listElement, listElementData }) => {
                     login: loginInputElement.value,
                     password: passwordInputElement.value,
                 })
-                    .then((responseData) => {
-                        console.log(token);
-                        setToken(responseData.user.token);
-                        console.log(token);
-                    })
-                    .then(() => {
-                        fetchGet({ listElementData });
-                        appElement.style.display = "none";
-                        listElement.style.display = "flex";
-                        formElement.style.display = "flex";
+                .then((responseData) => {
+                    setToken(responseData.user.token);
+                    nameInputElement.value = responseData.user.name;
+                })
+                .then(() => {
+                    fetchGet({ listElementData });                        
+                    appElement.style.display = "none";
+                    listElement.style.display = "flex";
+                    formElement.style.display = "flex";
 
-                    })
+                })
+                .catch((error) => {
+                    if (error.message === 'Введен неправильный логин или пароль') {
+                        alert('Введен неправильный логин или пароль');
+                    }
+                    else {
+                        alert("Кажется, у вас сломался интернет, попробуйте позже");
+                    }
+                    console.warn(error);
+                });
+
+                loginInputElement.value = "";
+                passwordInputElement.value = "";
             })
             
             const linkElement = document.getElementById("link-registration");
-            
+
             linkElement.addEventListener("click", () => {
                 renderRegistration({ listElement, listElementData });
             })

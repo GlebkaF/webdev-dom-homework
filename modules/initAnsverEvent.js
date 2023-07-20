@@ -1,6 +1,6 @@
 import { renderListElement } from "./renderListElement.js";
 
-export const initAnsverEvent = ({ listElementData, commentTextareaElement, listElement, nameInputElement}) => {
+export const initAnsverEvent = ({ listElementData, commentTextareaElement }) => {
     for (const comment of document.querySelectorAll('.comment')) {
       comment.addEventListener('click', () => {
         const index = comment.dataset.index;
@@ -8,7 +8,7 @@ export const initAnsverEvent = ({ listElementData, commentTextareaElement, listE
 
         commentTextareaElement.value = `QUOTE_BEGIN ${commentText} QUOTE_END`;
 
-        renderListElement({ listElement, listElementData, commentTextareaElement, nameInputElement });
+        renderListElement({ listElementData, commentTextareaElement});
       })
     }
   }
