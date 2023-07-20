@@ -2,6 +2,7 @@ import * as api from './api.js';
 import * as render from './render.js';
 import * as time from './date.js';
 import * as startPage from './renderStart.js';
+import { format } from "date-fns";
 
 let isLoadingAllComments;
 let isLoading;
@@ -11,8 +12,8 @@ function apiGetStartPage() {
     api.getFetch()
     .then((responseData) => {
         userComment = responseData.comments.map((comment) => {
-            let date = new Date(comment.date);
-            date = time.formatCommentDate(date);
+            const createDate = format(new Date(), 'YYYY-MM-DD hh.mm.ss');
+            let date = createDate;
             return {
                 id: comment.id,
                 name: comment.author.name,
