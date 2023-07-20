@@ -52,6 +52,7 @@
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
+       
         <textarea
         id="commentText"
           type="textarea"
@@ -77,19 +78,23 @@
       date: `12.02.22 12:18`,
       comment: `Это первый комментарий на странице!`,
       like: 3,
-      isLiked: false
+      isLiked: false,
+      isCommentRepliy: false
     },
       {
       name: `Варвара Н.`,
       date:`13.02.22 12:18`,
       comment: `Мне нравится как оформлена страница`,
       like: 75,
-      isLiked: false
+      isLiked: false,
+      isCommentRepliy: false
     }
   ]; 
+    const commentForm =document.getElementById(`add-formListId`)
     const list = document.getElementById("commentsListId")
     const listButton = document.getElementById(`add-form-buttonListId`)
     const commentText = document.getElementById(`commentText`)
+    
     const commentName = document.getElementById(`commentName`)
     let currentDate = new Date();
     const commentLists = document.querySelectorAll(`.comments`)
@@ -97,6 +102,7 @@
     const buttonOfLikes = document.querySelectorAll(`.likes`)
     const button = document.querySelectorAll(`.like-button`)
     const commentBlock = document.querySelectorAll(`.comment`)
+    
     
 //создание блоков комментариев по содержимому массива
     
@@ -110,6 +116,7 @@ const renderLikes = () =>{
             <div>${i.date}</div>
             
           </div>
+         
           <div class="comment-body">
             <div class="comment-text">
               ${i.comment}
@@ -124,8 +131,8 @@ const renderLikes = () =>{
         </li>`
       }).join(``);
       list.innerHTML=likesHtml;
-        console.log(likesHtml)
-        initLikeButton() 
+      commentReply()  
+      initLikeButton() 
       }
       initLikeButton()
       renderLikes()
@@ -142,28 +149,26 @@ likeButton.addEventListener(`click`, (event) => {
   // из массива обЪектов-коммертариев делаем объект из содержимого одного комментария 
   event.stopPropagation();
 const comment = comments[likeButton.dataset.index] //комментарий выбираем по dataset.index из html
-console.log(`www ${likeButton}`)
+
 let a = comment.like
 if(comment.isLiked===false)   {
    comment.isLiked=true
    comment.like=a+1
    comments.isLiked=comment.isLiked
    comments.like=comment.like
-  console.log(a+1)
-  console.log(comments.isLiked)
+
   }
 else if(comment.isLiked===true)
 {
    comment.isLiked=false
    comment.like=a-1
-   console.log(a-1)
-   console.log(comment.isLiked)
+   
    comments.isLiked=comment.isLiked
    comments.like=comment.like
-  console.log(`ggg${comments.isLiked}`)
+  
 }
    renderLikes()
-   commentCopy()
+   commentReply()
   }
 )}
 }
@@ -173,6 +178,14 @@ else if(comment.isLiked===true)
     //проверка формы комментария на заполнение
 
     listButton.addEventListener(`click`, ()=>{
+    let textCommentReply =  `QUOTE_BEGIN${commentText.value}QUOTE_END`
+if(comments.isCommentRepliy === true){
+  textCommentReply = `QUOTE_BEGIN${commentText.value}QUOTE_END`
+ 
+}
+else {
+  textCommentReply = commentText.value
+}
       commentName.classList.remove('error');
       commentText.classList.remove('error');
       const oldList = list.innerHTML 
@@ -186,38 +199,59 @@ else if(comment.isLiked===true)
     commentText.classList.add('error');
     return;
   }
-    // добавление комментария в массив
-    comments.push({
-    name: commentName.value.replaceAll("<","&lt;").replaceAll(">","&gt;"),
+// добавление комментария в массив
+
+
+  comments.push({
+    name:commentName.value.replaceAll("<","&lt;").replaceAll(">","&gt;"),
     date: `${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString()}`,
-    comment: commentText.value,
+    comment: textCommentReply.replaceAll('QUOTE_BEGIN','<textarea class="add-form-text">').replaceAll('QUOTE_END','</textarea>').replaceAll("<","&lt;").replaceAll(">","&gt;"),
+    // `${commentText.value}`,
+    // .replaceAll("<","&lt;").replaceAll(">","&gt;")
     like: 0,
     isLiked: false
   }
+
 )
 // очистка формы ввода комментария после его добавления
 
-    commentText.value=``
-    commentName.value=``  
-    
+    commentText.value = ``
+    commentName.value = ``  
     renderLikes()
       })
+
+
 // ответ на комментарий   
 
-function commentCopy() {
+function commentReply() {
 
+  
 const commentBlock = document.querySelectorAll(`.comment`)
 for (const commentElement of commentBlock) {
 commentElement.addEventListener(`click`, () => {
-console.log(`hi-lou ${comments[commentElement.dataset.index].name}`)
-commentText.value= `${comments[commentElement.dataset.index].name}, ${comments[commentElement.dataset.index].comment}` 
-})}}
-commentCopy()
+
+comments[commentElement.dataset.index].isCommentRepliy = true
+
+commentText.value = `${comments[commentElement.dataset.index].name}, ${comments[commentElement.dataset.index].comment}`;
+
+console.log(comments.comment)
+  
 
 
+// console.log(comments[commentElement.dataset.index].name)
+        })}}
+        // renderLikes()
+        commentReply()
+        
+
+
+// <div>${comments[commentElement.dataset.index].name}, ${comments[commentElement.dataset.index].comment}<div>
+
+
+  
 
      // Код писать здесь
-    console.log("It not works!");
+    console.log("It works!");
     
   
   </script>
