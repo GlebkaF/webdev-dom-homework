@@ -35,28 +35,28 @@ export const enterComment = ({ listElement, listElementData, loaderCommentElemen
 
             return fetchGet({ listElement, listElementData, commentTextareaElement, nameInputElement, loaderListElement, formElement, loaderCommentElement });
         })
-            .then(() => {
-                formElement.style.display = 'flex';
-                loaderCommentElement.style.display = 'none';
-                nameInputElement.value = '';
-                commentTextareaElement.value = '';
-                nameInputElement.classList.remove('error');
-                commentTextareaElement.classList.remove('error');
-            })
-            .catch((error, typeError) => {
-                if (error.message === 'Имя и комментарий должны быть не короче 3 символов') {
-                    alert('Имя и комментарий должны быть не короче 3 символов');
-                }
-                else if (error.message === 'Сервер сломался, попробуй позже') {
-                    fetchPost();
-                }
-                else {
-                    alert("Кажется, у вас сломался интернет, попробуйте позже");
-                }
-                console.warn(error);
-                formElement.style.display = 'flex';
-                loaderCommentElement.style.display = 'none';
-            });
+        .then(() => {
+            formElement.style.display = 'flex';
+            loaderCommentElement.style.display = 'none';
+            nameInputElement.value = '';
+            commentTextareaElement.value = '';
+            nameInputElement.classList.remove('error');
+            commentTextareaElement.classList.remove('error');
+        })
+        .catch((error, typeError) => {
+            if (error.message === 'Имя и комментарий должны быть не короче 3 символов') {
+                alert('Имя и комментарий должны быть не короче 3 символов');
+            }
+            else if (error.message === 'Сервер сломался, попробуй позже') {
+                fetchPost();
+            }
+            else {
+                alert("Кажется, у вас сломался интернет, попробуйте позже");
+            }
+            console.warn(error);
+            formElement.style.display = 'flex';
+            loaderCommentElement.style.display = 'none';
+        });
     }
 
     fetchPost();

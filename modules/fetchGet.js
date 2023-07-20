@@ -1,7 +1,8 @@
+import { formElement, loaderListElement, loaderCommentElement } from "../main.js";
 import { getComments } from "./api.js";
 import { renderListElement } from "./renderListElement.js";
 
-export const fetchGet = ({ listElement, listElementData, commentTextareaElement, nameInputElement, loaderListElement, formElement, loaderCommentElement }) => {
+export const fetchGet = ({ listElementData }) => {
     getComments().then((responseData) => {
       console.log(responseData)
       
@@ -19,7 +20,7 @@ export const fetchGet = ({ listElement, listElementData, commentTextareaElement,
       })
 
       listElementData = appComments;
-      renderListElement({ listElement, listElementData, commentTextareaElement, nameInputElement });
+      renderListElement({ listElementData });
       loaderListElement.style.display = 'none';
     })
     .catch((error) => {

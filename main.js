@@ -1,4 +1,4 @@
-import { renderLogin } from "./loginPage.js";
+import { renderLogin } from "./modules/loginPage.js";
 import { enterComment } from "./modules/enterComment.js";
 import { fetchGet } from "./modules/fetchGet.js";
 import { initAnsverEvent } from "./modules/initAnsverEvent.js";
@@ -7,13 +7,14 @@ import { initLikeEvent } from "./modules/initLikeEvent.js";
 import { initRedactorEvent } from "./modules/initRedactorEvent.js";
 import { renderListElement } from "./modules/renderListElement.js";
 
-const listElement = document.getElementById('list');
-const buttonElement = document.getElementById('add-button');
-const nameInputElement = document.getElementById('name');
-const commentTextareaElement = document.getElementById('comment');
-const formElement = document.getElementById('form');
-const loaderListElement = document.getElementById('loader-list');
-const loaderCommentElement = document.getElementById('loader-comment');
+export const listElement = document.getElementById('list');
+export const buttonElement = document.getElementById('add-button');
+export const nameInputElement = document.getElementById('name');
+export const commentTextareaElement = document.getElementById('comment');
+export const formElement = document.getElementById('form');
+export const loaderListElement = document.getElementById('loader-list');
+export const loaderCommentElement = document.getElementById('loader-comment');
+export const appElement = document.getElementById("app");
 
 //Запрашиваем список комментариев (fetch GET)
 formElement.style.display = 'none';
@@ -37,8 +38,8 @@ initDeleteEvent({ listElementData });
 
 //Ф-ция рендера
 // renderListElement({ listElement, listElementData, commentTextareaElement, nameInputElement });
-    
-renderLogin();
+
+renderLogin({ listElement, listElementData });
 
 //Событие выключения кнопки "Написать"
 document.addEventListener('mouseover', () => {
@@ -57,13 +58,13 @@ document.addEventListener('keyup', () => {
 })
 
 //Ф-ция добавления комментария:
-  //Вызываем функцию добавления комментария через комбинацию клавиш Ctrl + Enter
-  document.addEventListener('keyup', function (e) {
-    if (e.ctrlKey & e.key === 'Enter') {
-      enterComment({ nameInputElement, commentTextareaElement, listElement, loaderCommentElement, loaderListElement, formElement, listElementData });
-    }
-  });
-  //Вызываем функцию добавления комментария через клие по кнопке "Написать"
-  buttonElement.addEventListener('click', () => {
+//Вызываем функцию добавления комментария через комбинацию клавиш Ctrl + Enter
+document.addEventListener('keyup', function (e) {
+  if (e.ctrlKey & e.key === 'Enter') {
     enterComment({ nameInputElement, commentTextareaElement, listElement, loaderCommentElement, loaderListElement, formElement, listElementData });
-  });
+  }
+});
+//Вызываем функцию добавления комментария через клие по кнопке "Написать"
+buttonElement.addEventListener('click', () => {
+  enterComment({ nameInputElement, commentTextareaElement, listElement, loaderCommentElement, loaderListElement, formElement, listElementData });
+});

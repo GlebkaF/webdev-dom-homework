@@ -1,9 +1,10 @@
+import { listElement, loaderCommentElement, formElement, commentTextareaElement, nameInputElement } from "../main.js";
 import { initAnsverEvent } from "./initAnsverEvent.js";
 import { initDeleteEvent } from "./initDeleteEvent.js";
 import { initLikeEvent } from "./initLikeEvent.js";
 import { initRedactorEvent } from "./initRedactorEvent.js";
 
-export const renderListElement = ({ listElement, loaderCommentElement, formElement, listElementData, commentTextareaElement, nameInputElement }) => {
+export const renderListElement = ({ listElementData }) => {
     listElement.innerHTML = listElementData
       .map((element, index) => {
         return `
