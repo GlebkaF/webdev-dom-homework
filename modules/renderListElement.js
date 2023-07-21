@@ -1,3 +1,4 @@
+import { formatDate } from "../lib/formatDate/formatDate.js";
 import { listElement, loaderCommentElement, formElement, commentTextareaElement, nameInputElement } from "../main.js";
 import { initAnsverEvent } from "./initAnsverEvent.js";
 import { initDeleteEvent } from "./initDeleteEvent.js";
@@ -11,7 +12,7 @@ export const renderListElement = ({ listElementData }) => {
           <li class="comment" data-index=${index}>
             <div class="comment-header">
               <div>${element.name}</div>
-              <div>${element.date}</div>
+              <div>${formatDate(element.date)}</div>
             </div>
             <div class="comment-body">
               <div class="comment-text">

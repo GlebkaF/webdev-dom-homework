@@ -58,7 +58,7 @@ export function deleteComment({ id }) {
         },
     })
     .then((response) => {
-        if (response.status === 201) {
+        if (response.status === 200) {
             return response.json();
         }
         else {

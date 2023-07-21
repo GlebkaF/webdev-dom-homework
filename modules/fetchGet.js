@@ -7,8 +7,7 @@ export const fetchGet = ({ listElementData }) => {
       console.log(responseData)
       
       const appComments = responseData.comments.map((comment) => {
-        let currentDate = new Date(comment.date);
-        let myDate = currentDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'numeric', year: '2-digit' }) + ' ' + currentDate.toLocaleTimeString('ru-RU', { hour: 'numeric', minute: 'numeric' });
+        let myDate = new Date(comment.date);
         return {
           name: comment.author.name,
           date: myDate,
