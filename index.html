@@ -122,12 +122,11 @@ function addLike () {
 // Ответ на комментарий
 const answer = () => {
 const commentAnswers = document.querySelectorAll('.comment-text');
-const textInput = document.getElementById('.comment-input');
 commentAnswers.forEach((textElement, index) => {
   textElement.addEventListener('click', (event) => {
     event.stopPropagation();
     let textValue = textElement.textContent;
-    return textInput.value = `${users.text} ${users[index].name}`;
+    return commentInputElement.value = `${users[index].text} ${users[index].name}`;
   });
 });
 };
@@ -173,8 +172,6 @@ renderUsers()
   } else {
     buttonElement.classList.remove("disabled-button");
   }
-
-
 
   // Добавляем новый комментарий
   users.push({
