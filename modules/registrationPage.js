@@ -60,7 +60,6 @@ export const renderRegistration = ({ listElement, listElementData }) => {
                 console.warn(error);
             });
 
-        nameInputElement.value = "";
         loginInputElement.value = "";
         passwordInputElement.value = "";
     })
