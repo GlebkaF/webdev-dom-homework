@@ -5,7 +5,7 @@ import { initAnsverEvent } from "./modules/initAnsverEvent.js";
 import { initDeleteEvent } from "./modules/initDeleteEvent.js";
 import { initLikeEvent } from "./modules/initLikeEvent.js";
 import { initRedactorEvent } from "./modules/initRedactorEvent.js";
-import { renderListElement } from "./modules/renderListElement.js";
+import { format } from "date-fns";
 
 export const listElement = document.getElementById('list');
 export const buttonElement = document.getElementById('add-button');

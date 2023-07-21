@@ -32,31 +32,31 @@ export const renderLogin = ({ listElement, listElementData }) => {
                     login: loginInputElement.value,
                     password: passwordInputElement.value,
                 })
-                .then((responseData) => {
-                    setToken(responseData.user.token);
-                    nameInputElement.value = responseData.user.name;
-                })
-                .then(() => {
-                    fetchGet({ listElementData });                        
-                    appElement.style.display = "none";
-                    listElement.style.display = "flex";
-                    formElement.style.display = "flex";
+                    .then((responseData) => {
+                        setToken(responseData.user.token);
+                        nameInputElement.value = responseData.user.name;
+                    })
+                    .then(() => {
+                        fetchGet({ listElementData });
+                        appElement.style.display = "none";
+                        listElement.style.display = "flex";
+                        formElement.style.display = "flex";
 
-                })
-                .catch((error) => {
-                    if (error.message === 'Введен неправильный логин или пароль') {
-                        alert('Введен неправильный логин или пароль');
-                    }
-                    else {
-                        alert("Кажется, у вас сломался интернет, попробуйте позже");
-                    }
-                    console.warn(error);
-                });
+                    })
+                    .catch((error) => {
+                        if (error.message === 'Введен неправильный логин или пароль') {
+                            alert('Введен неправильный логин или пароль');
+                        }
+                        else {
+                            alert("Кажется, у вас сломался интернет, попробуйте позже");
+                        }
+                        console.warn(error);
+                    });
 
                 loginInputElement.value = "";
                 passwordInputElement.value = "";
             })
-            
+
             const linkElement = document.getElementById("link-registration");
 
             linkElement.addEventListener("click", () => {

@@ -1,4 +1,5 @@
-import { formatDate } from "../lib/formatDate/formatDate.js";
+import { format } from "date-fns";
+// import { formatDate } from "../lib/formatDate/formatDate.js";
 import { listElement, loaderCommentElement, formElement, commentTextareaElement, nameInputElement } from "../main.js";
 import { initAnsverEvent } from "./initAnsverEvent.js";
 import { initDeleteEvent } from "./initDeleteEvent.js";
@@ -6,20 +7,20 @@ import { initLikeEvent } from "./initLikeEvent.js";
 import { initRedactorEvent } from "./initRedactorEvent.js";
 
 export const renderListElement = ({ listElementData }) => {
-    listElement.innerHTML = listElementData
-      .map((element, index) => {
-        return `
+  listElement.innerHTML = listElementData
+    .map((element, index) => {
+      return `
           <li class="comment" data-index=${index}>
             <div class="comment-header">
               <div>${element.name}</div>
-              <div>${formatDate(element.date)}</div>
+              <div>${format(element.date, 'yyyy-MM-dd hh.mm.ss')}</div>
             </div>
             <div class="comment-body">
               <div class="comment-text">
-                ${element.comment 
-            .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
-            .replaceAll("QUOTE_END", "</div>")
-                } 
+                ${element.comment
+          .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+          .replaceAll("QUOTE_END", "</div>")
+        } 
               </div>
             </div>
             <div class="comment-footer">
@@ -33,10 +34,10 @@ export const renderListElement = ({ listElementData }) => {
               </div>
             </div>
           </li>`
-      }).join('');
+    }).join('');
 
-    initLikeEvent({ listElement, listElementData, loaderCommentElement, formElement, commentTextareaElement, nameInputElement });
-    initRedactorEvent({ listElementData });
-    initDeleteEvent({ listElementData });
-    initAnsverEvent({ listElementData, commentTextareaElement });
+  initLikeEvent({ listElement, listElementData, loaderCommentElement, formElement, commentTextareaElement, nameInputElement });
+  initRedactorEvent({ listElementData });
+  initDeleteEvent({ listElementData });
+  initAnsverEvent({ listElementData, commentTextareaElement });
 }
