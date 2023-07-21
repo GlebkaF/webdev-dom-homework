@@ -1,17 +1,17 @@
 export function enableLoadingToNewComment(boolean, loadingCommentsBox, inputsBox) {
     if (boolean) {
-      loadingCommentsBox.classList.remove('loading_hidden')
-      inputsBox.classList.add('loading_hidden')
+      loadingCommentsBox.classList.remove('hidden')
+      inputsBox.classList.add('hidden')
     } else {
-      loadingCommentsBox.classList.add('loading_hidden')
-      inputsBox.classList.remove('loading_hidden')
+      loadingCommentsBox.classList.add('hidden')
+      inputsBox.classList.remove('hidden')
     }
 }
 
 export function enableLoadingToStartApp(boolean, loadingHeadBox) {
     if (boolean) {
-      loadingHeadBox.classList.remove('loading_hidden')      
+      loadingHeadBox.classList.remove('hidden')      
     } else {
-      loadingHeadBox.classList.add('loading_hidden')      
+      loadingHeadBox.classList.add('hidden')      
     }
 }

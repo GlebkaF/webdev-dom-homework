@@ -36,7 +36,7 @@ export const setIsLogin = (newValue) => {
 }
 
 // Получение и рендер списка комментариев с API
-function getAndRenderCommentList() {
+export function getAndRenderCommentList() {
     enableLoadingToStartApp(isLoadingToStartApp, loadingHeadBox)        
     getCommentList()
     .then((responseData) => {
@@ -67,9 +67,7 @@ function getAndRenderCommentList() {
 
 //Проверка на наличии токена
 checkToken(() => {
-    renderApp(isLogin, () => {   
-        getAndRenderCommentList()
-    })
+    renderApp(isLogin, getAndRenderCommentList)
 })
 
 // Функция добавления комментария на страиницу и в список API 
