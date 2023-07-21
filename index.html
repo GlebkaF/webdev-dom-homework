@@ -119,6 +119,18 @@ function addLike () {
     })
   })
 }
+// Ответ на комментарий
+const answer = () => {
+const commentAnswers = document.querySelectorAll('.comment-text');
+const textInput = document.getElementById('.comment-input');
+commentAnswers.forEach((textElement, index) => {
+  textElement.addEventListener('click', (event) => {
+    event.stopPropagation();
+    let textValue = textElement.textContent;
+    return textInput.value = `${users.text} ${users[index].name}`;
+  });
+});
+};
 
 // Рендер функция
 const renderUsers = () => {
@@ -143,7 +155,8 @@ const renderUsers = () => {
     </li>`
   }).join("");
   commentsElement.innerHTML = userHtml;
-  addLike()
+  addLike();
+  answer();
 };
 
 renderUsers()
@@ -161,6 +174,8 @@ renderUsers()
     buttonElement.classList.remove("disabled-button");
   }
 
+
+
   // Добавляем новый комментарий
   users.push({
     name: nameInputElement.value
@@ -174,20 +189,14 @@ renderUsers()
   })
 
   renderUsers();
+  answer();
+
 
   nameInputElement.value = "";
   commentInputElement.value = "";
 });
 
-// Ответ на комментарий
-const commentAnswers = document.querySelectorAll('.comment-text');
-for (let commentAnswer of commentAnswers) {
-  commentAnswer.addEventListener('click', () => {
-    
-    commentInputElement.value = `${user.name}, ${user.text}`
-    return
-  });
-}
+
 
 console.log("It works!");
   </script>
