@@ -9,6 +9,7 @@ import { tryPostAgain } from "./modules/tryPostAgain.js" // Повторный P
 import { renderApp } from "./modules/renderApp.js"
 import { loginPageRender } from "./modules/loginPage.js"
 import { checkToken } from "./modules/checkToken.js"
+import { format } from "date-fns"
 
 // Переменные элементов
 export const nameInput = document.querySelector('#name-input')
@@ -43,7 +44,7 @@ export function getAndRenderCommentList() {
         const rightResponse = responseData.comments.map((comment) => {
             return {
                 userName: comment.author.name,
-                currDate: rightDateFormat(fullTime, comment.date),
+                currDate: format(new Date(comment.date), "yyyy-MM-dd hh.mm.ss"),
                 likes: comment.likes,
                 isLiked: comment.isLiked,
                 text: comment.text,
