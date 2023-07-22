@@ -121,7 +121,7 @@ function addLike () {
 }
 // Ответ на комментарий
 const answer = () => {
-const commentAnswers = document.querySelectorAll('.comment-body');
+const commentAnswers = document.querySelectorAll('.comment');
 commentAnswers.forEach((textElement, index) => {
   textElement.addEventListener('click', (event) => {
     event.stopPropagation();
