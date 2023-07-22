@@ -16,6 +16,7 @@ log(likeElement);
 
 
 
+
 const commentators = [
     {
         name: 'Глеб Фокин',
