@@ -105,7 +105,8 @@ const getLikeClass = (element) => {
 function addLike () {
   const likeElements = document.querySelectorAll('.like-button')
   likeElements.forEach((element, index) => {
-    element.addEventListener('click', () => {
+    element.addEventListener('click', (event) => {
+      event.stopPropagation();
       const user = users[index];
       if (user.likeActive === true) {
         user.likeActive = false;
@@ -124,7 +125,6 @@ const answer = () => {
 const commentAnswers = document.querySelectorAll('.comment');
 commentAnswers.forEach((textElement, index) => {
   textElement.addEventListener('click', (event) => {
-    event.stopPropagation();
     let textValue = textElement.textContent;
     return commentInputElement.value = `${users[index].text} ${users[index].name}`;
   });
