@@ -9,40 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments" id="listComment">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+        <!-- generation with js -->
       </ul>
       <div class="add-form">
         <input
@@ -70,25 +37,15 @@
         background-color: rgb(83, 83, 83);
     }
   </style>
+
+
   <script>
 
-/* ------------------------------------------------------------------
-*
-                            DATE
-*
-__________________________________________________________________ */
-
-    let myDate = new Date();
-    let year = myDate.getFullYear() % 100;
-    if (year < 10) year = '0' + year;
-
-    let fullDate = myDate.getDate() + '.' + myDate.getMonth() + '.' + year + ' ' + myDate.getHours() + ':' + myDate.getMinutes();
-    
-/* ------------------------------------------------------------------
-*
-                            getElementById
-*
-__________________________________________________________________ */
+    /* ------------------------------------------------------------------
+    *
+                                getElementById
+    *
+    __________________________________________________________________ */
 
     const sendButton = document.getElementById("buttonSend");
     const deleteButton = document.getElementById("buttonDeleteLast");
@@ -96,96 +53,152 @@ __________________________________________________________________ */
     const getName = document.getElementById("inputGetName");
     const getComment = document.getElementById("inputGetComment");
 
+    const user = [
+          {
+            name: "Глеб Фокин",
+            date: "12.02.22 12:18",
+            comment: "Это будет первый комментарий на этой странице",
+            cost: "3",
+            isLikeActive: false,
+            like: ''
+          },
+          {
+            name: "Варвара Н.",
+            date: "13.02.22 19:22",
+            comment: "Мне нравится как оформлена эта страница! ❤",
+            cost: "75",
+            isLikeActive: false,
+            like: ''
+          }
+        ];
+
+/* ------------------------------------------------------------------
+                                 button event
+
+__________________________________________________________________ */
+
+const likeClick = () => {
+
+    const btn = document.querySelectorAll(".like-button");
+
+    for (const el of btn) {
+
+      let like = el.dataset.active;
+    
+      el.addEventListener('click', () => {
+
+          let index = el.dataset.index;
+
+          if (like === true) {
+              el.classList.remove('-active-like');
+              like = false;
+          } else {
+              el.classList.add('-active-like');
+              like = true;
+          }
+
+      const likeCounts = document.querySelectorAll('.likes-counter');
+
+      likeCount = likeCounts[index];
+      likeCount = likeCount.dataset.cost;
+      likeCount = likeCounts[index].innerHTML;
+      likeCount = like ? ++likeCount : --likeCount;
+      likeCounts[index].innerHTML = likeCount;
+    })
+  }
+}
+
+/* ------------------------------------------------------------------
+*
+                                 RENDER
+*
+__________________________________________________________________ */
+
+    const render = () => {
+      const result = user.map((el, index) => {
+        return `<li class="comment" data-index="${index}">
+                  <div class="comment-header">
+                    <div>${el.name}</div>
+                    <div>${el.date}</div>
+                  </div>
+                  <div class="comment-body">
+                    <div class="comment-text">
+                      ${el.comment}
+                    </div>
+                  </div>
+                  <div class="comment-footer">
+                    <div class="likes">
+                      <span data-index="${index}" data-cost="${el.cost}" class="likes-counter">${el.cost}</span>
+                      <button data-index="${index}" data-active="${el.isLikeActive}" data-active="${el.isLikeActive}" class="like-button ${el.like}"></button>
+                    </div>
+                  </div>
+                </li>
+              `}).join('');
+              
+              getListComment.innerHTML = result;
+              likeClick();
+    }
+
+    render();
+
+/* ------------------------------------------------------------------
+*
+                                 DATE
+*
+__________________________________________________________________ */
+
+function myTime() {
+    let myDate = new Date();
+    let year = myDate.getFullYear() % 100;
+    if (year < 10) year = '0' + year;
+    let fullDate;
+    return fullDate = myDate.getDate() + '.' + myDate.getMonth() + '.' + year + ' ' + myDate.getHours() + ':' + myDate.getMinutes();
+  }
+
+/* ------------------------------------------------------------------
+*
+                                    SEND
+*
+__________________________________________________________________ */
+
+    sendButton.addEventListener("click", () => {
+      
+      if (getName.value != '' && getComment.value != '') {
+        
+        user.push({
+            name: getName.value,
+            date: myTime(),
+            comment: getComment.value,
+            cost: 0,
+            isLikeActive: false
+        })
+        likeClick();
+        render();
+      }
+    });
+
 /* ------------------------------------------------------------------
 *
                             check input => grey
 *
 __________________________________________________________________ */
 
-    sendButton.classList.add("error")
+sendButton.classList.add("error")
 
-    const res = addEventListener("input", () => {
-      if (getName.value != '' && getComment.value != '') {
-          return sendButton.classList.remove("error");
-      } else {
-          return sendButton.classList.add("error"); 
-      }
-    })
+const res = addEventListener("input", () => {
+  if (getName.value != '' && getComment.value != '') {
+      return sendButton.classList.remove("error");
+  } else {
+      return sendButton.classList.add("error"); 
+  }
+})
 
-    getComment.res;
-    getName.res;
-
-/* ------------------------------------------------------------------
-                            IF
-__________________________________________________________________ */
-
-    sendButton.addEventListener("click", () => {
-      
-      if (getName.value != '' && getComment.value != '') {
-        const getOldListComment = getListComment.innerHTML;
-        getListComment.innerHTML = getOldListComment + 
-        `      
-          <li class="comment">
-            <div class="comment-header">
-              <div>${getName.value}</div>
-              <div>${fullDate}</div>
-            </div>
-            <div class="comment-body">
-              <div class="comment-text">
-                ${getComment.value}
-              </div>
-            </div>
-            <div class="comment-footer">
-              <div class="likes">
-                <span class="likes-counter">0</span>
-                <button class="like-button"></button>
-              </div>
-            </div>
-          </li>
-        `
-      }
-    });
+  getComment.res;
+  getName.res;
 
 /* ------------------------------------------------------------------
 *
-                            Enter
-*
-__________________________________________________________________ */
-
-        const input = document.querySelector('input');
-
-        getName.addEventListener('keyup', logKey);
-        getComment.addEventListener('keyup', logKey);
-
-        function logKey(e) {
-          if (`${e.code}` === 'Enter'){
-            const getOldListComment = getListComment.innerHTML;
-            getListComment.innerHTML = getOldListComment + 
-            `      
-              <li class="comment">
-                <div class="comment-header">
-                  <div>${getName.value}</div>
-                  <div>${fullDate}</div>
-                </div>
-                <div class="comment-body">
-                  <div class="comment-text">
-                    ${getComment.value}
-                  </div>
-                </div>
-                <div class="comment-footer">
-                  <div class="likes">
-                    <span class="likes-counter">0</span>
-                    <button class="like-button"></button>
-                  </div>
-                </div>
-              </li>
-            `
-            }
-          }
-
-/* ------------------------------------------------------------------
-*
-                            delete
+                                  delete
 *
 __________________________________________________________________ */
 
