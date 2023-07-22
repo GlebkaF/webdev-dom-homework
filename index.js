@@ -71,7 +71,7 @@ const btnErrAdd = () => {
 
 const getDelCard = (element) => {
     setTimeout(() => {
-        element.closest('.like-button').classList.add('del-card');
+        element.closest('.comment').classList.add('del-card');
     }, 300)
     element.classList.remove('del');
     element.classList.add('exet-del');
