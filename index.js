@@ -196,6 +196,7 @@ const renderComments = () => {
     answComment();
 }
 
+
 renderComments();
 
 const eventErrors = (element) => {
