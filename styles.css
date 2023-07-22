@@ -61,7 +61,7 @@ body {
 }
 
 .comment-footer_new{
-    justify-content: space-between;
+    justify-content: flex-end;
 }
 
 .comment-body {
@@ -71,6 +71,7 @@ body {
 
 .comment-text {
     font-size: 32px;
+    cursor: pointer;
 
 }
 
@@ -160,7 +161,6 @@ body {
 
     border-radius: 18px;
     transition:  0.4s ease;
-    
 }
 
 .exet-del{
@@ -193,6 +193,17 @@ body {
 
 .red{
     font-size: 18px;
+    position: absolute;
+    left: 7%;
+    bottom: 12%;
+}
+
+.comment-new-bg{
+    background: radial-gradient(
+        75.42% 75.42% at 50% 42.37%,
+        #bcec30 22.92%,
+        #202020 100%
+    );
 }
 
 @keyframes btn-color {
@@ -256,3 +267,11 @@ body {
         transform:scale(0.98);
     }
 }
+
+.c{
+    padding: 20px;
+    margin-bottom: 30px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #7334ea, #bcec30);
+}
+
