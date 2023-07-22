@@ -8,7 +8,7 @@ const inputName = document.getElementById("nameTextId");
 const inputText = document.getElementById("commentTextId");
 const likeElement = document.getElementsByClassName("like-button");
 const formBg = document.querySelector('.add-form'); 
-let textAnswerHtml = "";
+let textAnswerHtml = "no";
 let indexOld = 0;
 // массив людей оставивших комменты
 
@@ -235,8 +235,13 @@ const clickEventAddComment = () => {
     formBg.classList.remove('comment-new-bg');
     inputText.placeholder = 'Введите ваш коментарий'
     const commentText = document.querySelectorAll('.comment-text');
-                const isAnswerTest =  commentText[indexOld].innerText === textAnswerHtml;
-    const test = () => isAnswerTest ? textAnswerHtml : "";
+    const test = () =>{
+        if (commentText[indexOld] !== undefined) {
+            const isAnswerTest =  commentText[indexOld].innerText === textAnswerHtml;
+            return isAnswerTest ? textAnswerHtml : "";
+        }
+        return "";
+    }
 
     commentators.push(
         {
