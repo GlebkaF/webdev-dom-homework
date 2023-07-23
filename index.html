@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <title>Проект "Комменты"</title>
   <meta charset="utf-8" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
   <div class="container">
     <ul class="comments">
@@ -20,140 +18,131 @@
       </div>
     </div>
   </div>
-</body>
 
-<script>
-  "use strict";
-  // Код писать здесь
-  const addButton = document.querySelector('.add-form-button');
-  const nameInput = document.querySelector('.add-form-name');
-  const commentInput = document.querySelector('.add-form-text');
-  const commentsList = document.querySelector('.comments');
+  <script>
+    "use strict";
 
-  const comments = [
-    {
-      name: "Глеб Фокин",
-      date: "12.02.22 12:18",
-      comment: "Это будет первый комментарий на этой странице",
-      likes: 3,
-      like: false,
-    },
-    {
-      name: "Варвара Н.",
-      date: "13.02.22 19:22",
-      comment: "Мне нравится как оформлена эта страница! ❤",
-      likes: 75,
-      like: false,
-    },
-  ];
+    // Код писать здесь
+    let comments = [];
 
-  const generateHtml = (comments) => {
-
-    const commentsListHtml = comments
-      .map((comment, index) => {
-        const likeButtonClass = comment.like ? 'like-button liked' : 'like-button';
-        return `<li class="comment">
-        <div class="comment-header">
-          <div class="commentator-name" data-name='${comment.name}'>${comment.name}</div>
-          <div>${comment.date}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text" data-text="${comment.comment}">${comment.comment}</div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">${comment.likes}</span>
-            <button class="${likeButtonClass}" data-index="${index}"></button>
-          </div>
-        </div>
-      </li>`;
+    const fetchComments = () => {
+      fetch('https://wedev-api.sky.pro/api/v1/adam-batukaev/comments', {
+        method: "GET"
       })
-      .join('')
-    return commentsListHtml;
-  }
-
-  const renderComments = () => {
-    commentsList.innerHTML = generateHtml(comments);
-
-    const commentElements = document.querySelectorAll('.comment');
-
-    for (const commentElement of commentElements) {
-      const commentTextElement = commentElement.querySelector('.comment-text');
-      const commentatorNameElement = commentElement.querySelector('.commentator-name');
-
-      commentElement.addEventListener('click', () => {
-        const comment = commentTextElement.dataset.text;
-        const name = commentatorNameElement.dataset.name;
-
-        commentInput.value = `${comment}\n> ${name}`;
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
+        comments = responseData.comments;
+        renderComments();
       });
     };
 
-
-    putLike();
-  };
-
-  const putLike = () => {
-    const likeButtonElements = document.querySelectorAll('.like-button');
-
-    for (const likeButtonElement of likeButtonElements) {
-      likeButtonElement.addEventListener('click', (event) => {
-      event.stopPropagation();  
-        const index = likeButtonElement.dataset.index;
-
-        if (comments[index].like === true) {
-          comments[index].like = false;
-          comments[index].likes--;
-        } else {
-          comments[index].like = true;
-          comments[index].likes++;
-        }
-        renderComments();
-      });
-    }
-  };
-
- 
-  const addComment = () => {
-
-    const name = nameInput.value;
-    const comment = commentInput.value;
-
-    if (name === '' || comment === '') {
-      return; // Validation failed, do not add the comment
-    }
-
-    const currentDate = new Date();
-    const formattedDate = currentDate.toLocaleString('ru-RU', {
+    const generateHtml = (comments) => {
+  const commentsListHtml = comments.map((comment, index) => {
+    const likeButtonClass = comment.isLiked ? 'like-button liked' : 'like-button';
+    const formattedDate = new Date(comment.date).toLocaleString('ru-RU', {
       day: 'numeric',
       month: 'numeric',
       year: 'numeric',
       hour: 'numeric',
       minute: 'numeric',
     });
-
-    comments.push({
-      name: nameInput.value
-        .replaceAll('<', '&lt').replaceAll('>', '&gt'),
-      date: formattedDate,
-      comment: commentInput.value
-        .replaceAll('<', '&lt').replaceAll('>', '&gt'),
-      likes: 0,
-      like: false,
-    });
-
-    renderComments();
-
-    // Clear input
-    nameInput.value = '';
-    commentInput.value = '';
-  };
-
-  addButton.addEventListener('click', addComment);
-
-  renderComments();
+    return `<li class="comment">
+      <div class="comment-header">
+        <div class="commentator-name" data-name='${comment.author.name}'>${comment.author.name}</div>
+        <div>${formattedDate}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text" data-text="${comment.text}">${comment.text}</div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">${comment.likes}</span>
+          <button class="${likeButtonClass}" data-index="${index}"></button>
+        </div>
+      </div>
+    </li>`;
+  }).join('');
+  return commentsListHtml;
+};
 
 
-</script>
+    const renderComments = () => {
+      const commentsList = document.querySelector('.comments');
+      commentsList.innerHTML = generateHtml(comments);
 
+      const commentElements = document.querySelectorAll('.comment');
+
+      for (const commentElement of commentElements) {
+        const commentTextElement = commentElement.querySelector('.comment-text');
+        const commentatorNameElement = commentElement.querySelector('.commentator-name');
+
+        commentElement.addEventListener('click', () => {
+          const comment = commentTextElement.dataset.text;
+          const name = commentatorNameElement.dataset.name;
+
+          document.querySelector('.add-form-text').value = `${comment}\n> ${name}`;
+        });
+      }
+
+      putLike();
+    };
+
+    const putLike = () => {
+      const likeButtonElements = document.querySelectorAll('.like-button');
+
+      for (const likeButtonElement of likeButtonElements) {
+        likeButtonElement.addEventListener('click', (event) => {
+          event.stopPropagation();
+          const index = likeButtonElement.dataset.index;
+
+          if (comments[index].isLiked) {
+            comments[index].isLiked = false;
+            comments[index].likes--;
+          } else {
+            comments[index].isLiked = true;
+            comments[index].likes++;
+          }
+          renderComments();
+        });
+      }
+    };
+
+    const addComment = () => {
+      const name = document.querySelector('.add-form-name').value;
+      const comment = document.querySelector('.add-form-text').value;
+
+      if (name === '' || comment === '') {
+        return; // Validation failed, do not add the comment
+      }
+
+      const newComment = {
+        text: comment.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
+        name: name.replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+      };
+
+      // POST the new comment to the server
+      fetch('https://wedev-api.sky.pro/api/v1/adam-batukaev/comments', {
+        method: "POST",
+        body: JSON.stringify(newComment),
+      })
+      .then((response) => {
+        // Fetch the updated comments from the server
+        fetchComments();
+      });
+
+
+      // Clear input
+      document.querySelector('.add-form-name').value = '';
+      document.querySelector('.add-form-text').value = '';
+    };
+
+    const addButton = document.querySelector('.add-form-button');
+    addButton.addEventListener('click', addComment);
+
+    // Fetch initial comments from the server
+    fetchComments();
+
+  </script>
 </html>
