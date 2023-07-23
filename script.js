@@ -7,7 +7,6 @@ const inputText = document.getElementById("commentTextId");
 const likeElement = document.getElementsByClassName("like-button");
 
 // массив людей
-
 const commentators = [
     {
         name: 'Глеб Фокин',
@@ -74,7 +73,7 @@ const commentDel = () => {
     })
 }
 
-// Функция добавления лайка
+
 function addLike () {
     Array.from(likeElement).forEach((element,index) => {
         element.addEventListener('click', () => {
@@ -94,7 +93,6 @@ function addLike () {
     })
 }
 
-// Функция редактирования комментария
 const clickEventEditComment = () => {
     const redirectElements = document.querySelectorAll(".red");
     const textElements = document.querySelectorAll(".comment-text");
@@ -104,7 +102,6 @@ const clickEventEditComment = () => {
             if (redirectElement.innerText === "Редактировать") {
                 redirectElement.innerHTML = "Ок"
                 
-                // const parent = textElements[indexDel].innerText
                 textElements[indexDel].innerHTML = `<textarea type="textarea"  class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>`;
                 
     
@@ -149,7 +146,7 @@ const renderComments = () => {
     </li>`;
     }).join("");
     cardElements.innerHTML = commentatorsHtml;
-    // red()
+
     commentDel();
     addLike();
     clickEventEditComment();
