@@ -67,43 +67,30 @@
             date: "13.02.22 19:22",
             comment: "Мне нравится как оформлена эта страница! ❤",
             cost: "75",
-            isLikeActive: false,
-            like: ''
+            isLikeActive: true,
+            like: '-active-like'
           }
         ];
 
 /* ------------------------------------------------------------------
                                  button event
-
 __________________________________________________________________ */
 
-const likeClick = () => {
+const handerLike = () => {
 
     const btn = document.querySelectorAll(".like-button");
 
     for (const el of btn) {
 
-      let like = el.dataset.active;
-    
-      el.addEventListener('click', () => {
+        el.addEventListener('click', () => {
 
-          let index = el.dataset.index;
+            const index = el.dataset.index;
 
-          if (like === true) {
-              el.classList.remove('-active-like');
-              like = false;
-          } else {
-              el.classList.add('-active-like');
-              like = true;
-          }
-
-      const likeCounts = document.querySelectorAll('.likes-counter');
-
-      likeCount = likeCounts[index];
-      likeCount = likeCount.dataset.cost;
-      likeCount = likeCounts[index].innerHTML;
-      likeCount = like ? ++likeCount : --likeCount;
-      likeCounts[index].innerHTML = likeCount;
+            (user[index].isLikeActive === false) ? 
+            (++user[index].cost, user[index].isLikeActive = true, user[index].like = '-active-like')
+            : (--user[index].cost, user[index].isLikeActive = false, user[index].like = '')
+              
+        render();
     })
   }
 }
@@ -128,7 +115,7 @@ __________________________________________________________________ */
                   </div>
                   <div class="comment-footer">
                     <div class="likes">
-                      <span data-index="${index}" data-cost="${el.cost}" class="likes-counter">${el.cost}</span>
+                      <span data-cost="${el.cost}" class="likes-counter" ${el.like}>${el.cost}</span>
                       <button data-index="${index}" data-active="${el.isLikeActive}" data-active="${el.isLikeActive}" class="like-button ${el.like}"></button>
                     </div>
                   </div>
@@ -136,7 +123,7 @@ __________________________________________________________________ */
               `}).join('');
               
               getListComment.innerHTML = result;
-              likeClick();
+              handerLike();
     }
 
     render();
@@ -163,18 +150,18 @@ __________________________________________________________________ */
 
     sendButton.addEventListener("click", () => {
       
-      if (getName.value != '' && getComment.value != '') {
+        if (getName.value != '' && getComment.value != '') {
+          
+          user.push({
+              name: getName.value,
+              date: myTime(),
+              comment: getComment.value,
+              cost: 0,
+              isLikeActive: false
+          })
         
-        user.push({
-            name: getName.value,
-            date: myTime(),
-            comment: getComment.value,
-            cost: 0,
-            isLikeActive: false
-        })
-        likeClick();
-        render();
-      }
+          render();
+        }
     });
 
 /* ------------------------------------------------------------------
