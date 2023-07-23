@@ -1,40 +1,28 @@
-import { users, updateUsers } from "./main.js";
-import { listCommentElement } from "./main.js";
-import { enterCommentElement } from "./main.js";
-import { enterNameElement } from "./main.js";
-import { renderUsers } from "./renderComments.js";
+//В этом модуле находится только то что связано с запросами в API
+import { updateUsers } from "./main.js";
+import { renderUserComments, token } from "./renderComments.js";
 
-//Кладем ссылку в переменную так как она везде общая, так будет ее проще менять, можно одинарные, а можно и двойные кавычки, разницы нет
 const host = "https://wedev-api.sky.pro/api/v2/rashid-abdulkhamidov/comments";
 
 // Получаем список комментов с помощью функции fetch и метода запросов GET
-const fetchPromiseFuncGet = () => {
+export const getTodo = () => {
     return fetch(
         host,
         {
             method: "GET",
         })
-        // Показываем пользователю сообщение о том, что происходит загрузка комментариев
-        .then((response) => {
-            console.log(response);
-            listCommentElement.innerHTML = 'Идет загрузка';
+        .then((response) => { // Добавить индикатор загрузки
             return response.json();     //декодируем ответ в формате JSON и переходим на выполнение следующего then
         })
-        .then((responseData) => {
-            console.log(responseData);
-            //Преобразовываем данные из формата API в формат приложения
+        .then((responseData) => { //Преобразовываем данные из формата API в формат приложения
             const currentDate = new Date()
             let newDate = currentDate.getDate() + '.' + currentDate.getMonth() + '.' + currentDate.getFullYear() + ' ' + currentDate.getHours() + ':' + currentDate.getMinutes()
             const appComments = responseData.comments.map((comment) => {
                 return {
-                    //Достаем имя автора
                     name: comment.author.name,
-                    //Преобразовываем дату-строку в Date
                     date: comment.date,
                     text: comment.text,
                     likes: comment.likes,
-                    // В API пока нет признака лайкнутости
-                    // Поэтому пока добавляем заглушку
                     isLiked: comment.isLiked,
                 };
             });
@@ -42,8 +30,12 @@ const fetchPromiseFuncGet = () => {
         })
 };
 
-// Добавляем коммент и имя в API с помошью метода POST
-const fetchPromiseFuncPost = () => {
+// Добавляем коммент и имя в API с помошью функции fetch и метода запросов POST
+export const addTodo = ({ token }) => {
+
+    const enterNameElement = document.getElementById("enter-name")
+    const enterCommentElement = document.getElementById("enter-comment")
+
     //Преобразовываем данные из формата API в формат приложения
     const currentDate = new Date()
     let newDate = currentDate.getDate() + '.' + currentDate.getMonth() + '.' + currentDate.getFullYear() + ' ' + currentDate.getHours() + ':' + currentDate.getMinutes()
@@ -51,13 +43,13 @@ const fetchPromiseFuncPost = () => {
         host,
         {
             method: "POST",
-            login: "rashid",
-            password: "123456",
+            headers: {
+                authorization: token,
+            },
             body: JSON.stringify({     // Преобразование объекта в JSON строку(иначе будет приходить ошибка 400)
                 text: enterCommentElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),     //Добавляем коммент с заменой < и > в целях безопасности
                 name: enterNameElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),     //Добавляем имя с заменой < и > в целях безопасности
                 date: newDate,
-                // forceError: true, //Параметр при котором POST-запрос будет в половине случаев отвечать 500-й ошибкой
             }),
         })
         .then((response) => {
@@ -76,7 +68,7 @@ const fetchPromiseFuncPost = () => {
             enterNameElement.value = "";     // Очищаем инпут с именем после успешного добавления комментария
             //Получаем НОВЫЙ список комментов с помощью метода запросов GET
             // Рендерим НОВЫЙ список комментов
-            fetchPromiseFuncGet().then(() => renderUsers());
+            getTodo().then(() => renderUserComments());
         })
         .catch((error) => {
             if (error.message === "Я остановил цепочку так как ошибка 400") {
@@ -87,6 +79,33 @@ const fetchPromiseFuncPost = () => {
             }
             alert("Кажется, у вас сломался интернет, попробуйте позже");
         })
-}
+};
 
-export { fetchPromiseFuncGet, fetchPromiseFuncPost };
+
+// https://github.com/GlebkaF/webdev-hw-api/blob/main/pages/api/user/README.md
+// Авторизуемся с помощью функции fetch и метода запросов POST
+export const loginTodo = ({ login, password }) => {
+    return fetch(
+        "https://wedev-api.sky.pro/api/user/login",
+        {
+            method: "POST",
+            body: JSON.stringify({
+                login,
+                password,
+            })
+        }).then((response) => { // Добавить индикатор загрузки
+            console.log(response);
+            if (response.status === 400) {
+                alert("Неверный логин или пароль");
+                return Promise.reject("Неверный логин или пароль");
+            }
+            if (response.status === 400) {
+                alert("Пользователь с таким логином уже существует");
+                return Promise.reject("Пользователь с таким логином уже существует");
+            } else {
+                return response.json();     //декодируем ответ в формате JSON и переходим на выполнение следующего then
+            }
+        }).catch((error) => {
+            console.warn(error)
+        })
+}
