@@ -171,7 +171,7 @@ const renderComments = () => {
 
     const commentatorsHtml = commentators.map((commentator, index) => {
         const edit = commentator.isEdit;
-        return `<li class="comment ${commentator.animationClass}">
+        return `<li id="#form" class="comment ${commentator.animationClass}">
         <i class='bx bx-x del' data-index="${index}"></i>
       <div class="comment-header">
         <div>${commentator.name}</div>
