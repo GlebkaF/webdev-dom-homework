@@ -37,6 +37,16 @@
     .error{
       background-color: brown;
     }
+
+    .quote {
+      margin-bottom: 32px;
+      padding: 15px 20px;
+      white-space: pre-line;
+      background: #d5d2d2;
+      font-size: 16px;
+      color: #000000;
+      border-radius: 5px;
+    }
   </style>
   <script>
     "use strict";
@@ -44,6 +54,8 @@
     const listElement = document.getElementById("commentsId");
     const nameInputElement = document.getElementById("name-input");
     const textInputElement = document.getElementById("text-input");
+
+    let isReplay = false;
 
     let newDate = new Date;
     let time = {
@@ -65,42 +77,17 @@
         dateCom: "12.02.22 12:18",
         text: "Это будет первый комментарий на этой странице",
         likesQuantity: 3,
-        likeActive: false
+        isLiked: false
       },
       {
         name: "Варвара Н.",
         dateCom: "13.02.22 19:22",
         text: "Мне нравится как оформлена эта страница! ❤",
         likesQuantity: 75,
-        likeActive: true
+        isLiked: true
       }
     ];
-
-      const getLikeClass = (element) => {
-        return element ? "like-button -active-like" : "like-button";
-      }
-
-    function addLike() {
-      const likeElements = document.querySelectorAll(".like-button");
-      
-      likeElements.forEach((likeElement, index) => {
-        
-        likeElement.addEventListener("click", () => {
-          const user = users[index];
-          if(user.likeActive === true) {
-            user.likeActive = false;
-            user.likesQuantity -= 1;
-            renderUsers();
-          } else{
-            user.likeActive = true;
-            user.likesQuantity += 1;
-            renderUsers();
-          }; 
-        });
-      });
-    };
     
-
     const renderUsers = () => {
       const usersHtml = users.map((user) => {
         return `<li class="comment">
@@ -116,7 +103,7 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${user.likesQuantity}</span>
-              <button class="${getLikeClass(user.likeActive)}"></button>
+              <button class="${getLikeClass(user.isLiked)}"></button>
             </div>
           </div>
         </li>`
@@ -124,42 +111,92 @@
       
       listElement.innerHTML = usersHtml;
       addLike();
+      newReply();
     };
-    renderUsers();
 
-    buttonElement.addEventListener('click', () => {
-      nameInputElement.classList.remove('error');
-      textInputElement.classList.remove('error');
+    const addComment = () => {
+      const textInputValue = isReplay ? `QUOTE_BEGIN${textInputElement.value}QUOTE_END` : textInputElement.value;
       
-      if(nameInputElement.value === '' && textInputElement.value === ''){
-        nameInputElement.classList.add('error');
-        textInputElement.classList.add('error');
-        return;
-      }
-
       if(nameInputElement.value === ''){
         nameInputElement.classList.add('error');
         return;
-      } 
-      if(textInputElement.value === '') {
+      } else if(textInputElement.value === '') {
           textInputElement.classList.add('error');
           return;
-      } 
-
-      users.push({
-        name: nameInputElement.value,
+      } else {
+        users.push({
+        name: replaceValue(nameInputElement.value),
         dateCom: nowDate,
-        text: textInputElement.value,
+        text: replaceValue(textInputValue)
+        .replaceAll('QUOTE_BEGIN', '<div class="quote">')
+        .replaceAll('QUOTE_END', '</div>'),
         likesQuantity: 0,
-        likeActive: false
+        isLiked: false
       })
-      
-      addLike();
+      }
+    
       renderUsers();
       
-        nameInputElement.value = "";
-        textInputElement.value = "";
-    });
+      nameInputElement.value = "";
+      textInputElement.value = "";
+      nameInputElement.classList.remove('error');
+      textInputElement.classList.remove('error');
+      isReplay = false;
+    };
+    
+      
+    const getLikeClass = (element) => {
+        return element ? "like-button -active-like" : "like-button";
+      }
+
+    function addLike() {
+      const likeElements = document.querySelectorAll(".like-button");
+      
+      likeElements.forEach((likeElement, index) => {
+        
+        likeElement.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const user = users[index];
+          if(user.isLiked === true) {
+            user.isLiked = false;
+            user.likesQuantity -= 1;
+            renderUsers();
+          } else{
+            user.isLiked = true;
+            user.likesQuantity += 1;
+            renderUsers();
+          }; 
+        });
+      });
+    };
+    
+    const newReply = () => {
+      const commentElements = document.querySelectorAll('.comment');
+
+      commentElements.forEach((commentElement, index) => {
+        commentElement.addEventListener('click', (event) => {
+          event.stopPropagation();
+          const originalText = `${users[index].name} : ${users[index].text
+          .replaceAll('<div class="quote">', '')
+          .replaceAll('</div', '')}`;
+          textInputElement.value = originalText;
+          isReplay = true;
+        })
+      });
+    };
+
+    const replaceValue = (value) => {
+      return value
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;');
+    }
+    
+    renderUsers();
+
+    buttonElement.addEventListener('click', addComment)
+      
     console.log("It works!");
   </script>
 </html>
