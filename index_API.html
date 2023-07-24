@@ -14,14 +14,17 @@
             <!-- Рендеринг в JS -->
 
         </ul>
-        <div class="add-form">
-            <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
+        <div class="add-form add-form-comment disableLoader">
+            <input type="text" readonly class="add-form-name" placeholder="Введите ваше имя" />
             <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
             <div class="add-form-row">
                 <button class="add-form-button" disabled>Написать</button>
             </div>
         </div>
         <div class="comment-loader add-form disableLoader">Комментарий добавляется...</div>
+
+        <div id="login"></div>
+
     </div>
     <script type="module" src="./main.js"> </script>
 </body>
@@ -34,6 +37,8 @@
     .disableLoader {
         display: none;
     }
+
+   
 </style>
 <!-- <script type="module" src="./main.js"> </script> -->
 
