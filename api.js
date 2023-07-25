@@ -1,8 +1,10 @@
 //В этом модуле находится только то что связано с запросами в API
 import { updateUsers } from "./main.js";
-import { renderUserComments, token } from "./renderComments.js";
+import { renderUserComments } from "./renderComments.js";
 
 const host = "https://wedev-api.sky.pro/api/v2/rashid-abdulkhamidov/comments";
+
+export let userName = "Неизвестно";
 
 // Получаем список комментов с помощью функции fetch и метода запросов GET
 export const getTodo = () => {
@@ -85,6 +87,7 @@ export const addTodo = ({ token }) => {
 // https://github.com/GlebkaF/webdev-hw-api/blob/main/pages/api/user/README.md
 // Авторизуемся с помощью функции fetch и метода запросов POST
 export const loginTodo = ({ login, password }) => {
+
     return fetch(
         "https://wedev-api.sky.pro/api/user/login",
         {
@@ -93,8 +96,8 @@ export const loginTodo = ({ login, password }) => {
                 login,
                 password,
             })
-        }).then((response) => { // Добавить индикатор загрузки
-            console.log(response);
+        })
+        .then((response) => { // Добавить индикатор загрузки          
             if (response.status === 400) {
                 alert("Неверный логин или пароль");
                 return Promise.reject("Неверный логин или пароль");
@@ -105,6 +108,11 @@ export const loginTodo = ({ login, password }) => {
             } else {
                 return response.json();     //декодируем ответ в формате JSON и переходим на выполнение следующего then
             }
+        }).then((responseData) => {
+            userName = responseData.user.name;
+            console.log(userName);
+           
+            return responseData;
         }).catch((error) => {
             console.warn(error)
         })
