@@ -24,7 +24,8 @@
     const likeMaker = () => {
         const likeButtonElements = document.querySelectorAll('.like-button');
         likeButtonElements.forEach((likeButtonElement) => {
-            likeButtonElement.addEventListener('click', () => {
+            likeButtonElement.addEventListener('click', (event) => {
+                event.stopPropagation()
                 const index = likeButtonElement.dataset.index
                 const like = commentators[index];
                 if (like.isLiked === false) {
@@ -40,6 +41,18 @@
         })
     }
     
+    const replyТoСomment = () => {
+      const commentElements = document.querySelectorAll('.comment');
+      commentElements.forEach((commentElement) => {
+        commentElement.addEventListener('click', (event) => {
+          const index = commentElement.dataset.index;
+          console.log(index);
+          const person = commentators[index]
+          textInputElement.value = `> ${person.commentText} \n \n  ${person.name},`;
+        })
+      })
+    }
+
     const newlikeColor = (element) => {
         if (element) {
             return 'like-button -active-like';
@@ -48,10 +61,10 @@
         }
         // return element ? 'like-button -active-like' : 'like-button'; 
       }
-
+    
     const renderCommentators = () => {
         const commentatorsHtml = commentators.map((commentator, index) => {
-            return `<li class="comment">
+            return `<li data-index="${index}" class="comment">
             <div class="comment-header">
               <div>${commentator.name}</div>
               <div>${commentator.time}</div>
@@ -69,7 +82,8 @@
             </div>`
         }).join('');
         commentBlockElement.innerHTML = commentatorsHtml;
-        likeMaker()
+        likeMaker();
+        replyТoСomment();
     }
 
     renderCommentators()
@@ -100,6 +114,9 @@
     };
 
 
+
+
+
     formButtonElement.addEventListener("click", () => {
       nameInputElement.classList.remove("error");
       if (nameInputElement.value === "") {
@@ -114,7 +131,7 @@
 
       commentators.push({
         name: nameInputElement.value,
-        commentText: textInputElement.value,
+        commentText: textInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
         time: dateInComment(),
         likes: 0,
         isLiked: false,
