@@ -69,7 +69,7 @@
 
   <script>
     "use strict";
-
+    
 // создание комментариев
 
 // Запрос в API - все запрсы в API асинхронны, т.е мы не знаем длительность исполнения запроса.
@@ -80,11 +80,11 @@ const fetchPromise = fetch(
   }
 );
 console.log(fetchPromise)
-fetchPromise.then((response)=>{
-  console.log(response) 
+  fetchPromise.then((response)=>{
+console.log(response) 
   const jsonPromise = response.json()
   jsonPromise.then((responseData)=>{
-    console.log(responseData)
+console.log(responseData)
   comments = responseData.comments
   renderLikes()
   })
@@ -94,30 +94,12 @@ fetchPromise.then((response)=>{
 
 
 // создание массива комментариев
-    let comments = [
-      {
-      author: {name: `Глеб Фокин`},
-      date: `12.02.22 12:18`,
-      text: `Это первый комментарий на странице!`,
-      likes: 0,
-      isLiked: false,
-      isCommentRepliy: false
-    },
-      {
-      author: {name:`Варвара Н.`},
-      date:`13.02.22 12:18`,
-      text: `Мне нравится как оформлена страница`,
-      likes: 75,
-      isLiked: false,
-      isCommentRepliy: false
-    }
-  ]; 
-  
+    let comments = [  ]; 
+
     const commentForm =document.getElementById(`add-formListId`)
     const list = document.getElementById("commentsListId")
     const listButton = document.getElementById(`add-form-buttonListId`)
     const commentText = document.getElementById(`commentText`)
-    
     const commentName = document.getElementById(`commentName`)
     let currentDate = new Date();
     const commentLists = document.querySelectorAll(`.comments`)
@@ -125,13 +107,38 @@ fetchPromise.then((response)=>{
     const buttonOfLikes = document.querySelectorAll(`.likes`)
     const button = document.querySelectorAll(`.like-button`)
     const commentBlock = document.querySelectorAll(`.comment`)
+
+
+
+    function renderAddComment () {
+    let resultCommentForm = commentForm.innerHTML =   
+    `<input
+        id="commentName"
+          type="text"
+          class="add-form-name"
+          placeholder="Введите ваше имя"
+        />
+       
+        <textarea
+        id="commentText"
+          type="textarea"
+          class="add-form-text"
+          placeholder="Введите ваш коментарий"
+          rows="4"
+        ></textarea>
+        <div class="add-form-row" id="add-form-rowListId">
+          <button class="add-form-button" id="add-form-buttonListId">Написать</button>
+        </div>`
+    return resultCommentForm
+    }    
     
     
 //создание блоков комментариев по содержимому массива
     
 function renderLikes () {
         
-  commentReply()  
+  commentReply() 
+
       const likesHtml = comments.map((i, index)=> {
         return `<li class="comment"data-index="${index}">
           <div class="comment-header">
@@ -160,6 +167,7 @@ function renderLikes () {
       }
       initLikeButton()
       renderLikes()
+      
 
 //  простановка лайков   
     
@@ -198,16 +206,13 @@ else if(comment.isLiked===true)
 }
 
 // добавление комментария
-
-  
-
-    //проверка формы комментария на заполнение
+//проверка формы комментария на заполнение
 
     listButton.addEventListener(`click`, ()=>{
 
+      const oldButton= listButton.innerHTML
       commentName.classList.remove('error');
       commentText.classList.remove('error');
-      
       const oldList = list.innerHTML 
 
     if (commentName.value ===""){
@@ -216,37 +221,58 @@ else if(comment.isLiked===true)
     
     return;
   }
-  else if(commentText.value ===""){
+    else if(commentText.value ===""){
     commentText.classList.add('error');
     return;
   }
 // добавление комментария в массив
-
-console.log(1)
-
-
 // добавлять комментарий из хранилища данных
 
-const fetchPromise = fetch(
+  let isLoading = true
+  if (isLoading=== true){renderLoader()}
+  
+
+  const fetchPromise = fetch(
   'https://wedev-api.sky.pro/api/v1/arseny-kulikov/comments',
   {
     method: "POST",
     body: JSON.stringify({
-      text: commentText.value,
+      text: commentText.value.replaceAll("QUOTE_BEGIN","<textarea>").replaceAll("QUOTE_END","</textarea><br>"),
       name: commentName.value,
       
     })
   }
 );
 console.log(fetchPromise)
+  fetchPromise.then((response)=>{
+  console.log(response) 
+  const jsonPromise = response.json()
+  jsonPromise.then((responseData)=>{
+console.log(responseData)
+  comments = responseData.comments
+isLoading=false
+renderAddComment ()
+
+  const fetchPromise = fetch(
+  'https://wedev-api.sky.pro/api/v1/arseny-kulikov/comments',
+  {
+    method: "GET"
+  });
+
+console.log(fetchPromise)
+
 fetchPromise.then((response)=>{
   console.log(response) 
   const jsonPromise = response.json()
   jsonPromise.then((responseData)=>{
     console.log(responseData)
   comments = responseData.comments
-
+  
   renderLikes()
+  
+  })
+})
+  
   
   })
   
@@ -255,15 +281,7 @@ fetchPromise.then((response)=>{
 
 //добавление завершено
 
-  // comments.push({
-  //   author: commentName.value.replaceAll("<","&lt;").replaceAll(">","&gt;"),
-  //   date: `${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString()}`,
-  //   text: commentText.value.replaceAll('QUOTE_BEGIN','<textarea class="add-form-text">').replaceAll('QUOTE_END','</textarea><br>'),
-  //   likes: 0,
-  //   isLiked: false
-  // }
-  
-//)
+
 // очистка формы ввода комментария после его добавления
 
     commentText.value = ``
@@ -277,16 +295,15 @@ fetchPromise.then((response)=>{
 // ответ на комментарий   
 
 function commentReply() {
-
   
 const commentBlock = document.querySelectorAll(`.comment`)
 for (const commentElement of commentBlock) {
 commentElement.addEventListener(`click`, () => {
 
 comments[commentElement.dataset.index].isCommentRepliy = true
-console.log(comments)
 
-commentText.value = `${comments[commentElement.dataset.index].author}, ${comments[commentElement.dataset.index].text}`;
+
+commentText.value = `${comments[commentElement.dataset.index].author.name}, ${comments[commentElement.dataset.index].text}`;
 commentText.value = commentText.value.replaceAll("<","&lt;").replaceAll(">","&gt;")
 if (comments[commentElement.dataset.index].isCommentRepliy === true){
   commentText.value = `QUOTE_BEGIN${commentText.value.replaceAll("<","&lt;").replaceAll(">","&gt;")}QUOTE_END`
@@ -295,20 +312,22 @@ else{
   commentText.value = commentText.value.replaceAll("<","&lt;").replaceAll(">","&gt;")
 }
 
-  
-
-
-
         })}}
-        // renderLikes()
-        
-        
 
 
 
-
-
-  
+    function renderLoader () {
+    let resultCommentForm = commentForm.innerHTML =   
+    `<textarea
+          type="textarea"
+          class="add-form-text"
+          placeholder="loading data..."
+        ></textarea>`
+    return resultCommentForm
+    }   
+    
+    
+    
 
      // Код писать здесь
     console.log("It works!");
