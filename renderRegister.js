@@ -1,4 +1,5 @@
-//import { renderLogin } from "./renderLogin.js";
+import { renderLogin } from "./renderLogin.js";
+import { getTodo } from "./main.js";
 
 export function renderRegister() {
     const appElement = document.getElementById("login-app");
@@ -37,10 +38,10 @@ export function renderRegister() {
 
     appElement.innerHTML = registerHtml;
 
-//    const enterLink = document.getElementById('enter-link');
+   const enterLink = document.getElementById('enter-link');
 
-//    enterLink.addEventListener('click', () => {
-//     renderLogin({ getTodo });
-//    })
+   enterLink.addEventListener('click', () => {
+    renderLogin({ getTodo });
+   })
 
 }

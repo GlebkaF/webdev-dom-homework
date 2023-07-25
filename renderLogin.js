@@ -1,4 +1,4 @@
-import { login, setToken, setUserName, userName } from "./api.js";
+import { login, setToken, token, setUserName, userName } from "./api.js";
 import { renderRegister } from "./renderRegister.js";
 
 export const renderLogin = ({ getTodo }) => {
@@ -43,6 +43,7 @@ export const renderLogin = ({ getTodo }) => {
         }).then((responseData) => {
             console.log(responseData);
             setToken(responseData.user.token);
+            console.log(token);
             setUserName(responseData.user.name);
             console.log(userName);
         }).then(() => {

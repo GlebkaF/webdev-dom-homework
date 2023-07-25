@@ -1,22 +1,4 @@
-let currentDate = new Date();
-let day = currentDate.getDate();
-let month = currentDate.getMonth() + 1;
-let year = currentDate.getFullYear();
-let hour = currentDate.getHours();
-let minutes= currentDate.getMinutes();
-
-if (day < 10 ) {
-  day = '0' + day;
-}
-if (month < 10 ) {
-  month = '0' + month;
-}
-if (hour < 10 ) {
-  hour = '0' + hour;
-}
-if (minutes < 10 ) {
-  minutes = '0' + minutes;
-}
+import { format } from "date-fns";
 
 const baseURL = "https://wedev-api.sky.pro/api/v2/AnnaIllarionova/comments";
 const registerURL = "https://wedev-api.sky.pro/api/user";
@@ -26,87 +8,83 @@ export let userName;
 
 export const setUserName = (newUserName) => {
   userName = newUserName;
-}
+};
 
 export let token;
 
 export const setToken = (newToken) => {
   token = newToken;
-}
+};
 
 export function getComments() {
-    return fetch(baseURL, {
+  let headers = {};
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+  return fetch(baseURL, {
     method: "GET",
-    headers: {
-    //   Authorization: `Bearer ${token}`
-    },
-    })
-    .then((answer) => {
+    headers,
+  }).then((answer) => {
     return answer.json();
-    });
+  });
 }
 
+export function postComments({ text, name, }) {
+  const now = new Date();
+  
+  const createDate = format(now, "dd-MM-yyyy HH:mm:ss");
 
-export function postComments({ text, name }) {
-    return fetch(baseURL, {
-  method: "POST",
-  headers: {
-    Authorization: `Bearer ${token}`
-  },
-  body: JSON.stringify({
-    text: text
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;"),
-    name: name
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;"),
-    date: day + '.' + month + '.' + year + ' ' + hour + ':' + minutes,
-    counter: 0,
-    isLiked: false,
-    isEdit: false,
-    forceError: true,
-  })
-})
-.then((response) => {
-  if (response.status === 201) {
-    return response.json();
-  } else if (response.status === 400) {
-    throw new Error('Неправильный ввод');
-  } else if (response.status === 500) {
-    throw new Error('Сервер сломался');
-  } else {
-    throw new Error('Нет интернета');
-  }
-})
+  return fetch(baseURL, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      text: text.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+      name: name.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+      date: createDate,
+      counter: 0,
+      isLiked: false,
+      isEdit: false,
+      forceError: true,
+    }),
+  }).then((response) => {
+    console.log(createDate);
+    if (response.status === 201) {
+      return response.json();
+    } else if (response.status === 400) {
+      throw new Error("Неправильный ввод");
+    } else if (response.status === 500) {
+      throw new Error("Сервер сломался");
+    } else {
+      throw new Error("Нет интернета");
+    }
+  });
 }
 
 export function repeatPostComments({ text, name }) {
-    return fetch(baseURL, {
+  return fetch(baseURL, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
-      text: text
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;"),
-      name: name
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;"),
-      date: day + '.' + month + '.' + year + ' ' + hour + ':' + minutes,
+      text: text.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+      name: name.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+      date: day + "." + month + "." + year + " " + hour + ":" + minutes,
       counter: 0,
       isLiked: false,
       isEdit: false,
       forceError: false,
-    })
-  })
-  .then((response) => {
+    }),
+  }).then((response) => {
     if (response.status === 500) {
-      throw new Error('Сервер сломался');
+      throw new Error("Сервер сломался");
     } else {
       return response.json();
     }
-  }); 
+  });
 }
 
 export function deleteComment({ id }) {
@@ -114,27 +92,38 @@ export function deleteComment({ id }) {
   return fetch(`${baseURL}/${id}`, {
     method: "DELETE",
     headers: {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     },
-  })
-  .then((response) => {
+  }).then((response) => {
     return response.json();
   });
 }
 
+//берем из API авторизацию
 export function login({ login, password }) {
   return fetch(authorizedURL, {
-method: "POST",
-body: JSON.stringify({
-  login,
-  password,
-})
-})
-.then((response) => {
-if (response.status === 400) {
-  alert("Неправильно введен логин или пароль, попробуйте ещё раз")
-  throw new Error('Неправильный ввод');
-} 
-return response.json();
-})
+    method: "POST",
+    body: JSON.stringify({
+      login,
+      password,
+    }),
+  }).then((response) => {
+    if (response.status === 400) {
+      alert("Неправильно введен логин или пароль, попробуйте ещё раз");
+      throw new Error("Неправильный ввод");
+    }
+    return response.json();
+  });
 }
+
+//берем из Api счетчик лайков
+export const toogleLikes = ({ id }) => {
+  return fetch(`${baseURL}/${id}/toggle-like`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }).then((response) => {
+    return response.json();
+  });
+};
