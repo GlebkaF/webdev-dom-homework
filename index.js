@@ -14,17 +14,19 @@ let indexOld = 0;
 // массив людей оставивших комменты
 
 log(likeElement);
+const getAPI = () => {
+    return fetch('https://wedev-api.sky.pro/api/v1/:nik/comments',
+        {
+            method: "GET"
+        })
+        .then(data => data.json())
+        .then(dataJson => {
+            commentators = dataJson.comments;
+            renderComments();
+        })
+    }
 
-fetch('https://wedev-api.sky.pro/api/v1/:nik/comments',
-    {
-        method: "GET"
-    })
-    .then(data => data.json())
-    .then(dataJson => {
-        commentators = dataJson.comments;
-        renderComments();
-    })
-
+getAPI()
 
 
 
@@ -113,7 +115,7 @@ const answComment = () => {
             formBg.classList.add('comment-new-bg');
             const commentator = commentators[index]
             const oldComment = commentator.text
-            inputText.placeholder = `Введите Ответ Пользователю ${commentator.name}`;
+            inputText.placeholder = `Введите Ответ Пользователю ${commentator.author.name}`;
             textAnswerHtml = oldComment;    
             indexOld = index;
         })
@@ -177,8 +179,6 @@ const getLikeClass = (element) => {
 }
 
 const renderComments = () => {
-
-    
     const commentatorsHtml = commentators.map((commentator, index) => {
         return `<li id="#form" class="comment ">
         <i class='bx bx-x del' data-index="${index}"></i>
@@ -199,10 +199,10 @@ const renderComments = () => {
     </li>`;
     }).join("");
     cardElements.innerHTML = commentatorsHtml;
-    // commentDel();
+    commentDel();
     addLike();
-    // clickEventEditComment();
-    // answComment();
+    clickEventEditComment();
+    answComment();
 }
 
 
@@ -267,11 +267,12 @@ btnElement.addEventListener( 'click', () => {
         return data.json()
     })
     .then(dataJson => {
-        renderComments()
-        log(dataJson)
-        return dataJson
-        // renderComments()
+        log(dataJson);
+        return dataJson;
     })
+
+    getAPI()
+    renderComments()
     
 
     // commentators.push(
