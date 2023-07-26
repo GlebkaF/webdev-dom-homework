@@ -73,7 +73,9 @@
         ];
 
 /* ------------------------------------------------------------------
+
                                  button event
+
 __________________________________________________________________ */
 
 const handerLike = () => {
@@ -86,15 +88,38 @@ const handerLike = () => {
 
             const index = el.dataset.index;
 
-            (user[index].isLikeActive === false) ? 
-            (++user[index].cost, user[index].isLikeActive = true, user[index].like = '-active-like')
-            : (--user[index].cost, user[index].isLikeActive = false, user[index].like = '')
+            if (user[index].isLikeActive === false) {
+              ++user[index].cost, user[index].isLikeActive = true, user[index].like = '-active-like'
+            } else {
+              --user[index].cost, user[index].isLikeActive = false, user[index].like = ''
+            }
               
         render();
     })
   }
 }
 
+/* ------------------------------------------------------------------
+
+                                 surfacing
+                                 
+__________________________________________________________________ */
+
+const surfacing = () => {
+
+const comments = document.querySelectorAll(".comment-text");
+
+  for (const el of comments) {
+
+      el.addEventListener('click', () => {
+
+      const comment = el.dataset.comment;
+      const userName = el.dataset.name;
+      getComment.value = `> ${comment}
+${userName},`;
+      })
+  }
+}
 /* ------------------------------------------------------------------
 *
                                  RENDER
@@ -109,20 +134,21 @@ __________________________________________________________________ */
                     <div>${el.date}</div>
                   </div>
                   <div class="comment-body">
-                    <div class="comment-text">
+                    <div class="comment-text data-index="${index}" data-comment="${el.comment}" data-name="${el.name}">
                       ${el.comment}
                     </div>
                   </div>
                   <div class="comment-footer">
                     <div class="likes">
                       <span data-cost="${el.cost}" class="likes-counter" ${el.like}>${el.cost}</span>
-                      <button data-index="${index}" data-active="${el.isLikeActive}" data-active="${el.isLikeActive}" class="like-button ${el.like}"></button>
+                      <button data-index="${index}" data-active="${el.isLikeActive}" class="like-button ${el.like}"></button>
                     </div>
                   </div>
                 </li>
               `}).join('');
               
               getListComment.innerHTML = result;
+              surfacing();
               handerLike();
     }
 
@@ -142,6 +168,8 @@ function myTime() {
     return fullDate = myDate.getDate() + '.' + myDate.getMonth() + '.' + year + ' ' + myDate.getHours() + ':' + myDate.getMinutes();
   }
 
+
+
 /* ------------------------------------------------------------------
 *
                                     SEND
@@ -153,9 +181,9 @@ __________________________________________________________________ */
         if (getName.value != '' && getComment.value != '') {
           
           user.push({
-              name: getName.value,
+              name: getName.value.replaceAll("<", "&lt").replaceAll(">","&gt"),
               date: myTime(),
-              comment: getComment.value,
+              comment: getComment.value.replaceAll("<", "&lt").replaceAll(">","&gt"),
               cost: 0,
               isLikeActive: false
           })
@@ -189,7 +217,7 @@ const res = addEventListener("input", () => {
 *
 __________________________________________________________________ */
 
-    deleteButton.addEventListener("click", () => {
+const delBtn = deleteButton.addEventListener("click", () => {
           
       const numbers = getListComment.innerHTML.lastIndexOf('<li class="comment">');
 
@@ -199,6 +227,7 @@ __________________________________________________________________ */
       const deleteLastComment = getListComment.innerHTML.slice(0, result);
       getListComment.innerHTML = deleteLastComment;
     });
-        
+
+
   </script>
 </html>
