@@ -51,49 +51,62 @@
   const commentsElement = document.getElementById ("comments");
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
+  let users = [];
 
 // Получение данных из API
-const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/stas-gushchin/comments",
+const getApi = () => {
+
+const fetchPromiseGet = fetch("https://wedev-api.sky.pro/api/v1/stas/comments",
   {
     method: "GET",
-  });
-
-  fetchPromise.then((response) => {
-    const jsonPromise = response.json();
-
-    jsonPromise.then((responseData) => {
-      console.log(responseData);
-
+  }).then((response) => {
+    response.json().then((responseData) => {
       users = responseData.comments;
       renderUsers();
     });
   });
+  return fetchPromiseGet;
+}
+getApi();
 
+const postApi = () => {
 
+  const fetchPromisePost = fetch("https://wedev-api.sky.pro/api/v1/stas/comments",
+  {
+    method: "POST",
+    body: JSON.stringify({
+      text: commentInputElement.value,
+      name: nameInputElement.value
+    })
+  }).then(() => {
+    getApi()
+  });
+  return fetchPromisePost;
+}
 
 // Массив данных
-const users = [
-  {
-    name: "Глеб Фокин",
-    date: "12.02.22 12:18",
-    text: "Это будет первый комментарий на этой странице",
-    likes: 3,
-    isLiked: false
-  },
-  {
-    name: "Варвара Н.",
-    date: "13.02.22 19:22",
-    text: "Мне нравится как оформлена эта страница! ❤",
-    likes: 75,
-    isLiked: true
-  }
-];
+// const users = [
+//   {
+//     name: "Глеб Фокин",
+//     date: "12.02.22 12:18",
+//     text: "Это будет первый комментарий на этой странице",
+//     likes: 3,
+//     isLiked: false
+//   },
+//   {
+//     name: "Варвара Н.",
+//     date: "13.02.22 19:22",
+//     text: "Мне нравится как оформлена эта страница! ❤",
+//     likes: 75,
+//     isLiked: true
+//   }
+// ];
 
 // Установка формата даты ДД.ММ.ГГГГ ЧЧ:ММ
-const date = function () {
+const date = function (date) {
 const months = ["01", "02", "03", "04", "05", "06",
 "07", "08", "09", "10", "11", "12"];
-let commentDate = new Date();
+let commentDate = new Date(date);
   let currentDate = commentDate.getDate() + "." + months[commentDate.getMonth()] + "." + commentDate.getFullYear();
   let hour = commentDate.getHours();
   let minute = commentDate.getMinutes();
@@ -146,7 +159,7 @@ const commentAnswers = document.querySelectorAll('.comment');
 commentAnswers.forEach((textElement, index) => {
   textElement.addEventListener('click', (event) => {
     let textValue = textElement.textContent;
-    return commentInputElement.value = `${users[index].text} ${users[index].name}`;
+    return commentInputElement.value = `${users[index].text} ${users[index].author.name}`;
   });
 });
 };
@@ -157,8 +170,8 @@ const renderUsers = () => {
     return `<li id="last-element" class="comment">
 
     <div class="comment-header">
-        <div>${user.name}</div>
-        <div>${user.date}</div>
+        <div>${user.author.name}</div>
+        <div>${date(user.date)}</div>
       </div>
       <div class="comment-body">
         <div class="comment-text">
@@ -194,36 +207,18 @@ renderUsers()
   }
 
 // Добавляем новый комментарий
-  users.push({
-    name: nameInputElement.value
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;"),
-    date: date(),
-    text: commentInputElement.value
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;"),
-    likes: 0
-  })
-
-// Получение данных из API
-const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/stas-gushchin/comments",
-  {
-    method: "POST",
-    body: JSON.stringify({
-      text: commentInputElement.value,
-      name: nameInputElement.value
-    })
-  }).then((response) => {
-    response.json().then((responseData) => {
-      users = responseData.comments;
-      renderUsers();
-    });
-  });
-
+  // users.push({
+  //   name: nameInputElement.value
+  //   .replaceAll("<", "&lt;")
+  //   .replaceAll(">", "&gt;"),
+  //   date: date(),
+  //   text: commentInputElement.value
+  //   .replaceAll("<", "&lt;")
+  //   .replaceAll(">", "&gt;"),
+  //   likes: 0
+  // })
+  postApi();
   renderUsers();
-
-
-
   nameInputElement.value = "";
   commentInputElement.value = "";
 });
@@ -233,3 +228,4 @@ const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/stas-gushchin/comme
 console.log("It works!");
   </script>
 </html>
+
