@@ -2,6 +2,7 @@
 import { users } from "./main.js";
 import { addTodo, userName } from "./api.js";
 import { renderLoginComponent } from "./login.js";
+import { format } from "date-fns";
 
 export let token = "Bearer coascsbkbob46g5g5k5o5s5w606g39c3b43ds3c03bk";
 token = null;
@@ -10,13 +11,17 @@ token = null;
 export const renderUserComments = () => {
   const appEl = document.getElementById("app"); // Объявили константу в которую будет загружаться конечный код
 
+ 
+
   if (!token) {
     const userHtml = users.map((user, index) => { // С помощью метода .map проходимся по всему массиву users 
+
+      const createDate = format(new Date(user.date), 'yyyy/MM/dd hh:mm:ss');
 
       return `<li class="comment">
           <div class="comment-header">
             <div class="comment-name">${user.name}</div>  
-            <div>${user.date}</div>
+            <div>${createDate}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -58,10 +63,13 @@ export const renderUserComments = () => {
       `;
 
     const userHtml = users.map((user, index) => {
+
+      const createDate = formatDateToRu(new Date(user.date), 'yyyy/MM/dd hh:mm:ss');
+
       return `<li class="comment">
           <div class="comment-header">
             <div class="comment-name">${user.name}</div>  
-            <div>${user.date}</div>
+            <div>${createDate}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -77,7 +85,7 @@ export const renderUserComments = () => {
         </li><br>`;
     }).join(''); // join() все элементы массива объединяет в одно строковое значение, убирая все разделители за счет кавычек (''), 
     // если скобки пустые то разделение произойдет по умолчанию с помощью запятой, рендер комментариев закончен
-    
+
     appEl.innerHTML = userHtml + formComments;
     document.getElementById('enter-name').setAttribute("readonly", "readonly");
 
