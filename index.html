@@ -53,6 +53,9 @@
         <button id="add-comment" class="add-form-button">Написать</button>
       </div>
     </div>
+    <div class="add-form-row">
+      <button id="del-comment" class="add-form-button">Удалить последний комментарий</button>
+    </div>
   </div>
 </body>
 
@@ -64,6 +67,7 @@
 
 <script>
   "use strict";
+
   // Код писать здесь
   const buttonAddElement = document.getElementById("add-comment");
   const listElement = document.getElementById("list");
@@ -74,20 +78,27 @@
   buttonAddElement.addEventListener('click', () => {
     nameInputElement.classList.remove("error");
     commentInputElement.classList.remove("error");
+    buttonAddElement.removeAttribute('disabled', 'disabled');
+
 
     if (commentInputElement.value === '' || nameInputElement.value === '') {
+      buttonAddElement.setAttribute('disabled', 'disabled');
+
+
       if (commentInputElement.value === '' && nameInputElement.value === '') {
         commentInputElement.classList.add("error");
         nameInputElement.classList.add("error");
         return;
       } if (nameInputElement.value === '') {
         nameInputElement.classList.add("error");
+        buttonAddElement.setAttribute('disabled', '');
         return;
       } else {
         commentInputElement.classList.add("error");
         return;
       }
     }
+
 
     let myDate = new Date();
     let month = myDate.getMonth();
@@ -129,7 +140,25 @@
     commentInputElement.value = "";
 
   })
+
+
+  document.addEventListener("keyup", function (e) {
+    if (e.keyCode === 13) {
+      document.getElementById("add-comment").click();
+    }
+  });
+
+  const buttonDelComment = document.getElementById("del-comment");
+
+  buttonDelComment.addEventListener('click', () => {
+
+    let lastComment = listElement.lastChild;
+    lastComment.parentNode.removeChild(lastComment);
+
+  })
+
   console.log("It works!");
+
 </script>
 
 </html>
