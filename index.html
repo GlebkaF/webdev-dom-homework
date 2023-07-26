@@ -52,21 +52,40 @@
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
 
-    // Массив данных
-    const users = [
+// Получение данных из API
+const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/stas-gushchin/comments",
+  {
+    method: "GET",
+  });
+
+  fetchPromise.then((response) => {
+    const jsonPromise = response.json();
+
+    jsonPromise.then((responseData) => {
+      console.log(responseData);
+
+      users = responseData.comments;
+      renderUsers();
+    });
+  });
+
+
+
+// Массив данных
+const users = [
   {
     name: "Глеб Фокин",
-    dateComment: "12.02.22 12:18",
+    date: "12.02.22 12:18",
     text: "Это будет первый комментарий на этой странице",
     likes: 3,
-    likeActive: false
+    isLiked: false
   },
   {
     name: "Варвара Н.",
-    dateComment: "13.02.22 19:22",
+    date: "13.02.22 19:22",
     text: "Мне нравится как оформлена эта страница! ❤",
     likes: 75,
-    likeActive: true
+    isLiked: true
   }
 ];
 
@@ -101,25 +120,26 @@ const getLikeClass = (element) => {
   return element ? "like-button -active-like" : "like-button"
 }
 
-    // Добавить лайк
+// Добавить лайк
 function addLike () {
   const likeElements = document.querySelectorAll('.like-button')
   likeElements.forEach((element, index) => {
     element.addEventListener('click', (event) => {
       event.stopPropagation();
       const user = users[index];
-      if (user.likeActive === true) {
-        user.likeActive = false;
+      if (user.isLiked === true) {
+        user.isLiked = false;
         user.likes -= 1;
         renderUsers();
       } else {
-        user.likeActive = true;
+        user.isLiked = true;
         user.likes += 1;
         renderUsers();
       }
     })
   })
 }
+
 // Ответ на комментарий
 const answer = () => {
 const commentAnswers = document.querySelectorAll('.comment');
@@ -138,7 +158,7 @@ const renderUsers = () => {
 
     <div class="comment-header">
         <div>${user.name}</div>
-        <div>${user.dateComment}</div>
+        <div>${user.date}</div>
       </div>
       <div class="comment-body">
         <div class="comment-text">
@@ -148,7 +168,7 @@ const renderUsers = () => {
       <div class="comment-footer">
         <div class="likes">
           <span class="likes-counter">${user.likes}</span>
-          <button class="${getLikeClass(user.likeActive)}"></button>
+          <button class="${getLikeClass(user.isLiked)}"></button>
         </div>
       </div>
     </li>`
@@ -160,7 +180,7 @@ const renderUsers = () => {
 
 renderUsers()
 
-    // Функция клика, валидация
+// Функция клика, валидация
   buttonElement.addEventListener("click", () => {
   nameInputElement.classList.remove("error");
   commentInputElement.classList.remove("error");
@@ -173,17 +193,32 @@ renderUsers()
     buttonElement.classList.remove("disabled-button");
   }
 
-  // Добавляем новый комментарий
+// Добавляем новый комментарий
   users.push({
     name: nameInputElement.value
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;"),
-    dateComment: date(),
+    date: date(),
     text: commentInputElement.value
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;"),
     likes: 0
   })
+
+// Получение данных из API
+const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/stas-gushchin/comments",
+  {
+    method: "POST",
+    body: JSON.stringify({
+      text: commentInputElement.value,
+      name: nameInputElement.value
+    })
+  }).then((response) => {
+    response.json().then((responseData) => {
+      users = responseData.comments;
+      renderUsers();
+    });
+  });
 
   renderUsers();
 
