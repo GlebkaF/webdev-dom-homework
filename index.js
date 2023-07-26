@@ -2,34 +2,66 @@ const {log} = console;
 // ------------------
 "use strict"
 // Добавляем ДОМ элементы
+// рендерим форму отправки
+const formBg = document.querySelector('.add-form'); 
+let loud = false;
+
+const formRender =  () => {
+    if(loud){
+        return formBg.innerHTML     = `<img class="louder" src="./loud.gif" alt="louding">`
+    } else {
+        return formBg.innerHTML = `<input
+        type="text"
+        class="add-form-name"
+        placeholder="Введите ваше имя"
+        id="nameTextId"
+        />
+        <textarea
+                type="textarea"
+                class="add-form-text"
+                placeholder="Введите ваш коментарий"
+                rows="4"
+                id="commentTextId"
+        ></textarea>
+        <div class="add-form-row">
+            <button class="add-form-button" id="btnId">Написать</button>
+        </div>`
+    }
+}
+
+formRender();
+// 
 const cardElements = document.getElementById("commentsId");
 const btnElement = document.getElementById("btnId");
 const inputName = document.getElementById("nameTextId");
 const inputText = document.getElementById("commentTextId");
 const likeElement = document.getElementsByClassName("like-button");
-const formBg = document.querySelector('.add-form'); 
+
 let commentators = [];
-// let textAnswerHtml = "no";
+let textAnswerHtml = "no";
 let indexOld = 0;
 // массив людей оставивших комменты
 
 log(likeElement);
 const getAPI = () => {
-    return fetch('https://wedev-api.sky.pro/api/v1/:t/comments',
+    loud = true;
+    formRender()
+    return fetch('https://wedev-api.sky.pro/api/v1/:to/comments',
         {
             method: "GET"
         })
         .then(data => data.json())
         .then(dataJson => {
             commentators = dataJson.comments;
-            
             renderComments();
+            loud = false;
+            formRender()
         })
     }
 getAPI()
 
 const postAPI = () => {
-    return fetch('https://wedev-api.sky.pro/api/v1/:t/comments',
+    return fetch('https://wedev-api.sky.pro/api/v1/:to/comments',
     {
         method: "POST",
         body: JSON.stringify({
@@ -37,8 +69,9 @@ const postAPI = () => {
             name: inputName.value
         })
     })
-        .then(data => data.json())
-        .then(() => getAPI())
+        .then(() => {
+            getAPI()
+        })
 }
 
 
@@ -191,6 +224,8 @@ const getLikeClass = (element) => {
     return element ? "like-button -active-like" : "like-button";
 }
 
+// рендер формы
+
 const renderComments = () => {
     const commentatorsHtml = commentators.map((commentator, index) => {
         return `<li id="#form" class="comment ">
@@ -212,10 +247,10 @@ const renderComments = () => {
     </li>`;
     }).join("");
     cardElements.innerHTML = commentatorsHtml;
-    commentDel();
+    // commentDel();
     addLike();
-    clickEventEditComment();
-    answComment();
+    // clickEventEditComment();
+    // answComment();
 }
 
 
@@ -255,6 +290,7 @@ btnElement.addEventListener( 'click', () => {
         btnErrAdd()
         return;
     }
+    
 
     // formBg.classList.remove('comment-new-bg');
     // inputText.placeholder = 'Введите ваш коментарий'
@@ -287,6 +323,10 @@ btnElement.addEventListener( 'click', () => {
     document.getElementById("nameTextId").value = '';
     document.getElementById("commentTextId").value = '';
     textAnswerHtml = ""
+})
+
+btnElement.addEventListener('click', () => {
+
 })
 log("It works!");
 
