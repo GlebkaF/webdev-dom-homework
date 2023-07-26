@@ -15,18 +15,31 @@ let indexOld = 0;
 
 log(likeElement);
 const getAPI = () => {
-    return fetch('https://wedev-api.sky.pro/api/v1/:nik/comments',
+    return fetch('https://wedev-api.sky.pro/api/v1/:t/comments',
         {
             method: "GET"
         })
         .then(data => data.json())
         .then(dataJson => {
             commentators = dataJson.comments;
+            
             renderComments();
         })
     }
-
 getAPI()
+
+const postAPI = () => {
+    return fetch('https://wedev-api.sky.pro/api/v1/:t/comments',
+    {
+        method: "POST",
+        body: JSON.stringify({
+            text: inputText.value,
+            name: inputName.value
+        })
+    })
+        .then(data => data.json())
+        .then(() => getAPI())
+}
 
 
 
@@ -254,25 +267,7 @@ btnElement.addEventListener( 'click', () => {
     //     return "";
     // }
 
-    fetch('https://wedev-api.sky.pro/api/v1/:nik/comments',
-    {
-        method: "POST",
-        body: JSON.stringify({
-            text: inputText.value,
-            name: inputName.value
-        })
-    })
-    .then(data => {
-        log(data)
-        return data.json()
-    })
-    .then(dataJson => {
-        log(dataJson);
-        return dataJson;
-    })
-
-    getAPI()
-    renderComments()
+    postAPI();
     
 
     // commentators.push(
