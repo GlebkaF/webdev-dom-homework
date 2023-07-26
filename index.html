@@ -105,7 +105,8 @@ const getLikeClass = (element) => {
 function addLike () {
   const likeElements = document.querySelectorAll('.like-button')
   likeElements.forEach((element, index) => {
-    element.addEventListener('click', () => {
+    element.addEventListener('click', (event) => {
+      event.stopPropagation();
       const user = users[index];
       if (user.likeActive === true) {
         user.likeActive = false;
@@ -119,6 +120,16 @@ function addLike () {
     })
   })
 }
+// Ответ на комментарий
+const answer = () => {
+const commentAnswers = document.querySelectorAll('.comment');
+commentAnswers.forEach((textElement, index) => {
+  textElement.addEventListener('click', (event) => {
+    let textValue = textElement.textContent;
+    return commentInputElement.value = `${users[index].text} ${users[index].name}`;
+  });
+});
+};
 
 // Рендер функция
 const renderUsers = () => {
@@ -143,13 +154,14 @@ const renderUsers = () => {
     </li>`
   }).join("");
   commentsElement.innerHTML = userHtml;
-  addLike()
+  addLike();
+  answer();
 };
 
 renderUsers()
 
     // Функция клика, валидация
-    buttonElement.addEventListener("click", () => {
+  buttonElement.addEventListener("click", () => {
   nameInputElement.classList.remove("error");
   commentInputElement.classList.remove("error");
   if (nameInputElement.value === "" || commentInputElement.value === "") {
@@ -163,17 +175,25 @@ renderUsers()
 
   // Добавляем новый комментарий
   users.push({
-    name: nameInputElement.value,
+    name: nameInputElement.value
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;"),
     dateComment: date(),
-    text: commentInputElement.value,
-    likes: 0 // Что сюда писать, чтобы счетчик работал?
+    text: commentInputElement.value
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;"),
+    likes: 0
   })
 
   renderUsers();
 
+
+
   nameInputElement.value = "";
   commentInputElement.value = "";
 });
+
+
 
 console.log("It works!");
   </script>
