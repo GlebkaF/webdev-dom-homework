@@ -42,7 +42,6 @@ let commentators = [];
 let isAnswer = "";
 let indexOld = 0;
 // массив людей оставивших комменты
-
 const getAPI = () => {
     loud = true;
     formRender()
@@ -56,6 +55,7 @@ const getAPI = () => {
             renderComments();
             loud = false;
             formRender()
+            
         })
         
     }
@@ -107,7 +107,6 @@ const postAPI = () => {
 // ]
 
 // Вспомогательные функции
-
 const addDate = (date) =>{
     date = new Date(date);
     let time = {
@@ -263,10 +262,12 @@ const renderComments = () => {
     addLike();
     // clickEventEditComment();
     answComment();
+    
 }
 
 
 renderComments();
+
 
 const eventErrors = (element) => {
     return element
@@ -278,7 +279,7 @@ const eventErrors = (element) => {
 
 // Функция добавления нового комментария
 
-const renderClickBtn = () => {
+function renderClickBtn () {
     const btnElement = document.getElementById("btnId");
 
     btnElement.addEventListener( 'click', () => {
@@ -333,7 +334,6 @@ const renderClickBtn = () => {
 }
 
 renderClickBtn()
-
 
 log("It works!");
 
