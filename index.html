@@ -9,7 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments" id="list">
-        <li class="comment">
+        <!-- <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -38,16 +38,16 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
+              <span class="likes-counter">74</span>
+              <button class="like-button"></button>
             </div>
           </div>
-        </li>
+        </li> -->
       </ul>
       <div class="add-form">
         <input
           id="name-input"
-          value=" "
+          
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
@@ -68,49 +68,104 @@
   </body>
 
   <script>
+    //ДОБАВЛЕНИЕ КОММЕНТАРИЯ
     
     const buttonElement = document.getElementById("add-button");
     const listElement = document.getElementById("list");
     const nameInputElement = document.getElementById("name-input");
     const comInputElement = document.getElementById("com-input");
 
-    buttonElement.addEventListener('click' , () => {
+    //Добавляем рендер-функцию для комментариев:
+    const comentElement = document.querySelectorAll('.comment');
+
+    const coments = [
+      {
+        name:"Глеб Фокин",
+        data:"12.02.22 12:18",
+        com:"Это будет первый комментарий на этой странице",
+        likes:"3",
+        liked: false,
+      },
+      {
+        name:"Варвара Н.",
+        data:"13.02.22 19:22",
+        com:"Мне нравится как оформлена эта страница! ❤",
+        likes:"74",
+        liked: false,
+      }
+    ]
+      const render = () => {
+        const comHtml = coments.map((coment) =>{
+          return `<li class="comment">
+          <div class="comment-header">
+            <div>${coment.name}</div>
+            <div>${coment.data}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${coment.com}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${coment.likes}</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+        
+        }).join('');
+        listElement.innerHTML = comHtml;
+      };
+      render()
+      const like = () =>{
+        document.querySelectorAll('.like-button').forEach(function(likeButton) {
+          let likeCount = likeButton.previousElementSibling;
+          let likes = Number(likeCount.textContent);
+          let liked = false;
+          likeButton.addEventListener('click', function() {
+            if (liked === false) {
+              likes++;
+              liked = true;
+              likeButton.classList.add('-active-like');
+            } else {
+              likes--;
+              liked = false;
+              likeButton.classList.remove('-active-like');
+            }
+            likeCount.textContent = likes;
+          });
+        });
+      };
+      like();
       
+      //Активируем функцию добавления комментария на страницу сайта:
+      buttonElement.addEventListener('click' , () => {
       nameInputElement.classList.remove('error');
       
-      if(nameInputElement.value === " " || comInputElement.value === "") {
+      if(nameInputElement.value === "" || comInputElement.value === "") {
         comInputElement.classList.add('error');
         nameInputElement.classList.add('error');
         return;
       } 
       comInputElement.classList.remove('error');
-
-        function date(newDate) {
+      //Функция определения текущей даты:
+      function date(newDate) {
           let fullHour = newDate.toLocaleDateString() + " " + newDate.getHours() + ":"+ newDate.getMinutes();
           return fullHour;
         }
         date(new Date())
-
-        const oldListHtml = listElement.innerHTML;
-        listElement.innerHTML += 
-        `<li class="comment">
-          <div class="comment-header">
-            <div>${nameInputElement.value}</div>
-            <div>${date(new Date())}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${comInputElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>`
+      //Добавляем массив с коментариями
+      coments.push({
+        name: nameInputElement.value,
+        data: date(new Date()),
+        com: comInputElement.value,
+        likes:"0",
+        liked: false,
+      })
+        render();
+        like();
     });
-    
+  
   </script>
 </html>
