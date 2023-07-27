@@ -51,30 +51,62 @@
   const commentsElement = document.getElementById ("comments");
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
+  let users = [];
 
-    // Массив данных
-    const users = [
+// Получение данных из API
+const getApi = () => {
+
+const fetchPromiseGet = fetch("https://wedev-api.sky.pro/api/v1/stas/comments",
   {
-    name: "Глеб Фокин",
-    dateComment: "12.02.22 12:18",
-    text: "Это будет первый комментарий на этой странице",
-    likes: 3,
-    likeActive: false
-  },
+    method: "GET",
+  }).then((response) => {
+    response.json().then((responseData) => {
+      users = responseData.comments;
+      renderUsers();
+    });
+  });
+  return fetchPromiseGet;
+}
+getApi();
+
+const postApi = () => {
+
+  const fetchPromisePost = fetch("https://wedev-api.sky.pro/api/v1/stas/comments",
   {
-    name: "Варвара Н.",
-    dateComment: "13.02.22 19:22",
-    text: "Мне нравится как оформлена эта страница! ❤",
-    likes: 75,
-    likeActive: true
-  }
-];
+    method: "POST",
+    body: JSON.stringify({
+      text: commentInputElement.value,
+      name: nameInputElement.value
+    })
+  }).then(() => {
+    getApi()
+  });
+  return fetchPromisePost;
+}
+
+// Массив данных
+// const users = [
+//   {
+//     name: "Глеб Фокин",
+//     date: "12.02.22 12:18",
+//     text: "Это будет первый комментарий на этой странице",
+//     likes: 3,
+//     isLiked: false
+//   },
+//   {
+//     name: "Варвара Н.",
+//     date: "13.02.22 19:22",
+//     text: "Мне нравится как оформлена эта страница! ❤",
+//     likes: 75,
+//     isLiked: true
+//   }
+// ];
 
 // Установка формата даты ДД.ММ.ГГГГ ЧЧ:ММ
-const date = function () {
+const date = function (date) {
 const months = ["01", "02", "03", "04", "05", "06",
 "07", "08", "09", "10", "11", "12"];
-let commentDate = new Date();
+let commentDate = new Date(date);
   let currentDate = commentDate.getDate() + "." + months[commentDate.getMonth()] + "." + commentDate.getFullYear();
   let hour = commentDate.getHours();
   let minute = commentDate.getMinutes();
@@ -101,32 +133,33 @@ const getLikeClass = (element) => {
   return element ? "like-button -active-like" : "like-button"
 }
 
-    // Добавить лайк
+// Добавить лайк
 function addLike () {
   const likeElements = document.querySelectorAll('.like-button')
   likeElements.forEach((element, index) => {
     element.addEventListener('click', (event) => {
       event.stopPropagation();
       const user = users[index];
-      if (user.likeActive === true) {
-        user.likeActive = false;
+      if (user.isLiked === true) {
+        user.isLiked = false;
         user.likes -= 1;
         renderUsers();
       } else {
-        user.likeActive = true;
+        user.isLiked = true;
         user.likes += 1;
         renderUsers();
       }
     })
   })
 }
+
 // Ответ на комментарий
 const answer = () => {
 const commentAnswers = document.querySelectorAll('.comment');
 commentAnswers.forEach((textElement, index) => {
   textElement.addEventListener('click', (event) => {
     let textValue = textElement.textContent;
-    return commentInputElement.value = `${users[index].text} ${users[index].name}`;
+    return commentInputElement.value = `${users[index].text} ${users[index].author.name}`;
   });
 });
 };
@@ -137,8 +170,8 @@ const renderUsers = () => {
     return `<li id="last-element" class="comment">
 
     <div class="comment-header">
-        <div>${user.name}</div>
-        <div>${user.dateComment}</div>
+        <div>${user.author.name}</div>
+        <div>${date(user.date)}</div>
       </div>
       <div class="comment-body">
         <div class="comment-text">
@@ -148,7 +181,7 @@ const renderUsers = () => {
       <div class="comment-footer">
         <div class="likes">
           <span class="likes-counter">${user.likes}</span>
-          <button class="${getLikeClass(user.likeActive)}"></button>
+          <button class="${getLikeClass(user.isLiked)}"></button>
         </div>
       </div>
     </li>`
@@ -160,7 +193,7 @@ const renderUsers = () => {
 
 renderUsers()
 
-    // Функция клика, валидация
+// Функция клика, валидация
   buttonElement.addEventListener("click", () => {
   nameInputElement.classList.remove("error");
   commentInputElement.classList.remove("error");
@@ -173,22 +206,19 @@ renderUsers()
     buttonElement.classList.remove("disabled-button");
   }
 
-  // Добавляем новый комментарий
-  users.push({
-    name: nameInputElement.value
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;"),
-    dateComment: date(),
-    text: commentInputElement.value
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;"),
-    likes: 0
-  })
-
+// Добавляем новый комментарий
+  // users.push({
+  //   name: nameInputElement.value
+  //   .replaceAll("<", "&lt;")
+  //   .replaceAll(">", "&gt;"),
+  //   date: date(),
+  //   text: commentInputElement.value
+  //   .replaceAll("<", "&lt;")
+  //   .replaceAll(">", "&gt;"),
+  //   likes: 0
+  // })
+  postApi();
   renderUsers();
-
-
-
   nameInputElement.value = "";
   commentInputElement.value = "";
 });
@@ -198,3 +228,4 @@ renderUsers()
 console.log("It works!");
   </script>
 </html>
+
