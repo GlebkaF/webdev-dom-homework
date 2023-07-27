@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="commentBlock">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -39,7 +39,7 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
+              <button class="like-button -active-like" id="likeButton"></button>
             </div>
           </div>
         </li>
@@ -49,15 +49,20 @@
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          id="nameInput"
         />
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+          id="commentInput"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="addButton">Написать</button>
+          <button class="add-form-button remuve-form-button" id="remuveButton">
+            Удалить
+          </button>
         </div>
       </div>
     </div>
@@ -65,7 +70,120 @@
 
   <script>
     "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const handleLikeButtonClick = (event) => {
+      const likeButton = event.target;
+      const likesCounter = likeButton.previousElementSibling;
+
+      if (likeButton.classList.contains("-active-like")) {
+        likeButton.classList.remove("-active-like");
+        numberOfLike--;
+      } else {
+        likeButton.classList.add("-active-like");
+        numberOfLike++;
+      }
+      likesCounter.textContent = numberOfLike;
+    };
+
+    const bindClickEventToLikeButtons = () => {
+      const likeButtons = document.querySelectorAll(
+        ".comment-footer .like-button"
+      );
+      likeButtons.forEach((likeButton) => {
+        likeButton.addEventListener("click", handleLikeButtonClick);
+      });
+    };
+    bindClickEventToLikeButtons();
+    const nameInput = document.getElementById("nameInput");
+    const commentInput = document.getElementById("commentInput");
+    let numberOfLike = 0;
+    const getCurrentDate = () => {
+    const currentDate = new Date();
+    const year = String(currentDate.getFullYear()).slice(-2);
+    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+    const day = String(currentDate.getDate()).padStart(2, "0");
+    const hours = String(currentDate.getHours()).padStart(2, "0");
+    const minutes = String(currentDate.getMinutes()).padStart(2, "0");
+    const seconds = String(currentDate.getSeconds()).padStart(2, "0");
+    const formattedDate = `${day}.${month}.${year} ${hours}:${minutes}`;
+      return formattedDate;
+    };
+    const blockComment = document.getElementById("commentBlock");
+    const addButton = document.getElementById("addButton");
+    const likeButton = document.getElementById("likeButton");
+    const remuveButton = document.getElementById("remuveButton");
+
+    remuveButton.addEventListener("click", () => {
+      blockComment.lastChild.remove();
+    });
+
+    addButton.addEventListener("click", () => {
+      getComment();
+    });
+
+    const getComment = () => {
+      if (nameInput.value === "") {
+        nameInput.style.backgroundColor = "rgba(255, 0, 0, 0.5)";
+        nameInput.placeholder = "ВВЕДИТЕ ВАШЕ ИМЯ";
+        addButton.disabled = true;
+        addButton.style.backgroundColor = "gray";
+        return;
+      }
+
+      if (commentInput.value === "") {
+        commentInput.style.backgroundColor = "rgba(255, 0, 0, 0.5)";
+        commentInput.placeholder = "ВЫ НИЧЕГО НЕ ВВЕЛИ";
+        addButton.disabled = true;
+        addButton.style.backgroundColor = "gray";
+        return;
+      }
+
+      const newCommentElement = document.createElement("li");
+      newCommentElement.className = "comment";
+      newCommentElement.innerHTML = `
+      <div class="comment-header">
+        <div>${nameInput.value}</div>
+        <div>${getCurrentDate()}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">
+          ${commentInput.value}
+        </div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">${numberOfLike}</span>
+          <button class="like-button"></button>
+        </div>
+      </div>
+     `;
+      commentBlock.appendChild(newCommentElement);
+
+      nameInput.value = "";
+      commentInput.value = "";
+      nameInput.style.backgroundColor = "";
+      nameInput.placeholder = "Введите ваше имя";
+      commentInput.style.backgroundColor = "";
+      commentInput.placeholder = "Введите ваш комментарий";
+
+      bindClickEventToLikeButtons();
+    };
+
+    document.addEventListener("keyup", (event) => {
+      if (event.key === "Enter") {
+        getComment();
+      }
+    });
+
+    nameInput.addEventListener("input", () => {
+      addButton.disabled = false;
+      addButton.style.backgroundColor = "";
+      nameInput.style.backgroundColor = "";
+    });
+
+    commentInput.addEventListener("input", () => {
+      addButton.disabled = false;
+      addButton.style.backgroundColor = "";
+      commentInput.style.backgroundColor = "";
+    });
   </script>
 </html>
