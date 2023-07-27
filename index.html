@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Проект "Комменты"</title>
   <meta charset="utf-8" />
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
   <div class="container">
     <ul class="comments">
+      <div class="loading-message-top" style="display: none;">Пожалуйста подождите, загружаю комментарии...</div>
       <!-- Спиосок рендерится из JS -->
     </ul>
     <div class="add-form">
@@ -17,6 +20,7 @@
         <button class="add-form-button">Написать</button>
       </div>
     </div>
+    <div class="loading-message-bottom" style="display: none;">Комментарий добавляется...</div>
   </div>
 
   <script>
@@ -26,47 +30,55 @@
     let comments = [];
 
     const fetchComments = () => {
+      // Show loading message when fetching comments begins
+      const loadingMessageTop = document.querySelector('.loading-message-top');
+      loadingMessageTop.style.display = 'block';
+
       fetch('https://wedev-api.sky.pro/api/v1/adam-batukaev/comments', {
         method: "GET"
       })
-      .then((response) => {
-        return response.json();
-      })
-      .then((responseData) => {
-        comments = responseData.comments;
-        renderComments();
-      });
+        .then((response) => {
+          return response.json();
+        })
+        .then((responseData) => {
+          comments = responseData.comments;
+          renderComments();
+        })
+        .then(() => {
+          // Hide loading message when comments are rendered 
+          loadingMessageTop.style.display = 'none';
+        });
     };
 
     const generateHtml = (comments) => {
-  const commentsListHtml = comments.map((comment, index) => {
-    const likeButtonClass = comment.isLiked ? 'like-button liked' : 'like-button';
-    const formattedDate = new Date(comment.date).toLocaleString('ru-RU', {
-      day: 'numeric',
-      month: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-    });
-    return `<li class="comment">
-      <div class="comment-header">
-        <div class="commentator-name" data-name='${comment.author.name}'>${comment.author.name}</div>
-        <div>${formattedDate}</div>
-      </div>
-      <div class="comment-body">
-        <div class="comment-text" data-text="${comment.text}">${comment.text}</div>
-      </div>
-      <div class="comment-footer">
-        <div class="likes">
-          <span class="likes-counter">${comment.likes}</span>
-          <button class="${likeButtonClass}" data-index="${index}"></button>
-        </div>
-      </div>
-    </li>`;
-  }).join('');
-  return commentsListHtml;
-};
-
+      const commentsListHtml = comments.map((comment, index) => {
+        const likeButtonClass = comment.isLiked ? 'like-button liked' : 'like-button';
+        const formattedDate = new Date(comment.date).toLocaleString('ru-RU', {
+          day: 'numeric',
+          month: 'numeric',
+          year: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+        });
+        return `
+        <li class="comment">      
+          <div class="comment-header">        
+            <div class="commentator-name" data-name='${comment.author.name}'>${comment.author.name}</div>
+            <div>${formattedDate}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text" data-text="${comment.text}">${comment.text}</div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.likes}</span>
+              <button class="${likeButtonClass}" data-index="${index}"></button>
+            </div>
+          </div>
+        </li>`;
+      }).join('');
+      return commentsListHtml;
+    };
 
     const renderComments = () => {
       const commentsList = document.querySelector('.comments');
@@ -109,6 +121,7 @@
       }
     };
 
+
     const addComment = () => {
       const name = document.querySelector('.add-form-name').value;
       const comment = document.querySelector('.add-form-text').value;
@@ -116,6 +129,13 @@
       if (name === '' || comment === '') {
         return; // Validation failed, do not add the comment
       }
+
+      // Show loading message when adding comment begins
+      const loadingMessageBottom = document.querySelector('.loading-message-bottom');
+      loadingMessageBottom.style.display = 'block';
+
+      const addCommentElement = document.querySelector('.add-form');
+      addCommentElement.style.display = 'none';
 
       const newComment = {
         text: comment.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
@@ -127,10 +147,26 @@
         method: "POST",
         body: JSON.stringify(newComment),
       })
-      .then((response) => {
-        // Fetch the updated comments from the server
-        fetchComments();
-      });
+        .then((response) => {
+          return response.json();
+        })
+        .then((responseData) => {
+          return fetch('https://wedev-api.sky.pro/api/v1/adam-batukaev/comments', {
+            method: "GET",
+          });
+        })
+        .then((response) => {
+          return response.json();
+        })
+        .then((responseData) => {
+          comments = responseData.comments;
+          renderComments();
+        })
+        .then(() => {
+          // Hide loading message when comments are rendered 
+          loadingMessageBottom.style.display = 'none';
+          addCommentElement.style.display = 'flex';
+        });
 
 
       // Clear input
@@ -145,4 +181,5 @@
     fetchComments();
 
   </script>
+
 </html>
