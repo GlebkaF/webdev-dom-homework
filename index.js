@@ -2,13 +2,13 @@ const {log} = console;
 // ------------------
 "use strict"
 // Добавляем ДОМ элементы
-// рендерим форму отправки
 const formBg = document.querySelector('.add-form'); 
 let loud = false;
 
+// рендерим форму отправки
 const formRender =  () => {
     if(loud){
-        return formBg.innerHTML     = `<img class="louder" src="./loud.gif" alt="louding">`
+        return formBg.innerHTML = `<img class="louder" src="./loud.gif" alt="louding">`
     } else {
         return formBg.innerHTML = `<input
         type="text"
@@ -25,28 +25,28 @@ const formRender =  () => {
         ></textarea>
         <div class="add-form-row">
             <button class="add-form-button" id="btnId">Написать</button>
-        </div>`
+        </div>`;
     }
 }
 
-formRender();
+formRender()
+
 // 
 const cardElements = document.getElementById("commentsId");
-const btnElement = document.getElementById("btnId");
 const inputName = document.getElementById("nameTextId");
 const inputText = document.getElementById("commentTextId");
 const likeElement = document.getElementsByClassName("like-button");
+const btnElement = document.getElementById("btnId");
 
 let commentators = [];
-let textAnswerHtml = "no";
+let isAnswer = "";
 let indexOld = 0;
 // массив людей оставивших комменты
 
-log(likeElement);
 const getAPI = () => {
     loud = true;
     formRender()
-    return fetch('https://wedev-api.sky.pro/api/v1/:to/comments',
+    return fetch('https://wedev-api.sky.pro/api/v1/:to0/comments',
         {
             method: "GET"
         })
@@ -57,11 +57,13 @@ const getAPI = () => {
             loud = false;
             formRender()
         })
+        
     }
 getAPI()
 
+
 const postAPI = () => {
-    return fetch('https://wedev-api.sky.pro/api/v1/:to/comments',
+    return fetch('https://wedev-api.sky.pro/api/v1/:to0/comments',
     {
         method: "POST",
         body: JSON.stringify({
@@ -160,10 +162,11 @@ const answComment = () => {
         comment.addEventListener('click', () => {
             formBg.classList.add('comment-new-bg');
             const commentator = commentators[index]
-            const oldComment = commentator.text
+            commentator.text = `@mail@${commentator.text}@mail@`
             inputText.placeholder = `Введите Ответ Пользователю ${commentator.author.name}`;
-            textAnswerHtml = oldComment;    
+            isAnswer = commentator.text;    
             indexOld = index;
+            isAnswer = isAnswer.replaceAll('@mail@', "")
         })
     });
 } 
@@ -190,6 +193,7 @@ function addLike () {
 }
 
 // Функция редактирования комментария
+
 const clickEventEditComment = () => {
     const redirectElements = document.querySelectorAll(".red");
     redirectElements.forEach((redirectElement, indexEl) => {
@@ -216,6 +220,14 @@ const clickEventEditComment = () => {
 }
 
 
+    const test = () =>{
+        const commentText = document.querySelectorAll('.comment-text');
+        if (commentText[indexOld] !== undefined) {
+            const isAnswerTest =  commentText[indexOld].innerText === isAnswer;
+            return isAnswerTest ? true : false;
+        }
+        return false;
+    }
 
 
 // Рендер
@@ -224,7 +236,7 @@ const getLikeClass = (element) => {
     return element ? "like-button -active-like" : "like-button";
 }
 
-// рендер формы
+// рендер комментариев
 
 const renderComments = () => {
     const commentatorsHtml = commentators.map((commentator, index) => {
@@ -235,7 +247,7 @@ const renderComments = () => {
         <div>${addDate(commentator.date)}</div>
       </div>
       <div class="comment-body">
-            ${commentator.isAnswers !== undefined && isNaN(commentator.isAnswers) && commentator.isAnswers.length !== 0 ? `<div class="c">${commentator.isAnswers}</div>`: ""}
+            ${test(isAnswer) ? `<div class="c">${isAnswer}</div>`: ""}
           <div class="comment-text">${commentator.text}</div>
    
       <div class="comment-footer comment-footer_new">
@@ -250,7 +262,7 @@ const renderComments = () => {
     // commentDel();
     addLike();
     // clickEventEditComment();
-    // answComment();
+    answComment();
 }
 
 
@@ -266,9 +278,10 @@ const eventErrors = (element) => {
 
 // Функция добавления нового комментария
 
+const renderClickBtn = () => {
+    const btnElement = document.getElementById("btnId");
 
-
-btnElement.addEventListener( 'click', () => {
+    btnElement.addEventListener( 'click', () => {
     inputText.classList.remove("error");
     inputName.classList.remove("error");
 
@@ -292,16 +305,9 @@ btnElement.addEventListener( 'click', () => {
     }
     
 
-    // formBg.classList.remove('comment-new-bg');
-    // inputText.placeholder = 'Введите ваш коментарий'
-    // const commentText = document.querySelectorAll('.comment-text');
-    // const test = () =>{
-    //     if (commentText[indexOld] !== undefined) {
-    //         const isAnswerTest =  commentText[indexOld].innerText === textAnswerHtml;
-    //         return isAnswerTest ? textAnswerHtml : "";
-    //     }
-    //     return "";
-    // }
+    formBg.classList.remove('comment-new-bg');
+    inputText.placeholder = 'Введите ваш коментарий'
+    
 
     postAPI();
     
@@ -318,16 +324,17 @@ btnElement.addEventListener( 'click', () => {
     //         isReduction: true
     //         }
     // )
+
     renderComments();
     commentators[commentators.length - 1].animationClass = "";
     document.getElementById("nameTextId").value = '';
     document.getElementById("commentTextId").value = '';
-    textAnswerHtml = ""
 })
+}
 
-btnElement.addEventListener('click', () => {
+renderClickBtn()
 
-})
+
 log("It works!");
 
 
