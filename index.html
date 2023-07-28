@@ -166,12 +166,15 @@
           // Hide loading message when comments are rendered 
           loadingMessageBottom.style.display = 'none';
           addCommentElement.style.display = 'flex';
+          // Clear input
+          document.querySelector('.add-form-name').value = '';
+          document.querySelector('.add-form-text').value = '';
+        })
+        .catch((error) => {
+          alert("Похоже что-то пошло не так, попробуй позже...");
+          
         });
 
-
-      // Clear input
-      document.querySelector('.add-form-name').value = '';
-      document.querySelector('.add-form-text').value = '';
     };
 
     const addButton = document.querySelector('.add-form-button');
