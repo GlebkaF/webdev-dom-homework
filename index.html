@@ -146,6 +146,23 @@
     }
   });
 
+  nameInputElement.addEventListener('input', () => {
+
+    buttonAddElement.disabled = false;
+    buttonAddElement.style.backgroundColor = '';
+    nameInputElement.classList.remove('error');
+
+  })
+
+  commentInputElement.addEventListener('input', () => {
+
+    buttonAddElement.disabled = false;
+    buttonAddElement.style.backgroundColor = '';
+    commentInputElement.classList.remove('error');
+
+  })
+
+
   const buttonDelComment = document.getElementById("del-comment");
 
   buttonDelComment.addEventListener('click', () => {
@@ -155,7 +172,7 @@
 
   })
 
-  
+
   console.log("It works!");
 
 </script>
