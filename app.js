@@ -8,7 +8,7 @@ const listComments = document.querySelector(".comments");
 let PEOPLE = [];
 
 const appPromise = () => {
-    return fetch("https://wedev-api.sky.pro/api/v1/:zaporozhtsev/comments", {
+    return fetch("https://wedev-api.sky.pro/api/v1/:zaporozhtsev-1/comments", {
         method: "GET",
     }).then((response) => {
         response.json().then((responseData) => {
@@ -33,7 +33,7 @@ const appPromise = () => {
 // };
 
 const promiseSend = () => {
-    return fetch("https://wedev-api.sky.pro/api/v1/:zaporozhtsev/comments", {
+    return fetch("https://wedev-api.sky.pro/api/v1/:zaporozhtsev-1/comments", {
         method: "POST",
         body: JSON.stringify({
             text: inputText.value,
