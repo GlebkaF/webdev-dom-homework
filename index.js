@@ -8,9 +8,9 @@ let loud = false;
 // рендерим форму отправки
 const formRender =  () => {
     if(loud){
-        return formBg.innerHTML = `<img class="louder" src="./loud.gif" alt="louding">`
+        formBg.innerHTML = `<img class="louder" src="./loud.gif" alt="louding">`
     } else {
-        return formBg.innerHTML = `<input
+        formBg.innerHTML = `<input
         type="text"
         class="add-form-name"
         placeholder="Введите ваше имя"
@@ -26,6 +26,7 @@ const formRender =  () => {
         <div class="add-form-row">
             <button class="add-form-button" id="btnId">Написать</button>
         </div>`;
+        renderClickBtn()
     }
 }
 
@@ -333,7 +334,7 @@ function renderClickBtn () {
 })
 }
 
-renderClickBtn()
+
 
 log("It works!");
 
