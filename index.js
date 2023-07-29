@@ -34,8 +34,6 @@ formRender()
 
 // 
 const cardElements = document.getElementById("commentsId");
-const inputName = document.getElementById("nameTextId");
-const inputText = document.getElementById("commentTextId");
 const likeElement = document.getElementsByClassName("like-button");
 const btnElement = document.getElementById("btnId");
 
@@ -46,7 +44,7 @@ let indexOld = 0;
 const getAPI = () => {
     loud = true;
     formRender()
-    return fetch('https://wedev-api.sky.pro/api/v1/:to0/comments',
+    return fetch('https://wedev-api.sky.pro/api/v1/:nikita/comments',
         {
             method: "GET"
         })
@@ -63,8 +61,8 @@ const getAPI = () => {
 getAPI()
 
 
-const postAPI = () => {
-    return fetch('https://wedev-api.sky.pro/api/v1/:to0/comments',
+const postAPI = (inputText,inputName) => {
+    return fetch('https://wedev-api.sky.pro/api/v1/:nikita/comments',
     {
         method: "POST",
         body: JSON.stringify({
@@ -73,7 +71,7 @@ const postAPI = () => {
         })
     })
         .then(() => {
-            getAPI()
+            getAPI();
         })
 }
 
@@ -123,13 +121,6 @@ const addDate = (date) =>{
     return  date.toLocaleString("ru", year) + " " + date.toLocaleString('ru', time);
 }
 
-const btnErrAdd = () => {
-    btnElement.classList.add("btn-error");
-    setTimeout(() =>{
-        btnElement.classList.remove("btn-error");
-    },500)
-
-}
 
 const getDelCard = (element) => {
     setTimeout(() => {
@@ -281,7 +272,21 @@ const eventErrors = (element) => {
 // Функция добавления нового комментария
 
 function renderClickBtn () {
+
+    const inputName = document.getElementById("nameTextId");
+    const inputText = document.getElementById("commentTextId"); 
     const btnElement = document.getElementById("btnId");
+
+    function btnErrAdd () {
+        btnElement.classList.add("btn-error");
+        setTimeout(() =>{
+            btnElement.classList.remove("btn-error");
+        },500)
+    }
+
+    function btnCompete () {
+        btnElement.classList.add("btn-complete");
+    }
 
     btnElement.addEventListener( 'click', () => {
     inputText.classList.remove("error");
@@ -311,7 +316,7 @@ function renderClickBtn () {
     inputText.placeholder = 'Введите ваш коментарий'
     
 
-    postAPI();
+    postAPI(inputText,inputName);
     
 
     // commentators.push(
@@ -326,6 +331,7 @@ function renderClickBtn () {
     //         isReduction: true
     //         }
     // )
+    btnCompete()
 
     renderComments();
     commentators[commentators.length - 1].animationClass = "";
