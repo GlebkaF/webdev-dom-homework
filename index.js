@@ -184,7 +184,6 @@ function addLike () {
 }
 
 // Функция редактирования комментария
-
 const clickEventEditComment = () => {
     const redirectElements = document.querySelectorAll(".red");
     redirectElements.forEach((redirectElement, indexEl) => {
@@ -259,7 +258,6 @@ const renderComments = () => {
 
 
 renderComments();
-
 
 const eventErrors = (element) => {
     return element
