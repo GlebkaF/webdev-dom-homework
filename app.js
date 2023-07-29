@@ -8,7 +8,7 @@ const listComments = document.querySelector(".comments");
 let PEOPLE = [];
 
 const appPromise = () => {
-    return fetch("https://wedev-api.sky.pro/api/v1/:zaporozhtsev-1/comments", {
+    return fetch("https://wedev-api.sky.pro/api/v1/:zaporozhtsev-11/comments", {
         method: "GET",
     }).then((response) => {
         response.json().then((responseData) => {
@@ -18,33 +18,29 @@ const appPromise = () => {
     });
 };
 
-// const deletePromise = (id) => {
-//     return fetch(
-//         "https://wedev-api.sky.pro/api/v1/:zaporozhtsev-pavely/comments/" + id,
-//         {
-//             method: "DELETE",
-//         }
-//     ).then((response) => {
-//         response.json().then((responseData) => {
-//             PEOPLE = responseData.comments;
-//             renderPeople();
-//         });
-//     });
-// };
-
 const promiseSend = () => {
-    return fetch("https://wedev-api.sky.pro/api/v1/:zaporozhtsev-1/comments", {
+    return fetch("https://wedev-api.sky.pro/api/v1/:zaporozhtsev-11/comments", {
         method: "POST",
         body: JSON.stringify({
             text: inputText.value,
             name: inputName.value,
         }),
-    }).then((responseData) => {
-        responseData.json().then((responseJson) => {
-            PEOPLE = responseJson.comments;
+    })
+        .then((responseData) => {
+            return fetch(
+                "https://wedev-api.sky.pro/api/v1/:zaporozhtsev-11/comments",
+                {
+                    method: "GET",
+                }
+            );
+        })
+        .then((response) => {
+            return response.json();
+        })
+        .then((responseData) => {
+            PEOPLE = responseData.comments;
             renderPeople();
         });
-    });
 };
 
 const addDate = (value) => {
@@ -84,21 +80,9 @@ function addComment() {
         }
         event.stopPropagation();
 
-        // PEOPLE.push({
-        //     name: inputName.value
-        //         .replaceAll("<", "&lt;")
-        //         .replaceAll(">", "&gt;"),
-        //     comment: inputText.value
-        //         .replaceAll("<", "&lt;")
-        //         .replaceAll(">", "&gt;"),
-        //     isLiked: false,
-        //     countLikes: 0,
-        //     isItDate: addDate(),
-        // });
-
         promiseSend();
-        appPromise();
-        renderPeople();
+        // appPromise();
+        // renderPeople();
         inputName.value = "";
         inputText.value = "";
     });
