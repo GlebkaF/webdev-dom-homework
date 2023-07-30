@@ -40,14 +40,13 @@ const btnElement = document.getElementById("btnId");
 
 let commentators = [];
 let isAnswer = "";
-let indexOld = 0;
 // массив людей оставивших комменты
 const getAPI = () => {
     if(!loud){
         loud = true;
         formRender()
     }
-    return fetch('https://wedev-api.sky.pro/api/v1/:ni/comments',
+    return fetch('https://wedev-api.sky.pro/api/v1/:nikitea/comments',
         {
             method: "GET"
         })
@@ -66,7 +65,7 @@ getAPI()
 
 
 const postAPI = (inputText,inputName) => {
-    return fetch('https://wedev-api.sky.pro/api/v1/:ni/comments',
+    return fetch('https://wedev-api.sky.pro/api/v1/:nikitea/comments',
     {
         method: "POST",
         body: JSON.stringify({
@@ -152,35 +151,46 @@ const commentDel = () => {
 
 const answComment = () => {
     const comments = document.querySelectorAll('.comment-text');
+    
     // const btnElement = document.getElementById("btnId"); 
     comments.forEach((comment,index) => {
         comment.addEventListener('click', () => {
+            const inputText = document.getElementById("commentTextId"); 
             formBg.classList.add('comment-new-bg');
-            const commentator = commentators[index]
-            commentator.text = `@mail@${commentator.text}@mail@`
+            const commentator = commentators[index];
             inputText.placeholder = `Введите Ответ Пользователю ${commentator.author.name}`;
             isAnswer = commentator.text;    
             indexOld = index;
-            isAnswer = isAnswer.replaceAll('@mail@', "")
         })
     });
 } 
 
 // Функция добавления лайка
 function addLike () {
+    const like = document.querySelectorAll('.like-button');
+    log(like)
     Array.from(likeElement).forEach((element,index) => {
         element.addEventListener('click', (e) => {
             e.stopPropagation();
             const commentator = commentators[index];
             if (commentator.isLiked === true) {
-                commentator.isLiked = false;
-                commentator.likes -= 1;
-                renderComments();
+                like[index].classList.add('add-like');
+                setTimeout(() => {
+                    like[index].classList.remove('add-like');
+                    commentator.isLiked = false;
+                    commentator.likes -= 1;
+                    renderComments();
+                },400)
+                
                 
             } else {
+                like[index].classList.add('add-like')
+                setTimeout(() => {
+                like[index].classList.remove('add-like')
                 commentator.isLiked = true;
                 commentator.likes += 1;
                 renderComments()
+                },400)
             }
 
         })
@@ -214,11 +224,9 @@ const clickEventEditComment = () => {
 }
 
 
-    const test = () =>{
-        const commentText = document.querySelectorAll('.comment-text');
-        if (commentText[indexOld] !== undefined) {
-            const isAnswerTest =  commentText[indexOld].innerText === isAnswer;
-            return isAnswerTest ? true : false;
+    const test = (index) =>{
+        if (index === commentators[commentators.length - 2]) {
+            return true;
         }
         return false;
     }
@@ -241,7 +249,7 @@ const renderComments = () => {
         <div>${addDate(commentator.date)}</div>
       </div>
       <div class="comment-body">
-            ${test(isAnswer) ? `<div class="c">${isAnswer}</div>`: ""}
+            ${test(index) ? `<div class="c">${isAnswer}</div>`: ""}
           <div class="comment-text">${commentator.text}</div>
    
       <div class="comment-footer comment-footer_new">
@@ -256,7 +264,7 @@ const renderComments = () => {
     // commentDel();
     addLike();
     // clickEventEditComment();
-    answComment();
+    // answComment();
     
 }
 
