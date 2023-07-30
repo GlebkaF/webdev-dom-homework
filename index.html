@@ -60,11 +60,12 @@ const fetchPromiseGet = fetch("https://wedev-api.sky.pro/api/v1/stas/comments",
   {
     method: "GET",
   }).then((response) => {
-    response.json().then((responseData) => {
+    return response.json();
+  })
+    .then((responseData) => {
       users = responseData.comments;
       renderUsers();
     });
-  });
   return fetchPromiseGet;
 }
 getApi();
