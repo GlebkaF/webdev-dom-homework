@@ -8,8 +8,12 @@ let loud = false;
 // рендерим форму отправки
 const formRender =  () => {
     if(loud){
+        if(!formBg.classList.contains('new-form')){
+            formBg.classList.add('new-form');
+        }
         formBg.innerHTML = `<img class="louder" src="./loud.gif" alt="louding">`
     } else {
+        formBg.classList.remove('new-form');
         formBg.innerHTML = `<input
         type="text"
         class="add-form-name"
@@ -29,9 +33,6 @@ const formRender =  () => {
         renderClickBtn()
     }
 }
-
-formRender()
-
 // 
 const cardElements = document.getElementById("commentsId");
 const likeElement = document.getElementsByClassName("like-button");
@@ -42,9 +43,11 @@ let isAnswer = "";
 let indexOld = 0;
 // массив людей оставивших комменты
 const getAPI = () => {
-    loud = true;
-    formRender()
-    return fetch('https://wedev-api.sky.pro/api/v1/:nikita/comments',
+    if(!loud){
+        loud = true;
+        formRender()
+    }
+    return fetch('https://wedev-api.sky.pro/api/v1/:ni/comments',
         {
             method: "GET"
         })
@@ -52,9 +55,10 @@ const getAPI = () => {
         .then(dataJson => {
             commentators = dataJson.comments;
             renderComments();
+        })
+        .then(() => {
             loud = false;
-            formRender()
-            
+            formRender();
         })
         
     }
@@ -62,7 +66,7 @@ getAPI()
 
 
 const postAPI = (inputText,inputName) => {
-    return fetch('https://wedev-api.sky.pro/api/v1/:nikita/comments',
+    return fetch('https://wedev-api.sky.pro/api/v1/:ni/comments',
     {
         method: "POST",
         body: JSON.stringify({
@@ -282,9 +286,9 @@ function renderClickBtn () {
         },500)
     }
 
-    function btnCompete () {
-        btnElement.classList.add("btn-complete");
-    }
+    // function btnCompete () {
+    //     btnElement.classList.add("btn-complete");
+    // }
 
     btnElement.addEventListener( 'click', () => {
     inputText.classList.remove("error");
@@ -310,9 +314,10 @@ function renderClickBtn () {
     }
     
 
-    formBg.classList.remove('comment-new-bg');
-    inputText.placeholder = 'Введите ваш коментарий'
-    
+    // formBg.classList.remove('comment-new-bg');
+    // inputText.placeholder = 'Введите ваш коментарий'
+    loud = true;
+    formRender();
 
     postAPI(inputText,inputName);
     
@@ -329,12 +334,10 @@ function renderClickBtn () {
     //         isReduction: true
     //         }
     // )
-    btnCompete()
+    // btnCompete()
 
     renderComments();
-    commentators[commentators.length - 1].animationClass = "";
-    document.getElementById("nameTextId").value = '';
-    document.getElementById("commentTextId").value = '';
+
 })
 }
 
