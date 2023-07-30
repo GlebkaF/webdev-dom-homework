@@ -12,7 +12,33 @@
         <!-- Список рендерится из JS -->
       </ul>
       <div class="add-form">
-        <input
+        <p>Загрузка...</p>
+      </div>
+    </div>
+  </body>
+  <style>
+
+    .error {
+      background: linear-gradient(to right, rgb(189, 91, 91), rgb(229, 20, 55));
+    }
+
+    .disabled-button {
+      background-color: #ffffffbe;
+    }
+    
+
+  </style>
+
+  <script>
+        "use strict";
+  let loader = false;
+  const addForm = document.querySelector(".add-form")
+  const formRender = () => {
+    if (loader) {
+      addForm.innerHTML = "<p>Загрузка...</p>"
+      
+    } else {
+      addForm.innerHTML = `<input
           id="name-input"
           type="text"
           class="add-form-name"
@@ -27,35 +53,22 @@
         ></textarea>
         <div class="add-form-row">
           <button id="add-button" class="add-form-button">Написать</button>
-        </div>
-      </div>
-    </div>
-  </body>
-  <style>
-
-    .error {
-      background: linear-gradient(to right, rgb(189, 91, 91), rgb(229, 20, 55));
+        </div>`
+        addEventButton();
     }
+  }
+  formRender();
 
-    .disabled-button {
-      background-color: #ffffffbe;
-    }
-
-  </style>
-
-  <script>
-        "use strict";
-
-  const buttonElement = document.getElementById("add-button");
+  
   const buttonLike = document.getElementById("like");
   const commentsElement = document.getElementById ("comments");
-  const nameInputElement = document.getElementById("name-input");
-  const commentInputElement = document.getElementById("comment-input");
+
   let users = [];
 
 // Получение данных из API
 const getApi = () => {
-
+  loader = true;
+  formRender();
 const fetchPromiseGet = fetch("https://wedev-api.sky.pro/api/v1/stas/comments",
   {
     method: "GET",
@@ -65,13 +78,16 @@ const fetchPromiseGet = fetch("https://wedev-api.sky.pro/api/v1/stas/comments",
     .then((responseData) => {
       users = responseData.comments;
       renderUsers();
-    });
+      loader = false;
+      formRender();
+  })
+  
   return fetchPromiseGet;
 }
 getApi();
 
-const postApi = () => {
-
+const postApi = (nameInputElement, commentInputElement) => {
+  
   const fetchPromisePost = fetch("https://wedev-api.sky.pro/api/v1/stas/comments",
   {
     method: "POST",
@@ -81,7 +97,9 @@ const postApi = () => {
     })
   }).then(() => {
     getApi()
-  });
+  })
+  
+  
   return fetchPromisePost;
 }
 
@@ -195,6 +213,11 @@ const renderUsers = () => {
 renderUsers()
 
 // Функция клика, валидация
+function addEventButton () {
+  const buttonElement = document.getElementById("add-button");
+  const nameInputElement = document.getElementById("name-input");
+  const commentInputElement = document.getElementById("comment-input");
+
   buttonElement.addEventListener("click", () => {
   nameInputElement.classList.remove("error");
   commentInputElement.classList.remove("error");
@@ -218,11 +241,11 @@ renderUsers()
   //   .replaceAll(">", "&gt;"),
   //   likes: 0
   // })
-  postApi();
+  postApi(nameInputElement, commentInputElement);
   renderUsers();
-  nameInputElement.value = "";
-  commentInputElement.value = "";
+  
 });
+}
 
 
 
