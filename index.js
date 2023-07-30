@@ -5,7 +5,7 @@ const nameInputElement = document.getElementById("name-input");
 const textInputElement = document.getElementById("text-input");
 
 
-const GETFunction = () => {
+const getFunction = () => {
   fetch('https://wedev-api.sky.pro/api/v1/:ErmushinRomanW/comments',
     {
       method: 'GET',
@@ -28,7 +28,7 @@ const GETFunction = () => {
       })
     })
 }
-GETFunction()
+getFunction()
 
 const dateInAPI = (dateInAPI) => {
   const myDate = dateInAPI;
@@ -166,9 +166,10 @@ formButtonElement.addEventListener("click", () => {
     }).then((response) => {
       response.json().then((responseData) => {
         commentators = responseData.comment;
+        getFunction();
+
       });
     })
-  GETFunction();
   renderCommentators()
 });
 
