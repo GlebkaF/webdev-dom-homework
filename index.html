@@ -59,6 +59,12 @@
     })
 
     
+  /* ------------------------------------------------------------------
+  *
+                                getListComponent
+  *
+  __________________________________________________________________ */
+  function getListComponent() {
 
     fetchPromise.then((response) => {
 
@@ -84,11 +90,11 @@
 
 
             return {
-              name: comment.author.name,
-              date: sTime(comment.date),
-              text: comment.text,
-              likes: comment.likes,
-              isLiked: false,
+                name: comment.author.name,
+                date: sTime(comment.date),
+                text: comment.text,
+                likes: comment.likes,
+                isLiked: false,
             }
           })
             console.log(responseData)
@@ -96,19 +102,11 @@
             render();
         });
     }); 
+  }
 
-    let user = [
-          {
-            date: "12.02.22 12:18",
-            likes: 3,
-            isLiked: false,
-            text: "Это будет первый комментарий на этой странице",
-            name: "Глеб Фокин", 
-            like: ""
-          }
-        ];
+  getListComponent();
 
-
+  let user = [];
 /* ------------------------------------------------------------------
 
                                  button event
@@ -222,32 +220,14 @@ __________________________________________________________________ */
       
         if (getName.value != '' && getComment.value != '') {
           
-/*        user.push({
-              name: getName.value.replaceAll("<", "&lt").replaceAll(">","&gt").replaceAll('"', "&quot;").replaceAll("&", "&amp;"),
-              date: myTime(),
-              text: getComment.value.replaceAll("<", "&lt").replaceAll(">","&gt").replaceAll('"', "&quot;").replaceAll("&", "&amp;"),
-              likes: 0,
-              isLiked: false
-          }) */
-          
           const fetchPost = fetch("https://wedev-api.sky.pro/api/v1/illia-hryn/comments", {
           method: "POST",
           body: JSON.stringify({
-              name: getName.value,
-              text: getComment.value
+              name: getName.value.replaceAll("<", "&lt").replaceAll(">","&gt").replaceAll('"', "&quot;").replaceAll("&", "&amp;"),
+              text: getComment.value.replaceAll("<", "&lt").replaceAll(">","&gt").replaceAll('"', "&quot;").replaceAll("&", "&amp;"),
               }),
           });
-
-          fetchPost.then((response) => {
-
-              response.json().then((responseData) => {
-
-                  user = responseData.comments;
-                  render();
-              });
-          });
-
-          render();
+          getListComponent();
           getName.value = "",
           getComment.value = "";
         }
