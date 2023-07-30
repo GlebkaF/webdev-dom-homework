@@ -59,13 +59,133 @@
         <div class="add-form-row">
           <button class="add-form-button">Написать</button>
         </div>
+        <button class="remove-form-button">Удалить</button>
       </div>
     </div>
   </body>
+<style>
+  .red {
+    background-color: red;
+  }
 
+  .unactive{
+    background-color: #9e9e9e;
+  }
+</style>
   <script>
     "use strict";
-    // Код писать здесь
-    console.log("It works!");
+// Код писать здесь
+const text = document.querySelector('.add-form-text');
+const name = document.querySelector('.add-form-name');
+const boxMessages = document.querySelector('.comments');
+const button = document.querySelector('.add-form-button');
+const del = document.querySelectorAll('ul > li');
+const date = new Date();
+console.log(del.innerHTML);
+button.disabled = true;
+button.classList.add('unactive');
+
+text.addEventListener("input", () => {
+  button.disabled = false;
+  button.classList.remove('unactive');
+}); 
+name.addEventListener("input", () => {
+  button.disabled = false;
+  button.classList.remove('unactive');
+}); 
+
+
+
+text.addEventListener("keyup", keyCode);
+
+function keyCode(e) {
+if (e.keyCode === 13) {
+    addCommentare();
+} else {
+  return;
+}
+}
+
+
+function formatDate(date) {
+
+let dd = date.getDate();
+if (dd < 10) dd = '0' + dd;
+
+let mm = date.getMonth() + 1;
+if (mm < 10) mm = '0' + mm;
+
+let yy = date.getFullYear() % 100;
+if (yy < 10) yy = '0' + yy;
+
+let hh = date.getHours();
+if (hh < 10) hh = '0' + hh;
+
+let min = date.getMinutes();
+if (min < 10) min = '0' + min;
+
+return dd + '.' + mm + '.' + yy + ' ' + hh + ':' + min;
+}
+
+
+
+ let n = 0;
+
+
+button.addEventListener("click", () => {
+  addCommentare();
+});
+
+
+function addCommentare() {
+
+  text.classList.remove('red');
+  name.classList.remove('red');
+  if(name.value === '' && text.value === '') {
+    text.placeholder = 'Это поле не должно быть пустым'
+    text.classList.add('red');
+    name.placeholder = 'Это поле не должно быть пустым'
+    name.classList.add('red');
+    return;
+  }
+  else if (name.value === '') {
+    name.placeholder = 'Это поле не должно быть пустым'
+    name.classList.add('red');
+    return;
+  } else if (text.value === ''){
+    text.placeholder = 'Это поле не должно быть пустым'
+    text.classList.add('red');
+    return;
+  }
+
+  button.disabled = true;
+  button.classList.add('unactive');
+
+  const box = boxMessages.innerHTML;
+  console.log(box)
+  boxMessages.innerHTML = box + `<li class="comment">
+          <div class="comment-header">
+            <div>${name.value}</div>
+            <div>${formatDate(date)}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${text.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+  name.value = '';
+  text.value = '';
+}
+
+
+
+    //console.log("It works!");
   </script>
 </html>
