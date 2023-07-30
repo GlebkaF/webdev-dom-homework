@@ -9,40 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments" id="commentBlock">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like" id="likeButton"></button>
-            </div>
-          </div>
-        </li>
+        <!-- Список рендериться из JS  -->
       </ul>
       <div class="add-form">
         <input
@@ -70,55 +37,91 @@
 
   <script>
     "use strict";
-    const handleLikeButtonClick = (event) => {
-      const likeButton = event.target;
-      const likesCounter = likeButton.previousElementSibling;
-
-      if (likeButton.classList.contains("-active-like")) {
-        likeButton.classList.remove("-active-like");
-        numberOfLike--;
-      } else {
-        likeButton.classList.add("-active-like");
-        numberOfLike++;
-      }
-      likesCounter.textContent = numberOfLike;
-    };
-
-    const bindClickEventToLikeButtons = () => {
-      const likeButtons = document.querySelectorAll(
-        ".comment-footer .like-button"
-      );
-      likeButtons.forEach((likeButton) => {
-        likeButton.addEventListener("click", handleLikeButtonClick);
-      });
-    };
-    bindClickEventToLikeButtons();
-    const nameInput = document.getElementById("nameInput");
-    const commentInput = document.getElementById("commentInput");
-    let numberOfLike = 0;
     const getCurrentDate = () => {
-    const currentDate = new Date();
-    const year = String(currentDate.getFullYear()).slice(-2);
-    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
-    const day = String(currentDate.getDate()).padStart(2, "0");
-    const hours = String(currentDate.getHours()).padStart(2, "0");
-    const minutes = String(currentDate.getMinutes()).padStart(2, "0");
-    const seconds = String(currentDate.getSeconds()).padStart(2, "0");
-    const formattedDate = `${day}.${month}.${year} ${hours}:${minutes}`;
+      const currentDate = new Date();
+      const year = String(currentDate.getFullYear()).slice(-2);
+      const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+      const day = String(currentDate.getDate()).padStart(2, "0");
+      const hours = String(currentDate.getHours()).padStart(2, "0");
+      const minutes = String(currentDate.getMinutes()).padStart(2, "0");
+      const seconds = String(currentDate.getSeconds()).padStart(2, "0");
+      const formattedDate = `${day}.${month}.${year} ${hours}:${minutes}`;
       return formattedDate;
     };
-    const blockComment = document.getElementById("commentBlock");
-    const addButton = document.getElementById("addButton");
-    const likeButton = document.getElementById("likeButton");
+
+    const nameInput = document.getElementById("nameInput");
+    const commentInput = document.getElementById("commentInput");
     const remuveButton = document.getElementById("remuveButton");
+    const addButton = document.getElementById("addButton");
+    const commentElement = document.querySelectorAll(".comments");
+    const commentList = document.getElementById("commentBlock");
 
-    remuveButton.addEventListener("click", () => {
-      blockComment.lastChild.remove();
-    });
+    const commentListener = [
+      {
+        name: "Глеб Фокин",
+        Text: "Это будет первый комментарий на этой странице",
+        date: "13.02.22 19:22",
+        like: false,
+        numOfLike: 3,
+      },
 
-    addButton.addEventListener("click", () => {
-      getComment();
-    });
+      {
+        name: "Варвара Н.",
+        Text: "Мне нравится как оформлена эта страница! ❤",
+        date: "13.02.22 19:22",
+        like: true,
+        numOfLike: 75,
+      },
+    ];
+
+    const handleLike = (event) => {
+      const index = event.target.dataset.index;
+      const comment = commentListener[index];
+      if (!comment.like) {
+        comment.like = true;
+        comment.numOfLike++;
+      } else {
+        comment.like = false;
+        comment.numOfLike--;
+      }
+      renderComments();
+    };
+
+    const renderComments = () => {
+      const commentHtml = commentListener
+        .map((comment, index) => {
+          if (comment.like === true) {
+            comment.like = "-active-like";
+          }
+          return `<li class="comment">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.Text}
+            </div>
+          </div>
+          <div class="comment-footer">
+             
+            <div class="likes">
+              <span class="likes-counter">${comment.numOfLike}</span>
+              <button class="like-button ${comment.like} " data-index="${index}"></button>
+            </div>
+          </div>
+          <button class = 'edit-btn'>Редактирвать</button> 
+        </li>`;
+        })
+        .join("");
+
+      commentList.innerHTML = commentHtml;
+      const likeButtons = document.querySelectorAll(".like-button");
+      likeButtons.forEach((button) => {
+        button.addEventListener("click", handleLike);
+      });
+    };
+    renderComments();
 
     const getComment = () => {
       if (nameInput.value === "") {
@@ -137,26 +140,12 @@
         return;
       }
 
-      const newCommentElement = document.createElement("li");
-      newCommentElement.className = "comment";
-      newCommentElement.innerHTML = `
-      <div class="comment-header">
-        <div>${nameInput.value}</div>
-        <div>${getCurrentDate()}</div>
-      </div>
-      <div class="comment-body">
-        <div class="comment-text">
-          ${commentInput.value}
-        </div>
-      </div>
-      <div class="comment-footer">
-        <div class="likes">
-          <span class="likes-counter">${numberOfLike}</span>
-          <button class="like-button"></button>
-        </div>
-      </div>
-     `;
-      commentBlock.appendChild(newCommentElement);
+      commentListener.push({
+        name: nameInput.value,
+        Text: commentInput.value,
+        date: getCurrentDate(),
+        numOfLike: 0,
+      });
 
       nameInput.value = "";
       commentInput.value = "";
@@ -164,9 +153,17 @@
       nameInput.placeholder = "Введите ваше имя";
       commentInput.style.backgroundColor = "";
       commentInput.placeholder = "Введите ваш комментарий";
-
-      bindClickEventToLikeButtons();
+      renderComments();
     };
+
+    remuveButton.addEventListener("click", () => {
+      commentListener.pop();
+      renderComments();
+    });
+
+    addButton.addEventListener("click", () => {
+      getComment();
+    });
 
     document.addEventListener("keyup", (event) => {
       if (event.key === "Enter") {
