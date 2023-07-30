@@ -2,33 +2,65 @@
 
 const inputName = document.getElementById("add-form-name");
 const inputText = document.getElementById("add-form-text");
-const buttonSend = document.querySelector(".add-form-button");
+// const buttonSend = document.querySelector(".add-form-button");
 const listComments = document.querySelector(".comments");
+const formString = `<input
+type="text"
+id="add-form-name"
+class="add-form-name"
+placeholder="Введите ваше имя"
+/>
+<textarea
+type="textarea"
+id="add-form-text"
+class="add-form-text"
+placeholder="Введите ваш коментарий"
+rows="4"
+wrap="soft"
+maxlength="100"
+></textarea>
+<div class="add-form-row">
+<button class="add-form-button">Написать</button>
+</div>`;
+// const formItem = document.querySelector(".add-form");
 
 let PEOPLE = [];
 
 const appPromise = () => {
-    return fetch("https://wedev-api.sky.pro/api/v1/:zaporozhtsev-11/comments", {
+    const formItem = document.querySelector(".add-form");
+    return fetch("https://wedev-api.sky.pro/api/v1/:zaporozhtsevv/comments", {
         method: "GET",
-    }).then((response) => {
-        response.json().then((responseData) => {
+    })
+        .then((response) => {
+            // formItem.innerHTML = `Загрузка...`;
+            return response;
+        })
+        .then((response) => {
+            return response.json();
+        })
+        .then((responseData) => {
             PEOPLE = responseData.comments;
+            formItem.innerHTML = formString;
             renderPeople();
         });
-    });
 };
 
 const promiseSend = () => {
-    return fetch("https://wedev-api.sky.pro/api/v1/:zaporozhtsev-11/comments", {
+    const formItem = document.querySelector(".add-form");
+    return fetch("https://wedev-api.sky.pro/api/v1/:zaporozhtsevv/comments", {
         method: "POST",
         body: JSON.stringify({
             text: inputText.value,
             name: inputName.value,
         }),
     })
+        .then((response) => {
+            formItem.innerHTML = `Загрузка`;
+            return response;
+        })
         .then((responseData) => {
             return fetch(
-                "https://wedev-api.sky.pro/api/v1/:zaporozhtsev-11/comments",
+                "https://wedev-api.sky.pro/api/v1/:zaporozhtsevv/comments",
                 {
                     method: "GET",
                 }
@@ -39,6 +71,7 @@ const promiseSend = () => {
         })
         .then((responseData) => {
             PEOPLE = responseData.comments;
+            formItem.innerHTML = formString;
             renderPeople();
         });
 };
@@ -63,6 +96,7 @@ const addDate = (value) => {
 };
 
 function addComment() {
+    const buttonSend = document.querySelector(".add-form-button");
     buttonSend.addEventListener("click", (event) => {
         inputName.classList.remove("error");
         inputText.classList.remove("error");
