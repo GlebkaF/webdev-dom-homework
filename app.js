@@ -23,12 +23,13 @@ maxlength="100"
 <button class="add-form-button">Написать</button>
 </div>`;
 // const formItem = document.querySelector(".add-form");
+const API_LINK = "https://wedev-api.sky.pro/api/v1/:WEB_ZAP/comments";
 
 let PEOPLE = [];
 
 const appPromise = () => {
     const formItem = document.querySelector(".add-form");
-    return fetch("https://wedev-api.sky.pro/api/v1/:zaporozhtsevv/comments", {
+    return fetch(API_LINK, {
         method: "GET",
     })
         .then((response) => {
@@ -47,11 +48,12 @@ const appPromise = () => {
         });
 };
 
+// промис
 const promiseSend = () => {
     const formItem = document.querySelector(".add-form");
     const inputName = document.getElementById("add-form-name");
     const inputText = document.getElementById("add-form-text");
-    return fetch("https://wedev-api.sky.pro/api/v1/:zaporozhtsevv/comments", {
+    return fetch(API_LINK, {
         method: "POST",
         body: JSON.stringify({
             text: inputText.value,
@@ -63,12 +65,9 @@ const promiseSend = () => {
             return response;
         })
         .then((responseData) => {
-            return fetch(
-                "https://wedev-api.sky.pro/api/v1/:zaporozhtsevv/comments",
-                {
-                    method: "GET",
-                }
-            );
+            return fetch(API_LINK, {
+                method: "GET",
+            });
         })
         .then((response) => {
             return response.json();
