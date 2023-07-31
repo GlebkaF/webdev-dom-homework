@@ -179,7 +179,8 @@ const commentAnswers = document.querySelectorAll('.comment');
 commentAnswers.forEach((textElement, index) => {
   textElement.addEventListener('click', (event) => {
     let textValue = textElement.textContent;
-    return commentInputElement.value = `${users[index].text} ${users[index].author.name}`;
+    const commentInputElement = document.getElementById("comment-input");
+    return commentInputElement.value = `${users[index].text} ${users[index].author.name}, `;
   });
 });
 };
