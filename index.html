@@ -9,40 +9,6 @@
   <body>
     <div class="container">
       <ul class="comments" id="comments-list">
-        <li class="comment" id="comment-new">
-          <div class="comment-header">
-            <div id="comment-name">Глеб Фокин</div>
-            <div id="comment-data">12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text" id="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter" id="like-text" value="">3</span>
-              <button class="like-button" id="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
       </ul>
       <div class="add-form">
         <input id="name-input" value=""
@@ -93,10 +59,74 @@
       return resultDate;
     }
 
+    const comments = [
+  {
+    name: "Глеб Фокин",
+    date: "12.02.22 12:18",
+    text: "Это будет первый комментарий на этой странице",
+    like: 3,
+    active: false
+  },
+  {
+    name: "Варвара Н.",
+    date: "13.02.22 19:22",
+    text: "Мне нравится как оформлена эта страница! ❤",
+    like: 75,
+    active: true
+  }
+];
 
-    buttonElement.addEventListener('click', () => {
-      nameInputElement.classList.remove('error');
-      commentInputElement.classList.remove('error');
+const clickLike = (event) => {
+  const index = event.target.dataset.index;
+  const comment = comments[index];
+  if(!comment.active) {
+    comment.active = true;
+    comment.like++;
+  } else {
+    comment.active = false;
+    comment.like--;
+  }
+  renderComments();
+
+}
+
+const renderComments = () => {
+  const commentsHtml = comments.map((comment, index) => {
+    if (comment.active === true) {
+      comment.active = '-active-like';
+    }
+      return `<li class="comment" id="comment-new">
+          <div class="comment-header">
+            <div id="comment-name">${comment.name}</div>
+            <div id="comment-data">${comment.date}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text" id="comment-text">
+              ${comment.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter" id="like-text" value="">${comment.like}</span>
+              <button class="like-button ${comment.active}" data-index="${index}""></button>
+            </div>
+          </div>
+        </li>`;
+    }).join('');
+    listComments.innerHTML= commentsHtml;
+
+    const buttonLikes = document.querySelectorAll('.like-button');
+    buttonLikes.forEach((button) => {
+      button.addEventListener('click', clickLike);
+    })
+  }
+
+  renderComments();
+
+ 
+const getElement = () => {
+  nameInputElement.classList.remove('error');
+  commentInputElement.classList.remove('error');
       
 
       if(nameInputElement.value === '') {
@@ -111,33 +141,27 @@
         return;
       }
 
-    oldListComments = listComments.innerHTML;
-    listComments.innerHTML = oldListComments + `<li class="comment" id="comment-new">
-          <div class="comment-header">
-            <div id="comment-name">${nameInputElement.value}</div>
-            <div id="comment-data">${getCurrentDate()}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text" id="comment-text">
-              ${commentInputElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter" id="like-text" value="">0</span>
-              <button class="like-button" id="like-button"></button>
-            </div>
-          </div>
-        </li>`;
+    comments.push({
+    name: nameInputElement.value,
+    date: getCurrentDate(),
+    text: commentInputElement.value,
+    like: 0,
+    })
 
   nameInputElement.value = '';
   commentInputElement.value = '';
   nameInputElement.classList.remove('error');
   commentInputElement.classList.remove('error');
-    
-  })
 
-  nameInputElement.addEventListener('input', () => {
+  renderComments();
+    
+}
+
+buttonElement.addEventListener('click', () => {
+  getElement();
+})
+
+nameInputElement.addEventListener('input', () => {
     buttonElement.disabled = false;
     buttonElement.style.backgroundColor = '';
     nameInputElement.classList.remove('error');
@@ -150,54 +174,14 @@
     }) 
 
   newButton.addEventListener('click', () => {
-    listComments.lastChild.remove();
+    comments.pop();
+    renderComments();
   })
 
-const getElement = () => {
-  nameInputElement.classList.remove('error');
-      commentInputElement.classList.remove('error');
-      
 
-      if(nameInputElement.value === '') {
-        buttonElement.disabled = true;
-        buttonElement.style.backgroundColor = 'gray';
-        nameInputElement.classList.add('error');
-        return;
-      } if (commentInputElement.value === '') {
-        buttonElement.disabled = true;
-        buttonElement.style.backgroundColor = 'gray';
-        commentInputElement.classList.add('error');
-        return;
-      }
 
-    oldListComments = listComments.innerHTML;
-    listComments.innerHTML = oldListComments + `<li class="comment" id="comment-new">
-          <div class="comment-header">
-            <div id="comment-name">${nameInputElement.value}</div>
-            <div id="comment-data">${getCurrentDate()}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text" id="comment-text">
-              ${commentInputElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter" id="like-text" value="">0</span>
-              <button class="like-button" id="like-button"></button>
-            </div>
-          </div>
-        </li>`;
-
-  nameInputElement.value = '';
-  commentInputElement.value = '';
-  nameInputElement.classList.remove('error');
-  commentInputElement.classList.remove('error');
-    
-}
-
-document.addEventListener("keyup", (event) => {
-      if (event.key === "Enter") {
+document.addEventListener('keyup', (event) => {
+      if (event.key === 'Enter') {
         getElement();
       }
     })
