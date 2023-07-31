@@ -2,7 +2,7 @@
 
 const inputName = document.getElementById("add-form-name");
 const inputText = document.getElementById("add-form-text");
-// const buttonSend = document.querySelector(".add-form-button");
+const buttonSend = document.querySelector(".add-form-button");
 const listComments = document.querySelector(".comments");
 const formString = `<input
 type="text"
@@ -32,7 +32,7 @@ const appPromise = () => {
         method: "GET",
     })
         .then((response) => {
-            // formItem.innerHTML = `Загрузка...`;
+            formItem.innerHTML = `Загрузка...`;
             return response;
         })
         .then((response) => {
@@ -42,11 +42,15 @@ const appPromise = () => {
             PEOPLE = responseData.comments;
             formItem.innerHTML = formString;
             renderPeople();
+            addComment();
+            // promiseSend();
         });
 };
 
 const promiseSend = () => {
     const formItem = document.querySelector(".add-form");
+    const inputName = document.getElementById("add-form-name");
+    const inputText = document.getElementById("add-form-text");
     return fetch("https://wedev-api.sky.pro/api/v1/:zaporozhtsevv/comments", {
         method: "POST",
         body: JSON.stringify({
@@ -73,6 +77,7 @@ const promiseSend = () => {
             PEOPLE = responseData.comments;
             formItem.innerHTML = formString;
             renderPeople();
+            addComment();
         });
 };
 
@@ -96,6 +101,8 @@ const addDate = (value) => {
 };
 
 function addComment() {
+    const inputName = document.getElementById("add-form-name");
+    const inputText = document.getElementById("add-form-text");
     const buttonSend = document.querySelector(".add-form-button");
     buttonSend.addEventListener("click", (event) => {
         inputName.classList.remove("error");
