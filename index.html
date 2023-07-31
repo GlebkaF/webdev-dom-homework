@@ -12,7 +12,7 @@
         <!-- Список рендерится из JS -->
       </ul>
       <div class="add-form">
-        <p>Загрузка...</p>
+        <!-- Список рендерится из JS -->
       </div>
     </div>
   </body>
@@ -31,15 +31,14 @@
 
   <script>
         "use strict";
-  // Загрузка
-  let loader = false;
-  const addForm = document.querySelector(".add-form")
-  const formRender = () => {
-    if (loader) {
-      addForm.innerHTML = "<p>Загрузка...</p>"
-      
-    } else {
-      addForm.innerHTML = `<input
+
+  const buttonElement = document.getElementById("add-button");
+  const nameInputElement = document.getElementById("name-input");
+  const commentInputElement = document.getElementById("comment-input");
+  const buttonLike = document.getElementById("like");
+  const commentsElement = document.getElementById ("comments");
+  const formElement = document.querySelector (".add-form");
+  const addFormHtml = `<input
           id="name-input"
           type="text"
           class="add-form-name"
@@ -54,23 +53,18 @@
         ></textarea>
         <div class="add-form-row">
           <button id="add-button" class="add-form-button">Написать</button>
-        </div>`
-        addEventButton();
-    }
-  }
-  formRender();
-
-  
-  const buttonLike = document.getElementById("like");
-  const commentsElement = document.getElementById ("comments");
+        </div>`;
 
   let users = [];
 
+// Загрузка
+  formElement.innerHTML = 'Комметарии загружаются...';
+  
 // Получение данных из API
-const getApi = () => {
-  loader = true;
-  formRender();
-const fetchPromiseGet = fetch("https://wedev-api.sky.pro/api/v1/stas/comments",
+  const getApi = () => {
+    const formElement = document.querySelector (".add-form");
+
+    return fetch("https://wedev-api.sky.pro/api/v1/stas/comments",
   {
     method: "GET",
   }).then((response) => {
@@ -78,30 +72,29 @@ const fetchPromiseGet = fetch("https://wedev-api.sky.pro/api/v1/stas/comments",
   })
     .then((responseData) => {
       users = responseData.comments;
+      formElement.innerHTML = addFormHtml;
       renderUsers();
-      loader = false;
-      formRender();
+      addEventButton();
   })
-  
-  return fetchPromiseGet;
 }
-getApi();
 
-const postApi = (nameInputElement, commentInputElement) => {
+const postApi = () => {
   
-  const fetchPromisePost = fetch("https://wedev-api.sky.pro/api/v1/stas/comments",
+  const formElement = document.querySelector (".add-form");
+  const nameInputElement = document.getElementById("name-input");
+  const commentInputElement = document.getElementById("comment-input");
+  formElement.innerHTML = 'Комментарий загружается';
+
+  return fetch("https://wedev-api.sky.pro/api/v1/stas/comments",
   {
     method: "POST",
     body: JSON.stringify({
       text: commentInputElement.value,
       name: nameInputElement.value
     })
-  }).then(() => {
+  }).then((response) => {
     getApi()
   })
-  
-  
-  return fetchPromisePost;
 }
 
 // Массив данных
@@ -243,14 +236,10 @@ function addEventButton () {
   //   .replaceAll(">", "&gt;"),
   //   likes: 0
   // })
-  postApi(nameInputElement, commentInputElement);
-  renderUsers();
-  
+  postApi();
 });
 }
-
-
-
+getApi();
 console.log("It works!");
   </script>
 </html>
