@@ -53,10 +53,6 @@
     const getName = document.getElementById("inputGetName");
     const getComment = document.getElementById("inputGetComment");
 
-    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/illia-hryn/comments", {
-        method: "GET",
-
-    })
 
     
   /* ------------------------------------------------------------------
@@ -65,6 +61,12 @@
   *
   __________________________________________________________________ */
   function getListComponent() {
+
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/illia-hryn/comments", {
+        method: "GET",
+
+    })
+
 
     fetchPromise.then((response) => {
 
@@ -227,7 +229,7 @@ __________________________________________________________________ */
               text: getComment.value.replaceAll("<", "&lt").replaceAll(">","&gt").replaceAll('"', "&quot;").replaceAll("&", "&amp;"),
               }),
           });
-          getListComponent();
+          fetchPost.then(getListComponent());
           getName.value = "",
           getComment.value = "";
         }
