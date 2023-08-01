@@ -18,12 +18,14 @@ placeholder="Введите ваш коментарий"
 rows="4"
 wrap="soft"
 maxlength="100"
+
+
 ></textarea>
 <div class="add-form-row">
 <button class="add-form-button">Написать</button>
 </div>`;
 // const formItem = document.querySelector(".add-form");
-const API_LINK = "https://wedev-api.sky.pro/api/v1/:WEB_ZAP-1/comments";
+const API_LINK = "https://wedev-api.sky.pro/api/v1/pavelzяя/comments";
 
 let PEOPLE = [];
 
@@ -58,10 +60,64 @@ const promiseSend = () => {
         body: JSON.stringify({
             text: inputText.value,
             name: inputName.value,
+            forceError: true,
         }),
     })
         .then((response) => {
+            if (response.status === 400) {
+                let inputSaveName = inputName.value;
+                let inputSaveText = inputText.value;
+                formItem.innerHTML = `<input
+                type="text"
+                id="add-form-name"
+                class="add-form-name"
+                placeholder="Введите ваше имя"
+                value="${inputSaveName}"
+                />
+                <textarea
+                type="textarea"
+                id="add-form-text"
+                class="add-form-text"
+                placeholder="Введите ваш коментарий"
+                rows="4"
+                wrap="soft"
+                maxlength="100"
+                
+                >${inputSaveText}</textarea>
+                <div class="add-form-row">
+                <button class="add-form-button">Написать</button>
+                </div>`;
+                addComment();
+                throw new Error("Имя или текст короче 3х символов");
+            }
+            if (response.status === 500) {
+                let inputSaveName = inputName.value;
+                let inputSaveText = inputText.value;
+                formItem.innerHTML = `<input
+                type="text"
+                id="add-form-name"
+                class="add-form-name"
+                placeholder="Введите ваше имя"
+                value="${inputSaveName}"
+                />
+                <textarea
+                type="textarea"
+                id="add-form-text"
+                class="add-form-text"
+                placeholder="Введите ваш коментарий"
+                rows="4"
+                wrap="soft"
+                maxlength="100"
+                
+                >${inputSaveText}</textarea>
+                <div class="add-form-row">
+                <button class="add-form-button">Написать</button>
+                </div>`;
+                addComment();
+                throw new Error("Сервер не отвечает, попробуйте еще раз.");
+            }
             formItem.innerHTML = `Загрузка`;
+            appPromise();
             return response;
         })
         .then((responseData) => {
@@ -77,6 +133,12 @@ const promiseSend = () => {
             formItem.innerHTML = formString;
             renderPeople();
             addComment();
+            inputName.value = "";
+            inputText.value = "";
+        })
+        .catch((error) => {
+            alert(error);
+            //todo: Отправлять в систему сбора ошибка
         });
 };
 
@@ -123,8 +185,6 @@ function addComment() {
         promiseSend();
         // appPromise();
         // renderPeople();
-        inputName.value = "";
-        inputText.value = "";
     });
 }
 
@@ -133,7 +193,7 @@ const addLike = () => {
     likeButtons.forEach((likeButtonEl, index) => {
         likeButtonEl.addEventListener("click", () => {
             let likeEl = PEOPLE[index];
-            console.log(likeEl);
+            // console.log(likeEl);
             if (likeEl.isLiked === false) {
                 likeEl.isLiked = true;
                 likeEl.likes++;
@@ -218,6 +278,7 @@ const renderPeople = () => {
     takeCommentText();
     delCommentElement();
 };
+
 appPromise();
 addComment();
 renderPeople();
