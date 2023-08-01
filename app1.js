@@ -25,7 +25,7 @@ maxlength="100"
 <button class="add-form-button">Написать</button>
 </div>`;
 // const formItem = document.querySelector(".add-form");
-const API_LINK = "https://wedev-api.sky.pro/api/v1/pavelzяя/comments";
+const API_LINK = "https://wedev-api.sky.pro/api/v1/pavelzяяz/comments";
 
 let PEOPLE = [];
 
