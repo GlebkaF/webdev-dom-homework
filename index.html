@@ -112,7 +112,7 @@
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${comment.like}</span>
-            <button class="like-button"></button>
+            <button class="like-button" data-index="${index}"></button>
           </div>
         </div>
         <div class="add-form-row">
@@ -126,107 +126,6 @@
 
     listElement.innerHTML = commentsHtml;
   }
-
-
-
-  //        ОБРАБОТЧИК на LIKES,  РЕАЛИЗАЦИЯ ЛАЙКОВ
-
-  const initLikesButtonListeners = () => {
-
-    const likeButtons = document.querySelectorAll(".like-button");
-    const likeCounts = document.querySelectorAll(".likes-counter");
-
-    likeButtons.forEach((button, index) => {
-      button.addEventListener("click", () => {
-        button.classList.toggle("-active-like");
-        const current = Number(likeCounts[index].innerHTML);
-        const inc = button.classList.contains("-active-like") ? 1 : -1;
-        likeCounts[index].innerHTML = current + inc;
-      });
-    });
-
-  }
-
-  renderComments();
-  // initEventListeners();
-  initLikesButtonListeners();
-
-
-  //        РЕДАКТИРОВАНИЕ КОММЕНТАРИЕВ
-
-
-  const initEditButtonListeners = () => {
-    const buttonEdits = document.querySelectorAll(".edit-comment");
-    const buttonSave = document.getElementById("save-comment");
-
-
-    for (const buttonEdit of buttonEdits) {
-      buttonEdit.addEventListener('click', () => {
-
-        const view = document.getElementById("view");
-        view.style.display = "none";
-
-        let textarea = document.createElement('textarea');
-        textarea.innerHTML = `<textarea type="textarea" id="comment-input" class="add-form-text" placeholder="Введите ваш коментарий"
-        rows="4"></textarea>`;
-
-        textarea.value = view.innerHTML;
-
-        view.replaceWith(textarea);
-        if (textarea.value != view.innerHTML) {
-          buttonSave.display = "none";
-        } else {
-          buttonEdits.display = "none";
-        }
-
-
-      })
-
-    }
-  }
-
-
-
-
-
-
-
-  // for (let i = 0; i < comments.length; i++) {
-  //   const commentTextHtml = comments.map((comment, index) => {
-  //     return `<li class="comment">
-  //   <div class="comment-header">
-  //     <div> ${comment.name} </div>
-  //     <div>${comment.date}</div>
-  //   </div>
-  //   <div class="comment-body">
-  //     <textarea type="textarea" id="comment-input" class="add-form-text" placeholder="Введите ваш коментарий"
-  //   rows="4"></textarea>
-  //   </div>
-  //   <div class="comment-footer">
-  //     <div class="likes">
-  //       <span class="likes-counter">${comment.like}</span>
-  //       <button class="like-button"></button>
-  //     </div>
-  //   </div>
-  //   <div class="add-form-row">
-  //   <button class="add-form-button edit-commen">Редактировать</button>
-  // </div>
-  // </li>`
-  //   }).join(' ');
-
-  //   listElement.innerHTML = commentTextHtml;
-
-  // }
-
-
-  // for (let commentText of commentTexts) {
-
-  // }
-
-
-
-  initEditButtonListeners();
-
 
 
 
