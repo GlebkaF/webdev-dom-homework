@@ -28,7 +28,7 @@ const formRender = () => {
   <div class="add-form-row">
     <button id="form-button" class="add-form-button">Написать</button>
   </div>`;
-  clickEventButton();
+    clickEventButton();
   }
 }
 // formRender();
@@ -47,26 +47,14 @@ const getFunction = () => {
     {
       method: 'GET',
     }).then((response) => {
-      console.log(response);
-      response.json().then((responseData) => {
-        // console.log(responseData);
-        // const appComments = responseData.comments.map((comment) => {
-        //   return {
-        //     name: comment.author.name,
-        //     time: new Date(comment.date),
-        //     commentText: comment.text,
-        //     likes: comment.likes,
-        //     isLiked: false,
-        //   }
-        // });
-        commentators = responseData.comments;
-        console.log(commentators);
-        renderCommentators();
-        loader = false;
-        formRender();
-        
-      })
+      return response.json();
+    }).then((responseData) => {
+      commentators = responseData.comments;
+      renderCommentators();
+      loader = false;
+      formRender();
     })
+
 }
 getFunction();
 
@@ -97,22 +85,7 @@ const dateInAPI = (dateInAPI) => {
   return fullDate;
 };
 
-let commentators = [
-  // {
-  //     name: 'Глеб Фокин',
-  //     commentText: 'Это будет первый комментарий на этой странице',
-  //     time: '12.02.22 12:18',
-  //     likes: 3,
-  //     isLiked: false,
-  // },
-  // {
-  //     name: 'Варвара Н.',
-  //     commentText: 'Мне нравится как оформлена эта страница! ❤',
-  //     time: '13.02.22 19:22',
-  //     likes: 3,
-  //     isLiked: false,
-  // }
-];
+let commentators = [];
 
 
 const likeMaker = () => {
@@ -202,22 +175,19 @@ function clickEventButton() {
       return;
     }
 
-    fetch('https://wedev-api.sky.pro/api/v1/:ErmushinRomant/comments',
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          name: nameInputElement.value,
-          text: textInputElement.value,  //Вопрос: почему API принимает любые названия ключей в объекте комментаторов, и выводит корректный результат?
-          // datе: new Date(),
-        })
-      }).then((response) => {
-        response.json().then((responseData) => {
-          console.log(responseData);
-          commentators = responseData.comment;
-          getFunction();
-
-        });
+    fetch('https://wedev-api.sky.pro/api/v1/:ErmushinRomant/comments', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: nameInputElement.value,
+        text: textInputElement.value,
       })
+    }).then((response) => {
+      return response.json();
+    }).then((responseData) => {
+      commentators = responseData.comment;
+      getFunction();
+
+    });
   });
 }
 
