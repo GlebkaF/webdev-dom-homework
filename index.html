@@ -1,22 +1,21 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>Проект "Комменты"</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
 
-<head>
-  <title>Проект "Комменты"</title>
-  <meta charset="utf-8" />
-  <link rel="stylesheet" href="styles.css" />
-</head>
+  <body>
+    <div class="container">
+      <div id="first-LoadForm">
+        <div class="add-form-text" id="first-LoadText">
+          First time loading data...
+        </div>
+      </div>
 
-<body>
-  <div class="container">
-    <div id="first-LoadForm" >
-    <div class="add-form-text" id="first-LoadText">
-      First time loading data...
-    </div>
-  </div>
-
-    <ul class="comments" id="commentsListId">
-      <!-- <li class="comment">
+      <ul class="comments" id="commentsListId">
+        <!-- <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -51,106 +50,87 @@
             </div>
           </div>
         </li> -->
-    </ul>
-    <div class="add-form" id="add-formListId">
-      <input id="commentName" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+      </ul>
+      <div class="add-form" id="add-formListId">
+        <input
+          id="commentName"
+          type="text"
+          class="add-form-name"
+          placeholder="Введите ваше имя"
+        />
 
-      <textarea id="commentText" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
-        rows="4"></textarea>
-      <div class="add-form-row" id="add-form-rowListId">
-        <button class="add-form-button" id="add-form-buttonListId">Написать</button>
+        <textarea
+          id="commentText"
+          type="textarea"
+          class="add-form-text"
+          placeholder="Введите ваш коментарий"
+          rows="4"
+        ></textarea>
+        <div class="add-form-row" id="add-form-rowListId">
+          <button class="add-form-button" id="add-form-buttonListId">
+            Написать
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-</body>
+  </body>
 
-<script>
-  "use strict";
+  <script>
+    "use strict";
 
-  let comments = []; // создание массива для комментариев
-  
+    let comments = []; // создание массива для комментариев
 
-  
+    // Загрузка комментариев по API сервера в массив
+    // Запрос в API - все запрсы в API асинхронны, т.е мы не знаем длительность исполнения запроса.
 
+    function dataGet() {
+      const fetchPromise = fetch(
+        "https://wedev-api.sky.pro/api/v1/arseny-kulikov/comments",
+        {
+          method: "GET",
+        }
+      ); // Возвращает promise.
 
-// Загрузка комментариев по API сервера в массив
-
-  // Запрос в API - все запрсы в API асинхронны, т.е мы не знаем длительность исполнения запроса.
-
-function dataGet (){
-  
-  const fetchPromise = fetch(
-    'https://wedev-api.sky.pro/api/v1/arseny-kulikov/comments',
-    {
-      method: "GET"
+      fetchPromise
+        .then((response) => {
+          //т.к ответ не данные, а promise то используем метод .then - подключает обработчик на ответ от сервера, полученный в promise по запросу GET в вормате строки.
+          const jsonPromise = response.json();
+          return jsonPromise;
+        })
+        .then((responseData) => {
+          comments = responseData.comments;
+          renderComments();
+          startLoader();
+          console.log(responseData);
+        });
     }
-  ); // Возвращает promise.
+    dataGet();
 
-  
-  fetchPromise.then((response) => {
-    //т.к ответ не данные, а promise то используем метод .then - подключает обработчик на ответ от сервера, полученный в promise по запросу GET в вормате строки.
-    const jsonPromise = response.json()
-    return jsonPromise})
-    .then((responseData)=>{
-    comments = responseData.comments
-    renderComments()
-    startLoader()
-  console.log(responseData)})
+    const firstLoader = document.getElementById(`first-LoadText`);
+    const commentForm = document.getElementById(`add-formListId`);
+    const list = document.getElementById("commentsListId");
+    const listButton = document.getElementById(`add-form-buttonListId`);
+    const commentText = document.getElementById(`commentText`);
+    const commentName = document.getElementById(`commentName`);
+    let currentDate = new Date();
+    const commentLists = document.querySelectorAll(`.comments`);
+    const likeButtonPush = document.querySelectorAll(`.comment-footer`);
+    const buttonOfLikes = document.querySelectorAll(`.likes`);
+    const button = document.querySelectorAll(`.like-button`);
+    const commentBlock = document.querySelectorAll(`.comment`);
+    const commentBlockNew = document.querySelectorAll(`.comment`);
+
+    // индикатор первой загрузки
+
+    function startLoader() {
+      firstLoader.classList.add("firstLoader");
     }
-    dataGet()
+    // Добавление комментария после появления формы лоадера "загрузка..."
 
-      
-    
-  
+    function renderAddComment() {
+      // Пересоздание формы ввода комментария
 
-  // const fetchPromise = fetch(
-  //   'https://wedev-api.sky.pro/api/v1/arseny-kulikov/comments',
-  //   {
-  //     method: "GET"
-  //   }
-  // ); // Возвращает promise.
-
-  
-  // fetchPromise.then((response) => {
-  //   console.log(response) //т.к ответ не данные, а promise то используем метод .then - подключает обработчик на ответ от сервера, полученный в promise по запросу GET в вормате строки.
-  //   const jsonPromise = response.json() // подключаем функцию json()- преобразует из строки в формат данных json.
-  //                                       // Этот метод возвращает не результат, а также promise.
-  //   jsonPromise.then((responseData) => { //т.к ответ не данные, а promise то используем метод .then, который обрабатывает ответ, который ранее был получен и уже приведен в формат данных.
-  //     console.log(responseData)
-  //     comments = responseData.comments // Записываем в наш массив comments данные от сервера из responseData по ключу comments-тк там объект с данными назван также comments
-  //     renderComments()
-      
-  //   })
-  // })
-  const firstLoader = document.getElementById(`first-LoadText`)
-  const commentForm = document.getElementById(`add-formListId`)
-  const list = document.getElementById("commentsListId")
-  const listButton = document.getElementById(`add-form-buttonListId`)
-  const commentText = document.getElementById(`commentText`)
-  const commentName = document.getElementById(`commentName`)
-  let currentDate = new Date();
-  const commentLists = document.querySelectorAll(`.comments`)
-  const likeButtonPush = document.querySelectorAll(`.comment-footer`)
-  const buttonOfLikes = document.querySelectorAll(`.likes`)
-  const button = document.querySelectorAll(`.like-button`)
-  const commentBlock = document.querySelectorAll(`.comment`)
-  const commentBlockNew = document.querySelectorAll(`.comment`)
-
-// индикатор первой загрузки
-
-  function startLoader() {
-    firstLoader.classList.add('firstLoader');
-    }
-    
-
-// Добавление комментария после появления формы лоадера "загрузка..."
-
-  function renderAddComment() {
-    
-// Пересоздание формы ввода комментария
-
-    let resultCommentForm = commentForm.innerHTML =
-      `<input
+      let resultCommentForm = (commentForm.innerHTML = `<input
         id="commentNameNew"
           type="text"
           class="add-form-name"
@@ -166,98 +146,107 @@ function dataGet (){
         ></textarea>
         <div class="add-form-row" id="add-form-rowListIdNew">
           <button class="add-form-button" id="add-form-buttonListIdNew">Написать</button>
-        </div>`
+        </div>`);
 
+      const commentTextNew = document.getElementById(`commentTextNew`);
+      const commentNameNew = document.getElementById(`commentNameNew`);
+      const addFormButtonListIdNew = document.getElementById(
+        `add-form-buttonListIdNew`
+      );
 
-    const commentTextNew = document.getElementById(`commentTextNew`)
-    const commentNameNew = document.getElementById(`commentNameNew`)
-    const addFormButtonListIdNew = document.getElementById(`add-form-buttonListIdNew`)
+      // Подключение события клик к новой форме (пересозданной после создания лоадера) ввода комментария
 
-// Подключение события клик к новой форме (пересозданной после создания лоадера) ввода комментария
+      addFormButtonListIdNew.addEventListener(`click`, () => {
+        const oldButton = listButton.innerHTML;
+        commentNameNew.classList.remove("error");
+        commentTextNew.classList.remove("error");
+        const oldList = list.innerHTML;
 
-    addFormButtonListIdNew.addEventListener(`click`, () => {
+        if (commentNameNew.value === "") {
+          commentNameNew.classList.add("error");
 
-      const oldButton = listButton.innerHTML
-      commentNameNew.classList.remove('error');
-      commentTextNew.classList.remove('error');
-      const oldList = list.innerHTML
-
-      if (commentNameNew.value === "") {
-
-        commentNameNew.classList.add('error');
-
-        return;
-      }
-      else if (commentTextNew.value === "") {
-        commentTextNew.classList.add('error');
-        return;
-      }
-      
-// добавление комментария в массив
-// добавлять комментарий из хранилища данных
-
-      let isLoading = true
-
-      if (isLoading === true) { renderLoader() }
-
-
-      const fetchPromiseNew = fetch(
-        'https://wedev-api.sky.pro/api/v1/arseny-kulikov/comments',
-        {
-          method: "POST",
-          body: JSON.stringify({
-            text: commentTextNew.value.replaceAll("QUOTE_BEGIN", "<textarea>").replaceAll("QUOTE_END", "</textarea><br>"),
-            name: commentNameNew.value,
-
-          })
+          return;
+        } else if (commentTextNew.value === "") {
+          commentTextNew.classList.add("error");
+          return;
         }
-       ).then ((response)=>{
-      return response.json()})
-     .then((responseData)=>{
-//comments = responseData.comments 
-      return fetch(
-          'https://wedev-api.sky.pro/api/v1/arseny-kulikov/comments',
+
+        // добавление комментария в массив
+        // добавлять комментарий из хранилища данных
+
+        let isLoading = true;
+        addFormButtonListIdNew.disabled = true;
+
+        const fetchPromiseNew = fetch(
+          "https://wedev-api.sky.pro/api/v1/arseny-kulikov/comments",
           {
-            method: "GET"
-          });
-        })
-      .then((response)=>{
-        return response.json()})
-      .then((responseData)=>{
-        console.log(responseData)
-        comments = responseData.comments
-        isLoading = false
-        console.log(comments)
-            
-            renderAddComment()
-            renderComments()
-            commentReplyNew()
+            method: "POST",
+            body: JSON.stringify({
+              text: commentTextNew.value
+                .replaceAll("QUOTE_BEGIN", "<textarea>")
+                .replaceAll("QUOTE_END", "</textarea><br>"),
+              name: commentNameNew.value,
+              forceError: true,
+            }),
+          }
+        )
+          .then((response) => {
+            if (response.status === 400) {
+              //Код который обработает ошибку
+              throw new Error(`Нужно ввести более 2 символов`);
+            }
+
+            //return Promise.reject(`сервер упал`)
+            else if (response.status === 500) {
+              fetchFunction();
+              throw new Error(`Сервер не работает, попробуем еще раз?...`);
+            } else if (isLoading === true) {
+              renderLoader();
+            }
+            return response.json();
           })
-       
-           
-//добавление завершено
 
+          .then((responseData) => {
+            return fetch(
+              "https://wedev-api.sky.pro/api/v1/arseny-kulikov/comments",
+              {
+                method: "GET",
+              }
+            );
+          })
+          .then((response) => {
+            return response.json();
+          })
+          .then((responseData) => {
+            console.log(responseData);
+            comments = responseData.comments;
+            isLoading = false;
+            console.log(comments);
 
-// очистка формы ввода комментария после его добавления
+            renderAddComment();
+            renderComments();
+            commentReplyNew();
+          })
+          .catch((error) => {
+            alert(`${error}`);
 
-      commentTextNew.value = ``
-      commentNameNew.value = ``
+            addFormButtonListIdNew.disabled = false;
+          });
+        //добавление завершено
 
-      renderComments()
-      
-    })
-    
-    return resultCommentForm
-  }
-// Завершение добавления комментария после появления формы лоадера "загрузка..."
+        renderComments();
+      });
 
-//создание блоков комментариев по содержимому массива
+      return resultCommentForm;
+    }
+    // Завершение добавления комментария после появления формы лоадера "загрузка..."
 
-  function renderComments() {
-    
+    //создание блоков комментариев по содержимому массива
 
-    const likesHtml = comments.map((i, index) => {
-      return `<li class="comment"data-index="${index}">
+    function renderComments() {
+      const likesHtml = comments
+        .map((i, index) => {
+          return `<li class="comment"data-index="${index}">
           <div class="comment-header">
             <div>${i.author.name}</div>
             <div>${i.date}</div>
@@ -272,225 +261,294 @@ function dataGet (){
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${i.likes}</span>
-              <button class="like-button ${i.isLiked ? `-active-like` : ''}"data-index="${index}"></button>
+              <button class="like-button ${
+                i.isLiked ? `-active-like` : ""
+              }"data-index="${index}"></button>
             </div>
           </div>
-        </li>`
-    }).join(``);
+        </li>`;
+        })
+        .join(``);
 
-    list.innerHTML = likesHtml;
-    keyPush ()
-    commentReply()
-    initLikeButton()
-    
-    
-  }
-    renderComments()
-    
+      list.innerHTML = likesHtml;
+      keyPush();
+      commentReply();
+      initLikeButton();
+    }
+    renderComments();
 
-//  простановка лайков   
+    //  простановка лайков
 
-  function initLikeButton() {
+    function initLikeButton() {
+      const button = document.querySelectorAll(`.like-button`);
 
-    const button = document.querySelectorAll(`.like-button`)
+      for (const likeButton of button) {
+        likeButton.addEventListener(`click`, (event) => {
+          // из массива обЪектов-коммертариев делаем объект из содержимого одного комментария
 
-    for (const likeButton of button) {
+          event.stopPropagation();
+          const comment = comments[likeButton.dataset.index]; //комментарий выбираем по dataset.index из html
 
-      likeButton.addEventListener(`click`, (event) => {
+          let a = comment.likes;
+          if (comment.isLiked === false) {
+            comment.isLiked = true;
+            comment.likes = a + 1;
+            comments.isLiked = comment.isLiked;
+            comments.likes = comment.like;
+          } else if (comment.isLiked === true) {
+            comment.isLiked = false;
+            comment.likes = a - 1;
 
-// из массива обЪектов-коммертариев делаем объект из содержимого одного комментария
-
-        event.stopPropagation();
-        const comment = comments[likeButton.dataset.index] //комментарий выбираем по dataset.index из html
-
-        let a = comment.likes
-        if(comment.isLiked === false) {
-          comment.isLiked = true
-          comment.likes = a + 1
-          comments.isLiked = comment.isLiked
-          comments.likes = comment.like
-
-        }
-        else if(comment.isLiked === true) {
-          comment.isLiked = false
-          comment.likes = a - 1
-
-          comments.isLiked = comment.isLiked
-          comments.likes = comment.like
-
-        }
-        renderComments()
-        commentReply()
-
+            comments.isLiked = comment.isLiked;
+            comments.likes = comment.like;
+          }
+          renderComments();
+          commentReply();
+        });
       }
-      )
     }
-  }
 
-// Ввод с клавиатуры
+    // Ввод с клавиатуры
 
-function keyPush (){
-  commentForm.addEventListener(`keyup`, (event) => {if (event.code === 'Enter'){
-    console.log(`сохранить комментарий`)
-      
-    }})
-} 
-// Клавиатура завершено
-
-// Добавление комментария в массив
-
-function addComment () {
-  
-  listButton.addEventListener(`click`, () => {
-    
-    const oldButton = listButton.innerHTML
-    commentName.classList.remove('error');
-    commentText.classList.remove('error');
-    const oldList = list.innerHTML
-
-
-    if (commentName.value === "") {
-
-      commentName.classList.add('error');
-
-      return;
+    function keyPush() {
+      commentForm.addEventListener(`keyup`, (event) => {
+        if (event.code === "Enter") {
+          console.log(`сохранить комментарий`);
+        }
+      });
     }
-    else if (commentText.value === "") {
-      commentText.classList.add('error');
-      return;
+    // Ввод с клавиатуры завершено
+
+    // Добавление комментария в массив самый первый раз после обновления страницы
+    function addComment() {
+      listButton.addEventListener(`click`, () => {
+        const oldButton = listButton.innerHTML;
+        commentName.classList.remove("error");
+        commentText.classList.remove("error");
+        const oldList = list.innerHTML;
+        if (commentName.value === "") {
+          commentName.classList.add("error");
+          return;
+        } else if (commentText.value === "") {
+          commentText.classList.add("error");
+          return;
+        }
+        let isLoading = true;
+        listButton.disabled = true;
+
+        //Добавление комментариев в хранилище данных самый первый раз после загрузки страницы
+        //Цепочка промисов начало
+
+        fetch("https://wedev-api.sky.pro/api/v1/arseny-kulikov/comments", {
+          method: "POST",
+          body: JSON.stringify({
+            text: commentText.value
+              .replaceAll("QUOTE_BEGIN", "<textarea>")
+              .replaceAll("QUOTE_END", "</textarea><br>"),
+            name: commentName.value,
+            forceError: true,
+          }),
+        })
+          .then((response) => {
+            if (response.status === 400) {
+              //Код который обработает ошибку
+              throw new Error(`Нужно ввести более 2 символов`);
+              //return Promise.reject(`сервер упал`)
+            } else if (response.status === 500) {
+              firstLaunchFetchFunction();
+              throw new Error(`Сервер не работает, попробуем еще раз?...`);
+            } else {
+              if (isLoading === true) {
+                renderLoader();
+              }
+              return response.json();
+            }
+          })
+          .then((responseData) => {
+            return fetch(
+              "https://wedev-api.sky.pro/api/v1/arseny-kulikov/comments",
+              {
+                method: "GET",
+              }
+            );
+          })
+          .then((response) => {
+            console.log(comments);
+            return response.json();
+          })
+          .then((responseData) => {
+            console.log(responseData);
+            comments = responseData.comments;
+            console.log(isLoading);
+            renderAddComment();
+            renderComments();
+            commentReplyNew();
+            isLoading = false;
+            console.log(isLoading);
+          })
+          .catch((error) => {
+            alert(`${error}`);
+            listButton.disabled = false;
+          });
+        //Цепочка промисов конец
+        //добавление завершено
+      });
     }
- 
-    
-    // Вызов формы загрузка после по нажатия на добавить комментарий
+    addComment();
 
-    let isLoading = true
-    
-    if (isLoading === true) { 
-      renderLoader()
-      
-       }
+    // ответ на комментарий до создания поля "загрузка"
+    function commentReply() {
+      const commentBlock = document.querySelectorAll(`.comment`);
+      for (const commentElement of commentBlock) {
+        commentElement.addEventListener(`click`, () => {
+          comments[commentElement.dataset.index].isCommentRepliy = true;
+          commentText.value = `${
+            comments[commentElement.dataset.index].author.name
+          }, ${comments[commentElement.dataset.index].text}`;
+          commentText.value = commentText.value
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;");
+          if (comments[commentElement.dataset.index].isCommentRepliy === true) {
+            commentText.value = `QUOTE_BEGIN${commentText.value
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;")}QUOTE_END`;
+          } else {
+            commentText.value = commentText.value
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;");
+          }
+        });
+      }
+    }
 
-// Добавление комментариев в хранилище данных
-       
-//Цепочка промисов начало
+    //Создание поля "загрузка"
+    function renderLoader() {
+      let resultCommentForm = (commentForm.innerHTML = `<div
+         class="add-form-text"
+        >loading data...</div>`);
+      return resultCommentForm;
+    }
+    //ответ на комментарий после появления поля "загрузка"
+    function commentReplyNew() {
+      const commentBlockNew = document.querySelectorAll(`.comment`);
+      for (const commentElementNew of commentBlockNew) {
+        commentElementNew.addEventListener(`click`, () => {
+          comments[commentElementNew.dataset.index].isCommentRepliy = true;
+          commentTextNew.value = `${
+            comments[commentElementNew.dataset.index].author.name
+          }, ${comments[commentElementNew.dataset.index].text}`;
+          commentTextNew.value = commentTextNew.value
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;");
+          if (
+            comments[commentElementNew.dataset.index].isCommentRepliy === true
+          ) {
+            commentTextNew.value = `QUOTE_BEGIN${commentTextNew.value
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;")}QUOTE_END`;
+            commentText.value = commentTextNew.value;
+          } else {
+            commentTextNew.value = commentTextNew.value
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;");
+            commentText.value = commentTextNew.value;
+          }
+        });
+      }
+    }
+    commentReplyNew();
 
- fetch('https://wedev-api.sky.pro/api/v1/arseny-kulikov/comments',
-      {
+    //fetch
+    function fetchFunction() {
+      fetch("https://wedev-api.sky.pro/api/v1/arseny-kulikov/comments", {
         method: "POST",
         body: JSON.stringify({
-          text: commentText.value.replaceAll("QUOTE_BEGIN", "<textarea>").replaceAll("QUOTE_END", "</textarea><br>"),
+          text: commentTextNew.value
+            .replaceAll("QUOTE_BEGIN", "<textarea>")
+            .replaceAll("QUOTE_END", "</textarea><br>"),
+          name: commentNameNew.value,
+          forceError: true,
+        }),
+      })
+        .then((response) => {
+          if (response.status === 400) {
+            throw new Error(`Нужно ввести более 2 символов`);
+          } else if (response.status === 500) {
+            fetchFunction();
+            throw new Error(`Сервер опять не отвечает...`);
+          } else {
+            return response.json();
+          }
+        })
+        .then((responseData) => {
+          return fetch(
+            "https://wedev-api.sky.pro/api/v1/arseny-kulikov/comments",
+            {
+              method: "GET",
+            }
+          );
+        })
+        .then((response) => {
+          return response.json();
+        })
+        .then((responseData) => {
+          console.log(responseData);
+          comments = responseData.comments;
+          console.log(comments);
+          renderAddComment();
+          renderComments();
+          commentReplyNew();
+        })
+        .catch((error) => {
+          // alert(`${error}`)
+        });
+    }
+    function firstLaunchFetchFunction() {
+      fetch("https://wedev-api.sky.pro/api/v1/arseny-kulikov/comments", {
+        method: "POST",
+        body: JSON.stringify({
+          text: commentText.value
+            .replaceAll("QUOTE_BEGIN", "<textarea>")
+            .replaceAll("QUOTE_END", "</textarea><br>"),
           name: commentName.value,
-
-        })
-      }
-    ).then ((response)=>{
-      return response.json()})
-     .then((responseData)=>{
-      //comments = responseData.comments 
-      return fetch(
-          'https://wedev-api.sky.pro/api/v1/arseny-kulikov/comments',
-          {
-            method: "GET"
-          });
-        })
-      .then((response)=>{
-        return response.json()})
-      .then((responseData)=>{
-        console.log(responseData)
-        comments = responseData.comments
-        isLoading = false
-        console.log(comments)
-            
-            renderAddComment()
-            renderComments()
-            commentReplyNew()
-          })
-           
-
-//Цепочка промисов конец
-
-//добавление завершено
-// очистка формы ввода комментария после его добавления
-
-    commentText.value = ``
-    commentName.value = ``
-     
-  })}
-
-  addComment()
-
-// ответ на комментарий до создания поля "загрузка" 
-
-  function commentReply() {
-
-    const commentBlock = document.querySelectorAll(`.comment`)
-    for (const commentElement of commentBlock) {
-      commentElement.addEventListener(`click`, () => {
-
-
-        comments[commentElement.dataset.index].isCommentRepliy = true
-
-
-        commentText.value = `${comments[commentElement.dataset.index].author.name}, ${comments[commentElement.dataset.index].text}`;
-        commentText.value = commentText.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;")
-        
-        if (comments[commentElement.dataset.index].isCommentRepliy === true) {
-          commentText.value = `QUOTE_BEGIN${commentText.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;")}QUOTE_END`
-        }
-        else {
-          commentText.value = commentText.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;")
-        }
-
+          forceError: true,
+        }),
       })
+        .then((response) => {
+          if (response.status === 400) {
+            throw new Error(`Нужно ввести более 2 символов`);
+          } else if (response.status === 500) {
+            firstLaunchFetchFunction();
+            throw new Error(`Сервер опять не отвечает...`);
+          } else {
+            return response.json();
+          }
+        })
+        .then((responseData) => {
+          return fetch(
+            "https://wedev-api.sky.pro/api/v1/arseny-kulikov/comments",
+            {
+              method: "GET",
+            }
+          );
+        })
+        .then((response) => {
+          return response.json();
+        })
+        .then((responseData) => {
+          console.log(responseData);
+          comments = responseData.comments;
+          console.log(comments);
+          renderAddComment();
+          renderComments();
+          commentReplyNew();
+        })
+        .catch((error) => {
+          // alert(`${error}`)
+        });
     }
-     
-    }
-    
-//появление поля "загрузка"
-  function renderLoader() {
-    let resultCommentForm = commentForm.innerHTML =
-      `<div
-         class="add-form-text"
-        >loading data...</div>`
-        
-    return resultCommentForm
-  }
 
-
-//ответ на комментарий после появления поля "загрузка"
-
-
-  function commentReplyNew() {
-
-    const commentBlockNew = document.querySelectorAll(`.comment`)
-    for (const commentElementNew of commentBlockNew) {
-      commentElementNew.addEventListener(`click`, () => {
-
-
-        comments[commentElementNew.dataset.index].isCommentRepliy = true
-
-
-        commentTextNew.value = `${comments[commentElementNew.dataset.index].author.name}, ${comments[commentElementNew.dataset.index].text}`;
-        commentTextNew.value = commentTextNew.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;")
-
-        if (comments[commentElementNew.dataset.index].isCommentRepliy === true) {
-          commentTextNew.value = `QUOTE_BEGIN${commentTextNew.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;")}QUOTE_END`
-          commentText.value = commentTextNew.value
-        }
-        else {
-          commentTextNew.value = commentTextNew.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;")
-          commentText.value = commentTextNew.value
-        }
-
-      })
-    }
-  }
-  commentReplyNew()
-
-  // Код писать здесь
-  console.log("It works!");
-
-
-</script>
-
+    // Код писать здесь
+    console.log("It works!");
+  </script>
 </html>
