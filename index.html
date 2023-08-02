@@ -25,6 +25,10 @@
     .disabled-button {
       background-color: #ffffffbe;
     }
+
+    .disappear {
+      display: none;
+    }
     
 
   </style>
@@ -90,30 +94,20 @@ const postApi = () => {
     method: "POST",
     body: JSON.stringify({
       text: commentInputElement.value,
-      name: nameInputElement.value
+      name: nameInputElement.value,
+      forceError: true
     })
   }).then((response) => {
-    getApi()
+
+    if (response.status === 400) {
+      return Promise.reject("Имя и текст комментария менее 3 символов");
+    }
+      getApi()
+  }).catch ((error) => {
+      alert("Имя и текст комментария должен содержать хотя бы 3 символа");
+      formElement.innerHTML = addFormHtml;
   })
 }
-
-// Массив данных
-// const users = [
-//   {
-//     name: "Глеб Фокин",
-//     date: "12.02.22 12:18",
-//     text: "Это будет первый комментарий на этой странице",
-//     likes: 3,
-//     isLiked: false
-//   },
-//   {
-//     name: "Варвара Н.",
-//     date: "13.02.22 19:22",
-//     text: "Мне нравится как оформлена эта страница! ❤",
-//     likes: 75,
-//     isLiked: true
-//   }
-// ];
 
 // Установка формата даты ДД.ММ.ГГГГ ЧЧ:ММ
 const date = function (date) {
