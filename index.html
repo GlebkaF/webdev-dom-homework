@@ -67,5 +67,31 @@
     "use strict";
     // Код писать здесь
     console.log("It works!");
+    const commentNameInput = document.querySelector (".add-form-name");
+    const commentTextInput = document.querySelector (".add-form-text");
+    const addButton = document.querySelector (".add-form-button");
+    const commentsBox = document.querySelector (".comments");
+    addButton.addEventListener ('click', () => {
+      //alert (commentNameInput.value, commentTextInput.value)
+      commentsBox.innerHTML += `<li class="comment">
+      <div class="comment-header">
+        <div>${commentNameInput.value}</div>
+        <div>${newDate}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">
+          ${commentTextInput.value}
+        </div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">0</span>
+          <button class="like-button"></button>
+        </div>
+      </div>
+    </li>
+    `;
+
+    })
   </script>
 </html>
