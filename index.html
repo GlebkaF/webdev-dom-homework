@@ -95,17 +95,24 @@ const postApi = () => {
     body: JSON.stringify({
       text: commentInputElement.value,
       name: nameInputElement.value,
-      forceError: true
+      forceError: false
     })
   }).then((response) => {
 
     if (response.status === 400) {
-      return Promise.reject("Имя и текст комментария менее 3 символов");
-    }
-      getApi()
+    return Promise.reject("Имя и текст комментария менее 3 символов");
+    } 
+    
   }).catch ((error) => {
-      alert("Имя и текст комментария должен содержать хотя бы 3 символа");
+      alert("Имя и текст комментария должны содержать хотя бы 3 символа");
+      formElement.classList.add("disappear");
+      formElement.classList.remove("disappear");
       formElement.innerHTML = addFormHtml;
+      
+
+  }).then((response) => {
+      return getApi();
+      
   })
 }
 
