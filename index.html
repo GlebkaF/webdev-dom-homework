@@ -190,7 +190,15 @@
             }),
           }
         )
+          .catch((error) => {
+            addFormButtonListIdNew.disabled = false;
+
+            throw new Error(
+              `Кажется, у вас сломался интернет, попробуйте позже...`
+            );
+          })
           .then((response) => {
+            console.log(response.status);
             if (response.status === 400) {
               //Код который обработает ошибку
               throw new Error(`Нужно ввести более 2 символов`);
@@ -228,7 +236,7 @@
             commentReplyNew();
           })
           .catch((error) => {
-            alert(`${error}`);
+            alert(` ${error}`);
 
             addFormButtonListIdNew.disabled = false;
           });
@@ -349,6 +357,13 @@
             forceError: true,
           }),
         })
+          .catch((error) => {
+            listButton.disabled = false;
+
+            throw new Error(
+              `Кажется, у вас сломался интернет, попробуйте позже...`
+            );
+          })
           .then((response) => {
             if (response.status === 400) {
               //Код который обработает ошибку
