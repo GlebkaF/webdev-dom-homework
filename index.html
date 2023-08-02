@@ -87,13 +87,15 @@
       name: "Глеб Фокин",
       date: "12.02.22 12:18",
       text: "Это будет первый комментарий на этой странице",
-      like: "3"
+      like: "3",
+      isLiked: false
     },
     {
       name: "Варвара Н.",
       date: "13.02.22 19:22",
       text: "Мне нравится как оформлена эта страница! ❤",
-      like: "75"
+      like: "75",
+      isLiked: true
     }
   ];
 
@@ -112,7 +114,7 @@
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${comment.like}</span>
-            <button class="like-button" data-index="${index}"></button>
+            <button class="like-button ${comment.isLiked ? '-active-like' : ''} " data-index="${index}"></button>
           </div>
         </div>
         <div class="add-form-row">
@@ -127,6 +129,77 @@
     listElement.innerHTML = commentsHtml;
   }
 
+
+  //        ОБРАБОТЧИК на LIKES,  РЕАЛИЗАЦИЯ ЛАЙКОВ
+
+  const initLikesButtonListeners = () => {
+
+    const buttonElements = document.querySelectorAll(".like-button");
+    const likeCounts = document.querySelectorAll(".likes-counter");
+
+    for (const buttonElement of buttonElements) {
+      buttonElement.addEventListener("click", () => {
+        // индекс номер объекта в массиве, получаем из data-атрибута кнопки на к-ую нажимаем
+        const index = buttonElement.dataset.index;
+        //обращаемся к свойству isLiked объекта, к-ый получили из массивы comments по индексу
+        if (comments[index].isLiked) {
+          comments[index].isLiked = false;
+          comments[index].like--;
+        } else {
+          comments[index].isLiked = true;
+          comments[index].like++;
+        }
+
+        renderComments();
+      })
+    }
+
+  }
+
+  renderComments();
+  // initEventListeners();
+  initLikesButtonListeners();
+
+
+
+
+
+
+  //        РЕДАКТИРОВАНИЕ КОММЕНТАРИЕВ
+
+
+  const initEditButtonListeners = () => {
+    const buttonEdits = document.querySelectorAll(".edit-comment");
+    const buttonSave = document.getElementById("save-comment");
+
+
+    for (const buttonEdit of buttonEdits) {
+      buttonEdit.addEventListener('click', () => {
+
+        const view = document.getElementById("view");
+        view.style.display = "none";
+
+        let textarea = document.createElement('textarea');
+        textarea.innerHTML = `<textarea type="textarea" id="comment-input" class="add-form-text" placeholder="Введите ваш коментарий"
+        rows="4"></textarea>`;
+
+        textarea.value = view.innerHTML;
+
+        view.replaceWith(textarea);
+        if (textarea.value != view.innerHTML) {
+          buttonSave.display = "none";
+        } else {
+          buttonEdits.display = "none";
+        }
+
+
+      })
+
+    }
+  }
+
+
+  initEditButtonListeners();
 
 
   // HOMEWORK 2.9
@@ -162,7 +235,8 @@
       name: nameInputElement.value,
       date: fullDate + fullTime,
       text: commentInputElement.value,
-      like: 0
+      like: 0,
+      isLiked: false
     });
 
 
