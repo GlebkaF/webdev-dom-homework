@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="comments-list" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -46,26 +46,97 @@
       </ul>
       <div class="add-form">
         <input
+          id="name-input"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
+          id="textarea-input"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="add-form-button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
-
+  <style>
+    .error {
+      background-color: yellow 
+    }
+  </style>
   <script>
     "use strict";
+    // Комментарии
+    // 1. Найти и получить элемент кнопки 'Написать' через id, который добавлен ей в разметке
+    // 2. На этот элемент (кнопку) добавить обработчик события клика ("click", () => }) c помощью метода addEventListener
+    // 3. Получить элемент comments (список) через id "comments-list" + прочитать содержимое comments через свойство innerHtml
+    // 3.1 Можно обновить содержимое элемента comments (список) также при помощи свойства innerHtml, записав любую html строчку, например через '<p></p>'
+    // 4. Изменить содержимое элементов
+    // 4.1 Получить элемент содержимого списка 
+    // 4.2 приклеить к существующему содержимому (списку) строчку из списка
+    // 5. Работа с формой добавления
+    // 5.1 присвоить id элементам input и textarea, далее получить эти элементы в коде через их id
+    // 5.2 Заменить в разметке значение имени на nameInputElement.value и значение комментария на textareaInputElement.value 
+    // вот так --> ${nameInputElement.value} и ${textareaInputElement.value}
+    // 6. Реализовать валидацию полей ввода. 
+    // 7. Установить дату и время - ???
+
     // Код писать здесь
-    console.log("It works!");
+
+    const buttonElement = document.getElementById("add-form-button");
+    const commentsElement = document.getElementById("comments-list");
+    const nameInputElement = document.getElementById("name-input");
+    const textareaInputElement = document.getElementById("textarea-input");
+    const currentDateElement = new Date().getDate().toString().padStart(2, '0') + '.' +
+    new Date().getMonth().toString().padStart(2, '0') + '.' +
+    new Date().getFullYear().toString().substr(-2)  + " " +
+    new Date().toLocaleTimeString().slice(0,-3);
+
+    buttonElement.addEventListener("click", () => {
+
+      nameInputElement.classList.remove('error');  
+      if (nameInputElement.value === "") {
+        nameInputElement.classList.add('error');
+        return;
+      }
+
+      textareaInputElement.classList.remove('error');  
+      if (textareaInputElement.value === "") {
+        textareaInputElement.classList.add('error');
+        return;
+      }
+
+      const oldCommentsHtml = commentsElement.innerHTML;
+      commentsElement.innerHTML =
+        oldCommentsHtml +
+        `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>
+              ${currentDateElement.value}
+            </div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textareaInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+      nameInputElement.value = "";
+      textareaInputElement.value = "";
+    });
+
+    // console.log("It works!");
   </script>
 </html>
