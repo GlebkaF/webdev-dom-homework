@@ -55,7 +55,6 @@
         const likeButtonElements = document.querySelectorAll(".like-button");
         for (const likeButton of likeButtonElements) {
           likeButton.addEventListener('click', () => {
-
             const counter = comments[likeButton.dataset.index]
             let a = counter.like
             if (counter.isLiked === false) {
