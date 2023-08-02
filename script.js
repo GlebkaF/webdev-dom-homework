@@ -1,4 +1,5 @@
 
+// ------------------
 "use strict"
 // Добавляем ДОМ элементы
 const cardElements = document.getElementById("commentsId");
@@ -10,7 +11,6 @@ const formBg = document.querySelector('.add-form');
 let textAnswerHtml = "";
 let indexOld = 0;
 // массив людей оставивших комменты
-log(likeElement);
 const commentators = [
     {
         name: 'Глеб Фокин',
