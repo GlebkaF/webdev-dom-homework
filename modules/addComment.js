@@ -3,7 +3,7 @@ export const addComment = (ARRAY, API_LINK, appPromise) => {
     const inputText = document.getElementById("add-form-text");
     const buttonSend = document.querySelector(".add-form-button");
     const formItem = document.querySelector(".add-form");
-
+    //dasd
     buttonSend.addEventListener("click", (event) => {
         inputName.classList.remove("error");
         inputText.classList.remove("error");
