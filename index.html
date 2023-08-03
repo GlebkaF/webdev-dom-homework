@@ -17,7 +17,7 @@
 
     <div class="add-form">
       <input type="text" id="name-input" class="add-form-name" placeholder="Введите ваше имя" />
-      <textarea type="textarea" id="comment-input" class="add-form-text edit-text" placeholder="Введите ваш коментарий"
+      <textarea type="textarea" id="comment-input" class="add-form-text" placeholder="Введите ваш коментарий"
         rows="4"></textarea>
       <div class="add-form-row">
         <button id="add-comment" class="add-form-button">Написать</button>
@@ -88,14 +88,16 @@
       date: "12.02.22 12:18",
       text: "Это будет первый комментарий на этой странице",
       like: "3",
-      isLiked: false
+      isLiked: false,
+      isEdit: true
     },
     {
       name: "Варвара Н.",
       date: "13.02.22 19:22",
       text: "Мне нравится как оформлена эта страница! ❤",
       like: "75",
-      isLiked: true
+      isLiked: true,
+      isEdit: false
     }
   ];
 
@@ -107,21 +109,18 @@
           <div>${comment.date}</div>
         </div>
         <div class="comment-body">
-          <div class="comment-text" id="view">
+          ${comment.isEdit ? `<textarea class="edit-text">${comment.text}</textarea>` : `<div class="comment-text">
             ${comment.text}
-          </div>
+          </div>`}
         </div>
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${comment.like}</span>
-            <button class="like-button ${comment.isLiked ? '-active-like' : ''} " data-index="${index}"></button>
+            <button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index="${index}"></button>
           </div>
         </div>
         <div class="add-form-row">
-        <button class="add-form-button edit-comment" id='edit-comment'>Редактировать</button>
-      </div>
-      <div class="add-form-row">
-        <button class="add-form-button save-comment id="save-comment">Сохранить</button>
+        <button class="add-form-button edit-comment" data-edit="${index}">${comment.isEdit ? 'Сохранить' : 'Редактировать'}</button>
       </div>
       </li>`
     }).join(' ');
@@ -135,7 +134,6 @@
   const initLikesButtonListeners = () => {
 
     const buttonElements = document.querySelectorAll(".like-button");
-    const likeCounts = document.querySelectorAll(".likes-counter");
 
     for (const buttonElement of buttonElements) {
       buttonElement.addEventListener("click", () => {
@@ -161,40 +159,27 @@
   initLikesButtonListeners();
 
 
-
-
-
-
   //        РЕДАКТИРОВАНИЕ КОММЕНТАРИЕВ
 
 
   const initEditButtonListeners = () => {
-    const buttonEdits = document.querySelectorAll(".edit-comment");
-    const buttonSave = document.getElementById("save-comment");
+    const buttonEditElements = document.querySelectorAll(".edit-comment");
 
+    for (const buttonEditElement of buttonEditElements) {
+      buttonEditElement.addEventListener("click", () => {
 
-    for (const buttonEdit of buttonEdits) {
-      buttonEdit.addEventListener('click', () => {
+        const edit = buttonEditElement.dataset.edit;
 
-        const view = document.getElementById("view");
-        view.style.display = "none";
-
-        let textarea = document.createElement('textarea');
-        textarea.innerHTML = `<textarea type="textarea" id="comment-input" class="add-form-text" placeholder="Введите ваш коментарий"
-        rows="4"></textarea>`;
-
-        textarea.value = view.innerHTML;
-
-        view.replaceWith(textarea);
-        if (textarea.value != view.innerHTML) {
-          buttonSave.display = "none";
+        if (comments[edit].isEdit) {
+          comments[edit].isEdit = false;
+          comments.push(comments[text]);
         } else {
-          buttonEdits.display = "none";
+          comments[edit].isEdit = true;
+
         }
 
-
+        renderComments();
       })
-
     }
   }
 
@@ -236,7 +221,8 @@
       date: fullDate + fullTime,
       text: commentInputElement.value,
       like: 0,
-      isLiked: false
+      isLiked: false,
+      isEdit: false
     });
 
 
