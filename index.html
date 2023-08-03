@@ -120,7 +120,7 @@
           </div>
         </div>
         <div class="add-form-row">
-        <button class="add-form-button edit-comment" data-edit="${index}">${comment.isEdit ? 'Сохранить' : 'Редактировать'}</button>
+        <button class="add-form-button edit-comment" data-index="${index}">${comment.isEdit ? 'Сохранить' : 'Редактировать'} </button>
       </div>
       </li>`
     }).join(' ');
@@ -168,13 +168,13 @@
     for (const buttonEditElement of buttonEditElements) {
       buttonEditElement.addEventListener("click", () => {
 
-        const edit = buttonEditElement.dataset.edit;
+        const index = buttonEditElement.dataset.index;
 
-        if (comments[edit].isEdit) {
-          comments[edit].isEdit = false;
-          comments.push(comments[text]);
+        if (comments[index].isEdit) {
+          comments[index].isEdit = false;
+          // comments.push(comments[text]);
         } else {
-          comments[edit].isEdit = true;
+          comments[index].isEdit = true;
 
         }
 
