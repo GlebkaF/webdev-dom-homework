@@ -13,11 +13,61 @@
             </ul>
             <div class="add-form">Загрузка....</div>
         </div>
-        <script src="./app1.js"></script>
+
+        <div class="bg-modal">
+            <div class="modal">
+                <div class="modal__header">
+                    <button class="modal__close-btn">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="10"
+                            height="10"
+                            viewBox="0 0 10 10"
+                            fill="none"
+                        >
+                            <path
+                                d="M5 3.88906L8.88906 0L10 1.11094L6.11094 5L10 8.88906L8.88906 10L5 6.11094L1.11094 10L0 8.88906L3.88906 5L0 1.11094L1.11094 0L5 3.88906Z"
+                                fill="#4F4F4F"
+                            />
+                        </svg>
+                    </button>
+                </div>
+                <div class="modal__body">
+                    <div class="modal__picture">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="28"
+                            height="28"
+                            viewBox="0 0 28 28"
+                            fill="none"
+                        >
+                            <path
+                                d="M14 25.6667C17.2217 25.6667 20.1383 24.3608 22.2496 22.2496C24.3609 20.1383 25.6667 17.2216 25.6667 14C25.6667 10.7784 24.3609 7.86171 22.2496 5.75043C20.1383 3.63918 17.2217 2.33334 14 2.33334C10.7784 2.33334 7.86174 3.63918 5.75046 5.75043C3.63921 7.86171 2.33337 10.7784 2.33337 14C2.33337 17.2216 3.63921 20.1383 5.75046 22.2496C7.86174 24.3608 10.7784 25.6667 14 25.6667Z"
+                                fill="#F5F5F5"
+                                stroke="#4F4F4F"
+                                stroke-width="2"
+                                stroke-linejoin="round"
+                            />
+                            <path
+                                d="M9.33337 14L12.8334 17.5L19.8334 10.5"
+                                stroke="#4F4F4F"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                        </svg>
+                    </div>
+                    <div class="modal__wrapp-content">
+                        <p class="modal__text-title">Ошибка!</p>
+                        <p class="modal__text-body">
+                            Сервер не отвечает... Попробуйте позже ):
+                        </p>
+                        <a href="" class="modal__text-link">Learn More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="module" src="./app1.js"></script>
     </body>
-    <style>
-        .error {
-            background-color: rgb(249, 121, 121);
-        }
-    </style>
 </html>
