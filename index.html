@@ -229,7 +229,7 @@ __________________________________________________________________ */
               text: getComment.value.replaceAll("<", "&lt").replaceAll(">","&gt").replaceAll('"', "&quot;").replaceAll("&", "&amp;"),
               }),
           });
-          fetchPost.then(getListComponent());
+          fetchPost.then(getListComponent);
           getName.value = "",
           getComment.value = "";
         }
