@@ -1,4 +1,5 @@
 import { getComments, postComments } from "./api.js";
+import { likeComment } from "./liking.js";
 
 
 let comments = [];
@@ -66,28 +67,9 @@ const renderComments = () => {
         });
     }
 
-    putLike();
+    likeComment(comments, renderComments);
 };
 
-const putLike = () => {
-    const likeButtonElements = document.querySelectorAll('.like-button');
-
-    for (const likeButtonElement of likeButtonElements) {
-        likeButtonElement.addEventListener('click', (event) => {
-            event.stopPropagation();
-            const index = likeButtonElement.dataset.index;
-
-            if (comments[index].isLiked) {
-                comments[index].isLiked = false;
-                comments[index].likes--;
-            } else {
-                comments[index].isLiked = true;
-                comments[index].likes++;
-            }
-            renderComments();
-        });
-    }
-};
 
 
 const addComment = () => {
@@ -108,7 +90,7 @@ const addComment = () => {
     const newComment = {
         text: comment.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
         name: name.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
-        forceError: false
+        forceError: true
     };
 
     // POST the new comment to the server
