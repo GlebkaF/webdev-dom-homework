@@ -54,4 +54,6 @@ export const renderLogin = ({ getTodo }) => {
     registerLink.addEventListener('click', () => {
       renderRegister();
     });
+
+    
 };

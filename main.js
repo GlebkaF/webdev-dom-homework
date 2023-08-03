@@ -8,6 +8,18 @@ import { getLikes } from "./getLikes.js";
 //import { renderLogin } from "./renderLogin.js";
 import { renderComments } from "./renderComments.js";
 import { format } from "date-fns";
+import {
+  getUserInLocalStorage,
+  saveUserInLocalStorage,
+} from "./userInLocalStorage.js";
+
+export let user = getUserInLocalStorage();
+
+export function setUser(newUser) {
+  user = newUser;
+  saveUserInLocalStorage(user);
+  // getTodo();
+}
 
 let comments = [];
 
@@ -28,8 +40,8 @@ export const getTodo = (showLoading = true) => {
       //console.log(answerData);
       //Преобразовываем данные из формата API в формат ленты
       const appComments = answerData.comments.map((comment) => {
-        const now = new Date();
-        format(now, "dd-MM-yyyy HH:mm:ss");
+        // const now = new Date();
+        // format(now, "dd-MM-yyyy HH:mm:ss");
         const createDate = format(
           new Date(comment.date),
           "dd-MM-yyyy HH:mm:ss"

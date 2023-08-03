@@ -30,9 +30,9 @@ export function getComments() {
   });
 }
 
-export function postComments({ text, name, }) {
+export function postComments({ text, name }) {
   const now = new Date();
-  
+
   const createDate = format(now, "dd-MM-yyyy HH:mm:ss");
 
   return fetch(baseURL, {
@@ -114,6 +114,29 @@ export function login({ login, password }) {
     }
     return response.json();
   });
+}
+
+//Авторизоваться
+export function registerNewUser({ login, name, password }) {
+  return fetch(registerURL, {
+    method: "POST",
+    body: JSON.stringify({
+      login,
+      name,
+      password,
+    }),
+  })
+    .then((response) => {
+      if (response.status === 400) {
+        throw new Error("Пользователь существует");
+      }
+      return response.json();
+    })
+    .catch((error) => {
+      if (error.message === "Пользователь существует") {
+        alert("Пользователь с таким логином уже существует");
+      }
+    });
 }
 
 //берем из Api счетчик лайков

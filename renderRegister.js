@@ -1,10 +1,11 @@
 import { renderLogin } from "./renderLogin.js";
-import { getTodo } from "./main.js";
+import { getTodo, setUser } from "./main.js";
+import { registerNewUser } from "./api.js";
 
 export function renderRegister() {
-    const appElement = document.getElementById("login-app");
+  const appElement = document.getElementById("login-app");
 
-    const registerHtml = `
+  const registerHtml = `
     <div class="container">
         <div class="enter-form">
             <h2>Форма регистрации</h2>
@@ -36,12 +37,34 @@ export function renderRegister() {
       </div>
     `;
 
-    appElement.innerHTML = registerHtml;
+  appElement.innerHTML = registerHtml;
 
-   const enterLink = document.getElementById('enter-link');
+  const enterLink = document.getElementById("enter-link");
+  const registerButton = document.getElementById("register-button");
 
-   enterLink.addEventListener('click', () => {
+  registerButton.addEventListener("click", () => {
+    const login = document.getElementById("login-input").value;
+    const name = document.getElementById("user-name-input").value;
+    const password = document.getElementById("password-input").value;
+    
+    if (!name || !login || !password) {
+      alert("Заполнены не все поля")
+    }
+
+    registerNewUser({
+      login: login,
+      name: name,
+      password: password,
+    }).then((user) => {
+      console.log(login);
+      setUser(user.user);
+    })
+    .then(() => {
+      renderLogin({ getTodo });
+    })
+  });
+
+  enterLink.addEventListener("click", () => {
     renderLogin({ getTodo });
-   })
-
+  });
 }
