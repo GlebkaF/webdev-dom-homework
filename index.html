@@ -25,10 +25,6 @@
     .disabled-button {
       background-color: #ffffffbe;
     }
-
-    .disappear {
-      display: none;
-    }
     
 
   </style>
@@ -87,7 +83,7 @@ const postApi = () => {
   const formElement = document.querySelector (".add-form");
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
-  formElement.innerHTML = 'Комментарий загружается';
+  
 
   return fetch("https://wedev-api.sky.pro/api/v1/stas/comments",
   {
@@ -95,25 +91,73 @@ const postApi = () => {
     body: JSON.stringify({
       text: commentInputElement.value,
       name: nameInputElement.value,
-      forceError: false
+      forceError: true
     })
   }).then((response) => {
 
     if (response.status === 400) {
-    return Promise.reject("Имя и текст комментария менее 3 символов");
-    } 
-    
-  }).catch ((error) => {
-      alert("Имя и текст комментария должны содержать хотя бы 3 символа");
-      formElement.classList.add("disappear");
-      formElement.classList.remove("disappear");
-      formElement.innerHTML = addFormHtml;
       
+      let saveName = nameInputElement.value;
+      let saveComment = commentInputElement.value;
+      formElement.innerHTML = `<input
+          id="name-input"
+          type="text"
+          class="add-form-name"
+          placeholder="Введите ваше имя"
+          value = ${saveName}
+        />
+        <textarea
+          id="comment-input"
+          type="textarea"
+          class="add-form-text"
+          placeholder="Введите ваш коментарий"
+          rows="4"
+        >${saveComment}</textarea>
+        <div class="add-form-row">
+          <button id="add-button" class="add-form-button">Написать</button>
+        </div>`;
+        addEventButton();
+        
+        throw new Error("Имя и комментарий должны быть не короче 3 символов");
+    } 
 
+    if (response.status === 500) {
+      let saveName = nameInputElement.value;
+      let saveComment = commentInputElement.value;
+      formElement.innerHTML = `<input
+          id="name-input"
+          type="text"
+          class="add-form-name"
+          placeholder="Введите ваше имя"
+          value=${saveName}
+        />
+        <textarea
+          id="comment-input"
+          type="textarea"
+          class="add-form-text"
+          placeholder="Введите ваш коментарий"
+          rows="4"
+        >${saveComment}</textarea>
+        <div class="add-form-row">
+          <button id="add-button" class="add-form-button">Написать</button>
+        </div>`;
+        addEventButton();
+
+        throw new Error("Сервер сломался, попробуй позже");
+    }
+    
+    formElement.innerHTML = 'Комментарий загружается';
+    getApi();
+    return response
+    
   }).then((response) => {
       return getApi();
       
-  })
+    }).catch ((error) => {
+      
+      alert(error);
+         
+})
 }
 
 // Установка формата даты ДД.ММ.ГГГГ ЧЧ:ММ
