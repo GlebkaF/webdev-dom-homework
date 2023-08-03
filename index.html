@@ -71,6 +71,7 @@
     const commentTextInput = document.querySelector (".add-form-text");
     const addButton = document.querySelector (".add-form-button");
     const commentsBox = document.querySelector (".comments");
+    const newDate = new Date().toLocaleString().slice(0, -3);
     addButton.addEventListener ('click', () => {
       //alert (commentNameInput.value, commentTextInput.value)
       commentsBox.innerHTML += `<li class="comment">
