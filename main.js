@@ -4,9 +4,15 @@ import { likeComment } from "./like.js";
 
 let comments = [];
 
-const fetchComments = () => {
+const loadingMessageTop = document.querySelector('.loading-message-top');
+const loadingMessageBottom = document.querySelector('.loading-message-bottom');
+const addButton = document.querySelector('.add-form-button');
+
+addButton.addEventListener('click', addComment);
+
+const showComments = () => {
     // Show loading message when fetching comments begins
-    const loadingMessageTop = document.querySelector('.loading-message-top');
+
     loadingMessageTop.style.display = 'block';
 
     getComments().then((responseData) => {
@@ -71,7 +77,6 @@ const renderComments = () => {
 };
 
 
-
 const addComment = () => {
     const name = document.querySelector('.add-form-name').value;
     const comment = document.querySelector('.add-form-text').value;
@@ -81,56 +86,50 @@ const addComment = () => {
     }
 
     // Show loading message when adding comment begins
-    const loadingMessageBottom = document.querySelector('.loading-message-bottom');
     loadingMessageBottom.style.display = 'block';
 
-    const addCommentElement = document.querySelector('.add-form');
+    addCommentElement = document.querySelector('.add-form');
     addCommentElement.style.display = 'none';
 
     const newComment = {
         text: comment.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
         name: name.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
-        forceError: true
+        forceError: false
     };
 
     // POST the new comment to the server
-    postComments(newComment).then(() => {
-        return fetch('https://wedev-api.sky.pro/api/v1/adam-batukaev/comments', {
-            method: "GET",
-        });
-    })
-        .then((response) => {
-            console.log(response);
-            return response.json();
-        })
+    postComments(newComment).then(() => getComments())
         .then((responseData) => {
             comments = responseData.comments;
             renderComments();
         })
-        .then(() => {
-            // Clear input
-            document.querySelector('.add-form-name').value = '';
-            document.querySelector('.add-form-text').value = '';
-            // Hide loading message when comments are rendered 
-            loadingMessageBottom.style.display = 'none';
-            addCommentElement.style.display = 'flex';
-        })
-        .catch((error) => {
-            loadingMessageBottom.style.display = 'none';
-            addCommentElement.style.display = 'flex';
-            if (error === "Bad request") {
-                alert('Сообщение не может быть короче трех символов')
-            } else {
-                alert("Проверьте подключение к сети Интернет");
-            }
-
-            //TODO Caught Errors 
-            console.warn(error);
-        });
+        .then(clearFields)
+        .catch(catchErrors)
 };
 
-const addButton = document.querySelector('.add-form-button');
-addButton.addEventListener('click', addComment);
+const catchErrors = (error) => {
+    loadingMessageBottom.style.display = 'none';
+    addCommentElement.style.display = 'flex';
+    if (error === "Bad request") {
+        alert('Сообщение не может быть короче трех символов')
+    } else {
+        alert("Проверьте подключение к сети Интернет");
+    }
+
+    //TODO Caught Errors 
+    console.warn(error);
+}
+
+const clearFields = () => {
+
+    // Clear input
+    document.querySelector('.add-form-name').value = '';
+    document.querySelector('.add-form-text').value = '';
+    // Hide loading message when comments are rendered 
+    loadingMessageBottom.style.display = 'none';
+    addCommentElement.style.display = 'flex';
+
+}
 
 // Fetch initial comments from the server
-fetchComments();
+showComments();
