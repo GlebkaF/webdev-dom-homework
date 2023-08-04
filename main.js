@@ -7,8 +7,8 @@ let comments = [];
 const loadingMessageTop = document.querySelector('.loading-message-top');
 const loadingMessageBottom = document.querySelector('.loading-message-bottom');
 const addButton = document.querySelector('.add-form-button');
+let addCommentElement;
 
-addButton.addEventListener('click', addComment);
 
 const showComments = () => {
     // Show loading message when fetching comments begins
@@ -107,6 +107,8 @@ const addComment = () => {
         .catch(catchErrors)
 };
 
+addButton.addEventListener('click', addComment);
+
 const catchErrors = (error) => {
     loadingMessageBottom.style.display = 'none';
     addCommentElement.style.display = 'flex';
@@ -121,14 +123,12 @@ const catchErrors = (error) => {
 }
 
 const clearFields = () => {
-
     // Clear input
     document.querySelector('.add-form-name').value = '';
     document.querySelector('.add-form-text').value = '';
     // Hide loading message when comments are rendered 
     loadingMessageBottom.style.display = 'none';
     addCommentElement.style.display = 'flex';
-
 }
 
 // Fetch initial comments from the server
