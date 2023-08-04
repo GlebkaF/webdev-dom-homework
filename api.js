@@ -5,11 +5,11 @@ export function getComments() {
         .then((response) => {
             return response.json();
         })
-} 
+}
 
 
 export function postComments(newComment) {
-     return fetch('https://wedev-api.sky.pro/api/v1/adam-batukaev/comments', {
+    return fetch('https://wedev-api.sky.pro/api/v1/adam-batukaev/comments', {
         method: "POST",
         body: JSON.stringify(newComment),
     })

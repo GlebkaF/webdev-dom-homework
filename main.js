@@ -1,5 +1,5 @@
 import { getComments, postComments } from "./api.js";
-import { likeComment } from "./liking.js";
+import { likeComment } from "./like.js";
 
 
 let comments = [];
@@ -94,11 +94,11 @@ const addComment = () => {
     };
 
     // POST the new comment to the server
-    postComments(newComment).then((responseData) => {
-            return fetch('https://wedev-api.sky.pro/api/v1/adam-batukaev/comments', {
-                method: "GET",
-            });
-        })
+    postComments(newComment).then(() => {
+        return fetch('https://wedev-api.sky.pro/api/v1/adam-batukaev/comments', {
+            method: "GET",
+        });
+    })
         .then((response) => {
             console.log(response);
             return response.json();
