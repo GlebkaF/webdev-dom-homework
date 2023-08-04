@@ -62,6 +62,11 @@
       </div>
     </div>
   </body>
+  <style>
+    .error {
+      background-color: red;
+    }
+  </style>
 
   <script>
     "use strict";
@@ -74,6 +79,16 @@
     const newDate = new Date().toLocaleString().slice(0, -3);
     addButton.addEventListener ('click', () => {
       //alert (commentNameInput.value, commentTextInput.value)
+      commentNameInput.classList.remove("error");
+
+      if (commentNameInput.value === "") {
+        commentNameInput.classList.add("error");
+        return;
+      }
+      if (commentTextInput.value === "") {
+        commentTextInput.classList.add("error");
+        return;
+      }
       commentsBox.innerHTML += `<li class="comment">
       <div class="comment-header">
         <div>${commentNameInput.value}</div>
@@ -90,8 +105,9 @@
           <button class="like-button"></button>
         </div>
       </div>
-    </li>
-    `;
+    </li>`;
+    commentNameInput.value = "";
+    commentTextInput.value = "";
 
     })
   </script>
