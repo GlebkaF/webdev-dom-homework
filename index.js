@@ -47,12 +47,21 @@ const getFunction = () => {
     {
       method: 'GET',
     }).then((response) => {
-      return response.json();
+      if (response.status != 200) {
+        throw new Error('error')
+      } else {
+        return response.json();
+      }
     }).then((responseData) => {
       commentators = responseData.comments;
       renderCommentators();
       loader = false;
       formRender();
+    }).catch((error) => {
+      alert('Кажется у Вас пропал интернет');
+      if (error.message === 'error') {
+        alert('Что то пошло не так, обновите страницу')
+      }
     })
 
 }
@@ -180,14 +189,31 @@ function clickEventButton() {
       body: JSON.stringify({
         name: nameInputElement.value,
         text: textInputElement.value,
+        // forceError: true,
       })
     }).then((response) => {
-      return response.json();
+      console.log(response.type);
+      if (response.status === 400) {
+        throw new Error('< 2 sumb')
+      } else if (response.status === 500) {
+        throw new Error('server fall')
+      } else {
+        return response.json();
+      }
     }).then((responseData) => {
       commentators = responseData.comment;
       getFunction();
-
-    });
+    }).catch((error) => {
+      alert('Кажется у Вас пропал интернет');
+      if (error.message === '< 2 sumb') {
+        alert('Вы ввели слишком короткое имя либо комментарий');
+        nameInputElement.classList.add("error");
+        textInputElement.classList.add('error')
+      };
+      if (error.message === 'server fall') {
+        alert('Сервер сломался, попробуй позже')
+      }
+    })
   });
 }
 
