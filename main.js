@@ -126,9 +126,6 @@ function addComment() {
                 alert(error);
                 //todo: Отправлять в систему сбора ошибка
             });
-        // promiseSend();
-        // appPromise();
-        // renderPeople();
     });
 }
 
