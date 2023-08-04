@@ -45,6 +45,7 @@
       comment: 'Это будет первый комментарий на этой странице',
       like: 3,
       isLiked: false,
+      isEdit: true,
     },
     {
       name: 'Варвара Н.',
@@ -52,6 +53,7 @@
       comment: 'Мне нравится как оформлена эта страница! ❤',
       like: 75,
       isLiked: true,
+      isEdit: false,
     },
   ];
 
@@ -84,10 +86,11 @@
             <div> ${comment.date}</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
+            ${comment.isEdit ? `<textarea class='' >${comment.comment}</textarea>` : `<div class="comment-text">
               ${comment.comment}
-            </div>
+            </div>`}
           </div>
+          <button class="add-form-button" data-index="${index}">${comment.isEdit ? 'Сохранить' : 'Редактировать'}</button>
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${comment.like}</span>
