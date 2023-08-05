@@ -7,8 +7,8 @@
   </head>
 
   <body>
-    <div class="container">
-      <ul class="comments">
+    <div class="container" >
+      <ul class="comments" id="list">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -36,7 +36,7 @@
               Мне нравится как оформлена эта страница! ❤
             </div>
           </div>
-          <div class="comment-footer">
+          <div class="comment-footer" >
             <div class="likes">
               <span class="likes-counter">75</span>
               <button class="like-button -active-like"></button>
@@ -49,15 +49,17 @@
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          id="name-input"
         />
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+          id="text-input"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="add-button">Написать</button>
         </div>
       </div>
     </div>
@@ -65,7 +67,64 @@
 
   <script>
     "use strict";
-    // Код писать здесь
+    let day = new Date().toLocaleDateString();
+    let time = new Date().toLocaleTimeString().slice(0,-3);;
+    const buttonElement = document.getElementById("add-button");
+    const listElement = document.getElementById("list");
+    const nameInputElement = document.getElementById("name-input");
+    const textInputElement = document.getElementById("text-input");
+
+    buttonElement.addEventListener("click", () => {
+      if (nameInputElement.value === ""){
+        nameInputElement.classList.toggle('color-error')
+        return;
+      }
+
+      if (textInputElement.value === ""){
+        textInputElement.classList.toggle('color-error')
+        return;
+      }
+      
+    const oldListHtml = listElement.innerHTML;
+    listElement.innerHTML =
+      oldListHtml +
+      `<li class="comment">
+            <div class="comment-header">
+              <div>${nameInputElement.value}</div>
+              <div>${day} ${time}</div>
+            </div>
+            <div class="comment-body">
+              <div class="comment-text">
+                ${textInputElement.value}
+              </div>
+            </div>
+            <div class="comment-footer" >
+              <div class="likes">
+                <span class="likes-counter">0</span>
+                <button class="like-button -active-like"></button>
+              </div>
+            </div>
+          </li>
+    `;
+});
+
     console.log("It works!");
   </script>
 </html>
+
+
+<!-- const buttonElement = document.getElementById("add-button");
+const listElement = document.getElementById("list");
+const nameInputElement = document.getElementById("name-input");
+const colorInputElement = document.getElementById("color-input");
+
+buttonElement.addEventListener("click", () => {
+  const oldListHtml = listElement.innerHTML;
+  listElement.innerHTML =
+    oldListHtml +
+    `<li>
+      ${nameInputElement.value}, любимый цвет <span style="color: ${colorInputElement.value}"> ${colorInputElement.value}</span>
+    </li>`;
+
+  
+}); -->
