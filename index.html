@@ -78,6 +78,61 @@
 
   let fullTime = myDate.getHours() + ":" + minute;
 
+  //        ОБРАБОТЧИК на LIKES,  РЕАЛИЗАЦИЯ ЛАЙКОВ
+
+  const initLikesButtonListeners = () => {
+
+    const buttonElements = document.querySelectorAll(".like-button");
+
+    for (const buttonElement of buttonElements) {
+      buttonElement.addEventListener("click", () => {
+        // индекс номер объекта в массиве, получаем из data-атрибута кнопки на к-ую нажимаем
+        const index = buttonElement.dataset.index;
+        //обращаемся к свойству isLiked объекта, к-ый получили из массивы comments по индексу
+        if (comments[index].isLiked) {
+          comments[index].isLiked = false;
+          comments[index].like--;
+        } else {
+          comments[index].isLiked = true;
+          comments[index].like++;
+        }
+
+        renderComments();
+      })
+    }
+
+  }
+
+
+
+
+  //        РЕДАКТИРОВАНИЕ КОММЕНТАРИЕВ
+
+  const initEditButtonListeners = () => {
+    const buttonEditElements = document.querySelectorAll(".edit-comment");
+
+    for (const buttonEditElement of buttonEditElements) {
+      buttonEditElement.addEventListener("click", () => {
+
+        const index = buttonEditElement.dataset.index;
+        const textarea = document.querySelectorAll(".edit-text");
+
+
+        if (comments[index].isEdit) {
+          comments[index].isEdit = false;
+          comments[index].text = textarea[index].value;
+
+          renderComments()
+        } else {
+          comments[index].isEdit = true;
+        }
+
+        renderComments();
+      })
+    }
+  }
+
+
   // HOMEWORK 2.10
 
   //        ФОРМИРОВАНИЕ НОВОГО СПИСКА КОММЕНТОВ
@@ -109,7 +164,7 @@
           <div>${comment.date}</div>
         </div>
         <div class="comment-body">
-          ${comment.isEdit ? `<textarea class="edit-text">${comment.text}</textarea>` : `<div class="comment-text">
+          ${comment.isEdit ? `<textarea class="edit-text" data-index="${index}">${comment.text}</textarea>` : `<div class="comment-text">
             ${comment.text}
           </div>`}
         </div>
@@ -126,64 +181,15 @@
     }).join(' ');
 
     listElement.innerHTML = commentsHtml;
+
+    initLikesButtonListeners();
+    initEditButtonListeners();
   }
 
-
-  //        ОБРАБОТЧИК на LIKES,  РЕАЛИЗАЦИЯ ЛАЙКОВ
-
-  const initLikesButtonListeners = () => {
-
-    const buttonElements = document.querySelectorAll(".like-button");
-
-    for (const buttonElement of buttonElements) {
-      buttonElement.addEventListener("click", () => {
-        // индекс номер объекта в массиве, получаем из data-атрибута кнопки на к-ую нажимаем
-        const index = buttonElement.dataset.index;
-        //обращаемся к свойству isLiked объекта, к-ый получили из массивы comments по индексу
-        if (comments[index].isLiked) {
-          comments[index].isLiked = false;
-          comments[index].like--;
-        } else {
-          comments[index].isLiked = true;
-          comments[index].like++;
-        }
-
-        renderComments();
-      })
-    }
-
-  }
 
   renderComments();
   // initEventListeners();
   initLikesButtonListeners();
-
-
-  //        РЕДАКТИРОВАНИЕ КОММЕНТАРИЕВ
-
-
-  const initEditButtonListeners = () => {
-    const buttonEditElements = document.querySelectorAll(".edit-comment");
-
-    for (const buttonEditElement of buttonEditElements) {
-      buttonEditElement.addEventListener("click", () => {
-
-        const index = buttonEditElement.dataset.index;
-
-        if (comments[index].isEdit) {
-          comments[index].isEdit = false;
-          // comments.push(comments[text]);
-        } else {
-          comments[index].isEdit = true;
-
-        }
-
-        renderComments();
-      })
-    }
-  }
-
-
   initEditButtonListeners();
 
 
