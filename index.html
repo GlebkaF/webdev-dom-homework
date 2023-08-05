@@ -85,7 +85,9 @@
     const buttonElements = document.querySelectorAll(".like-button");
 
     for (const buttonElement of buttonElements) {
-      buttonElement.addEventListener("click", () => {
+      buttonElement.addEventListener("click", (event) => {
+        event.stopPropagation();
+
         // индекс номер объекта в массиве, получаем из data-атрибута кнопки на к-ую нажимаем
         const index = buttonElement.dataset.index;
         //обращаемся к свойству isLiked объекта, к-ый получили из массивы comments по индексу
@@ -112,7 +114,8 @@
     const buttonEditElements = document.querySelectorAll(".edit-comment");
 
     for (const buttonEditElement of buttonEditElements) {
-      buttonEditElement.addEventListener("click", () => {
+      buttonEditElement.addEventListener("click", (event) => {
+        event.stopPropagation();
 
         const index = buttonEditElement.dataset.index;
         const textarea = document.querySelectorAll(".edit-text");
@@ -144,7 +147,7 @@
       text: "Это будет первый комментарий на этой странице",
       like: "3",
       isLiked: false,
-      isEdit: true
+      isEdit: false
     },
     {
       name: "Варвара Н.",
@@ -157,14 +160,14 @@
   ];
 
   const renderComments = () => {
-    const commentsHtml = comments.map((comment, index) => {
-      return `<li class="comment" id="comment-full" >
+        const commentsHtml = comments.map((comment, index) => {
+            return `<li class="comment" id="comment-full" data-text="${comment.text}" data-name="${comment.name}">
         <div class="comment-header">
           <div> ${comment.name} </div>
           <div>${comment.date}</div>
         </div>
         <div class="comment-body">
-          ${comment.isEdit ? `<textarea class="edit-text" data-index="${index}">${comment.text}</textarea>` : `<div class="comment-text">
+          ${comment.isEdit ? `<textarea class="edit-text">${comment.text}</textarea>` : `<div class="comment-text">
             ${comment.text}
           </div>`}
         </div>
@@ -178,9 +181,35 @@
         <button class="add-form-button edit-comment" data-index="${index}">${comment.isEdit ? 'Сохранить' : 'Редактировать'} </button>
       </div>
       </li>`
-    }).join(' ');
+        }).join(' ');
 
     listElement.innerHTML = commentsHtml;
+
+    //  Homework 2.11
+
+    //        Ответы на комменты
+
+    const answerElements = document.querySelectorAll(".comment");
+
+
+    for (const answerElement of answerElements) {
+      answerElement.addEventListener('click', () => {
+
+        const text = answerElement.dataset.text;
+        const name = answerElement.dataset.name;
+
+        // когда нажимаю = &{comment.text} должен появляться в commentInputElement (тексте добавления комментариев)
+        // commentInputElement.value = `> ${text} \n ${name}, `;
+
+
+        commentInputElement.value = `BEGIN_QUOTE ${text} ${name} QUOTE_END`;
+        commentInputElement.value.replaceAll("BEGIN_QUOTE", `<div class='quote'>`)
+          .replaceAll("QUOTE_END", `<div class='quote'>`);
+
+        renderComments();
+      })
+
+    }
 
     initLikesButtonListeners();
     initEditButtonListeners();
