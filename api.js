@@ -5,7 +5,6 @@ export function getFetch() {
     throw new Error(`Кажется, у вас сломался интернет, попробуйте позже...`);
   });
 }
-
 export function postFetch() {
   const addFormButtonIdNew = document.getElementById(
     `add-form-buttonListIdNew`
@@ -25,7 +24,6 @@ export function postFetch() {
     throw new Error(`Кажется, у вас сломался интернет, попробуйте позже...`);
   });
 }
-
 export function postFetchFirst() {
   //const addFormButtonIdNew = document.getElementById(`add-form-buttonListIdNew`);
   const listButton = document.getElementById(`add-form-buttonListId`);

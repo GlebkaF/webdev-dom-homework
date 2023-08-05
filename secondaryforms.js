@@ -3,9 +3,8 @@ export function startLoader() {
   const firstLoader = document.getElementById(`first-LoadText`);
   firstLoader.classList.add("firstLoader");
 }
-// создание html формы комментариев на основе массива
-// renderComments и renderAddComment
-
+//создание html формы комментариев на основе массива
+//renderComments и renderAddComment
 //Создание поля "загрузка"
 export function renderLoader() {
   const commentForm = document.getElementById(`add-formListId`);
@@ -44,7 +43,6 @@ export function commentReplyNew(comments, commentText) {
     });
   }
 }
-
 // ответ на комментарий до создания поля "загрузка"
 export function commentReply(comments, commentText) {
   const commentBlock = document.querySelectorAll(`.comment`);

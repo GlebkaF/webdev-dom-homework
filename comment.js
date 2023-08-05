@@ -6,7 +6,6 @@ import { commentReplyNew } from "./secondaryforms.js";
 import { commentReply } from "./secondaryforms.js";
 import { postFetchFirst } from "./api.js";
 import { firstLaunchFetchFunction } from "./main.js";
-
 //создание блоков комментариев по содержимому массива
 export function renderComments(comments, commentText) {
   const list = document.getElementById("commentsListId");
@@ -18,8 +17,7 @@ export function renderComments(comments, commentText) {
               <div>${i.date}</div>
               
             </div>
-           
-            <div class="comment-body">
+              <div class="comment-body">
               <div class="comment-text">
                 ${i.text}
               </div>
@@ -41,7 +39,6 @@ export function renderComments(comments, commentText) {
   commentReply(comments, commentText);
   initLikeButton(comments);
 }
-
 //простановка лайков
 function initLikeButton(comments, commentText) {
   const button = document.querySelectorAll(`.like-button`);
@@ -49,10 +46,8 @@ function initLikeButton(comments, commentText) {
   for (const likeButton of button) {
     likeButton.addEventListener(`click`, (event) => {
       // из массива обЪектов-коммертариев делаем объект из содержимого одного комментария
-
       event.stopPropagation();
       const comment = comments[likeButton.dataset.index]; //комментарий выбираем по dataset.index из html
-
       let a = comment.likes;
       if (comment.isLiked === false) {
         comment.isLiked = true;
@@ -62,7 +57,6 @@ function initLikeButton(comments, commentText) {
       } else if (comment.isLiked === true) {
         comment.isLiked = false;
         comment.likes = a - 1;
-
         comments.isLiked = comment.isLiked;
         comments.likes = comment.like;
       }
@@ -100,10 +94,8 @@ export function renderAddComment(comments, commentText) {
   const addFormButtonIdNew = document.getElementById(
     `add-form-buttonListIdNew`
   );
-
   // Подключение события клик к новой форме (пересозданной после создания лоадера) ввода комментария
-
-  addFormButtonIdNew.addEventListener(`click`, () => {
+    addFormButtonIdNew.addEventListener(`click`, () => {
     //const oldButton = listButton.innerHTML;
     commentNameNew.classList.remove("error");
     commentTextNew.classList.remove("error");
@@ -117,12 +109,10 @@ export function renderAddComment(comments, commentText) {
       commentTextNew.classList.add("error");
       return;
     }
-
     // добавление комментария в массив
     // добавлять комментарий из хранилища данных
     let isLoading = true;
     addFormButtonIdNew.disabled = true;
-
     postFetch()
       .then((response) => {
         console.log(response.status);
@@ -169,7 +159,6 @@ export function addComment(comments, commentText) {
   const list = document.getElementById("commentsListId");
   const listButton = document.getElementById(`add-form-buttonListId`);
   //const commentForm = document.getElementById(`add-formListId`);
-
   listButton.addEventListener(`click`, () => {
     const oldButton = listButton.innerHTML;
     commentName.classList.remove("error");
@@ -184,10 +173,8 @@ export function addComment(comments, commentText) {
     }
     let isLoading = true;
     listButton.disabled = true;
-
     //Добавление комментариев в хранилище данных самый первый раз после загрузки страницы
     //Цепочка промисов начало
-
     postFetchFirst()
       .then((response) => {
         if (response.status === 400) {

@@ -1,31 +1,18 @@
 //"use strict";
-
 import { getFetch } from "./api.js";
 import { postFetch } from "./api.js";
 import { postFetchFirst } from "./api.js";
 import { renderLoader } from "./secondaryforms.js";
 import { commentReplyNew } from "./secondaryforms.js";
-import { commentReply } from "./secondaryforms.js";
 import { startLoader } from "./secondaryforms.js";
 import { renderComments } from "./comment.js";
-// import { initLikeButton } from "./comment.js";
 import { renderAddComment } from "./comment.js";
 import { addComment } from "./comment.js";
 let comments = []; // создание массива для комментариев
-const firstLoader = document.getElementById(`first-LoadText`);
 const commentForm = document.getElementById(`add-formListId`);
-const list = document.getElementById("commentsListId");
 const listButton = document.getElementById(`add-form-buttonListId`);
 const commentText = document.getElementById(`commentText`);
-const commentName = document.getElementById(`commentName`);
 let currentDate = new Date();
-const commentLists = document.querySelectorAll(`.comments`);
-const likeButtonPush = document.querySelectorAll(`.comment-footer`);
-const buttonOfLikes = document.querySelectorAll(`.likes`);
-const button = document.querySelectorAll(`.like-button`);
-const commentBlock = document.querySelectorAll(`.comment`);
-const commentBlockNew = document.querySelectorAll(`.comment`);
-
 // Загрузка комментариев по API сервера в массив
 function dataGet() {
   getFetch()
@@ -44,12 +31,9 @@ function dataGet() {
     });
 }
 dataGet();
-
 //создание блоков комментариев по содержимому массива - comments.js
 renderComments(comments, commentText);
-
 //  простановка лайков - comments.js
-
 // Ввод с клавиатуры
 function keyPush() {
   commentForm.addEventListener(`keyup`, (event) => {
@@ -58,10 +42,8 @@ function keyPush() {
     }
   });
 }
-
 addComment(comments, commentText); //вызываем функцию, проводит добавление по клику "написать" комментария в массив самый первый раз после обновления страницы
 commentReplyNew(comments, commentText);
-
 //fetch1
 export function fetchFunction() {
   const addFormButtonIdNew = document.getElementById(
@@ -125,7 +107,6 @@ export function firstLaunchFetchFunction() {
     .then((responseData) => {
       console.log(responseData);
       comments = responseData.comments;
-
       console.log(comments);
       renderAddComment(comments, commentText);
       renderComments(comments, commentText);
@@ -135,6 +116,5 @@ export function firstLaunchFetchFunction() {
       //alert(`${error}`)
     });
 }
-
 // Код писать здесь
 console.log("It works!");
