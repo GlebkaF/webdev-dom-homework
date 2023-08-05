@@ -18,6 +18,7 @@
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
+        
         <textarea
           id = "inputGetComment"
           type="textarea"
@@ -26,7 +27,6 @@
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button id = "buttonDeleteLast" class="add-form-button">Удалить</button>
           <button id = "buttonSend" class="add-form-button">Написать</button>
         </div>
       </div>
@@ -53,25 +53,62 @@
     const getName = document.getElementById("inputGetName");
     const getComment = document.getElementById("inputGetComment");
 
-    const user = [
-          {
-            name: "Глеб Фокин",
-            date: "12.02.22 12:18",
-            comment: "Это будет первый комментарий на этой странице",
-            cost: "3",
-            isLikeActive: false,
-            like: ''
-          },
-          {
-            name: "Варвара Н.",
-            date: "13.02.22 19:22",
-            comment: "Мне нравится как оформлена эта страница! ❤",
-            cost: "75",
-            isLikeActive: true,
-            like: '-active-like'
-          }
-        ];
 
+    
+  /* ------------------------------------------------------------------
+  *
+                                getListComponent
+  *
+  __________________________________________________________________ */
+  function getListComponent() {
+
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/illia-hryn/comments", {
+        method: "GET",
+
+    })
+
+
+    fetchPromise.then((response) => {
+
+        response.json().then((responseData) => {
+
+          const appComment = responseData.comments.map((comment) => {
+
+            function sTime() {
+
+                let specialTime = new Date(comment.date);
+
+                let day = specialTime.getDate() % 100;
+                if (day < 10) day = '0' + day;
+                let Month = specialTime.getMonth() % 100;
+                if (Month < 10) Month = '0' + (1 + Month);
+                let Hours = specialTime.getHours() % 100;
+                if (Hours < 10) Hours = '0' + Hours;
+                let Minutes = specialTime.getMinutes() % 100;
+                if (Minutes < 10) Minutes = '0' + Minutes;
+
+                return fullDates = day + '.' + Month + '.' + specialTime.getFullYear() + ' ' + Hours + ':' + Minutes;
+            }
+
+
+            return {
+                name: comment.author.name,
+                date: sTime(comment.date),
+                text: comment.text,
+                likes: comment.likes,
+                isLiked: false,
+            }
+          })
+            console.log(responseData)
+            user = appComment;
+            render();
+        });
+    }); 
+  }
+
+  getListComponent();
+
+  let user = [];
 /* ------------------------------------------------------------------
 
                                  button event
@@ -84,14 +121,16 @@ const handerLike = () => {
 
     for (const el of btn) {
 
-        el.addEventListener('click', () => {
+        el.addEventListener('click', (event) => {
 
+            event.stopPropagation();
+            
             const index = el.dataset.index;
 
-            if (user[index].isLikeActive === false) {
-              ++user[index].cost, user[index].isLikeActive = true, user[index].like = '-active-like'
+            if (user[index].isLiked === false) {
+              ++user[index].likes, user[index].isLiked = true, user[index].like = '-active-like'
             } else {
-              --user[index].cost, user[index].isLikeActive = false, user[index].like = ''
+              --user[index].likes, user[index].isLiked = false, user[index].like = ''
             }
               
         render();
@@ -107,19 +146,23 @@ __________________________________________________________________ */
 
 const surfacing = () => {
 
-const comments = document.querySelectorAll(".comment-text");
+const comments = document.querySelectorAll(".comment");
 
   for (const el of comments) {
 
-      el.addEventListener('click', () => {
+      el.addEventListener("click", () => {
 
-      const comment = el.dataset.comment;
-      const userName = el.dataset.name;
+      const comment = el.dataset.text;
+      const commentsName = el.dataset.name;
       getComment.value = `> ${comment}
-${userName},`;
+${commentsName},`;
+      
       })
+
   }
 }
+
+
 /* ------------------------------------------------------------------
 *
                                  RENDER
@@ -128,28 +171,28 @@ __________________________________________________________________ */
 
     const render = () => {
       const result = user.map((el, index) => {
-        return `<li class="comment" data-index="${index}">
+        return `<li class="comment" data-index="${index}" data-comment="${el.text}" data-name="${el.name}">
                   <div class="comment-header">
                     <div>${el.name}</div>
                     <div>${el.date}</div>
                   </div>
                   <div class="comment-body">
-                    <div class="comment-text data-index="${index}" data-comment="${el.comment}" data-name="${el.name}">
-                      ${el.comment}
+                    <div class="comment-text data-index="${index}" data-comment="${el.text}" data-name="${el.name}">
+                      ${el.text}
                     </div>
                   </div>
                   <div class="comment-footer">
                     <div class="likes">
-                      <span data-cost="${el.cost}" class="likes-counter" ${el.like}>${el.cost}</span>
-                      <button data-index="${index}" data-active="${el.isLikeActive}" class="like-button ${el.like}"></button>
+                      <span data-cost="${el.likes}" class="likes-counter" ${el.like}>${el.likes}</span>
+                      <button data-index="${index}" data-active="${el.isLiked}" class="like-button ${el.like}"></button>
                     </div>
                   </div>
                 </li>
               `}).join('');
               
               getListComment.innerHTML = result;
-              surfacing();
               handerLike();
+              surfacing();
     }
 
     render();
@@ -161,14 +204,13 @@ __________________________________________________________________ */
 __________________________________________________________________ */
 
 function myTime() {
+
     let myDate = new Date();
     let year = myDate.getFullYear() % 100;
     if (year < 10) year = '0' + year;
     let fullDate;
     return fullDate = myDate.getDate() + '.' + myDate.getMonth() + '.' + year + ' ' + myDate.getHours() + ':' + myDate.getMinutes();
   }
-
-
 
 /* ------------------------------------------------------------------
 *
@@ -180,15 +222,16 @@ __________________________________________________________________ */
       
         if (getName.value != '' && getComment.value != '') {
           
-          user.push({
-              name: getName.value.replaceAll("<", "&lt").replaceAll(">","&gt"),
-              date: myTime(),
-              comment: getComment.value.replaceAll("<", "&lt").replaceAll(">","&gt"),
-              cost: 0,
-              isLikeActive: false
-          })
-        
-          render();
+          const fetchPost = fetch("https://wedev-api.sky.pro/api/v1/illia-hryn/comments", {
+          method: "POST",
+          body: JSON.stringify({
+              name: getName.value.replaceAll("<", "&lt").replaceAll(">","&gt").replaceAll('"', "&quot;").replaceAll("&", "&amp;"),
+              text: getComment.value.replaceAll("<", "&lt").replaceAll(">","&gt").replaceAll('"', "&quot;").replaceAll("&", "&amp;"),
+              }),
+          });
+          fetchPost.then(getListComponent);
+          getName.value = "",
+          getComment.value = "";
         }
     });
 
@@ -210,24 +253,6 @@ const res = addEventListener("input", () => {
 
   getComment.res;
   getName.res;
-
-/* ------------------------------------------------------------------
-*
-                                  delete
-*
-__________________________________________________________________ */
-
-const delBtn = deleteButton.addEventListener("click", () => {
-          
-      const numbers = getListComment.innerHTML.lastIndexOf('<li class="comment">');
-
-      for (i = 0; i < getListComment.innerHTML.length; i++){}
-
-      const result = i - (i - numbers);
-      const deleteLastComment = getListComment.innerHTML.slice(0, result);
-      getListComment.innerHTML = deleteLastComment;
-    });
-
 
   </script>
 </html>
