@@ -79,19 +79,8 @@ const commentDel = () => {
         })
     })
 }
-const answComment = () => {
-    const comments = document.querySelectorAll('.comment-text');
-    comments.forEach((comment,index) => {
-        comment.addEventListener('click', () => {
-            formBg.classList.add('comment-new-bg');
-            const commentator = commentators[index]
-            const oldComment = commentator.textComment
-            inputText.placeholder = `Введите Ответ Пользователю ${commentator.name}`;
-            textAnswerHtml = oldComment;    
-            indexOld = index;
-        })
-    });
-} 
+
+
 // Функция добавления лайка
 function addLike () {
     Array.from(likeElement).forEach((element,index) => {
@@ -117,13 +106,13 @@ const clickEventEditComment = () => {
     redirectElements.forEach((redirectElement, indexEl) => {
         redirectElement.addEventListener('click', (e) => {
             e.stopPropagation();
-            log(redirectElement.innerHTML); 
+            console.log(redirectElement.innerHTML); 
             const index = redirectElement.dataset.index;
             const comment =  commentators[index];
-            log(comment);
+            console.log(comment);
             if (comment.isEdit) {
                 const edit = document.querySelector('.add-edit');
-                log(edit);
+                console.log(edit);
                 comment.textComment = edit.value;
                 if (comment.textComment.length === 0) {
                     commentators.splice(index,1);
@@ -140,12 +129,12 @@ const clickEventEditComment = () => {
 const getLikeClass = (element) => {
     return element ? "like-button -active-like" : "like-button";
 }
-const renderComments = () => {
+function renderComments () {
     
     const commentatorsHtml = commentators.map((commentator, index) => {
         const edit = commentator.isEdit;
-        return `<li class="comment ${commentator.animationClass}">
-        <i class='bx bx-x del' data-index="${index}"></i>
+        return `<li class="comment ${commentator.animationClass}" data-index="${index}">
+        <i class='bx bx-x del' ></i>
       <div class="comment-header">
         <div>${commentator.name}</div>
         <div>${commentator.data}</div>
@@ -155,7 +144,7 @@ const renderComments = () => {
           ${edit ? `<textarea type="textarea" class="add-form-text add-edit" placeholder="Введите ваш коментарий" rows="4">${commentator.textComment}</textarea>` : `<div class="comment-text">${commentator.textComment}</div>`}
    
       <div class="comment-footer comment-footer_new">
-        ${commentator.isReduction ? `<button  class="add-form-button red" data-index="${index}">Редактировать</button>` : ''}
+        ${commentator.isReduction ? `<button  class="add-form-button red" data-index="${index}" >Редактировать</button>` : ''}
         <div class="likes">
           <span class="likes-counter">${commentator.likeQuantity}</span>
           <button class="${getLikeClass(commentator.LikeActive)}"></button>
@@ -167,18 +156,32 @@ const renderComments = () => {
     commentDel();
     addLike();
     clickEventEditComment();
-    answComment();
+    answerComment();
 }
 
 
 renderComments();
 
+function answerComment() {
+    const oldComments = document.querySelectorAll(".comment");
+    for (let oldComment of oldComments) {
+      oldComment.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const index = oldComment.dataset.index;
+        const comment = commentators[index];
+        inputText.value =`QUOTE_BEGIN ${comment.textComment}\n${comment.name} QUOTE_END`;
+        
+      });
+    }
+  }
 const eventErrors = (element) => {
     return element
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
+        .replaceAll('QUOTE_BEGIN', "")
+        .replaceAll('QUOTE_END', "&quot;")
 }
 // Функция добавления нового комментария
 const clickEventAddComment = () => {
@@ -229,4 +232,4 @@ document.addEventListener('keyup', (key) => {
     }
 })
 btnElement.addEventListener( 'click', () => clickEventAddComment())
-log("It works!");
+console.log("It works!");
