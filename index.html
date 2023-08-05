@@ -6,12 +6,13 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
 
-  <body>
+  <body class="body">
     <div class="container">
       <ul class="comments" id="listComment">
         <!-- generation with js -->
       </ul>
-      <div class="add-form">
+      <li class="hideTestM" id="hideText" style="display: none;"><h2>Подождите, пожалуйста, идет загрузка комментариев...</h2></li>
+      <div class="add-form" id="hideForm" style="display: flex;">
         <input
           id = "inputGetName"
           type="text"
@@ -52,63 +53,69 @@
     const getListComment = document.getElementById("listComment");
     const getName = document.getElementById("inputGetName");
     const getComment = document.getElementById("inputGetComment");
-
-
+    const hideSendForm = document.getElementById("hideForm");
+    const hideTextForm = document.getElementById("hideText");
     
   /* ------------------------------------------------------------------
   *
                                 getListComponent
   *
   __________________________________________________________________ */
+
   function getListComponent() {
 
-    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/illia-hryn/comments", {
-        method: "GET",
+      hideSendForm.style.display = "none";
+      hideTextForm.style.display = "flex";
 
-    })
+      return fetch("https://wedev-api.sky.pro/api/v1/illia-hryn/comments", {
+          method: "GET",
+      })
 
-
-    fetchPromise.then((response) => {
-
-        response.json().then((responseData) => {
+      .then((response) => {
+          return response.json();
+      })
+      .then((responseData) => {
 
           const appComment = responseData.comments.map((comment) => {
 
-            function sTime() {
+          function sTime() {
 
-                let specialTime = new Date(comment.date);
+              let specialTime = new Date(comment.date);
+              let day = specialTime.getDate() % 100;
+              if (day < 10) day = '0' + day;
+              let Month = specialTime.getMonth() % 100;
+              if (Month < 10) Month = '0' + (1 + Month);
+              let Hours = specialTime.getHours() % 100;
+              if (Hours < 10) Hours = '0' + Hours;
+              let Minutes = specialTime.getMinutes() % 100;
+              if (Minutes < 10) Minutes = '0' + Minutes;
 
-                let day = specialTime.getDate() % 100;
-                if (day < 10) day = '0' + day;
-                let Month = specialTime.getMonth() % 100;
-                if (Month < 10) Month = '0' + (1 + Month);
-                let Hours = specialTime.getHours() % 100;
-                if (Hours < 10) Hours = '0' + Hours;
-                let Minutes = specialTime.getMinutes() % 100;
-                if (Minutes < 10) Minutes = '0' + Minutes;
+              return fullDates = day + '.' + Month + '.' + specialTime.getFullYear() + ' ' + Hours + ':' + Minutes;
+          }
 
-                return fullDates = day + '.' + Month + '.' + specialTime.getFullYear() + ' ' + Hours + ':' + Minutes;
-            }
+          return {
 
-
-            return {
-                name: comment.author.name,
-                date: sTime(comment.date),
-                text: comment.text,
-                likes: comment.likes,
-                isLiked: false,
-            }
+                  name: comment.author.name,
+                  date: sTime(comment.date),
+                  text: comment.text,
+                  likes: comment.likes,
+                  isLiked: false,
+              }
           })
-            console.log(responseData)
-            user = appComment;
-            render();
-        });
-    }); 
+          
+          console.log(responseData);
+          user = appComment;
+          render();
+          hideTextForm.style.display = "none";
+          hideSendForm.style.display = "flex";
+      });
+
   }
 
   getListComponent();
 
   let user = [];
+
 /* ------------------------------------------------------------------
 
                                  button event
@@ -171,7 +178,7 @@ __________________________________________________________________ */
 
     const render = () => {
       const result = user.map((el, index) => {
-        return `<li class="comment" data-index="${index}" data-comment="${el.text}" data-name="${el.name}">
+          return `<li class="comment" data-index="${index}" data-comment="${el.text}" data-name="${el.name}">
                   <div class="comment-header">
                     <div>${el.name}</div>
                     <div>${el.date}</div>
@@ -205,11 +212,11 @@ __________________________________________________________________ */
 
 function myTime() {
 
-    let myDate = new Date();
-    let year = myDate.getFullYear() % 100;
-    if (year < 10) year = '0' + year;
-    let fullDate;
-    return fullDate = myDate.getDate() + '.' + myDate.getMonth() + '.' + year + ' ' + myDate.getHours() + ':' + myDate.getMinutes();
+      let myDate = new Date();
+      let year = myDate.getFullYear() % 100;
+      if (year < 10) year = '0' + year;
+      let fullDate;
+      return fullDate = myDate.getDate() + '.' + myDate.getMonth() + '.' + year + ' ' + myDate.getHours() + ':' + myDate.getMinutes();
   }
 
 /* ------------------------------------------------------------------
@@ -219,40 +226,29 @@ function myTime() {
 __________________________________________________________________ */
 
     sendButton.addEventListener("click", () => {
+
+        hideSendForm.style.display = "none";
+        hideTextForm.style.display = "flex";
       
         if (getName.value != '' && getComment.value != '') {
           
-          const fetchPost = fetch("https://wedev-api.sky.pro/api/v1/illia-hryn/comments", {
-          method: "POST",
-          body: JSON.stringify({
-              name: getName.value.replaceAll("<", "&lt").replaceAll(">","&gt").replaceAll('"', "&quot;").replaceAll("&", "&amp;"),
-              text: getComment.value.replaceAll("<", "&lt").replaceAll(">","&gt").replaceAll('"', "&quot;").replaceAll("&", "&amp;"),
-              }),
-          });
-          fetchPost.then(getListComponent);
-          getName.value = "",
-          getComment.value = "";
+            fetch("https://wedev-api.sky.pro/api/v1/illia-hryn/comments", {
+            method: "POST",
+            body: JSON.stringify({
+                name: getName.value.replaceAll("<", "&lt").replaceAll(">","&gt").replaceAll('"', "&quot;").replaceAll("&", "&amp;"),
+                text: getComment.value.replaceAll("<", "&lt").replaceAll(">","&gt").replaceAll('"', "&quot;").replaceAll("&", "&amp;"),
+                }),
+            })
+            .then(() => {
+                return getListComponent();
+            })
+            .then(() => {
+                hideTextForm.style.display = "none";
+                getName.value = "",
+                getComment.value = "";
+                hideSendForm.style.display = "flex";
+            });
         }
     });
-
-/* ------------------------------------------------------------------
-*
-                            check input => grey
-*
-__________________________________________________________________ */
-
-sendButton.classList.add("error")
-
-const res = addEventListener("input", () => {
-  if (getName.value != '' && getComment.value != '') {
-      return sendButton.classList.remove("error");
-  } else {
-      return sendButton.classList.add("error"); 
-  }
-})
-
-  getComment.res;
-  getName.res;
-
   </script>
-</html>
+</html>  
