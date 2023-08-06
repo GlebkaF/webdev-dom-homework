@@ -65,18 +65,20 @@
     date: "12.02.22 12:18",
     text: "Это будет первый комментарий на этой странице",
     like: 3,
-    active: false
+    active: false,
+    isEdit: true
   },
   {
     name: "Варвара Н.",
     date: "13.02.22 19:22",
     text: "Мне нравится как оформлена эта страница! ❤",
     like: 75,
-    active: true
+    active: true,
+    isEdit: false
   }
 ];
 
-const clickLike = (event) => {
+  const clickLike = (event) => {
   const index = event.target.dataset.index;
   const comment = comments[index];
   if(!comment.active) {
@@ -90,6 +92,25 @@ const clickLike = (event) => {
 
 }
 
+const clickEdit = (event) => {
+  const index = event.target.dataset.index;
+  const comment = comments[index];
+  if(!comment.isEdit) {
+    comment.isEdit = true;
+  } else {
+    comment.isEdit = false;
+  }
+  renderComments();
+
+}
+
+const textCommentClick = (event) => {
+  const index = event.target.dataset.text;
+  const comment = comments[index];
+  commentInputElement.value = '>' + comments[index].text + '\n' + '\n' + comments[index].name + ',';
+  renderComments();
+}
+
 const renderComments = () => {
   const commentsHtml = comments.map((comment, index) => {
     if (comment.active === true) {
@@ -101,10 +122,10 @@ const renderComments = () => {
             <div id="comment-data">${comment.date}</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text" id="comment-text">
-              ${comment.text}
-            </div>
+            ${comment.isEdit ? `<textarea class="text-area">${comment.text}</textarea>` : `<div class="comment-text" id="comment-text" data-text=${index}>
+              ${comment.text}</div>`}
           </div>
+          <button class="add-form-button" data-index="${index}"">${comment.isEdit ? 'Сохранить' : 'Редактировать'}</button>
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter" id="like-text" value="">${comment.like}</span>
@@ -119,6 +140,17 @@ const renderComments = () => {
     buttonLikes.forEach((button) => {
       button.addEventListener('click', clickLike);
     })
+
+    const commentElements = document.querySelectorAll('.comment-text');
+    commentElements.forEach((button) => {
+      button.addEventListener('click', textCommentClick)
+    })
+
+    const buttonEdit = document.querySelectorAll('.add-form-button');
+    buttonEdit.forEach((button) => {
+      button.addEventListener('click', clickEdit);
+    })
+
   }
 
   renderComments();
@@ -142,11 +174,13 @@ const getElement = () => {
       }
 
     comments.push({
-    name: nameInputElement.value,
+    name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
     date: getCurrentDate(),
-    text: commentInputElement.value,
+    text: commentInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
     like: 0,
     })
+
+  
 
   nameInputElement.value = '';
   commentInputElement.value = '';
@@ -156,6 +190,8 @@ const getElement = () => {
   renderComments();
     
 }
+
+
 
 buttonElement.addEventListener('click', () => {
   getElement();
