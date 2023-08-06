@@ -25,11 +25,15 @@
 </body>
 <script>
   "use strict";
+  const form = document.querySelector('.add-form');
   const nameInputElement = document.querySelector('.add-form-name');
   const textInputElement = document.querySelector('.add-form-text');
   const buttonElement = document.querySelector('.add-form-button');
   const commentsElement = document.querySelector('.comments');
   const buttonElementDel = document.querySelector('.delete-form-button');
+  const arrayInputs = [nameInputElement, textInputElement];
+
+  
 
 
   const comments = [
@@ -83,16 +87,15 @@
 
     const commentsHtml = comments.map((comment, index) => {   
 
-    return `<li class="comment">
+    return `<li class="comment" data-text="${comment.textComment} - ${comment.name}">
           <div class="comment-header">
-            <div>${comment.name}</div>
-            <div>${comment.dateСreation}</div>
+            <div>${comment.name}
+            </div>
+            <div class="date">${comment.dateСreation}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${comment.textComment}
-            </div>
-          </div>
+              ${comment.textComment}</div></div>
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter"> ${comment.likesNumber}</span>
@@ -103,12 +106,14 @@
         </li>`;
     }).join("");
 
-
     commentsElement.innerHTML = commentsHtml;
+
     getLikeButton();
   };
 
+
   renderComments();
+  
 
 
 
@@ -138,6 +143,18 @@
 
     buttonElement.setAttribute('disabled', true);
 
+
+
+
+
+
+ 
+
+
+
+
+
+
 // комментарий вводимый пользователем добавляем в массив
     comments.push({
       name: nameInputElement.value,
@@ -149,11 +166,73 @@
 
     });
     renderComments();
+    replyComment();
+    
     nameInputElement.value = "";
     textInputElement.value = "";
 
 
+
+
   });
+
+
+    //Ответы на комментарии
+  const replyComment = () => {
+    const userCommentElements = document.querySelectorAll(".comment");
+    
+  for ( const userCommentElement of userCommentElements) {
+   userCommentElement.addEventListener("click", () => {
+    textInputElement.value=userCommentElement.dataset.text;
+  })
+}};
+
+replyComment();
+
+
+
+// Отключение сработки даты и лайка
+
+const date = document.querySelector(".date");
+const likes = document.querySelector(".likes");
+date.addEventListener("click", (event) => {
+event.stopPropagation();
+});
+likes.addEventListener("click", (event) => {
+event.stopPropagation();
+});
+
+
+
+
+
+
+
+
+
+
+// Функция обработки при нажатии на кнопку "написать"
+const handleFormSubmission = () => {
+  const inputValue = nameInputElement.value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;');
+  const areaFormValue = textInputElement.value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+  inputValue === '' || areaFormValue === ''
+};
+
+// Вешаем обработчик событий на кнопку add comment
+buttonElement.addEventListener('click', handleFormSubmission);
+
+
+
+
+
 
 
 
@@ -184,5 +263,11 @@
   });
 
   console.log("It works!");
+
+
 </script>
 </html>
+
+
+
+
