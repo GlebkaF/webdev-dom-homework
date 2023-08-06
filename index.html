@@ -9,40 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+
       </ul>
       <div class="add-form">
         <input
@@ -59,7 +26,6 @@
         <div class="add-form-row">
           <button class="add-form-button">Написать</button>
         </div>
-        <button class="remove-form-button">Удалить</button>
       </div>
     </div>
   </body>
@@ -81,9 +47,12 @@ const boxMessages = document.querySelector('.comments');
 const button = document.querySelector('.add-form-button');
 const del = document.querySelectorAll('ul > li');
 const date = new Date();
-console.log(del.innerHTML);
 button.disabled = true;
 button.classList.add('unactive');
+// const UlComments = document.getElementById('comments')
+// console.log(UlComments);
+
+//console.log(boxMessages);
 
 text.addEventListener("input", () => {
   button.disabled = false;
@@ -105,6 +74,113 @@ if (e.keyCode === 13) {
   return;
 }
 }
+
+
+
+const comments = [
+  {
+    name: 'Глеб Фокин',
+    text: 'Это будет первый комментарий на этой странице ',
+    time: '12.02.22 12:18',
+    like: 3,
+    isLiked: false,
+    isEdit: false,
+  },
+  {
+    name: 'Варвара Н.',
+    text: 'Мне нравится как оформлена эта страница! ❤',
+    time: '13.02.22 19:22',
+    like: 75,
+    isLiked: true,
+    isEdit: false,
+  },
+  
+];
+
+
+
+
+const likedFunction = () => {
+  const likeButtons = document.querySelectorAll('.like-button');
+  // console.log(likeButtons);
+  for (const likeButton of likeButtons) {
+    likeButton.addEventListener('click', () => {
+      const index = likeButton.dataset.index
+      //console.log();
+      if (comments[index].isLiked === true) {
+        comments[index].like--;
+        comments[index].isLiked = false;
+      } else if(comments[index].isLiked === false) {
+        comments[index].like++;
+        comments[index].isLiked = true;
+      }
+      renderFunction();
+    })
+    
+  }
+}
+const editText = () => {
+  const newTexts = document.querySelectorAll('.edit-text');
+  for (const newText of newTexts) {
+    const index = newText.dataset.index;
+    console.log(newText.value);
+  }
+
+}
+
+const editButton = () => {
+
+  const editButtons = document.querySelectorAll('.edit-button');
+
+  for (const editButton of editButtons) {
+editButton.addEventListener('click', () => {
+  const index = editButton.dataset.index; 
+  //console.log(comments[edit].isEdit);
+    if (comments[index].isEdit === true) {
+      comments[index].text = 'Как обратиться к полю редактирования.';
+      comments[index].isEdit = false;
+    } else if (comments[index].isEdit === false) {
+      comments[index].isEdit = true;
+      //console.log(comments[index].isEdit);
+    }
+    renderFunction();
+
+})
+  }
+}
+
+
+const renderFunction = () => {
+  const commtentsHtml = comments
+  .map((comment, index, edit) => {
+    return `<li class="comment">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.time}</div>
+          </div>
+          <div class="comment-body">
+            ${comment.isEdit? `<textarea data-index="${index}" class="edit-text">${comment.text}</textarea>` : `<div class="comment-text">${comment.text}</div>`}
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.like}</span>
+              <button data-index="${index}" class="${comment.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
+            </div>
+            
+          </div>
+          <button data-index="${index}" class="edit-button">${comment.isEdit? 'Сохранить' : 'Редактировать'}</button>
+        </li>`
+  }
+
+  ).join("");
+  boxMessages.innerHTML = commtentsHtml;
+  likedFunction();
+  editButton();
+};
+renderFunction();
+
+
+
 
 
 function formatDate(date) {
@@ -161,28 +237,21 @@ function addCommentare() {
   button.disabled = true;
   button.classList.add('unactive');
 
-  const box = boxMessages.innerHTML;
-  console.log(box)
-  boxMessages.innerHTML = box + `<li class="comment">
-          <div class="comment-header">
-            <div>${name.value}</div>
-            <div>${formatDate(date)}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${text.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`
+comments.push({
+    name: name.value,
+    text: text.value,
+    time: formatDate(date),
+    like: 0,
+    isLiked: false,
+    isEdit: false,
+});
+
   name.value = '';
   text.value = '';
+
+  renderFunction();
 }
+
 
 
 
