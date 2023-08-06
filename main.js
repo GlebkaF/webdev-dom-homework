@@ -1,13 +1,12 @@
-        "use strict";
-  // Загрузка
-  let loader = false;
-  const addForm = document.querySelector(".add-form")
-  const formRender = () => {
-    if (loader) {
-      addForm.innerHTML = "<p>Загрузка...</p>"
-      
-    } else {
-      addForm.innerHTML = `<input
+import { getComments, postComment } from "./api.js";
+
+const buttonElement = document.getElementById("add-button");
+const nameInputElement = document.getElementById("name-input");
+const commentInputElement = document.getElementById("comment-input");
+const buttonLike = document.getElementById("like");
+const commentsElement = document.getElementById ("comments");
+const formElement = document.querySelector (".add-form");
+const addFormHtml = `<input
           id="name-input"
           type="text"
           class="add-form-name"
@@ -22,73 +21,45 @@
         ></textarea>
         <div class="add-form-row">
           <button id="add-button" class="add-form-button">Написать</button>
-        </div>`
-        addEventButton();
-    }
-  }
-  formRender();
-
-  
-  const buttonLike = document.getElementById("like");
-  const commentsElement = document.getElementById ("comments");
+        </div>`;
 
   let users = [];
 
+// Загрузка
+  formElement.innerHTML = 'Комметарии загружаются...';
+
 // Получение данных из API
-const getApi = () => {
-  loader = true;
-  formRender();
-const fetchPromiseGet = fetch("https://wedev-api.sky.pro/api/v1/stas/comments",
-  {
-    method: "GET",
-  }).then((response) => {
-    return response.json();
-  })
-    .then((responseData) => {
+  const getApi = () => {
+    const formElement = document.querySelector (".add-form");
+    
+    getComments().then((responseData) => {
       users = responseData.comments;
+      formElement.innerHTML = addFormHtml;
       renderUsers();
-      loader = false;
-      formRender();
+      addEventButton();
   })
-  
-  return fetchPromiseGet;
-}
-getApi();
-
-const postApi = (nameInputElement, commentInputElement) => {
-  
-  const fetchPromisePost = fetch("https://wedev-api.sky.pro/api/v1/stas/comments",
-  {
-    method: "POST",
-    body: JSON.stringify({
-      text: commentInputElement.value,
-      name: nameInputElement.value
-    })
-  }).then(() => {
-    getApi()
-  })
-  
-  
-  return fetchPromisePost;
 }
 
-// Массив данных
-// const users = [
-//   {
-//     name: "Глеб Фокин",
-//     date: "12.02.22 12:18",
-//     text: "Это будет первый комментарий на этой странице",
-//     likes: 3,
-//     isLiked: false
-//   },
-//   {
-//     name: "Варвара Н.",
-//     date: "13.02.22 19:22",
-//     text: "Мне нравится как оформлена эта страница! ❤",
-//     likes: 75,
-//     isLiked: true
-//   }
-// ];
+const postApi = () => {
+
+  const formElement = document.querySelector (".add-form");
+  const nameInputElement = document.getElementById("name-input");
+  const commentInputElement = document.getElementById("comment-input");
+
+
+  postComment({ 
+    text: commentInputElement.value,
+    name: nameInputElement.value
+    
+  }).then((response) => {
+      return getApi();
+
+    }).catch ((error) => {
+
+      alert(error);
+
+})
+}
 
 // Установка формата даты ДД.ММ.ГГГГ ЧЧ:ММ
 const date = function (date) {
@@ -147,7 +118,8 @@ const commentAnswers = document.querySelectorAll('.comment');
 commentAnswers.forEach((textElement, index) => {
   textElement.addEventListener('click', (event) => {
     let textValue = textElement.textContent;
-    return commentInputElement.value = `${users[index].text} ${users[index].author.name}`;
+    const commentInputElement = document.getElementById("comment-input");
+    return commentInputElement.value = `${users[index].text} ${users[index].author.name}, `;
   });
 });
 };
@@ -156,7 +128,6 @@ commentAnswers.forEach((textElement, index) => {
 const renderUsers = () => {
   const userHtml = users.map((user, index) => {
     return `<li id="last-element" class="comment">
-
     <div class="comment-header">
         <div>${user.author.name}</div>
         <div>${date(user.date)}</div>
@@ -199,21 +170,8 @@ function addEventButton () {
     buttonElement.classList.remove("disabled-button");
   }
 
-// Добавляем новый комментарий
-  // users.push({
-  //   name: nameInputElement.value
-  //   .replaceAll("<", "&lt;")
-  //   .replaceAll(">", "&gt;"),
-  //   date: date(),
-  //   text: commentInputElement.value
-  //   .replaceAll("<", "&lt;")
-  //   .replaceAll(">", "&gt;"),
-  //   likes: 0
-  // })
-  postApi(nameInputElement, commentInputElement);
-  renderUsers();
-  
+  postApi();
 });
 }
-
+getApi();
 console.log("It works!");
