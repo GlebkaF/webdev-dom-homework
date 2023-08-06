@@ -60,19 +60,21 @@ const btnErrAdd = () => {
 }
 const getDelCard = (element) => {
     setTimeout(() => {
-        element.closest('.like-button').classList.add('del-card');
+        element.classList.add('del-card');
     }, 300)
     element.classList.remove('del');
     element.classList.add('exet-del');
 }
 const commentDel = () => {
     const btnFormElement = document.querySelectorAll(".del");
+    // console.log(btnFormElement);
     btnFormElement.forEach((element) => {
         element.addEventListener('click', (e) => {
             e.stopPropagation();
             getDelCard(element);
             setTimeout(() => {
                 const indexElement = element.dataset.index;
+                console.log(indexElement)
                 commentators.splice(indexElement, 1);
                 renderComments()
             },800)
@@ -134,8 +136,8 @@ function renderComments () {
     const commentatorsHtml = commentators.map((commentator, index) => {
         const edit = commentator.isEdit;
         return `<li class="comment ${commentator.animationClass}" data-index="${index}">
-        <i class='bx bx-x del' ></i>
-      <div class="comment-header">
+        <i class='bx bx-x del ' data-index="${index}" ></i>
+      <div class="comment-header" >
         <div>${commentator.name}</div>
         <div>${commentator.data}</div>
       </div>
@@ -162,18 +164,6 @@ function renderComments () {
 
 renderComments();
 
-function answerComment() {
-    const oldComments = document.querySelectorAll(".comment");
-    for (let oldComment of oldComments) {
-      oldComment.addEventListener("click", (event) => {
-        event.stopPropagation();
-        const index = oldComment.dataset.index;
-        const comment = commentators[index];
-        inputText.value =`QUOTE_BEGIN ${comment.textComment}\n${comment.name} QUOTE_END`;
-        
-      });
-    }
-  }
 const eventErrors = (element) => {
     return element
         .replaceAll("&", "&amp;")
@@ -181,8 +171,24 @@ const eventErrors = (element) => {
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll('QUOTE_BEGIN', "")
-        .replaceAll('QUOTE_END', "&quot;")
-}
+        .replaceAll('QUOTE_END', "")
+} 
+
+function answerComment() {
+    const oldComments = document.querySelectorAll(".comment");
+    for (let oldComment of oldComments) {
+      oldComment.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const index = oldComment.dataset.index;
+        const comment = commentators[index];
+        // eventErrors(comment);
+        console.log(comment);
+        inputText.value =` ${comment.textComment}\n${comment.name} `;
+      });
+    }
+  }
+  
+      
 // Функция добавления нового комментария
 const clickEventAddComment = () => {
     inputText.classList.remove("error");
