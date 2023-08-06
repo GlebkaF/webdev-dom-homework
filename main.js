@@ -1,10 +1,11 @@
 import { getComments, postComment } from "./api.js";
+import { renderUsers } from "./render.js";
 
 const buttonElement = document.getElementById("add-button");
 const nameInputElement = document.getElementById("name-input");
 const commentInputElement = document.getElementById("comment-input");
 const buttonLike = document.getElementById("like");
-const commentsElement = document.getElementById ("comments");
+
 const formElement = document.querySelector (".add-form");
 const addFormHtml = `<input
           id="name-input"
@@ -31,18 +32,18 @@ const addFormHtml = `<input
 // Получение данных из API
   const getApi = () => {
     const formElement = document.querySelector (".add-form");
+    const commentsElement = document.getElementById ("comments");
     
     getComments().then((responseData) => {
       users = responseData.comments;
       formElement.innerHTML = addFormHtml;
-      renderUsers();
+      renderUsers({ addLike, answer, commentsElement });
       addEventButton();
   })
 }
 
 const postApi = () => {
 
-  const formElement = document.querySelector (".add-form");
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
 
@@ -50,9 +51,6 @@ const postApi = () => {
   postComment({ 
     text: commentInputElement.value,
     name: nameInputElement.value
-    
-  }).then((response) => {
-      return getApi();
 
     }).catch ((error) => {
 
@@ -69,7 +67,7 @@ let commentDate = new Date(date);
   let currentDate = commentDate.getDate() + "." + months[commentDate.getMonth()] + "." + commentDate.getFullYear();
   let hour = commentDate.getHours();
   let minute = commentDate.getMinutes();
-  let second = commentDate.getSeconds();
+
     if (minute < 10) {
       minute = "0" + minute;
     }
@@ -95,6 +93,7 @@ const getLikeClass = (element) => {
 // Добавить лайк
 function addLike () {
   const likeElements = document.querySelectorAll('.like-button')
+  
   likeElements.forEach((element, index) => {
     element.addEventListener('click', (event) => {
       event.stopPropagation();
@@ -102,11 +101,11 @@ function addLike () {
       if (user.isLiked === true) {
         user.isLiked = false;
         user.likes -= 1;
-        renderUsers();
+        renderUsers({ addLike, answer, commentsElement });
       } else {
         user.isLiked = true;
         user.likes += 1;
-        renderUsers();
+        renderUsers({ addLike, answer, commentsElement });
       }
     })
   })
@@ -124,33 +123,7 @@ commentAnswers.forEach((textElement, index) => {
 });
 };
 
-// Рендер функция
-const renderUsers = () => {
-  const userHtml = users.map((user, index) => {
-    return `<li id="last-element" class="comment">
-    <div class="comment-header">
-        <div>${user.author.name}</div>
-        <div>${date(user.date)}</div>
-      </div>
-      <div class="comment-body">
-        <div class="comment-text">
-          ${user.text}
-        </div>
-      </div>
-      <div class="comment-footer">
-        <div class="likes">
-          <span class="likes-counter">${user.likes}</span>
-          <button class="${getLikeClass(user.isLiked)}"></button>
-        </div>
-      </div>
-    </li>`
-  }).join("");
-  commentsElement.innerHTML = userHtml;
-  addLike();
-  answer();
-};
 
-renderUsers()
 
 // Функция клика, валидация
 function addEventButton () {

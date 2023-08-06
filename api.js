@@ -9,8 +9,11 @@ export function getComments() {
 
 
 
-export function postComment({ text, name }) {
+export function postComment({ text, name, getApi }) {
     const formElement = document.querySelector (".add-form");
+    const nameInputElement = document.getElementById("name-input");
+    const commentInputElement = document.getElementById("comment-input");
+
     return fetch("https://wedev-api.sky.pro/api/v1/stas/comments",
   {
     method: "POST",
@@ -75,7 +78,9 @@ export function postComment({ text, name }) {
 
     formElement.innerHTML = 'Комментарий загружается';
 
-    return response
+    return response;
 
+  }).then((response) => {
+    return getApi();
   })
 }
