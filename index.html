@@ -49,13 +49,14 @@
       return formattedDate;
     };
 
+    let tempura = "";
     const nameInput = document.getElementById("nameInput");
     const commentInput = document.getElementById("commentInput");
     const remuveButton = document.getElementById("remuveButton");
     const addButton = document.getElementById("addButton");
     const commentElement = document.querySelectorAll(".comments");
     const commentList = document.getElementById("commentBlock");
-
+    const editImput = document.querySelectorAll(".edit-input");
     const commentListener = [
       {
         name: "Глеб Фокин",
@@ -63,6 +64,8 @@
         date: "13.02.22 19:22",
         like: false,
         numOfLike: 3,
+        isEdit: true,
+        isComment: false,
       },
 
       {
@@ -71,10 +74,13 @@
         date: "13.02.22 19:22",
         like: true,
         numOfLike: 75,
+        isEdit: true,
+        isComment: false,
       },
     ];
 
     const handleLike = (event) => {
+      event.stopPropagation();
       const index = event.target.dataset.index;
       const comment = commentListener[index];
       if (!comment.like) {
@@ -85,6 +91,38 @@
         comment.numOfLike--;
       }
       renderComments();
+    };
+
+    const editEvent = (event) => {
+      event.stopPropagation();
+      const index = event.target.dataset.edit;
+      const comment = commentListener[index];
+      tempura = document.querySelector(".edit-input");
+      console.log(tempura);
+      if (tempura) {
+        commentListener[index].editText = tempura.value;
+        commentListener[index].Text = tempura.value;
+        console.log(commentListener[index]);
+      }
+      if (!comment.isEdit) {
+        comment.isEdit = true;
+      } else {
+        comment.isEdit = false;
+      }
+      renderComments();
+    };
+
+    const commentTextElement = (event) => {
+      event.stopPropagation();
+      const index = event.target.dataset.text;
+      const comment = commentListener[index];
+      commentInput.value =
+        ">" +
+        commentListener[index].Text +
+        "\n" +
+        "\n" +
+        commentListener[index].name +
+        ",";
     };
 
     const renderComments = () => {
@@ -99,18 +137,31 @@
             <div>${comment.date}</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
+            ${
+              comment.isEdit
+                ? `<div class="comment-text" data-text=${index}>
               ${comment.Text}
-            </div>
+            </div>`
+                : `<textarea
+          type="textarea"
+          class="add-form-text edit-input"
+          placeholder="Введите ваш коментарий"
+          rows="4"
+          data-text=${index}
+        >${comment.Text}</textarea>`
+            }
           </div>
           <div class="comment-footer">
-             
+            <button class = 'edit-btn' data-edit=${index}>
+              ${comment.isEdit ? "Редактировать" : "Сохранить"}
+            </button>
             <div class="likes">
               <span class="likes-counter">${comment.numOfLike}</span>
-              <button class="like-button ${comment.like} " data-index="${index}"></button>
+              <button class="like-button ${
+                comment.like
+              } " data-index="${index}"></button>
             </div>
           </div>
-          <button class = 'edit-btn'>Редактирвать</button> 
         </li>`;
         })
         .join("");
@@ -119,6 +170,16 @@
       const likeButtons = document.querySelectorAll(".like-button");
       likeButtons.forEach((button) => {
         button.addEventListener("click", handleLike);
+      });
+
+      const eventClickText = document.querySelectorAll(".comment-text");
+      eventClickText.forEach((button) => {
+        button.addEventListener("click", commentTextElement);
+      });
+
+      const editEventElement = document.querySelectorAll(".edit-btn");
+      editEventElement.forEach((button) => {
+        button.addEventListener("click", editEvent);
       });
     };
     renderComments();
@@ -141,10 +202,19 @@
       }
 
       commentListener.push({
-        name: nameInput.value,
-        Text: commentInput.value,
+        name: nameInput.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
+        Text: commentInput.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
         date: getCurrentDate(),
         numOfLike: 0,
+        isEdit: true,
       });
 
       nameInput.value = "";
