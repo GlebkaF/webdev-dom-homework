@@ -160,8 +160,8 @@
   ];
 
   const renderComments = () => {
-        const commentsHtml = comments.map((comment, index) => {
-            return `<li class="comment" id="comment-full" data-text="${comment.text}" data-name="${comment.name}">
+    const commentsHtml = comments.map((comment, index) => {
+      return `<li class="comment" data-text="${comment.text}" data-name="${comment.name}" data-index="${index}"">
         <div class="comment-header">
           <div> ${comment.name} </div>
           <div>${comment.date}</div>
@@ -181,7 +181,7 @@
         <button class="add-form-button edit-comment" data-index="${index}">${comment.isEdit ? 'Сохранить' : 'Редактировать'} </button>
       </div>
       </li>`
-        }).join(' ');
+    }).join(' ');
 
     listElement.innerHTML = commentsHtml;
 
@@ -193,7 +193,10 @@
 
 
     for (const answerElement of answerElements) {
+
       answerElement.addEventListener('click', () => {
+
+        const index = answerElement.dataset.index;
 
         const text = answerElement.dataset.text;
         const name = answerElement.dataset.name;
@@ -201,14 +204,15 @@
         // когда нажимаю = &{comment.text} должен появляться в commentInputElement (тексте добавления комментариев)
         // commentInputElement.value = `> ${text} \n ${name}, `;
 
+        if (comments[index].isEdit === false) {
 
-        commentInputElement.value = `BEGIN_QUOTE ${text} ${name} QUOTE_END`;
-        commentInputElement.value.replaceAll("BEGIN_QUOTE", `<div class='quote'>`)
-          .replaceAll("QUOTE_END", `<div class='quote'>`);
+          commentInputElement.value = `BEGIN_QUOTE ${text} ${name} QUOTE_END`;
 
-        renderComments();
+          renderComments();
+
+        }
+
       })
-
     }
 
     initLikesButtonListeners();
@@ -252,9 +256,17 @@
     //        ДОБАВЛЕНИЕ КОММЕНТОВ
 
     comments.push({
-      name: nameInputElement.value,
+      name: nameInputElement.value.replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       date: fullDate + fullTime,
-      text: commentInputElement.value,
+      text: commentInputElement.value.replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("BEGIN_QUOTE", "<div class='quote'>")
+        .replaceAll("QUOTE_END", "<div class='quote'>"),
       like: 0,
       isLiked: false,
       isEdit: false
