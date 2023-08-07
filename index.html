@@ -137,8 +137,11 @@ editButton.addEventListener('click', () => {
   const index = editButton.dataset.index; 
   //console.log(comments[edit].isEdit);
     if (comments[index].isEdit === true) {
-      comments[index].text = 'Как обратиться к полю редактирования.';
-      comments[index].isEdit = false;
+      const newTexts = document.querySelectorAll('.edit-text');
+      for (const newText of newTexts) {
+       comments[index].text = newText.value;
+       comments[index].isEdit = false;
+        }
     } else if (comments[index].isEdit === false) {
       comments[index].isEdit = true;
       //console.log(comments[index].isEdit);
@@ -159,7 +162,7 @@ const renderFunction = () => {
             <div>${comment.time}</div>
           </div>
           <div class="comment-body">
-            ${comment.isEdit? `<textarea data-index="${index}" class="edit-text">${comment.text}</textarea>` : `<div class="comment-text">${comment.text}</div>`}
+            ${comment.isEdit? `<textarea data-texted="${index}" class="edit-text">${comment.text}</textarea>` : `<div class="comment-text">${comment.text}</div>`}
           </div>
           <div class="comment-footer">
             <div class="likes">
