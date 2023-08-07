@@ -19,6 +19,7 @@
         />
         <textarea
           type="textarea"
+          style="white-space:pre-line"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
@@ -133,7 +134,7 @@ const editButton = () => {
   const editButtons = document.querySelectorAll('.edit-button');
 
   for (const editButton of editButtons) {
-editButton.addEventListener('click', () => {
+editButton.addEventListener('click', (event) => {
   const index = editButton.dataset.index; 
   //console.log(comments[edit].isEdit);
     if (comments[index].isEdit === true) {
@@ -147,9 +148,26 @@ editButton.addEventListener('click', () => {
       //console.log(comments[index].isEdit);
     }
     renderFunction();
+    event.stopPropagation();
 
 })
   }
+}
+
+
+const answerElement = () => {
+  const answerTexts = document.querySelectorAll('.comment-text');
+  //console.log(answerTexts);
+  for( const answerText of answerTexts)
+  answerText.addEventListener('click', (event) => {
+    const index = answerText.dataset.index; 
+      console.log(answerText.dataset.index);
+      text.value = `BEGIN_QUOTE${comments[index].text}` + `\n` + `${comments[index].name}QUOTE_END` + `\n`;
+      text.value.replaceAll("BEGIN_QUOTE", `<div class='quote'>`).replaceAll("QUOTE_END", `<div class='quote'>`);
+      
+      renderFunction();
+      event.stopPropagation();
+  })
 }
 
 
@@ -162,7 +180,7 @@ const renderFunction = () => {
             <div>${comment.time}</div>
           </div>
           <div class="comment-body">
-            ${comment.isEdit? `<textarea data-texted="${index}" class="edit-text">${comment.text}</textarea>` : `<div class="comment-text">${comment.text}</div>`}
+            ${comment.isEdit? `<textarea data-index="${index}" class="edit-text white-space: pre-line">${comment.text}</textarea>` : `<div data-index="${index}" class="comment-text white-space: pre-line">${comment.text}</div>`}
           </div>
           <div class="comment-footer">
             <div class="likes">
@@ -179,6 +197,7 @@ const renderFunction = () => {
   boxMessages.innerHTML = commtentsHtml;
   likedFunction();
   editButton();
+  answerElement();
 };
 renderFunction();
 
@@ -241,8 +260,16 @@ function addCommentare() {
   button.classList.add('unactive');
 
 comments.push({
-    name: name.value,
-    text: text.value,
+    name: name.value
+    .replaceAll("&", "&amp")
+    .replaceAll("<", "&lt")
+    .replaceAll(">", "&gt")
+    .replaceAll('"', "&quot"),
+    text: text.value    
+    .replaceAll("&", "&amp")
+    .replaceAll("<", "&lt")
+    .replaceAll(">", "&gt")
+    .replaceAll('"', "&quot"),
     time: formatDate(date),
     like: 0,
     isLiked: false,
