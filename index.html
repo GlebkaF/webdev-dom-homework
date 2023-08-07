@@ -67,7 +67,7 @@
   const nameInputElement = document.getElementById('name-input');
   const commentInputElement = document.getElementById('comment-input');
   const newDate = new Date();
-
+  let myDate = newDate.getDate() + "." + newDate.getMonth() + "." + newDate.getFullYear() + " " + newDate.getHours() + ":" + newDate.getMinutes();
   buttonElement.addEventListener("click", () => {
 
     nameInputElement.classList.remove("error");
@@ -103,4 +103,5 @@
   })
   console.log("It works!");
 </script>
+
 </html>
