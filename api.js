@@ -9,7 +9,7 @@ export function getComments() {
 
 
 
-export function postComment({ text, name, getApi }) {
+export function postComment({ text, name, getApi, addEventButton }) {
     const formElement = document.querySelector (".add-form");
     const nameInputElement = document.getElementById("name-input");
     const commentInputElement = document.getElementById("comment-input");

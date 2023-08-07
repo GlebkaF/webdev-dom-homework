@@ -1,6 +1,6 @@
 let users = [];
 export const renderUsers = ({ addLike, answer, commentsElement }) => {
-    const userHtml = users.map((user, index) => {
+    const userHtml = users.map((user) => {
       return `<li id="last-element" class="comment">
       <div class="comment-header">
           <div>${user.author.name}</div>
