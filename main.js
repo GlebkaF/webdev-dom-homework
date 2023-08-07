@@ -50,8 +50,9 @@ const postApi = () => {
 
   postComment({ 
     text: commentInputElement.value,
-    name: nameInputElement.value
-
+    name: nameInputElement.value,
+    getApi
+  
     }).catch ((error) => {
 
       alert(error);
