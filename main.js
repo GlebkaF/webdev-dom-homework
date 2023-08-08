@@ -77,7 +77,8 @@ const getLikeClass = (element) => {
 
 // Добавить лайк
 function addLike() {
-  const likeElements = document.querySelectorAll('.like-button')
+  const likeElements = document.querySelectorAll('.like-button');
+  const commentsElement = document.querySelector(".comments");
 
   likeElements.forEach((element, index) => {
     element.addEventListener('click', (event) => {
@@ -86,11 +87,11 @@ function addLike() {
       if (user.isLiked === true) {
         user.isLiked = false;
         user.likes -= 1;
-        renderUsers({ addLike, answer, date, getLikeClass });
+        renderUsers({ addLike, answer, commentsElement, date, getLikeClass });
       } else {
         user.isLiked = true;
         user.likes += 1;
-        renderUsers({ addLike, answer, date, getLikeClass });
+        renderUsers({ addLike, answer, commentsElement, date, getLikeClass });
       }
     })
   })
