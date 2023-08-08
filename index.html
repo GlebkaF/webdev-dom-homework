@@ -66,8 +66,8 @@
   const commentElement = document.getElementById('comment-id');
   const nameInputElement = document.getElementById('name-input');
   const commentInputElement = document.getElementById('comment-input');
-  const newDate = new Date();
-  let myDate = newDate.getDate() + "." + newDate.getMonth() + "." + newDate.getFullYear() + " " + newDate.getHours() + ":" + newDate.getMinutes();
+  const newDate = new Date().toLocaleDateString().slice(0, 6) + new Date().toLocaleDateString().slice(-2);
+  const myDate = newDate + ' ' + new Date().toLocaleTimeString().slice(0, -3);
   buttonElement.addEventListener("click", () => {
 
     nameInputElement.classList.remove("error");
