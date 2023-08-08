@@ -120,14 +120,14 @@ const likedFunction = () => {
     
   }
 }
-const editText = () => {
-  const newTexts = document.querySelectorAll('.edit-text');
-  for (const newText of newTexts) {
-    const index = newText.dataset.index;
-    console.log(newText.value);
-  }
+// const editText = () => {
+//   const newTexts = document.querySelectorAll('.edit-text');
+//   for (const newText of newTexts) {
+//     const index = newText.dataset.index;
+//     console.log(newText.value);
+//   }
 
-}
+// }
 
 const editButton = () => {
 
@@ -135,6 +135,7 @@ const editButton = () => {
 
   for (const editButton of editButtons) {
 editButton.addEventListener('click', (event) => {
+  event.stopPropagation();
   const index = editButton.dataset.index; 
   //console.log(comments[edit].isEdit);
     if (comments[index].isEdit === true) {
@@ -148,7 +149,7 @@ editButton.addEventListener('click', (event) => {
       //console.log(comments[index].isEdit);
     }
     renderFunction();
-    event.stopPropagation();
+
 
 })
   }
@@ -160,13 +161,13 @@ const answerElement = () => {
   //console.log(answerTexts);
   for( const answerText of answerTexts)
   answerText.addEventListener('click', (event) => {
+    event.stopPropagation();
     const index = answerText.dataset.index; 
-      console.log(answerText.dataset.index);
-      text.value = `BEGIN_QUOTE${comments[index].text}` + `\n` + `${comments[index].name}QUOTE_END` + `\n`;
-      text.value.replaceAll("BEGIN_QUOTE", `<div class='quote'>`).replaceAll("QUOTE_END", `<div class='quote'>`);
-      
+      //console.log(answerText.dataset.index);
+      text.value = `BEGIN_QUOTE>${comments[index].name}  \n  ${comments[index].text}QUOTE_END \n`;
+
       renderFunction();
-      event.stopPropagation();
+
   })
 }
 
@@ -269,7 +270,9 @@ comments.push({
     .replaceAll("&", "&amp")
     .replaceAll("<", "&lt")
     .replaceAll(">", "&gt")
-    .replaceAll('"', "&quot"),
+    .replaceAll('"', "&quot")
+    .replaceAll('BEGIN_QUOTE', "<div class='quote'>")
+    .replaceAll('QUOTE_END', "</div>"),
     time: formatDate(date),
     like: 0,
     isLiked: false,
