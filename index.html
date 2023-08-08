@@ -99,6 +99,7 @@
         btn.disabled = false;
       }
     });
+
     commitInput.addEventListener("input", function () {
       if (nameInput.value.length < 1 || commitInput.value.length < 1) {
         btn.classList.add("empty");
@@ -161,6 +162,7 @@
         nameInput.value = "";
         commitInput.value = "";
         btn.classList.add("empty");
+        btn.disabled = true;
       })
     );
 
