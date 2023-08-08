@@ -67,6 +67,31 @@
     const listCom = document.getElementById("list-com");
     const nameInput = document.getElementById("name-input");
     const commitInput = document.getElementById("commit-input");
+    const inp = document.querySelector(".add-form-name");
+    const textAr = document.querySelector(".add-form-text");
+    let btn = document.querySelector("#write-button");
+
+    btn.classList.add("empty");
+    btn.disabled = true;
+
+    nameInput.addEventListener("input", function () {
+      if (nameInput.value.length < 1 || commitInput.value.length < 1) {
+        btn.classList.add("empty");
+        btn.disabled = true;
+      } else {
+        btn.classList.remove("empty");
+        btn.disabled = false;
+      }
+    });
+    commitInput.addEventListener("input", function () {
+      if (nameInput.value.length < 1 || commitInput.value.length < 1) {
+        btn.classList.add("empty");
+        btn.disabled = true;
+      } else {
+        btn.classList.remove("empty");
+        btn.disabled = false;
+      }
+    });
 
     const getDateNow = () => {
       const dateNow = new Date();
@@ -91,13 +116,13 @@
     };
 
     writeButton.addEventListener("click", () => {
-      if (nameInput.value === "" || commitInput.value === "") {
-        return;
-      } else {
-        const oldListCom = listCom.innerHTML;
-        listCom.innerHTML =
-          oldListCom +
-          `<li class="comment">
+      // if (nameInput.value === "" || commitInput.value === "") {
+      //   return;
+      // } else { вариант без добавления обработчика событий на поля ввода
+      const oldListCom = listCom.innerHTML;
+      listCom.innerHTML =
+        oldListCom +
+        `<li class="comment">
           <div class="comment-header">
             <div>${nameInput.value}</div>
             <div>${getDateNow()}</div>
@@ -114,9 +139,10 @@
             </div>
           </div>
         </li>`;
-      }
+      // }
       nameInput.value = "";
       commitInput.value = "";
+      btn.classList.add("empty");
     });
   </script>
 </html>
