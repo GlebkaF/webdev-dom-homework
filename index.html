@@ -34,6 +34,8 @@
   const arrayInputs = [nameInputElement, textInputElement];
   
 
+
+
   
 
 
@@ -59,85 +61,34 @@
 
 //счетчик лайков
 
-  function getLikeButton() {    
+function getLikeButton() {    
     const likesButton = document.querySelectorAll('.like-button');
     for (const like of likesButton) {
-      like.addEventListener("click", () => {
+      like.addEventListener("click", (event) => {
         const likeIndex = like.dataset.index;
         const commentsElement = comments[likeIndex];
-                
+        event.stopPropagation();
+   
+
         if (commentsElement.likeComment) {
           commentsElement.likesNumber -= 1;
           commentsElement.likeComment = false;
-          commentsElement.propertyColorLike = 'like-button -no-active-like';
-          renderComments();     
+          commentsElement.propertyColorLike = 'like-button -no-active-like'; 
+          renderComments();
         } else {
           commentsElement.likesNumber += 1;
           commentsElement.likeComment = true;
-          commentsElement.propertyColorLike = 'like-button -active-like';
-          renderComments();         
+          commentsElement.propertyColorLike = 'like-button -active-like'; 
+          renderComments();      
         }
-
       })
     }
   };
+
   getLikeButton();
-
-
-
-
-
-
-
-
-// HTML код через JS
-   const renderComments = () => {
-
-    const commentsHtml = comments.map((comment, index) => {   
-
-    return `<li class="comment" data-text="${comment.textComment} - ${comment.name}">
-          <div class="comment-header">
-            
-            <div>${comment.name
-              .replaceAll('&', '&amp;')
-              .replaceAll('<', '&lt;')
-              .replaceAll('>', '&gt;')
-              .replaceAll('"', '&quot;')}</div>
-            <div class="date">${comment.dateСreation}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${comment.textComment
-              .replaceAll('&', '&amp;')
-              .replaceAll('<', '&lt;')
-              .replaceAll('>', '&gt;')
-              .replaceAll('"', '&quot;')}
-              </div></div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter"> ${comment.likesNumber}</span>
-              <button data-index="${index}" class='${comment.propertyColorLike}'></button>
-
-            </div>
-          </div>
-        </li>`;
-    }).join("");
-
-    commentsElement.innerHTML = commentsHtml;
-
-    getLikeButton();
-    
-    
-  };
-  
-
-
-renderComments();
-
-
   
   
-
+  
 
 
 
@@ -190,44 +141,67 @@ renderComments();
 
     });
     
-   
-    renderComments();
-    replyComment();
     
     
     nameInputElement.value = "";
     textInputElement.value = "";
 
-
-
-
-  });
+replyComment();
+renderComments();
+});
 
 
     //Ответы на комментарии
-    const replyComment = () => {  
-      const userCommentElements = document.querySelectorAll(".comment");
-      for ( const userCommentElement of userCommentElements) {
-        userCommentElement.addEventListener("click", () => {
-          textInputElement.value=userCommentElement.dataset.text;
-        })
+const replyComment = () => {
+  const userCommentElements = document.querySelectorAll(".comment");  
+  for ( const userCommentElement of userCommentElements) {
+    userCommentElement.addEventListener("click", () => {
+      textInputElement.value=userCommentElement.dataset.text;
+    })       
 }};
 
 replyComment();
 
+// HTML код через JS
+const renderComments = () => {
 
+const commentsHtml = comments.map((comment, index) => {   
 
+return `<li class="comment" data-text="${comment.textComment} - ${comment.name}">
+      <div class="comment-header">
+        
+        <div>${comment.name
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')}</div>
+        <div class="date">${comment.dateСreation}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">
+          ${comment.textComment
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')}
+          </div></div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter"> ${comment.likesNumber}</span>
+          <button data-index="${index}" class='${comment.propertyColorLike}'></button>
 
-// Отключение сработки даты и лайка
-const likes = document.querySelector(".likes");
-likes.addEventListener("click", (event) => {
-event.stopPropagation();
-});
+        </div>
+      </div>
+    </li>`;
+}).join("");
 
+commentsElement.innerHTML = commentsHtml;
 
+getLikeButton();  
+replyComment();
+};
 
-
-
+renderComments();
 
 
 
