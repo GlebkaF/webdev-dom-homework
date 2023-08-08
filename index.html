@@ -71,6 +71,14 @@
     const textAr = document.querySelector(".add-form-text");
     let btn = document.querySelector("#write-button");
 
+    document.addEventListener("keyup", (keyEnter) => {
+      if (keyEnter.code === "Enter") {
+        if (!btn.classList.contains('empty')) {
+          pushCommit();
+        }
+      }
+    });
+
     btn.classList.add("empty");
     btn.disabled = true;
 
@@ -115,7 +123,7 @@
       return `${day}.${month}.${year} ${hour}:${minute}`;
     };
 
-    writeButton.addEventListener("click", () => {
+    writeButton.addEventListener("click", pushCommit = () => {
       // if (nameInput.value === "" || commitInput.value === "") {
       //   return;
       // } else { вариант без добавления обработчика событий на поля ввода
