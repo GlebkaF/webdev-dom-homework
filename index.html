@@ -45,19 +45,17 @@
         </li>
       </ul>
       <div class="add-form">
-        <input 
+        <input
           id="name-input"
           type="text"
           class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
+          placeholder="Введите ваше имя" />
         <textarea
           id="commit-input"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
+          rows="4"></textarea>
         <div class="add-form-row">
           <button id="write-button" class="add-form-button">Написать</button>
         </div>
@@ -65,10 +63,10 @@
     </div>
   </body>
   <script>
-    const writeButton = document.getElementById('write-button')
-    const listCom = document.getElementById('list-com')
-    const nameInput = document.getElementById('name-input')
-    const commitInput = document.getElementById('commit-input')
+    const writeButton = document.getElementById("write-button");
+    const listCom = document.getElementById("list-com");
+    const nameInput = document.getElementById("name-input");
+    const commitInput = document.getElementById("commit-input");
 
     const getDateNow = () => {
       const dateNow = new Date();
@@ -78,27 +76,28 @@
       let hour = dateNow.getHours();
       let minute = dateNow.getMinutes();
       if (day < 10) {
-        day = "0" + day; 
+        day = "0" + day;
       }
       if (month < 10) {
-        month = "0" + month; 
+        month = "0" + month;
       }
       if (hour < 10) {
-        hour = "0" + hour; 
+        hour = "0" + hour;
       }
       if (minute < 10) {
-        minute = "0" + minute; 
+        minute = "0" + minute;
       }
-      return `${day}.${month}.${year} ${hour}:${minute}`
-    }
+      return `${day}.${month}.${year} ${hour}:${minute}`;
+    };
 
-    writeButton.addEventListener('click', () => {
-      if (nameInput.value === '' || commitInput.value === '') {
-        return
+    writeButton.addEventListener("click", () => {
+      if (nameInput.value === "" || commitInput.value === "") {
+        return;
       } else {
-      const oldListCom = listCom.innerHTML
-      listCom.innerHTML = oldListCom + 
-      `<li class="comment">
+        const oldListCom = listCom.innerHTML;
+        listCom.innerHTML =
+          oldListCom +
+          `<li class="comment">
           <div class="comment-header">
             <div>${nameInput.value}</div>
             <div>${getDateNow()}</div>
@@ -114,10 +113,10 @@
               <button class="like-button"></button>
             </div>
           </div>
-        </li>`
+        </li>`;
       }
-      nameInput.value = ''
-      commitInput.value = ''
-    })
+      nameInput.value = "";
+      commitInput.value = "";
+    });
   </script>
 </html>
