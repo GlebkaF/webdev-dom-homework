@@ -15,48 +15,15 @@
       </div>
 
       <ul class="comments" id="commentsListId">
-        <!-- <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li> -->
+        
       </ul>
-      <div class="add-form" id="add-formListId">
+      <div class="add-form view-form" id="add-formListId">
         <input
           id="commentName"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          readonly
         />
 
         <textarea
@@ -72,6 +39,72 @@
           </button>
         </div>
       </div>
+<!-- autorization -->
+
+<div class="add-form" id="choose-formListId">
+<div class="choose-text">Чтобы добавить комментарий авторизуйтесь</div>
+  <div class="add-form-row">
+    <button class="add-form-button" id="choose-enter-buttonListId">
+      Вход
+    </button>
+    
+    <button class="add-form-button" id="choose-reg-buttonListId">
+        Регистрация
+    </button>
+    
+  </div>
+
+</div>
+
+
+      <div class="add-form view-form" id="login-formListId">
+        <input
+          id="autorizationLogin"
+          type="text"
+          class="add-form-name"
+          placeholder="Введите ваш login"
+        />
+
+        <div class="add-form-name">
+        </div>
+
+        <input
+        id="autorizationName"
+        type="text"
+        class="add-form-name"
+        placeholder="Введите ваше Имя"
+        
+      />
+
+      <div class="add-form-name">
+      </div>
+
+        <input
+          id="autorizationPass"
+          type="text"
+          class="add-form-name"
+          placeholder="Введите ваш Password"
+        />
+
+        
+        <div class="add-form-row" id="login-form-rowListId">
+          <button class="add-form-button" id="login-form-buttonListId">
+            Войти
+          </button>
+          
+          <button class="add-form-button" id="reg-form-buttonListId">
+            Регистрация
+          </button>
+
+          <button class="add-form-button" id="back-form-buttonListId">
+            Назад
+          </button>
+          
+        </div>
+     
+      </div>
+
+
     </div> 
     <script type="module" src="main.js"></script>
   </body>

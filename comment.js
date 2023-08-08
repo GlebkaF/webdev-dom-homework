@@ -6,12 +6,19 @@ import { commentReplyNew } from "./secondaryforms.js";
 import { commentReply } from "./secondaryforms.js";
 import { postFetchFirst } from "./api.js";
 import { firstLaunchFetchFunction } from "./main.js";
+import { userName } from "./api.js";
+import { token } from "./api.js";
+//import { getFetch } from "./api.js";
+import { dataGet } from "./main.js";
+
+//import { LikesFetch } from "./api.js";
+//const button = document.querySelectorAll(`.like-button`);
 //создание блоков комментариев по содержимому массива
 export function renderComments(comments, commentText) {
   const list = document.getElementById("commentsListId");
   const likesHtml = comments
     .map((i, index) => {
-      return `<li class="comment"data-index="${index}">
+      return `<li class="comment" data-index="${index}">
             <div class="comment-header">
               <div>${i.author.name}</div>
               <div>${i.date}</div>
@@ -23,6 +30,15 @@ export function renderComments(comments, commentText) {
               </div>
             </div>
             <div class="comment-footer">
+
+            <button 
+            class="add-form-button del-button"
+            data-index="${index}" 
+            id="dell-form-buttonListId"
+            >
+            Удалить
+            </button>
+
               <div class="likes">
                 <span class="likes-counter">${i.likes}</span>
                 <button class="like-button ${
@@ -36,35 +52,54 @@ export function renderComments(comments, commentText) {
 
   list.innerHTML = likesHtml;
   //keyPush();
+  delCommentFetch(comments);
+  LikesFetch(comments);
   commentReply(comments, commentText);
-  initLikeButton(comments);
 }
-//простановка лайков
-function initLikeButton(comments, commentText) {
-  const button = document.querySelectorAll(`.like-button`);
+// простановка лайков
 
+function LikesFetch(comments) {
+  const button = document.querySelectorAll(`.like-button`);
   for (const likeButton of button) {
     likeButton.addEventListener(`click`, (event) => {
-      // из массива обЪектов-коммертариев делаем объект из содержимого одного комментария
       event.stopPropagation();
-      const comment = comments[likeButton.dataset.index]; //комментарий выбираем по dataset.index из html
-      let a = comment.likes;
-      if (comment.isLiked === false) {
-        comment.isLiked = true;
-        comment.likes = a + 1;
-        comments.isLiked = comment.isLiked;
-        comments.likes = comment.like;
-      } else if (comment.isLiked === true) {
-        comment.isLiked = false;
-        comment.likes = a - 1;
-        comments.isLiked = comment.isLiked;
-        comments.likes = comment.like;
-      }
-      renderComments(comments, commentText);
-      commentReply(comments, commentText);
+      const comment = comments[likeButton.dataset.index];
+      console.log(comment);
+      let idCom = comment.id;
+      console.log(idCom);
+
+      return fetch(
+        `https://wedev-api.sky.pro/api/v2/arseny-kulikov/comments/${idCom}/toggle-like`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      )
+        .catch((error) => {
+          throw new Error(`Интернет не работает`);
+        })
+        .then((response) => {
+          console.log(response.status);
+          if (response.status === 401)
+            throw new Error(`Вы не зарегистрированы!`);
+          else {
+            return response.json();
+          }
+        })
+        .then((responseData) => {
+          comment.isLiked = responseData.result.isLiked;
+          comment.likes = responseData.result.likes;
+          console.log(comment.isLiked);
+          console.log(responseData);
+          renderComments(comments, commentText);
+        })
+        .catch((error) => {
+          alert(`Внимание ошибка ${error}`);
+        });
     });
   }
 }
+
 // добавление комментария после появления формы лоадера "загрузка..."
 export function renderAddComment(comments, commentText) {
   // Пересоздание формы ввода комментария
@@ -76,6 +111,7 @@ export function renderAddComment(comments, commentText) {
             type="text"
             class="add-form-name"
             placeholder="Введите ваше имя"
+            readonly
           />
          
           <textarea
@@ -90,12 +126,14 @@ export function renderAddComment(comments, commentText) {
           </div>`);
 
   const commentTextNew = document.getElementById(`commentTextNew`);
+
   const commentNameNew = document.getElementById(`commentNameNew`);
+  commentNameNew.value = userName;
   const addFormButtonIdNew = document.getElementById(
     `add-form-buttonListIdNew`
   );
   // Подключение события клик к новой форме (пересозданной после создания лоадера) ввода комментария
-    addFormButtonIdNew.addEventListener(`click`, () => {
+  addFormButtonIdNew.addEventListener(`click`, () => {
     //const oldButton = listButton.innerHTML;
     commentNameNew.classList.remove("error");
     commentTextNew.classList.remove("error");
@@ -159,6 +197,7 @@ export function addComment(comments, commentText) {
   const list = document.getElementById("commentsListId");
   const listButton = document.getElementById(`add-form-buttonListId`);
   //const commentForm = document.getElementById(`add-formListId`);
+
   listButton.addEventListener(`click`, () => {
     const oldButton = listButton.innerHTML;
     commentName.classList.remove("error");
@@ -215,3 +254,47 @@ export function addComment(comments, commentText) {
       });
   });
 }
+
+export function delCommentFetch(comments) {
+  const deleteCommentButton = document.querySelectorAll(`.del-button`);
+  for (const delButton of deleteCommentButton) {
+    delButton.addEventListener(`click`, (event) => {
+      event.stopPropagation();
+      console.log(comments);
+      const comment = comments[delButton.dataset.index];
+      console.log(comment);
+      let idCom = comment.id;
+      console.log(idCom);
+
+      return (
+        fetch(
+          `https://wedev-api.sky.pro/api/v2/arseny-kulikov/comments/${idCom}`,
+          {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        )
+          //.catch((error) =>{throw new Error(`Интернет не работает`)})
+          .then((response) => {
+            console.log(response.status);
+            if (response.status === 401)
+              throw new Error(`Вы не зарегистрированы!`);
+            else {
+              return response.json();
+            }
+          })
+          .then((responseData) => {
+            // comment.isLiked=responseData.result.isLiked
+            // comment.likes=responseData.result.likes
+            // console.log(comment.isLiked)
+            console.log(responseData);
+            dataGet();
+          })
+          .catch((error) => {
+            alert(`Внимание ошибка ${error}`);
+          })
+      );
+    });
+  }
+}
+delCommentFetch();

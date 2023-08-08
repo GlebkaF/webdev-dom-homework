@@ -1,10 +1,11 @@
+//import { initLikeButton } from "./comment";
+//initLikeButton(comments, commentText)
 //стартовый индикатор загрузки
 export function startLoader() {
   const firstLoader = document.getElementById(`first-LoadText`);
   firstLoader.classList.add("firstLoader");
 }
-//создание html формы комментариев на основе массива
-//renderComments и renderAddComment
+
 //Создание поля "загрузка"
 export function renderLoader() {
   const commentForm = document.getElementById(`add-formListId`);
@@ -45,24 +46,26 @@ export function commentReplyNew(comments, commentText) {
 }
 // ответ на комментарий до создания поля "загрузка"
 export function commentReply(comments, commentText) {
+  // const commentText = document.getElementById(`commentText`);
   const commentBlock = document.querySelectorAll(`.comment`);
   for (const commentElement of commentBlock) {
     commentElement.addEventListener(`click`, () => {
-      console.log(`ggggg`);
       comments[commentElement.dataset.index].isCommentRepliy = true;
+      console.log(`${comments[commentElement.dataset.index].isCommentRepliy}`);
+
       commentText.value = `${
         comments[commentElement.dataset.index].author.name
       }, ${comments[commentElement.dataset.index].text}`;
+
       commentText.value = commentText.value
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;");
+
       if (comments[commentElement.dataset.index].isCommentRepliy === true) {
-        console.log(`ggggg`);
         commentText.value = `QUOTE_BEGIN${commentText.value
           .replaceAll("<", "&lt;")
           .replaceAll(">", "&gt;")}QUOTE_END`;
       } else {
-        console.log(`ggggg`);
         commentText.value = commentText.value
           .replaceAll("<", "&lt;")
           .replaceAll(">", "&gt;");
@@ -70,3 +73,20 @@ export function commentReply(comments, commentText) {
     });
   }
 }
+function goBackForm() {
+  const chooseForm = document.getElementById(`choose-formListId`);
+  const loginForm = document.getElementById(`login-formListId`);
+  const goBackButton = document.getElementById(`back-form-buttonListId`);
+  const loginName = document.getElementById(`autorizationName`);
+  const regButton = document.getElementById(`reg-form-buttonListId`);
+  const loginButton = document.getElementById(`login-form-buttonListId`);
+
+  goBackButton.addEventListener(`click`, () => {
+    chooseForm.classList.remove(`view-form`);
+    loginForm.classList.add(`view-form`);
+    loginName.classList.remove(`view-form`); //открываем поле ИМЯ
+    loginButton.classList.remove(`view-form`); //открываем кнопку ВХОДА
+    regButton.classList.remove(`view-form`); // открываем кнопку РЕГ
+  });
+}
+goBackForm();

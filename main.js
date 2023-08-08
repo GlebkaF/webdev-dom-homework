@@ -8,13 +8,16 @@ import { startLoader } from "./secondaryforms.js";
 import { renderComments } from "./comment.js";
 import { renderAddComment } from "./comment.js";
 import { addComment } from "./comment.js";
-let comments = []; // создание массива для комментариев
+import { delCommentFetch } from "./comment.js";
+export let comments = []; // создание массива для комментариев
+
 const commentForm = document.getElementById(`add-formListId`);
 const listButton = document.getElementById(`add-form-buttonListId`);
 const commentText = document.getElementById(`commentText`);
 let currentDate = new Date();
+
 // Загрузка комментариев по API сервера в массив
-function dataGet() {
+export function dataGet() {
   getFetch()
     .then((response) => {
       const jsonPromise = response.json();
@@ -24,6 +27,7 @@ function dataGet() {
       comments = responseData.comments;
       renderComments(comments, commentText);
       startLoader();
+      delCommentFetch(comments);
       console.log(responseData);
     })
     .catch((error) => {
@@ -31,17 +35,22 @@ function dataGet() {
     });
 }
 dataGet();
+
 //создание блоков комментариев по содержимому массива - comments.js
 renderComments(comments, commentText);
-//  простановка лайков - comments.js
+
 // Ввод с клавиатуры
-function keyPush() {
-  commentForm.addEventListener(`keyup`, (event) => {
-    if (event.code === "Enter") {
-      console.log(`сохранить комментарий`);
-    }
-  });
-}
+// function keyPush() {
+//   commentForm.addEventListener(`keyup`, (event) => {
+//     if (event.code === "Enter") {
+//       postFetch()
+
+//       console.log(`сохранить комментарий`);
+//     }
+//   });
+// }
+// keyPush()
+
 addComment(comments, commentText); //вызываем функцию, проводит добавление по клику "написать" комментария в массив самый первый раз после обновления страницы
 commentReplyNew(comments, commentText);
 //fetch1
