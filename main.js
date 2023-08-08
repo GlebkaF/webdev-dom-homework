@@ -2,10 +2,7 @@ import { getComments, postComment } from "./api.js";
 import { renderUsers } from "./render.js";
 import { date } from "./date.js";
 
-const buttonElement = document.getElementById("add-button");
-const nameInputElement = document.getElementById("name-input");
-const commentInputElement = document.getElementById("comment-input");
-const buttonLike = document.getElementById("like");
+
 const formElement = document.querySelector(".add-form");
 const addFormHtml = `<input
           id="name-input"
@@ -61,7 +58,6 @@ const postApi = () => {
   })
 }
 
-
 // Добавление комментрия клавишей Enter
 document.addEventListener("keyup", (event) => {
   if (event.code === 'Enter') {
@@ -108,8 +104,6 @@ const answer = () => {
     });
   });
 };
-
-
 
 // Функция клика, валидация
 function addEventButton() {
