@@ -1,5 +1,6 @@
 import { getComments, postComment } from "./api.js";
 import { renderUsers } from "./render.js";
+import { date } from "./date.js";
 
 const buttonElement = document.getElementById("add-button");
 const nameInputElement = document.getElementById("name-input");
@@ -23,7 +24,7 @@ const addFormHtml = `<input
           <button id="add-button" class="add-form-button">Написать</button>
         </div>`;
 
-let users = [];
+export let users = [];
 
 // Загрузка
 formElement.innerHTML = 'Комметарии загружаются...';
@@ -36,7 +37,7 @@ const getApi = () => {
   getComments().then((responseData) => {
     users = responseData.comments;
     formElement.innerHTML = addFormHtml;
-    renderUsers({ addLike, answer, commentsElement });
+    renderUsers({ addLike, answer, commentsElement, date, getLikeClass });
     addEventButton();
   })
 }
@@ -60,23 +61,6 @@ const postApi = () => {
   })
 }
 
-// Установка формата даты ДД.ММ.ГГГГ ЧЧ:ММ
-const date = function (date) {
-  const months = ["01", "02", "03", "04", "05", "06",
-    "07", "08", "09", "10", "11", "12"];
-  let commentDate = new Date(date);
-  let currentDate = commentDate.getDate() + "." + months[commentDate.getMonth()] + "." + commentDate.getFullYear();
-  let hour = commentDate.getHours();
-  let minute = commentDate.getMinutes();
-
-  if (minute < 10) {
-    minute = "0" + minute;
-  }
-  let currentTime = hour + ":" + minute;
-
-  let fullDate = `${currentDate} ${currentTime}`;
-  return fullDate
-}
 
 // Добавление комментрия клавишей Enter
 document.addEventListener("keyup", (event) => {
@@ -102,11 +86,11 @@ function addLike() {
       if (user.isLiked === true) {
         user.isLiked = false;
         user.likes -= 1;
-        renderUsers({ addLike, answer });
+        renderUsers({ addLike, answer, date, getLikeClass });
       } else {
         user.isLiked = true;
         user.likes += 1;
-        renderUsers({ addLike, answer });
+        renderUsers({ addLike, answer, date, getLikeClass });
       }
     })
   })

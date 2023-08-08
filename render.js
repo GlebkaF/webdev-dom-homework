@@ -1,5 +1,6 @@
-let users = [];
-export const renderUsers = ({ addLike, answer, commentsElement }) => {
+import { users } from "./main.js"
+
+export const renderUsers = ({ addLike, answer, commentsElement, date, getLikeClass }) => {
     const userHtml = users.map((user) => {
       return `<li id="last-element" class="comment">
       <div class="comment-header">
