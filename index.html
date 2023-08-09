@@ -38,6 +38,9 @@
   .unactive{
     background-color: #9e9e9e;
   }
+  .newNew{
+    background-color: green;
+  }
 </style>
   <script>
     "use strict";
@@ -155,6 +158,12 @@ editButton.addEventListener('click', (event) => {
   }
 }
 
+const colorClass = () => {
+  const bgcWhite = document.querySelectorAll('.quote');
+  for (const bgcWhit of bgcWhite) {
+    //console.log(bgcWhit);
+  }
+}
 
 const answerElement = () => {
   const answerTexts = document.querySelectorAll('.comment-text');
@@ -171,7 +180,6 @@ const answerElement = () => {
   })
 }
 
-
 const renderFunction = () => {
   const commtentsHtml = comments
   .map((comment, index, edit) => {
@@ -180,9 +188,11 @@ const renderFunction = () => {
             <div>${comment.name}</div>
             <div>${comment.time}</div>
           </div>
-          <div class="comment-body">
+          <div class='quote'>
+            <div class="comment-body">
             ${comment.isEdit? `<textarea data-index="${index}" class="edit-text white-space: pre-line">${comment.text}</textarea>` : `<div data-index="${index}" class="comment-text white-space: pre-line">${comment.text}</div>`}
           </div>
+            </div>
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${comment.like}</span>
@@ -199,6 +209,7 @@ const renderFunction = () => {
   likedFunction();
   editButton();
   answerElement();
+  colorClass();
 };
 renderFunction();
 
@@ -256,7 +267,6 @@ function addCommentare() {
     text.classList.add('red');
     return;
   }
-
   button.disabled = true;
   button.classList.add('unactive');
 
@@ -271,8 +281,8 @@ comments.push({
     .replaceAll("<", "&lt")
     .replaceAll(">", "&gt")
     .replaceAll('"', "&quot")
-    .replaceAll('BEGIN_QUOTE', "<div class='quote'>")
-    .replaceAll('QUOTE_END', "</div>"),
+    .replaceAll("BEGIN_QUOTE", "<div class='quoteOne'>")
+    .replaceAll("QUOTE_END", "</div>"),
     time: formatDate(date),
     like: 0,
     isLiked: false,
@@ -283,6 +293,7 @@ comments.push({
   text.value = '';
 
   renderFunction();
+  
 }
 
 
