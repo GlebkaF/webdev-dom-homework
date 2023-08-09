@@ -1,42 +1,33 @@
-
 "use strict";
 
 const comments = document.querySelector(".comments");
 const addFormBtn = document.querySelector(".add-form-button");
+const delFormBtn = document.querySelector(".del-form-button");
 const inputName = document.querySelector(".add-form-name");
 const inputText = document.querySelector(".add-form-text");
 
+addFormBtn.disabled = true;
+
+document.addEventListener("input", () => {
+  inputName.value != "" && inputText.value != ""
+    ? (addFormBtn.disabled = false)
+    : (addFormBtn.disabled = true);
+});
+
 const plusZero = (str) => {
-  if (str < 10) return `0${str}`;
+  return str < 10 ? `0${str}` : str;
 };
 
 const now = (currentDate) => {
+  console.log(currentDate);
   let date = plusZero(currentDate.getDate());
-  let month = plusZero(currentDate.getMonth());
+  let month = plusZero(currentDate.getMonth() + 1);
   let hours = plusZero(currentDate.getHours());
   let mins = plusZero(currentDate.getMinutes());
   return `${date}.${month}.${currentDate.getFullYear() % 100} ${hours}:${mins}`;
 };
 
-inputName.addEventListener("focus", () => {
-  inputName.classList.remove("error");
-});
-
-inputText.addEventListener("focus", () => {
-  inputText.classList.remove("error");
-});
-
-addFormBtn.addEventListener("click", () => {
-  if (inputName.value === "") {
-    inputName.classList.add("error");
-    return;
-  }
-
-  if (inputText.value === "") {
-    inputText.classList.add("error");
-    return;
-  }
-
+const renderNewComment = () => {
   let currentDate = new Date();
 
   comments.innerHTML += `<li class="comment">
@@ -59,4 +50,19 @@ addFormBtn.addEventListener("click", () => {
 
   inputName.value = "";
   inputText.value = "";
+  addFormBtn.disabled = true;
+  delFormBtn.disabled = false;
+};
+
+addFormBtn.addEventListener("click", () => {
+  renderNewComment();
 });
+
+document.addEventListener("keyup", (e) => {
+  if (e.code === "Enter" && !addFormBtn.disabled) renderNewComment();
+});
+
+delFormBtn.addEventListener("click", () => {
+    comments.removeChild(comments.lastElementChild);
+    if (!comments.lastElementChild) delFormBtn.disabled = true;
+  });
