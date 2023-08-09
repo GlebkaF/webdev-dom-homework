@@ -118,7 +118,7 @@
       };
 Initlikes()
 
-  const addComment = () => {
+  ButtonInputElement.addEventListener("click", () => {
     const TextInputValue = isReply ? `QUOTE_BEGIN${CommentInputElement.value}QUOTE_END` : CommentInputElement.value;
     if (NameInputElement.value === '') {
       NameInputElement.classList.add('form-error');
@@ -139,7 +139,9 @@ Initlikes()
       })
     }
  renderUsers();
-  }
+  NameInputElement.value = "";
+  CommentInputElement.value = "";
+  })
   
   const newReplay = () => {
       const replyComments = document.querySelectorAll(".comment");
@@ -188,29 +190,29 @@ const renderUsers = () => {
   
 
 
-  ButtonInputElement.addEventListener("click", () => {
+  // ButtonInputElement.addEventListener("click", () => {
    
-      if (NameInputElement.value === '') {
-        ButtonInputElement.disabled = true;
-      return;
-    } else if (CommentInputElement.value === '') {
-        ButtonInputElement.disabled = true;
-      return;
-    }
-      else {users.push({
+  //     if (NameInputElement.value === '') {
+  //       ButtonInputElement.disabled = true;
+  //     return;
+  //   } else if (CommentInputElement.value === '') {
+  //       ButtonInputElement.disabled = true;
+  //     return;
+  //   }
+  //     else {users.push({
 
-      name: NameInputElement.value,
-      date: `${commentDate.toLocaleDateString('numeric')} ${commentDate.toLocaleTimeString([], {hour: "2-digit", minute:"2-digit"})
-      }`,
-      comment: CommentInputElement.value,
-      countLikes: 0,
-      isLiked: false,
-    });}
+  //     name: NameInputElement.value,
+  //     date: `${commentDate.toLocaleDateString('numeric')} ${commentDate.toLocaleTimeString([], {hour: "2-digit", minute:"2-digit"})
+  //     }`,
+  //     comment: CommentInputElement.value,
+  //     countLikes: 0,
+  //     isLiked: false,
+  //   });}
     
-    renderUsers();
-    NameInputElement.value = "";
-    CommentInputElement.value = "";
-  });
+  //   renderUsers();
+  //   NameInputElement.value = "";
+  //   CommentInputElement.value = "";
+  // });
 
   
   const replaceValue = (value) => {
