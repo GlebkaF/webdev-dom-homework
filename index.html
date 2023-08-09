@@ -58,6 +58,7 @@
         ></textarea>
         <div class="add-form-row">
           <button class="add-form-button">Написать</button>
+          <button class="add-form-button add-form-button_reset">Удалить коментарий</button>
         </div>
       </div>
     </div>
@@ -65,7 +66,53 @@
 
   <script>
     "use strict";
-    // Код писать здесь
+    const list = document.querySelector(".comments");
+    const button = document.querySelector(".add-form-button");
+    const addName = document.querySelector(".add-form-name");
+    const addText = document.querySelector(".add-form-text");
+    let buttonReset = document.querySelector(".add-form-button_reset");
+
+    buttonReset.addEventListener("click", () => {
+      let newList = list.innerHTML;
+      let lastIndex = newList.lastIndexOf(`<li class="comment">`);
+      if(lastIndex !== -1){
+        list.innerHTML = newList.slice(0, lastIndex);
+      }
+    });
+
+    button.addEventListener("click", () => {
+        addText.classList.remove("error");
+        addName.classList.remove("error");
+      if(!addName.value || !addText.value){
+        addText.classList.add("error");
+        addName.classList.add("error");
+        return;
+      }
+      let currentDate = new Date().toLocaleString().replace(",", "")
+      const oldList = list.innerHTML;
+       list.innerHTML = oldList +
+        `<li class="comment">
+          <div class="comment-header">
+            <div>${addName.value}</div>
+            <div>${currentDate}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${addText.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+       addName.value = "";
+       addText.value = "";
+    })
+
+
     console.log("It works!");
   </script>
 </html>
