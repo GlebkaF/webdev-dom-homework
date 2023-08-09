@@ -106,8 +106,6 @@
   }
 
 
-
-
   //        РЕДАКТИРОВАНИЕ КОММЕНТАРИЕВ
 
   const initEditButtonListeners = () => {
@@ -118,12 +116,12 @@
         event.stopPropagation();
 
         const index = buttonEditElement.dataset.index;
-        const textarea = document.querySelectorAll(".edit-text");
+        const textarea = document.getElementById(`textarea-${index}`);
 
 
         if (comments[index].isEdit) {
           comments[index].isEdit = false;
-          comments[index].text = textarea[index].value;
+          comments[index].text = textarea.value;
 
           renderComments()
         } else {
@@ -131,6 +129,38 @@
         }
 
         renderComments();
+      })
+    }
+  }
+
+    //  Homework 2.11
+
+    //        Ответы на комменты
+
+  const initEditCommentListeners = () => {
+    const answerElements = document.querySelectorAll(".comment");
+
+
+    for (const answerElement of answerElements) {
+
+      answerElement.addEventListener('click', () => {
+
+        const index = answerElement.dataset.index;
+
+        const text = answerElement.dataset.text;
+        const name = answerElement.dataset.name;
+
+        // когда нажимаю = &{comment.text} должен появляться в commentInputElement (тексте добавления комментариев)
+        // commentInputElement.value = `> ${text} \n ${name}, `;
+
+        if (comments[index].isEdit === false) {
+
+          commentInputElement.value = `BEGIN_QUOTE ${text} ${name} QUOTE_END`;
+
+          renderComments();
+
+        }
+
       })
     }
   }
@@ -167,7 +197,7 @@
           <div>${comment.date}</div>
         </div>
         <div class="comment-body">
-          ${comment.isEdit ? `<textarea class="edit-text">${comment.text}</textarea>` : `<div class="comment-text">
+          ${comment.isEdit ? `<textarea class="edit-text" id="textarea-${index}">${comment.text}</textarea>` : `<div class="comment-text">
             ${comment.text}
           </div>`}
         </div>
@@ -185,38 +215,9 @@
 
     listElement.innerHTML = commentsHtml;
 
-    //  Homework 2.11
-
-    //        Ответы на комменты
-
-    const answerElements = document.querySelectorAll(".comment");
-
-
-    for (const answerElement of answerElements) {
-
-      answerElement.addEventListener('click', () => {
-
-        const index = answerElement.dataset.index;
-
-        const text = answerElement.dataset.text;
-        const name = answerElement.dataset.name;
-
-        // когда нажимаю = &{comment.text} должен появляться в commentInputElement (тексте добавления комментариев)
-        // commentInputElement.value = `> ${text} \n ${name}, `;
-
-        if (comments[index].isEdit === false) {
-
-          commentInputElement.value = `BEGIN_QUOTE ${text} ${name} QUOTE_END`;
-
-          renderComments();
-
-        }
-
-      })
-    }
-
     initLikesButtonListeners();
     initEditButtonListeners();
+    initEditCommentListeners();
   }
 
 
@@ -224,6 +225,8 @@
   // initEventListeners();
   initLikesButtonListeners();
   initEditButtonListeners();
+  initEditCommentListeners();
+
 
 
   // HOMEWORK 2.9
@@ -266,7 +269,7 @@
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("BEGIN_QUOTE", "<div class='quote'>")
-        .replaceAll("QUOTE_END", "<div class='quote'>"),
+        .replaceAll("QUOTE_END", "</div>"),
       like: 0,
       isLiked: false,
       isEdit: false
