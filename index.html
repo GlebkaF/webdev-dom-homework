@@ -6,9 +6,9 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
 
-  <body>
+  <body id="body">
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -46,26 +46,114 @@
       </ul>
       <div class="add-form">
         <input
+          id="add-form-name"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
+          id="add-form-text"
           type="textarea"
-          class="add-form-text"
+          class="add-form-text "
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="add-form-button" >Написать</button>
         </div>
       </div>
     </div>
   </body>
 
   <script>
-    "use strict";
-    // Код писать здесь
+    // "use strict";
+    const commentsElement = document.getElementById("comments");
+    const addFormButtonElement = document.getElementById("add-form-button");
+    const nameInputElement = document.getElementById("add-form-name");
+    const textInputElement = document.getElementById("add-form-text");
+    const body = document.getElementById("body");
+
+
+    let currentDate = new Date();
+    let zero = (n) => {
+      return n < 10 ? `0${n}` : n;
+    }
+
+    addFormButtonElement.classList.add("empty");
+    addFormButtonElement.disabled = true;
+
+    nameInputElement.addEventListener ('input',() => {
+      if (nameInputElement.value === "" || textInputElement.value === "") {
+        addFormButtonElement.classList.add("empty");
+        addFormButtonElement.disabled = true;
+    } else if (nameInputElement.value !== "" && textInputElement.value !== "") {
+        addFormButtonElement.classList.remove("empty");
+        addFormButtonElement.disabled = false;
+    }});
+
+    textInputElement.addEventListener ('input',() => {
+      if (textInputElement.value === "" || nameInputElement.value === "") {
+        addFormButtonElement.classList.add("empty");
+        addFormButtonElement.disabled = true;
+    } else if (textInputElement.value !== "" && nameInputElement.value !== "") {
+        addFormButtonElement.classList.remove("empty");
+        addFormButtonElement.disabled = false;
+    }});
+
+    // textInputElement.addEventListener ('input',() => {
+    //   if (textInputElement.value === "" && nameInputElement.value === "") {
+    //       addFormButtonElement.classList.add("empty");
+    // }});
+
+    addFormButtonElement.addEventListener("click", () => {
+
+      addFormButtonElement.classList.remove("empty");
+      textInputElement.classList.remove("emptyTextName");
+      nameInputElement.classList.remove("emptyTextName");
+
+      if (nameInputElement.value === "" && textInputElement.value === ""){
+        // addFormButtonElement.classList.add("empty");
+        textInputElement.classList.add("emptyTextName");
+        nameInputElement.classList.add("emptyTextName");
+        return;
+      } else if (textInputElement.value === "") {
+        // addFormButtonElement.classList.add("empty");
+        textInputElement.classList.add("emptyTextName");
+        return;
+      } else if (nameInputElement.value === "") {
+        // addFormButtonElement.classList.add("empty");
+        nameInputElement.classList.add("emptyTextName");
+        return;
+      }
+
+
+    
+      const oldCommentsElement = commentsElement.innerHTML;
+      commentsElement.innerHTML =
+      oldCommentsElement +
+      `<li class="comment">
+        <div class="comment-header">
+          <div>${nameInputElement.value}</div>
+          <div>${zero(currentDate.getDate())}.${zero(currentDate.getMonth()+1)}.${currentDate.getFullYear() % 100} ${zero(currentDate.getHours())}:${zero(currentDate.getMinutes())}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${textInputElement.value}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">0</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>`;
+
+    textInputElement.value = "";
+    nameInputElement.value = "";
+
+    });
+
     console.log("It works!");
   </script>
 </html>
