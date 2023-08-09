@@ -8,8 +8,8 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
-        <li class="comment">
+      <ul id="list" class="comments">
+        <!-- <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -42,30 +42,276 @@
               <button class="like-button -active-like"></button>
             </div>
           </div>
-        </li>
+        </li> -->
       </ul>
       <div class="add-form">
         <input
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+
+          value=""
         />
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
-        ></textarea>
+          >
+        </textarea>
         <div class="add-form-row">
           <button class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
-
+  <style>
+    .error {
+      background-color: red;
+    }
+  </style>
   <script>
     "use strict";
-    // Код писать здесь
-    console.log("It works!");
+        // 1. Dom дерево
+    // 2. Поиск элментов
+    // const buttonElement = document.getElementById("add-form-button");
+    // const listElement = document.getElementById("list");
+    // const nameInputElement = document.getElementById("add-form-name");
+    // const textInputElement = document.getElementById("add-form-text");
+    // const btnElement = document.querySelector('.add-form-button');
+    // const myDate = new Date().toLocaleDateString().slice(0, 6) + new Date().toLocaleDateString().slice(-2);
+    // const newDate = myDate + ' ' + new Date().toLocaleTimeString().slice(0, -3);
+
+    // const commentElements = document.querySelectorAll(".comment");
+
+    const btnElement = document.querySelector('.add-form-button');
+    const nameInputElement = document.querySelector('.add-form-name');
+    const nameTextAreaElement = document.querySelector('.add-form-text');
+    const myDate = new Date().toLocaleDateString().slice(0, 6) + new Date().toLocaleDateString().slice(-2);
+	  const newDate = myDate + ' ' + new Date().toLocaleTimeString().slice(0, -3);
+    const listElement = document.getElementById('list');
+
+    const comments = [
+      {
+        name: "Глеб Фокин",
+        date: "12.02.22 12:18",
+        comment: "Это будет первый комментарий на этой странице",
+        like: 3,
+			  isLiked: false,
+        
+      },
+      {
+        name: "Варвара Н.",
+        date: "13.02.22 19:22",
+        comment: "Мне нравится как оформлена эта страница! ❤",
+        like: 75,
+		  	isLiked: true,
+      },
+    ];
+
+          // Добавляет обработчики кликов ко всем элементам с классом student
+    // const initEventListeners = () => {
+    //   // Находит все элементы с классом student в разметке
+    //   const commentElements = document.querySelectorAll(".comment");
+
+    //   // Цикл for проходит по каждому элементу в списке
+    //   for (const commentElement of commentElements) {
+    //     // Добавляет обработчик клика на конкретный элемент в списке
+    //     commentElement.addEventListener("click", () => {
+    //       console.log(commentElement.dataset.text);
+    //     });
+    //   }
+    // };
+
+    const initEventListeners = () => {
+		const buttonElements = document.querySelectorAll('.like-button');
+
+		for (const buttonElement of buttonElements) {
+			buttonElement.addEventListener('click', () => {
+				// индекс = номер обьекта в массиве, получаем из дата атрибута кнопки на которую нажимаем
+				const index = buttonElement.dataset.index;
+				// обращаемся к свойству isLaked обьекта массива, кот мы получили из массива comments по индексу
+				if (comments[index].isLiked) {
+					comments[index].isLiked = false;
+					comments[index].like--;
+				} else {
+					comments[index].isLiked = true;
+					comments[index].like++;
+				}
+
+				renderComments();
+			});
+		}
+	  };
+
+    // const initDeleteButtonsListeners = () => {
+    //   const deleteButtonsElements = document.querySelectorAll(".delete-button");
+
+    //   for (const deleteButtonElement of deleteButtonsElements) {
+    //     deleteButtonElement.addEventListener("click", () => {
+    //       // План удаления
+    //       // 1. (+) Мы храним список студентов в js массиве
+    //       // 2. (+) При клике мы удаляем нужный элемент из массива
+    //       // 3. (+) На основе нового массива в js формируем html разметку списка
+    //       const index = deleteButtonElement.dataset.index;
+    //       comments.splice(index, 1);
+    //       renderComments();
+    //     });
+    //   }
+    // };
+
+    // const renderComments = () => {
+    //   const commentsHtml = comments
+    //     .map((comment, index) => {
+    //       return  `<li class="comment">
+    //       <div class="comment-header">
+    //         <div>${comment.name}</div>
+    //         <div>${newDate}</div>
+    //       </div>
+    //       <div class="comment-body">
+    //         <div class="comment-text">
+    //           ${comment.text}
+    //         </div>
+    //       </div>
+    //       <div class="comment-footer">
+    //         <div class="likes">
+    //           <span class="likes-counter"></span>
+    //           <button class="like-button"></button>
+    //         </div>
+    //         <button data-index="${index}" class="delete-button">Удалить</button>
+    //       </div>
+    //     </li>`;
+
+    //       // `<li class="student" data-color="${student.color}">
+    //       //   <p class="student-name">
+    //       //     ${student.name}, любимый цвет
+    //       //     <span style="color: ${student.color}"> ${student.color}</span>
+    //       //   </p>
+    //       //   <button data-index="${index}" class="delete-button">Удалить</button>
+    //       // </li>`;
+    //     })
+    //     .join("");
+    //     listElement.innerHTML = commentsHtml;
+
+    //   initEventListeners();
+    //   initDeleteButtonsListeners();
+    //   };
+
+    const renderComments = () => {
+		const commentsHtml = comments.map((comment, index) => {
+			return `<li class="comment">
+					<div class="comment-header">
+						<div>${comment.name}</div>
+						<div>${comment.date}</div>
+					</div>
+					<div class="comment-body">
+						<div class="comment-text">
+							${comment.comment}
+						</div>
+					</div>
+					<div class="comment-footer">
+						<div class="likes">
+							<span class="likes-counter">${comment.like}</span>
+							<button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index='${index}'>
+							</button>
+						</div >
+					</div >
+				</li >`;
+		}).join('');
+
+		listElement.innerHTML = commentsHtml;
+    initEventListeners();
+	  }
+
+    renderComments();
+
+    const likesElements = document.querySelectorAll('.likes');
+
+    initEventListeners();
+
+    renderComments();
+
+    btnElement.addEventListener('click', () => {
+
+      nameInputElement.classList.remove('error');
+      nameTextAreaElement.classList.remove('error');
+
+      if (nameInputElement.value === '') {
+        nameInputElement.classList.add('error');
+        return;
+      }
+      if (nameTextAreaElement.value === '') {
+        nameTextAreaElement.classList.add('error');
+        return;
+		  }
+    
+  
+
+
+    //   renderComments();
+
+    //   buttonElement.addEventListener("click", () => {
+    //     nameInputElement.classList.remove("input-error");
+
+    //     if (nameInputElement.value === "") {
+    //       nameInputElement.classList.add("input-error");
+    //       return;
+    //     }
+
+    //     comments.push({
+    //       name: nameInputElement.value,
+    //       text: textInputElement.value
+    //     });
+
+    // renderStudents();
+    // nameInputElement.value = "";
+    // textInputElement.value = "";
+
+    comments.push({
+			name: nameInputElement.value,
+			date: newDate,
+			comment: nameTextAreaElement.value,
+			like: 0,
+			isLiked: false,
+		  });
+
+		renderComments();
+
+    // buttonElement.addEventListener("click", () => {
+
+    //   nameInputElement.classList.remove("error");
+
+    //   if (nameInputElement.value === "") {
+    //     nameInputElement.classList.add("error");
+    //     return;
+    //   }
+    //   if (textInputElement.value === "") {
+    //     textInputElement.classList.add("error");
+    //     return;
+    //   }
+
+    //   const oldListHtml = listElement.innerHTML;
+    //   listElement.innerHTML =
+    //     oldListHtml + 
+    //     `<li class="comment">
+    //       <div class="comment-header">
+    //         <div>${nameInputElement.value}</div>
+    //         <div>${newDate}</div>
+    //       </div>
+    //       <div class="comment-body">
+    //         <div class="comment-text">
+    //           ${textInputElement.value}
+    //         </div>
+    //       </div>
+    //       <div class="comment-footer">
+    //         <div class="likes">
+    //           <span class="likes-counter"></span>
+    //           <button class="like-button"></button>
+    //         </div>
+    //       </div>
+    //     </li>`;
+        nameInputElement.value = "";
+        nameTextAreaElement.value = "";
+      });
   </script>
 </html>
