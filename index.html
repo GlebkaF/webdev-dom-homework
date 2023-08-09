@@ -70,7 +70,6 @@
     const button = document.querySelector(".add-form-button");
     const addName = document.querySelector(".add-form-name");
     const addText = document.querySelector(".add-form-text");
-    let currentDate = new Date().toLocaleString().replace(",", "")
     let buttonReset = document.querySelector(".add-form-button_reset");
 
     buttonReset.addEventListener("click", () => {
@@ -89,6 +88,7 @@
         addName.classList.add("error");
         return;
       }
+      let currentDate = new Date().toLocaleString().replace(",", "")
       const oldList = list.innerHTML;
        list.innerHTML = oldList +
         `<li class="comment">
@@ -103,7 +103,7 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter"></span>
+              <span class="likes-counter">0</span>
               <button class="like-button"></button>
             </div>
           </div>
