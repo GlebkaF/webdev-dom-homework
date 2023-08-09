@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="list-com" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -46,26 +46,133 @@
       </ul>
       <div class="add-form">
         <input
+          id="name-input"
           type="text"
           class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
+          placeholder="Введите ваше имя" />
         <textarea
+          id="commit-input"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          rows="4"></textarea>
+        <div class="button-container">
+          <div class="rem-form-row">
+            <button id="delete-button" class="rem-form-button">
+              Удалить последний комментарий
+            </button>
+          </div>
+          <div class="add-form-row">
+            <button id="write-button" class="add-form-button">Написать</button>
+          </div>
         </div>
       </div>
     </div>
   </body>
-
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const writeButton = document.getElementById("write-button");
+    const deleteButton = document.getElementById("delete-button");
+    const listCom = document.getElementById("list-com");
+    const nameInput = document.getElementById("name-input");
+    const commitInput = document.getElementById("commit-input");
+    const inp = document.querySelector(".add-form-name");
+    const textAr = document.querySelector(".add-form-text");
+    let btn = document.querySelector("#write-button");
+
+    document.addEventListener("keyup", (key) => {
+      if (key.code === "Enter") {
+        if (!btn.classList.contains("empty")) {
+          pushCommit();
+        }
+      }
+    });
+
+    btn.classList.add("empty");
+    btn.disabled = true;
+
+    nameInput.addEventListener("input", function () {
+      if (nameInput.value.length < 1 || commitInput.value.length < 1) {
+        btn.classList.add("empty");
+        btn.disabled = true;
+      } else {
+        btn.classList.remove("empty");
+        btn.disabled = false;
+      }
+    });
+
+    commitInput.addEventListener("input", function () {
+      if (nameInput.value.length < 1 || commitInput.value.length < 1) {
+        btn.classList.add("empty");
+        btn.disabled = true;
+      } else {
+        btn.classList.remove("empty");
+        btn.disabled = false;
+      }
+    });
+
+    const getDateNow = () => {
+      const dateNow = new Date();
+      let day = dateNow.getDate();
+      let month = dateNow.getMonth() + 1;
+      let year = dateNow.getFullYear() % 1000;
+      let hour = dateNow.getHours();
+      let minute = dateNow.getMinutes();
+      if (day < 10) {
+        day = "0" + day;
+      }
+      if (month < 10) {
+        month = "0" + month;
+      }
+      if (hour < 10) {
+        hour = "0" + hour;
+      }
+      if (minute < 10) {
+        minute = "0" + minute;
+      }
+      return `${day}.${month}.${year} ${hour}:${minute}`;
+    };
+
+    writeButton.addEventListener(
+      "click",
+      (pushCommit = () => {
+        // if (nameInput.value === "" || commitInput.value === "") {
+        //   return;
+        // } else { вариант без добавления обработчика событий на поля ввода
+        const oldListCom = listCom.innerHTML;
+        listCom.innerHTML =
+          oldListCom +
+          `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInput.value}</div>
+            <div>${getDateNow()}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${commitInput.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+        // }
+        nameInput.value = "";
+        commitInput.value = "";
+        btn.classList.add("empty");
+        btn.disabled = true;
+      })
+    );
+
+    deleteButton.addEventListener("click", () => {
+      const oldListCom = listCom.innerHTML;
+      console.log(listCom.innerHTML);
+      const startDel = oldListCom.lastIndexOf('<li class="comment">');
+      const endDel = oldListCom.lastIndexOf("</li>") + 5;
+      const forDelArr = oldListCom.slice(startDel, endDel);
+      listCom.innerHTML = oldListCom.replace(forDelArr, "");
+    });
   </script>
 </html>
