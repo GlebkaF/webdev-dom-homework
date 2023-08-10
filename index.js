@@ -19,7 +19,6 @@ const plusZero = (str) => {
 };
 
 const now = (currentDate) => {
-  console.log(currentDate);
   let date = plusZero(currentDate.getDate());
   let month = plusZero(currentDate.getMonth() + 1);
   let hours = plusZero(currentDate.getHours());
@@ -59,10 +58,11 @@ addFormBtn.addEventListener("click", () => {
 });
 
 document.addEventListener("keyup", (e) => {
-  if (e.code === "Enter" && !addFormBtn.disabled) renderNewComment();
+  if ((e.code === "Enter" || e.code === "NumpadEnter") && !addFormBtn.disabled)
+    renderNewComment();
 });
 
 delFormBtn.addEventListener("click", () => {
-    comments.removeChild(comments.lastElementChild);
-    if (!comments.lastElementChild) delFormBtn.disabled = true;
-  });
+  comments.removeChild(comments.lastElementChild);
+  if (!comments.lastElementChild) delFormBtn.disabled = true;
+});
