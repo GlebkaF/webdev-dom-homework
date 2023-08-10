@@ -44,7 +44,7 @@
           </div>
         </li>
       </ul>
-      <div class="add-form">
+      <div class="add-form" id="add-form">
         <input
           id="add-form-name"
           type="text"
@@ -71,7 +71,7 @@
     const addFormButtonElement = document.getElementById("add-form-button");
     const nameInputElement = document.getElementById("add-form-name");
     const textInputElement = document.getElementById("add-form-text");
-    const body = document.getElementById("body");
+    const form = document.getElementById("add-form");
 
 
     let currentDate = new Date();
@@ -82,7 +82,18 @@
     addFormButtonElement.classList.add("empty");
     addFormButtonElement.disabled = true;
 
+
+    // const check = (a,b) => {
+    //   if (a === "" || b ==""){
+    //     addFormButtonElement.classList.add("empty");
+    //     addFormButtonElement.disabled = true;
+    //   } else if (a !== "" && b !== "") {
+    //     addFormButtonElement.classList.remove("empty");
+    //     addFormButtonElement.disabled = false;
+    //   }};
+
     nameInputElement.addEventListener ('input',() => {
+
       if (nameInputElement.value === "" || textInputElement.value === "") {
         addFormButtonElement.classList.add("empty");
         addFormButtonElement.disabled = true;
@@ -91,7 +102,10 @@
         addFormButtonElement.disabled = false;
     }});
 
+
+
     textInputElement.addEventListener ('input',() => {
+
       if (textInputElement.value === "" || nameInputElement.value === "") {
         addFormButtonElement.classList.add("empty");
         addFormButtonElement.disabled = true;
@@ -100,28 +114,20 @@
         addFormButtonElement.disabled = false;
     }});
 
-    // textInputElement.addEventListener ('input',() => {
-    //   if (textInputElement.value === "" && nameInputElement.value === "") {
-    //       addFormButtonElement.classList.add("empty");
-    // }});
 
-    addFormButtonElement.addEventListener("click", () => {
 
-      addFormButtonElement.classList.remove("empty");
-      textInputElement.classList.remove("emptyTextName");
+const addNewComment = () => {
+  textInputElement.classList.remove("emptyTextName");
       nameInputElement.classList.remove("emptyTextName");
 
       if (nameInputElement.value === "" && textInputElement.value === ""){
-        // addFormButtonElement.classList.add("empty");
         textInputElement.classList.add("emptyTextName");
         nameInputElement.classList.add("emptyTextName");
         return;
       } else if (textInputElement.value === "") {
-        // addFormButtonElement.classList.add("empty");
         textInputElement.classList.add("emptyTextName");
         return;
       } else if (nameInputElement.value === "") {
-        // addFormButtonElement.classList.add("empty");
         nameInputElement.classList.add("emptyTextName");
         return;
       }
@@ -149,7 +155,12 @@
 
     textInputElement.value = "";
     nameInputElement.value = "";
+}
 
+    addFormButtonElement.addEventListener("click", addNewComment);
+
+    form.addEventListener("keyup", (e) => {
+      if (e.code === "Enter") addNewComment();
     });
 
     console.log("It works!");
