@@ -61,18 +61,10 @@
 
       likeButtonsElement.addEventListener("click", () => {
 
-        
+        comments[index].likeButton ? comments[index].likesCounter -= 1 : comments[index].likesCounter += 1 ;
 
-        if (comments[index].likeButton) {
-          comments[index].likesCounter -= 1;
-          comments[index].likeButton = 'false';
-          
-          
-        } else {
-          comments[index].likesCounter += 1;
-          comments[index].likeButton = 'true';
-          
-        }
+        comments[index].likeButton ? comments[index].likeButton = 'false' : comments[index].likeButton = 'true';
+
         renderComments();
       })
     }
@@ -105,8 +97,6 @@
     initLikesCounter();
   }
   renderComments();
-
-
 
   buttonElement.addEventListener("click", () => {
 
@@ -145,7 +135,7 @@
 
   });
 
-  console.log("It works!");
+  console.log("It works!!");
 </script>
 
 </html>
