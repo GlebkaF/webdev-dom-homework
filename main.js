@@ -54,7 +54,8 @@ function addCommentHandler() {
 
     // Отправка нового комментария на сервер
     addCommentRequest(newComment)
-        .then(() => {
+        .then((responseData) => {
+          comments = responseData;
             nameInput.value = "";
             commentInput.value = "";
             nameInput.disabled = false;
@@ -64,6 +65,7 @@ function addCommentHandler() {
             loadingMessage.style.display = "none";
             // Перерисовать комментарии после успешного добавления
             renderComments();
+            
         })
         .catch((error) => {
             console.log(error);
@@ -102,7 +104,7 @@ function main() {
             showLoadingMessage();
         })
         .catch((error) => {
-            console.error(error);
+            //console.error(error);
             alert("Кажется что-то пошло не так, попробуйте позже.");
             isLoading = false;
             showLoadingMessage();

@@ -1,6 +1,6 @@
 
-export const getComments = (nameInputValue, commentInputValue) => {
-    return fetch("https://wedev-api.sky.pro/api/v1/kristina-sapega/comments")
+export const getComments = () => {
+    return fetch("https://wedev-api.sky.pro/api/v1/kristina-sapega/comments",)
       //method: "GET",
     //})
       .then((response) => {
@@ -15,33 +15,28 @@ export const getComments = (nameInputValue, commentInputValue) => {
 
 
 //функция для добавления комментария
-export function addCommentRequest() {
-   // const newComment = {
-    //name: nameInput.value,
-   // text: commentInput.value,
-  //};
+export function addCommentRequest(newComment) {
+    
   return fetch("https://wedev-api.sky.pro/api/v1/kristina-sapega/comments", {
     method: "POST",
     body: JSON.stringify(newComment),
   })
     .then((response) => {
     if (response.status === 400) {
-        throw new Error("Неверный запрос"); 
+        //throw new Error("Неверный запрос"); 
+        return response.json().then((responseData) => {
+            throw new Error(responseData.message || "Неверный запрос");
+          });
       } else if (response.status === 500) {
         throw new Error("Ошибка сервера");
       }
       return response.json();
     })
     .then(() => {
-      return fetch("https://wedev-api.sky.pro/api/v1/kristina-sapega/comments");
-    })
-    .then((response) => {
-  if (!response.ok) {
-    throw new Error("Ошибка при получении комментариев");
-  }
-  return response.json();
+      
+  return getComments();
 });
-};
+}
     
 
   
