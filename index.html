@@ -8,42 +8,7 @@
 
   <body>
     <div class="container">
-      <ul id="list-com" class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
+      <ul id="list-com" class="comments"></ul>
       <div class="add-form">
         <input
           id="name-input"
@@ -77,7 +42,90 @@
     const commitInput = document.getElementById("commit-input");
     const inp = document.querySelector(".add-form-name");
     const textAr = document.querySelector(".add-form-text");
+
     let btn = document.querySelector("#write-button");
+
+    const comments = [
+      {
+        userName: "Глеб Фокин",
+        checkLike: false,
+        textComment: "Это будет первый комментарий на этой странице",
+        countLikes: 3,
+        dateBox: "12.02.22 12:18",
+      },
+      {
+        userName: "Варвара Н.",
+        checkLike: true,
+        textComment: "Мне нравится как оформлена эта страница! ❤",
+        countLikes: 75,
+        dateBox: "13.02.22 19:22",
+      },
+    ];
+
+    const renderComments = () => {
+      return (listCom.innerHTML = comments
+        .map((comment, index) => {
+          if (comment.checkLike === false) {
+            return `<li class="comment">
+            <div class="comment-header">
+              <div>${comment.userName}</div>
+              <div>${comment.dateBox}</div>
+            </div>
+            <div class="comment-body">
+              <div class="comment-text">
+                ${comment.textComment}
+              </div>
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">${comment.countLikes}</span>
+                <button data-index ="${index}" class="like-button"></button>
+              </div>
+            </div>
+          </li>`;
+          } else {
+            return `<li class="comment">
+            <div class="comment-header">
+              <div>${comment.userName}</div>
+              <div>${comment.dateBox}</div>
+            </div>
+            <div class="comment-body">
+              <div class="comment-text">
+                ${comment.textComment}
+              </div>
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">${comment.countLikes}</span>
+                <button data-index ="${index}" class="like-button -active-like"></button>
+              </div>
+            </div>
+          </li>`;
+          }
+        })
+        .join(""));
+    };
+
+    const likeButtons = () => {
+      const buttonLikes = document.querySelectorAll(".like-button");
+      for (const buttonLike of buttonLikes) {
+        buttonLike.addEventListener("click", () => {
+          if (comments[buttonLike.dataset.index].checkLike === true) {
+            comments[buttonLike.dataset.index].checkLike = false;
+            comments[buttonLike.dataset.index].countLikes--;
+          } else if (comments[buttonLike.dataset.index].checkLike === false) {
+            comments[buttonLike.dataset.index].checkLike = true;
+            comments[buttonLike.dataset.index].countLikes++;
+          }
+          renderComments();
+          likeButtons();
+        });
+      }
+    };
+
+    
+    renderComments();
+    likeButtons();
 
     document.addEventListener("keyup", (key) => {
       if (key.code === "Enter") {
@@ -135,44 +183,28 @@
     writeButton.addEventListener(
       "click",
       (pushCommit = () => {
-        // if (nameInput.value === "" || commitInput.value === "") {
-        //   return;
-        // } else { вариант без добавления обработчика событий на поля ввода
-        const oldListCom = listCom.innerHTML;
-        listCom.innerHTML =
-          oldListCom +
-          `<li class="comment">
-          <div class="comment-header">
-            <div>${nameInput.value}</div>
-            <div>${getDateNow()}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${commitInput.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
-        // }
+        comments.push({
+          userName: nameInput.value,
+          checkLike: false,
+          textComment: commitInput.value,
+          countLikes: 0,
+          dateBox: getDateNow(),
+        });
+
         nameInput.value = "";
         commitInput.value = "";
         btn.classList.add("empty");
         btn.disabled = true;
+
+        renderComments();
+        likeButtons();
       })
     );
 
     deleteButton.addEventListener("click", () => {
-      const oldListCom = listCom.innerHTML;
-      console.log(listCom.innerHTML);
-      const startDel = oldListCom.lastIndexOf('<li class="comment">');
-      const endDel = oldListCom.lastIndexOf("</li>") + 5;
-      const forDelArr = oldListCom.slice(startDel, endDel);
-      listCom.innerHTML = oldListCom.replace(forDelArr, "");
+      comments.pop();
+      renderComments();
+      likeButtons();
     });
   </script>
 </html>
