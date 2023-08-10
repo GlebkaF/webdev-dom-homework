@@ -32,6 +32,7 @@
     const inputCommentTextElement = document.getElementById('input-comment-text');
     const commentDate = new Date();
 
+
     // Массив 
     const comments = [
     {
@@ -50,16 +51,17 @@
       },
     ];
 
+
     // Добавляет Лайки //
     const addLike = () => {
         const likeButtonElements = document.querySelectorAll(".like-button");
         for (const likeButton of likeButtonElements) {
-          likeButton.addEventListener('click', () => {
+          likeButton.addEventListener('click', (event) => {
+            event.stopPropagation();
             const counter = comments[likeButton.dataset.index]
             let a = counter.like
             if (counter.isLiked === false) {
               counter.isLiked = true;
-              likeButton.classList.add("-active-like")
               counter.like++;
             }
             else if (counter.isLiked === true) {
@@ -70,7 +72,23 @@
           });
         }
       };
-addLike()
+    addLike();
+
+
+    // Ответ на комментарий
+    const answer = () => {
+      const answerComment = document.querySelectorAll('.comment');
+      const answerCommentTexts = document.querySelectorAll('.comment-text');
+      const answerCommentHeaders = document.querySelectorAll('.comment-header');
+      const inputField = document.querySelector('.add-form-text');
+      answerComment.forEach((answerComment, index) => {
+        answerComment.addEventListener('click', () => {
+          inputField.value = '>'+ ' ' + answerCommentTexts[index].innerText + ' (' + answerCommentHeaders[index].innerText+ ')';
+          renderComments();
+        });
+      });
+    };
+
 
     // Рендер
     const renderComments = () => {
@@ -94,8 +112,10 @@ addLike()
       .join("");
       commentListElement.innerHTML = commentsHtml;
       addLike();
+      answer();
     }; 
     renderComments();
+
 
     // Добавляет комментарий 
     const addComment = () => {
@@ -116,8 +136,8 @@ addLike()
         };
 
         comments.push({
-          name: inputCommentNameElement.value,
-          text: inputCommentTextElement.value,
+          name: inputCommentNameElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
+          text: inputCommentTextElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
           like: 0,
           isLiked: false,
           date: `${commentDate.toLocaleDateString('numeric')} ${commentDate.toLocaleTimeString([], {hour: "2-digit", minute:"2-digit"})
