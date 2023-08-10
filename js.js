@@ -1,5 +1,4 @@
 
-"use strict";
 const form = document.querySelector('.add-form');
 const nameInputElement = document.querySelector('.add-form-name');
 const textInputElement = document.querySelector('.add-form-text');
