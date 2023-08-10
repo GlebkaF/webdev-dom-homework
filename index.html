@@ -30,71 +30,48 @@
     const commentListElement = document.getElementById('comment-list');
     const inputCommentNameElement = document.getElementById('input-comment-name');
     const inputCommentTextElement = document.getElementById('input-comment-text');
-    
-    // Устанавливает дату 
-    const commentDate = () => {
-      let myDate = new Date()
-      let day = myDate.getDate();
-      let month = myDate.getMonth() + 1;
-      let year = myDate.getFullYear();
-      year = year.toString().substr(-2);
-      let hour = myDate.getHours(); 
-      let minute = myDate.getMinutes(); 
+    const commentDate = new Date();
 
-      if (minute < 10) { 
-	     minute = "0" + minute; 
-      }
-      if (month < 0) {
-        month = "0" + month;
-      }
-      if (day < 0) {
-        day = "0" + day;
-      }
-      let resultDate =  day + "." + month + "." + year + " " + hour + ":" + minute
-      return resultDate;
-    }
     // Массив 
     const comments = [
     {
         name: "Глеб Фокин",
         text: "Это будет первый комментарий на этой странице",
-        like: "3",
+        like: 3,
         isLiked: false,
         date: "12.02.22 12:18",
       },
       {
         name: "Варвара Н",
         text: "Мне нравится как оформлена эта страница! ❤",
-        like: "75",
+        like: 75,
         isLiked: false,
         date: "13.02.22 19:22",
       },
-    ];    
+    ];
+
     // Добавляет Лайки //
     const addLike = () => {
-      const likeButtonElements = document.querySelectorAll(".like-button");
-      
-      for (const likeButton of likeButtonElements) {
-        likeButton.addEventListener("click", () => {
-          const index = likeButton.dataset.index;
-          let counter = likeButton.previousElementSibling
-          let likes = comments[index].like;
-          let countLike = likes;
+        const likeButtonElements = document.querySelectorAll(".like-button");
+        for (const likeButton of likeButtonElements) {
+          likeButton.addEventListener('click', () => {
+            const counter = comments[likeButton.dataset.index]
+            let a = counter.like
+            if (counter.isLiked === false) {
+              counter.isLiked = true;
+              likeButton.classList.add("-active-like")
+              counter.like++;
+            }
+            else if (counter.isLiked === true) {
+              counter.isLiked = false
+              counter.like--;
+            }
+            renderComments(); 
+          });
+        }
+      };
+addLike()
 
-          if (!comments[index].isLiked) {
-            likeButton.className = "like-button -active-like";
-            comments[index].isLiked = true;
-            countLike++;
-          } else {
-            likeButton.className = "like-button";
-            comments[index].isLiked = false;
-            countLike;
-          }
-          counter.textContent = countLike;
-        });
-      }
-    }    
-    addLike();
     // Рендер
     const renderComments = () => {
       const commentsHtml = comments.map((comment, index) => {
@@ -109,7 +86,7 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${comment.like}</span>
-              <button class="like-button" data-index=${index}></button>
+              <button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index=${index}></button>
             </div>
           </div>
       </li>`
@@ -119,6 +96,7 @@
       addLike();
     }; 
     renderComments();
+
     // Добавляет комментарий 
     const addComment = () => {
       buttonElement.addEventListener ('click', () => {
@@ -142,7 +120,8 @@
           text: inputCommentTextElement.value,
           like: 0,
           isLiked: false,
-          date: commentDate(),
+          date: `${commentDate.toLocaleDateString('numeric')} ${commentDate.toLocaleTimeString([], {hour: "2-digit", minute:"2-digit"})
+      }`,
         })
 
         renderComments();
