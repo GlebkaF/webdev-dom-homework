@@ -173,7 +173,7 @@ const answerElement = () => {
     event.stopPropagation();
     const index = answerText.dataset.index; 
       //console.log(answerText.dataset.index);
-      text.value = `BEGIN_QUOTE>${comments[index].name}  \n  ${comments[index].text}QUOTE_END \n`;
+      text.value = `BEGIN_QUOTE Start_any > ${comments[index].name} \n End_any ${comments[index].text}end QUOTE_END \n`;
 
       renderFunction();
 
@@ -282,7 +282,9 @@ comments.push({
     .replaceAll(">", "&gt")
     .replaceAll('"', "&quot")
     .replaceAll("BEGIN_QUOTE", "<div class='quoteOne'>")
-    .replaceAll("QUOTE_END", "</div>"),
+    .replaceAll("QUOTE_END", "</div>")
+    .replaceAll("Start_any", "<div class='sts'>")
+    .replaceAll("End_any", "</div>"),
     time: formatDate(date),
     like: 0,
     isLiked: false,
