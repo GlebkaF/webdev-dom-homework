@@ -1,114 +1,142 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
+<html lang="en">
 
-  <body>
-    <div class="container">
-      <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
-        </div>
-      </div>
-    </div>
-  </body>
-  <style>
-    .error {
-      background-color: red;
-    }
-  </style>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="styles.css" />
+	<title>Проект "Комменты"</title>
+</head>
 
-  <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
-    const commentNameInput = document.querySelector (".add-form-name");
-    const commentTextInput = document.querySelector (".add-form-text");
-    const addButton = document.querySelector (".add-form-button");
-    const commentsBox = document.querySelector (".comments");
-    const newDate = new Date().toLocaleString().slice(0, -3);
-    addButton.addEventListener ('click', () => {
-      //alert (commentNameInput.value, commentTextInput.value)
-      commentNameInput.classList.remove("error");
+<body>
+	<div class="container">
+		<ul class="comments" id="comments-list">
+		</ul>
+		<div class="add-form">
+			<input type="text" class="add-form-name" placeholder="Введите ваше имя" value="" />
+			<textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4">
+			</textarea>
+			<div class="add-form-row">
+				<button class="add-form-button">Написать</button>
+			</div>
+		</div>
+	</div>
+</body>
 
-      if (commentNameInput.value === "") {
-        commentNameInput.classList.add("error");
-        return;
-      }
-      if (commentTextInput.value === "") {
-        commentTextInput.classList.add("error");
-        return;
-      }
-      commentsBox.innerHTML += `<li class="comment">
-      <div class="comment-header">
-        <div>${commentNameInput.value}</div>
-        <div>${newDate}</div>
-      </div>
-      <div class="comment-body">
-        <div class="comment-text">
-          ${commentTextInput.value}
-        </div>
-      </div>
-      <div class="comment-footer">
-        <div class="likes">
-          <span class="likes-counter">0</span>
-          <button class="like-button"></button>
-        </div>
-      </div>
-    </li>`;
-    commentNameInput.value = "";
-    commentTextInput.value = "";
+<script>
+	"use strict";
 
-    })
-  </script>
+	const comments = [
+		{
+			name: 'Глеб Фокин',
+			date: '12.02.22 12:18',
+			body: 'Это будет первый комментарий на этой странице',
+			likesCount: 3,
+			isLiked: false,
+		},
+		{
+			name: 'Варвара Н.',
+			date: '13.02.22 19:22',
+			body: 'Мне нравится как оформлена эта страница! ❤',
+			likesCount: 75,
+			isLiked: true,
+		},
+	];
+
+	function renderComments() {
+		const commentsListHtml = comments.map((comment, index) => {
+			return `
+			<li class="comment" data-index='${index}'>
+				<div class="comment-header">
+					<div>${comment.name}</div>
+					<div>${comment.date}</div>
+				</div>
+				<div class="comment-body">
+					<div class="comment-text" style="white-space:pre-line">
+						${comment.body}
+					</div>
+				</div>
+				<div class="comment-footer">
+					<div class="likes">
+						<span class="likes-counter">${comment.likesCount}</span>
+						<button class="like-button ${comment.isLiked ? '-active-like' : ''}">
+						</button>
+					</div>
+				</div>
+			</li>
+			`;
+		}).join('');
+
+		const commentsList = document.getElementById('comments-list');
+		commentsList.innerHTML = commentsListHtml;
+
+		const commentListItems = commentsList.querySelectorAll('.comment');
+		for (const commentListItem of commentListItems) {
+			const likeButton = commentListItem.querySelector('.like-button');
+			const commentIndex = commentListItem.dataset.index;
+			const comment = comments[commentIndex];
+
+			likeButton.addEventListener('click', (event) => {
+				event.stopPropagation();				
+
+				if (comment.isLiked) {
+					comment.isLiked = false;
+					comment.likesCount--;
+				} else {
+					comment.isLiked = true;
+					comment.likesCount++;
+				}
+
+				renderComments();
+			});
+		}
+	}
+
+	const submitCommentButton = document.querySelector('.add-form-button');
+	const authorNameInputField = document.querySelector('.add-form-name');
+	const commentBodyTextArea = document.querySelector('.add-form-text');
+
+	submitCommentButton.addEventListener('click', () => {
+		authorNameInputField.classList.remove('error');
+		commentBodyTextArea.classList.remove('error');
+
+		if (authorNameInputField.value === '') {
+			authorNameInputField.classList.add('error');
+			return;
+		}
+		if (commentBodyTextArea.value === '') {
+			commentBodyTextArea.classList.add('error');
+			return;
+		}
+
+		const currentDate = new Date();
+		const commentDateString = currentDate.toLocaleDateString().slice(0, 6) + 
+									currentDate.toLocaleDateString().slice(-2) + " " +
+									currentDate.toLocaleTimeString().slice(0, -3);
+
+		const bodyEncodedText = commentBodyTextArea.value
+			.replaceAll("&", "&amp;")
+			.replaceAll("<", "&lt;")
+			.replaceAll(">", "&gt;")
+			.replaceAll('"', "&quot;")
+			.replaceAll("QUOTE_BEGIN", "<div class='quote'>").replaceAll("QUOTE_END", "</div>");
+
+		comments.push({
+			name: authorNameInputField.value,
+			date: commentDateString,
+			body: bodyEncodedText,
+			likesCount: 0,
+			isLiked: false,
+		});
+
+		renderComments();
+
+		authorNameInputField.value = '';
+		commentBodyTextArea.value = '';
+	});
+
+	renderComments();
+
+</script>
+
 </html>
