@@ -45,21 +45,6 @@
     const buttonDelComment = document.getElementById("del-comment");
 
 
-
-
-    // const initEventListeners = () => {
-    //   const commentElements = document.querySelectorAll(".comment");
-
-    //   for (const commentElement of commentElements) {
-
-    //     commentElement.addEventListener('click', () => {
-    //       console.log(commentElement);
-    //     })
-    //   }
-    // }
-
-
-
     //        АКТУАЛЬНАЯ DATA
 
     let myDate = new Date();
@@ -77,82 +62,6 @@
     }
 
     let fullTime = myDate.getHours() + ":" + minute;
-
-    // HOMEWORK 2.10
-
-    //        ФОРМИРОВАНИЕ НОВОГО СПИСКА КОММЕНТОВ
-
-    const comments = [
-        {
-            name: "Глеб Фокин",
-            date: "12.02.22 12:18",
-            text: "Это будет первый комментарий на этой странице",
-            like: "3",
-            isLiked: false,
-            isEdit: false
-        },
-        {
-            name: "Варвара Н.",
-            date: "13.02.22 19:22",
-            text: "Мне нравится как оформлена эта страница! ❤",
-            like: "75",
-            isLiked: true,
-            isEdit: false
-        }
-    ];
-
-    const renderComments = () => {
-        const commentsHtml = comments.map((comment, index) => {
-            return `<li class="comment" id="comment-full" data-text="${comment.text}" data-name="${comment.name}">
-        <div class="comment-header">
-          <div> ${comment.name} </div>
-          <div>${comment.date}</div>
-        </div>
-        <div class="comment-body">
-          ${comment.isEdit ? `<textarea class="edit-text">${comment.text}</textarea>` : `<div class="comment-text">
-            ${comment.text}
-          </div>`}
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">${comment.like}</span>
-            <button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index="${index}"></button>
-          </div>
-        </div>
-        <div class="add-form-row">
-        <button class="add-form-button edit-comment" data-index="${index}">${comment.isEdit ? 'Сохранить' : 'Редактировать'} </button>
-      </div>
-      </li>`
-        }).join(' ');
-
-        listElement.innerHTML = commentsHtml;
-
-
-        const answerElements = document.querySelectorAll(".comment");
-
-        //  Homework 2.11
-
-        //        Ответы на комменты
-
-        for (const answerElement of answerElements) {
-            answerElement.addEventListener('click', () => {
-                const text = answerElement.dataset.text;
-                const name = answerElement.dataset.name;
-
-                // когда нажимаю = &{comment.text} должен появляться в commentInputElement (тексте добавления комментариев)
-                // commentInputElement.value = `> ${text} \n ${name}, `;
-
-
-                commentInputElement.value = `BEGIN_QUOTE ${text} \n ${name} QUOTE_END`;
-                commentInputElement.value.replaceAll("BEGIN_QUOTE", `<div class='quote'>`)
-                    .replaceAll("QUOTE_END", `<div class='quote'>`);
-
-                renderComments();
-            })
-
-        }
-    }
-
 
     //        ОБРАБОТЧИК на LIKES,  РЕАЛИЗАЦИЯ ЛАЙКОВ
 
@@ -181,10 +90,6 @@
 
     }
 
-    renderComments();
-    // initEventListeners();
-    initLikesButtonListeners();
-
 
     //        РЕДАКТИРОВАНИЕ КОММЕНТАРИЕВ
 
@@ -195,12 +100,15 @@
             buttonEditElement.addEventListener("click", (event) => {
                 event.stopPropagation();
 
-
                 const index = buttonEditElement.dataset.index;
+                const textarea = document.getElementById(`textarea-${index}`);
+
 
                 if (comments[index].isEdit) {
                     comments[index].isEdit = false;
-                    comments.push(comments[index].text);
+                    comments[index].text = textarea.value;
+
+                    renderComments()
                 } else {
                     comments[index].isEdit = true;
                 }
@@ -210,14 +118,105 @@
         }
     }
 
+    //  Homework 2.11
 
+    //        Ответы на комменты
+
+    const initEditCommentListeners = () => {
+        const answerElements = document.querySelectorAll(".comment");
+
+
+        for (const answerElement of answerElements) {
+
+            answerElement.addEventListener('click', () => {
+
+                const index = answerElement.dataset.index;
+
+                const text = answerElement.dataset.text;
+                const name = answerElement.dataset.name;
+
+                // когда нажимаю = &{comment.text} должен появляться в commentInputElement (тексте добавления комментариев)
+                // commentInputElement.value = `> ${text} \n ${name}, `;
+
+                if (comments[index].isEdit === false) {
+
+                    commentInputElement.value = `BEGIN_QUOTE ${text} ${name} QUOTE_END`;
+
+                    renderComments();
+
+                }
+
+            })
+        }
+    }
+
+
+    // HOMEWORK 2.10
+
+    //        ФОРМИРОВАНИЕ НОВОГО СПИСКА КОММЕНТОВ
+
+    const comments = [
+        {
+            name: "Глеб Фокин",
+            date: "12.02.22 12:18",
+            text: "Это будет первый комментарий на этой странице",
+            like: "3",
+            isLiked: false,
+            isEdit: false
+        },
+        {
+            name: "Варвара Н.",
+            date: "13.02.22 19:22",
+            text: "Мне нравится как оформлена эта страница! ❤",
+            like: "75",
+            isLiked: true,
+            isEdit: false
+        }
+    ];
+
+    const renderComments = () => {
+        const commentsHtml = comments.map((comment, index) => {
+            return `<li class="comment" data-text="${comment.text}" data-name="${comment.name}" data-index="${index}"">
+        <div class="comment-header">
+          <div> ${comment.name} </div>
+          <div>${comment.date}</div>
+        </div>
+        <div class="comment-body">
+          ${comment.isEdit ? `<textarea class="edit-text" id="textarea-${index}">${comment.text}</textarea>` : `<div class="comment-text">
+            ${comment.text}
+          </div>`}
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${comment.like}</span>
+            <button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index="${index}"></button>
+          </div>
+        </div>
+        <div class="add-form-row">
+        <button class="add-form-button edit-comment" data-index="${index}">${comment.isEdit ? 'Сохранить' : 'Редактировать'} </button>
+      </div>
+      </li>`
+        }).join(' ');
+
+        listElement.innerHTML = commentsHtml;
+
+        initLikesButtonListeners();
+        initEditButtonListeners();
+        initEditCommentListeners();
+    }
+
+
+    renderComments();
+    // initEventListeners();
+    initLikesButtonListeners();
     initEditButtonListeners();
+    initEditCommentListeners();
 
 
 
     // HOMEWORK 2.9
 
-    //        ПРОВЕРКА НА ЗАПОЛНЕНИЕ ФОРМ + НЕАКТИВНАЯ КНОПКА + COMMENTS.PUSH
+    //        ПРОВЕРКА НА ЗАПОЛНЕНИЕ ФОРМ + НЕАКТИВНАЯ КНОПКА
 
     buttonAddElement.addEventListener('click', () => {
         nameInputElement.classList.remove("error");
@@ -255,14 +254,13 @@
                 .replaceAll(">", "&gt;")
                 .replaceAll('"', "&quot;")
                 .replaceAll("BEGIN_QUOTE", "<div class='quote'>")
-                .replaceAll("QUOTE_END", "<div class='quote'>"),
+                .replaceAll("QUOTE_END", "</div>"),
             like: 0,
             isLiked: false,
             isEdit: false
         });
 
 
-        // initEventListeners();
         renderComments();
         initLikesButtonListeners();
         initEditButtonListeners();
