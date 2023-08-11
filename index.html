@@ -85,7 +85,9 @@
     const buttonElements = document.querySelectorAll(".like-button");
 
     for (const buttonElement of buttonElements) {
-      buttonElement.addEventListener("click", () => {
+      buttonElement.addEventListener("click", (event) => {
+        event.stopPropagation();
+
         // индекс номер объекта в массиве, получаем из data-атрибута кнопки на к-ую нажимаем
         const index = buttonElement.dataset.index;
         //обращаемся к свойству isLiked объекта, к-ый получили из массивы comments по индексу
@@ -104,23 +106,22 @@
   }
 
 
-
-
   //        РЕДАКТИРОВАНИЕ КОММЕНТАРИЕВ
 
   const initEditButtonListeners = () => {
     const buttonEditElements = document.querySelectorAll(".edit-comment");
 
     for (const buttonEditElement of buttonEditElements) {
-      buttonEditElement.addEventListener("click", () => {
+      buttonEditElement.addEventListener("click", (event) => {
+        event.stopPropagation();
 
         const index = buttonEditElement.dataset.index;
-        const textarea = document.querySelectorAll(".edit-text");
+        const textarea = document.getElementById(`textarea-${index}`);
 
 
         if (comments[index].isEdit) {
           comments[index].isEdit = false;
-          comments[index].text = textarea[index].value;
+          comments[index].text = textarea.value;
 
           renderComments()
         } else {
@@ -128,6 +129,38 @@
         }
 
         renderComments();
+      })
+    }
+  }
+
+    //  Homework 2.11
+
+    //        Ответы на комменты
+
+  const initEditCommentListeners = () => {
+    const answerElements = document.querySelectorAll(".comment");
+
+
+    for (const answerElement of answerElements) {
+
+      answerElement.addEventListener('click', () => {
+
+        const index = answerElement.dataset.index;
+
+        const text = answerElement.dataset.text;
+        const name = answerElement.dataset.name;
+
+        // когда нажимаю = &{comment.text} должен появляться в commentInputElement (тексте добавления комментариев)
+        // commentInputElement.value = `> ${text} \n ${name}, `;
+
+        if (comments[index].isEdit === false) {
+
+          commentInputElement.value = `BEGIN_QUOTE ${text} ${name} QUOTE_END`;
+
+          renderComments();
+
+        }
+
       })
     }
   }
@@ -144,7 +177,7 @@
       text: "Это будет первый комментарий на этой странице",
       like: "3",
       isLiked: false,
-      isEdit: true
+      isEdit: false
     },
     {
       name: "Варвара Н.",
@@ -158,13 +191,13 @@
 
   const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
-      return `<li class="comment" id="comment-full" >
+      return `<li class="comment" data-text="${comment.text}" data-name="${comment.name}" data-index="${index}"">
         <div class="comment-header">
           <div> ${comment.name} </div>
           <div>${comment.date}</div>
         </div>
         <div class="comment-body">
-          ${comment.isEdit ? `<textarea class="edit-text" data-index="${index}">${comment.text}</textarea>` : `<div class="comment-text">
+          ${comment.isEdit ? `<textarea class="edit-text" id="textarea-${index}">${comment.text}</textarea>` : `<div class="comment-text">
             ${comment.text}
           </div>`}
         </div>
@@ -184,6 +217,7 @@
 
     initLikesButtonListeners();
     initEditButtonListeners();
+    initEditCommentListeners();
   }
 
 
@@ -191,6 +225,8 @@
   // initEventListeners();
   initLikesButtonListeners();
   initEditButtonListeners();
+  initEditCommentListeners();
+
 
 
   // HOMEWORK 2.9
@@ -223,9 +259,17 @@
     //        ДОБАВЛЕНИЕ КОММЕНТОВ
 
     comments.push({
-      name: nameInputElement.value,
+      name: nameInputElement.value.replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       date: fullDate + fullTime,
-      text: commentInputElement.value,
+      text: commentInputElement.value.replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("BEGIN_QUOTE", "<div class='quote'>")
+        .replaceAll("QUOTE_END", "</div>"),
       like: 0,
       isLiked: false,
       isEdit: false
