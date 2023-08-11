@@ -13,7 +13,7 @@
       <div class="loading-message-top" style="display: none;">Пожалуйста подождите, загружаю комментарии...</div>
       <!-- Спиосок рендерится из JS -->
     </ul>
-    <div class="add-form">
+    <div class="add-form" style="display: none;">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш комментарий" rows="4"></textarea>
       <div class="add-form-row">
@@ -21,7 +21,14 @@
       </div>
     </div>
     <div class="loading-message-bottom" style="display: none;">Комментарий добавляется...</div>
-    <div class="login-loading-message" style="display: block;">Чтобы добавить комментарий, авторизуйтесь</div>
+    <div class="login-loading-message" style="display: flex;">Чтобы добавить
+      комментарий, &nbsp; <span class="login">авторизуйтесь</span></div>
+
+    <div id="app"></div>
+
+    <div id="registration"></div>
+
+
   </div>
 
   <script type="module" src="main.js"></script>

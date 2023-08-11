@@ -1,11 +1,13 @@
 import { getComments, postComments } from "./api.js";
 import { likeComment } from "./like.js";
+import { renderLogin, renderRegistration } from "./renderLogin.js";
 
 
 let comments = [];
 
 const loadingMessageTop = document.querySelector('.loading-message-top');
 const loadingMessageBottom = document.querySelector('.loading-message-bottom');
+let loginLoadingMessage = document.querySelector('.login-loading-message');
 const addButton = document.querySelector('.add-form-button');
 let addCommentElement;
 
@@ -50,7 +52,9 @@ const generateHtml = (comments) => {
           <button class="${likeButtonClass}" data-index="${index}"></button>
         </div>
       </div>
-    </li>`;
+    </li>
+    `;
+
     }).join('');
     return commentsListHtml;
 };
@@ -133,3 +137,33 @@ const clearFields = () => {
 
 // Fetch initial comments from the server
 showComments();
+// showLoginElement();
+
+
+// Set up event listeners
+
+
+document.addEventListener('click', (event) => {
+    const target = event.target;
+
+    if (target.classList.contains('register')) {
+        renderRegistration();
+    }
+
+    if (target.classList.contains('enter')) {
+        renderLogin();
+    }
+
+    if (target.classList.contains('login')) {
+    renderLogin();
+    }
+});
+
+loginLoadingMessage.addEventListener('click', () => {
+    loginLoadingMessage.style.display = 'none';
+});
+
+
+
+
+
