@@ -1,6 +1,6 @@
-export const renderComments = (comments) => {
-    const commentList = document.querySelector('.comments');
-    commentList.innerHTML = "";
+export const renderComments = (commentsList, comments) => {
+    
+    commentsList.innerHTML = "";
 
     comments.forEach((comment) => {
         const newComment = document.createElement("li");
