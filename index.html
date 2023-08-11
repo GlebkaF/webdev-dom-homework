@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -44,28 +44,94 @@
           </div>
         </li>
       </ul>
-      <div class="add-form">
+      <div class="add-form" id="add-form">
         <input
           type="text"
+          id="add-form-name"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
           type="textarea"
+          id="add-form-text"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
 
+  <style>
+    .error {
+      background-color: lightcoral;
+    }
+    
+  </style>
+
   <script>
     "use strict";
     // Код писать здесь
-    console.log("It works!");
+
+    const zero = (n) => (n < 10 ? `0${n}` : n);
+    
+    const commentsElement = document.getElementById('comments');
+    const buttonElement = document.getElementById('add-form-button');
+    const nameElement = document.getElementById('add-form-name');
+    const textElement = document.getElementById('add-form-text');
+    const form = document.getElementById("add-form");
+
+    buttonElement.addEventListener("click", () => {
+  nameElement.classList.remove("error");
+  textElement.classList.remove("error");
+
+  if (nameElement.value.trim() === "") {
+    nameElement.classList.add("error");
+    return;
+  }
+
+  if (textElement.value.trim() === "") {
+    textElement.classList.add("error");
+    return;
+  }
+
+  const currentDate = new Date();
+  const formattedDate = `${zero(currentDate.getDate())}.${zero(
+    currentDate.getMonth() + 1
+  )}.${currentDate.getFullYear()} ${zero(currentDate.getHours())}:${zero(
+    currentDate.getMinutes())
+  }`;
+
+  const newCommentElement = document.createElement("li");
+  newCommentElement.className = "comment";
+
+  newCommentElement.innerHTML = `
+    <div class="comment-header">
+      <div>${nameElement.value}</div>
+      <div>${formattedDate}</div>
+    </div>
+    <div class="comment-body">
+      <div class="comment-text">
+        ${textElement.value}
+      </div>
+    </div>
+    <div class="comment-footer">
+      <div class="likes">
+        <span class="likes-counter">0</span>
+        <button class="like-button"></button>
+      </div>
+    </div>
+  `;
+
+  commentsElement.appendChild(newCommentElement);
+
+  nameElement.value = "";
+  textElement.value = "";
+});
+
+ console.log("It works!");
   </script>
 </html>
