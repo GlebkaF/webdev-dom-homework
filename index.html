@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
+
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
 
 <body>
   <div class="container">
@@ -63,12 +64,13 @@
 
         comments[index].likeButton ? comments[index].likesCounter -= 1 : comments[index].likesCounter += 1 ;
 
-        comments[index].likeButton ? comments[index].likeButton = 'false' : comments[index].likeButton = 'true';
+        comments[index].likeButton ? comments[index].likeButton = false : comments[index].likeButton = true;
 
         renderComments();
       })
     }
   }
+
 
   const renderComments = () => {
 
