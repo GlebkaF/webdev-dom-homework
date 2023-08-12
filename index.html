@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="list-comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -49,23 +49,61 @@
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          id="name-input"
         />
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+          id="text-input"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="write-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
+  <style>
+    .error {
+      background-color: red;
+    }
+  </style>
 
   <script>
     "use strict";
-    // Код писать здесь
+    const buttonElement = document.getElementById('write-button');
+    const listElement = document.getElementById('list-comments');
+    const nameInputElement = document.getElementById('name-input');
+    const textInputElement = document.getElementById('text-input');  
+
+    buttonElement.addEventListener("click", () => {
+      const oldListHtml = listElement.innerHTML;
+      listElement.innerHTML = oldListHtml + `<li class="comment">
+          <div class="comment-header">
+          ${nameInputElement.value}
+          
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+          ${textInputElement.value}    
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+       if (nameInputElement === '') {
+        nameInputElement.classList.add('error');
+        return;
+        } else if (textInputElement === '') {
+        textInputElement.classList.add('error');
+        return;
+        } 
+    });
     console.log("It works!");
   </script>
 </html>
