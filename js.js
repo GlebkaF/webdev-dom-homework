@@ -59,8 +59,7 @@ const addFormElement = document.getElementById("add-form-name");
      initEventListeners();
      }
     renderComents();
-    
-   
+       
     buttonElement.addEventListener("click", () => {
      
      addFormElement.classList.remove("error");
