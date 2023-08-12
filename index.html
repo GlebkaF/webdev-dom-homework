@@ -65,7 +65,6 @@
     const renderComments = () => {
       return (listCom.innerHTML = comments
         .map((comment, index) => {
-          if (comment.checkLike === false) {
             return `<li class="comment">
             <div class="comment-header">
               <div>${comment.userName}</div>
@@ -79,29 +78,10 @@
             <div class="comment-footer">
               <div class="likes">
                 <span class="likes-counter">${comment.countLikes}</span>
-                <button data-index ="${index}" class="like-button"></button>
+                <button data-index ="${index}" class="like-button ${comment.checkLike === true ? '-active-like' : ''}"></button>
               </div>
             </div>
           </li>`;
-          } else {
-            return `<li class="comment">
-            <div class="comment-header">
-              <div>${comment.userName}</div>
-              <div>${comment.dateBox}</div>
-            </div>
-            <div class="comment-body">
-              <div class="comment-text">
-                ${comment.textComment}
-              </div>
-            </div>
-            <div class="comment-footer">
-              <div class="likes">
-                <span class="likes-counter">${comment.countLikes}</span>
-                <button data-index ="${index}" class="like-button -active-like"></button>
-              </div>
-            </div>
-          </li>`;
-          }
         })
         .join(""));
     };
