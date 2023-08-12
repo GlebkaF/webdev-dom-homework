@@ -9,40 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments" id="comments">
-        <li class="comment" id="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment" id="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+ 
       </ul>
       <div class="add-form">
         <input
@@ -60,72 +27,18 @@
           <button class="add-form-button" id="add-form-button">Написать</button>
         </div>
       </div>
-    </div>
+      </div>
   </body>
 <style>
   .error {
     background-color: red;
   }
   
+  
+.like-button-active-like {
+  background-color: lightgreen;
+}
 </style>
-  <script>
-    
-    const addFormElement = document.getElementById("add-form-name");
-    const buttonElement = document.getElementById("add-form-button");
-    const addFormTextElement =document.getElementById("add-form-text");
-    const listElement = document.getElementById("comments")
-    
-    buttonElement.addEventListener("click", () => {
-     
-     addFormElement.classList.remove("error");
-     if (addFormElement.value === "") {
-      addFormElement.classList.add("error");
-          return;
-     }
-     addFormTextElement.classList.remove("error");
-     if (addFormTextElement.value === "") {
-      addFormTextElement.classList.add("error");
-          return;
-     }
-     
-
-    
-      let currentDate = new Date();
-     let month = currentDate.getMonth() + 1;
-      let day = currentDate.getDay();
-      let year = currentDate.getFullYear();
-      let hours = currentDate.getHours();
-      let minutes = currentDate.getMinutes();
-      let formattedDay = day < 10 ? '0' + day : day;
-      let formattedMonth = month < 10 ? '0' + month : month;
-      let formattedYear = year;
-      let formattedHours = hours < 10 ? '0' + hours : hours;
-      let formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
-      let formattedDate = formattedDay + '.' + formattedMonth + '.' + formattedYear + ' ' + formattedHours + ':' + formattedMinutes;
-     const oldListHTML = listElement.innerHTML;
-      listElement.innerHTML = oldListHTML + `<ul class="comments">
-        <li class="comment" id="comment">
-          <div class="comment-header">
-            <div>${addFormElement.value}</div>
-            <div>${formattedDate}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${addFormTextElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-          </li>
-          </ul>`;
-        
-        
-
-     });
-    console.log("It works!");
-  </script>
+<script src="./js.js"></script>
+ 
 </html>
