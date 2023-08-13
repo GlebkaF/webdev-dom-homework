@@ -75,15 +75,20 @@
     const textInputElement = document.getElementById("text-input");
 
     buttonElement.addEventListener("click", () => {
+      nameInputElement.classList.remove('color-error')
+      textInputElement.classList.remove('color-error')
+
       if (nameInputElement.value === ""){
-        nameInputElement.classList.toggle('color-error')
+        nameInputElement.classList.add('color-error')
         return;
       }
 
       if (textInputElement.value === ""){
-        textInputElement.classList.toggle('color-error')
+        textInputElement.classList.add('color-error')
         return;
       }
+
+      
       
     const oldListHtml = listElement.innerHTML;
     listElement.innerHTML =
@@ -101,13 +106,13 @@
             <div class="comment-footer" >
               <div class="likes">
                 <span class="likes-counter">0</span>
-                <button class="like-button -active-like"></button>
+                <button class="like-button"></button>
               </div>
             </div>
-          </li>
-    `;
+          </li>`;
+          nameInputElement.value = "";
+          textInputElement.value = "";
 });
-
     console.log("It works!");
   </script>
 </html>
