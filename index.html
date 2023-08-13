@@ -77,7 +77,10 @@
     const nameInputElement = document.getElementById('name-input');
     const textInputElement = document.getElementById('text-input');
     
-    function getCurrentDate() {
+
+
+    buttonElement.addEventListener("click", () => {
+      function getCurrentDate() {
       let myDate = new Date();
       let date = myDate.getDate();
       let month = myDate.getMonth()+1;
@@ -96,14 +99,14 @@
       if (minute < 10) {
         minute = "0" + minute
       }
-      const dateNow = date + '.' + month + '.' + year + ' ' + hours + ':' + minute; 
+      const dateNow = date + '.' + month + '.' + String(year).slice(2) + ' ' + hours + ':' + minute; 
       return dateNow;
     }
-    const currentDate = getCurrentDate();
+      const currentDate = getCurrentDate();
 
-    buttonElement.addEventListener("click", () => {
       nameInputElement.classList.remove('error');
         textInputElement.classList.remove('error');
+
        if (nameInputElement.value === '' || textInputElement.value === '') {
           if ( nameInputElement.value === '') {
             nameInputElement.classList.add('error');
@@ -113,8 +116,9 @@
           }
         return;
         }
-      const oldListHtml = listElement.innerHTML;
-      listElement.innerHTML = oldListHtml + `<li class="comment">
+      
+        const oldListHtml = listElement.innerHTML;
+        listElement.innerHTML = oldListHtml + `<li class="comment">
           <div class="comment-header">
           <div>${nameInputElement.value}</div>
           <div>${currentDate}</div>
