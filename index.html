@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="List" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -46,26 +46,75 @@
       </ul>
       <div class="add-form">
         <input
+          id="buttonNameId"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
+          id="buttonCommentId"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
-        <div class="add-form-row">
+        <div id="buttonClick" class="add-form-row">
           <button class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
-
+  <style>
+    .error{
+      background-color: red;
+    }
+  </style>
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    // "use strict";
+    const ListOld = document.getElementById("List");
+    const buttonName = document.getElementById("buttonNameId");
+    const buttonComment = document.getElementById("buttonCommentId");
+    const buttonClick = document.getElementById("buttonClick");
+    buttonClick.addEventListener("click", () =>{
+      buttonComment.classList.remove("error");
+      buttonName.classList.remove("error");
+      if(buttonName.value == '' && buttonComment.value == ''){
+        buttonComment.classList.add("error");
+        buttonName.classList.add("error");
+        return;
+      } else if(buttonName.value == ''){
+        buttonName.classList.add("error");
+        return;} else if (buttonComment.value == ''){
+        buttonComment.classList.add("error");
+        return;
+      }
+      var options = {
+        year: '2-digit',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        timezone: 'UTC'
+      };
+      const oldListHtml = ListOld.innerHTML;
+      ListOld.innerHTML = oldListHtml + `<li class="comment">
+          <div class="comment-header">
+            <div>${buttonName.value}</div>
+            <div>${new Date().toLocaleString("ru", options)}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${buttonComment.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+    });
+    // console.log("It works!");
   </script>
 </html>
