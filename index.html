@@ -76,35 +76,29 @@
     let isReply = false;
        
     
-    let users = [ 
-      // {
-      //   name: 'Глеб Фокин',
-      //   date: '12.02.22 12:18',
-      //   comment: 'Это будет первый комментарий на этой странице',
-      //   countLikes: 3,
-      //   isLiked: false,
-
-      // },
-      // {
-      //   name: 'Варвара Н.',
-      //   date: '13.02.22 19:22',
-      //   comment: ' Мне нравится как оформлена эта страница! ❤',
-      //   countLikes: 75,
-      //   isLiked: false,
-
-      // },
-    ]
     
-  fetch('https://wedev-api.sky.pro/api/v1/NataliaKov/comments', {
+    
+  const fetchPromise = () => fetch('https://wedev-api.sky.pro/api/v1/:NataliaKov/comments', {
     method: "GET"
   }).then((response) => {
     response.json().then((responseUsers) => {
-      console.log(responseUsers);
-      users = responseUsers.comments;
+    const newComments = responseUsers.comments.map((comment) => {
+      return {
+        name: comment.author.name,
+        date: new Date(comment.date),
+        comment: comment.text,
+        countLikes: comment.likes,
+        isLiked: comment.isLiked,
+      };
+    }  )
+      users = newComments;
       renderUsers();
 
     });
   });
+  
+  let users = []
+
      const Initlikes = () => {
         const likeButtons = document.querySelectorAll(".like-button");
         for (const like of likeButtons) {
@@ -147,9 +141,10 @@ Initlikes()
         isLiked: false,
       })
     }
- renderUsers();
-  NameInputElement.value = "";
-  CommentInputElement.value = "";
+    fetchPromiseNew();
+   renderUsers();
+   NameInputElement.value = "";
+   CommentInputElement.value = "";
   })
   
   const newReplay = () => {
@@ -232,7 +227,7 @@ const renderUsers = () => {
     .replaceAll('"', '&quot;');
 
   }
-     fetch('https://wedev-api.sky.pro/api/v1/NataliaKov/comments', {
+     const fetchPromiseNew = () => fetch('https://wedev-api.sky.pro/api/v1/:NataliaKov/comments', {
         method: "POST",
         body: JSON.stringify({
           text: CommentInputElement.value,
@@ -244,11 +239,30 @@ const renderUsers = () => {
           users = responseUsers.comments;
         });
       })
+      fetchPromise();
       renderUsers();
+      
 
 
      
+// {
+// name: 'Глеб Фокин',
+// date: '12.02.22 12:18',
+// comment: 'Это будет первый комментарий на этой странице',
+// countLikes: 3,
+// isLiked: false,
 
+// },
+// {
+// name: 'Варвара Н.',
+// date: '13.02.22 19:22',
+// comment: ' Мне нравится как оформлена эта страница! ❤',
+// countLikes: 75,
+// isLiked: false,
+// },
 
 </script>
 </html>
+
+
+
