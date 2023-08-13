@@ -158,13 +158,12 @@ editButton.addEventListener('click', (event) => {
   }
 }
 
-const colorClass = () => {
-  const bgcWhite = document.querySelectorAll('.quote');
-  for (const bgcWhit of bgcWhite) {
-    //console.log(bgcWhit);
-  }
-}
-//Start_any End_any
+// const colorClass = () => {
+//   const bgcWhite = document.querySelectorAll('.quote');
+//   for (const bgcWhit of bgcWhite) {
+//     //console.log(bgcWhit);
+//   }
+// }
 const answerElement = () => {
   const answerTexts = document.querySelectorAll('.comment-text');
   //console.log(answerTexts);
@@ -190,7 +189,9 @@ const renderFunction = () => {
           </div>
           <div class='quote'>
             <div class="comment-body">
-            ${comment.isEdit? `<textarea data-index="${index}" class="edit-text white-space: pre-line">${comment.text}</textarea>` : `<div data-index="${index}" class="comment-text" style="white-space:pre-line">${comment.text}</div>`}
+            ${comment.isEdit? `<textarea data-index="${index}" class="edit-text white-space: pre-line">${comment.text}</textarea>` : `<div data-index="${index}" class="comment-text" style="white-space:pre-line">${comment.text
+              .replaceAll("BEGIN_QUOTE", "<div class='quoteOne'>")
+              .replaceAll("QUOTE_END", "</div>")}</div>`}
           </div>
             </div>
           <div class="comment-footer">
@@ -209,7 +210,7 @@ const renderFunction = () => {
   likedFunction();
   editButton();
   answerElement();
-  colorClass();
+  //colorClass();
 };
 renderFunction();
 
