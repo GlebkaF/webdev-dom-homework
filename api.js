@@ -8,6 +8,19 @@ export const getComments = () => {
         throw new Error("Ошибка при получении комментариев");
       }
       return response.json();
+    })
+    .then((responseData)=> {
+        const appComments = responseData.comments.map((comment)=> {
+            return {
+                id: comment.id,
+                name: comment.author.name,
+                date: new Date(comment.date), // Преобразование строки даты в объект Date
+                text: comment.text,
+                likes: comment.likes,
+                liked: false,
+            };
+        });
+        return appComments;
     });
   };
   

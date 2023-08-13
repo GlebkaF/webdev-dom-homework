@@ -23,10 +23,10 @@ const showLoadingMessage = () => {
 const main = () => {
   getComments()
     .then((responseData) => {
-      const comments = responseData.comments; // Получаем массив комментариев из responseData
+      const fetchedComments = responseData.comments; // Получаем массив комментариев из responseData
 
       // Рендеринг начального списка комментариев
-      renderComments(commentsList, comments);
+      renderComments(commentsList, fetchedComments);
 
       // Обработчик кнопки "Написать"
       addButton.addEventListener("click", () => {
@@ -127,11 +127,11 @@ const main = () => {
       }
       comment.liked = !comment.liked;
       // Обновляем список комментариев на странице
-      renderComments(commentsList, comments);
+      renderComments(commentsList, updatedComments);
     });
   });
   // Показываем начальный список комментариев
-  renderComments(commentsList, comments);
+  //renderComments(commentsList, comments);
 })
 
     .catch((error) => {

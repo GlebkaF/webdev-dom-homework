@@ -11,7 +11,7 @@ export const renderComments = (commentsList, comments) => {
           const dateAndTime = `${comment.date.toLocaleDateString()} ${comment.date.toLocaleTimeString()}`;
           newComment.innerHTML = `
             <div class="comment-header">
-              <div>${comment.name}</div>
+              <div>${comment.author}</div>
               <div>${dateAndTime}</div>
             </div>
             <div class="comment-body">
