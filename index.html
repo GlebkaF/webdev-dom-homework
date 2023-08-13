@@ -75,14 +75,49 @@
     const buttonElement = document.getElementById('write-button');
     const listElement = document.getElementById('list-comments');
     const nameInputElement = document.getElementById('name-input');
-    const textInputElement = document.getElementById('text-input');  
+    const textInputElement = document.getElementById('text-input');
+    
+    function getCurrentDate() {
+      let myDate = new Date();
+      let date = myDate.getDate();
+      let month = myDate.getMonth()+1;
+      let year = myDate.getFullYear();
+      let hours = myDate.getHours();
+      let minute = myDate.getMinutes();
+      if (date < 10) {
+        date = "0" + date;
+      }
+      if (month < 10) {
+        month = "0" + month;
+      }
+      if (hours < 10) {
+        hours = "0" + hours;
+      }
+      if (minute < 10) {
+        minute = "0" + minute
+      }
+      const dateNow = date + '.' + month + '.' + year + ' ' + hours + ':' + minute; 
+      return dateNow;
+    }
+    const currentDate = getCurrentDate();
 
     buttonElement.addEventListener("click", () => {
+      nameInputElement.classList.remove('error');
+        textInputElement.classList.remove('error');
+       if (nameInputElement.value === '' || textInputElement.value === '') {
+          if ( nameInputElement.value === '') {
+            nameInputElement.classList.add('error');
+          }
+          if (textInputElement.value === '') {
+            textInputElement.classList.add('error');
+          }
+        return;
+        }
       const oldListHtml = listElement.innerHTML;
       listElement.innerHTML = oldListHtml + `<li class="comment">
           <div class="comment-header">
-          ${nameInputElement.value}
-          
+          <div>${nameInputElement.value}</div>
+          <div>${currentDate}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -96,13 +131,7 @@
             </div>
           </div>
         </li>`;
-       if (nameInputElement === '') {
-        nameInputElement.classList.add('error');
-        return;
-        } else if (textInputElement === '') {
-        textInputElement.classList.add('error');
-        return;
-        } 
+
     });
     console.log("It works!");
   </script>
