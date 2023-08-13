@@ -1,7 +1,15 @@
+export let token;
+
+export const setToken = (newToken) => {
+  token = newToken;
+}
 export function getComments() {
-  return fetch("https://wedev-api.sky.pro/api/v1/stas/comments",
+  return fetch("https://wedev-api.sky.pro/api/v2/stas/comments",
 {
   method: "GET",
+  headers: {
+    Authorization: `Bearer ${token}`,
+  }
 }).then((response) => {
   return response.json();
 })
@@ -12,9 +20,12 @@ export function postComment({ text, name, getApi, addEventButton }) {
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
 
-  return fetch("https://wedev-api.sky.pro/api/v1/stas/comments",
+  return fetch("https://wedev-api.sky.pro/api/v2/stas/comments",
 {
   method: "POST",
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
   body: JSON.stringify({
     text: text,
     name: name,
@@ -81,4 +92,18 @@ export function postComment({ text, name, getApi, addEventButton }) {
 }).then((response) => {
   return getApi();
 })
+}
+
+export function login({login, password}) {
+  const userURL = "https://wedev-api.sky.pro/api/user/login";
+
+  return fetch(userURL, {
+  method: "POST",
+  body: JSON.stringify({
+    login,
+    password,
+  })
+}).then((response) => {
+  return response.json();
+});
 }
