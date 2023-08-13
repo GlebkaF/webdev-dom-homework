@@ -1,6 +1,7 @@
 import { getComments, postComments } from "./api.js";
 import { likeComment } from "./like.js";
 import { renderLogin, renderRegistration } from "./renderLogin.js";
+import { format } from "date-fns";
 
 
 let comments = [];
@@ -30,13 +31,7 @@ const showComments = () => {
 const generateHtml = (comments) => {
     const commentsListHtml = comments.map((comment, index) => {
         const likeButtonClass = comment.isLiked ? 'like-button liked' : 'like-button';
-        const formattedDate = new Date(comment.date).toLocaleString('ru-RU', {
-            day: 'numeric',
-            month: 'numeric',
-            year: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-        });
+        const formattedDate = format(new Date(task.created_at), 'dd/MM/yyyy hh:mm');
         return `
     <li class="comment">      
       <div class="comment-header">        
