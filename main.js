@@ -24,7 +24,7 @@ const addFormHtml = `<input
 
 export let users = [];
 
-renderLogin();
+renderLogin()
 
 // Загрузка
 formElement.innerHTML = 'Комметарии загружаются...';

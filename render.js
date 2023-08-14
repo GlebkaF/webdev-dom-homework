@@ -18,7 +18,11 @@ export const renderUsers = ({ addLike, answer, commentsElement, date, getLikeCla
             <button class="${getLikeClass(user.isLiked)}"></button>
           </div>
         </div>
-      </li>`
+      </li>
+      <div class="authorization">
+        <p>Чтобы добавить комментарий, <a class="authorization-link" href="login.html">авторизуйтесь</a></p>
+      </div>
+      `
     }).join("");
     commentsElement.innerHTML = userHtml;
     addLike();

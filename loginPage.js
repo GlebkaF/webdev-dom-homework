@@ -33,7 +33,10 @@ export const renderLogin = () => {
     }).then((responseData) => {
         setToken(responseData.user.token);
         console.log(token);
-    });
+    }).then(() => {
+        getApi();
+    })
+    
 });
 };
 
