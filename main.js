@@ -1,6 +1,7 @@
 import { getComments, postComment } from "./api.js";
 import { renderUsers } from "./render.js";
 import { date } from "./date.js";
+import { renderLogin } from "./loginPage.js";
 
 
 const formElement = document.querySelector(".add-form");
@@ -22,6 +23,8 @@ const addFormHtml = `<input
         </div>`;
 
 export let users = [];
+
+renderLogin();
 
 // Загрузка
 formElement.innerHTML = 'Комметарии загружаются...';
