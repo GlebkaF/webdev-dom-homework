@@ -1,4 +1,4 @@
-import { users } from "./main.js"
+import { users } from "./users.js"
 
 export const renderUsers = ({ addLike, answer, commentsElement, date, getLikeClass }) => {
     const userHtml = users.map((user) => {
