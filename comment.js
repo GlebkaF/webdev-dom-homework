@@ -10,6 +10,8 @@ import { userName } from "./api.js";
 import { token } from "./api.js";
 //import { getFetch } from "./api.js";
 import { dataGet } from "./main.js";
+//import { formatDateToRu, formatDateToUs } from "./lib/formatDate/formatDate.js"
+import { format } from "date-fns"
 
 //import { LikesFetch } from "./api.js";
 //const button = document.querySelectorAll(`.like-button`);
@@ -18,9 +20,12 @@ export function renderComments(comments, commentText) {
   const list = document.getElementById("commentsListId");
   const likesHtml = comments
     .map((i, index) => {
+      const now = new Date();
+      const createDate = format(now, 'yyyy-MM-dd hh.mm.ss');
       return `<li class="comment" data-index="${index}">
             <div class="comment-header">
               <div>${i.author.name}</div>
+              <div>${createDate}</div>
               <div>${i.date}</div>
               
             </div>
@@ -54,11 +59,12 @@ export function renderComments(comments, commentText) {
   //keyPush();
   delCommentFetch(comments);
   LikesFetch(comments);
-  commentReply(comments, commentText);
+  commentReplyNew(comments, commentText);
+  commentReply(comments, commentText)
 }
 // простановка лайков
 
-function LikesFetch(comments) {
+function LikesFetch(comments, commentText) {
   const button = document.querySelectorAll(`.like-button`);
   for (const likeButton of button) {
     likeButton.addEventListener(`click`, (event) => {

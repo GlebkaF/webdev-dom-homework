@@ -15,8 +15,8 @@ export function renderLoader() {
   return resultCommentForm;
 }
 //ответ на комментарий после появления поля "загрузка"
-export function commentReplyNew(comments, commentText) {
-  //const commentText = document.getElementById(`commentText`);
+export function commentReplyNew(comments) {
+  const commentText = document.getElementById(`commentText`);
   const commentTextNew = document.getElementById(`commentTextNew`);
   const commentNameNew = document.getElementById(`commentNameNew`);
   const commentBlockNew = document.querySelectorAll(`.comment`);
@@ -49,6 +49,7 @@ export function commentReply(comments, commentText) {
   // const commentText = document.getElementById(`commentText`);
   const commentBlock = document.querySelectorAll(`.comment`);
   for (const commentElement of commentBlock) {
+    // const commentText = document.getElementById(`commentText`);
     commentElement.addEventListener(`click`, () => {
       comments[commentElement.dataset.index].isCommentRepliy = true;
       console.log(`${comments[commentElement.dataset.index].isCommentRepliy}`);

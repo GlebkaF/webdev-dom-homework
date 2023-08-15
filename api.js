@@ -1,6 +1,7 @@
 export let token;
 export let userName;
 import { comments } from "./main.js";
+import _ from 'lodash'
 
 export function getFetch() {
   return fetch("https://wedev-api.sky.pro/api/v2/arseny-kulikov/comments", {
@@ -136,7 +137,7 @@ function registrationFetch() {
       method: "POST",
       body: JSON.stringify({
         login: loginLogin.value,
-        name: loginName.value,
+        name: _.capitalize(loginName.value),
         password: loginPass.value,
       }),
       // }).catch((error) => {

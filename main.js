@@ -11,6 +11,7 @@ import { addComment } from "./comment.js";
 import { delCommentFetch } from "./comment.js";
 export let comments = []; // создание массива для комментариев
 
+
 const commentForm = document.getElementById(`add-formListId`);
 const listButton = document.getElementById(`add-form-buttonListId`);
 const commentText = document.getElementById(`commentText`);
