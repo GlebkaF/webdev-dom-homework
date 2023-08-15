@@ -35,7 +35,7 @@
   </body>
   <style>
     .error {
-        background-color: rgb(83, 83, 83);
+        background-color: rgb(212, 141, 141);
     }
   </style>
 
@@ -70,14 +70,18 @@
       return fetch("https://wedev-api.sky.pro/api/v1/illia-hryn/comments", {
           method: "GET",
       })
-
       .then((response) => {
-          return response.json();
+          if (response.status === 500) {
+              alert("error, try later...");
+              return Promise.reject("Server is down");
+          } else {
+              return response.json();
+          }
       })
       .then((responseData) => {
-
+        
           const appComment = responseData.comments.map((comment) => {
-
+ 
           function sTime() {
 
               let specialTime = new Date(comment.date);
@@ -108,6 +112,10 @@
           render();
           hideTextForm.style.display = "none";
           hideSendForm.style.display = "flex";
+      })
+      .catch((error) => {
+        alert("Кажется, у вас сломался интернет, попробуйте позже");
+        console.log(error);
       });
 
   }
@@ -130,19 +138,20 @@ const handerLike = () => {
 
         el.addEventListener('click', (event) => {
 
-            event.stopPropagation();
-            
-            const index = el.dataset.index;
+              event.stopPropagation();
+                
+              const index = el.dataset.index;
 
-            if (user[index].isLiked === false) {
-              ++user[index].likes, user[index].isLiked = true, user[index].like = '-active-like'
-            } else {
-              --user[index].likes, user[index].isLiked = false, user[index].like = ''
-            }
-              
-        render();
-    })
-  }
+              if (user[index].isLiked === false) {
+                ++user[index].likes, user[index].isLiked = true, user[index].like = '-active-like'
+              } else {
+                --user[index].likes, user[index].isLiked = false, user[index].like = ''
+              }
+                
+          render();
+
+        })
+    }
 }
 
 /* ------------------------------------------------------------------
@@ -225,7 +234,7 @@ function myTime() {
 *
 __________________________________________________________________ */
 
-    sendButton.addEventListener("click", () => {
+const sendBtn = () => {
 
         hideSendForm.style.display = "none";
         hideTextForm.style.display = "flex";
@@ -237,18 +246,49 @@ __________________________________________________________________ */
             body: JSON.stringify({
                 name: getName.value.replaceAll("<", "&lt").replaceAll(">","&gt").replaceAll('"', "&quot;").replaceAll("&", "&amp;"),
                 text: getComment.value.replaceAll("<", "&lt").replaceAll(">","&gt").replaceAll('"', "&quot;").replaceAll("&", "&amp;"),
+                forceError: true,
                 }),
             })
-            .then(() => {
-                return getListComponent();
+            .then((response) => {
+
+                if (response.status === 400) {
+                    alert("Имя и комментарий должны быть не короче 3 символов");
+                    hideTextForm.style.display = "none";
+                    hideSendForm.style.display = "flex";
+                    throw new Error("error input");
+                } else {
+                    return response;
+                }
+            })
+            .then((response) => {
+  
+                if (response.status === 500) {
+                    alert("server is down");
+                    hideTextForm.style.display = "none";
+                    hideSendForm.style.display = "flex";
+                    throw new Error("500");
+                } else {
+                    return getListComponent();
+                }
             })
             .then(() => {
                 hideTextForm.style.display = "none";
                 getName.value = "",
                 getComment.value = "";
                 hideSendForm.style.display = "flex";
+            })
+            .catch((error) => {
+                if (error.message = 500){
+                    console.log(error);
+                    sendBtn();
+                } else {
+                    console.log('Type > 2 symbol: ',error);
+                }
             });
         }
-    });
+}
+
+sendButton.addEventListener("click", sendBtn);
+
   </script>
 </html>  
