@@ -31,7 +31,7 @@ const showComments = () => {
 const generateHtml = (comments) => {
     const commentsListHtml = comments.map((comment, index) => {
         const likeButtonClass = comment.isLiked ? 'like-button liked' : 'like-button';
-        const formattedDate = format(new Date(), 'dd/MM/yyyy hh:mm');
+        const formattedDate = format(new Date(), 'yyyy/MM/dd hh:mm:ss');
         return `
     <li class="comment">      
       <div class="comment-header">        
