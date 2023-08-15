@@ -50,6 +50,7 @@
   fetchPromise.then((response) => {
 
     const jsonPromise = response.json();
+
     jsonPromise.then((responseData) => {
 
       const appComments = responseData.comments.map((comment) => {
@@ -280,11 +281,19 @@
         // date: fullDate + fullTime,
         text: commentInputElement.value,
       }),
-    }).then((response) => {
-
-      const jsonPromise = response.json();
-      jsonPromise.then((responseData) => {
-
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
+        return fetch("https://wedev-api.sky.pro/api/v1/lana-olhowko/comments", {
+          method: "GET",
+        });
+      })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
         const appComments = responseData.comments.map((comment) => {
           return {
             name: comment.author.name,
@@ -292,10 +301,11 @@
             date: new Date(comment.date),
 
             text: comment.text,
-            likes: comment.likes,
+            like: comment.likes,
 
             isLiked: false,
             isEdit: false,
+            isLoading: false,
           };
         });
 
@@ -304,10 +314,7 @@
 
         renderComments();
       })
-    })
 
-
-    // initEventListeners();
     renderComments();
     initLikesButtonListeners();
     initEditButtonListeners();
