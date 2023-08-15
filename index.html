@@ -32,24 +32,46 @@
     const inputCommentTextElement = document.getElementById('input-comment-text');
     const commentDate = new Date();
 
+    
+    // GET API
+    const getApi = () => {
+      fetch('https://wedev-api.sky.pro/api/v1/:maksim-sokolskiy/comments',{
+        method: "GET"
+        }).then((response) => {
+        response.json().then((responseData) => {
+          const appComments = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: new Date(comment.date),
+              text: comment.text,
+              like: comment.likes,
+              isLiked: false,
+            }
+          });
+          commentsArr = appComments;
+          renderComments();
+        });
+      });
+    } 
+    getApi();
+
+
+    // POST API
+    const postApi = (inputCommentTextElement, inputCommentNameElement) => {
+      fetch('https://wedev-api.sky.pro/api/v1/:maksim-sokolskiy/comments',{
+        method: "POST",
+        body: JSON.stringify({
+          text: inputCommentTextElement.value,
+          name: inputCommentNameElement.value
+        })
+      }).then(() => {
+        getApi();
+      })
+    }
+
 
     // Массив 
-    const comments = [
-    {
-        name: "Глеб Фокин",
-        text: "Это будет первый комментарий на этой странице",
-        like: 3,
-        isLiked: false,
-        date: "12.02.22 12:18",
-      },
-      {
-        name: "Варвара Н",
-        text: "Мне нравится как оформлена эта страница! ❤",
-        like: 75,
-        isLiked: false,
-        date: "13.02.22 19:22",
-      },
-    ];
+    let commentsArr = [];
 
 
 
@@ -60,7 +82,7 @@
         for (const likeButton of likeButtonElements) {
           likeButton.addEventListener('click', (event) => {
             event.stopPropagation();
-            const counter = comments[likeButton.dataset.index]
+            const counter = commentsArr[likeButton.dataset.index]
             let a = counter.like
             if (counter.isLiked === false) {
               counter.isLiked = true;
@@ -94,11 +116,13 @@
 
     // Рендер
     const renderComments = () => {
-      const commentsHtml = comments.map((comment, index) => {
+      const commentsHtml = commentsArr.map((comment, index) => {
+        const commentDate = new Date(comment.date);
+        const timeDate = commentDate.toLocaleDateString() + ' ' +commentDate.getHours() + ':' + commentDate.getMinutes();
         return  `<li  class="comment">
           <div class="comment-header">
             <div>${comment.name}</div>
-            <div>${comment.date}</div>
+            <div>${timeDate}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">${comment.text}</div>
@@ -137,20 +161,21 @@
           return;
         };
 
-        comments.push({
-          name: inputCommentNameElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
-          text: inputCommentTextElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
-          like: 0,
-          isLiked: false,
-          date: `${commentDate.toLocaleDateString('numeric')} ${commentDate.toLocaleTimeString([], {hour: "2-digit", minute:"2-digit"})
-      }`,
-        })
-
+      //   commentsArr.push({
+      //     name: inputCommentNameElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
+      //     text: inputCommentTextElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
+      //     like: 0,
+      //     isLiked: false,
+      //     date: `${commentDate.toLocaleDateString('numeric')} ${commentDate.toLocaleTimeString([], {hour: "2-digit", minute:"2-digit"})
+      // }`,
+      //   })
+        
+        postApi(inputCommentTextElement, inputCommentNameElement);
         renderComments();
         inputCommentNameElement.value = ""
         inputCommentTextElement.value = ""
       });
     }    
-    addComment();
+    addComment();     
   </script>
 </html>
