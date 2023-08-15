@@ -45,14 +45,14 @@
       name: 'Глеб Фокин',
       date: '12.02.22 12:18',
       comment: 'Это будет первый комментарий на этой странице',
-      likesCounter: '3',
+      likesCounter: 3,
       myLike: false,
     },
     {
       name: 'Варвара Н.',
       date: '13.02.22 19:22',
       comment: 'Мне нравится как оформлена эта страница! ❤',
-      likesCounter: '75',
+      likesCounter: 75,
       myLike: true,
     }
   ];
@@ -61,9 +61,7 @@
     const buttonElement = document.getElementById('add-button');
     const listElement = document.getElementById('list');
     const nameInputElement = document.getElementById('name-input');
-    const commentInputElement = document.getElementById('comment-input');
-     
-    
+    const commentInputElement = document.getElementById('comment-input');   
 
     const initEventListeners = () => {
     const likeButtons = document.querySelectorAll('.like-button');
@@ -103,9 +101,7 @@
       
       initEventListeners();
     }
-    renderComments();
-    
-  
+    renderComments();   
 
     const plusZero = (str) => {
       return str < 10 ? `0${str}` : str;
@@ -117,9 +113,7 @@
     let date = plusZero(currentDate.getDate());
     let month = plusZero(currentDate.getMonth());
     return `${date}.${month}.${currentDate.getFullYear() % 100} ${hours}:${minute}`;
-    }
-
-    
+    }    
 
       buttonElement.addEventListener("click", () => {
       nameInputElement.classList.remove("error");
@@ -132,15 +126,17 @@
         commentInputElement.classList.add("error");
         return;
       }   
+      
 
       commentsArr.push({
         name: nameInputElement.value,
         date: now(currentDate),
         comment: commentInputElement.value,
-        likesCounter: '0',
+        likesCounter: 0,
         myLike: false,
-
       });
+      commentInputElement.value = "";
+      nameInputElement.value = "";
       
       renderComments();
       initEventListeners();
