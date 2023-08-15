@@ -84,7 +84,7 @@
           const oldName = commentBody.dataset.name;
           //console.log(oldComment);
           //console.log(oldName);
-          commentInputElement.innerHTML += `${oldComment}&#10${oldName}`;
+          commentInputElement.innerHTML += `&gt${oldComment}&#10${oldName}`;
           //renderComments();
         })
       }
@@ -146,9 +146,9 @@
       
 
       commentsArr.push({
-        name: nameInputElement.value,
+        name: nameInputElement.value.replaceAll('<', "&lt;").replaceAll('>','&gt'),
         date: now(currentDate),
-        comment: commentInputElement.value,
+        comment: commentInputElement.value.replaceAll('<', "&lt;").replaceAll('>','&gt'),
         likesCounter: 0,
         myLike: false,
       });
