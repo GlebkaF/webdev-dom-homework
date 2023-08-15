@@ -76,6 +76,21 @@
     }
     };
 
+    const replyToComment = () => {      
+      const commentBodies = document.querySelectorAll(".comment-body");
+      for (const commentBody of commentBodies) {
+        commentBody.addEventListener ('click', () => {             
+          const oldComment = commentBody.dataset.text;
+          const oldName = commentBody.dataset.name;
+          //console.log(oldComment);
+          //console.log(oldName);
+          commentInputElement.innerHTML += `${oldComment}&#10${oldName}`;
+          //renderComments();
+        })
+      }
+
+    }
+
     const renderComments = () => {
       comments.innerHTML = commentsArr
       .map((comment, index) => {
@@ -84,7 +99,7 @@
             <div>${comment.name}</div>
             <div>${comment.date}</div>
           </div>
-          <div class="comment-body">
+          <div class="comment-body" data-text = "${comment.comment}" data-name = "${comment.name}">
             <div class="comment-text">
               ${comment.comment}
             </div>
@@ -99,7 +114,9 @@
       })
       .join("");
       
+            
       initEventListeners();
+      replyToComment();
     }
     renderComments();   
 
@@ -135,7 +152,7 @@
         likesCounter: 0,
         myLike: false,
       });
-      commentInputElement.value = "";
+      //commentInputElement.value = "";
       nameInputElement.value = "";
       
       renderComments();
