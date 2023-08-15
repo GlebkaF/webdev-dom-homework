@@ -64,25 +64,42 @@
   </body>
 
   <script>
-const Name = document.querySelector('.add-form-name');
-const Text = document.querySelector('.add-form-text');
+const name = document.querySelector('.add-form-name');
+const text = document.querySelector('.add-form-text');
 const addButton = document.querySelector('.add-form-button');
-const Comments = document.querySelector('.comments');
+const comments = document.querySelector('.comments');
+
 // Добавить коммент
 function addComment() {
-// Поля заполнены
-if (Name.value && Text.value) {
-const date = new Date(); // Для даты и времени
-const comment = document.createElement('li'); // Создаем элемент списка
-comment.classList.add('comment'); // Добавляем класс
-// Создаём новуюю html-структуру и добавляем в неё введённые пользователем значения
-comment.innerHTML =`<div class="comment-header"><div>${Name.value}</div><div>${date.toLocaleString()}</div></div><div class="comment-body"><div class="comment-text">${Text.value}</div></div><div class="comment-footer"><div class="likes"><span class="likes-counter">0</span><button class="like-button"></button></div></div>`;
-Comments.appendChild(comment); // Добавить 
-// Очистить поля
-Name.value = '';
-Text.value = '';
+    // Поля заполнены
+    if (name.value && text.value) {
+        const date = new Date(); // Для даты и времени
+        const oldList = comments.innerHTML;
+        comments.innerHTML = oldList + ` <li class="comment"><div class="comment-header"><div>${name.value}</div><div>${date.toLocaleString()}</div></div><div class="comment-body"><div class="comment-text">${text.value}</div></div><div class="comment-footer"><div class="likes"><span class="likes-counter">0</span><button class="like-button"></button></div></div></li>`
+        // Очистить поля
+        name.value = '';
+        text.value = '';
+        name.classList.remove('error');
+        text.classList.remove('error');
+    } else {
+        if (!name.value) {
+            name.classList.add('error');
+        }
+        if (!text.value) {
+            text.classList.add('error');
+        }
+    }
 }
-}
+
+// Удалить error при вводе
+name.addEventListener('input', function () {
+    name.classList.remove('error');
+});
+
+text.addEventListener('input', function () {
+    text.classList.remove('error');
+});
+
 // Активировать кнопку "Написать"
 addButton.addEventListener('click', addComment);
   </script>
