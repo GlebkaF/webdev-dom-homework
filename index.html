@@ -173,7 +173,7 @@
 		}
 
 		comments.push({
-			name: nameInputElement.value,
+			name: nameInputElement.value.replaceAll("<", "").replaceAll(">",""),
 			date: nowDate,
 			comment: nameTextAreaElement.value.replaceAll("&", "&amp;")
 				.replaceAll("<", "&lt;")
