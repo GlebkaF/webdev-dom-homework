@@ -1,41 +1,32 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
-      <ul id="list" class="comments">
-        <!--Рендерится из JS-->
-      </ul>
-      <div class="add-form">
-        <input
-          id="name-input"
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"          
-        />
-        <textarea
-        id="comment-input"
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"          
-        ></textarea>
-        <div class="add-form-row">
-          <button id="add-button" class="add-form-button">Написать</button>
-        </div>
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <ul id="list" class="comments">
+      <!--Рендерится из JS-->
+    </ul>
+    <div class="add-form">
+      <input id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+      <textarea id="comment-input" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+        rows="4"></textarea>
+      <div class="add-form-row">
+        <button id="add-button" class="add-form-button">Написать</button>
       </div>
     </div>
-  </body>
-  <script>
-    "use strict";
-    // Код писать здесь  
-  
-    const commentsArr = [
+  </div>
+</body>
+<script>
+  "use strict";
+  // Код писать здесь  
+
+  const commentsArr = [
     {
       name: 'Глеб Фокин',
       date: '12.02.22 12:18',
@@ -52,13 +43,13 @@
     }
   ];
 
-    const comments = document.querySelector(".comments");
-    const buttonElement = document.getElementById('add-button');
-    const listElement = document.getElementById('list');
-    const nameInputElement = document.getElementById('name-input');
-    const commentInputElement = document.getElementById('comment-input');   
+  const comments = document.querySelector(".comments");
+  const buttonElement = document.getElementById('add-button');
+  const listElement = document.getElementById('list');
+  const nameInputElement = document.getElementById('name-input');
+  const commentInputElement = document.getElementById('comment-input');
 
-    const initEventListeners = () => {
+  const initEventListeners = () => {
     const likeButtons = document.querySelectorAll('.like-button');
 
     for (const likeButton of likeButtons) {
@@ -69,30 +60,40 @@
         renderComments();
       });
     }
-    };
+  };
 
-    buttonElement.disabled = true;
+  buttonElement.disabled = true;
 
-    document.addEventListener("input", () => {
+  document.addEventListener("input", () => {
     nameInputElement.value != "" && commentInputElement.value != ""
-    ? (buttonElement.disabled = false)
-    : (buttonElement.disabled = true);
-});
+      ? (buttonElement.disabled = false)
+      : (buttonElement.disabled = true);
+  });
 
-  const replyToComment = () => {      
+  document.addEventListener("keyup", (e) => {
+    if (
+      (e.code === "Enter" || e.code === "NumpadEnter") &&
+      !buttonElement.disabled
+    ) {
+      createNewComment();
+      renderComments();
+    }
+  });
+
+  const replyToComment = () => {
     const commentBodies = document.querySelectorAll(".comment-body");
     for (const commentBody of commentBodies) {
-        commentBody.addEventListener ('click', () => {             
-          const oldComment = commentBody.dataset.text;
-          const oldName = commentBody.dataset.name;
-          commentInputElement.value += `${oldComment}\n${oldName}`;          
-        })
+      commentBody.addEventListener('click', () => {
+        const oldComment = commentBody.dataset.text;
+        const oldName = commentBody.dataset.name;
+        commentInputElement.value += `${oldComment}\n${oldName}`;
+      })
     }
 
   }
 
-    const renderComments = () => {
-      comments.innerHTML = commentsArr
+  const renderComments = () => {
+    comments.innerHTML = commentsArr
       .map((comment, index) => {
         return `<li class="comment">
           <div class="comment-header">
@@ -113,42 +114,47 @@
         </li>`
       })
       .join("");
-      
-      buttonElement.disabled = true;   
-      initEventListeners();
-      replyToComment();
-    }
-    renderComments();   
+    commentInputElement.value = "";
+    nameInputElement.value = "";
+    buttonElement.disabled = true;
+    initEventListeners();
+    replyToComment();
+  }
+  renderComments();
 
-    const plusZero = (str) => {
-      return str < 10 ? `0${str}` : str;
-    }
+  const plusZero = (str) => {
+    return str < 10 ? `0${str}` : str;
+  }
 
+
+
+  const now = (currentDate) => {
+    let minute = plusZero(currentDate.getMinutes());
+    let hours = plusZero(currentDate.getHours());
+    let date = plusZero(currentDate.getDate());
+    let month = plusZero(currentDate.getMonth());
+    return `${date}.${month}.${currentDate.getFullYear() % 100} ${hours}:${minute}`;
+  }
+
+  const createNewComment = () => {
     let currentDate = new Date();
-
-    const now = (currentDate) => {
-      let minute = plusZero(currentDate.getMinutes());
-      let hours = plusZero(currentDate.getHours());
-      let date = plusZero(currentDate.getDate());
-      let month = plusZero(currentDate.getMonth());
-      return `${date}.${month}.${currentDate.getFullYear() % 100} ${hours}:${minute}`;
-    }    
-
-    buttonElement.addEventListener("click", () => {      
-      commentsArr.push({
-        name: nameInputElement.value.replaceAll('<', "&lt;").replaceAll('>','&gt'),
-        date: now(currentDate),
-        comment: commentInputElement.value.replaceAll('<', "&lt;").replaceAll('>','&gt'),
-        likesCounter: 0,
-        myLike: false,
-      });
-
-      commentInputElement.value = "";
-      nameInputElement.value = "";      
-      renderComments();
-      initEventListeners();
+    commentsArr.push({
+      name: nameInputElement.value.replaceAll('<', "&lt;").replaceAll('>', '&gt'),
+      date: now(currentDate),
+      comment: commentInputElement.value.replaceAll('<', "&lt;").replaceAll('>', '&gt'),
+      likesCounter: 0,
+      myLike: false,
     });
+  }
 
-    console.log("It works!");
-  </script>
+  buttonElement.addEventListener("click", () => {
+    createNewComment();
+    renderComments();    
+  });
+
+
+
+  console.log("It works!");
+</script>
+
 </html>
