@@ -1,6 +1,7 @@
 export const renderComments = (commentsList, comments) => {
     
     commentsList.innerHTML = "";
+    
 
     comments.forEach((comment) => {
         const newComment = document.createElement("li");
@@ -11,7 +12,7 @@ export const renderComments = (commentsList, comments) => {
           const dateAndTime = `${comment.date.toLocaleDateString()} ${comment.date.toLocaleTimeString()}`;
           newComment.innerHTML = `
             <div class="comment-header">
-              <div>${comment.author}</div>
+              <div>${comment.name}</div>
               <div>${dateAndTime}</div>
             </div>
             <div class="comment-body">

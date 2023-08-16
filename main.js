@@ -11,19 +11,21 @@ let isLoading = true;
 
 let comments = [];
 
-const showLoadingMessage = () => {
-    if (isLoading) {
-        loadingMessage.textContent = "Пожалуйста, подождите, загружаю комментарии...";
-        loadingMessage.style.display = 'block';
-    } else {
-        loadingMessage.style.display = 'none';
-    }
+function showLoadingMessage() {
+  if (isLoading) {
+    loadingMessage.textContent = "Пожалуйста, подождите, загружаю комментарии...";
+    loadingMessage.style.display = 'block';
+  } else {
+    loadingMessage.style.display = 'none';
+  }
 }
 
 const main = () => {
   getComments()
     .then((responseData) => {
       const fetchedComments = responseData.comments; // Получаем массив комментариев из responseData
+      comments = fetchedComments; // Присвоение данных переменной comments
+
 
       // Рендеринг начального списка комментариев
       renderComments(commentsList, fetchedComments);
@@ -112,7 +114,7 @@ const main = () => {
 
       // 
 
-      const likeButtons = document.querySelectorAll('.like-button');
+      /*const likeButtons = document.querySelectorAll('.like-button');
       likeButtons.forEach((button) => {
       button.addEventListener('click', (event) => {
       event.stopPropagation();
@@ -131,14 +133,14 @@ const main = () => {
     });
   });
   // Показываем начальный список комментариев
-  //renderComments(commentsList, comments);
+  //renderComments(commentsList, comments); */
 })
 
     .catch((error) => {
       console.error(error);
       alert("Кажется что-то пошло не так, попробуйте позже.");
       isLoading = false;
-      renderComments(commentsList, comments); // Показываем сообщение об ошибке
+      renderComments(commentsList, []); // Показываем сообщение об ошибке
     });
 };
 
