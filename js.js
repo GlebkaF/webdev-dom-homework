@@ -32,7 +32,6 @@ const addFormElement = document.getElementById("add-form-name");
             })
         }
     }
-    
     const replyToComment = () => {
       const commentsBody = document.querySelectorAll(".comment");
       for (const commentBody of commentsBody) {
@@ -45,7 +44,7 @@ const addFormElement = document.getElementById("add-form-name");
     })
   }
 }
-        
+       
      const renderComents = () => {
         const commentsHTML = comments.map((comment, index) => {
             return `<ul class="comments">
