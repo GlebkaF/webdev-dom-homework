@@ -23,7 +23,8 @@ const addFormElement = document.getElementById("add-form-name");
       const initEventListeners = () => {
         const likesButton = document.querySelectorAll(".like-button");
         for (const likeButton of likesButton ) {
-            likeButton.addEventListener("click", () =>{
+            likeButton.addEventListener("click", (event) =>{
+              event.stopPropagation();
                 const comment = comments[likeButton.dataset.index];
                 comment.myLike ? --comment.likes : ++comment.likes;
                 comment.myLike = !comment.myLike;
@@ -31,18 +32,31 @@ const addFormElement = document.getElementById("add-form-name");
             })
         }
     }
-        
+    const replyToComment = () => {
+      const commentsBody = document.querySelectorAll(".comment");
+      for (const commentBody of commentsBody) {
+        commentBody.addEventListener('click', () => {
+          const oldComment = commentBody.dataset.text;
+          const oldName = commentBody.dataset.name;
+          addFormTextElement.value += `${oldComment}\n${oldName}:\n `;
+              document.querySelector(".add-form-text").focus();
+             
+    })
+  }
+}
+    
+    
      const renderComents = () => {
         const commentsHTML = comments.map((comment, index) => {
             return `<ul class="comments">
-            <li class="comment" id="comment">
+            <li class="comment" id="comment" data-text="${comment.text}" data-name="${comment.name}">
               <div class="comment-header">
                 <div>${comment.name}</div>
                 <div>${comment.date}</div>
               </div>
               <div class="comment-body">
                 <div class="comment-text">
-                  ${comment.text}
+                ${comment.text}
                 </div>
               </div>
               <div class="comment-footer">
@@ -57,9 +71,10 @@ const addFormElement = document.getElementById("add-form-name");
         .join("");
        listElement.innerHTML = commentsHTML;
      initEventListeners();
+        replyToComment();
      }
     renderComents();
-       
+  
     buttonElement.addEventListener("click", () => {
      
      addFormElement.classList.remove("error");
@@ -88,9 +103,17 @@ const addFormElement = document.getElementById("add-form-name");
       let formattedDate = formattedDay + '.' + formattedMonth + '.' + formattedYear + ' ' + formattedHours + ':' + formattedMinutes;
       const oldListHTML = listElement.innerHTML;
       comments.push({
-          name: addFormElement.value,
+          name: addFormElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
           date: formattedDate,
-          text: addFormTextElement.value,
+          text: addFormTextElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
           likes: 0,
            
       });
@@ -110,3 +133,9 @@ const addFormElement = document.getElementById("add-form-name");
      
 
     console.log("It works!");
+    //addFormTextElement.value = ${comment.comment}/n${comment.name};
+     //const replyInput = document.createElement('input');
+      //replyInput.type = 'text';
+      //replyInput.placeholder = 'Reply to comment...';
+      //replyInput.value = oldComment + oldName;
+      //commentBody.appendChild(replyInput);
