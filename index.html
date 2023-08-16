@@ -9,40 +9,7 @@
   <body>
     <div class="container">
       <ul id="List" class="comments">
-        <!-- <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице 
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li> -->
+        <!-- Рендер в js -->
       </ul>
       <div class="add-form">
         <input
@@ -70,15 +37,12 @@
     }
   </style>
   <script>
-    // "use strict"; Рув
     const ListOld = document.getElementById("List");
     const buttonName = document.getElementById("buttonNameId");
     const buttonComment = document.getElementById("buttonCommentId");
     const buttonClick = document.getElementById("buttonClick");
     const LikeButton = document.getElementById("likestr");
     // __________________________________________
-    // const LikeButtonActive = document.querySelectorAll("-active-like");
-
     let Comments =
       [{
       name: 'Глеб Фокин',
@@ -95,11 +59,12 @@
       likes: 72,
     },
   ]; 
+  // _____________________________________________Рендер____________________________________
   const renderComments = () => {
      const CommentsHtml = Comments.map((comment, index) => {
         return `<li class="comment" data-clicker=${comment.like} data-index=${index}>
           <div class="comment-header">
-            <div>${comment.name}</div>
+            <div class="name">${comment.name}</div>
             <div>${comment.date}</div>
           </div>
           <div class="comment-body">
@@ -118,6 +83,7 @@
       ListOld.innerHTML = CommentsHtml;
     };
 renderComments();
+// _____________________________________________Рендер END____________________________________
     const likesIn = () =>{
       const LikeButton = document.getElementById("likestr");
       const CommentsElements = document.querySelectorAll(".comment");
@@ -152,27 +118,32 @@ renderComments();
         minute: 'numeric',
         timezone: 'UTC'
       };
+
       Comments.push({
-        name: buttonName.value,
-        coment: buttonComment.value,
+        name: buttonName.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
+        coment: buttonComment.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
         date: new Date().toLocaleString("ru", options),
-        likes: Number('0'),
+        likes: 0,
         like: false,
       });
+      buttonName.value = "";
+      buttonComment.value = "";
       renderComments();
       Obclick();
+      Comlick();
 // __________________________end____________________________________________________________
 });
      // ____________________Функции обработки лайков__________________________________________
     const Obclick = () => {
-    const LikeButton = document.getElementById("likestr");
-    const CommentsElements = document.querySelectorAll(".comment");
-    for (const CommentsElement of CommentsElements){
-      const clicker = CommentsElement.dataset.clicker;
-      const index = CommentsElement.dataset.index;
-    CommentsElement.addEventListener("click", () =>{
+    const CommentsElement = document.querySelectorAll(".like-button");
+    for (const CommentsElements of CommentsElement){
+      CommentsElements.addEventListener("click", () =>{
+      const CommentsElements = document.querySelectorAll(".comment");
+      for (const CommentsElementy of CommentsElements){
+      const clicker = CommentsElementy.dataset.clicker;
+      const index = CommentsElementy.dataset.index;
+    CommentsElementy.addEventListener("click", () =>{
       if (clicker == 'true'){
-        console.log('df');
         Comments[index].like = false;
         Comments[index].likes = Comments[index].likes - 1;
       } else {
@@ -181,10 +152,33 @@ renderComments();
       }
       renderComments();
       Obclick();
+      Comlick();
       });
-    }
+    };
+  });
+    };
   };
   Obclick();
+  const Comlick = () => {
+    const CopyComm = document.querySelectorAll(".comment-header, .comment-body");
+    for (const CopyComms of CopyComm){
+      CopyComms.addEventListener("click", (event) =>{
+        console.log(event);
+      const Commentstiay = document.querySelectorAll(".comment");
+      for (const Commentstiays of Commentstiay){
+      const clicker = Commentstiays.dataset.clicker;
+      const index = Commentstiays.dataset.index;
+      Commentstiays.addEventListener("click", (event) =>{
+      buttonComment.value = (`>${Comments[index].coment}` + `\n${Comments[index].name}, `);
+      renderComments();
+      Obclick();
+      Comlick();
+      });
+    };
+  });
+    };
+  };
+  Comlick();
 // ____________________end_______________________________________
   </script>
 </html>
