@@ -32,6 +32,7 @@ const addFormElement = document.getElementById("add-form-name");
             })
         }
     }
+    
     const replyToComment = () => {
       const commentsBody = document.querySelectorAll(".comment");
       for (const commentBody of commentsBody) {
@@ -44,8 +45,7 @@ const addFormElement = document.getElementById("add-form-name");
     })
   }
 }
-    
-    
+        
      const renderComents = () => {
         const commentsHTML = comments.map((comment, index) => {
             return `<ul class="comments">
@@ -88,9 +88,8 @@ const addFormElement = document.getElementById("add-form-name");
           return;
      }
       
-     
       let currentDate = new Date();
-     let month = currentDate.getMonth() + 1;
+      let month = currentDate.getMonth() + 1;
       let day = currentDate.getDay();
       let year = currentDate.getFullYear();
       let hours = currentDate.getHours();
@@ -117,7 +116,8 @@ const addFormElement = document.getElementById("add-form-name");
           likes: 0,
            
       });
-      //initEventListeners();
+      
+
       renderComents();
      
       
@@ -133,6 +133,9 @@ const addFormElement = document.getElementById("add-form-name");
      
 
     console.log("It works!");
+
+
+    
     //addFormTextElement.value = ${comment.comment}/n${comment.name};
      //const replyInput = document.createElement('input');
       //replyInput.type = 'text';
