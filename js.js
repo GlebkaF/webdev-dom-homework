@@ -1,4 +1,3 @@
-
 const form = document.querySelector('.add-form');
 const nameInputElement = document.querySelector('.add-form-name');
 const textInputElement = document.querySelector('.add-form-text');
@@ -8,54 +7,73 @@ const buttonElementDel = document.querySelector('.delete-form-button');
 const arrayInputs = [nameInputElement, textInputElement];
 const host = "https://wedev-api.sky.pro/api/v1/ala-sharova/comments";
 const listElement = document.getElementById("list");
+const commentsLoading = document.querySelector('.loader');
+const commentLoading = document.querySelector('.loader_1');
+let comments = [];
+
+
   
-  // Функция getAPI позволяет получать данные с сервера
-  const getAPI = () => {
-    const fetchPromise = fetch(host, {
+// Функция getAPI позволяет получать данные с сервера
+
+const getAPI = () => {
+    return fetch(host, {
     method: "GET",
-  });
-  fetchPromise.then((response) => {
-    const jsonPromise = response.json();
-    jsonPromise.then((responseData) => {
-      console.log(responseData);
-      const appComments = responseData.comments.map((comment) => {
-        return {
-          name: comment.author.name,
-          date: new Date(comment.date),
-          text: comment.text,
-          likes:comment.likes,
-          isLiked: false,
-          propertyColorLike: 'like-button -no-active-like',
-        }
-      })
-      //comments = responseData.comments;
-      comments = appComments;
-      renderComments();
-      
-    });
   })
-}
+.then((response) => {
+  return response.json();
+})
+.then((responseData) => {
+  const appComments = responseData.comments.map((comment) => {
+    return {
+      name: comment.author.name,
+      date: new Date(comment.date),
+      text: comment.text,
+      likes:comment.likes,
+      isLiked: false,
+      propertyColorLike: 'like-button -no-active-like',
+    }
+  })
+comments = appComments;
+  renderComments();
+})
+.then(() => {
+  commentsLoading.style.display = 'none';
+})
+};
+
 getAPI();
 
 // Функция postAPI позволяет отправлять данные на сервер
 const postAPI = (nameInputElement, textInputElement) => {
+  form.style.display = 'none';
+  commentLoading.style.display = 'flex';
   return fetch(host, {
     method: "POST", 
     body: JSON.stringify({
       text: textInputElement.value,
       name: nameInputElement.value
      }),
-  }).then((response) => {
-    response.json().then((responseData) => {
-      comments = responseData.todos;
-      renderComments();
-    })
-    renderComments();
-    getAPI();
   })
-}
+.then((response) => {
+  console.log("Время:"+ (Date.now()- startAt));
+    return response.json()
+  })
+.then((responseData) => {
+  console.log("Время:"+ (Date.now()- startAt));
+      comments = responseData.todos;
+      getAPI();
+    })
+.then(() => {
+  nameInputElement.value = '';
+  textInputElement.value = '';	
+})
+.then(() => {
+  form.style.display = 'flex';
+  commentLoading.style.display = 'none';
 
-let comments = [];
+})
+};	   
+
 
 //счетчик лайков
 
@@ -85,9 +103,6 @@ getLikeButton()
 
 
 
-getLikeButton();
-
-
 // комментарий вводимый пользователем добавляем в массив
 
 buttonElement.addEventListener("click", () => {
@@ -98,11 +113,6 @@ buttonElement.addEventListener("click", () => {
       return;
   } 
   textInputElement.classList.remove('error');
-  function date(newDate) {
-      let fullHour = newDate.toLocaleDateString() + " " + newDate.getHours() + ":"+ newDate.getMinutes();
-      return fullHour;
-      }
-  date(new Date())
   postAPI(nameInputElement, textInputElement);
 });
 
