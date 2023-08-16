@@ -78,7 +78,7 @@ const replyToComment = () => {
         const oldName = commentBody.dataset.name;
         console.log (oldComment);
         console.log (oldName);
-        textInputElement.innerHTML += `${oldComment}&#10${oldName}: `;
+        textInputElement.value += `${oldComment}\n${oldName}: `;
         // renderComment();
       })
   }
@@ -138,7 +138,7 @@ nameInputElement.addEventListener ('input',() => {
     addFormButtonElement.disabled = false;
   }});
 
-textInputElement.addEventListener ('input',() => {
+textInputElement.addEventListener ('input', () => {
   if (textInputElement.value === "" || nameInputElement.value === "") {
     addFormButtonElement.classList.add("empty");
     addFormButtonElement.disabled = true;
@@ -147,14 +147,41 @@ textInputElement.addEventListener ('input',() => {
     addFormButtonElement.disabled = false;
   }});
 
-const check = (a,b) => {
-  if (a.value === "" || b.value === "") {
-    addFormButtonElement.classList.add("empty");
-    addFormButtonElement.disabled = true;
-  } else if (a.value !== "" && b.value !== "") {
-    addFormButtonElement.classList.remove("empty");
-    addFormButtonElement.disabled = false;
-  }};
+// textInputElement.addEventListener ('input', check (textInputElement.value, nameInputElement.value));
+// Функция которая не работает
+// const check = (a,b) => {
+//   if (a.value === "" || b.value === "") {
+//     addFormButtonElement.classList.add("empty");
+//     addFormButtonElement.disabled = true;
+//   } else if (a.value !== "" && b.value !== "") {
+//     addFormButtonElement.classList.remove("empty");
+//     addFormButtonElement.disabled = false;
+//   }};
+
+
+nameInputElement.addEventListener ('input',() => {
+  if (nameInputElement.value !== ""){
+    nameInputElement.classList.remove("emptyTextName");
+  }
+});
+
+textInputElement.addEventListener ('input',() => {
+  if (textInputElement.value !== ""){
+    textInputElement.classList.remove("emptyTextName");
+  }
+});
+
+// const color = (a) => {
+//   if (a !== ""){
+//     a.classList.remove("emptyTextName");
+//   }
+// }
+
+// textInputElement.addEventListener ('input', color);
+
+
+
+
 
 const addNewComment = () => {
 textInputElement.classList.remove("emptyTextName");
@@ -193,7 +220,7 @@ comments.push(
   });
 renderComment();
 
-textInputElement.innerHTML = "";
+textInputElement.value = "";
 nameInputElement.value = "";
 }
 
