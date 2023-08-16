@@ -82,10 +82,7 @@
         commentBody.addEventListener ('click', () => {             
           const oldComment = commentBody.dataset.text;
           const oldName = commentBody.dataset.name;
-          //console.log(oldComment);
-          //console.log(oldName);
-          commentInputElement.innerHTML += `&gt${oldComment}&#10${oldName}`;
-          //renderComments();
+          commentInputElement.value += `${oldComment}\n${oldName}`;          
         })
       }
 
@@ -152,7 +149,7 @@
         likesCounter: 0,
         myLike: false,
       });
-      //commentInputElement.value = "";
+      commentInputElement.value = "";
       nameInputElement.value = "";
       
       renderComments();
