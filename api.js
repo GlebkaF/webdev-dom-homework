@@ -1,4 +1,4 @@
-export let token;
+export let token = "fff";
 
 export const setToken = (newToken) => {
   token = newToken;
@@ -7,9 +7,7 @@ export function getComments() {
   return fetch("https://wedev-api.sky.pro/api/v2/stas/comments",
 {
   method: "GET",
-  headers: {
-    Authorization: `Bearer ${token}`,
-  }
+  
 }).then((response) => {
   return response.json();
 })
