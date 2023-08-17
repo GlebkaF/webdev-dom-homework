@@ -297,7 +297,7 @@ export const renderAll = (login) => {
 
         const renderPeople = () => {
             let render = PEOPLE.map((el, i) => {
-                const createDate = format(new Date(el.date), 'yyyy-MM-dd hh.mm.ss');
+                const createDate = format(new Date(el.date), ' yyyy-MM-dd hh.mm.ss');
                 return `<li class="comment">
         <div class="comment-header">
           <div>${el.author.name}</div>
