@@ -69,19 +69,99 @@ const text = document.querySelector('.add-form-text');
 const addButton = document.querySelector('.add-form-button');
 const comments = document.querySelector('.comments');
 
-// Добавить коммент
+const allComments = [
+  {
+    nameUser: "Глеб Фокин",
+    dataTime: "12.02.22 12:18",
+    comm: "Это будет первый комментарий на этой странице",
+    likesUser: false,
+    quantityLikes: 3,
+    class: "like-button",
+  },
+  {
+    nameUser: "Варвара Н.",
+    dataTime: "13.02.22 19:22",
+    comm: "Мне нравится как оформлена эта страница! ❤",
+    likesUser: true,
+    quantityLikes: 75,
+    class: "like-button -active-like",
+  },
+];
+
+const initLikeClick = () => {
+  const likeClickElements = document.querySelectorAll('.likes');
+  for (const likeClickElement of likeClickElements) {
+    likeClickElement.addEventListener('click', (e) => {
+      allComments[e.target.dataset.id].likesUser ? delLikes(e) : addLikes(e);
+      renderAllComments();
+    });
+  }
+};
+
+function addLikes(e) {
+  const index = e.target.dataset.id;
+  allComments[index].quantityLikes++;
+  allComments[index].likesUser = true;
+};
+
+function delLikes(e) {
+  const index = e.target.dataset.id;
+  allComments[index].quantityLikes--;
+  allComments[index].likesUser = false;
+};
+
+const renderAllComments = () => {
+  const allCommentsHtml = allComments.map((allComment, index) => {
+    const activeClass = allComment.likesUser ? "-active-like" : "";
+    return `<li class="comment">
+      <div class="comment-header">
+        <div class="name-text">${allComment.nameUser}</div>
+        <div>${allComment.dataTime}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">${allComment.comm}</div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">${allComment.quantityLikes}</span>
+          <button class="like-button ${activeClass}" aria-pressed="${allComment.likesUser}" data-id="${index}"></button> 
+        </div>
+      </div>
+    </li>`;
+  }).join('');
+  comments.innerHTML = allCommentsHtml;
+  initLikeClick();
+};
+renderAllComments();
+
 function addComment() {
-    // Поля заполнены
-    if (name.value && text.value) {
-        const date = new Date(); // Для даты и времени
-        const oldList = comments.innerHTML;
-        comments.innerHTML = oldList + ` <li class="comment"><div class="comment-header"><div>${name.value}</div><div>${date.toLocaleString()}</div></div><div class="comment-body"><div class="comment-text">${text.value}</div></div><div class="comment-footer"><div class="likes"><span class="likes-counter">0</span><button class="like-button"></button></div></div></li>`
-        // Очистить поля
-        name.value = '';
-        text.value = '';
-        name.classList.remove('error');
+  if (name.value && text.value) {
+    const date = new Date();
+    allComments.push({
+      nameUser: `${name.value}`
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
+      dataTime: date.toLocaleString(),
+      comm: `${text.value}`
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replace("|", "<div class='quote'>")
+        .replace("|", "</div>"),
+      likesUser: false,
+      quantityLikes: 0,
+      class: "like-button",
+    });
+    renderAllComments();
+    name.value = '';
+    text.value = '';
+    name.classList.remove('error');
         text.classList.remove('error');
-    } else {
+  }
+  else {
         if (!name.value) {
             name.classList.add('error');
         }
@@ -89,8 +169,7 @@ function addComment() {
             text.classList.add('error');
         }
     }
-}
-
+};
 // Удалить error при вводе
 name.addEventListener('input', function () {
     name.classList.remove('error');
@@ -99,8 +178,25 @@ name.addEventListener('input', function () {
 text.addEventListener('input', function () {
     text.classList.remove('error');
 });
+function replyComment(event) {
+  const nameTextElement = event.target.closest('.name-text');
+  const commentTextElement = event.target.closest('.comment-text');
+  if (nameTextElement || commentTextElement) {
+    const comment = event.target.closest('.comment');
+    const commentHeader = comment.querySelector('.comment-header > div:first-child').textContent;
+    const commentText = comment.querySelector('.comment-text').textContent;
+    const replyText = `@${commentHeader}, ${commentText}`;
+    text.value = replyText;
+    text.focus();
+  }
+};
 
-// Активировать кнопку "Написать"
+const commentElements = document.querySelectorAll('.comment');
+for (const commentElement of commentElements) {
+  commentElement.addEventListener('click', replyComment);
+}
+
 addButton.addEventListener('click', addComment);
+
   </script>
 </html>
