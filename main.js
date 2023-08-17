@@ -3,7 +3,7 @@ import { getComments } from "./api.js";
 import { setUsers } from "./users.js";
 
 // renderApp(true);
-// renderApp();
+renderApp(true);
 
 const fetchAndRenderComments = () => {
     getComments()

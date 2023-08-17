@@ -1,4 +1,4 @@
-export let token = "fff";
+export let token;
 
 export const setToken = (newToken) => {
   token = newToken;

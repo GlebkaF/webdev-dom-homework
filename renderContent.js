@@ -31,6 +31,7 @@ export const renderApp = () => {
         ${userHtml}
       </ul>
       ${token ? `
+      <div class="add-form">
         <input
           id="name-input"
           type="text"
@@ -47,6 +48,7 @@ export const renderApp = () => {
         <div class="add-form-row">
           <button id="add-button" class="add-form-button">Написать</button>
         </div>
+      </div>
         ` : `
         <div class="authorization">
           <p>Чтобы добавить комментарий, <a class="authorization-link" href="login.html">авторизуйтесь</a></p>

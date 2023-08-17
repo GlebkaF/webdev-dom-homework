@@ -34,7 +34,7 @@ export const renderLogin = () => {
         setToken(responseData.user.token);
         console.log(token);
     }).then(() => {
-        getApi();
+        fetchAndRenderComments();
     })
     
 });
