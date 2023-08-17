@@ -36,7 +36,8 @@
   const newDate = new Date().toLocaleDateString().slice(0, 6) + new Date().toLocaleDateString().slice(-2);
   const myDate = newDate + ' ' + new Date().toLocaleTimeString().slice(0, -3);
   const listElement = document.getElementById("comments");
-  const likesElements = document.querySelectorAll(".likes")
+  const likesElements = document.querySelectorAll(".likes");
+  const answerElements = document.querySelectorAll(".comment-text");
 
   const comments = [
     {
@@ -58,7 +59,7 @@
   const initEventListeners = () => {
     const buttonElements = document.querySelectorAll(".like-button");
     for (const buttonElement of buttonElements) {
-      buttonElement.addEventListener("click", () => {
+      buttonElement.addEventListener("click", (event) => {
         const index = buttonElement.dataset.index;
         if (comments[index].isLiked) {
           comments[index].isLiked = false;
@@ -67,6 +68,8 @@
           comments[index].isLiked = true;
           comments[index].like++;
         }
+
+        event.stopPropagation();
 
         renderComments();
       });
@@ -81,7 +84,7 @@
             <div> ${comment.date}</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
+            <div class="comment-text" data-text="${comment.comment}">
               ${comment.comment}
             </div>
           </div>
