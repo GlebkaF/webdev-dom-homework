@@ -1,4 +1,5 @@
 import { token } from "./api.js";
+import { renderLogin } from "./loginPage.js";
 import { users } from "./users.js"
 
 export const renderApp = () => {
@@ -51,11 +52,17 @@ export const renderApp = () => {
       </div>
         ` : `
         <div class="authorization">
-          <p>Чтобы добавить комментарий, <a class="authorization-link" href="login.html">авторизуйтесь</a></p>
+          <p>Чтобы добавить комментарий, <a class="authorization-link" href="#">авторизуйтесь</a></p>
         </div>
         `} 
     </div>
     `
       appElement.innerHTML = appHtml;
 
+      if(!token) {
+        const linkLogin = document.querySelector(".authorization-link");
+        linkLogin.addEventListener("click", () => {
+          renderLogin();
+        })
+      }
 }

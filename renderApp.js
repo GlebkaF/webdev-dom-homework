@@ -24,11 +24,7 @@ const addFormHtml = `<input
           <button id="add-button" class="add-form-button">Написать</button>
         </div>`;
 
-
-
 renderLogin()
-
-
 
 // Загрузка
 formElement.innerHTML = 'Комметарии загружаются...';

@@ -1,4 +1,5 @@
 import { login, setToken, token } from "./api.js";
+import { fetchAndRenderComments } from "./fetch.js";
 
 export const renderLogin = () => {
     const appElement = document.getElementById("app");
