@@ -28,7 +28,6 @@ export const authorization = () => {
     const loginButtonElement = document.getElementById("login-button");
     const loginInputElement = document.getElementById("login-input");
     const passwordInputElement = document.getElementById("password-input");
-    const nameInputElement = document.getElementById("name-input");
 
     loginButtonElement.addEventListener("click", () => {
     login({
@@ -41,7 +40,7 @@ export const authorization = () => {
         fetchAndRenderComments();
     })
     
-});
+    });
 
   registrationLink.addEventListener("click", () => {
   const regHtml = `
@@ -69,6 +68,7 @@ export const authorization = () => {
 
   const regButtonElement = document.getElementById("reg-button");
   const loginLink = document.querySelector(".login-link");
+  const nameInputElement = document.getElementById("name-input");
   regButtonElement.addEventListener("click", () => {
     postRegistration({
         login: loginInputElement.value,
