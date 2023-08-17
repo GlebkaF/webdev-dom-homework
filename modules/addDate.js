@@ -16,3 +16,4 @@ export const addDate = (value) => {
         nowDate.toLocaleTimeString("ru", time)
     );
 };
+

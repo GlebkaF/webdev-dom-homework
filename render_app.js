@@ -7,8 +7,7 @@ import { delCommentElement } from "./modules/delete_comment.js";
 import { renderLoging } from "./modules/renderLogin.js";
 import { signup, signin } from "./modules/API_mod.js";
 import { myName } from "./modules/API_mod.js";
-
-
+import { format } from "date-fns";
 
 
 export const renderAll = (login) => {
@@ -17,6 +16,7 @@ export const renderAll = (login) => {
             input.classList.remove("error")
         })
     }
+
     const app = document.querySelector('.app');
     let PEOPLE = [];
 
@@ -261,11 +261,13 @@ export const renderAll = (login) => {
         }
 
         const renderPeople = () => {
+
             let render = PEOPLE.map((el, i) => {
+                const createDate = format(new Date(el.date), 'yyyy-MM-dd hh.mm.ss');
                 return `<li class="comment">
         <div class="comment-header">
           <div>${el.author.name}</div>
-          <div>${addDate(el.date)}</div>
+          <div>${createDate}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text"  data-index="${i}">
@@ -292,12 +294,14 @@ export const renderAll = (login) => {
         appPromise();
     } else {
         const listComments = document.querySelector(".comments");
+
         const renderPeople = () => {
             let render = PEOPLE.map((el, i) => {
+                const createDate = format(new Date(el.date), 'yyyy-MM-dd hh.mm.ss');
                 return `<li class="comment">
         <div class="comment-header">
           <div>${el.author.name}</div>
-          <div>${addDate(el.date)}</div>
+          <div>${createDate}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text"  data-index="${i}">
