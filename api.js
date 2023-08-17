@@ -105,3 +105,24 @@ export function login({login, password}) {
   return response.json();
 });
 }
+
+export function postRegistration({login, name, password}) {
+  const userURL = "https://wedev-api.sky.pro/api/user";
+
+  return fetch(userURL, {
+  method: "POST",
+  body: JSON.stringify({
+    login,
+    name,
+    password,
+  })
+}).then((response) => {
+  if (response.status === 201) {
+    return response.json()
+  } else if (response.status === 400) {
+    throw Error("Пользователь уже существует")
+  } else {
+    throw Error("Ошибка")
+  }
+});
+}

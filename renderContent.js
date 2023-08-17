@@ -1,5 +1,5 @@
 import { token } from "./api.js";
-import { renderLogin } from "./loginPage.js";
+import { authorization } from "./loginPage.js";
 import { users } from "./users.js"
 
 export const renderApp = () => {
@@ -62,7 +62,7 @@ export const renderApp = () => {
       if(!token) {
         const linkLogin = document.querySelector(".authorization-link");
         linkLogin.addEventListener("click", () => {
-          renderLogin();
+          authorization();
         })
       }
 }
