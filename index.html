@@ -81,27 +81,59 @@ if (e.keyCode === 13) {
 
 
 
-const comments = [
-  {
-    name: 'Глеб Фокин',
-    text: 'Это будет первый комментарий на этой странице ',
-    time: '12.02.22 12:18',
-    like: 3,
-    isLiked: false,
-    isEdit: false,
-  },
-  {
-    name: 'Варвара Н.',
-    text: 'Мне нравится как оформлена эта страница! ❤',
-    time: '13.02.22 19:22',
-    like: 75,
-    isLiked: true,
-    isEdit: false,
-  },
-  
-];
+let comments = [];
+
+const apiCommentsGet = () => {
+  const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/:Evgeny-Onotskiy/comments', {
+  method: 'GET'
+});
 
 
+fetchPromise.then((response) => {
+
+  response.json().then((responseData) => {
+const apiComments = responseData.comments.map((comment) =>{
+
+
+
+  return {
+      name: comment.author.name,
+      date: new Date(comment.date),
+      text: comment.text,
+      like: comment.likes,
+      isLiked: false,
+      isEdit: false,
+    }
+});
+
+comments = apiComments;
+renderFunction();
+    // console.log(responseData);
+    // //comments = responseData.comments;
+  });
+});
+}
+apiCommentsGet();
+
+function formatDate(date) {
+
+let dd = date.getDate();
+if (dd < 10) dd = '0' + dd;
+
+let mm = date.getMonth() + 1;
+if (mm < 10) mm = '0' + mm;
+
+let yy = date.getFullYear() % 100;
+if (yy < 10) yy = '0' + yy;
+
+let hh = date.getHours();
+if (hh < 10) hh = '0' + hh;
+
+let min = date.getMinutes();
+if (min < 10) min = '0' + min;
+
+return dd + '.' + mm + '.' + yy + ' ' + hh + ':' + min;
+}
 
 
 const likedFunction = () => {
@@ -218,25 +250,7 @@ renderFunction();
 
 
 
-function formatDate(date) {
 
-let dd = date.getDate();
-if (dd < 10) dd = '0' + dd;
-
-let mm = date.getMonth() + 1;
-if (mm < 10) mm = '0' + mm;
-
-let yy = date.getFullYear() % 100;
-if (yy < 10) yy = '0' + yy;
-
-let hh = date.getHours();
-if (hh < 10) hh = '0' + hh;
-
-let min = date.getMinutes();
-if (min < 10) min = '0' + min;
-
-return dd + '.' + mm + '.' + yy + ' ' + hh + ':' + min;
-}
 
 
 
@@ -270,25 +284,40 @@ function addCommentare() {
   }
   button.disabled = true;
   button.classList.add('unactive');
+  fetch('https://wedev-api.sky.pro/api/v1/:Evgeny-Onotskiy/comments', {
+    method: 'POST',
+    body: JSON.stringify({
+      name: name.value,
+      text: text.value,
+      // time: formatDate(date),
+      // like: 0,
+      // isLiked: false,
+      // isEdit: false,
+    })
+  }).then(() => {
+    apiCommentsGet();
+  });
 
-comments.push({
-    name: name.value
-    .replaceAll("&", "&amp")
-    .replaceAll("<", "&lt")
-    .replaceAll(">", "&gt")
-    .replaceAll('"', "&quot"),
-    text: text.value    
-    .replaceAll("&", "&amp")
-    .replaceAll("<", "&lt")
-    .replaceAll(">", "&gt")
-    .replaceAll('"', "&quot")
-    .replaceAll("BEGIN_QUOTE", "<div class='quoteOne'>")
-    .replaceAll("QUOTE_END", "</div>"),
-    time: formatDate(date),
-    like: 0,
-    isLiked: false,
-    isEdit: false,
-});
+
+
+// comments.push({
+//     name: name.value
+//     .replaceAll("&", "&amp")
+//     .replaceAll("<", "&lt")
+//     .replaceAll(">", "&gt")
+//     .replaceAll('"', "&quot"),
+//     text: text.value    
+//     .replaceAll("&", "&amp")
+//     .replaceAll("<", "&lt")
+//     .replaceAll(">", "&gt")
+//     .replaceAll('"', "&quot")
+//     .replaceAll("BEGIN_QUOTE", "<div class='quoteOne'>")
+//     .replaceAll("QUOTE_END", "</div>"),
+//     time: formatDate(date),
+//     like: 0,
+//     isLiked: false,
+//     isEdit: false,
+// });
 
   name.value = '';
   text.value = '';
