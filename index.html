@@ -1,79 +1,70 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
-      <ul id="list" class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button" data-index="index"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like" data-index="index"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div class="add-form">
-        <input
-          id="name-input"
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"          
-        />
-        <textarea
-        id="comment-input"
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"          
-        ></textarea>
-        <div class="add-form-row">
-          <button id="add-button" class="add-form-button">Написать</button>
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <ul id="list" class="comments">
+      <li class="comment">
+        <div class="comment-header">
+          <div>Глеб Фокин</div>
+          <div>12.02.22 12:18</div>
         </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Это будет первый комментарий на этой странице
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">3</span>
+            <button class="like-button" data-index="index"></button>
+          </div>
+        </div>
+      </li>
+      <li class="comment">
+        <div class="comment-header">
+          <div>Варвара Н.</div>
+          <div>13.02.22 19:22</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Мне нравится как оформлена эта страница! ❤
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">75</span>
+            <button class="like-button -active-like" data-index="index"></button>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <div class="add-form">
+      <input id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+      <textarea id="comment-input" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+        rows="4"></textarea>
+      <div class="add-form-row">
+        <button id="add-button" class="add-form-button">Написать</button>
       </div>
     </div>
-  </body>
-  <style>
-    .error{
-      background-color: red;
-    }
-  </style>
-  <script>
-    "use strict";
-    // Код писать здесь  
-  
-    const commentsArr = [
+  </div>
+</body>
+<style>
+  .error {
+    background-color: red;
+  }
+</style>
+<script>
+  "use strict";
+  // Код писать здесь  
+
+  const commentsArr = [
     {
       name: 'Глеб Фокин',
       date: '12.02.22 12:18',
@@ -90,13 +81,11 @@
     }
   ];
 
-    const comments = document.querySelector(".comments");
-    const buttonElement = document.getElementById('add-button');
-    const listElement = document.getElementById('list');
-    const nameInputElement = document.getElementById('name-input');
-    const commentInputElement = document.getElementById('comment-input');
-     
-    
+  const comments = document.querySelector(".comments");
+  const buttonElement = document.getElementById('add-button');
+  const listElement = document.getElementById('list');
+  const nameInputElement = document.getElementById('name-input');
+  const commentInputElement = document.getElementById('comment-input');
 
   const initEventListeners = () => {
     const likeButtons = document.querySelectorAll('.like-button');
@@ -109,17 +98,31 @@
         renderComments();
       });
     }
-    };
+  };
+
+  const replyToComment = () => {
+    const commentBodys = document.querySelectorAll(".comment-body");
+    for (const commentBody of commentBodys) {
+      commentBody.addEventListener('click', () => {
+        const oldComment = commentBody.dataset.text;
+        const oldName = commentBody.dataset.name;
+        console.log(oldComment);
+        console.log(oldName);
+        commentInputElement.value += nameInputElement.value + `${oldName}` + `${oldComment}: `;
+        renderComments();
+      });
+    }
+  }
 
   const renderComments = () => {
-      comments.innerHTML = commentsArr
+    comments.innerHTML = commentsArr
       .map((comment, index) => {
         return `<li class="comment">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.date}</div>
           </div>
-          <div class="comment-body">
+          <div class="comment-body" data-text="\n${comment.comment}" data-name="${comment.name}">
             <div class="comment-text">
               ${comment.comment}
             </div>
@@ -133,51 +136,62 @@
         </li>`
       })
       .join("");
-      
-      initEventListeners();
-    }
-    renderComments();
-    
-  
 
-    const plusZero = (str) => {
-      return str < 10 ? `0${str}` : str;
-    }
-    let currentDate = new Date();
-    const now = (currentDate) => {
+    initEventListeners();
+    replyToComment();
+  }
+  renderComments();
+
+
+
+  const plusZero = (str) => {
+    return str < 10 ? `0${str}` : str;
+  }
+  let currentDate = new Date();
+  const now = (currentDate) => {
     let minute = plusZero(currentDate.getMinutes());
     let hours = plusZero(currentDate.getHours());
     let date = plusZero(currentDate.getDate());
     let month = plusZero(currentDate.getMonth());
     return `${date}.${month}.${currentDate.getFullYear() % 100} ${hours}:${minute}`;
+  }
+
+  initEventListeners();
+
+  buttonElement.addEventListener("click", () => {
+    nameInputElement.classList.remove("error");
+    commentInputElement.classList.remove("error");
+    if (nameInputElement.value === "") {
+      nameInputElement.classList.add("error");
+      return;
+    }
+    if (commentInputElement.value === "") {
+      commentInputElement.classList.add("error");
+      return;
     }
 
-    initEventListeners();
-
-      buttonElement.addEventListener("click", () => {
-      nameInputElement.classList.remove("error");
-      commentInputElement.classList.remove("error");
-      if (nameInputElement.value === "") {
-        nameInputElement.classList.add("error");
-        return;
-      }
-      if (commentInputElement.value === "") {
-        commentInputElement.classList.add("error");
-        return;
-      }   
-
-      commentsArr.push({
-        name: nameInputElement.value,
+    commentsArr.push
+      ({
+        name: nameInputElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
         date: now(currentDate),
-        comment: commentInputElement.value,
+        comment: commentInputElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
         likesCounter: '0',
-        myLike: false,
-
+        myLike: false
       });
-      
-      renderComments();
+    renderComments();
+    commentInputElement.value = "";
+    nameInputElement.value = "";
 
-      const oldListHtml = listElement.innerHTML;
+
+    /*  const oldListHtml = listElement.innerHTML;
       listElement.innerHTML = oldListHtml + `<li class="comment">
           <div class="comment-header">
             <div>${nameInputElement.value}</div>
@@ -196,9 +210,10 @@
           </div>
         </li>`;
 
-        initEventListeners();
-    });
+        initEventListeners();*/
+  });
 
-    console.log("It works!");
-  </script>
+  console.log("It works!");
+</script>
+
 </html>
