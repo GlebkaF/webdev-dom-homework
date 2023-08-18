@@ -43,7 +43,7 @@
     const listElement = document.getElementById('list-comments');
     const nameInputElement = document.getElementById('name-input');
     const textInputElement = document.getElementById('text-input');
-
+       
     const comments = [
       {
         name: "Глеб Фокин",
@@ -61,6 +61,19 @@
       },
     ];
     
+    const initEventListner = () => {
+      const likeButtons = document.querySelectorAll('.like-button');
+
+      for (const likeButton of likeButtons) {
+        likeButton.addEventListener('click', () => {
+
+          console.log(1);
+        });
+      }
+    }
+
+
+
     const renderComments = () => {
       const commentsHtml = comments.map((comment) => {
         return `<li class="comment">
@@ -75,7 +88,7 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">${comment.likesCount}</span>
+              <span class="likes-counter" data-count="${comment.likesCount}">${comment.likesCount}</span>
               <button class="like-button"></button>
             </div>
           </div>
@@ -83,7 +96,9 @@
       }).join('');
       listElement.innerHTML = commentsHtml;
     };
+ 
     renderComments();
+    initEventListner();
     
 
 
@@ -132,18 +147,19 @@
           likesCount: "0",
           myLike: false
         });
-        renderComments();     
+        renderComments();
+        initEventListner();     
        
     });
     
-  const initEventListner = () => {
-    const likeButtons = document.querySelector(".like-button");
-    for (likeButton of likeButtons) {
 
-      });      
-    }    
-  }
-initEventListner();
+  
+
+
+
+   
+
+
 
     
     console.log("It works!");
