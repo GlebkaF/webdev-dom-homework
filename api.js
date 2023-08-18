@@ -100,8 +100,12 @@ export function login({login, password}) {
     password,
   })
 }).then((response) => {
-  return response.json();
-});
+  if (response.status === 201) {
+    return response.json();
+  } else {
+    throw new Error("Такого пользователя не существует");
+  }
+})
 }
 
 export function postRegistration({login, name, password}) {

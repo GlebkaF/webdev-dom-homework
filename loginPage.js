@@ -41,6 +41,8 @@ export const authorization = () => {
         console.log(token);
     }).then(() => {
         return fetchAndRenderComments();
+    }).catch ((error) => {
+        alert(error);
     })
     
     });
@@ -85,7 +87,9 @@ export const authorization = () => {
         console.log(token);
     }).then(() => {
         fetchAndRenderComments();
-    })
+    }).catch ((error) => {
+        alert(error);
+  })
   })
   loginLink.addEventListener("click", () => {
     authorization();
