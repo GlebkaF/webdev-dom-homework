@@ -56,23 +56,25 @@ const postApi = () => {
     text: commentInputElement.value,
     name: nameInputElement.value,
   }).then(() => {
-    
+
     fetchAndRenderComments()
   })
   .catch((error) => {
 
-    alert(error);
+    if (error.message === "Имя и комментарий должны быть не короче 3 символов") {
+      alert("Имя и комментарий должны быть не короче 3 символов")
+    }
 
   })
 }
 
 // // Добавление комментрия клавишей Enter
-// document.addEventListener("keyup", (event) => {
-//   if (event.code === 'Enter') {
-//     document.getElementById("add-button").click();
-//     return;
-//   }
-// });
+document.addEventListener("keyup", (event) => {
+  if (event.code === 'Enter') {
+    document.getElementById("add-button").click();
+    return;
+  }
+});
 
 // // Кнопка лайка
 export const getLikeClass = (element) => {
@@ -113,13 +115,6 @@ export const answer = () => {
   });
 };
 
-
-// getApi();
-// console.log("It works!");
-// // } else {
-// //     // login
-// // }
-// // } 
 
 // Функция клика, валидация
 export function addEventButton() {

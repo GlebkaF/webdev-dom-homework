@@ -38,8 +38,7 @@ export const renderApp = () => {
           id="name-input"
           type="text"
           class="add-form-name"
-          placeholder="${name}" readonly
-        />
+          placeholder="${name}" />
         <textarea
           id="comment-input"
           type="textarea"
