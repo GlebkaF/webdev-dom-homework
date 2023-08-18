@@ -1,6 +1,5 @@
-
-import { getComments, addCommentRequest } from "./api.js";
-import { renderComments } from "./render.js";
+import { getComments, addCommentRequest } from './api.js';
+import { renderComments } from './render.js';
 
 const nameInput = document.querySelector('#name-input');
 const commentInput = document.querySelector('#comment-input');
@@ -13,7 +12,7 @@ let comments = [];
 
 function showLoadingMessage() {
   if (isLoading) {
-    loadingMessage.textContent = "Пожалуйста, подождите, загружаю комментарии...";
+    loadingMessage.textContent = 'Пожалуйста, подождите, загружаю комментарии...';
     loadingMessage.style.display = 'block';
   } else {
     loadingMessage.style.display = 'none';
@@ -23,17 +22,19 @@ function showLoadingMessage() {
 const main = () => {
   getComments()
     .then((responseData) => {
-      const fetchedComments = responseData.comments; // Получаем массив комментариев из responseData
+      console.log('🚀 ~ file: main.js:25 ~ .then ~ responseData:', responseData);
+
+      const fetchedComments = responseData; // Получаем массив комментариев из responseData
+
       comments = fetchedComments; // Присвоение данных переменной comments
 
-
       // Рендеринг начального списка комментариев
-      renderComments(commentsList, fetchedComments);
+      renderComments(commentsList, comments);
 
       // Обработчик кнопки "Написать"
-      addButton.addEventListener("click", () => {
+      addButton.addEventListener('click', () => {
         if (nameInput.value.trim().length < 3 || commentInput.value.trim().length < 3) {
-          alert("Имя и комментарий должны содержать хотя бы 3 символа!");
+          alert('Имя и комментарий должны содержать хотя бы 3 символа!');
           return;
         }
 
@@ -41,11 +42,13 @@ const main = () => {
         nameInput.disabled = true;
         commentInput.disabled = true;
         addButton.disabled = true;
-        loadingMessage.textContent = "Комментарий добавляется...";
+        loadingMessage.textContent = 'Комментарий добавляется...';
 
         // Создание нового комментария
         const now = new Date();
-        const dateString = `${now.getDate()}.${now.getMonth() + 1}.${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`;
+        const dateString = `${now.getDate()}.${
+          now.getMonth() + 1
+        }.${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`;
 
         /*const newComment = {
           id: comments.length + 1,
@@ -64,7 +67,7 @@ const main = () => {
           liked: false,
         };*/
         const newComment = {
-          author: nameInput.value,
+          name: nameInput.value,
           date: dateString,
           text: commentInput.value,
           likes: 0,
@@ -74,22 +77,26 @@ const main = () => {
         // Отправляем новый комментарий на сервер через POST-запрос
         addCommentRequest(newComment)
           .then(() => {
-            return getComments();
+            getComments().then((responseData) => {
+              comments = responseData;
+
+              renderComments(commentsList, comments);
+            });
           })
-          .then((responseData) => {
-            const updatedComments = responseData.comments; // Получаем обновленный массив комментариев
+          .then(() => {
+            // const updatedComments = responseData.comments; // Получаем обновленный массив комментариев
 
             // Обновляем список комментариев на странице
-            renderComments(commentsList, updatedComments);
+            // renderComments(commentsList, updatedComments);
 
             // Очистка полей ввода и включение элементов формы
-            nameInput.value = "";
-            commentInput.value = "";
+            nameInput.value = '';
+            commentInput.value = '';
             nameInput.disabled = false;
             commentInput.disabled = false;
             addButton.disabled = false;
-            addButton.textContent = "Добавить";
-            loadingMessage.style.display = "none";
+            addButton.textContent = 'Добавить';
+            loadingMessage.style.display = 'none';
           })
           .catch((error) => {
             // Обработка ошибок при добавлении комментария
@@ -97,48 +104,26 @@ const main = () => {
             nameInput.disabled = false;
             commentInput.disabled = false;
             addButton.disabled = false;
-            addButton.textContent = "Добавить";
-            loadingMessage.style.display = "none";
+            addButton.textContent = 'Добавить';
+            loadingMessage.style.display = 'none';
 
-            if (error.message === "Ошибка сервера") {
-              alert("Сервер сломался, попробуй позже");
+            if (error.message === 'Ошибка сервера') {
+              alert('Сервер сломался, попробуй позже');
               return;
             }
-            if (error.message === "Неверный запрос") {
-              alert("Имя и комментарий должны быть не короче трех символов");
+            if (error.message === 'Неверный запрос') {
+              alert('Имя и комментарий должны быть не короче трех символов');
               return;
             }
-            alert("Отсутствует интернет-соединение");
+            alert('Отсутствует интернет-соединение');
           });
       });
 
-      // 
-
-      /*const likeButtons = document.querySelectorAll('.like-button');
-      likeButtons.forEach((button) => {
-      button.addEventListener('click', (event) => {
-      event.stopPropagation();
-      
-      const commentId = parseInt(button.dataset.commentId);
-      const comment = comments.find((c) => c.id === commentId);
-
-      if (comment.liked) {
-        comment.likes--;
-      } else {
-        comment.likes++;
-      }
-      comment.liked = !comment.liked;
-      // Обновляем список комментариев на странице
-      renderComments(commentsList, updatedComments);
-    });
-  });
-  // Показываем начальный список комментариев
-  //renderComments(commentsList, comments); */
-})
-
+      //
+    })
     .catch((error) => {
       console.error(error);
-      alert("Кажется что-то пошло не так, попробуйте позже.");
+      alert('Кажется что-то пошло не так, попробуйте позже.');
       isLoading = false;
       renderComments(commentsList, []); // Показываем сообщение об ошибке
     });

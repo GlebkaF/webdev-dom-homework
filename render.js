@@ -1,16 +1,16 @@
 export const renderComments = (commentsList, comments) => {
-    
-    commentsList.innerHTML = "";
-    
+  console.log(comments);
 
-    comments.forEach((comment) => {
-        const newComment = document.createElement("li");
-        newComment.classList.add("comment");
-        
-        const likeButtonClass = comment.liked ? "like-button -active-like" : "like-button";
-      
-          const dateAndTime = `${comment.date.toLocaleDateString()} ${comment.date.toLocaleTimeString()}`;
-          newComment.innerHTML = `
+
+  commentsList.innerHTML = comments
+    .map((comment) => {
+      // const newComment = document.createElement('li');
+      // newComment.classList.add('comment');
+
+      const likeButtonClass = comment.liked ? 'like-button -active-like' : 'like-button';
+
+      const dateAndTime = `${comment.date.toLocaleDateString()} ${comment.date.toLocaleTimeString()}`;
+      return `<li class='comment'>
             <div class="comment-header">
               <div>${comment.name}</div>
               <div>${dateAndTime}</div>
@@ -28,15 +28,49 @@ export const renderComments = (commentsList, comments) => {
             <button class="edit-button" data-comment-id="${comment.id}">Редактировать</button>
               </div>
             </div>
+           </li>
           `;
-      
-          newComment.addEventListener("click", () => {
-          // При клике на комментарий, заполняем поля формы добавления комментария данными комментария
-          nameInput.value = '';
-          commentInput.value = `@${comment.name}, ${comment.text}:`;
-          commentInput.focus();
-          });
-          commentsList.appendChild(newComment);
-        });
-      
+    })
+    .join('');
+
+  // Задаем обработчики для взаимодействия с комментом
+  //replyInitEvent(newComment, comment);
+  likeInitEvent(comments);
 };
+
+// Ответ на коммент
+function replyInitEvent(newComment, comment) {
+  newComment.addEventListener('click', (event) => {
+    event.stopPropagation();
+    const nameInput = document.querySelector('#name-input');
+    const commentInput = document.querySelector('#comment-input');
+    // При клике на комментарий, заполняем поля формы добавления комментария данными комментария
+    nameInput.value = '';
+    commentInput.value = `@${comment.name}, ${comment.text}:`;
+    commentInput.focus();
+  });
+}
+// Лайк
+function likeInitEvent(comments) {
+  const likeButtons = document.querySelectorAll('.like-button');
+  likeButtons.forEach((button) => {
+    button.addEventListener('click', (event) => {
+      event.stopPropagation();
+
+      const commentId = parseInt(button.dataset.commentId);
+      const comment = comments.find((c) => c.id === commentId);
+
+      if (comment.liked) {
+        comment.likes--;
+      } else {
+        comment.likes++;
+      }
+      comment.liked = !comment.liked;
+      // Обновляем список комментариев на странице
+
+      const commentsList = document.querySelector('.comments');
+
+      renderComments(commentsList, comments);
+    });
+  });
+}
