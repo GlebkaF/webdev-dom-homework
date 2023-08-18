@@ -103,16 +103,16 @@ export function addLike() {
 }
 
 // // Ответ на комментарий
-// const answer = () => {
-//   const commentAnswers = document.querySelectorAll('.comment');
-//   commentAnswers.forEach((textElement, index) => {
-//     textElement.addEventListener('click', (event) => {
-//       let textValue = textElement.textContent;
-//       const commentInputElement = document.getElementById("comment-input");
-//       return commentInputElement.value = `${users[index].text} ${users[index].author.name}, `;
-//     });
-//   });
-// };
+const answer = () => {
+  const commentAnswers = document.querySelectorAll('.comment');
+  commentAnswers.forEach((textElement, index) => {
+    textElement.addEventListener('click', (event) => {
+      
+      const commentInputElement = document.getElementById("comment-input");
+      return commentInputElement.value = `${users[index].text} ${users[index].author.name}, `;
+    });
+  });
+};
 
 
 // getApi();
