@@ -1,4 +1,4 @@
-import { login, setToken, token } from "./api.js";
+import { login, postRegistration, setToken, token } from "./api.js";
 import { fetchAndRenderComments } from "./fetch.js";
 
 export const authorization = () => {
@@ -26,8 +26,9 @@ export const authorization = () => {
 
     const registrationLink = document.querySelector(".reg-link");
     const loginButtonElement = document.getElementById("login-button");
-    const loginInputElement = document.getElementById("login-input");
     const passwordInputElement = document.getElementById("password-input");
+    const loginInputElement = document.getElementById("login-input");
+    
 
     loginButtonElement.addEventListener("click", () => {
     login({
@@ -64,11 +65,13 @@ export const authorization = () => {
     </div>
     `
     appElement.innerHTML = regHtml;
-  });
 
   const regButtonElement = document.getElementById("reg-button");
   const loginLink = document.querySelector(".login-link");
   const nameInputElement = document.getElementById("name-input");
+  const passwordInputElement = document.getElementById("password-input");
+  const loginInputElement = document.getElementById("login-input");
+
   regButtonElement.addEventListener("click", () => {
     postRegistration({
         login: loginInputElement.value,
@@ -84,6 +87,8 @@ export const authorization = () => {
   loginLink.addEventListener("click", () => {
     authorization();
   });
+  });
+
 }
 
 
