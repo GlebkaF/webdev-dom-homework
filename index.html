@@ -45,35 +45,35 @@
   const buttonDelComment = document.getElementById("del-comment");
 
 
-  const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/lana-olhowko/comments", { method: "GET" });
-
-  fetchPromise.then((response) => {
-
-    const jsonPromise = response.json();
-
-    jsonPromise.then((responseData) => {
-
-      const appComments = responseData.comments.map((comment) => {
-        return {
-          name: comment.author.name,
-
-          date: new Date(comment.date),
-
-          text: comment.text,
-          like: comment.likes,
-
-          isLiked: false,
-          isEdit: false,
-          isLoading: false,
-        };
-      });
-
-
-      comments = appComments;
-
-      renderComments();
+  const fetchAndRenderComments = () => {
+    return fetch("https://wedev-api.sky.pro/api/v1/lana-olhowko/comments", {
+      method: "GET",
     })
-  })
+      .then((response) => response.json())
+      .then((responseData) => {
+
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+
+            date: new Date(comment.date),
+
+            text: comment.text,
+            like: comment.likes,
+
+            isLiked: false,
+            isEdit: false,
+            isLoading: false,
+          };
+        });
+
+        comments = appComments;
+
+        renderComments();
+      })
+  }
+
+
 
 
   //        АКТУАЛЬНАЯ DATA
@@ -219,7 +219,7 @@
     initEditCommentListeners();
   }
 
-
+  fetchAndRenderComments();
   renderComments();
   initLikesButtonListeners();
   initEditButtonListeners();
@@ -273,6 +273,9 @@
     //   isEdit: false
     // });
 
+    buttonAddElement.disabled = true;
+    buttonAddElement.textContent = 'Комментарий добавляется..';
+
 
     const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/lana-olhowko/comments", {
       method: "POST",
@@ -285,34 +288,14 @@
       .then((response) => {
         return response.json();
       })
-      .then((responseData) => {
-        return fetch("https://wedev-api.sky.pro/api/v1/lana-olhowko/comments", {
-          method: "GET",
-        });
+      .then(() => {
+        return fetchAndRenderComments();
+
       })
-      .then((response) => {
-        return response.json();
-      })
-      .then((responseData) => {
-        const appComments = responseData.comments.map((comment) => {
-          return {
-            name: comment.author.name,
+      .then((data) => {
 
-            date: new Date(comment.date),
-
-            text: comment.text,
-            like: comment.likes,
-
-            isLiked: false,
-            isEdit: false,
-            isLoading: false,
-          };
-        });
-
-
-        comments = appComments;
-
-        renderComments();
+        buttonAddElement.disabled = false;
+        buttonAddElement.textContent = 'Написать';
       })
 
     renderComments();
@@ -325,6 +308,7 @@
 
 
   })
+
 
   //        ДОБАВИТЬ С ПОМОЩЬЮ КЛАВИШИ ENTER + ВОЗВРАТ АКТИВНОСТИ КНОПКИ
 
