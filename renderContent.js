@@ -1,6 +1,6 @@
 import { token } from "./api.js";
 import { authorization } from "./loginPage.js";
-import { addLike, getLikeClass } from "./renderApp.js";
+import { addLike, answer, getLikeClass } from "./renderApp.js";
 import { users, name } from "./users.js"
 
 
@@ -67,6 +67,6 @@ export const renderApp = () => {
         })
       }
     addLike();
-    
+    answer();
 }
 
