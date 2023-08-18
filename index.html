@@ -45,19 +45,35 @@
   const buttonDelComment = document.getElementById("del-comment");
 
 
+  const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/lana-olhowko/comments", { method: "GET" });
+
+  fetchPromise.then((response) => {
+
+    const jsonPromise = response.json();
+
+    jsonPromise.then((responseData) => {
+
+      const appComments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+
+          date: new Date(comment.date),
+
+          text: comment.text,
+          like: comment.likes,
+
+          isLiked: false,
+          isEdit: false,
+          isLoading: false,
+        };
+      });
 
 
-  // const initEventListeners = () => {
-  //   const commentElements = document.querySelectorAll(".comment");
+      comments = appComments;
 
-  //   for (const commentElement of commentElements) {
-
-  //     commentElement.addEventListener('click', () => {
-  //       console.log(commentElement);
-  //     })
-  //   }
-  // }
-
+      renderComments();
+    })
+  })
 
 
   //        АКТУАЛЬНАЯ DATA
@@ -133,9 +149,9 @@
     }
   }
 
-    //  Homework 2.11
+  //  Homework 2.11
 
-    //        Ответы на комменты
+  //        Ответы на комменты
 
   const initEditCommentListeners = () => {
     const answerElements = document.querySelectorAll(".comment");
@@ -170,24 +186,7 @@
 
   //        ФОРМИРОВАНИЕ НОВОГО СПИСКА КОММЕНТОВ
 
-  const comments = [
-    {
-      name: "Глеб Фокин",
-      date: "12.02.22 12:18",
-      text: "Это будет первый комментарий на этой странице",
-      like: "3",
-      isLiked: false,
-      isEdit: false
-    },
-    {
-      name: "Варвара Н.",
-      date: "13.02.22 19:22",
-      text: "Мне нравится как оформлена эта страница! ❤",
-      like: "75",
-      isLiked: true,
-      isEdit: false
-    }
-  ];
+  let comments = [];
 
   const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
@@ -222,7 +221,6 @@
 
 
   renderComments();
-  // initEventListeners();
   initLikesButtonListeners();
   initEditButtonListeners();
   initEditCommentListeners();
@@ -258,25 +256,65 @@
 
     //        ДОБАВЛЕНИЕ КОММЕНТОВ
 
-    comments.push({
-      name: nameInputElement.value.replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-      date: fullDate + fullTime,
-      text: commentInputElement.value.replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("BEGIN_QUOTE", "<div class='quote'>")
-        .replaceAll("QUOTE_END", "</div>"),
-      like: 0,
-      isLiked: false,
-      isEdit: false
-    });
+    // comments.push({
+    //   name: nameInputElement.value.replaceAll("&", "&amp;")
+    //     .replaceAll("<", "&lt;")
+    //     .replaceAll(">", "&gt;")
+    //     .replaceAll('"', "&quot;"),
+    //   date: fullDate + fullTime,
+    //   text: commentInputElement.value.replaceAll("&", "&amp;")
+    //     .replaceAll("<", "&lt;")
+    //     .replaceAll(">", "&gt;")
+    //     .replaceAll('"', "&quot;")
+    //     .replaceAll("BEGIN_QUOTE", "<div class='quote'>")
+    //     .replaceAll("QUOTE_END", "</div>"),
+    //   like: 0,
+    //   isLiked: false,
+    //   isEdit: false
+    // });
 
 
-    // initEventListeners();
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/lana-olhowko/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        name: nameInputElement.value,
+        // date: fullDate + fullTime,
+        text: commentInputElement.value,
+      }),
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
+        return fetch("https://wedev-api.sky.pro/api/v1/lana-olhowko/comments", {
+          method: "GET",
+        });
+      })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+
+            date: new Date(comment.date),
+
+            text: comment.text,
+            like: comment.likes,
+
+            isLiked: false,
+            isEdit: false,
+            isLoading: false,
+          };
+        });
+
+
+        comments = appComments;
+
+        renderComments();
+      })
+
     renderComments();
     initLikesButtonListeners();
     initEditButtonListeners();

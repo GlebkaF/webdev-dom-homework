@@ -45,6 +45,37 @@
     const buttonDelComment = document.getElementById("del-comment");
 
 
+    const fetchAndRenderComments = () => {
+        return fetch("https://wedev-api.sky.pro/api/v1/lana-olhowko/comments", {
+            method: "GET",
+        })
+            .then((response) => response.json())
+            .then((responseData) => {
+
+                const appComments = responseData.comments.map((comment) => {
+                    return {
+                        name: comment.author.name,
+
+                        date: new Date(comment.date),
+
+                        text: comment.text,
+                        like: comment.likes,
+
+                        isLiked: false,
+                        isEdit: false,
+                        isLoading: false,
+                    };
+                });
+
+                comments = appComments;
+
+                renderComments();
+            })
+    }
+
+
+
+
     //        АКТУАЛЬНАЯ DATA
 
     let myDate = new Date();
@@ -155,24 +186,7 @@
 
     //        ФОРМИРОВАНИЕ НОВОГО СПИСКА КОММЕНТОВ
 
-    const comments = [
-        {
-            name: "Глеб Фокин",
-            date: "12.02.22 12:18",
-            text: "Это будет первый комментарий на этой странице",
-            like: "3",
-            isLiked: false,
-            isEdit: false
-        },
-        {
-            name: "Варвара Н.",
-            date: "13.02.22 19:22",
-            text: "Мне нравится как оформлена эта страница! ❤",
-            like: "75",
-            isLiked: true,
-            isEdit: false
-        }
-    ];
+    let comments = [];
 
     const renderComments = () => {
         const commentsHtml = comments.map((comment, index) => {
@@ -205,9 +219,8 @@
         initEditCommentListeners();
     }
 
-
+    fetchAndRenderComments();
     renderComments();
-    // initEventListeners();
     initLikesButtonListeners();
     initEditButtonListeners();
     initEditCommentListeners();
@@ -243,23 +256,47 @@
 
         //        ДОБАВЛЕНИЕ КОММЕНТОВ
 
-        comments.push({
-            name: nameInputElement.value.replaceAll("&", "&amp;")
-                .replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;")
-                .replaceAll('"', "&quot;"),
-            date: fullDate + fullTime,
-            text: commentInputElement.value.replaceAll("&", "&amp;")
-                .replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;")
-                .replaceAll('"', "&quot;")
-                .replaceAll("BEGIN_QUOTE", "<div class='quote'>")
-                .replaceAll("QUOTE_END", "</div>"),
-            like: 0,
-            isLiked: false,
-            isEdit: false
-        });
+        // comments.push({
+        //   name: nameInputElement.value.replaceAll("&", "&amp;")
+        //     .replaceAll("<", "&lt;")
+        //     .replaceAll(">", "&gt;")
+        //     .replaceAll('"', "&quot;"),
+        //   date: fullDate + fullTime,
+        //   text: commentInputElement.value.replaceAll("&", "&amp;")
+        //     .replaceAll("<", "&lt;")
+        //     .replaceAll(">", "&gt;")
+        //     .replaceAll('"', "&quot;")
+        //     .replaceAll("BEGIN_QUOTE", "<div class='quote'>")
+        //     .replaceAll("QUOTE_END", "</div>"),
+        //   like: 0,
+        //   isLiked: false,
+        //   isEdit: false
+        // });
 
+        buttonAddElement.disabled = true;
+        buttonAddElement.textContent = 'Комментарий добавляется..';
+
+
+        const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/lana-olhowko/comments", {
+            method: "POST",
+            body: JSON.stringify({
+                name: nameInputElement.value,
+                // date: fullDate + fullTime,
+                text: commentInputElement.value,
+            }),
+        })
+            .then((response) => {
+                return response.json();
+            })
+            .then(() => {
+                return fetchAndRenderComments();
+
+            })
+            .then((data) => {
+
+                buttonAddElement.disabled = false;
+                buttonAddElement.textContent = 'Написать';
+            })
 
         renderComments();
         initLikesButtonListeners();
@@ -271,6 +308,7 @@
 
 
     })
+    
 
     //        ДОБАВИТЬ С ПОМОЩЬЮ КЛАВИШИ ENTER + ВОЗВРАТ АКТИВНОСТИ КНОПКИ
 
