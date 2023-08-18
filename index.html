@@ -9,40 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments" id="list-comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+        
       </ul>
       <div class="add-form">
         <input
@@ -76,6 +43,47 @@
     const listElement = document.getElementById('list-comments');
     const nameInputElement = document.getElementById('name-input');
     const textInputElement = document.getElementById('text-input');
+
+    const comments = [
+      {
+        name: "Глеб Фокин",
+        date: "12.02.22 12:18",
+        text: "Это будет первый комментарий на этой странице",
+        likesCount: 3,
+        myLike: false
+      },
+      {
+        name: "Варвара Н.",
+        date: "13.02.22 19:22",
+        text: "Мне нравится как оформлена эта страница! ❤",
+        likesCount: 75,
+        myLike: true
+      },
+    ];
+    
+    const renderComments = () => {
+      const commentsHtml = comments.map((comment) => {
+        return `<li class="comment">
+          <div class="comment-header">
+          <div>${comment.name}</div>
+          <div>${comment.date}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+          ${comment.text}    
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.likesCount}</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+      }).join('');
+      listElement.innerHTML = commentsHtml;
+    };
+    renderComments();
     
 
 
@@ -115,28 +123,29 @@
             textInputElement.classList.add('error');
           }
         return;
-        }
-      
-        const oldListHtml = listElement.innerHTML;
-        listElement.innerHTML = oldListHtml + `<li class="comment">
-          <div class="comment-header">
-          <div>${nameInputElement.value}</div>
-          <div>${currentDate}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-          ${textInputElement.value}    
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
+        };
 
+       comments.push({
+          name: nameInputElement.value,
+          date: currentDate,
+          text: textInputElement.value,
+          likesCount: "0",
+          myLike: false
+        });
+        renderComments();     
+       
     });
+    
+  const initEventListner = () => {
+    const likeButtons = document.querySelector(".like-button");
+    for (likeButton of likeButtons) {
+
+      });      
+    }    
+  }
+initEventListner();
+
+    
     console.log("It works!");
   </script>
 </html>
