@@ -56,15 +56,14 @@ const postApi = () => {
     text: commentInputElement.value,
     name: nameInputElement.value,
   }).then(() => {
+    
     fetchAndRenderComments()
-    // addEventButton()
+  })
+  .catch((error) => {
+
+    alert(error);
 
   })
-  // .catch((error) => {
-
-  //   alert(error);
-
-  // })
 }
 
 // // Добавление комментрия клавишей Enter
