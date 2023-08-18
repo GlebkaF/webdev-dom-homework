@@ -74,15 +74,19 @@
     buttonElement.disabled = true;
     buttonElement.textContent = 'Отправка...';
 
-    fetch('https://wedev-api.sky.pro/api/v1/:maksim-sokolskiy/comments', {
+    return fetch('https://wedev-api.sky.pro/api/v1/:maksim-sokolskiy/comments', {
       method: "POST",
       body: JSON.stringify({
         text: inputCommentTextElement.value,
         name: inputCommentNameElement.value
       })
-    }).then(() => {
+    })
+    .then(() => {
       return getApi();
     })
+      .then((response) => {
+        return addComment();
+      })
       .then(() => {
         buttonElement.disabled = false;
         buttonElement.textContent = 'Написать';
