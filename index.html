@@ -37,7 +37,6 @@
   const myDate = newDate + ' ' + new Date().toLocaleTimeString().slice(0, -3);
   const listElement = document.getElementById("comments");
   const likesElements = document.querySelectorAll(".likes");
-  const answerElements = document.querySelectorAll(".comment-text");
 
   const comments = [
     {
@@ -74,13 +73,21 @@
         renderComments();
       });
     }
+
+    const answerElements = document.querySelectorAll(".comment-text");
+    for (const answerElement of answerElements) {
+      answerElement.addEventListener("click", () => {
+        document.getElementById('comment-input').value = '>' + answerElement.dataset.text;
+      })
+    }
+
   };
 
   const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
       return `<li class="comment">
           <div class="comment-header">
-            <div> ${comment.name} </div>
+            <div class="comment-name" data-name="${comment.name}"> ${comment.name} </div>
             <div> ${comment.date}</div>
           </div>
           <div class="comment-body">
