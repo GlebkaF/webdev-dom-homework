@@ -1,5 +1,7 @@
-import { postComment } from "./api.js";
+import { postComment, token } from "./api.js";
 import { fetchAndRenderComments } from "./fetch.js";
+import { renderApp } from "./renderContent.js";
+import { users } from "./users.js";
 
 // import { renderUsers } from "./render.js";
 // import { date } from "./date.js";
@@ -74,31 +76,31 @@ const postApi = () => {
 // });
 
 // // Кнопка лайка
-// const getLikeClass = (element) => {
-//   return element ? "like-button -active-like" : "like-button"
-// }
+export const getLikeClass = (element) => {
+  return element ? "like-button -active-like" : "like-button"
+}
 
 // // Добавить лайк
-// function addLike() {
-//   const likeElements = document.querySelectorAll('.like-button');
-//   const commentsElement = document.querySelector(".comments");
+export function addLike() {
+  const likeElements = document.querySelectorAll('.like-button');
+  // const commentsElement = document.querySelector(".comments");
 
-//   likeElements.forEach((element, index) => {
-//     element.addEventListener('click', (event) => {
-//       event.stopPropagation();
-//       const user = users[index];
-//       if (user.isLiked === true) {
-//         user.isLiked = false;
-//         user.likes -= 1;
-//         renderUsers({ addLike, answer, commentsElement, date, getLikeClass });
-//       } else {
-//         user.isLiked = true;
-//         user.likes += 1;
-//         renderUsers({ addLike, answer, commentsElement, date, getLikeClass });
-//       }
-//     })
-//   })
-// }
+  likeElements.forEach((element, index) => {
+    element.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const user = users[index];
+      if (user.isLiked === true) {
+        user.isLiked = false;
+        user.likes -= 1;
+        renderApp();
+      } else {
+        user.isLiked = true;
+        user.likes += 1;
+        renderApp();
+      }
+    })
+  })
+}
 
 // // Ответ на комментарий
 // const answer = () => {
@@ -122,6 +124,7 @@ const postApi = () => {
 
 // Функция клика, валидация
 export function addEventButton() {
+  if (token) {
   const buttonElement = document.getElementById("add-button");
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
@@ -129,7 +132,7 @@ export function addEventButton() {
   buttonElement.addEventListener("click", () => {
     nameInputElement.classList.remove("error");
     commentInputElement.classList.remove("error");
-    if (nameInputElement.value === "" || commentInputElement.value === "") {
+    if (commentInputElement.value === "") {
       nameInputElement.classList.add("error");
       commentInputElement.classList.add("error");
       buttonElement.classList.add("disabled-button");
@@ -140,4 +143,5 @@ export function addEventButton() {
 
     postApi();
   });
+}
 }

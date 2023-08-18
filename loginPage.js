@@ -1,5 +1,6 @@
 import { login, postRegistration, setToken, token } from "./api.js";
 import { fetchAndRenderComments } from "./fetch.js";
+import { setName } from "./users.js";
 
 export const authorization = () => {
     const appElement = document.getElementById("app");
@@ -35,10 +36,11 @@ export const authorization = () => {
         login: loginInputElement.value,
         password: passwordInputElement.value
     }).then((responseData) => {
+        setName(responseData.user.name);
         setToken(responseData.user.token);
         console.log(token);
     }).then(() => {
-        fetchAndRenderComments();
+        return fetchAndRenderComments();
     })
     
     });
@@ -78,6 +80,7 @@ export const authorization = () => {
         name: nameInputElement.value,
         password: passwordInputElement.value
     }).then((responseData) => {
+        setName(responseData.user.name);
         setToken(responseData.user.token);
         console.log(token);
     }).then(() => {

@@ -1,7 +1,7 @@
 import { renderApp } from "./renderContent.js";
 import { getComments } from "./api.js";
 import { setUsers } from "./users.js";
-import { addEventButton } from "./renderApp.js";
+import { addEventButton, addLike } from "./renderApp.js";
 
 // renderApp(true);
 

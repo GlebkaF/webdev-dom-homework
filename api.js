@@ -14,9 +14,9 @@ export function getComments() {
 }
 
 export function postComment({ text, name, addEventButton }) {
-  // const formElement = document.querySelector (".add-form");
-  // const nameInputElement = document.getElementById("name-input");
-  // const commentInputElement = document.getElementById("comment-input");
+  const formElement = document.querySelector (".add-form");
+  const nameInputElement = document.getElementById("name-input");
+  const commentInputElement = document.getElementById("comment-input");
 
   return fetch("https://wedev-api.sky.pro/api/v2/stas/comments",
 {
@@ -83,7 +83,7 @@ export function postComment({ text, name, addEventButton }) {
   //     return  formElement.innerHTML = "";
   // }
 
-  // formElement.innerHTML = 'Комментарий загружается';
+  formElement.innerHTML = 'Комментарий загружается';
 
   return response.json();
 

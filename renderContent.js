@@ -1,10 +1,11 @@
 import { token } from "./api.js";
 import { authorization } from "./loginPage.js";
-import { users } from "./users.js"
+import { addLike, getLikeClass } from "./renderApp.js";
+import { users, name } from "./users.js"
+
 
 export const renderApp = () => {
     const appElement = document.getElementById("app");
-    console.log(users);
     const userHtml = users.map((user) => {
         return `<li id="last-element" class="comment">
         <div class="comment-header">
@@ -19,7 +20,7 @@ export const renderApp = () => {
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${user.likes}</span>
-              <button class="${user.isLiked}"></button>
+              <button class="${getLikeClass(user.isLiked)}"></button>
             </div>
           </div>
         </li>
@@ -37,7 +38,7 @@ export const renderApp = () => {
           id="name-input"
           type="text"
           class="add-form-name"
-          placeholder="Введите ваше имя"
+          placeholder="${name}" readonly
         />
         <textarea
           id="comment-input"
@@ -65,4 +66,5 @@ export const renderApp = () => {
           authorization();
         })
       }
+    addLike();
 }
