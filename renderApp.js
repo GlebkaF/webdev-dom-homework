@@ -103,11 +103,11 @@ export function addLike() {
 }
 
 // // Ответ на комментарий
-const answer = () => {
+export const answer = () => {
   const commentAnswers = document.querySelectorAll('.comment');
   commentAnswers.forEach((textElement, index) => {
     textElement.addEventListener('click', (event) => {
-      
+      event.stopPropagation();
       const commentInputElement = document.getElementById("comment-input");
       return commentInputElement.value = `${users[index].text} ${users[index].author.name}, `;
     });
