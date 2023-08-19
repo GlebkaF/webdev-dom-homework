@@ -143,9 +143,9 @@
         };
 
        comments.push({
-          name: nameInputElement.value,
+          name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
           date: currentDate,
-          text: textInputElement.value,
+          text: textInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
           likesCount: "0",
           myLike: false
         });
