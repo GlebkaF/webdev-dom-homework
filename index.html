@@ -61,6 +61,7 @@
       },
     ];
     
+    /// наработки по лайкам ////
     const initEventListner = () => {
       const likeButtons = document.querySelectorAll('.like-button');
 
@@ -68,9 +69,18 @@
         likeButton.addEventListener('click', () => {
           let count = likeButton.dataset.count;
           count ++;
-          console.log(count);          
+          console.log(count);         
         });
-      }
+       }
+    }
+    //// наработка по цитированию ///
+    const commentElements = document.querySelectorAll(".comment");
+    for ( const commentElement of commentElements) {
+      commentElement.addEventListener("click", () => {
+        textInputElement.value = `${comments.text}\n${comment.name}`;
+        document.querySelector(".add-form-text").focus();
+
+      });
     }
 
 
