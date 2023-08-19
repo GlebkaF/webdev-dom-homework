@@ -119,7 +119,8 @@
       const likesButton = document.querySelectorAll(".like-button");
 
       for (const like of likesButton) {
-        like.addEventListener("click", () => {
+        like.addEventListener("click", (event) => {
+          event.stopPropagation();
           const likeIndex = like.dataset.index;
           const commentsElement = comments[likeIndex];
 
@@ -169,8 +170,8 @@
 
       commentsElement.innerHTML = commentsHtml;
       getLikeButton();
+      replyComments();
     };
-
     renderComments();
 
     // функция ответов на комментарии
@@ -184,8 +185,7 @@
         });
       }
     }
-
-    replyComments();
+    // replyComments();
 
     buttonElement.addEventListener("click", () => {
       // добавление обработчика клика на кнопку добавления комментариев и установка даты
@@ -231,7 +231,6 @@
 
       renderComments();
       getLikeButton();
-      replyComments();
 
       nameInputElement.value = "";
       textareaInputElement.value = "";
