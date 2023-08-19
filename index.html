@@ -66,11 +66,13 @@
 
       for (const likeButton of likeButtons) {
         likeButton.addEventListener('click', () => {
-
-          console.log(1);
+          let count = likeButton.dataset.count;
+          count ++;
+          console.log(count);          
         });
       }
     }
+
 
 
 
@@ -88,8 +90,8 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter" data-count="${comment.likesCount}">${comment.likesCount}</span>
-              <button class="like-button"></button>
+              <span class="likes-counter" >${comment.likesCount}</span>
+              <button class="like-button" data-count="${comment.likesCount}"></button>
             </div>
           </div>
         </li>`
