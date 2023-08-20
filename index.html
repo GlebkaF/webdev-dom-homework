@@ -8,10 +8,13 @@
 
   <body>
     <div class="container">
-    <div>
+    <div class="loader">
       <p>Подождите, комментарии загружаются...</p>
     </div>
       <ul class="comments" id="comments-list"></ul>
+      <div class="preloader">
+        <p>Ждём, комментарий добавляется...</p>
+      </div>
       <div class="add-form" id="input-list">
         <input
           id="name-input"
@@ -54,6 +57,8 @@
     const likeElement = document.getElementById("like-text");
     const newButton = document.getElementById("new-button");
     const inputList = document.getElementById("input-list");
+    const loader = document.querySelector(".loader");
+    const preloader = document.querySelector(".preloader");
 
     const getCurrentDate = () => {
       const currentDate = new Date();
@@ -91,6 +96,7 @@ const getDateApi = () => {
       });
 
     comments = appComments; 
+    loader.style.display = 'none';
      renderComments();
     });
 };
@@ -217,8 +223,8 @@ getDateApi();
         return;
       }
 
-      buttonElement.disabled = true;
-      buttonElement.textContent = 'Ждём, комментарий добавляется...';
+      preloader.style.display = 'block';
+      inputList.style.display = 'none';
 
        return fetch(
       'https://wedev-api.sky.pro/api/v1/:yulenka/comments',
@@ -231,21 +237,21 @@ getDateApi();
       })
       .then((response) => {
     return response.json();})
-    .then(() =>{
-      
-      return getDateApi();
+    .then((responseData) =>{
+
+  return getDateApi();
       })
-    .then(()=> {
-      buttonElement.disabled = false;
-      buttonElement.textContent = 'Написать';
-    });
-  
+      .then((getDate)=>{
+         preloader.style.display = 'none';
+        inputList.style.display = 'flex';
+        
 
-      nameInputElement.value = "";
-      commentInputElement.value = "";
-      nameInputElement.classList.remove("error");
-      commentInputElement.classList.remove("error");
+        nameInputElement.value = "";
+        commentInputElement.value = "";
+        nameInputElement.classList.remove("error");
+        commentInputElement.classList.remove("error");
 
+      });
     };
 
     buttonElement.addEventListener("click", getElement);
