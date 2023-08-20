@@ -8,8 +8,11 @@
 
   <body>
     <div class="container">
+    <div>
+      <p>Подождите, комментарии загружаются...</p>
+    </div>
       <ul class="comments" id="comments-list"></ul>
-      <div class="add-form">
+      <div class="add-form" id="input-list">
         <input
           id="name-input"
           value=""
@@ -50,6 +53,7 @@
     const commentInputElement = document.getElementById("comment-input");
     const likeElement = document.getElementById("like-text");
     const newButton = document.getElementById("new-button");
+    const inputList = document.getElementById("input-list");
 
     const getCurrentDate = () => {
       const currentDate = new Date();
@@ -65,19 +69,16 @@
 
     let comments = [];
 
+
 const getDateApi = () => {
-  const fetchPromise = fetch(
+  return fetch(
       'https://wedev-api.sky.pro/api/v1/:yulenka/comments',
       {
         method:'GET'
-      }
-    );
-
-  fetchPromise.then((response) => {
-    const jsonPromise = response.json();
-
-    jsonPromise.then((responseData) =>{
-      
+      })
+    .then((response) => {
+    return response.json();})
+.then((responseData) =>{
       const appComments = responseData.comments.map((comment)=>{
         return {
         name: comment.author.name,
@@ -89,10 +90,9 @@ const getDateApi = () => {
         }
       });
 
-    comments = appComments;
+    comments = appComments; 
      renderComments();
     });
-  });
 };
 
 getDateApi();
@@ -217,7 +217,10 @@ getDateApi();
         return;
       }
 
-      const fetchPromise = fetch(
+      buttonElement.disabled = true;
+      buttonElement.textContent = 'Ждём, комментарий добавляется...';
+
+       return fetch(
       'https://wedev-api.sky.pro/api/v1/:yulenka/comments',
       {
         method:'POST',
@@ -225,29 +228,24 @@ getDateApi();
           name: nameInputElement.value, 
           text: commentInputElement.value,
         }),
-      });
-
-  fetchPromise.then((response) => {
-    const jsonPromise = response.json();
-
-    
-
-    jsonPromise.then((responseData) =>{
-
-      console.log(responseData);
-
-      const comments = responseData.comments;
-
-    getDateApi();
+      })
+      .then((response) => {
+    return response.json();})
+    .then(() =>{
+      
+      return getDateApi();
+      })
+    .then(()=> {
+      buttonElement.disabled = false;
+      buttonElement.textContent = 'Написать';
     });
-  });
+  
 
       nameInputElement.value = "";
       commentInputElement.value = "";
       nameInputElement.classList.remove("error");
       commentInputElement.classList.remove("error");
 
-      renderComments();
     };
 
     buttonElement.addEventListener("click", getElement);
