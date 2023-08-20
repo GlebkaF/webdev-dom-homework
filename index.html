@@ -107,6 +107,7 @@
       },
     ];
 
+  
     function renderComments() {
       commentsElement.innerHTML = "";
       commentsData.forEach((comment, index) => {
@@ -118,12 +119,12 @@
 
         newCommentElement.innerHTML = `
           <div class="comment-header">
-            <div>${comment.name}</div>
-            <div>${comment.date}</div>
+            <div>${comment.name.replaceAll("<", "&lt;").replaceAll(">", "&gt;")}</div>
+            <div>${comment.date.replaceAll("<", "&lt;").replaceAll(">", "&gt;")}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${comment.text}
+              ${comment.text.replaceAll("<", "&lt;").replaceAll(">", "&gt;")}
             </div>
           </div>
           <div class="comment-footer">
