@@ -134,10 +134,12 @@
           </div>
         `;
 
-        newCommentElement.addEventListener("click", () => {
+        newCommentElement.addEventListener("click", (event) => {
+          if (!event.target.classList.contains("like-button")) {
       nameElement.value = comment.name;
-      textElement.value = `@${comment.name}\n${comment.text}\n`;
+      textElement.value = `@${comment.name}\n${textElement.value}`;
       textElement.focus();
+          }
     });
 
         commentsElement.appendChild(newCommentElement);
