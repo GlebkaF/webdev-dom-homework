@@ -74,10 +74,10 @@
       });
     }
 
-    const answerElements = document.querySelectorAll(".comment-text");
+    const answerElements = document.querySelectorAll(".comment");
     for (const answerElement of answerElements) {
       answerElement.addEventListener("click", () => {
-        document.getElementById('comment-input').value = '>' + answerElement.dataset.text;
+        document.getElementById('comment-input').value = '>' + answerElement.dataset.text + ' ' + answerElement.dataset.name;
       })
     }
 
