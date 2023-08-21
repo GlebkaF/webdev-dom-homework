@@ -20,7 +20,7 @@
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
-          rows="4"></textarea>
+          rows="6"></textarea>
         <div class="button-container">
           <div class="rem-form-row">
             <button id="delete-button" class="rem-form-button">
@@ -65,9 +65,9 @@
     const renderComments = () => {
       return (listCom.innerHTML = comments
         .map((comment, index) => {
-            return `<li class="comment">
+            return `<li class="comment" data-username="${comment.userName}" data-text="${comment.textComment}">
             <div class="comment-header">
-              <div>${comment.userName}</div>
+              <div class="usersNames">${comment.userName}</div>
               <div>${comment.dateBox}</div>
             </div>
             <div class="comment-body">
@@ -86,10 +86,20 @@
         .join(""));
     };
 
+    const answerToComment = () => {
+      const commentsToAnswer = document.querySelectorAll('.comment');
+      for (const commentToAnswer of commentsToAnswer) {
+        commentToAnswer.addEventListener("click", () => {
+          commitInput.value = `Комментарий: ${commentToAnswer.dataset.text}\n\nАвтор: ${commentToAnswer.dataset.username}\n\nОтветить: `;
+        })
+      }
+    }
+
     const likeButtons = () => {
       const buttonLikes = document.querySelectorAll(".like-button");
       for (const buttonLike of buttonLikes) {
-        buttonLike.addEventListener("click", () => {
+        buttonLike.addEventListener("click", (event) => {
+          event.stopPropagation();
           if (comments[buttonLike.dataset.index].checkLike === true) {
             comments[buttonLike.dataset.index].checkLike = false;
             comments[buttonLike.dataset.index].countLikes--;
@@ -98,6 +108,7 @@
             comments[buttonLike.dataset.index].countLikes++;
           }
           renderComments();
+          answerToComment();
           likeButtons();
         });
       }
@@ -105,6 +116,7 @@
 
     
     renderComments();
+    answerToComment();
     likeButtons();
 
     document.addEventListener("keyup", (key) => {
@@ -164,9 +176,17 @@
       "click",
       (pushCommit = () => {
         comments.push({
-          userName: nameInput.value,
+          userName: nameInput.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
           checkLike: false,
-          textComment: commitInput.value,
+          textComment: commitInput.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
           countLikes: 0,
           dateBox: getDateNow(),
         });
@@ -175,8 +195,8 @@
         commitInput.value = "";
         btn.classList.add("empty");
         btn.disabled = true;
-
         renderComments();
+        answerToComment();
         likeButtons();
       })
     );
@@ -184,6 +204,7 @@
     deleteButton.addEventListener("click", () => {
       comments.pop();
       renderComments();
+      answerToComment();
       likeButtons();
     });
   </script>
