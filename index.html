@@ -80,22 +80,42 @@
 
 	const listElement = document.getElementById('list');
 
-	const comments = [
-		{
-			name: 'Глеб Фокин',
-			date: '12.02.22 12:18',
-			comment: 'Это будет первый комментарий на этой странице',
-			like: 3,
-			isLiked: false,
-		},
-		{
-			name: 'Варвара Н.',
-			date: '13.02.22 19:22',
-			comment: 'Мне нравится как оформлена эта страница! ❤',
-			like: 75,
-			isLiked: true,
-		},
+	let comments = [
+		// {
+		// 	name: 'Глеб Фокин',
+		// 	date: '12.02.22 12:18',
+		// 	comment: 'Это будет первый комментарий на этой странице',
+		// 	like: 3,
+		// 	isLiked: false,
+		// },
+		// {
+		// 	name: 'Варвара Н.',
+		// 	date: '13.02.22 19:22',
+		// 	comment: 'Мне нравится как оформлена эта страница! ❤',
+		// 	like: 75,
+		// 	isLiked: true,
+		// },
 	];
+
+	fetch("https://wedev-api.sky.pro/api/v1/elnur-kakhramanov/comments", {
+		method: "GET"
+	}).then((response) => {
+		response.json().then((responseData) => {
+
+	const appComments = responseData.comments.map((comment) => {
+	return {
+		name: comment.author.name,
+		date: new Date(comment.date),
+		likes: comment.likes,
+		isLiked: false,
+		text: comment.text,
+		};
+	});
+	comments = appComments;
+	renderComments();
+	});
+		});
+
 
 	const initEventListeners = () => {
 		const buttonElements = document.querySelectorAll('.like-button');
@@ -135,7 +155,7 @@
 					</div>
 					<div class="comment-body">
 						<div class="comment-text" style="white-space:pre-line">
-							${comment.comment}
+							${comment.text}
 						</div>
 					</div>
 					<div class="comment-footer">
@@ -172,18 +192,60 @@
 			return;
 		}
 
-		comments.push({
-			name: nameInputElement.value.replaceAll("<", "").replaceAll(">",""),
-			date: nowDate,
-			comment: nameTextAreaElement.value.replaceAll("&", "&amp;")
-				.replaceAll("<", "&lt;")
-				.replaceAll(">", "&gt;")
-				.replaceAll('"', "&quot;").replaceAll("QUOTE_BEGIN", "<div class='quote'>").replaceAll("QUOTE_END", "</div>"),
-			like: 0,
-			isLiked: false,
-		});
-		renderComments();
+		fetch("https://wedev-api.sky.pro/api/v1/elnur-kakhramanov/comments", {
+			method: "POST",
+			body: JSON.stringify({
+				text: nameTextAreaElement.value.replaceAll("&", "&amp;")
+					.replaceAll("<", "&lt;")
+					.replaceAll(">", "&gt;")
+					.replaceAll('"', "&quot;")
+					.replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+					.replaceAll("QUOTE_END", "</div>"),
+				name: nameInputElement.value.replaceAll("&", "&amp;")
+					.replaceAll("<", "&lt;")
+					.replaceAll(">", "&gt;")
+					.replaceAll('"', "&quot;")
+					.replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+					.replaceAll("QUOTE_END", "</div>"),
+			})
+		}).then((response) => {
+			response.json().then((responseData) => {
 
+				fetch("https://wedev-api.sky.pro/api/v1/elnur-kakhramanov/comments", {
+					method: "GET"
+				}).then((response) => {
+					// Запускаем преобразовываем "сырые" данные от API в json формат
+					response.json().then((responseData) => {
+
+						const appComments = responseData.comments.map((comment) => {
+							return {
+								name: comment.author.name,
+								date: new Date(comment.date),
+								likes: comment.likes,
+								isLiked: false,
+								text: comment.text,
+							};
+						});
+						// получили данные и рендерим их в приложении
+						comments = appComments;
+
+		// comments.push({
+		// 	name: nameInputElement.value.replaceAll("<", "").replaceAll(">",""),
+		// 	date: nowDate,
+		// 	comment: nameTextAreaElement.value.replaceAll("&", "&amp;")
+		// 		.replaceAll("<", "&lt;")
+		// 		.replaceAll(">", "&gt;")
+		// 		.replaceAll('"', "&quot;").replaceAll("QUOTE_BEGIN", "<div class='quote'>").replaceAll("QUOTE_END", "</div>"),
+		// 	like: 0,
+		// 	isLiked: false,
+		// });
+		renderComments();
+	});
+				});
+			});
+			
+			});
+			renderComments();
 		nameInputElement.value = '';
 		nameTextAreaElement.value = '';
 	});
