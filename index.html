@@ -102,7 +102,6 @@ const getDateApi = () => {
 };
 
 
-///
 getDateApi();
 
 
@@ -235,26 +234,48 @@ getDateApi();
         body: JSON.stringify({
           name: nameInputElement.value, 
           text: commentInputElement.value,
+          forceError: true,
         }),
       })
-      .then((response) => {
-    return response.json();})
-    .then((responseData) =>{
+        .then((response) => {
+          if (response.status === 500) {
+            throw new Error('Сервер сломался');
+            // return Promise.reject('Сервер сломался');
+           }  if (response.status === 400) {
+            throw new Error('Плохой запрос');
+            // return Promise.reject('Плохой запрос');
+           } 
+           else {
+            return response.json();
+          }
+        })
+      .then((responseData) =>{
+    return getDateApi();
+        })
+        .then((getDate)=>{
+          preloader.style.display = 'none';
+          inputList.style.display = 'flex';
+          
+          nameInputElement.value = "";
+          commentInputElement.value = "";
+          nameInputElement.classList.remove("error");
+          commentInputElement.classList.remove("error");
+        })
+        .catch((error)=>{
+          preloader.style.display = 'none';
+          inputList.style.display = 'flex';
 
-  return getDateApi();
-      })
-      .then((getDate)=>{
-         preloader.style.display = 'none';
-        inputList.style.display = 'flex';
-        
+          if (error.message === 'Сервер сломался') {
+            alert("Сервер сломался, попробуй позже");
+            return;
+          } if (error.message === 'Плохой запрос') {
+            alert('Имя и комментарий должны быть не короче 3 символов');
+            return;
+          } 
 
-        nameInputElement.value = "";
-        commentInputElement.value = "";
-        nameInputElement.classList.remove("error");
-        commentInputElement.classList.remove("error");
-
-      });
-    };
+        alert('Кажется, у вас сломался интернет, попробуйте позже');
+        });
+      };
 
     buttonElement.addEventListener("click", getElement);
 
