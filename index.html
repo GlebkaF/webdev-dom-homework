@@ -119,10 +119,10 @@
       const likesButton = document.querySelectorAll(".like-button");
 
       for (const like of likesButton) {
-        like.addEventListener("click", () => {
+        like.addEventListener("click", (event) => {
+          event.stopPropagation();
           const likeIndex = like.dataset.index;
           const commentsElement = comments[likeIndex];
-
 
           if (commentsElement.currentLike) {
             commentsElement.likes -= 1;
@@ -146,7 +146,7 @@
     const renderComments = () => {
       const commentsHtml = comments
         .map((comment, index) => {
-          return `<li class="comment">
+          return `<li class="comment" data-index="${index}">
       <div class="comment-header">
         <div>${comment.name}</div>
         <div>${comment.date}</div>
@@ -159,47 +159,36 @@
       <div class="comment-footer">
         <div class="likes">
           <span class="likes-counter"> ${comment.likes}</span>
-          <button data-index="${index}" class="like-button ${comment.currentLike ? "-active-like" : ""}"></button>
+          <button data-index="${index}" class="like-button ${
+            comment.currentLike ? "-active-like" : ""
+          }"></button>
         </div>
       </div>
     </li>`;
         })
         .join("");
-        // <button data-index="${index}" class="like-button -no-active-like"></button>
+
       commentsElement.innerHTML = commentsHtml;
       getLikeButton();
+      replyComments();
     };
-
     renderComments();
 
-    // const initLikeButtonListeners = () => {
-    //   const likeButtonElements = document.querySelectorAll(".like-button");
+    // функция ответов на комментарии
+    function replyComments() {
+      const commentsTextElements = document.querySelectorAll(".comment");
 
-    //   for (const likeButtonElement of likeButtonElements) {
-    //     likeButtonElement.addEventListener("click", () => {
-    //       const likeButtonIndex = likeButtonIndex.dataset.index;
-    //       const commentsElement = comments[likeButtonIndex];
+      for (const commentsTextElement of commentsTextElements) {
+        commentsTextElement.addEventListener("click", () => {
+          const index = commentsTextElement.dataset.index;
+          textareaInputElement.value = `> ${comments[index].text} \n\n ${comments[index].name},`;
+        });
+      }
+    }
+    // replyComments();
 
-    //       if (commentsElement.likeIndex) {
-    //         commentsElement.likes -= 1;
-    //         commentsElement.currentLike = false;
-    //         likeButtonElements.classLike.add("-no-active-like");
-    //         likeButtonElements.classLike.remove("-active-like");
-    //         renderComments();
-    //       } else {
-    //         commentsElement.likes += 1;
-    //         commentsElement.currentLike = true;
-    //         likeButtonElements.classLike.add("-active-like");
-    //         likeButtonElements.classLike.remove("-no-active-like");
-    //         renderComments();
-    //       }
-    //     });
-    //   }
-    // };
-
-    // initLikeButtonListeners();
-
-    buttonElement.addEventListener("click", () => { // добавление обработчика клика на кнопку добавления комментариев и установка даты
+    buttonElement.addEventListener("click", () => {
+      // добавление обработчика клика на кнопку добавления комментариев и установка даты
       const currentDate =
         new Date().toLocaleDateString("default", {
           day: "2-digit",
@@ -223,9 +212,19 @@
 
       // добавление нового комментария через push
       comments.push({
-        name: nameInputElement.value,
+        name: nameInputElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
         date: currentDate,
-        text: textareaInputElement.value,
+        text: textareaInputElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+          .replaceAll("QUOTE_END", "</div><br><br>,"),
         currentLike: false,
         likes: 0,
       });
