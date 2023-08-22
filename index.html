@@ -50,14 +50,14 @@
         date: "12.02.22 12:18",
         text: "Это будет первый комментарий на этой странице",
         likesCount: 3,
-        myLike: false
+        isLiked: false
       },
       {
         name: "Варвара Н.",
         date: "13.02.22 19:22",
         text: "Мне нравится как оформлена эта страница! ❤",
         likesCount: 75,
-        myLike: true
+        isLiked: true
       },
     ];
     
@@ -119,9 +119,14 @@
       initEventListner();
 
     };
- 
+
     renderComments();
     initEventListner();
+
+    
+
+
+
     
 
 
@@ -164,14 +169,16 @@
         };
 
        comments.push({
-          name: nameInputElement.value,
+          name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
           date: currentDate,
-          text: textInputElement.value,
+          text: textInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
           likesCount: "0",
           myLike: false
         });
         renderComments();
-        initEventListner();     
+        initEventListner();
+
+        
        
     });
 
