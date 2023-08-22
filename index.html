@@ -85,13 +85,13 @@
 
   const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
-      return `<li class="comment">
+      return `<li class="comment" data-name="${comment.name}" data-text="${comment.comment}">
           <div class="comment-header">
-            <div class="comment-name" data-name="${comment.name}"> ${comment.name} </div>
+            <div class="comment-name"> ${comment.name} </div>
             <div> ${comment.date}</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text" data-text="${comment.comment}">
+            <div class="comment-text">
               ${comment.comment}
             </div>
           </div>
@@ -128,9 +128,15 @@
     }
 
     comments.push({
-      name: nameInputElement.value,
+      name: nameInputElement.value.replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       date: myDate,
-      comment: commentInputElement.value,
+      comment: commentInputElement.value.replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       like: 0,
       isLike: false,
     });
