@@ -45,22 +45,27 @@
 
     let btn = document.querySelector("#write-button");
 
-    const comments = [
-      {
-        author: {name: "Глеб Фокин"},
-        isLiked: false,
-        text: "Это будет первый комментарий на этой странице",
-        likes: 3,
-        date: "12.02.22 12:18",
-      },
-      {
-        author: {name: "Варвара Н."},
-        isLiked: true,
-        text: "Мне нравится как оформлена эта страница! ❤",
-        likes: 75,
-        date: "13.02.22 19:22",
-      },
-    ];
+    let comments = [];
+
+    fetch("https://wedev-api.sky.pro/api/v1/kirill-levchenko/comments", {
+      method: "GET",
+    }).then((Response) => {
+      Response.json().then((responseData) => {
+        const apiComments = responseData.comments.map((comment) => {
+          return {
+            author: { name: comment.author.name },
+            date: getDateInventor(comment.date),
+            likes: comment.likes,
+            isLiked: false,
+            text: comment.text,
+          };
+        });
+        comments = apiComments;
+        renderComments();
+        answerToComment();
+        likeButtons();
+      });
+    });
 
     const renderComments = () => {
       return (listCom.innerHTML = comments
@@ -94,7 +99,7 @@
       const commentsToAnswer = document.querySelectorAll(".comment");
       for (const commentToAnswer of commentsToAnswer) {
         commentToAnswer.addEventListener("click", () => {
-          commitInput.value = `Комментарий: ${commentToAnswer.dataset.text}\n\nАвтор: ${commentToAnswer.dataset.username}\n\nОтветить: `;
+          commitInput.value = `Комментарий: ${commentToAnswer.dataset.text}\n\nАвтор: ${commentToAnswer.dataset.username}\n\nОтвет: `;
         });
       }
     };
@@ -175,23 +180,70 @@
       return `${day}.${month}.${year} ${hour}:${minute}`;
     };
 
+    const getDateInventor = (dateFormat) => {
+      date = new Date(dateFormat);
+      let day = date.getDate();
+      let month = date.getMonth() + 1;
+      let year = date.getFullYear() % 1000;
+      let hour = date.getHours();
+      let minute = date.getMinutes();
+      if (day < 10) {
+        day = "0" + day;
+      }
+      if (month < 10) {
+        month = "0" + month;
+      }
+      if (hour < 10) {
+        hour = "0" + hour;
+      }
+      if (minute < 10) {
+        minute = "0" + minute;
+      }
+      return `${day}.${month}.${year} ${hour}:${minute}`;
+    };
+
     writeButton.addEventListener(
       "click",
       (pushCommit = () => {
-        comments.push({
-          author: {name: nameInput.value
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;"),},
-          isLiked: false,
-          text: commitInput.value
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;"),
-          likes: 0,
-          date: getDateNow(),
+        fetch("https://wedev-api.sky.pro/api/v1/kirill-levchenko/comments", {
+          method: "POST",
+          body: JSON.stringify({
+            name: nameInput.value
+              .replaceAll("&", "&amp;")
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;")
+              .replaceAll('"', "&quot;"),
+            text: commitInput.value
+              .replaceAll("&", "&amp;")
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;")
+              .replaceAll('"', "&quot;"),
+          }),
+        }).then((Response) => {
+          Response.json().then((responseData) => {
+            fetch(
+              "https://wedev-api.sky.pro/api/v1/kirill-levchenko/comments",
+              {
+                method: "GET",
+              }
+            ).then((Response) => {
+              Response.json().then((responseData) => {
+                const apiComments = responseData.comments.map((comment) => {
+                  return {
+                    author: { name: comment.author.name },
+                    date: getDateInventor(comment.date),
+                    likes: comment.likes,
+                    isLiked: false,
+                    text: comment.text,
+                  };
+                });
+                comments = apiComments;
+                renderComments();
+                answerToComment();
+                likeButtons();
+              });
+            });
+          });
         });
 
         nameInput.value = "";
