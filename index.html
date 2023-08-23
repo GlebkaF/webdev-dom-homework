@@ -78,43 +78,6 @@ if (e.keyCode === 13) {
   return;
 }
 }
-
-
-
-let comments = [];
-
-const apiCommentsGet = () => {
-  const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/:Evgeny-Onotskiy/comments', {
-  method: 'GET'
-});
-
-
-fetchPromise.then((response) => {
-
-  response.json().then((responseData) => {
-const apiComments = responseData.comments.map((comment) =>{
-
-
-
-  return {
-      name: comment.author.name,
-      date: new Date(comment.date),
-      text: comment.text,
-      like: comment.likes,
-      isLiked: false,
-      isEdit: false,
-    }
-});
-
-comments = apiComments;
-renderFunction();
-    // console.log(responseData);
-    // //comments = responseData.comments;
-  });
-});
-}
-apiCommentsGet();
-
 function formatDate(date) {
 
 let dd = date.getDate();
@@ -135,6 +98,57 @@ if (min < 10) min = '0' + min;
 return dd + '.' + mm + '.' + yy + ' ' + hh + ':' + min;
 }
 
+
+let comments = [];
+const apiCommentsGet = () => {
+  return fetch('https://wedev-api.sky.pro/api/v1/:Evgeny-Onotskiy/comments', {
+  method: 'GET'
+})
+.then((response) => response.json())
+.then((response) => {
+  comments.textContent = 'Комментарии загружаются...';
+  return response; 
+})
+.then((responseData) => {
+  const apiComments = responseData.comments.map((comment) =>{
+    return {
+      name: comment.author.name,
+      date: new Date(comment.date),
+      text: comment.text,
+      like: comment.likes,
+      isLiked: false,
+      isEdit: false,
+    }
+});
+comments = apiComments;
+renderFunction();
+})
+
+// fetchPromise.then((response) => {
+
+//   response.json().then((responseData) => {
+// const apiComments = responseData.comments.map((comment) =>{
+
+
+
+//   return {
+//       name: comment.author.name,
+//       date: new Date(comment.date),
+//       text: comment.text,
+//       like: comment.likes,
+//       isLiked: false,
+//       isEdit: false,
+//     }
+// });
+
+// comments = apiComments;
+// renderFunction();
+//     // console.log(responseData);
+//     // //comments = responseData.comments;
+//   });
+// });
+}
+apiCommentsGet();
 
 const likedFunction = () => {
   const likeButtons = document.querySelectorAll('.like-button');
@@ -217,7 +231,7 @@ const renderFunction = () => {
     return `<li class="comment">
           <div class="comment-header">
             <div>${comment.name}</div>
-            <div>${comment.time}</div>
+            <div>${comment.date}</div>
           </div>
           <div class='quote'>
             <div class="comment-body">
@@ -282,6 +296,7 @@ function addCommentare() {
     text.classList.add('red');
     return;
   }
+  button.textContent = 'Загрузка.'
   button.disabled = true;
   button.classList.add('unactive');
   fetch('https://wedev-api.sky.pro/api/v1/:Evgeny-Onotskiy/comments', {
@@ -289,14 +304,18 @@ function addCommentare() {
     body: JSON.stringify({
       name: name.value,
       text: text.value,
-      // time: formatDate(date),
+      // date: formatDate(date),
       // like: 0,
       // isLiked: false,
       // isEdit: false,
     })
-  }).then(() => {
-    apiCommentsGet();
-  });
+    })
+    .then(() => {
+    return apiCommentsGet();
+    })
+    .then((response) => {
+      button.textContent = 'Написать'
+    })
 
 
 
@@ -313,7 +332,7 @@ function addCommentare() {
 //     .replaceAll('"', "&quot")
 //     .replaceAll("BEGIN_QUOTE", "<div class='quoteOne'>")
 //     .replaceAll("QUOTE_END", "</div>"),
-//     time: formatDate(date),
+//     date: formatDate(date),
 //     like: 0,
 //     isLiked: false,
 //     isEdit: false,
