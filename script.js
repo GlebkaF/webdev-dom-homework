@@ -2,6 +2,7 @@
 // ------------------
 "use strict"
 // Добавляем ДОМ элементы
+let comments = [];
 const cardElements = document.getElementById("commentsId");
 const btnElement = document.getElementById("btnId");
 const inputName = document.getElementById("nameTextId");
@@ -10,34 +11,59 @@ const likeElement = document.getElementsByClassName("like-button");
 const formBg = document.querySelector('.add-form'); 
 let textAnswerHtml = "";
 let indexOld = 0;
+
+const getComments = () => {
+    
+fetch("https://wedev-api.sky.pro/api/v1/kekcsik/comments", { 
+    method: "GET",})
+    .then((response) => { response.json()
+        .then((responseData) => {
+            const appComments = responseData.comments.map((comments) => { 
+                return { 
+                  date: new Date(comments.date), 
+                  name: comments.author.name, //author
+                  text: comments.text, 
+                  likes: comments.likes, 
+                  isLiked: false, }; 
+                }); 
+                comments = appComments; 
+                 console.log(comments)
+                renderComments();
+                console.log(responseData)
+               
+            });
+    });
+}
+getComments();
+
 // массив людей оставивших комменты
-const commentators = [
-    {
-        name: 'Глеб Фокин',
-        data: '12.02.22 12:18',
-        textComment: "Это будет первый комментарий на этой странице",
-        likeQuantity: 3,
-        LikeActive: false,
-        isEdit: false,
-        isQuote: false,
-        animationClass: "",
-        isAnswers: "",
-        isReduction: true
+
+    // {
+    //     name: 'Глеб Фокин',
+    //     data: '12.02.22 12:18',
+    //     text: "Это будет первый комментарий на этой странице",
+    //     likes: 3,
+    //     LikeActive: false,
+    //     isEdit: false,
+    //     isQuote: false,
+    //     animationClass: "",
+    //     isAnswers: "",
+    //     isReduction: true
         
-    },
-    {
-        name: 'Варвара Н.',
-        data: '13.02.22 19:22',
-        textComment: "Мне нравится как оформлена эта страница! ❤",
-        likeQuantity: 75,
-        LikeActive: true,
-        isEdit: false,
-        isQuote: false,
-        animationClass: "",
-        isAnswers: "",
-        isReduction: true
-    }
-]
+    // },
+    // {
+    //     name: 'Варвара Н.',
+    //     data: '13.02.22 19:22',
+    //     text: "Мне нравится как оформлена эта страница! ❤",
+    //     likes: 75,
+    //     LikeActive: true,
+    //     isEdit: false,
+    //     isQuote: false,
+    //     animationClass: "",
+    //     isAnswers: "",
+    //     isReduction: true
+    // }
+
 // Вспомогательные функции
 const addDate = () =>{
     const date = new Date();
@@ -75,7 +101,7 @@ const commentDel = () => {
             setTimeout(() => {
                 const indexElement = element.dataset.index;
                 console.log(indexElement)
-                commentators.splice(indexElement, 1);
+                comments.splice(indexElement, 1);
                 renderComments()
             },800)
         })
@@ -88,67 +114,45 @@ function addLike () {
     Array.from(likeElement).forEach((element,index) => {
         element.addEventListener('click', (e) => {
             e.stopPropagation();
-            const commentator = commentators[index];
+            const commentator = comments[index];
             if (commentator.LikeActive === true) {
                 commentator.LikeActive = false;
-                commentator.likeQuantity -= 1;
+                commentator.likes -= 1;
                 renderComments();
                 
             } else {
                 commentator.LikeActive = true;
-                commentator.likeQuantity += 1;
+                commentator.likes += 1;
                 renderComments()
             }
         })
     })
 }
-// Функция редактирования комментария
-const clickEventEditComment = () => {
-    const redirectElements = document.querySelectorAll(".red");
-    redirectElements.forEach((redirectElement, indexEl) => {
-        redirectElement.addEventListener('click', (e) => {
-            e.stopPropagation();
-            console.log(redirectElement.innerHTML); 
-            const index = redirectElement.dataset.index;
-            const comment =  commentators[index];
-            console.log(comment);
-            if (comment.isEdit) {
-                const edit = document.querySelector('.add-edit');
-                console.log(edit);
-                comment.textComment = edit.value;
-                if (comment.textComment.length === 0) {
-                    commentators.splice(index,1);
-                }
-                comment.isEdit = false;
-            } else {
-                comment.isEdit = true;
-            }
-            renderComments();
-        })
-    })
-}
+
 // Рендер
 const getLikeClass = (element) => {
     return element ? "like-button -active-like" : "like-button";
 }
 function renderComments () {
     
-    const commentatorsHtml = commentators.map((commentator, index) => {
+    const commentatorsHtml = comments.map((commentator, index) => {
         const edit = commentator.isEdit;
+        console.log(commentator.likes);
         return `<li class="comment ${commentator.animationClass}" data-index="${index}">
         <i class='bx bx-x del ' data-index="${index}" ></i>
       <div class="comment-header" >
         <div>${commentator.name}</div>
-        <div>${commentator.data}</div>
+        <div>${addDate(new Date(commentator.date))}</div>
       </div>
       <div class="comment-body">
-            ${commentator.isAnswers.length !== 0 ? `<div class="c">${commentator.isAnswers}</div>`: ""}
-          ${edit ? `<textarea type="textarea" class="add-form-text add-edit" placeholder="Введите ваш коментарий" rows="4">${commentator.textComment}</textarea>` : `<div class="comment-text">${commentator.textComment}</div>`}
-   
+            
+      
+      ${edit ? `<textarea type="textarea" class="add-form-text add-edit" placeholder="Введите ваш коментарий" rows="4">${commentator.text}</textarea>` : `<div class="comment-text">${commentator.text}</div>`}
       <div class="comment-footer comment-footer_new">
-        ${commentator.isReduction ? `<button  class="add-form-button red" data-index="${index}" >Редактировать</button>` : ''}
+        ${commentator.isReduction ? '' : `<button  class="add-form-button red" data-index="${index}" >Редактировать</button>`}
         <div class="likes">
-          <span class="likes-counter">${commentator.likeQuantity}</span>
+          <span class="likes-counter">${commentator.likes}</span>
+          
           <button class="${getLikeClass(commentator.LikeActive)}"></button>
         </div>
       </div>
@@ -160,7 +164,33 @@ function renderComments () {
     clickEventEditComment();
     answerComment();
 }
-
+// Функция редактирования комментария
+const clickEventEditComment = () => {
+    const redirectElements = document.querySelectorAll(".red");
+    redirectElements.forEach((redirectElement, indexEl) => {
+        redirectElement.addEventListener('click', (e) => {
+            e.stopPropagation();
+            console.log(redirectElement.innerHTML); 
+            const index = redirectElement.dataset.index;
+            const comment =  comments[index];
+            console.log(comment);
+            if (comment.isEdit) {
+                const edit = document.querySelector('.add-edit');
+                console.log(edit);
+                comment.text = edit.value;
+                if (comment.text.length === 0) {
+                    comments.splice(index,1);
+                }
+                comment.isEdit = false;
+            } else {
+                comment.isEdit = true;
+            }
+            renderComments();
+        })
+    })
+}
+// ${commentator.isAnswers.length !== 0 ? `<div class="c">${commentator.isAnswers}</div>`: ""}
+// ${edit ? `<textarea type="textarea" class="add-form-text add-edit" placeholder="Введите ваш коментарий" rows="4">${commentator.text}</textarea>` : `<div class="comment-text">${commentator.text}</div>`}
 
 renderComments();
 
@@ -180,10 +210,10 @@ function answerComment() {
       oldComment.addEventListener("click", (event) => {
         event.stopPropagation();
         const index = oldComment.dataset.index;
-        const comment = commentators[index];
+        const comment = comments[index];
         // eventErrors(comment);
         console.log(comment);
-        inputText.value =` ${comment.textComment}\n${comment.name} `;
+        inputText.value =` ${comment.text}\n${comment.name} `;
       });
     }
   }
@@ -214,20 +244,37 @@ const clickEventAddComment = () => {
     const commentText = document.querySelectorAll('.comment-text');
                 const isAnswerTest =  commentText[indexOld].innerText === textAnswerHtml;
     const test = () => isAnswerTest ? textAnswerHtml : "";
-    commentators.push(
+    comments.push(
         {
             name: eventErrors(inputName.value),
-            textComment: eventErrors(inputText.value),
+            text: eventErrors(inputText.value),
             data: addDate(),
-            likeQuantity: 0,
+            likes: 0,
             animationClass: "comment_animation",
             isQuote: false,
             isAnswers: test(),
             isReduction: true
             }
     )
+    
+    fetch('https://wedev-api.sky.pro/api/v1/kekcsik/comments',
+    {   
+      method: 'POST',
+      body: JSON.stringify({
+        name: inputName.value,
+        text: inputText.value, 
+        datе: new Date(),
+      })
+    }).then((response) => {
+      response.json().then((responseData) => {
+        comments = responseData.comment;
+        getComments();
+
+      });
+    })
     renderComments();
-    commentators[commentators.length - 1].animationClass = "";
+    
+    comments[comments.length - 1].animationClass = "";
     document.getElementById("nameTextId").value = '';
     document.getElementById("commentTextId").value = '';
     textAnswerHtml = ""
@@ -239,3 +286,4 @@ document.addEventListener('keyup', (key) => {
 })
 btnElement.addEventListener( 'click', () => clickEventAddComment())
 console.log("It works!");
+
