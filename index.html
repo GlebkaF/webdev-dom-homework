@@ -1,71 +1,139 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
-      <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <ul class="comments">
+      <li class="comment">
+        <div class="comment-header">
+          <div>Глеб Фокин</div>
+          <div>12.02.22 12:18</div>
         </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Это будет первый комментарий на этой странице
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">3</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>
+      <li class="comment">
+        <div class="comment-header">
+          <div>Варвара Н.</div>
+          <div>13.02.22 19:22</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Мне нравится как оформлена эта страница! ❤
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">75</span>
+            <button class="like-button -active-like"></button>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <div class="add-form">
+      <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
+      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
+      <div class="add-form-row">
+        <button class="add-form-button">Написать</button>
+        <button class="delete-form-button">Удалить последний <br> комментарий</button>
       </div>
     </div>
-  </body>
+  </div>
+</body>
+<style>
+  .disabled {
+    background-color: gray;
+  }
 
-  <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
-  </script>
+  .disabled:hover {
+    opacity: 2;
+  }
+</style>
+<script>
+  "use strict";
+  const addButtonElement = document.querySelector(".add-form-button");
+  const deleteButtonElement = document.querySelector(".delete-form-button");
+  const comments = document.querySelector(".comments");
+  const comment = document.querySelector(".comment");
+  const nameInput = document.querySelector(".add-form-name");
+  const commentInput = document.querySelector(".add-form-text");
+
+  const commentTime = () => {
+    const date = new Date();
+    let day = date.getDate();
+    if (day < 10) {
+      day = '0' + day;
+    }
+    let month = date.getMonth();
+    if (month < 10) {
+      month = '0' + month;
+    }
+    let year = date.getFullYear();
+    year = year.toString().split('').splice(2, 2).join('');
+    let hours = date.getHours();
+    if (hours < 10) {
+      hours = '0' + hours;
+    }
+    let minutes = date.getMinutes();
+    if (minutes < 10) {
+      minutes = '0' + minutes;
+    }
+    return day + '.' + month + '.' + year + ' ' + hours + ':' + minutes;
+  };
+
+  addButtonElement.addEventListener('click', () => {
+    addButtonElement.classList.remove('disabled');
+
+    if (nameInput.value === '' || commentInput.value === '') {
+      addButtonElement.classList.add('disabled');
+      addButtonElement.classList.add('disabled:hover');
+      return;
+    };
+
+    const oldComments = comments.innerHTML;
+    comments.innerHTML = oldComments +
+      `<li class="comment">
+        <div class="comment-header">
+          <div>${nameInput.value}</div>
+          <div>${commentTime()}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${commentInput.value}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">0</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>`;
+
+    nameInput.value = '';
+    commentInput.value = '';
+  });
+
+  deleteButtonElement.addEventListener('click', () => {
+    //const oldComments = comments.innerHTML;
+    //comments.innerHTML = oldComments - oldComments.lastIndexOf(comment);
+  });
+  console.log("It works!");
+</script>
+
 </html>
