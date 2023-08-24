@@ -288,15 +288,29 @@
     })
       .then((response) => {
         return response.json();
-      })
-      .then(() => {
-        return fetchAndRenderComments();
 
-      })
+        if (response.status === 201) {
+          return fetchAndRenderComments();
+
+        } else {
+          throw new Error('Some error');
+          // return Promise.reject("Сервер упал");
+        }
       .then((data) => {
 
+          buttonAddElement.disabled = false;
+          buttonAddElement.textContent = 'Написать';
+
+          nameInputElement.value = "";
+          commentInputElement.value = "";
+
+        })
+      .catch((error) => {
         buttonAddElement.disabled = false;
         buttonAddElement.textContent = 'Написать';
+        alert("Кажется что-то пошло не так, попробуй позже");
+
+        console.warn(error);
       })
 
     renderComments();
@@ -304,8 +318,6 @@
     initEditButtonListeners();
 
 
-    nameInputElement.value = "";
-    commentInputElement.value = "";
 
 
   })
