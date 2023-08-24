@@ -1,80 +1,145 @@
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Урок "Управление html содержимым из js"</title>
+    <title>Урок «Асинхронность»</title>
   </head>
 
   <body>
-    <h1 id="button">Любимые цвета студентов</h1>
-    <ul id="list">
-      <li>Глеб, любимый цвет <span style="color: #ff2600;"> #ff2600</span></li>
-      <li>Иван, любимый цвет <span style="color: #00f900;"> #00f900</span></li>
-      <li>Люси, любимый цвет <span style="color: #0432ff;"> #0432ff</span></li>
+    <h1>Список задач</h1>
+    <ul class="tasks" id="list">
+      <!— Список рендерится из JS —>
     </ul>
-
-    <div>
-      <h3>Форма добавления</h3>
-      Имя:
-      <input type="text" id="name-input" value="Введите имя"/>
-      <br /><br />
-      Цвет:
-      <input type="color" id="color-input"/>
-      <br /><br />
-      <button id="add-button">Добавить</button>
-    </div>
     <br />
-    <div>
-      <h3>Форма удаления</h3>
-      <button>Удалить <span style="color: #ff2600;">#ff2600</span></button>
+    <div class="form">
+      <h3 class="form-title">Форма добавления</h3>
+      <div class="form-row">
+        Что нужно сделать:
+        <input
+          type="text"
+          id="text-input"
+          class="input"
+          placeholder="Выпить кофе"
+        />
+      </div>
+      <br />
+      <button class="button" id="add-button">Добавить</button>
     </div>
   </body>
-  <style>
-    .error {
-      background-color: red;
-    }
-    .error-title {
-      color: red;
-    }
-  </style>
-  <script>
-    const nameInputElement = document.getElementById("name-input");
-    const buttonElement = document.getElementById("add-button");
-    const colorInputElement = document.getElementById("color-input");
-    console.log(nameInputElement.value);
-    buttonElement.addEventListener("click", () => {
-     // alert("Меня нажали");
-     //nameInputElement.style.backgroundColor = "";
-     nameInputElement.classList.remove("error");
-     if (nameInputElement.value === "") {
-      nameInputElement.classList.add("error");
-      //nameInputElement.style.backgroundColor = "red";
-      return;
-      
-     }
-      const oldListHTML = listElement.innerHTML;
-      listElement.innerHTML = oldListHTML + `<li>${nameInputElement.value}, любимый цвет <span style="color: ${colorInputElement.value}"> ${colorInputElement.value}</span></li>`;
-      //buttonElement.disabled = true;
-      //nameInputElement.disabled = true;
-      nameInputElement.value = "";
-    });
-   
-    const button = document.getElementById("button");
-    
-    button.addEventListener("click", () => {
-      //alert("Не стоило сюда нажимать");
 
-      if (button.innerHTML = '<h1>Любимые цвета студентов</h1>') {
-        button.innerHTML = '<h1>Самые любимые цвета студентов</h1>';
-        button.classList.add("error-title");
-        button.addEventListener("click", () => {
-            if (button.innerHTML = '<h1>Самые любимые цвета студентов</h1>') {
-                button.innerHTML = '<h1>Любимые цвета студентов</h1>';
-                button.classList.remove("error-title"); 
-            }
-        })
-    }
-    });
+  <script>
+    const buttonElement = document.getElementById("add-button");
     const listElement = document.getElementById("list");
-    console.log(listElement.innerHTML);
-     </script>
+    const textInputElement = document.getElementById("text-input");
+
+    let tasks = [];
+
+    fetch("https://webdev-hw-api.vercel.app/api/todos", {
+      method: "GET",
+    }).then((response) => {
+      response.json().then((responseData) => {
+        tasks = responseData.todos;
+        renderTasks();
+      });
+    });
+
+    const renderTasks = () => {
+      const tasksHtml = tasks
+        .map((task) => {
+          return `
+          <li class="task">
+            <p class="task-text">
+              ${task.text}
+              <button data-id="${task.id}" class="button delete-button">Удалить</button>
+            </p>
+          </li>`;
+        })
+        .join("");
+
+      listElement.innerHTML = tasksHtml;
+      const deleteButtons = document.querySelectorAll(".delete-button");
+
+      for (const deleteButton of deleteButtons) {
+        deleteButton.addEventListener("click", (event) => {
+          event.stopPropagation();
+
+          const id = deleteButton.dataset.id;
+
+          fetch("https://webdev-hw-api.vercel.app/api/todos/" + id, {
+            method: "DELETE",
+          }).then((response) => {
+            response.json().then((responseData) => {
+              // { result: 'ok' }
+              tasks = responseData.todos;
+              renderTasks();
+            });
+          });
+
+          renderTasks();
+        });
+      }
+    };
+
+    renderTasks();
+
+    buttonElement.addEventListener("click", () => {
+      if (textInputElement.value === "") {
+        return;
+      }
+
+      const startAt = Date.now();
+      console.log("Начинаем делать запрос");
+
+      buttonElement.disabled = true;
+      buttonElement.textContent = "Элемент добавлятся...";
+      // Пример, код выше, переписанный на цепочку промисов:
+      fetch("https://webdev-hw-api.vercel.app/api/todos", {
+        method: "POST",
+        body: JSON.stringify({
+          text: textInputElement.value,
+        }),
+      })
+        .then((response) => {
+          console.log("Время: " + (Date.now() - startAt));
+          return response;
+        })
+        .then((response) => {
+          return response.json();
+        })
+        .then((response) => {
+          console.log("Время: " + (Date.now() - startAt));
+          buttonElement.disabled = true;
+          buttonElement.textContent = "Загружаю список...";
+          return response;
+        })
+        .then((responseData) => {
+          return fetch("https://webdev-hw-api.vercel.app/api/todos", {
+            method: "GET",
+          });
+        })
+        .then((response) => {
+          console.log("Время: " + (Date.now() - startAt));
+          return response;
+        })
+        .then((response) => {
+          return response.json();
+        })
+        .then((response) => {
+          console.log("Время: " + (Date.now() - startAt));
+          return response;
+        })
+        .then((responseData) => {
+          tasks = responseData.todos;
+          renderTasks();
+        })
+        .then((data) => {
+          buttonElement.disabled = false;
+          buttonElement.textContent = "Добавить";
+        });
+
+      renderTasks();
+
+      textInputElement.value = "";
+    });
+  </script>
 </html>

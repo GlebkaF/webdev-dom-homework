@@ -4,7 +4,7 @@ const addFormTextElement =document.getElementById("add-form-text");
 const listElement = document.getElementById("comments");
 const formAddElement = document.getElementById("add-form");
 const addNewComment = document.getElementById("add-form-row");
-buttonElement.disabled = true;
+
     let comments = [
         //{
           //name: "Глеб Фокин",
@@ -50,6 +50,7 @@ buttonElement.disabled = true;
             text: comment.text,
             likes: 0,
             activeLike: false,
+            isLoading: false,
           }
         })
         // получили данные и рендерим их в приложении
@@ -113,7 +114,7 @@ buttonElement.disabled = true;
         replyToComment();
      }
     renderComents();
-  
+    
     buttonElement.addEventListener("click", () => {
      
      addFormElement.classList.remove("error");
@@ -146,7 +147,9 @@ buttonElement.disabled = true;
       
 
       renderComents();
-      fetch("https://wedev-api.sky.pro/api/v1/doroshenko-polina/comments", {
+      buttonElement.disabled = true;
+      buttonElement.formContent = "Элемент дбавляется ...";
+           fetch("https://wedev-api.sky.pro/api/v1/doroshenko-polina/comments", {
         method: "POST",
         body: JSON.stringify({
           name: addFormElement.value,
@@ -169,6 +172,7 @@ buttonElement.disabled = true;
             text: comment.text,
             likes: 0,
             activeLike: false,
+            isLoading: false,
           };
         });
         // // получили данные и рендерим их в приложении
@@ -176,6 +180,9 @@ buttonElement.disabled = true;
         comment = responseData.comment;
         comments = appComments;
         renderComents();
+        buttonElement.disabled = false;
+        buttonElement.formContent = "Написать";
+        
       });
         });
       });
