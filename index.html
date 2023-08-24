@@ -8,8 +8,9 @@
 
   <body>
     <div class="container">
+      <h2 style="color: green; font-size: 40px;">Комментарии загружаются...</h2>
       <ul class="comments">
-
+        
       </ul>
       <div class="add-form">
         <input
@@ -50,11 +51,13 @@ const name = document.querySelector('.add-form-name');
 const boxMessages = document.querySelector('.comments');
 const button = document.querySelector('.add-form-button');
 const del = document.querySelectorAll('ul > li');
+const downloadAlert = document.querySelector('h2')
 const date = new Date();
 button.disabled = true;
 button.classList.add('unactive');
 // const UlComments = document.getElementById('comments')
 // console.log(UlComments);
+console.log(downloadAlert);
 
 //console.log(boxMessages);
 
@@ -80,22 +83,25 @@ if (e.keyCode === 13) {
 }
 function formatDate(date) {
 
-let dd = date.getDate();
-if (dd < 10) dd = '0' + dd;
 
-let mm = date.getMonth() + 1;
-if (mm < 10) mm = '0' + mm;
 
-let yy = date.getFullYear() % 100;
-if (yy < 10) yy = '0' + yy;
 
-let hh = date.getHours();
-if (hh < 10) hh = '0' + hh;
+// let dd = date.getDate();
+// if (dd < 10) dd = '0' + dd;
 
-let min = date.getMinutes();
-if (min < 10) min = '0' + min;
+// let mm = date.getMonth() + 1;
+// if (mm < 10) mm = '0' + mm;
 
-return dd + '.' + mm + '.' + yy + ' ' + hh + ':' + min;
+// let yy = date.getFullYear() % 100;
+// if (yy < 10) yy = '0' + yy;
+
+// let hh = date.getHours();
+// if (hh < 10) hh = '0' + hh;
+
+// let min = date.getMinutes();
+// if (min < 10) min = '0' + min;
+
+// return dd + '.' + mm + '.' + yy + ' ' + hh + ':' + min;
 }
 
 
@@ -113,7 +119,7 @@ const apiCommentsGet = () => {
   const apiComments = responseData.comments.map((comment) =>{
     return {
       name: comment.author.name,
-      date: new Date(comment.date),
+      date: ((new Date(comment.date)).getDate() + "." + 0 + (Number((new Date(comment.date)).getMonth()) + 1) + "." + (Number((new Date(comment.date)).getFullYear()) - 2000) + " " + (new Date(comment.date)).getHours() + ":" + (new Date(comment.date)).getMinutes()),
       text: comment.text,
       like: comment.likes,
       isLiked: false,
@@ -122,6 +128,8 @@ const apiCommentsGet = () => {
 });
 comments = apiComments;
 renderFunction();
+}).then(() => {
+  downloadAlert.style = 'display: none';
 })
 
 // fetchPromise.then((response) => {
