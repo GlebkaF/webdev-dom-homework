@@ -28,20 +28,7 @@
   // Код писать здесь  
 
   let commentsArr = [
-    /*{
-      name: 'Глеб Фокин',
-      date: '12.02.22 12:18',
-      comment: 'Это будет первый комментарий на этой странице',
-      likesCounter: 3,
-      myLike: false,
-    },
-    {
-      name: 'Варвара Н.',
-      date: '13.02.22 19:22',
-      comment: 'Мне нравится как оформлена эта страница! ❤',
-      likesCounter: 75,
-      myLike: true,
-    }*/
+    
   ];
 
   const comments = document.querySelector(".comments");
@@ -178,8 +165,7 @@
         body: JSON.stringify({
           name: nameInputElement.value,
           text: commentInputElement.value,
-        })
-        // JSON.stringifylikes:
+        })        
       }).then((response) => {
         response.json().then((responseData) => {
 
@@ -188,7 +174,6 @@
           }).then((response) => {
       // Запускаем преобразовываем "сырые" данные от API в json формат
      response.json().then((responseData) => {
-
         const appComments = responseData.comments.map((comment) => {
           return {
             name: comment.author.name,
@@ -199,21 +184,12 @@
           };
         });
         // // получили данные и рендерим их в приложении
-        // console.log(responseData);
-        //comment = responseData.comments;
         commentsArr = appComments;
         renderComments();
       });
         });
       });
-    });
-    /*commentsArr.push({
-      name: nameInputElement.value.replaceAll('<', "&lt;").replaceAll('>', '&gt'),
-      date: now(currentDate),
-      comment: commentInputElement.value.replaceAll('<', "&lt;").replaceAll('>', '&gt'),
-      likesCounter: 0,
-      myLike: false,
-    });*/
+    });    
   }
 
   buttonElement.addEventListener("click", () => {
