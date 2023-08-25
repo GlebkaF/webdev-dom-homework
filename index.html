@@ -9,10 +9,12 @@
 
 <body>
   <div class="container">
+    <div id="loading"></div>
     <ul id="list" class="comments">
       <!--Рендерится из JS-->
     </ul>
-    <div class="add-form">
+    <div id="loadingForm"></div>
+    <div class="add-form" id="add-form">
       <input id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
       <textarea id="comment-input" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
         rows="4"></textarea>
@@ -33,22 +35,27 @@
 
   const comments = document.querySelector(".comments");
   const buttonElement = document.getElementById('add-button');
+  const loadingForm = document.getElementById("loadingForm");
+  const loading = document.getElementById("loading");
+  const form = document.getElementById('add-form');
   const delFormBtn = document.querySelector(".del-form-button");
   const listElement = document.getElementById('list');
   const nameInputElement = document.getElementById('name-input');
   const commentInputElement = document.getElementById('comment-input');
 
-  const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/ekaterinabbkv/comments", {
+  loading.textContent = 'Комментарии загружаются...';
+  const fetchGet = () => { 
+    return fetch("https://wedev-api.sky.pro/api/v1/ekaterinabbkv/comments", {
       method: "GET"
-    });
+    })
 
     // подписываемся на успешное завершение запроса с помощью then
-    fetchPromise.then((response) => {
+    .then((response) => {
       // Запускаем преобразовываем "сырые" данные от API в json формат
-      const jsonPromise = response.json();
-
+      return response.json();
+    })
       // Подписываемся на результат преобразования
-      jsonPromise.then((responseData) => {
+      .then((responseData) => {
 
         const appComments = responseData.comments.map((comment) => {
           return {
@@ -60,12 +67,14 @@
           }
         })
         // получили данные и рендерим их в приложении
-        console.log(responseData);
+        //console.log(responseData);
         // comment = responseData.comment;
         commentsArr = appComments;
+        loading.textContent = '';
         renderComments();
       });
-    });
+    };
+    fetchGet();
 
   const initEventListeners = () => {
     const likeButtons = document.querySelectorAll('.like-button');
@@ -158,39 +167,33 @@
     return `${date}.${month}.${currentDate.getFullYear() % 100} ${hours}:${minute}`;
   }
   let currentDate = new Date();
+
+  
+
   const createNewComment = () => {
+    form.classList.add('none');
+    loadingForm.textContent = 'Комментарий добавляется...';
     // подписываемся на успешное завершение запроса с помощью then
-  fetch("https://wedev-api.sky.pro/api/v1/ekaterinabbkv/comments", {
+   fetch("https://wedev-api.sky.pro/api/v1/ekaterinabbkv/comments", {
         method: "POST",
         body: JSON.stringify({
           name: nameInputElement.value,
           text: commentInputElement.value,
-        })        
-      }).then((response) => {
-        response.json().then((responseData) => {
-
-          fetch("https://wedev-api.sky.pro/api/v1/ekaterinabbkv/comments", {
-            method: "GET"  
-          }).then((response) => {
-      // Запускаем преобразовываем "сырые" данные от API в json формат
-     response.json().then((responseData) => {
-        const appComments = responseData.comments.map((comment) => {
-          return {
-            name: comment.author.name,
-            date: now (new Date (comment.date)),
-            text: comment.text,
-            likes: 0,
-            myLike: false,
-          };
-        });
-        // // получили данные и рендерим их в приложении
-        commentsArr = appComments;
+        }),        
+      })
+      .then((response) => {
+        return response.json();  
+      })
+      .then((responseData) => {
+        fetchGet();
+      })
+      .then(() => {
+        loadingForm.textContent = '';
+        form.classList.remove('none');
+      })
         renderComments();
-      });
-        });
-      });
-    });    
-  }
+      };
+        
 
   buttonElement.addEventListener("click", () => {
     createNewComment();
