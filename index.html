@@ -44,7 +44,31 @@
     const nameInputElement = document.getElementById('name-input');
     const textInputElement = document.getElementById('text-input');
        
-    const comments = [
+    fetch(
+      "https://wedev-api.sky.pro/api/v1/sergey-kuzin/comments",
+      {
+        method: "GET"
+      }
+    ).then((response) => {
+      response.json().then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: new Date(comment.date),
+          text: comment.text,
+          likes: comment.likesCount,
+          isLiked: false,
+        }
+       });
+       comments = appComments;
+       renderComments();
+      })
+
+    });
+
+
+
+   /* const comments = [
       {
         name: "Глеб Фокин",
         date: "12.02.22 12:18",
@@ -59,7 +83,7 @@
         likesCount: 75,
         isLiked: true
       },
-    ];
+    ];*/
     
     const initEventListner = () => {
     const likeButtons = document.querySelectorAll('.like-button');
@@ -92,9 +116,6 @@
     }
     }
 
-
-
-
     const renderComments = () => {
       const commentsHtml = comments.map((comment, index) => {
         return `<li class="comment" data-index="${index}">
@@ -119,7 +140,6 @@
       initEventListner();
 
     };
-
     renderComments();
     initEventListner();
 
