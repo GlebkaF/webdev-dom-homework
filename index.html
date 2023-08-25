@@ -81,14 +81,26 @@
 
     for (const likeButton of likeButtons) {
       likeButton.addEventListener("click", () => {
-        const comment = commentsArr[likeButton.dataset.index];
-        comment.myLike ? --comment.likes : ++comment.likes;
-        comment.myLike = !comment.myLike;
-        renderComments();
+        likeButton.classList.add('-loading-like');
+        function delay(interval = 300) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, interval);
       });
-    }
-  };
-
+}
+delay(2000).then(() => {
+    const newLike = commentsArr[likeButton.dataset.index];
+    newLike.likes = newLike.isLiked
+      ? newLike.likes - 1
+      : newLike.likes + 1;
+    newLike.isLiked = !newLike.isLiked;
+    newLike.isLikeLoading = false;
+    renderComments();
+  });        
+  });
+  }
+  };  
   buttonElement.disabled = true;
 
   document.addEventListener("input", () => {
@@ -141,7 +153,7 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${comment.likes}</span>
-              <button data-index = '${index}' class="${comment.myLike ? 'like-button -active-like' : 'like-button'}"></button>
+              <button data-index = '${index}' class="${comment.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
             </div>
           </div>
         </li>`
@@ -200,6 +212,7 @@
     renderComments();    
   });
 
+  
   
 
   console.log("It works!");
