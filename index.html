@@ -45,40 +45,49 @@
 
     let btn = document.querySelector("#write-button");
 
-    const comments = [
-      {
-        userName: "Глеб Фокин",
-        checkLike: false,
-        textComment: "Это будет первый комментарий на этой странице",
-        countLikes: 3,
-        dateBox: "12.02.22 12:18",
-      },
-      {
-        userName: "Варвара Н.",
-        checkLike: true,
-        textComment: "Мне нравится как оформлена эта страница! ❤",
-        countLikes: 75,
-        dateBox: "13.02.22 19:22",
-      },
-    ];
+    let comments = [];
+
+    fetch("https://wedev-api.sky.pro/api/v1/kirill-levchenko/comments", {
+      method: "GET",
+    }).then((Response) => {
+      Response.json().then((responseData) => {
+        const apiComments = responseData.comments.map((comment) => {
+          return {
+            author: { name: comment.author.name },
+            date: getDateInventor(comment.date),
+            likes: comment.likes,
+            isLiked: false,
+            text: comment.text,
+          };
+        });
+        comments = apiComments;
+        renderComments();
+        answerToComment();
+        likeButtons();
+      });
+    });
 
     const renderComments = () => {
       return (listCom.innerHTML = comments
         .map((comment, index) => {
-            return `<li class="comment" data-username="${comment.userName}" data-text="${comment.textComment}">
+          return `<li class="comment" data-username="${
+            comment.author.name
+          }" data-text="${comment.text}">
             <div class="comment-header">
-              <div class="usersNames">${comment.userName}</div>
-              <div>${comment.dateBox}</div>
+              <div class="usersNames">${comment.author.name}</div>
+              <div>${comment.date}</div>
             </div>
             <div class="comment-body">
               <div class="comment-text">
-                ${comment.textComment}
+                ${comment.text}
               </div>
             </div>
             <div class="comment-footer">
               <div class="likes">
-                <span class="likes-counter">${comment.countLikes}</span>
-                <button data-index ="${index}" class="like-button ${comment.checkLike === true ? '-active-like' : ''}"></button>
+                <span class="likes-counter">${comment.likes}</span>
+                <button data-index ="${index}" class="like-button ${
+            comment.isLiked === true ? "-active-like" : ""
+          }"></button>
               </div>
             </div>
           </li>`;
@@ -87,25 +96,25 @@
     };
 
     const answerToComment = () => {
-      const commentsToAnswer = document.querySelectorAll('.comment');
+      const commentsToAnswer = document.querySelectorAll(".comment");
       for (const commentToAnswer of commentsToAnswer) {
         commentToAnswer.addEventListener("click", () => {
-          commitInput.value = `Комментарий: ${commentToAnswer.dataset.text}\n\nАвтор: ${commentToAnswer.dataset.username}\n\nОтветить: `;
-        })
+          commitInput.value = `Комментарий: ${commentToAnswer.dataset.text}\n\nАвтор: ${commentToAnswer.dataset.username}\n\nОтвет: `;
+        });
       }
-    }
+    };
 
     const likeButtons = () => {
       const buttonLikes = document.querySelectorAll(".like-button");
       for (const buttonLike of buttonLikes) {
         buttonLike.addEventListener("click", (event) => {
           event.stopPropagation();
-          if (comments[buttonLike.dataset.index].checkLike === true) {
-            comments[buttonLike.dataset.index].checkLike = false;
-            comments[buttonLike.dataset.index].countLikes--;
-          } else if (comments[buttonLike.dataset.index].checkLike === false) {
-            comments[buttonLike.dataset.index].checkLike = true;
-            comments[buttonLike.dataset.index].countLikes++;
+          if (comments[buttonLike.dataset.index].isLiked === true) {
+            comments[buttonLike.dataset.index].isLiked = false;
+            comments[buttonLike.dataset.index].likes--;
+          } else if (comments[buttonLike.dataset.index].isLiked === false) {
+            comments[buttonLike.dataset.index].isLiked = true;
+            comments[buttonLike.dataset.index].likes++;
           }
           renderComments();
           answerToComment();
@@ -114,7 +123,6 @@
       }
     };
 
-    
     renderComments();
     answerToComment();
     likeButtons();
@@ -131,7 +139,7 @@
     btn.disabled = true;
 
     nameInput.addEventListener("input", function () {
-      if (nameInput.value.length < 1 || commitInput.value.length < 1) {
+      if (nameInput.value.length < 3 || commitInput.value.length < 3) {
         btn.classList.add("empty");
         btn.disabled = true;
       } else {
@@ -141,7 +149,7 @@
     });
 
     commitInput.addEventListener("input", function () {
-      if (nameInput.value.length < 1 || commitInput.value.length < 1) {
+      if (nameInput.value.length < 3 || commitInput.value.length < 3) {
         btn.classList.add("empty");
         btn.disabled = true;
       } else {
@@ -172,23 +180,70 @@
       return `${day}.${month}.${year} ${hour}:${minute}`;
     };
 
+    const getDateInventor = (dateFormat) => {
+      date = new Date(dateFormat);
+      let day = date.getDate();
+      let month = date.getMonth() + 1;
+      let year = date.getFullYear() % 1000;
+      let hour = date.getHours();
+      let minute = date.getMinutes();
+      if (day < 10) {
+        day = "0" + day;
+      }
+      if (month < 10) {
+        month = "0" + month;
+      }
+      if (hour < 10) {
+        hour = "0" + hour;
+      }
+      if (minute < 10) {
+        minute = "0" + minute;
+      }
+      return `${day}.${month}.${year} ${hour}:${minute}`;
+    };
+
     writeButton.addEventListener(
       "click",
       (pushCommit = () => {
-        comments.push({
-          userName: nameInput.value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;"),
-          checkLike: false,
-          textComment: commitInput.value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;"),
-          countLikes: 0,
-          dateBox: getDateNow(),
+        fetch("https://wedev-api.sky.pro/api/v1/kirill-levchenko/comments", {
+          method: "POST",
+          body: JSON.stringify({
+            name: nameInput.value
+              .replaceAll("&", "&amp;")
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;")
+              .replaceAll('"', "&quot;"),
+            text: commitInput.value
+              .replaceAll("&", "&amp;")
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;")
+              .replaceAll('"', "&quot;"),
+          }),
+        }).then((Response) => {
+          Response.json().then((responseData) => {
+            fetch(
+              "https://wedev-api.sky.pro/api/v1/kirill-levchenko/comments",
+              {
+                method: "GET",
+              }
+            ).then((Response) => {
+              Response.json().then((responseData) => {
+                const apiComments = responseData.comments.map((comment) => {
+                  return {
+                    author: { name: comment.author.name },
+                    date: getDateInventor(comment.date),
+                    likes: comment.likes,
+                    isLiked: false,
+                    text: comment.text,
+                  };
+                });
+                comments = apiComments;
+                renderComments();
+                answerToComment();
+                likeButtons();
+              });
+            });
+          });
         });
 
         nameInput.value = "";
