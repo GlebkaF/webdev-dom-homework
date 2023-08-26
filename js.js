@@ -4,23 +4,11 @@ const addFormTextElement =document.getElementById("add-form-text");
 const listElement = document.getElementById("comments");
 const formAddElement = document.getElementById("add-form");
 const addNewComment = document.getElementById("add-form-row");
+const containerElement = document.getElementById("container-comments");
+const addElement = document.getElementById("add");
+    let comments = [];
 
-    let comments = [
-        //{
-          //name: "Глеб Фокин",
-          //date: "12.02.22 12:18",
-          //text: "Это будет первый комментарий на этой странице",
-          //likes: 3,
-          //liked: false
-        //},
-        //{
-          //name: "Варвара Н.",
-          //date: "13.02.22 19:22",
-          //text: "Мне нравится как оформлена эта страница! ❤️",
-          //likes: 75,
-          //liked: true
-        //}
-      ];
+    
       const plusZero = (str) => {
         return str < 10 ? `0${str}` : str;
       };
@@ -30,45 +18,59 @@ const addNewComment = document.getElementById("add-form-row");
         let hours = plusZero(currentDate.getHours());
         let mins = plusZero(currentDate.getMinutes());
         return `${date}.${month}.${currentDate.getFullYear() % 100} ${hours}:${mins}`;
-      };
-      const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/doroshenko-polina/comments", {
-      method: "GET"
-    });
-
-    // подписываемся на успешное завершение запроса с помощью then
-    fetchPromise.then((response) => {
-      // Запускаем преобразовываем "сырые" данные от API в json формат
-      const jsonPromise = response.json();
-
-      // Подписываемся на результат преобразования
-      jsonPromise.then((responseData) => {
-
-        const appComments = responseData.comments.map((comment) => {
-          return {
+      }
+  
+  containerElement.textContent = "Подождите идет загрузка сайта";
+const fetchPromise = () => {
+  return fetch("https://wedev-api.sky.pro/api/v1/doroshenko-polina/comments", {
+    method: "GET"
+  })
+ .then((response) => {
+    return response.json();
+  })
+   
+    .then((responseData) => {
+      const appComments = responseData.comments.map((comment) => {
+        return {
             name: comment.author.name,
             date: now (new Date (comment.date)),
             text: comment.text,
-            likes: 0,
+            likes: comment.likes,
             activeLike: false,
             isLoading: false,
-          }
-        })
-        // получили данные и рендерим их в приложении
-        console.log(responseData);
-        // comment = responseData.comment;
-        comments = appComments;
-        renderComents();
-      });
+    };
     });
+    comments = appComments;
+    containerElement.textContent = "";
+    renderComents();   
+    });
+      };
+ 
+fetchPromise();
+
       const initEventListeners = () => {
         const likesButton = document.querySelectorAll(".like-button");
         for (const likeButton of likesButton ) {
+          likeButton.classList.add('-loading-like');
             likeButton.addEventListener("click", (event) =>{
               event.stopPropagation();
+              function delay(interval = 300) {
+                return new Promise((resolve) => {
+                  setTimeout(() => {
+                    resolve();
+                  }, interval);
+                });
+          };
+          delay(2000).then(() => {
+              
                 const comment = comments[likeButton.dataset.index];
-                comment.myLike ? --comment.likes : ++comment.likes;
-                comment.myLike = !comment.myLike;
-                renderComents();
+                comment.likes = comment.isLiked
+                ? comment.likes - 1
+                : comment.likes + 1;
+                comment.isLiked = !comment.isLiked;
+                comment.isLikeLoading = false;
+              renderComents();
+          })
             })
         }
     }
@@ -102,7 +104,7 @@ const addNewComment = document.getElementById("add-form-row");
               <div class="comment-footer">
                 <div class="likes">
                   <span class="likes-counter">${comment.likes}</span>
-                  <button data-index="${index}" class="${comment.myLike ? 'like-button -active-like' : 'like-button'}"></button>
+                  <button data-index="${index}" class="${comment.likes ? 'like-button -active-like' : 'like-button'}"></button>
                 </div>
               </div>
               </li>
@@ -126,81 +128,57 @@ const addNewComment = document.getElementById("add-form-row");
      if (addFormTextElement.value === "") {
       addFormTextElement.classList.add("error");
           return;
-     }
-      
-     
-      //comments.push({
-        //  name: addFormElement.value
-          //.replaceAll("&", "&amp;")
-          //.replaceAll("<", "&lt;")
-          //.replaceAll(">", "&gt;")
-          //.replaceAll('"', "&quot;"),
-          //date: now(currentDate),
-          //text: addFormTextElement.value
-          //.replaceAll("&", "&amp;")
-          //.replaceAll("<", "&lt;")
-          //.replaceAll(">", "&gt;")
-          //.replaceAll('"', "&quot;"),
-          //likes: 0,
-           
-      //});
-      
+     } 
 
       renderComents();
-      buttonElement.disabled = true;
-      buttonElement.formContent = "Элемент дбавляется ...";
+      
+      formAddElement.classList.add('add-none');
+      addElement.textContent = "Комментарий добавляется ...";
+      
            fetch("https://wedev-api.sky.pro/api/v1/doroshenko-polina/comments", {
         method: "POST",
         body: JSON.stringify({
-          name: addFormElement.value,
-          text: addFormTextElement.value,
+          name: addFormElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
+          text: addFormTextElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
         })
-        // JSON.stringifylikes:
-      }).then((response) => {
-        response.json().then((responseData) => {
-
-          fetch("https://wedev-api.sky.pro/api/v1/doroshenko-polina/comments", {
-            method: "GET"  
-          }).then((response) => {
-      // Запускаем преобразовываем "сырые" данные от API в json формат
-     response.json().then((responseData) => {
-
-        const appComments = responseData.comments.map((comment) => {
-          return {
-            name: comment.author.name,
-            date: now (new Date (comment.date)),
-            text: comment.text,
-            likes: 0,
-            activeLike: false,
-            isLoading: false,
-          };
-        });
-        // // получили данные и рендерим их в приложении
         
-        comment = responseData.comment;
-        comments = appComments;
+      })  
+      .then((responseData) => {
+        return responseData;
+      })
+        .then((response) => {
+         return response.json();
+      })
+      .then(() => {    
+        fetchPromise();   
+         })
+
+      .then(() => {
+        addElement.textContent = "";
+        formAddElement.classList.remove('add-none');
+        })
+        
+      
         renderComents();
-        buttonElement.disabled = false;
-        buttonElement.formContent = "Написать";
-        
+        addFormElement.value = "";
+        addFormTextElement.value = "";
+   
+                      
       });
-        });
-      });
-    });
-
-    renderComents();
-      addFormElement.value = "";
-      addFormTextElement.value = "";
     
-  
-      renderComents();
-      
-      
+    
 
-         
-       addFormElement.value = "";
-       addFormTextElement.value = "";
-     });
+   
+      
+      
      
      
    
@@ -208,5 +186,4 @@ const addNewComment = document.getElementById("add-form-row");
     console.log("It works!");
 
 
-    
     
