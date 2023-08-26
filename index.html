@@ -8,8 +8,10 @@
 
   <body id="body">
     <div class="container">
+      <div id="loading"></div>
       <ul class="comments" id="comments">
       </ul>
+      <div id="loadingForm"></div>
       <div class="add-form" id="add-form">
         <input
           id="add-form-name"
@@ -29,6 +31,7 @@
           <button class="add-form-button" id="add-form-button" >Написать</button>
         </div>
       </div>
+      <!-- <div class="sending">Комментарий добавляется</div> -->
       <button class="delete-comment-button" id="delete-comment-button" >Удалить последний комментарий</button>
 
     </div>
@@ -36,7 +39,9 @@
 
   <script>
     // "use strict";
-    const commentsElement = document.getElementById("comments");
+    let commentsElement = document.getElementById("comments");
+    const loading = document.getElementById("loading");
+    const loadingForm = document.getElementById("loadingForm");
     const addFormButtonElement = document.getElementById("add-form-button");
     const nameInputElement = document.getElementById("add-form-name");
     const textInputElement = document.getElementById("add-form-text");
@@ -60,38 +65,24 @@
 
 
 let comments = [
-      // {
-      //   name: `Глеб Фокин`,
-      //   date: `12.02.22 12:18`,
-      //   quote: '',
-      //   comment: `Это будет первый комментарий на этой странице`,
-      //   like: 3,
-      //   activeLike: false,
-      //   changeButton: false,
-
-      // },
-      // {
-      //   name: `Варвара Н.`,
-      //   date: `13.02.22 19:22`,
-      //   quote: '',
-      //   comment: `Мне нравится как оформлена эта страница! ❤`,
-      //   like: 75,
-      //   activeLike: false,
-      //   changeButton: false,
-      // },
     ];
 
-    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/skorik-marina/comments", {
+    loading.textContent = "Комментарии загружаются...";
+
+    const fetchGet = () => {
+      console.log("fggf")
+      return fetch("https://wedev-api.sky.pro/api/v1/skorik-marina/comments", {
       method: "GET"
-    });
+    })
 
     // подписываемся на успешное завершение запроса с помощью then
-    fetchPromise.then((response) => {
-      // Запускаем преобразовываем "сырые" данные от API в json формат
-      const jsonPromise = response.json();
+    .then((response) => {
 
+      // Запускаем преобразовываем "сырые" данные от API в json формат
+      return response.json();
+    })
       // Подписываемся на результат преобразования
-      jsonPromise.then((responseData) => {
+    .then((responseData) => {
 
         const appComments = responseData.comments.map((comment) => {
           return {
@@ -99,18 +90,26 @@ let comments = [
             date:  now (new Date (comment.date)),
             text: comment.text,
             likes: 0,
-            activeLike: false,
+            isLiked: false,
             changeButton: false,
-
           }
         })
+        loading.textContent = "";
+
         // получили данные и рендерим их в приложении
-        console.log(responseData);
+        // console.log(responseData);
         // comment = responseData.comment;
         comments = appComments;
         renderComment();
       });
-    });
+    };
+
+  const r = () => {
+  fetchGet();
+    }
+
+    r();
+
 
 
 
@@ -148,51 +147,72 @@ const saveChangeComment = () => {
             .replaceAll("<", "&lt;")
             .replaceAll(">", "&gt;")
             .replaceAll('"', "&quot;"),
-        })
-        // JSON.stringifylikes:
-      }).then((response) => {
-        response.json().then((responseData) => {
-
-          fetch("https://wedev-api.sky.pro/api/v1/skorik-marina/comments", {
-            method: "GET"  
-          }).then((response) => {
-      // Запускаем преобразовываем "сырые" данные от API в json формат
-        response.json().then((responseData) => {
-
-        const appComments = responseData.comments.map((comment) => {
-          return {
-            name: comment.name,
-            date: now (new Date (comment.date)),
-            text: comment.text,
-            likes: 0,
-            activeLike: false,
-          };
-        });
-        // // получили данные и рендерим их в приложении
-        // console.log(responseData);
-        comment = responseData.text;
-        comments = appComments;
-        renderComment();
+          }),
+          })
+          .then((response) => {
+            return response.json();
+          })
+          .then((responseData) => {
+          return fetch("https://wedev-api.sky.pro/api/v1/skorik-marina/comments", {
+            method: "GET",
+          });
+          })
+          .then((response) => {
+            // Запускаем преобразовываем "сырые" данные от API в json формат
+            return response.json();
+          })
+          .then((responseData) => {
+            const appComments = responseData.comments.map((comment) => {
+              return {
+                name: comment.name,
+                date: now (new Date (comment.date)),
+                text: comment.text,
+                likes: 0,
+                isLiked: false,
+              };
+            });
+            // // получили данные и рендерим их в приложении
+            // console.log(responseData);
+            comment = responseData.text;
+            comments = appComments;
+            renderComment();
           });
         });
-      });
-    });
       // let currentDate = new Date();
       // comment.date = now(currentDate);
       renderComment();
-    })
-  }
-};
+    }};
 
 const clickLike = () => {
   const likeButtons = document.querySelectorAll(".like-button");
     for (const likeButton of likeButtons) {
       likeButton.addEventListener('click', () => {
-        console.log('d')
-        const newLike = comments[likeButton.dataset.index];
-        newLike.activeLike ? --newLike.likes : ++newLike.likes;
-        newLike.activeLike = !newLike.activeLike;
-        renderComment();
+        likeButton.classList.add('-loading-like');
+
+        function delay(interval = 300) {
+          return new Promise((resolve) => {
+            setTimeout(() => {
+            resolve();
+          }, interval);
+          });
+        };
+    delay(2000).then(() => {
+
+      // likeButtons.classList.add('-loading-like');
+       const newLike = comments[likeButton.dataset.index];
+
+      newLike.likes = newLike.isLiked
+      ? newLike.likes - 1
+      : newLike.likes + 1;
+      newLike.isLiked = !newLike.isLiked;
+      newLike.isLikeLoading = false;
+    renderComment();
+  });
+        // console.log('d')
+        // const newLike = comments[likeButton.dataset.index];
+        // newLike.activeLike ? --newLike.likes : ++newLike.likes;
+        // newLike.activeLike = !newLike.activeLike;
+        // renderComment();
       })
     }
 };
@@ -212,7 +232,11 @@ const replyToComment = () => {
   }
 };
 
-
+const sending = () => {
+  return `      
+`
+}
+sending();
 
 const renderComment = () => {
   const newComments = comments.map ((comment, index) => {
@@ -240,7 +264,7 @@ const renderComment = () => {
             : `<button class="change-comment-button" data-index="${index}">Изменить</button>`}
           <div class="likes">
             <span class="likes-counter">${comment.likes}</span>
-            <button data-index="${index}" class='${comment.activeLike ? "like-button -active-like" : "like-button"}'></button>
+            <button data-index="${index}" class='${comment.isLiked ? "like-button -active-like" : "like-button"}'></button>
           </div>
         </div>
       </li>`;
@@ -250,6 +274,7 @@ const renderComment = () => {
   changeComment();
   saveChangeComment();
   replyToComment();
+  sending();
 }
 
 renderComment();
@@ -292,6 +317,40 @@ textInputElement.addEventListener ('input',() => {
 
 
 const addNewComment = () => {
+
+//  const r = () => {
+//   const sending = document.querySelectorAll('.sending');
+// sending.style.display = sending.style.display === 'none' ? 'block' : 'none';
+//  } 
+
+//  r();
+
+// addFormButtonElement.isLoading  =  ;
+
+// const sending = () => {
+//   return 
+//   `${comment.isLoading ? `<div class="add-form" id="add-form">
+//         <input
+//           id="add-form-name"
+//           type="text"
+//           class="add-form-name"
+//           placeholder="Введите ваше имя"
+//         />
+//         <!-- <textarea id="quote"></textarea> -->
+//         <textarea
+//           id="add-form-text"
+//           type="textarea"
+//           class="add-form-text "
+//           placeholder="Введите ваш коментарий"
+//           rows="4"
+//         ></textarea>
+//         <div class="add-form-row">
+//           <button class="add-form-button" id="add-form-button" >Написать</button>
+//         </div>
+//       </div>` :`<div class="sending">Комментарий добавляется</div>`
+// }`
+// addFormButtonElement.isLoading != addFormButtonElement.isLoading };
+
 textInputElement.classList.remove("emptyTextName");
 nameInputElement.classList.remove("emptyTextName");
 
@@ -308,34 +367,10 @@ if (nameInputElement.value === "" && textInputElement.value === ""){
   return;
 };
 
-
-// comments.push(
-//   {
-//     name: nameInputElement.value
-//     .replaceAll("&", "&amp;")
-//     .replaceAll("<", "&lt;")
-//     .replaceAll(">", "&gt;")
-//     .replaceAll('"', "&quot;"),
-//     date: now(currentDate),
-//     quote: quote,
-//     comment: textInputElement.value
-//     .replace(`"${quote}"\n`, "")
-//     .replaceAll("&", "&amp;")
-//     .replaceAll("<", "&lt;")
-//     .replaceAll(">", "&gt;")
-//     .replaceAll('"', "&quot;"),
-//     // .replaceAll(`"`, "<div class=quote>")
-//     // .replaceAll(`"`, "</div>"),
-//     like: 0,
-//     activeLike: false,
-//     changeButton: false,
-//   });
-
-  // buttonElement.addEventListener("click", () => {
-  //     if (textInputElement.value === "") {
-  //       return;
-  //     }
-
+// form.disabled = true;
+form.classList.add('none');
+loadingForm.textContent = 'Комментарий добавляется...';
+// form.classList.
       // подписываемся на успешное завершение запроса с помощью then
       fetch("https://wedev-api.sky.pro/api/v1/skorik-marina/comments", {
         method: "POST",
@@ -351,41 +386,73 @@ if (nameInputElement.value === "" && textInputElement.value === ""){
             .replaceAll("<", "&lt;")
             .replaceAll(">", "&gt;")
             .replaceAll('"', "&quot;"),
+        }),
         })
-        // JSON.stringifylikes:
-      }).then((response) => {
-        response.json().then((responseData) => {
+        .then((response) => {
+          return response.json();
+        })
+        .then((responseData) => {
+          fetchGet();
+        })
+        .then(()=> {
+        // form.disabled = false;
+        loadingForm.textContent = '';
+        form.classList.remove('none');
 
-          fetch("https://wedev-api.sky.pro/api/v1/skorik-marina/comments", {
-            method: "GET"  
-          }).then((response) => {
-      // Запускаем преобразовываем "сырые" данные от API в json формат
-        response.json().then((responseData) => {
+        })
 
-        const appComments = responseData.comments.map((comment) => {
-          return {
-            name: comment.author.name,
-            date: now (new Date (comment.date)),
-            text: comment.text,
-            likes: 0,
-            activeLike: false,
-          };
-        });
-        // // получили данные и рендерим их в приложении
-        // console.log(responseData);
-        comment = responseData.text;
-        comments = appComments;
         renderComment();
-          });
-        });
-      });
-    });
 
-renderComment();
+        //   return fetch("https://wedev-api.sky.pro/api/v1/skorik-marina/comments", {
+        //     method: "GET"  
+        //   });
+        // })
+        // .then((response) => {
+        // // Запускаем преобразовываем "сырые" данные от API в json формат
+        // return response.json();
+        // })
+        // .then((responseData) => {
+
+        // const appComments = responseData.comments.map((comment) => {
+        //   return {
+        //     name: comment.author.name,
+        //     date: now (new Date (comment.date)),
+        //     text: comment.text,
+        //     likes: 0,
+        //     activeLike: false,
+        //   };
+        // });
+        // // // получили данные и рендерим их в приложении
+        // // console.log(responseData);
+        // comment = responseData.text;
+        // comments = appComments;
+        // renderComment();
+
+
+      //   form = return ` <div class="add-form" id="add-form">
+      //   <input
+      //     id="add-form-name"
+      //     type="text"
+      //     class="add-form-name"
+      //     placeholder="Введите ваше имя"
+      //   />
+      //   <textarea
+      //     id="add-form-text"
+      //     type="textarea"
+      //     class="add-form-text "
+      //     placeholder="Введите ваш коментарий"
+      //     rows="4"
+      //   ></textarea>
+      //   <div class="add-form-row">
+      //     <button class="add-form-button" id="add-form-button" >Написать</button>
+      //   </div>
+      // </div>`;
+
 
 textInputElement.value = "";
 nameInputElement.value = "";
 }
+
 
 addFormButtonElement.addEventListener("click", addNewComment);
 
