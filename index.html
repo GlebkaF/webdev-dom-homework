@@ -1,94 +1,85 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
-      <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div class="add-form">
-        <input
-          id="name"
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          id="text"
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button id="add-button" class="add-form-button">Написать</button>
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <ul class="comments">
+      <li class="comment">
+        <div class="comment-header">
+          <div>Глеб Фокин</div>
+          <div>12.02.22 12:18</div>
         </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Это будет первый комментарий на этой странице
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">3</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>
+      <li class="comment">
+        <div class="comment-header">
+          <div>Варвара Н.</div>
+          <div>13.02.22 19:22</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Мне нравится как оформлена эта страница! ❤
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">75</span>
+            <button class="like-button -active-like"></button>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <div class="add-form">
+      <input id="name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+      <textarea id="text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+        rows="4"></textarea>
+      <div class="add-form-row">
+        <button id="add-button" class="add-form-button">Написать</button>
       </div>
     </div>
-  </body>
+  </div>
+</body>
 <style>
   .error {
     background-color: red;
   }
 </style>
-  <script>
-    "use strict";
-const nameInput = document.getElementById('name');
-const commentInput = document.getElementById('text');
-const addButton = document.querySelector('.add-form-button');
-const commentsList = document.querySelector('.comments');
+<script>
+  "use strict";
+  const nameInput = document.getElementById('name');
+  const commentInput = document.getElementById('text');
+  const addButton = document.querySelector('.add-form-button');
+  const commentsList = document.querySelector('.comments');
 
-addButton.addEventListener("click", () => {
-nameInput.classList.remove("error");
-commentInput.classList.remove("error");
-  if (nameInput.value === '' || commentInput.value === '') {
-    nameInput.classList.add("error");
-    commentInput.classList.add("error");
-    return;
-  }
+  addButton.addEventListener("click", () => {
+    nameInput.classList.remove("error");
+    commentInput.classList.remove("error");
+    if (nameInput.value === '' || commentInput.value === '') {
+      nameInput.classList.add("error");
+      commentInput.classList.add("error");
+      return;
+    }
 
-  const newComment = document.createElement('li');
-  newComment.classList.add('comment');
+    const newComment = document.createElement('li');
+    newComment.classList.add('comment');
 
-  newComment.innerHTML = `
+    newComment.innerHTML = `
     <div class="comment-header">
       <div>${nameInput.value}</div>
       <div>${formatDate(new Date())}</div>
@@ -104,17 +95,35 @@ commentInput.classList.remove("error");
     </div>
   `;
 
-  commentsList.appendChild(newComment);
+    commentsList.appendChild(newComment);
 
-  nameInput.value = '';
-  commentInput.value = '';
-});
+    nameInput.value = '';
+    commentInput.value = '';
+  });
 
-const formatDate = (date) => {
-  const options = { year: '2-digit', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' };
-  return date.toLocaleString('ru', options).replace(',', '');
-};
+  const formatDate = (date) => {
+    const options = { year: '2-digit', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+    return date.toLocaleString('ru', options).replace(',', '');
+  };
 
-    console.log("It works!");
-  </script>
+  const comments = [
+    {
+      name: 'Глеб Фокин',
+      description: 'Это будет первый комментарий на этой странице',
+      likes: 3,
+      date: new Date('2022-02-12T12:18:00'),
+      isLiked: false
+    },
+    {
+      name: 'Варвара Н.',
+      description: 'Мне нравится как оформлена эта страница! ❤',
+      likes: 75,
+      date: new Date('2022-02-13T19:22:00'),
+      isLiked: true
+    }
+  ];
+
+  console.log("It works!");
+</script>
+
 </html>
