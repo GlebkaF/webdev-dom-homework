@@ -10,40 +10,7 @@
 <body>
   <div class="container">
     <ul class="comments">
-      <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>
+      <!-- Список рендерится из JS -->
     </ul>
     <div class="add-form">
       <input id="name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
@@ -76,26 +43,8 @@
       return;
     }
 
-    const newComment = document.createElement('li');
-    newComment.classList.add('comment');
-
-    newComment.innerHTML = `
-    <div class="comment-header">
-      <div>${nameInput.value}</div>
-      <div>${formatDate(new Date())}</div>
-    </div>
-    <div class="comment-body">
-      <div class="comment-text">${commentInput.value}</div>
-    </div>
-    <div class="comment-footer">
-      <div class="likes">
-        <span class="likes-counter">0</span>
-        <button class="like-button"></button>
-      </div>
-    </div>
-  `;
-
-    commentsList.appendChild(newComment);
+    addComment(nameInput.value, commentInput.value);
+    renderComments(comments);
 
     nameInput.value = '';
     commentInput.value = '';
@@ -122,6 +71,67 @@
       isLiked: true
     }
   ];
+
+  const addComment = (name, description, likes = 0, date = new Date(), isLiked = false) => {
+    const comment = {
+      name,
+      description,
+      likes,
+      date,
+      isLiked
+    }
+
+    comments.push(comment);
+  }
+
+  const toggleLikeComment = (commentName) => {
+    comments.forEach((comment, i) => {
+      if (comment.name === commentName) {
+        comments[i] = { ...comment, isLiked: !comment.isLiked, likes: comment.isLiked ? comment.likes - 1 : comment.likes + 1 };
+      }
+    });
+
+    renderComments(comments);
+  }
+
+  const renderComments = (comments) => {
+    const allComments = commentsList.querySelectorAll('.comment');
+
+    if (allComments.length >= 1) {
+      commentsList.innerHTML = '';
+    }
+
+    for (let comment of comments) {
+      const newComment = document.createElement('li');
+      newComment.classList.add('comment');
+
+      newComment.innerHTML = `
+              <div class="comment-header">
+                <div>${comment.name}</div>
+                <div>${formatDate(comment.date)}</div>
+              </div>
+              <div class="comment-body">
+                <div class="comment-text">
+                  ${comment.description}
+                </div>
+              </div>
+              <div class="comment-footer">
+                <div class="likes">
+                  <span class="likes-counter">${comment.likes}</span>
+                  <button class="like-button ${comment.isLiked ? '-active-like' : null}"></button>
+                </div>
+              </div>
+        `
+
+      commentsList.appendChild(newComment);
+
+      newComment.querySelector('.like-button').addEventListener('click', () => {
+        toggleLikeComment(comment.name);
+      });
+    }
+  };
+
+  renderComments(comments);
 
   console.log("It works!");
 </script>
