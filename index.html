@@ -312,6 +312,7 @@ function addCommentare() {
   button.disabled = true;
   button.classList.add('unactive');
 
+function postComment () {
   fetch('https://wedev-api.sky.pro/api/v1/:Evgeny-Onotskiy/comments', {
     method: 'POST',
     body: JSON.stringify({
@@ -339,7 +340,7 @@ function addCommentare() {
       if (response.status === 201) {
         return response.json()
       } else {
-        return Promise.reject(new Error('Сервер сломался, попробуй позже'))
+        throw new Error('Сервер сломался, попробуй позже')
       }
     })
     .then(() => {
@@ -352,10 +353,12 @@ function addCommentare() {
       text.value = '';
     })
     .catch((error) => {
-      if (error.mesage === 'Сервер сломался, попробуй позже') {
+      if (error.message === 'Сервер сломался, попробуй позже') {
         name.value = savedNameValue;
         text.value = savedTextValue;
-        addButton.addEventListener("click", handlePostClick);
+        console.log('1231');
+        postComment ();
+        // button.addEventListener("click", handlePostClick);
       }
       button.disabled = false;
       button.textContent = 'Написать'
@@ -367,6 +370,8 @@ function addCommentare() {
       alert(error)
 
     })
+};
+postComment();
 
 // comments.push({
 //     name: name.value
