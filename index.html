@@ -281,11 +281,15 @@ renderFunction();
 
 button.addEventListener("click", () => {
   addCommentare();
+
 });
 
 
 function addCommentare() {
-
+      let savedTextValue = text.value;
+      let savedNameValue = name.value;
+      // console.log(savedTextValue);
+      // console.log(savedNameValue);
   text.classList.remove('red');
   name.classList.remove('red');
   if(name.value === '' && text.value === '') {
@@ -307,6 +311,7 @@ function addCommentare() {
   button.textContent = 'Загрузка.'
   button.disabled = true;
   button.classList.add('unactive');
+
   fetch('https://wedev-api.sky.pro/api/v1/:Evgeny-Onotskiy/comments', {
     method: 'POST',
     body: JSON.stringify({
@@ -316,16 +321,52 @@ function addCommentare() {
       // like: 0,
       // isLiked: false,
       // isEdit: false,
+      forceError: true,
     })
+    })
+    // .then(() => {
+
+    // })
+    .then((response) =>{
+
+      if (response.status === 'Failed to fetch') {
+              throw new Error('Проблемы с сетью');
+          }
+
+      if (response.status === 400){
+        return Promise.reject(new Error('Имя и комментарий должны быть не короче 3 символов'))
+      }
+      if (response.status === 201) {
+        return response.json()
+      } else {
+        return Promise.reject(new Error('Сервер сломался, попробуй позже'))
+      }
     })
     .then(() => {
     return apiCommentsGet();
     })
+
     .then((response) => {
       button.textContent = 'Написать'
+      name.value = '';
+      text.value = '';
     })
+    .catch((error) => {
+      if (error.mesage === 'Сервер сломался, попробуй позже') {
+        name.value = savedNameValue;
+        text.value = savedTextValue;
+        addButton.addEventListener("click", handlePostClick);
+      }
+      button.disabled = false;
+      button.textContent = 'Написать'
+      button.classList.remove('unactive');
+      button.classList.add('class="add-form-button"')
+      name.value = savedNameValue;
+      text.value = savedTextValue;
+      console.warn(error)
+      alert(error)
 
-
+    })
 
 // comments.push({
 //     name: name.value
