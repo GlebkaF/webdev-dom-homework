@@ -329,19 +329,15 @@ function postComment () {
 
     // })
     .then((response) =>{
-
-      if (response.status === 'Failed to fetch') {
-              throw new Error('Проблемы с сетью');
-          }
-
       if (response.status === 400){
-        return Promise.reject(new Error('Имя и комментарий должны быть не короче 3 символов'))
+        throw new Error('некорректный запрос');
+      }
+      if (response.status === 500 ) {
+        throw new Error('ошибка сервера');
       }
       if (response.status === 201) {
-        return response.json()
-      } else {
-        throw new Error('Сервер сломался, попробуй позже')
-      }
+        return response.json();
+      } 
     })
     .then(() => {
     return apiCommentsGet();
@@ -353,12 +349,16 @@ function postComment () {
       text.value = '';
     })
     .catch((error) => {
-      if (error.message === 'Сервер сломался, попробуй позже') {
-        name.value = savedNameValue;
-        text.value = savedTextValue;
-        console.log('1231');
-        postComment ();
-        // button.addEventListener("click", handlePostClick);
+      console.warn(error);
+      if (error.message === 'некорректный запрос') {
+        alert('Имя и комментарий должны быть не короче 3 символов');
+      }
+      if (error.message === 'ошибка сервера') {
+        alert('Сломался сервер, попробуйте позже');
+        postComment();
+      }
+      if (window.navigator.onLine === false) {
+        alert('Проблемы с интернетом, проверьте подключение.');
       }
       button.disabled = false;
       button.textContent = 'Написать'
@@ -366,8 +366,7 @@ function postComment () {
       button.classList.add('class="add-form-button"')
       name.value = savedNameValue;
       text.value = savedTextValue;
-      console.warn(error)
-      alert(error)
+      // alert(error)
 
     })
 };
