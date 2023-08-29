@@ -49,12 +49,14 @@
         if (comment === "") {
           commentInput.classList.add("error");
           addCommentButton.classList.add("disabled");
-          
         }
+        else {
+          addCommentButton.classList.remove("disabled");
+        }
+        return;
       }
       nameInput.classList.remove("error");
       commentInput.classList.remove("error");
-      addCommentButton.classList.remove("disabled");
 
       const currentDate = new Date();
       const formattedDate = `${currentDate.getDate()}.${currentDate.getMonth() +
@@ -82,6 +84,7 @@
 
       nameInput.value = "";
       commentInput.value = "";
+      addCommentButton.classList.add("disabled");
     });
   </script>
 </body>
