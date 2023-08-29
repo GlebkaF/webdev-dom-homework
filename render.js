@@ -34,7 +34,7 @@ export const renderComments = (commentsList, comments) => {
     .join('');
 
   // Задаем обработчики для взаимодействия с комментом
-  //replyInitEvent(newComment, comment);
+  // replyInitEvent(newComment, comment);
   likeInitEvent(comments);
 };
 

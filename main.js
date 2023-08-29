@@ -10,6 +10,12 @@ let isLoading = true;
 
 let comments = [];
 
+//let login = prompt("Логин");
+let token = "bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+token = null;
+
+const host = "https://wedev-api.sky.pro/api/v2/kristina-sapega/comments";
+
 function showLoadingMessage() {
   if (isLoading) {
     loadingMessage.textContent = 'Пожалуйста, подождите, загружаю комментарии...';

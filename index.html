@@ -7,6 +7,9 @@
   </head>
 
   <body>
+
+    <div id="app"></div>
+
     <div class="container">
       <ul class="comments"></ul>
       <div class="loading-message"></div>
@@ -23,6 +26,21 @@
           <button class="add-form-button">Написать</button>
         </div>
       </div>
+    </div>
+
+    <div class="login-container">
+      <h2>ФОРМА ВХОДА</h2>
+      <form action="#">
+        <div class="input-group">
+          <label for="username">ЛОГИН</label>
+          <input type="text" id="username" name="username" required>
+        </div>
+        <div class="input-group">
+          <label for="password">ПАРОЛЬ</label>
+          <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit" class="btn">ВОЙТИ</button>
+      </form>
     </div>
     <script type="module" src ="./main.js"></script>
   </body>
