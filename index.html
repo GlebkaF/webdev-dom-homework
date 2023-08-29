@@ -9,10 +9,11 @@
     .error {
       background-color: red;
     }
+
     .disabled {
-        background-color: gray;
-        pointer-events: none;
-      }
+      background-color: gray;
+      pointer-events: none;
+    }
   </style>
 </head>
 
@@ -89,8 +90,10 @@
       addCommentButton.classList.remove("disabled");
     });
     deleteCommentButton.addEventListener("click", () => {
-      
-
+      const lastComment = commentsList.lastElementChild;
+      if (lastComment) {
+        commentsList.removeChild(lastComment);
+      }
     });
   </script>
 </body>
