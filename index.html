@@ -53,7 +53,7 @@
 
     const getFetchApi = () => {
       return fetch(
-        "https://wedev-api.sky.pro/api/v1/kirill-levchenkohw2/comments",
+        "https://wedev-api.sky.pro/api/v1/kirill-levchenkohw5/comments",
         {
           method: "GET",
         }
@@ -154,22 +154,34 @@
     btn.disabled = true;
 
     nameInput.addEventListener("input", function () {
-      if (nameInput.value.length < 3 || commitInput.value.length < 3) {
+      if (nameInput.value.length < 1 || commitInput.value.length < 1) {
         btn.classList.add("empty");
         btn.disabled = true;
       } else {
         btn.classList.remove("empty");
         btn.disabled = false;
       }
+      if (
+        nameInput.value.length >= 3 &&
+        nameInput.style.backgroundColor === `rgba(255, 186, 186, 0.5)`
+      ) {
+        nameInput.style.backgroundColor = `#FFFFFF`;
+      }
     });
 
     commitInput.addEventListener("input", function () {
-      if (nameInput.value.length < 3 || commitInput.value.length < 3) {
+      if (nameInput.value.length < 1 || commitInput.value.length < 1) {
         btn.classList.add("empty");
         btn.disabled = true;
       } else {
         btn.classList.remove("empty");
         btn.disabled = false;
+      }
+      if (
+        commitInput.value.length >= 3 &&
+        commitInput.style.backgroundColor === `rgba(255, 186, 186, 0.5)`
+      ) {
+        commitInput.style.backgroundColor = `#FFFFFF`;
       }
     });
 
@@ -224,7 +236,7 @@
         preLoaderText.classList.add("margin");
         btn.classList.add("empty");
         btn.disabled = true;
-        fetch("https://wedev-api.sky.pro/api/v1/kirill-levchenkohw2/comments", {
+        fetch("https://wedev-api.sky.pro/api/v1/kirill-levchenkohw5/comments", {
           method: "POST",
           body: JSON.stringify({
             name: nameInput.value
@@ -237,13 +249,53 @@
               .replaceAll("<", "&lt;")
               .replaceAll(">", "&gt;")
               .replaceAll('"', "&quot;"),
+            forceError: true,
           }),
-        }).then((response) => {
-          return getFetchApi();
-        });
-
-        nameInput.value = "";
-        commitInput.value = "";
+        })
+          .then((response) => {
+            preLoaderText.textContent = "";
+            preLoaderText.classList.remove("margin");
+            btn.classList.remove("empty");
+            btn.disabled = false;
+            console.log(response.status);
+            if (response.status === 400) {
+              if (nameInput.value.length < 3 || commitInput.value.length < 3) {
+                nameInput.value.length < 3
+                  ? (nameInput.style.backgroundColor = `rgba(255, 186, 186, 0.5)`)
+                  : (nameInput.style.backgroundColor = `#FFFFFF`);
+                commitInput.value.length < 3
+                  ? (commitInput.style.backgroundColor = `rgba(255, 186, 186, 0.5)`)
+                  : (commitInput.style.backgroundColor = `#FFFFFF`);
+                preLoaderText.textContent = "";
+                preLoaderText.classList.remove("margin");
+                throw new Error(
+                  "Длина имени или комментария меньше 3-х символов"
+                );
+              }
+            } else if (response.status === 500) {
+              throw new Error("Сервер не отвечает, повторите попытку позже");
+            }
+          })
+          .then(() => {
+            return getFetchApi();
+          })
+          .then(() => {
+            nameInput.value = "";
+            commitInput.value = "";
+            preLoaderText.textContent = "";
+            preLoaderText.classList.remove("margin");
+            btn.classList.add("empty");
+            btn.disabled = true;
+          })
+          .catch((error) => {
+            if (error == "TypeError: Failed to fetch") {
+              alert(
+                "Кажется потеряно соединение с интернетом, проверьте подключение к сети"
+              );
+            } else {
+              alert(error);
+            }
+          });
         renderComments();
         answerToComment();
         likeButtons();
@@ -258,3 +310,8 @@
     });
   </script>
 </html>
+<!-- начать отсюда ошибка 500 -->
+<!-- начать отсюда ошибка 500 -->
+
+<!-- начать отсюда ошибка 500 -->
+<!-- начать отсюда ошибка 500 -->
