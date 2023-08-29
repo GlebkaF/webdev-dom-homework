@@ -9,6 +9,10 @@
     .error {
       background-color: red;
     }
+    .disabled {
+        background-color: gray;
+        pointer-events: none;
+      }
   </style>
 </head>
 
@@ -40,14 +44,17 @@
       if (name === "" || comment === "") {
         if (name === "") {
           nameInput.classList.add("error");
+          addCommentButton.classList.add("disabled");
         }
         if (comment === "") {
           commentInput.classList.add("error");
+          addCommentButton.classList.add("disabled");
+          
         }
-        return;
       }
       nameInput.classList.remove("error");
       commentInput.classList.remove("error");
+      addCommentButton.classList.remove("disabled");
 
       const currentDate = new Date();
       const formattedDate = `${currentDate.getDate()}.${currentDate.getMonth() +
