@@ -10,11 +10,16 @@
 
 <body>
   <div class="container">
+    <div class="container-preloader"></div>
+    
     <ul id="list" class="comments">
 
       <!-- Список рендерится из JS -->
 
     </ul>
+
+    <div class="container-preloader-post"></div>
+
 
     <div class="add-form">
       <input type="text" id="name-input" class="add-form-name" placeholder="Введите ваше имя" />
@@ -45,12 +50,26 @@
   const commentInputElement = document.getElementById("comment-input");
   const buttonDelComment = document.getElementById("del-comment");
 
+  const myDate = new Date().toLocaleDateString().slice(0, 6) + new Date().toLocaleDateString().slice(-2);
+  const nowDate = myDate + ' ' + new Date().toLocaleTimeString().slice(0, -3);
+
+  const containerPreloader = document.getElementById('container-preloader');
+  const containerPreloaderPost = document.getElementById('container-preloader-post');
+
+
+  containerPreloader.textContent = 'Пожалуйста подождите, загружаю комментарии...';
+
+  //      GET
 
   const fetchAndRenderComments = () => {
     return fetch("https://wedev-api.sky.pro/api/v1/lana-olhowko/comments", {
       method: "GET",
     })
-      .then((response) => response.json())
+      .then((response) => {
+        containerPreloader.textContent = '';
+        response.json();
+      })
+
       .then((responseData) => {
 
         const appComments = responseData.comments.map((comment) => {
@@ -63,8 +82,8 @@
             like: comment.likes,
 
             isLiked: false,
-            isEdit: false,
-            isLoading: false,
+            // isEdit: false,
+            // isLoading: false,
           };
         });
 
@@ -75,25 +94,34 @@
   }
 
 
+  // Функция для имитации запросов в API
+
+  function delay(interval = 300) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, interval);
+    });
+  }
 
 
   //        АКТУАЛЬНАЯ DATA
 
-  let myDate = new Date();
-  let month = myDate.getMonth();
+  // let myDate = new Date();
+  // let month = myDate.getMonth();
 
-  if (month < 10) {
-    month = "0" + month;
-  }
+  // if (month < 10) {
+  //   month = "0" + month;
+  // }
 
-  let fullDate = myDate.getDate() + "." + month + "." + myDate.getFullYear() + " ";
-  let minute = myDate.getMinutes();
+  // let fullDate = myDate.getDate() + "." + month + "." + myDate.getFullYear() + " ";
+  // let minute = myDate.getMinutes();
 
-  if (minute < 10) {
-    minute = "0" + minute;
-  }
+  // if (minute < 10) {
+  //   minute = "0" + minute;
+  // }
 
-  let fullTime = myDate.getHours() + ":" + minute;
+  // let fullTime = myDate.getHours() + ":" + minute;
 
   //        ОБРАБОТЧИК на LIKES,  РЕАЛИЗАЦИЯ ЛАЙКОВ
 
@@ -103,6 +131,7 @@
 
     for (const buttonElement of buttonElements) {
       buttonElement.addEventListener("click", (event) => {
+
         event.stopPropagation();
 
         // индекс номер объекта в массиве, получаем из data-атрибута кнопки на к-ую нажимаем
@@ -255,72 +284,81 @@
       }
     }
 
-    //        ДОБАВЛЕНИЕ КОММЕНТОВ
+    addFormElement.classList.add('form-none');
 
-    // comments.push({
-    //   name: nameInputElement.value.replaceAll("&", "&amp;")
-    //     .replaceAll("<", "&lt;")
-    //     .replaceAll(">", "&gt;")
-    //     .replaceAll('"', "&quot;"),
-    //   date: fullDate + fullTime,
-    //   text: commentInputElement.value.replaceAll("&", "&amp;")
-    //     .replaceAll("<", "&lt;")
-    //     .replaceAll(">", "&gt;")
-    //     .replaceAll('"', "&quot;")
-    //     .replaceAll("BEGIN_QUOTE", "<div class='quote'>")
-    //     .replaceAll("QUOTE_END", "</div>"),
-    //   like: 0,
-    //   isLiked: false,
-    //   isEdit: false
-    // });
-
-    buttonAddElement.disabled = true;
-    buttonAddElement.textContent = 'Комментарий добавляется..';
+  })
 
 
-    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/lana-olhowko/comments", {
+  buttonAddElement.disabled = true;
+  buttonAddElement.textContent = 'Комментарий добавляется..';
+
+
+  const fetchPromise = () => {
+    containerPreloaderPost.textContent = 'Добавляется комментарий...';
+
+
+    return fetch("https://wedev-api.sky.pro/api/v1/lana-olhowko/comments", {
       method: "POST",
       body: JSON.stringify({
-        name: nameInputElement.value,
+        name: nameInputElement.value.replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+          .replaceAll("QUOTE_END", "</div>"),
         // date: fullDate + fullTime,
-        text: commentInputElement.value,
+        text: commentInputElement.value.replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+          .replaceAll("QUOTE_END", "</div>"),
+        forceError: true,
       }),
     })
       .then((response) => {
-        return response.json();
 
-        if (response.status === 201) {
-          return fetchAndRenderComments();
-
-        } else {
-          throw new Error('Some error');
-          // return Promise.reject("Сервер упал");
+        if (response.status === 500) {
+          throw new Error('Ошибка сервера');
         }
-      .then((data) => {
-
-          buttonAddElement.disabled = false;
-          buttonAddElement.textContent = 'Написать';
-
-          nameInputElement.value = "";
-          commentInputElement.value = "";
-
-        })
-      .catch((error) => {
-        buttonAddElement.disabled = false;
-        buttonAddElement.textContent = 'Написать';
-        alert("Кажется что-то пошло не так, попробуй позже");
-
-        console.warn(error);
+        else if (response.status === 400) {
+          throw new Error('Неверный запрос!');
+        }
+        else {
+          return response.json();
+        }
       })
+      .then((responseData) => {
+        return fetchAndRenderComments();
+      })
+      .then((data) => {
+        containerPreloaderPost.textContent = '';
+        addFormElement.classList.remove('form-none');
+        nameInputElement.value = '';
+        nameTextAreaElement.value = '';
+      })
+      .catch((error) => {
+        containerPreloaderPost.textContent = '';
+        addFormElement.classList.remove('form-none');
 
-    renderComments();
-    initLikesButtonListeners();
-    initEditButtonListeners();
+        if (error.message === 'Неверный запрос!') {
+          alert('Имя и комментарий должны быть не короче 3 символов');
+        } else if (error.message === "Ошибка сервера") {
+          alert('Сервер сломался, попробуй позже');
+          fetchPromise();
+        } else {
+          alert('Кажется у вас сломался интернет');
+        }
+      })
+  }
+
+  fetchPromise();
+  renderComments();
+  initLikesButtonListeners();
+  initEditButtonListeners();
 
 
 
-
-  })
 
 
   //        ДОБАВИТЬ С ПОМОЩЬЮ КЛАВИШИ ENTER + ВОЗВРАТ АКТИВНОСТИ КНОПКИ
