@@ -9,6 +9,7 @@
   <body>
     <div class="container">
       <ul id="list-com" class="comments"></ul>
+      <div id="pre-loader" class=""></div>
       <div class="add-form">
         <input
           id="name-input"
@@ -42,30 +43,44 @@
     const commitInput = document.getElementById("commit-input");
     const inp = document.querySelector(".add-form-name");
     const textAr = document.querySelector(".add-form-text");
+    const preLoaderText = document.getElementById("pre-loader");
 
     let btn = document.querySelector("#write-button");
 
     let comments = [];
 
-    fetch("https://wedev-api.sky.pro/api/v1/kirill-levchenko/comments", {
-      method: "GET",
-    }).then((Response) => {
-      Response.json().then((responseData) => {
-        const apiComments = responseData.comments.map((comment) => {
-          return {
-            author: { name: comment.author.name },
-            date: getDateInventor(comment.date),
-            likes: comment.likes,
-            isLiked: false,
-            text: comment.text,
-          };
+    preLoaderText.textContent = "Загрузка комментариев ...";
+
+    const getFetchApi = () => {
+      return fetch(
+        "https://wedev-api.sky.pro/api/v1/kirill-levchenkohw2/comments",
+        {
+          method: "GET",
+        }
+      )
+        .then((response) => {
+          return response.json();
+        })
+        .then((response) => {
+          const apiComments = response.comments.map((comment) => {
+            return {
+              author: { name: comment.author.name },
+              date: getDateInventor(comment.date),
+              likes: comment.likes,
+              isLiked: false,
+              text: comment.text,
+            };
+          });
+          comments = apiComments;
+          renderComments();
+          answerToComment();
+          likeButtons();
+        })
+        .then((response) => {
+          preLoaderText.textContent = "";
+          preLoaderText.classList.remove("margin");
         });
-        comments = apiComments;
-        renderComments();
-        answerToComment();
-        likeButtons();
-      });
-    });
+    };
 
     const renderComments = () => {
       return (listCom.innerHTML = comments
@@ -123,7 +138,7 @@
       }
     };
 
-    renderComments();
+    getFetchApi();
     answerToComment();
     likeButtons();
 
@@ -205,7 +220,11 @@
     writeButton.addEventListener(
       "click",
       (pushCommit = () => {
-        fetch("https://wedev-api.sky.pro/api/v1/kirill-levchenko/comments", {
+        preLoaderText.textContent = "Загружаем ваш комментарий ...";
+        preLoaderText.classList.add("margin");
+        btn.classList.add("empty");
+        btn.disabled = true;
+        fetch("https://wedev-api.sky.pro/api/v1/kirill-levchenkohw2/comments", {
           method: "POST",
           body: JSON.stringify({
             name: nameInput.value
@@ -219,37 +238,12 @@
               .replaceAll(">", "&gt;")
               .replaceAll('"', "&quot;"),
           }),
-        }).then((Response) => {
-          Response.json().then((responseData) => {
-            fetch(
-              "https://wedev-api.sky.pro/api/v1/kirill-levchenko/comments",
-              {
-                method: "GET",
-              }
-            ).then((Response) => {
-              Response.json().then((responseData) => {
-                const apiComments = responseData.comments.map((comment) => {
-                  return {
-                    author: { name: comment.author.name },
-                    date: getDateInventor(comment.date),
-                    likes: comment.likes,
-                    isLiked: false,
-                    text: comment.text,
-                  };
-                });
-                comments = apiComments;
-                renderComments();
-                answerToComment();
-                likeButtons();
-              });
-            });
-          });
+        }).then((response) => {
+          return getFetchApi();
         });
 
         nameInput.value = "";
         commitInput.value = "";
-        btn.classList.add("empty");
-        btn.disabled = true;
         renderComments();
         answerToComment();
         likeButtons();
