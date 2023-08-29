@@ -5,6 +5,7 @@
 let comments = [];
 const cardElements = document.getElementById("commentsId");
 const btnElement = document.getElementById("btnId");
+const pLoad = document.getElementById("commentsLoad")
 const inputName = document.getElementById("nameTextId");
 const inputText = document.getElementById("commentTextId");
 const likeElement = document.getElementsByClassName("like-button");
@@ -30,7 +31,10 @@ fetch("https://wedev-api.sky.pro/api/v1/kekcsik/comments", {
                  console.log(comments)
                 renderComments();
                 console.log(responseData)
-               
+                pLoad.textContent = "";
+                console.log("sdaas");
+                btnElement.disabled = false;
+                btnElement.textContent = "Написать";
             });
     });
 }
@@ -266,12 +270,14 @@ const clickEventAddComment = () => {
         datе: new Date(),
       })
     }).then((response) => {
-      response.json().then((responseData) => {
+      return response.json();
+    })
+      .then((responseData) => {
         comments = responseData.comment;
         getComments();
-
+        btnElement.disabled = true;
+        btnElement.textContent = "Элемент добавлятся...";
       });
-    })
     renderComments();
     
     comments[comments.length - 1].animationClass = "";
@@ -286,4 +292,6 @@ document.addEventListener('keyup', (key) => {
 })
 btnElement.addEventListener( 'click', () => clickEventAddComment())
 console.log("It works!");
+
+// pLoad.textContent = "Cписок загружается";
 
