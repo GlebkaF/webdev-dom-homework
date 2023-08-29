@@ -37,8 +37,6 @@
 
   let usersComments = [];
 
-
-
   fetch(
     'https://wedev-api.sky.pro/api/v1/xenya-Ilivitskaya/comments',
     {
@@ -178,12 +176,35 @@
       return;
     };
 
-    usersComments.push({
-      name: sanitizeHtml(nameInputElement.value),
-      date: actualDate,
-      text: sanitizeHtml(commentInputElement.value),
-      likes: 0,
-      isLiked: false
+    fetch(
+      'https://wedev-api.sky.pro/api/v1/xenya-Ilivitskaya/comments',
+      {
+        method: "POST",
+        body: JSON.stringify({
+          name: nameInputElement.value,
+          date: actualDate,
+          text: commentInputElement.value,
+          likes: 0,
+          isLiked: false
+        })
+      }
+    ).then((response) => {
+
+      response.json().then((responseData) => {
+
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: currentDate(new Date(comment.date)),
+            text: comment.text,
+            likes: comment.likes,
+            isLiked: false,
+          }
+        })
+
+        usersComments = appComments;
+        renderComments();
+      })
     })
 
     renderComments();
