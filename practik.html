@@ -135,11 +135,18 @@
         .then((data) => {
           buttonElement.disabled = false;
           buttonElement.textContent = "Добавить";
-        });
+          textInputElement.value = "";
+        })
+        .catch((error) => {
+          buttonElement.disabled = false;
+          buttonElement.textContent = "Добавить";
+        alert("Кажется. что-то пошло не так. попробуй позже");
+        console.warn(error);
+    });
 
       renderTasks();
 
-      textInputElement.value = "";
+      
     });
   </script>
 </html>

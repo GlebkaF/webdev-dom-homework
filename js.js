@@ -132,9 +132,10 @@ fetchPromise();
 
       renderComents();
       
+     
       formAddElement.classList.add('add-none');
       addElement.textContent = "Комментарий добавляется ...";
-      
+      function postTask(text) {
            fetch("https://wedev-api.sky.pro/api/v1/doroshenko-polina/comments", {
         method: "POST",
         body: JSON.stringify({
@@ -148,28 +149,44 @@ fetchPromise();
           .replaceAll("<", "&lt;")
           .replaceAll(">", "&gt;")
           .replaceAll('"', "&quot;"),
+          forceError: true,
         })
         
       })  
-      .then((responseData) => {
-        return responseData;
-      })
         .then((response) => {
-         return response.json();
+          if (response.status === 201) {
+            return response.json();
+          }  
+          else if (response.status === 400){
+          alert("Имя и комментарий должны быть не короче 3 символов");
+          if (addFormTextElement.value.length < 3 || addFormElement.value.lenght < 3) {
+            addFormElement.classList.add("color");
+            addFormTextElement.classList.add("color");
+          }
+          return Promise.reject(new Error("Не верный пользовательский ввод"));        
+          }
+          else {
+          return Promise.reject(new Error("Ошибка сервера"));
+          }
       })
       .then(() => {    
-        fetchPromise();   
+         fetchPromise();   
          })
-
       .then(() => {
         addElement.textContent = "";
         formAddElement.classList.remove('add-none');
-        })
-        
-      
-        renderComents();
         addFormElement.value = "";
         addFormTextElement.value = "";
+        })
+        .catch((error) => {
+          addElement.textContent = "";
+          formAddElement.classList.remove('add-none');        
+          postTask(text);
+        })
+      }
+        postTask();
+        renderComents();
+       
    
                       
       });
