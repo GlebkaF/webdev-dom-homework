@@ -1,43 +1,38 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-    <style>
-      .error {
-        background-color: red;
-      }
-    </style>
-  </head>
 
-  <body>
-    <div class="container">
-      <ul class="comments" id="comments-list">
-      </ul>
-      <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          id="name-input"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          id="comment-input"
-          placeholder="Введите ваш комментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button" id="add-comment-button">Написать</button>
-        </div>
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .error {
+      background-color: red;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <ul class="comments" id="comments-list">
+    </ul>
+    <div class="add-form">
+      <input type="text" class="add-form-name" id="name-input" placeholder="Введите ваше имя" />
+      <textarea type="textarea" class="add-form-text" id="comment-input" placeholder="Введите ваш комментарий"
+        rows="4"></textarea>
+      <div class="add-form-row">
+        <button class="add-form-button" id="add-comment-button">Написать</button>
       </div>
     </div>
+  </div>
 
-    <script>
-      "use strict";
-     
-    </script>
-  </body>
+  <script>
+    "use strict";
+    const addCommentButton = document.getElementById("add-comment-button");
+    const nameInput = document.getElementById("name-input");
+    const commentInput = document.getElementById("comment-input");
+    const commentsList = document.getElementById("comments-list");
+  </script>
+</body>
+
 </html>
