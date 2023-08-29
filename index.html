@@ -56,7 +56,6 @@
     })
       // Подписываемся на результат преобразования
       .then((responseData) => {
-
         const appComments = responseData.comments.map((comment) => {
           return {
             name: comment.author.name,
@@ -159,8 +158,7 @@ delay(2000).then(() => {
         </li>`
       })
       .join("");
-    commentInputElement.value = "";
-    nameInputElement.value = "";
+    
     buttonElement.disabled = true;
     initEventListeners();
     replyToComment();
@@ -186,15 +184,32 @@ delay(2000).then(() => {
     form.classList.add('none');
     loadingForm.textContent = 'Комментарий добавляется...';
     // подписываемся на успешное завершение запроса с помощью then
-   fetch("https://wedev-api.sky.pro/api/v1/ekaterinabbkv/comments", {
+  const post = (text) => {
+    fetch("https://wedev-api.sky.pro/api/v1/ekaterinabbkv/comments", {
         method: "POST",
         body: JSON.stringify({
           name: nameInputElement.value,
           text: commentInputElement.value,
+          forceError: true,
         }),        
       })
-      .then((response) => {
-        return response.json();  
+      .then((response) => {        
+        if (response.status === 201) {
+          return response.json();
+        }  
+        else if (response.status === 400){
+        alert("Мало символов");
+        if (nameInputElement.value.length < 3) {
+          nameInputElement.classList.add("color");
+        }
+        if (commentInputElement.value.length < 3) {
+          commentInputElement.classList.add("color");
+        }
+        return Promise.reject(new Error("Не верный пользовательский ввод"));        
+        }
+        else {
+        return Promise.reject(new Error("Ошибка сервера"));
+        }
       })
       .then((responseData) => {
         fetchGet();
@@ -202,9 +217,18 @@ delay(2000).then(() => {
       .then(() => {
         loadingForm.textContent = '';
         form.classList.remove('none');
+        commentInputElement.value = "";
+        nameInputElement.value = "";
       })
-        renderComments();
-      };
+      .catch((error) => {
+        loadingForm.textContent = '';
+        form.classList.remove('none');
+        post(text);
+      })
+    }
+    post();    
+    renderComments();
+    };
         
 
   buttonElement.addEventListener("click", () => {
