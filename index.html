@@ -26,7 +26,7 @@
         rows="4"></textarea>
       <div class="add-form-row">
         <button class="add-form-button" id="add-comment-button">Написать</button>
-        <button class="deleteLastCommentButton" id="deleteLastCommentButton">Удалить последний комментарий</button>
+        <button class="deleteCommentButton" id="deleteCommentButton">Удалить последний комментарий</button>
       </div>
     </div>
   </div>
@@ -37,6 +37,7 @@
     const nameInput = document.getElementById("name-input");
     const commentInput = document.getElementById("comment-input");
     const commentsList = document.getElementById("comments-list");
+    const deleteCommentButton = document.getElementById("deleteCommentButton");
 
     addCommentButton.addEventListener("click", () => {
       const name = nameInput.value.trim();
@@ -86,6 +87,10 @@
       nameInput.value = "";
       commentInput.value = "";
       addCommentButton.classList.remove("disabled");
+    });
+    deleteCommentButton.addEventListener("click", () => {
+      
+
     });
   </script>
 </body>
