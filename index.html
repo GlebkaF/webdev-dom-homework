@@ -26,6 +26,7 @@
         rows="4"></textarea>
       <div class="add-form-row">
         <button class="add-form-button" id="add-comment-button">Написать</button>
+        <button class="deleteLastCommentButton" id="deleteLastCommentButton">Удалить последний комментарий</button>
       </div>
     </div>
   </div>
@@ -84,7 +85,7 @@
 
       nameInput.value = "";
       commentInput.value = "";
-      addCommentButton.classList.add("disabled");
+      addCommentButton.classList.remove("disabled");
     });
   </script>
 </body>
