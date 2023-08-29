@@ -35,39 +35,46 @@
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
 
-  let usersComments = [
-    // {
-    //   author: "Глеб Фокин",
-    //   date: "12.02.22 12:18",
-    //   text: "Это будет первый комментарий на этой странице",
-    //   likes: 3,
-    //   isLiked: false
-    // },
-    // {
-    //   author: "Варвара Н.",
-    //   date: "13.02.22 19:22",
-    //   text: "Мне нравится как оформлена эта страница! ❤",
-    //   likes: 45,
-    //   isLiked: true
-    // }
-  ];
+  let usersComments = [];
 
-  const fetchPromise = fetch(
+
+
+  fetch(
     'https://wedev-api.sky.pro/api/v1/xenya-Ilivitskaya/comments',
     {
       method: "GET"
     }
-  )
+  ).then((response) => {
 
-  fetchPromise.then((response) => {
+    response.json().then((responseData) => {
 
-    const jsonPromise = response.json();
+      const appComments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: currentDate(new Date(comment.date)),
+          text: comment.text,
+          likes: comment.likes,
+          isLiked: false,
+        }
+      })
 
-    jsonPromise.then((responseData) => {
-      usersComments = responseData.comments;
+      usersComments = appComments;
       renderComments();
     })
   })
+
+  const currentDate = (data) => {
+
+    const months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
+
+    let day = data.getDate();
+    let month = months[data.getMonth()];
+    let year = data.getFullYear();
+    let hour = data.getHours() < 10 ? '0' + data.getHours() : data.getHours();
+    let minuts = data.getMinutes() < 10 ? '0' + data.getMinutes() : data.getMinutes();
+    let authorData = `${day}.${month}.${year} ${hour}:${minuts}`;
+    return authorData;
+  }
 
   const sanitizeHtml = (htmlString) => {
     return htmlString
@@ -106,7 +113,7 @@
 
       comment.addEventListener("click", () => {
 
-        commentInputElement.innerHTML = `&gt ${usersComments[index].text} \n ${usersComments[index].author},`;
+        commentInputElement.innerHTML = `&gt ${usersComments[index].text} \n ${usersComments[index].name},`;
 
         renderComments();
 
@@ -123,7 +130,7 @@
 
       return `<li class="comment" data-text="${index}">
           <div class="comment-header">
-            <div>${comment.author}</div>
+            <div>${comment.name}</div>
             <div>${comment.date}</div>
           </div>
           <div class="comment-body">
@@ -172,7 +179,7 @@
     };
 
     usersComments.push({
-      author: sanitizeHtml(nameInputElement.value),
+      name: sanitizeHtml(nameInputElement.value),
       date: actualDate,
       text: sanitizeHtml(commentInputElement.value),
       likes: 0,
