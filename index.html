@@ -33,14 +33,13 @@
   </div>
 
   <script>
-    "use strict";
     const addCommentButton = document.getElementById("add-comment-button");
     const nameInput = document.getElementById("name-input");
     const commentInput = document.getElementById("comment-input");
     const commentsList = document.getElementById("comments-list");
     const deleteCommentButton = document.getElementById("deleteCommentButton");
 
-    addCommentButton.addEventListener("click", () => {
+    function addComment() {
       const name = nameInput.value.trim();
       const comment = commentInput.value.trim();
 
@@ -52,8 +51,7 @@
         if (comment === "") {
           commentInput.classList.add("error");
           addCommentButton.classList.add("disabled");
-        }
-        else {
+        } else {
           addCommentButton.classList.remove("disabled");
         }
         return;
@@ -62,8 +60,7 @@
       commentInput.classList.remove("error");
 
       const currentDate = new Date();
-      const formattedDate = `${currentDate.getDate()}.${currentDate.getMonth() +
-        1}.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+      const formattedDate = `${currentDate.getDate()}.${currentDate.getMonth() + 1}.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
 
       const newCommentHtml = `
           <li class="comment">
@@ -88,7 +85,21 @@
       nameInput.value = "";
       commentInput.value = "";
       addCommentButton.classList.remove("disabled");
+    }
+
+    addCommentButton.addEventListener("click", addComment);
+
+    commentInput.addEventListener("keyup", (event) => {
+      if (event.keyCode === 13) {
+        addComment();
+      }
     });
+    nameInput.addEventListener("keyup", (event) => {
+      if (event.keyCode === 13) {
+        addComment();
+      }
+    });
+
     deleteCommentButton.addEventListener("click", () => {
       const lastComment = commentsList.lastElementChild;
       if (lastComment) {
