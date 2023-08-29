@@ -35,26 +35,50 @@
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
 
-
-  const comments = [
+  const fetchPromise = fetch(
+    'https://wedev-api.sky.pro/api/v1/xenya-Ilivitskaya/comments',
     {
-      name: "Глеб Фокин",
+      method: "GET"
+    }
+  )
+  let usersComments = [
+    {
+      author: "Глеб Фокин",
       date: "12.02.22 12:18",
-      commentText: "Это будет первый комментарий на этой странице",
-      likesCounter: 3,
-      likeButton: false
+      text: "Это будет первый комментарий на этой странице",
+      likes: 3,
+      isLiked: false
     },
     {
-      name: "Варвара Н.",
+      author: "Варвара Н.",
       date: "13.02.22 19:22",
-      commentText: "Мне нравится как оформлена эта страница! ❤",
-      likesCounter: 45,
-      likeButton: true
+      text: "Мне нравится как оформлена эта страница! ❤",
+      likes: 45,
+      isLiked: true
     }
-  ]
+  ];
+
+  fetchPromise.then((response) => {
+
+    const jsonPromise = response.json();
+
+    jsonPromise.then((responseData) => {
+      console.log(responseData.comments);
+
+      usersComments = responseData.comments;
+    })
+  })
+
+  const sanitizeHtml = (htmlString) => {
+    return htmlString
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;");
+  };
 
 
-  const initLikesCounter = () => {
+  const initLikes = () => {
 
     const likeButtonsElements = document.querySelectorAll(".like-button");
 
@@ -64,9 +88,9 @@
       likeButtonsElement.addEventListener("click", (event) => {
         event.stopPropagation();
 
-        comments[index].likeButton ? comments[index].likesCounter -= 1 : comments[index].likesCounter += 1;
+        usersComments[index].isLiked ? usersComments[index].likes -= 1 : usersComments[index].likes += 1;
 
-        comments[index].likeButton ? comments[index].likeButton = false : comments[index].likeButton = true;
+        usersComments[index].isLiked ? usersComments[index].isLiked = false : usersComments[index].isLiked = true;
 
         renderComments();
       })
@@ -81,8 +105,8 @@
       const index = comment.dataset.text;
 
       comment.addEventListener("click", () => {
-             
-        commentInputElement.innerHTML = `&gt ${comments[index].commentText} \n ${comments[index].name},`;
+
+        commentInputElement.innerHTML = `&gt ${usersComments[index].text} \n ${usersComments[index].author},`;
 
         renderComments();
 
@@ -95,29 +119,29 @@
 
   const renderComments = () => {
 
-    const commentsHtml = comments.map((comment, index) => {
+    const commentsHtml = usersComments.map((comment, index) => {
 
       return `<li class="comment" data-text="${index}">
           <div class="comment-header">
-            <div>${comment.name}</div>
+            <div>${comment.author}</div>
             <div>${comment.date}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${comment.commentText}
+              ${comment.text}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">${comment.likesCounter}</span>
-              <button data-index="${index}" class="like-button ${comment.likeButton ? "-active-like" : ""}" ></button>              
+              <span class="likes-counter">${comment.likes}</span>
+              <button data-index="${index}" class="like-button ${comment.isLiked ? "-active-like" : ""}" ></button>              
             </div>
           </div>
         </li>`
     }).join('');
 
     listElement.innerHTML = commentsHtml;
-    initLikesCounter();
+    initLikes();
     addReplyToComment();
   }
   renderComments();
@@ -147,12 +171,12 @@
       return;
     };
 
-    comments.push({
-      name: nameInputElement.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
+    usersComments.push({
+      author: sanitizeHtml(nameInputElement.value),
       date: actualDate,
-      commentText: commentInputElement.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
-      likesCounter: 0,
-      likeButton: false
+      text: sanitizeHtml(commentInputElement.value),
+      likes: 0,
+      isLiked: false
     })
 
     renderComments();
