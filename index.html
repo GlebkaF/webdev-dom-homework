@@ -35,37 +35,37 @@
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
 
+  let usersComments = [
+    // {
+    //   author: "Глеб Фокин",
+    //   date: "12.02.22 12:18",
+    //   text: "Это будет первый комментарий на этой странице",
+    //   likes: 3,
+    //   isLiked: false
+    // },
+    // {
+    //   author: "Варвара Н.",
+    //   date: "13.02.22 19:22",
+    //   text: "Мне нравится как оформлена эта страница! ❤",
+    //   likes: 45,
+    //   isLiked: true
+    // }
+  ];
+
   const fetchPromise = fetch(
     'https://wedev-api.sky.pro/api/v1/xenya-Ilivitskaya/comments',
     {
       method: "GET"
     }
   )
-  let usersComments = [
-    {
-      author: "Глеб Фокин",
-      date: "12.02.22 12:18",
-      text: "Это будет первый комментарий на этой странице",
-      likes: 3,
-      isLiked: false
-    },
-    {
-      author: "Варвара Н.",
-      date: "13.02.22 19:22",
-      text: "Мне нравится как оформлена эта страница! ❤",
-      likes: 45,
-      isLiked: true
-    }
-  ];
 
   fetchPromise.then((response) => {
 
     const jsonPromise = response.json();
 
     jsonPromise.then((responseData) => {
-      console.log(responseData.comments);
-
       usersComments = responseData.comments;
+      renderComments();
     })
   })
 
