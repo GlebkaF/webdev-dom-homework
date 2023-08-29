@@ -52,6 +52,29 @@
       const currentDate = new Date();
       const formattedDate = `${currentDate.getDate()}.${currentDate.getMonth() +
         1}.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+
+      const newCommentHtml = `
+          <li class="comment">
+            <div class="comment-header">
+              <div>${name}</div>
+              <div>${formattedDate}</div>
+            </div>
+            <div class="comment-body">
+              <div class="comment-text">${comment}</div>
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">0</span>
+                <button class="like-button"></button>
+              </div>
+            </div>
+          </li>
+        `;
+
+      commentsList.innerHTML += newCommentHtml;
+
+      nameInput.value = "";
+      commentInput.value = "";
     });
   </script>
 </body>
