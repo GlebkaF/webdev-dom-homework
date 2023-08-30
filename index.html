@@ -11,7 +11,7 @@
 <body>
   <div class="container">
     <div class="container-preloader"></div>
-    
+
     <ul id="list" class="comments">
 
       <!-- Список рендерится из JS -->
@@ -49,15 +49,17 @@
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
   const buttonDelComment = document.getElementById("del-comment");
+  const addFormElement = document.querySelector('.add-form');
+
 
   const myDate = new Date().toLocaleDateString().slice(0, 6) + new Date().toLocaleDateString().slice(-2);
   const nowDate = myDate + ' ' + new Date().toLocaleTimeString().slice(0, -3);
 
-  const containerPreloader = document.getElementById('container-preloader');
-  const containerPreloaderPost = document.getElementById('container-preloader-post');
+  // const containerPreloader = document.getElementById('container-preloader');
+  // const containerPreloaderPost = document.getElementById('container-preloader-post');
 
 
-  containerPreloader.textContent = 'Пожалуйста подождите, загружаю комментарии...';
+  // containerPreloader.textContent = 'Пожалуйста подождите, загружаю комментарии...';
 
   //      GET
 
@@ -66,10 +68,9 @@
       method: "GET",
     })
       .then((response) => {
-        containerPreloader.textContent = '';
+        // containerPreloader.textContent = '';
         response.json();
       })
-
       .then((responseData) => {
 
         const appComments = responseData.comments.map((comment) => {
@@ -294,7 +295,7 @@
 
 
   const fetchPromise = () => {
-    containerPreloaderPost.textContent = 'Добавляется комментарий...';
+    // containerPreloaderPost.textContent = 'Добавляется комментарий...';
 
 
     return fetch("https://wedev-api.sky.pro/api/v1/lana-olhowko/comments", {
@@ -317,37 +318,42 @@
       }),
     })
       .then((response) => {
-
+        if (response.status === 400) {
+          throw new Error('Неверный запрос')
+        }
         if (response.status === 500) {
-          throw new Error('Ошибка сервера');
+          throw new Error('Ошибка сервера')
         }
-        else if (response.status === 400) {
-          throw new Error('Неверный запрос!');
-        }
-        else {
+        if (response.status === 201) {
           return response.json();
         }
+
       })
       .then((responseData) => {
         return fetchAndRenderComments();
       })
       .then((data) => {
-        containerPreloaderPost.textContent = '';
-        addFormElement.classList.remove('form-none');
+      //   containerPreloaderPost.textContent = '';
+      //   addFormElement.classList.remove('form-none');
         nameInputElement.value = '';
-        nameTextAreaElement.value = '';
+        commentInputElement.value = '';
       })
       .catch((error) => {
-        containerPreloaderPost.textContent = '';
-        addFormElement.classList.remove('form-none');
 
-        if (error.message === 'Неверный запрос!') {
-          alert('Имя и комментарий должны быть не короче 3 символов');
-        } else if (error.message === "Ошибка сервера") {
-          alert('Сервер сломался, попробуй позже');
+        // containerPreloaderPost.textContent = '';
+        // addFormElement.classList.remove('form-none');
+
+        console.warn(error);
+
+        if (error.message === "Неверный запрос") {
+          alert('Короткое имя или текст комментария, минимум 3 символа');
+        }
+        if (error.message === "Ошибка сервера") {
+          alert('Сломался сервер , попробуйте позже');
           fetchPromise();
-        } else {
-          alert('Кажется у вас сломался интернет');
+        }
+        if (window.navigator.onLine === false) {
+          alert('Проблемы с интернетом, проверьте подключение');
         }
       })
   }
