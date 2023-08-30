@@ -2,74 +2,38 @@
 <html>
   <head>
     <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css" />
+	<title>COmmentariii</title>
   </head>
 
   <body>
-    <div class="container">
-      <ul id="list" class="comments">
-        <!-- <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li> -->
-      </ul>
-      <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-
-          value=""
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-          >
-        </textarea>
-        <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
-        </div>
-      </div>
-    </div>
+	<div class="container">
+    	<div id="container-preloader"></div>
+    	<ul id="list" class="comments"></ul>
+    	<div id="container-preloader-post"></div>
+		<div class="add-form">
+			<input
+			type="text"
+			class="add-form-name"
+			placeholder="Введите ваше имя"
+			value=""
+			/>
+			<textarea
+			type="textarea"
+			class="add-form-text"
+			placeholder="Введите ваш коментарий"
+			rows="4"
+			>
+			</textarea>
+       		<div class="add-form-row">
+        		<button class="add-form-button">Написать</button>
+        	</div>
+		</div>	
+	</div>
   </body>
-  <style>
-    .error {
-      background-color: red;
-    }
-  </style>
+
   <script>
 	"use strict";
 	const btnElement = document.querySelector('.add-form-button');
@@ -80,44 +44,44 @@
 
 	const listElement = document.getElementById('list');
 
-	let comments = [
-		// {
-		// 	name: 'Глеб Фокин',
-		// 	date: '12.02.22 12:18',
-		// 	comment: 'Это будет первый комментарий на этой странице',
-		// 	like: 3,
-		// 	isLiked: false,
-		// },
-		// {
-		// 	name: 'Варвара Н.',
-		// 	date: '13.02.22 19:22',
-		// 	comment: 'Мне нравится как оформлена эта страница! ❤',
-		// 	like: 75,
-		// 	isLiked: true,
-		// },
-	];
+	
+	const containerPreloader = document.getElementById('container-preloader');
+	const containerPreloaderPost = document.getElementById('container-preloader-post');
+	const addFormElement = document.querySelector('.add-form');
 
-	fetch("https://wedev-api.sky.pro/api/v1/elnur-kakhramanov/comments", {
-		method: "GET"
-	}).then((response) => {
-		response.json().then((responseData) => {
+	let comments = [];
 
-	const appComments = responseData.comments.map((comment) => {
-	return {
-		name: comment.author.name,
-		date: new Date(comment.date),
-		likes: comment.likes,
-		isLiked: false,
-		text: comment.text,
-		};
-	});
-	comments = appComments;
-	renderComments();
-	});
-		});
+	containerPreloader.textContent = `Идет загрузка комментария...`;
+
+	const fetchAndRendetTasks = () => {
+		return fetch("https://wedev-api.sky.pro/api/v1/elnur-kakhramanov/comments", {
+			method: "GET"
+		})
+
+			.then((response) => {
+				containerPreloader.textContent = '';
+				return response.json();
+			})
+			.then((responseData) => {
+
+				const appComments = responseData.comments.map((comment) => {
+					return {
+						name: comment.author.name,
+						date: new Date(comment.date),
+						likes: comment.likes,
+						isLiked: false,
+						text: comment.text,
+					};
+				});
+
+				comments = appComments;
+				renderComments();
+			});
+	}
 
 
 	const initEventListeners = () => {
+
 		const buttonElements = document.querySelectorAll('.like-button');
 
 		for (const buttonElement of buttonElements) {
@@ -126,10 +90,10 @@
 				const index = buttonElement.dataset.index;
 				if (comments[index].isLiked) {
 					comments[index].isLiked = false;
-					comments[index].like--;
+					comments[index].likes--;
 				} else {
 					comments[index].isLiked = true;
-					comments[index].like++;
+					comments[index].likes++;
 				}
 
 				renderComments();
@@ -149,40 +113,61 @@
 	const renderComments = () => {
 		const commentsHtml = comments.map((comment, index) => {
 			return `<li class="comment" data-index='${index}'>
-					<div class="comment-header">
-						<div>${comment.name}</div>
-						<div>${comment.date}</div>
-					</div>
-					<div class="comment-body">
-						<div class="comment-text" style="white-space:pre-line">
-							${comment.text}
+						<div class="comment-header">
+							<div>${comment.name}</div>
+							<div>${comment.date}</div>
 						</div>
-					</div>
-					<div class="comment-footer">
-						<div class="likes">
-							<span class="likes-counter">${comment.like}</span>
-							<button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index='${index}'>
-							</button>
-						</div >
-					</div >
-				</li >`;
-		}).join('');
+						<div class="comment-body">
+						${comment.isEdit ? `<textarea class='add-form-text comment-edit-text'>${comment.text}</textarea>` : `<div class="comment-text" style="white-space:pre-line">
+							${comment.text}
+						</div>`}
+						</div>
+						<button class="add-form-button edits" data-index='${index}'>${comment.isEdit ? 'Сохранить' : 'Редактировать'}</button>
+						<div class="comment-footer">
+							<div class="likes">
+								<span class="likes-counter">${comment.likes}</span>
+								<button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index='${index}'>
+								</button>
+							</div>
+						</div>
+					</li>`;
+		}).join('');			
 
 		listElement.innerHTML = commentsHtml;
 		initEventListeners();
+		functionEdit();
 	}
 
+	function functionEdit() {
+		const commentEditText = document.querySelector('.comment-edit-text');
+		const editElements = document.querySelectorAll('.edits');
+		for (const edit of editElements) {
+			edit.addEventListener('click', () => {
+				const index = edit.dataset.index;
+				console.log(index);
+
+				if (comments[index].isEdit) {
+					comments[index].isEdit = false;
+					comments[index].text = commentEditText.value;
+				} else {
+					comments[index].isEdit = true;
+				}
+				renderComments();
+			});
+		}
+	}
+
+	fetchAndRendetTasks();
 	renderComments();
 
 	const likesElements = document.querySelectorAll('.likes');
 
-	initEventListeners();
-
-	renderComments();
 
 	btnElement.addEventListener('click', () => {
+		addFormElement.classList.add('form-none');
 		nameInputElement.classList.remove('error');
 		nameTextAreaElement.classList.remove('error');
+
 		if (nameInputElement.value === '') {
 			nameInputElement.classList.add('error');
 			return;
@@ -192,62 +177,47 @@
 			return;
 		}
 
-		fetch("https://wedev-api.sky.pro/api/v1/elnur-kakhramanov/comments", {
-			method: "POST",
-			body: JSON.stringify({
-				text: nameTextAreaElement.value.replaceAll("&", "&amp;")
-					.replaceAll("<", "&lt;")
-					.replaceAll(">", "&gt;")
-					.replaceAll('"', "&quot;")
-					.replaceAll("QUOTE_BEGIN", "<div class='quote'>")
-					.replaceAll("QUOTE_END", "</div>"),
-				name: nameInputElement.value.replaceAll("&", "&amp;")
-					.replaceAll("<", "&lt;")
-					.replaceAll(">", "&gt;")
-					.replaceAll('"', "&quot;")
-					.replaceAll("QUOTE_BEGIN", "<div class='quote'>")
-					.replaceAll("QUOTE_END", "</div>"),
-			})
-		}).then((response) => {
-			response.json().then((responseData) => {
 
-				fetch("https://wedev-api.sky.pro/api/v1/elnur-kakhramanov/comments", {
-					method: "GET"
-				}).then((response) => {
-					// Запускаем преобразовываем "сырые" данные от API в json формат
-					response.json().then((responseData) => {
-
-						const appComments = responseData.comments.map((comment) => {
-							return {
-								name: comment.author.name,
-								date: new Date(comment.date),
-								likes: comment.likes,
-								isLiked: false,
-								text: comment.text,
-							};
-						});
-						// получили данные и рендерим их в приложении
-						comments = appComments;
-
-		// comments.push({
-		// 	name: nameInputElement.value.replaceAll("<", "").replaceAll(">",""),
-		// 	date: nowDate,
-		// 	comment: nameTextAreaElement.value.replaceAll("&", "&amp;")
-		// 		.replaceAll("<", "&lt;")
-		// 		.replaceAll(">", "&gt;")
-		// 		.replaceAll('"', "&quot;").replaceAll("QUOTE_BEGIN", "<div class='quote'>").replaceAll("QUOTE_END", "</div>"),
-		// 	like: 0,
-		// 	isLiked: false,
-		// });
-		renderComments();
-	});
-				});
-			});
+		const addTodo = () => {
+			containerPreloader.textContent = 'Добавляется комментарий...';
 			
-			});
-			renderComments();
+			return fetch("https://wedev-api.sky.pro/api/v1/elnur-kakhramanov/comments", {
+				method: "POST",
+				body: JSON.stringify({
+					text: nameTextAreaElement.value.replaceAll("&", "&amp;")
+						.replaceAll("<", "&lt;")
+						.replaceAll(">", "&gt;")
+						.replaceAll('"', "&quot;")
+						.replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+						.replaceAll("QUOTE_END", "</div>"),
+					name: nameInputElement.value.replaceAll("&", "&amp;")
+						.replaceAll("<", "&lt;")
+						.replaceAll(">", "&gt;")
+						.replaceAll('"', "&quot;")
+						.replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+						.replaceAll("QUOTE_END", "</div>"),
+				})
+			})
+				.then((responseData) => {
+					return responseData;
+				})
+				.then((response) => {
+					return response.json();
+				})
+				.then((responseData) => {
+					return fetchAndRendetTasks();
+				})
+				.then((data) => {
+					containerPreloaderPost.textContent = '';
+					addFormElement.classList.remove('form-none');
+				})
+		}
+			
+		addTodo();
+		renderComments();
 		nameInputElement.value = '';
 		nameTextAreaElement.value = '';
+	
 	});
   </script>
 </html>
