@@ -122,7 +122,7 @@
     for (const saveChangeCommentBotton of saveChangeCommentBottons) {
       saveChangeCommentBotton.addEventListener('click', () => {
         console.log('qqq');
-        const comment = comments[saveChangeCommentBotton.dataset.index];
+        let comment = comments[saveChangeCommentBotton.dataset.index];
         comment.changeButton = false;
         const saveFormText = saveChangeCommentBotton
           .closest(".comment")
@@ -399,7 +399,7 @@
             return Promise.reject(new Error("Не верный пользовательский ввод"));
           } else {
             // validation();
-            // alert("Кажется, что-то пошло не так, попробуй позже");
+            alert("Кажется, что-то пошло не так, попробуй позже");
             return Promise.reject(new Error("Сервер упал"));
           }
         })
@@ -440,6 +440,8 @@
     comments.pop();
     renderComment();
   });
+
+
 
 </script>
 
