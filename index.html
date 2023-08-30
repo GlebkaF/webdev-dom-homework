@@ -310,54 +310,22 @@
 
   const addNewComment = () => {
 
-    //  const r = () => {
-    //   const sending = document.querySelectorAll('.sending');
-    // sending.style.display = sending.style.display === 'none' ? 'block' : 'none';
-    //  } 
-
-    //  r();
-
-    // addFormButtonElement.isLoading  =  ;
-
-    // const sending = () => {
-    //   return 
-    //   `${comment.isLoading ? `<div class="add-form" id="add-form">
-    //         <input
-    //           id="add-form-name"
-    //           type="text"
-    //           class="add-form-name"
-    //           placeholder="Введите ваше имя"
-    //         />
-    //         <!-- <textarea id="quote"></textarea> -->
-    //         <textarea
-    //           id="add-form-text"
-    //           type="textarea"
-    //           class="add-form-text "
-    //           placeholder="Введите ваш коментарий"
-    //           rows="4"
-    //         ></textarea>
-    //         <div class="add-form-row">
-    //           <button class="add-form-button" id="add-form-button" >Написать</button>
-    //         </div>
-    //       </div>` :`<div class="sending">Комментарий добавляется</div>`
-    // }`
-    // addFormButtonElement.isLoading != addFormButtonElement.isLoading };
 
     textInputElement.classList.remove("emptyTextName");
     nameInputElement.classList.remove("emptyTextName");
 
 
-    if (nameInputElement.value === "" && textInputElement.value === "") {
-      textInputElement.classList.add("emptyTextName");
-      nameInputElement.classList.add("emptyTextName");
-      return;
-    } else if (textInputElement.value === "") {
-      textInputElement.classList.add("emptyTextName");
-      return;
-    } else if (nameInputElement.value === "") {
-      nameInputElement.classList.add("emptyTextName");
-      return;
-    };
+    // if (nameInputElement.value === "" && textInputElement.value === "") {
+    //   textInputElement.classList.add("emptyTextName");
+    //   nameInputElement.classList.add("emptyTextName");
+    //   return;
+    // } else if (textInputElement.value === "") {
+    //   textInputElement.classList.add("emptyTextName");
+    //   return;
+    // } else if (nameInputElement.value === "") {
+    //   nameInputElement.classList.add("emptyTextName");
+    //   return;
+    // };
     const validation = () => {
       if (nameInputElement.value.length < 3) {
         nameInputElement.classList.add("emptyTextName");
@@ -371,6 +339,13 @@
     form.disabled = true;
     form.classList.add('none');
     loadingForm.textContent = 'Комментарий добавляется...';
+
+    // if (!navigator.onLine) {
+    //   alert("Отсутствует подключение к интернету");
+    //   loadingForm.textContent = '';
+    //   form.classList.remove('none');
+    //   return;
+    // }
 
     const post = (text) => {
       fetch("https://wedev-api.sky.pro/api/v1/skorik-marina/comments", {
@@ -397,11 +372,15 @@
             validation();
             alert('Имя и текст должны быть длиннее 3-х символов!');
             return Promise.reject(new Error("Не верный пользовательский ввод"));
-          } else {
+          } else if (response.status === 500) {
             // validation();
-            alert("Кажется, что-то пошло не так, попробуй позже");
+            // alert("Кажется, что-то пошло не так, попробуй позже");
             return Promise.reject(new Error("Сервер упал"));
           }
+          // } else  {
+          //   alert("Кажется, что-то пошло не так, попробуй позже");
+          //   return Promise.reject(new Error("Нет связи с интернетом"));
+          // }
         })
         .then((responseData) => {
           return fetchGet();
@@ -416,6 +395,10 @@
             // Пробуем снова, если сервер сломался
             post(text);
           };
+          if (window.navigator.onLine === false) {
+            alert('Проблемы с интернетом, проверьте подключение')
+          };
+
           console.warn(error);
           loadingForm.textContent = '';
           form.classList.remove('none');
@@ -425,6 +408,10 @@
     post();
 
     renderComment();
+    // window.addEventListener('offline', function (e) {
+    //   alert("Отсутствует подключение к интернету");
+    // });
+
   }
 
 
