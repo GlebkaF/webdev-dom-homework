@@ -60,12 +60,71 @@
           <button class="add-form-button">Написать</button>
         </div>
       </div>
+      <button class="delete-comment-button">Удалить последний комментарий</button>
     </div>
   </body>
 
   <script>
     "use strict";
-    // Код писать здесь
+    // Создаём переменные обращаясь к классу
+    const commentsElement = document.querySelector('.comments');
+    const nameInputElement = document.querySelector('.add-form-name');
+    const commentInputElement = document.querySelector('.add-form-text');
+    const buttonInputElement = document.querySelector('.add-form-button');
+    const formInputElement = document.querySelector('.add-form')
+
+
+    // Enter на поле комментария означает клик на кнопку
+    commentInputElement.addEventListener("keyup", function(event) {
+      event.preventDefault();
+    if (event.keyCode === 13) {
+        buttonInputElement.click();
+    }
+    });
+
+    // Функция после клика на кнопку "Написать"
+    buttonInputElement.addEventListener("click", () => {
+
+      //Проверка на пустые значения
+      formInputElement.classList.remove("add-form-error");
+      if (nameInputElement.value.trim() === '' || commentInputElement.value.trim() === '') {
+        formInputElement.classList.add("add-form-error");
+        return;
+      }
+
+      const oldComments = commentsElement.innerHTML; // Получили HTML списка с комментариями
+      let date = new Date(); // Получили дату
+
+      //Добавляем новый комментарий
+      commentsElement.innerHTML = oldComments +
+      `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${date.getDate()}.${date.getMonth()}.${date.getFullYear() - 2000} ${date.getHours()}:${date.getMinutes()}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${commentInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+            
+      //Очищаем форму от последнего комментария
+      nameInputElement.value = '';
+      commentInputElement.value = '';
+    });
+    
+    // Функция после клика на кнопку "Удалить"
+    document.querySelector('.delete-comment-button').addEventListener("click", () => {
+      let lastList = document.querySelector('li:last-child');
+      lastList.remove();
+    });
     console.log("It works!");
   </script>
 </html>
