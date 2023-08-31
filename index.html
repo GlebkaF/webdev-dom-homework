@@ -115,7 +115,7 @@
 			return `<li class="comment" data-index='${index}'>
 						<div class="comment-header">
 							<div>${comment.name}</div>
-							<div>${comment.date}</div>
+							<div>${comment.date.toLocaleDateString()} ${comment.date.toLocaleTimeString()}</div>
 						</div>
 						<div class="comment-body">
 						${comment.isEdit ? `<textarea class='add-form-text comment-edit-text'>${comment.text}</textarea>` : `<div class="comment-text" style="white-space:pre-line">
