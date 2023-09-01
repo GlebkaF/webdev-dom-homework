@@ -37,7 +37,6 @@
   </div>
 
   <script>
-    "use strict";
     const addCommentButton = document.getElementById("add-comment-button");
     const nameInput = document.getElementById("name-input");
     const commentInput = document.getElementById("comment-input");
@@ -110,18 +109,6 @@
     }
 
     addCommentButton.addEventListener("click", addComment);
-
-    commentInput.addEventListener("keyup", (event) => {
-      if (event.key === "NumpadEnter") {
-        addComment();
-      }
-    });
-
-    nameInput.addEventListener("keyup", (event) => {
-      if (event.key === "NumpadEnter") {
-        addComment();
-      }
-    });
 
     deleteCommentButton.addEventListener("click", () => {
       const lastComment = commentsList.lastElementChild;
