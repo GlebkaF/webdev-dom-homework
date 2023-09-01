@@ -67,5 +67,105 @@
     "use strict";
     // Код писать здесь
     console.log("It works!");
-  </script>
+    const commentNameInput = document.querySelector (".add-form-name");
+    const commentTextInput = document.querySelector (".add-form-text");
+    const addButton = document.querySelector (".add-form-button");
+    const commentsBox = document.querySelector (".comments");
+    const newDate = new Date().toLocaleString().slice(0, -3);
+    
+    fetch("https://wedev-api.sky.pro/api/v1/anastasija-pelyak/comments", {
+      method: "GET"
+      }).then((response) => {
+        response.json().then((responseData) => {
+    
+      const appComments = responseData.comments.map((comment) => {
+      return {
+          name: comment.author.name,
+          date: new Date(comment.date),
+          likes: comment.likes,
+          isLiked: false,
+          text: comment.text,
+          };
+      });
+      comments = appComments;
+        renderComments();
+        });
+    });
+    
+    
+    
+    const comments = [
+      {
+        name: 'Глеб Фокин',
+        date: '12.02.22 12:18',
+        comment: 'Это будет первый комментарий на этой странице',
+        likesCount: 3,
+        isLiked: false,
+      },
+      {
+        name: 'Варвара Н.',
+        date: '13.02.22 19:22',
+        comment: 'Мне нравится как оформлена эта страница! ❤',
+        likesCount: 75,
+        isLiked: true,
+      },
+    
+    ]
+    const initEventListeners = () => {
+      const buttonElements = document.querySelectorAll('.like-button');
+    
+      for (const buttonElement of buttonElements) {
+        buttonElement.addEventListener('click', () => {
+          // индекс = номер обьекта в массиве, получаем из дата атрибута кнопки на которую нажимаем
+          const index = buttonElement.dataset.index;
+          // обращаемся к свойству isLaked обьекта массива, кот мы получили из массива comments по индексу
+          if (comments[index].isLiked) {
+            comments[index].isLiked = false;
+            comments[index].likesCount--;
+          } else {
+            comments[index].isLiked = true;
+            comments[index].likesCount++;
+          }
+    
+          renderComments();
+        });
+      }
+    };
+    
+    
+    
+    addButton.addEventListener ('click', () => {
+      //alert (commentNameInput.value, commentTextInput.value)
+      commentNameInput.classList.remove("error");
+    
+      if (commentNameInput.value === "") {
+        commentNameInput.classList.add("error");
+        return;
+      }
+      if (commentTextInput.value === "") {
+        commentTextInput.classList.add("error");
+        return;
+      }
+      commentsBox.innerHTML += `<li class="comment">
+      <div class="comment-header">
+        <div>${commentNameInput.value}</div>
+        <div>${newDate}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">
+          ${commentTextInput.value}
+        </div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">0</span>
+          <button class="like-button"></button>
+        </div>
+      </div>
+    </li>`;
+    commentNameInput.value = "";
+    commentTextInput.value = "";
+    
+    })
+    </script>
 </html>
