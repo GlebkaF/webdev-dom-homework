@@ -1,6 +1,6 @@
-"use strict";
+import { postComments } from "./api.js";
+import { getComments } from "./api.js";
 
-import { postComments } from "./api";
 
 //        ОБЪЯВЛЕНИЕ ВСЕХ CONST
 const buttonAddElement = document.getElementById("add-comment");
