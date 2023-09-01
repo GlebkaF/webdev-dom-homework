@@ -81,16 +81,14 @@
   <script>
     "use strict";
 
-    const zero = (n) => (n < 10 ? `0${n}` : n);
-
-    const commentsElement = document.getElementById("comments");
+    const addFormElement = document.getElementById("add-form-name");
     const buttonElement = document.getElementById("add-form-button");
-    const nameElement = document.getElementById("add-form-name");
-    const textElement = document.getElementById("add-form-text");
-    const form = document.getElementById("add-form");
+    const addFormTextElement = document.getElementById("add-form-text");
+    const listElement = document.getElementById("comments");
+    const formAddElement = document.getElementById("add-form");
+    const addNewComment = document.getElementById("add-form-row");
 
-  
-    const commentsData = [
+    let comments = [
       {
         name: "Глеб Фокин",
         date: "12.02.22 12:18",
@@ -107,103 +105,151 @@
       },
     ];
 
-  
-    function renderComments() {
-      commentsElement.innerHTML = "";
-      commentsData.forEach((comment, index) => {
-        const newCommentElement = document.createElement("li");
-        newCommentElement.className = "comment";
+    const plusZero = (str) => {
+      return str < 10 ? `0${str}` : str;
+    };
 
-      
-        const likeButtonClass = comment.liked ? "like-button -active-like" : "like-button";
+    const now = (currentDate) => {
+      let date = plusZero(currentDate.getDate());
+      let month = plusZero(currentDate.getMonth() + 1);
+      let hours = plusZero(currentDate.getHours());
+      let mins = plusZero(currentDate.getMinutes());
+      return `${date}.${month}.${currentDate.getFullYear() % 100} ${hours}:${mins}`;
+    };
 
-        newCommentElement.innerHTML = `
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/ford-ekaterina/comments", {
+      method: "GET"
+    });
+
+    // подписываемся на успешное завершение запроса с помощью then
+    fetchPromise.then((response) => {
+      // Запускаем преобразовываем "сырые" данные от API в json формат
+      const jsonPromise = response.json();
+
+      // Подписываемся на результат преобразования
+      jsonPromise.then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: now(new Date(comment.date)),
+            text: comment.text,
+            likes: 0,
+            activeLike: false,
+            isLoading: false,
+          };
+        });
+
+        comments = appComments;
+        renderComents();
+      });
+    });
+
+    const initEventListeners = () => {
+      const likesButton = document.querySelectorAll(".like-button");
+      for (const likeButton of likesButton) {
+        likeButton.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const comment = comments[likeButton.dataset.index];
+          comment.myLike ? --comment.likes : ++comment.likes;
+          comment.myLike = !comment.myLike;
+          renderComents();
+        });
+      }
+    };
+
+    const replyToComment = () => {
+      const commentsBody = document.querySelectorAll(".comment");
+      for (const commentBody of commentsBody) {
+        commentBody.addEventListener('click', () => {
+          const oldComment = commentBody.dataset.text;
+          const oldName = commentBody.dataset.name;
+          addFormTextElement.value += `${oldComment}\n${oldName}:\n `;
+          document.querySelector(".add-form-text").focus();
+        })
+      }
+    };
+
+    const renderComents = () => {
+      const commentsHTML = comments.map((comment, index) => {
+        return `<ul class="comments">
+        <li class="comment" id="comment" data-text="${comment.text}" data-name="${comment.name}">
           <div class="comment-header">
-            <div>${comment.name.replaceAll("<", "&lt;").replaceAll(">", "&gt;")}</div>
-            <div>${comment.date.replaceAll("<", "&lt;").replaceAll(">", "&gt;")}</div>
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${comment.text.replaceAll("<", "&lt;").replaceAll(">", "&gt;")}
+            ${comment.text}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${comment.likes}</span>
-              <button class="${likeButtonClass}" data-index="${index}"></button>
+              <button data-index="${index}" class="${comment.myLike ? 'like-button -active-like' : 'like-button'}"></button>
             </div>
           </div>
-        `;
-
-        newCommentElement.addEventListener("click", (event) => {
-          if (!event.target.classList.contains("like-button")) {
-      nameElement.value = comment.name;
-      textElement.value = `@${comment.name}\n${textElement.value}`;
-      textElement.focus();
-          }
-    });
-
-        commentsElement.appendChild(newCommentElement);
-      });
-    }
+          </li>
+          </ul>`;
+      })
+        .join("");
+      listElement.innerHTML = commentsHTML;
+      initEventListeners();
+      replyToComment();
+    };
 
     buttonElement.addEventListener("click", () => {
-      nameElement.classList.remove("error");
-      textElement.classList.remove("error");
-
-      if (nameElement.value.trim() === "") {
-        nameElement.classList.add("error");
+      addFormElement.classList.remove("error");
+      if (addFormElement.value === "") {
+        addFormElement.classList.add("error");
+        return;
+      }
+      addFormTextElement.classList.remove("error");
+      if (addFormTextElement.value === "") {
+        addFormTextElement.classList.add("error");
         return;
       }
 
-      if (textElement.value.trim() === "") {
-        textElement.classList.add("error");
-        return;
-      }
+      renderComents();
+      buttonElement.disabled = true;
+      buttonElement.formContent = "Элемент дбавляется ...";
+      fetch("https://wedev-api.sky.pro/api/v1/ford-ekaterina/comments", {
+        method: "POST",
+        body: JSON.stringify({
+          name: addFormElement.value,
+          text: addFormTextElement.value,
+        })
+      }).then((response) => {
+        response.json().then((responseData) => {
+          fetch("https://wedev-api.sky.pro/api/v1/ford-ekaterina/comments", {
+            method: "GET"
+          }).then((response) => {
+            response.json().then((responseData) => {
+              const appComments = responseData.comments.map((comment) => {
+                return {
+                  name: comment.author.name,
+                  date: now(new Date(comment.date)),
+                  text: comment.text,
+                  likes: 0,
+                  activeLike: false,
+                  isLoading: false,
+                };
+              });
 
-      const currentDate = new Date();
-      const formattedDate = `${zero(currentDate.getDate())}.${zero(
-        currentDate.getMonth() + 1
-      )}.${currentDate.getFullYear()} ${zero(currentDate.getHours())}:${zero(
-        currentDate.getMinutes()
-      )}`;
+              comments = appComments;
+              renderComents();
+              buttonElement.disabled = false;
+              buttonElement.formContent = "Написать";
+            });
+          });
+        });
+      });
 
-      const newComment = {
-        name: nameElement.value,
-        text: textElement.value,
-        date: formattedDate,
-        likes: 0,
-        liked: false,
-      };
-
-      commentsData.push(newComment);
-
-      renderComments();
-
-      nameElement.value = "";
-      textElement.value = "";
+      renderComents();
+      addFormElement.value = "";
+      addFormTextElement.value = "";
     });
 
-  
-    commentsElement.addEventListener("click", (event) => {
-      if (event.target.classList.contains("like-button")) {
-        const commentIndex = event.target.getAttribute("data-index");
-        const comment = commentsData[commentIndex];
-
-        const newLikedState = !comment.liked;
-
-        comment.likes += newLikedState ? 1 : -1;
-        comment.liked = newLikedState;
-
-        const likeButton = event.target;
-        const likesCounter = likeButton.parentElement.querySelector(".likes-counter");
-
-        likeButton.classList.toggle("-active-like", newLikedState);
-        likesCounter.textContent = comment.likes;
-      }
-    });
-
-    renderComments();
+    console.log("It works!");
   </script>
 </body>
 </html>
