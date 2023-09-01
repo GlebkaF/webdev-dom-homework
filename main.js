@@ -1,4 +1,7 @@
 "use strict";
+
+import { postComments } from "./api";
+
 //        ОБЪЯВЛЕНИЕ ВСЕХ CONST
 const buttonAddElement = document.getElementById("add-comment");
 const listElement = document.getElementById("list");
@@ -20,33 +23,26 @@ const nowDate = myDate + ' ' + new Date().toLocaleTimeString().slice(0, -3);
 //      GET
 
 const fetchAndRenderComments = () => {
-  return fetch("https://wedev-api.sky.pro/api/v1/lana-olhowko/comments", {
-    method: "GET",
-  })
-    .then((response) => {
-      // containerPreloader.textContent = '';
-      response.json();
-    })
-    .then((responseData) => {
+    getComments().then((responseData) => {
 
-      const appComments = responseData.comments.map((comment) => {
-        return {
-          name: comment.author.name,
+        const appComments = responseData.comments.map((comment) => {
+            return {
+                name: comment.author.name,
 
-          date: new Date(comment.date),
+                date: new Date(comment.date),
 
-          text: comment.text,
-          like: comment.likes,
+                text: comment.text,
+                like: comment.likes,
 
-          isLiked: false,
-          // isEdit: false,
-          // isLoading: false,
-        };
-      });
+                isLiked: false,
+                // isEdit: false,
+                // isLoading: false,
+            };
+        });
 
-      comments = appComments;
+        comments = appComments;
 
-      renderComments();
+        renderComments();
     })
 }
 
@@ -54,11 +50,11 @@ const fetchAndRenderComments = () => {
 // Функция для имитации запросов в API
 
 function delay(interval = 300) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, interval);
-  });
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve();
+        }, interval);
+    });
 }
 
 
@@ -84,27 +80,27 @@ function delay(interval = 300) {
 
 const initLikesButtonListeners = () => {
 
-  const buttonElements = document.querySelectorAll(".like-button");
+    const buttonElements = document.querySelectorAll(".like-button");
 
-  for (const buttonElement of buttonElements) {
-    buttonElement.addEventListener("click", (event) => {
+    for (const buttonElement of buttonElements) {
+        buttonElement.addEventListener("click", (event) => {
 
-      event.stopPropagation();
+            event.stopPropagation();
 
-      // индекс номер объекта в массиве, получаем из data-атрибута кнопки на к-ую нажимаем
-      const index = buttonElement.dataset.index;
-      //обращаемся к свойству isLiked объекта, к-ый получили из массивы comments по индексу
-      if (comments[index].isLiked) {
-        comments[index].isLiked = false;
-        comments[index].like--;
-      } else {
-        comments[index].isLiked = true;
-        comments[index].like++;
-      }
+            // индекс номер объекта в массиве, получаем из data-атрибута кнопки на к-ую нажимаем
+            const index = buttonElement.dataset.index;
+            //обращаемся к свойству isLiked объекта, к-ый получили из массивы comments по индексу
+            if (comments[index].isLiked) {
+                comments[index].isLiked = false;
+                comments[index].like--;
+            } else {
+                comments[index].isLiked = true;
+                comments[index].like++;
+            }
 
-      renderComments();
-    })
-  }
+            renderComments();
+        })
+    }
 
 }
 
@@ -112,28 +108,28 @@ const initLikesButtonListeners = () => {
 //        РЕДАКТИРОВАНИЕ КОММЕНТАРИЕВ
 
 const initEditButtonListeners = () => {
-  const buttonEditElements = document.querySelectorAll(".edit-comment");
+    const buttonEditElements = document.querySelectorAll(".edit-comment");
 
-  for (const buttonEditElement of buttonEditElements) {
-    buttonEditElement.addEventListener("click", (event) => {
-      event.stopPropagation();
+    for (const buttonEditElement of buttonEditElements) {
+        buttonEditElement.addEventListener("click", (event) => {
+            event.stopPropagation();
 
-      const index = buttonEditElement.dataset.index;
-      const textarea = document.getElementById(`textarea-${index}`);
+            const index = buttonEditElement.dataset.index;
+            const textarea = document.getElementById(`textarea-${index}`);
 
 
-      if (comments[index].isEdit) {
-        comments[index].isEdit = false;
-        comments[index].text = textarea.value;
+            if (comments[index].isEdit) {
+                comments[index].isEdit = false;
+                comments[index].text = textarea.value;
 
-        renderComments()
-      } else {
-        comments[index].isEdit = true;
-      }
+                renderComments()
+            } else {
+                comments[index].isEdit = true;
+            }
 
-      renderComments();
-    })
-  }
+            renderComments();
+        })
+    }
 }
 
 //  Homework 2.11
@@ -141,31 +137,31 @@ const initEditButtonListeners = () => {
 //        Ответы на комменты
 
 const initEditCommentListeners = () => {
-  const answerElements = document.querySelectorAll(".comment");
+    const answerElements = document.querySelectorAll(".comment");
 
 
-  for (const answerElement of answerElements) {
+    for (const answerElement of answerElements) {
 
-    answerElement.addEventListener('click', () => {
+        answerElement.addEventListener('click', () => {
 
-      const index = answerElement.dataset.index;
+            const index = answerElement.dataset.index;
 
-      const text = answerElement.dataset.text;
-      const name = answerElement.dataset.name;
+            const text = answerElement.dataset.text;
+            const name = answerElement.dataset.name;
 
-      // когда нажимаю = &{comment.text} должен появляться в commentInputElement (тексте добавления комментариев)
-      // commentInputElement.value = `> ${text} \n ${name}, `;
+            // когда нажимаю = &{comment.text} должен появляться в commentInputElement (тексте добавления комментариев)
+            // commentInputElement.value = `> ${text} \n ${name}, `;
 
-      if (comments[index].isEdit === false) {
+            if (comments[index].isEdit === false) {
 
-        commentInputElement.value = `BEGIN_QUOTE ${text} ${name} QUOTE_END`;
+                commentInputElement.value = `BEGIN_QUOTE ${text} ${name} QUOTE_END`;
 
-        renderComments();
+                renderComments();
 
-      }
+            }
 
-    })
-  }
+        })
+    }
 }
 
 
@@ -176,8 +172,8 @@ const initEditCommentListeners = () => {
 let comments = [];
 
 const renderComments = () => {
-  const commentsHtml = comments.map((comment, index) => {
-    return `<li class="comment" data-text="${comment.text}" data-name="${comment.name}" data-index="${index}"">
+    const commentsHtml = comments.map((comment, index) => {
+        return `<li class="comment" data-text="${comment.text}" data-name="${comment.name}" data-index="${index}"">
       <div class="comment-header">
         <div> ${comment.name} </div>
         <div>${comment.date}</div>
@@ -197,13 +193,13 @@ const renderComments = () => {
       <button class="add-form-button edit-comment" data-index="${index}">${comment.isEdit ? 'Сохранить' : 'Редактировать'} </button>
     </div>
     </li>`
-  }).join(' ');
+    }).join(' ');
 
-  listElement.innerHTML = commentsHtml;
+    listElement.innerHTML = commentsHtml;
 
-  initLikesButtonListeners();
-  initEditButtonListeners();
-  initEditCommentListeners();
+    initLikesButtonListeners();
+    initEditButtonListeners();
+    initEditCommentListeners();
 }
 
 fetchAndRenderComments();
@@ -219,29 +215,29 @@ initEditCommentListeners();
 //        ПРОВЕРКА НА ЗАПОЛНЕНИЕ ФОРМ + НЕАКТИВНАЯ КНОПКА
 
 buttonAddElement.addEventListener('click', () => {
-  nameInputElement.classList.remove("error");
-  commentInputElement.classList.remove("error");
-  buttonAddElement.removeAttribute('disabled', 'disabled');
+    nameInputElement.classList.remove("error");
+    commentInputElement.classList.remove("error");
+    buttonAddElement.removeAttribute('disabled', 'disabled');
 
-  if (commentInputElement.value === '' || nameInputElement.value === '') {
-    buttonAddElement.setAttribute('disabled', 'disabled');
+    if (commentInputElement.value === '' || nameInputElement.value === '') {
+        buttonAddElement.setAttribute('disabled', 'disabled');
 
 
-    if (commentInputElement.value === '' && nameInputElement.value === '') {
-      commentInputElement.classList.add("error");
-      nameInputElement.classList.add("error");
-      return;
-    } if (nameInputElement.value === '') {
-      nameInputElement.classList.add("error");
-      buttonAddElement.setAttribute('disabled', '');
-      return;
-    } else {
-      commentInputElement.classList.add("error");
-      return;
+        if (commentInputElement.value === '' && nameInputElement.value === '') {
+            commentInputElement.classList.add("error");
+            nameInputElement.classList.add("error");
+            return;
+        } if (nameInputElement.value === '') {
+            nameInputElement.classList.add("error");
+            buttonAddElement.setAttribute('disabled', '');
+            return;
+        } else {
+            commentInputElement.classList.add("error");
+            return;
+        }
     }
-  }
 
-  addFormElement.classList.add('form-none');
+    addFormElement.classList.add('form-none');
 
 })
 
@@ -251,67 +247,51 @@ buttonAddElement.textContent = 'Комментарий добавляется..'
 
 
 const fetchPromise = () => {
-  // containerPreloaderPost.textContent = 'Добавляется комментарий...';
+    // containerPreloaderPost.textContent = 'Добавляется комментарий...';
 
-
-  return fetch("https://wedev-api.sky.pro/api/v1/lana-olhowko/comments", {
-    method: "POST",
-    body: JSON.stringify({
-      name: nameInputElement.value.replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
-        .replaceAll("QUOTE_END", "</div>"),
-      // date: fullDate + fullTime,
-      text: commentInputElement.value.replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
-        .replaceAll("QUOTE_END", "</div>"),
-      forceError: true,
-    }),
-  })
-    .then((response) => {
-      if (response.status === 400) {
-        throw new Error('Неверный запрос')
-      }
-      if (response.status === 500) {
-        throw new Error('Ошибка сервера')
-      }
-      if (response.status === 201) {
-        return response.json();
-      }
-
+    postComments({
+        name: nameInputElement.value,
+        text: commentInputElement.value,
     })
-    .then((responseData) => {
-      return fetchAndRenderComments();
-    })
-    .then((data) => {
-    //   containerPreloaderPost.textContent = '';
-    //   addFormElement.classList.remove('form-none');
-      nameInputElement.value = '';
-      commentInputElement.value = '';
-    })
-    .catch((error) => {
+        .then((response) => {
+            if (response.status === 400) {
+                throw new Error('Неверный запрос')
+            }
+            if (response.status === 500) {
+                throw new Error('Ошибка сервера')
+            }
+            if (response.status === 201) {
+                return response.json();
+            }
 
-      // containerPreloaderPost.textContent = '';
-      // addFormElement.classList.remove('form-none');
+        })
+        .then((responseData) => {
+            return fetchAndRenderComments();
+        })
+        .then((data) => {
+            //   containerPreloaderPost.textContent = '';
+            //   addFormElement.classList.remove('form-none');
+            nameInputElement.value = '';
+            commentInputElement.value = '';
+        })
+        .catch((error) => {
 
-      console.warn(error);
+            // containerPreloaderPost.textContent = '';
+            // addFormElement.classList.remove('form-none');
 
-      if (error.message === "Неверный запрос") {
-        alert('Короткое имя или текст комментария, минимум 3 символа');
-      }
-      if (error.message === "Ошибка сервера") {
-        alert('Сломался сервер , попробуйте позже');
-        fetchPromise();
-      }
-      if (window.navigator.onLine === false) {
-        alert('Проблемы с интернетом, проверьте подключение');
-      }
-    })
+            console.warn(error);
+
+            if (error.message === "Неверный запрос") {
+                alert('Короткое имя или текст комментария, минимум 3 символа');
+            }
+            if (error.message === "Ошибка сервера") {
+                alert('Сломался сервер , попробуйте позже');
+                fetchPromise();
+            }
+            if (window.navigator.onLine === false) {
+                alert('Проблемы с интернетом, проверьте подключение');
+            }
+        })
 }
 
 fetchPromise();
@@ -326,24 +306,24 @@ initEditButtonListeners();
 //        ДОБАВИТЬ С ПОМОЩЬЮ КЛАВИШИ ENTER + ВОЗВРАТ АКТИВНОСТИ КНОПКИ
 
 document.addEventListener("keyup", function (e) {
-  if (e.keyCode === 13) {
-    document.getElementById("add-comment").click();
-  }
+    if (e.keyCode === 13) {
+        document.getElementById("add-comment").click();
+    }
 });
 
 nameInputElement.addEventListener('input', () => {
 
-  buttonAddElement.disabled = false;
-  buttonAddElement.style.backgroundColor = '';
-  nameInputElement.classList.remove('error');
+    buttonAddElement.disabled = false;
+    buttonAddElement.style.backgroundColor = '';
+    nameInputElement.classList.remove('error');
 
 })
 
 commentInputElement.addEventListener('input', () => {
 
-  buttonAddElement.disabled = false;
-  buttonAddElement.style.backgroundColor = '';
-  commentInputElement.classList.remove('error');
+    buttonAddElement.disabled = false;
+    buttonAddElement.style.backgroundColor = '';
+    commentInputElement.classList.remove('error');
 
 })
 
@@ -351,8 +331,8 @@ commentInputElement.addEventListener('input', () => {
 
 buttonDelComment.addEventListener('click', () => {
 
-  let lastComment = listElement.lastChild;
-  lastComment.parentNode.removeChild(lastComment);
+    let lastComment = listElement.lastChild;
+    lastComment.parentNode.removeChild(lastComment);
 
 })
 
