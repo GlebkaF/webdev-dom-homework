@@ -14,6 +14,10 @@
       background-color: gray;
       pointer-events: none;
     }
+
+    .like-button.active {
+      background-color: rgb(64, 255, 0);
+    }
   </style>
 </head>
 
@@ -33,6 +37,7 @@
   </div>
 
   <script>
+    "use strict";
     const addCommentButton = document.getElementById("add-comment-button");
     const nameInput = document.getElementById("name-input");
     const commentInput = document.getElementById("comment-input");
@@ -85,17 +90,20 @@
       nameInput.value = "";
       commentInput.value = "";
       addCommentButton.classList.remove("disabled");
+
+
     }
 
     addCommentButton.addEventListener("click", addComment);
 
     commentInput.addEventListener("keyup", (event) => {
-      if (event.keyCode === 13) {
+      if (event.key === "NumpadEnter") {
         addComment();
       }
     });
+
     nameInput.addEventListener("keyup", (event) => {
-      if (event.keyCode === 13) {
+      if (event.key === "NumpadEnter") {
         addComment();
       }
     });
