@@ -16,7 +16,7 @@
     }
 
     .like-button.active {
-      background-color: rgb(64, 255, 0);
+      background-color: rgba(255, 0, 0, 0.566);
     }
   </style>
 </head>
@@ -92,7 +92,21 @@
       addCommentButton.classList.remove("disabled");
 
       const likeButtons = document.querySelectorAll(".like-button");
-      
+
+      likeButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const likesCounter = button.parentElement.querySelector(".likes-counter");
+          const currentLikes = parseInt(likesCounter.textContent, 10);
+
+          if (button.classList.contains("active")) {
+            button.classList.remove("active");
+            likesCounter.textContent = currentLikes - 1;
+          } else {
+            button.classList.add("active");
+            likesCounter.textContent = currentLikes + 1;
+          }
+        });
+      });
     }
 
     addCommentButton.addEventListener("click", addComment);
