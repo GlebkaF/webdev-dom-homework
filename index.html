@@ -70,17 +70,39 @@
   <script>
     "use strict";
     const addFormButtonElement = document.getElementById("add-form-button");
-    const addFormTextElement = document.getElementsById("add-form-text");
-    const addFormNameElement = document.getElementsById("add-form-name");
-    const addFormElement = document.getElementsByClassName("add-form");
-    const commentsList = document.getElementsById("comments");
-    const commentElement = document.getElementsById("comment");
+    const addFormTextElement = document.getElementById("add-form-text");
+    const addFormNameElement = document.getElementById("add-form-name");
+    const addFormElement = document.getElementByClassName("add-form");
+    const commentsList = document.getElementById("comments");
+    const commentElement = document.getElementById("comment");
 
     addFormButtonElement.addEventListener("click", () => {
-const allComents = commentsList.innerHTML;
-commentsList.innerHTML = allComents + commentElement.innerHTML;
-    });
-
+const name = addFormButtonElement.value.trim();
+const text = addFormTextElement.value.trim();
+const newComment = document.createElement("li");
+newComment.classList.add("comment");
+const curentDate = new Date();
+const comDate = `${curentDate.getDate()}.${curentDate.getMonth()}.${curentDate.getFullYear()}`;
+newComment.innerHTML = `<li class="comment" id="comment">
+          <div class="comment-header">
+            <div>${name}</div>
+            <div>${comDate}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">3</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+        addFormNameElement.value = "";
+        addFormTextElement.value = "";
+        });
     console.log("It works!");
   </script>
 </html>
