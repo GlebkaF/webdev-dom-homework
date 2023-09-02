@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="list" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -46,26 +46,67 @@
       </ul>
       <div class="add-form">
         <input
-          type="text"
+          type="text" id="name-input" value=""
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
-          type="textarea"
+          type="textarea" id="comm-input"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="publish-button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
 
+ 
+
   <script>
     "use strict";
     // Код писать здесь
+    const nameInputElement = document.getElementById("name-input");
+    const commInputElement = document.getElementById("comm-input");
+    const buttonElement = document.getElementById("publish-button");
+    const listElement = document.getElementById("list");
+
+    buttonElement.addEventListener("click", () => {
+      
+      nameInputElement.style.backgroundColor = "";
+     if(nameInputElement.value === "") {
+      nameInputElement.style.backgroundColor = "red";
+           return;
+     }
+    
+    
+    const oldListHtml = listElement.innerHTML;
+      listElement.innerHTML =
+        oldListHtml +
+        `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>12.02.22 12:18</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${commInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">3</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>
+        `
+
+      });
     console.log("It works!");
   </script>
+
+
 </html>
