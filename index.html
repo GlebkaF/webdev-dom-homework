@@ -77,8 +77,21 @@
     const commentsElement = document.getElementById("comments");
     const nameInputElement = document.getElementById("name-input");
     const textareaInputElement = document.getElementById("textarea-input");
-   
     
+    const commentElements = document.querySelectorAll('.comment');
+
+    const initEventListeners = () => {
+      const commentElements = document.querySelectorAll('.comment');
+    for (const commentElement of commentElements) {
+      commentElement.addEventListener("click", () => {
+        console.log(1);
+        });
+      }
+    }
+
+    initEventListeners();
+    
+
     function formatDate(date) {
     var dd = date.getDate();
     if (dd < 10) dd = '0' + dd;
@@ -104,6 +117,7 @@
       textareaInputElement.classList.add("error"); 
       return;
     }
+
 
     // дополнительно
     buttonElement.setAttribute('disabled', true);
@@ -148,6 +162,9 @@
             </div>
           </div>
         </li> `
+
+    
+        initEventListeners();
         nameInputElement.value = "";
         textareaInputElement.value = "";
     });

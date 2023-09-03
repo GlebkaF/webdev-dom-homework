@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    /*
+    <div class="like-container">
+        <button class="like-button">👍</button>
+        <span class="like-count">0</span>
+      </div>
+     */
+
+    <div class="likes">
+        <span class="likes-counter">0</span>
+        <button class="like-button -active-like"></button>
+      </div>
+</body>
+
+<script>
+
+const likeButton = document.querySelector('.like-button');
+const likesCounter = document.querySelector('.likes-counter');
+ 
+likeButton.addEventListener('click', () => {
+  // Получаем текущее значение счетчика лайков и увеличиваем на 1
+  const currentCounter = parseInt(likeCounter.textContent, 10);
+  likeCounter.textContent = currentCounter + 1;
+});
+
+
+</script>
+
+
+</html>
