@@ -27,7 +27,7 @@ const renderComments = () => {
         <div>${comment.name}</div>
         <div>${comment.date}</div>
         </div>
-        <div class="comment-body">
+        <div class="comment-body" data-body = '${comment.comment}, ${comment.name}'>
         <div class="comment-text">
             ${comment.comment}
         </div>
@@ -43,16 +43,28 @@ const renderComments = () => {
 
     listElement.innerHTML = commentsHtml;
 
+    commentAnswerElement();
     initMyLikeListeners();
 };
 
+const commentAnswerElement = () => {
+    const commentAnswers = document.querySelectorAll(".comment-body");
+
+    for (const commentAnswer of commentAnswers) {
+        commentAnswer.addEventListener("click", () => {
+            const index = commentAnswer.dataset.body;
+            textInputEl.value += `${index}`;
+        })
+    }
+}
+
+commentAnswerElement();
 
 const initMyLikeListeners = () => {
     const likeButtons = document.querySelectorAll(".like-button");
 
     for (const likeElement of likeButtons) {
-        likeElement.addEventListener("click", (like) => {
-            like.stopPropagation();
+        likeElement.addEventListener("click", () => {
             const index = comments[likeElement.dataset.index];
             index.likeCheck ? --index.likes : ++index.likes;
             index.likeCheck = !index.likeCheck;
@@ -90,9 +102,9 @@ commentElement.addEventListener("click", () => {
     };
 
     comments.push({
-        name: nameInputEl.value,
+        name: nameInputEl.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
         date: `${date}.${month}.${year} ${hour}:${minute}`,
-        comment: textInputEl.value,
+        comment: textInputEl.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
         likes: 0,
         likeCheck: false,
     });
