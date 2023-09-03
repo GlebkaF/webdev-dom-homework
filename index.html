@@ -7,6 +7,7 @@
 </head>
 <body>
   <div class="container">
+    <div class="loading-message" id="loading-message">Загрузка комментариев...</div>
     <ul class="comments" id="comments">
       <li class="comment">
         <div class="comment-header">
@@ -61,6 +62,9 @@
         <button class="add-form-button" id="add-form-button">Написать</button>
       </div>
     </div>
+    <div class="adding-comment" id="adding-comment" style="display: none;">
+      Комментарий добавляется...
+    </div>
   </div>
 
   <style>
@@ -80,13 +84,13 @@
 
   <script>
     "use strict";
-
-const addFormElement = document.getElementById("add-form-name");
+const addFormNameElement = document.getElementById("add-form-name");
 const buttonElement = document.getElementById("add-form-button");
 const addFormTextElement = document.getElementById("add-form-text");
 const listElement = document.getElementById("comments");
-const formAddElement = document.getElementById("add-form");
-const addNewComment = document.getElementById("add-form-row");
+const loadingMessage = document.getElementById("loading-message");
+const addFormElement = document.getElementById("add-form");
+const addingCommentElement = document.getElementById("adding-comment");
 
 let comments = [
   {
@@ -118,6 +122,7 @@ const now = (currentDate) => {
 };
 
 const fetchComments = () => {
+  loadingMessage.style.display = "block"; // Отображаем сообщение о загрузке
   return fetch("https://wedev-api.sky.pro/api/v1/ford-ekaterina/comments", {
     method: "GET",
   })
@@ -143,9 +148,11 @@ const fetchComments = () => {
       renderComments();
       buttonElement.disabled = false;
       buttonElement.formContent = "Написать";
+      loadingMessage.style.display = "none"; // Скрываем сообщение о загрузке после получения комментариев
     })
     .catch((error) => {
       console.error("Error fetching comments:", error);
+      loadingMessage.style.display = "none"; // Скрываем сообщение о загрузке при ошибке
     });
 };
 
@@ -204,9 +211,9 @@ const renderComments = () => {
 };
 
 buttonElement.addEventListener("click", () => {
-  addFormElement.classList.remove("error");
-  if (addFormElement.value === "") {
-    addFormElement.classList.add("error");
+  addFormNameElement.classList.remove("error");
+  if (addFormNameElement.value === "") {
+    addFormNameElement.classList.add("error");
     return;
   }
   addFormTextElement.classList.remove("error");
@@ -217,12 +224,16 @@ buttonElement.addEventListener("click", () => {
 
   renderComments();
   buttonElement.disabled = true;
-  buttonElement.formContent = "Элемент дбавляется ...";
+  buttonElement.formContent = "Элемент добавляется ...";
+
+  // Скрываем форму добавления и отображаем сообщение "Комментарий добавляется"
+  addFormElement.style.display = "none";
+  addingCommentElement.style.display = "block";
 
   fetch("https://wedev-api.sky.pro/api/v1/ford-ekaterina/comments", {
     method: "POST",
     body: JSON.stringify({
-      name: addFormElement.value,
+      name: addFormNameElement.value,
       text: addFormTextElement.value,
     }),
   })
@@ -239,8 +250,12 @@ buttonElement.addEventListener("click", () => {
     .then(() => {
       buttonElement.disabled = false;
       buttonElement.formContent = "Написать";
-      addFormElement.value = "";
+      addFormNameElement.value = "";
       addFormTextElement.value = "";
+
+      // Отображаем форму добавления и скрываем сообщение "Комментарий добавляется"
+      addFormElement.style.display = "block";
+      addingCommentElement.style.display = "none";
     })
     .catch((error) => {
       console.error("Error adding a new comment:", error);
