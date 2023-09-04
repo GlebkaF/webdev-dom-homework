@@ -14,7 +14,11 @@
       background-color: gray;
       pointer-events: none;
     }
+
+    .like-button.active {
+      background-color: rgba(255, 0, 0, 0.566);    }
   </style>
+  // я все добавил и забыл создать сперва ветку, поэтому сразу сохраняю все задание. 
 </head>
 
 <body>
@@ -85,20 +89,26 @@
       nameInput.value = "";
       commentInput.value = "";
       addCommentButton.classList.remove("disabled");
+
+      const likeButtons = document.querySelectorAll(".like-button");
+
+      likeButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const likesCounter = button.parentElement.querySelector(".likes-counter");
+          const currentLikes = parseInt(likesCounter.textContent, 10);
+
+          if (button.classList.contains("active")) {
+            button.classList.remove("active");
+            likesCounter.textContent = currentLikes - 1;
+          } else {
+            button.classList.add("active");
+            likesCounter.textContent = currentLikes + 1;
+          }
+        });
+      });
     }
 
     addCommentButton.addEventListener("click", addComment);
-
-    commentInput.addEventListener("keyup", (event) => {
-      if (event.keyCode === 13) {
-        addComment();
-      }
-    });
-    nameInput.addEventListener("keyup", (event) => {
-      if (event.keyCode === 13) {
-        addComment();
-      }
-    });
 
     deleteCommentButton.addEventListener("click", () => {
       const lastComment = commentsList.lastElementChild;
