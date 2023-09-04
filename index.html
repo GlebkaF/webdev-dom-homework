@@ -96,19 +96,20 @@ function addComment() {
   const likeButtons = document.querySelectorAll(".like-button");
 
   likeButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const likesCounter = button.parentElement.querySelector(".likes-counter");
-      const currentLikes = parseInt(likesCounter.textContent, 10);
+  button.addEventListener("click", (event) => {
+    event.stopPropagation(); 
+    const likesCounter = button.parentElement.querySelector(".likes-counter");
+    const currentLikes = parseInt(likesCounter.textContent, 10);
 
-      if (button.classList.contains("active")) {
-        button.classList.remove("active");
-        likesCounter.textContent = currentLikes - 1;
-      } else {
-        button.classList.add("active");
-        likesCounter.textContent = currentLikes + 1;
-      }
-    });
+    if (button.classList.contains("active")) {
+      button.classList.remove("active");
+      likesCounter.textContent = currentLikes - 1;
+    } else {
+      button.classList.add("active");
+      likesCounter.textContent = currentLikes + 1;
+    }
   });
+});
 }
 
 addCommentButton.addEventListener("click", addComment);
