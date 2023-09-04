@@ -12,7 +12,7 @@
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
+            <div id="d">12.02.22 12:18</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -72,22 +72,41 @@
     const commInputElement = document.getElementById("comm-input");
     const buttonElement = document.getElementById("publish-button");
     const listElement = document.getElementById("list");
+    
 
+
+
+    function formatDate(date) {
+      let day = date.getDate();
+      if(day < 10) day = '0'+ day;
+      let mon = date.getMonth() +1;
+      if(mon < 10) mon = '0'+ mon;
+      let year = date.getFullYear() % 100;
+      if(year < 10) year = '0'+ year;
+      let hour = date.getHours();
+      let min = date.getMinutes();
+      if (min < 10) min = '0' + min;
+      return day + '.' + mon + '.' + year + ' ' + hour + ':' + min;
+    }
+    let d = new Date();
+    
+   
     buttonElement.addEventListener("click", () => {
-
+      commInputElement.style.backgroundColor = "";
       nameInputElement.style.backgroundColor = "";
-     if(nameInputElement.value === "") {
+     if(commInputElement.value === "" || nameInputElement.value === "") {
+      commInputElement.style.backgroundColor = "red";
       nameInputElement.style.backgroundColor = "red";
            return;
      }
-
+     
     const oldListHtml = listElement.innerHTML;
       listElement.innerHTML =
         oldListHtml +
         `<li class="comment">
           <div class="comment-header">
             <div>${nameInputElement.value}</div>
-            <div>12.02.22 12:18</div>
+            <div>${d}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -96,7 +115,7 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">3</span>
+              <span class="likes-counter">0</span>
               <button class="like-button"></button>
             </div>
           </div>
