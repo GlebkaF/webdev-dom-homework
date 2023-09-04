@@ -88,6 +88,20 @@
     comments.push(comment);
   }
 
+  const escapeHTML = (text) => {
+    const entitiesMap = new Map([
+      ['&', '&amp;'],
+      ['<', '&lt;'],
+      ['>', '&gt;'],
+      ['"', '&quot;'],
+      ["'", '&#39;']
+    ]);
+
+    return Array.from(entitiesMap.keys()).reduce((acc, key) => {
+      return acc.replaceAll(key, entitiesMap.get(key));
+    }, text);
+  };
+
   const toggleLikeComment = (commentName) => {
     comments.forEach((comment, i) => {
       if (comment.name === commentName) {
