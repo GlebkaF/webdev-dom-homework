@@ -12,10 +12,11 @@ const likeElement = document.getElementsByClassName("like-button");
 const formBg = document.querySelector('.add-form'); 
 let textAnswerHtml = "";
 let indexOld = 0;
+const apiUrl = "https://wedev-api.sky.pro/api/v1/kekcsik/comments";
 
 const getComments = () => {
     
-fetch("https://wedev-api.sky.pro/api/v1/kekcsik/comments", { 
+fetch(apiUrl, { 
     method: "GET",})
     .then((response) => { response.json()
         .then((responseData) => {
@@ -28,11 +29,8 @@ fetch("https://wedev-api.sky.pro/api/v1/kekcsik/comments", {
                   isLiked: false, }; 
                 }); 
                 comments = appComments; 
-                 console.log(comments)
                 renderComments();
-                console.log(responseData)
                 pLoad.textContent = "";
-                console.log("sdaas");
                 btnElement.disabled = false;
                 btnElement.textContent = "Написать";
             });
@@ -104,7 +102,6 @@ const commentDel = () => {
             getDelCard(element);
             setTimeout(() => {
                 const indexElement = element.dataset.index;
-                console.log(indexElement)
                 comments.splice(indexElement, 1);
                 renderComments()
             },800)
@@ -141,7 +138,6 @@ function renderComments () {
     
     const commentatorsHtml = comments.map((commentator, index) => {
         const edit = commentator.isEdit;
-        console.log(commentator.likes);
         return `<li class="comment ${commentator.animationClass}" data-index="${index}">
         <i class='bx bx-x del ' data-index="${index}" ></i>
       <div class="comment-header" >
@@ -174,13 +170,10 @@ const clickEventEditComment = () => {
     redirectElements.forEach((redirectElement, indexEl) => {
         redirectElement.addEventListener('click', (e) => {
             e.stopPropagation();
-            console.log(redirectElement.innerHTML); 
             const index = redirectElement.dataset.index;
             const comment =  comments[index];
-            console.log(comment);
             if (comment.isEdit) {
                 const edit = document.querySelector('.add-edit');
-                console.log(edit);
                 comment.text = edit.value;
                 if (comment.text.length === 0) {
                     comments.splice(index,1);
@@ -216,7 +209,6 @@ function answerComment() {
         const index = oldComment.dataset.index;
         const comment = comments[index];
         // eventErrors(comment);
-        console.log(comment);
         inputText.value =` ${comment.text}\n${comment.name} `;
       });
     }
@@ -243,6 +235,25 @@ const clickEventAddComment = () => {
         btnErrAdd()
         return;
     }
+    if ((inputText.value.length > 0 && inputText.value.length < 3) && (inputName.value.length > 0 && inputName.value.length < 3)) {
+        alert("Имя и комментарий должны быть не короче 3 символов");
+        inputName.classList.add("error");
+        inputText.classList.add("error");
+        btnErrAdd()
+        return;
+    }
+    if (inputName.value.length > 0 && inputName.value.length < 3) {
+        alert("Имя и комментарий должны быть не короче 3 символов");
+        inputName.classList.add("error");
+        btnErrAdd();
+        return;
+    }
+    if (inputText.value.length > 0 && inputText.value.length < 3) {
+        alert("Имя и комментарий должны быть не короче 3 символов");
+        inputText.classList.add("error");
+        btnErrAdd()
+        return;
+    }
     formBg.classList.remove('comment-new-bg');
     inputText.placeholder = 'Введите ваш коментарий'
     const commentText = document.querySelectorAll('.comment-text');
@@ -261,22 +272,45 @@ const clickEventAddComment = () => {
             }
     )
     
-    fetch('https://wedev-api.sky.pro/api/v1/kekcsik/comments',
+    btnElement.disabled = true;
+    fetch(apiUrl,
     {   
       method: 'POST',
       body: JSON.stringify({
         name: inputName.value,
         text: inputText.value, 
         datе: new Date(),
+        forceError: true,
       })
-    }).then((response) => {
-      return response.json();
+    })
+    .then((response) => {
+        if (response.status === 400) {
+            throw new Error ("Network response was no ok");
+        }
+        if (response.status === 500) {
+            throw new Error ("Server Andrey");
+        }
+    return response.json();
     })
       .then((responseData) => {
         comments = responseData.comment;
         getComments();
-        btnElement.disabled = true;
+        btnElement.disabled = false;
         btnElement.textContent = "Элемент добавлятся...";
+      })
+      .catch((error) => {
+        btnElement.disabled = false;
+        error.message = "Server Andrey";
+        // console.warn(error);
+        // alert("Что-то пошло не так...");
+        if (error.message === "Server Andrey") {
+            alert("Сервер сломался, попробуй позже");
+            return;
+        }
+        if (error.message === "Network response was no ok") {
+            alert("Ваше интернет соединение плохое");
+            return;
+        }
       });
     renderComments();
     
@@ -293,5 +327,4 @@ document.addEventListener('keyup', (key) => {
 btnElement.addEventListener( 'click', () => clickEventAddComment())
 console.log("It works!");
 
-// pLoad.textContent = "Cписок загружается";
 
