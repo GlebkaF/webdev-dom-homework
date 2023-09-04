@@ -23,6 +23,10 @@
   </div>
 </body>
 <style>
+  .comment-text {
+    white-space: pre-line;
+  }
+
   .error {
     background-color: red;
   }
@@ -94,6 +98,11 @@
     renderComments(comments);
   }
 
+  const autofillForm = (name, text) => {
+    commentInput.value = `> ${text}\n${name}\n\n`;
+    commentInput.focus();
+  };
+
   const renderComments = (comments) => {
     const allComments = commentsList.querySelectorAll('.comment');
 
@@ -107,12 +116,12 @@
 
       newComment.innerHTML = `
               <div class="comment-header">
-                <div>${comment.name}</div>
+                <div>${escapeHTML(comment.name)}</div>
                 <div>${formatDate(comment.date)}</div>
               </div>
               <div class="comment-body">
                 <div class="comment-text">
-                  ${comment.description}
+                  ${escapeHTML(comment.description)}
                 </div>
               </div>
               <div class="comment-footer">
@@ -125,8 +134,13 @@
 
       commentsList.appendChild(newComment);
 
-      newComment.querySelector('.like-button').addEventListener('click', () => {
+      newComment.querySelector('.like-button').addEventListener('click', (e) => {
+        e.stopPropagation();
         toggleLikeComment(comment.name);
+      });
+
+      newComment.addEventListener('click', () => {
+        autofillForm(comment.name, comment.description);
       });
     }
   };
