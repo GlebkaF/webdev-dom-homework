@@ -9,40 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+        
       </ul>
       <div class="add-form">
         <input
@@ -72,8 +39,81 @@
     const addButton = document.querySelector (".add-form-button");
     const commentsBox = document.querySelector (".comments");
     const newDate = new Date().toLocaleString().slice(0, -3);
+       
+    let comments = [
+      /*{
+        name: 'Глеб Фокин',
+        date: '12.02.22 12:18',
+        comment: 'Это будет первый комментарий на этой странице',
+        likesCount: 3,
+        isLiked: false,
+      },
+      {
+        name: 'Варвара Н.',
+        date: '13.02.22 19:22',
+        comment: 'Мне нравится как оформлена эта страница! ❤',
+        likesCount: 75,
+        isLiked: true,
+      },
+    */
+    ]
     
-    fetch("https://wedev-api.sky.pro/api/v1/anastasija-pelyak/comments", {
+    function renderComments() {
+		const commentsListHtml = comments.map((comment, index) => {
+			console.log(comment)
+      return `
+			<li class="comment" data-name="${comment.name}" data-text="${comment.text}" data-index="${index}">
+				<div class="comment-header">
+					<div>${comment.name}</div>
+					<div>${comment.date}</div>
+				</div>
+				<div class="comment-body">
+					<div class="comment-text" style="white-space:pre-line">
+						${comment.text}
+					</div>
+				</div>
+				<div class="comment-footer">
+					<div class="likes">
+						<span class="likes-counter">${comment.likes}</span>
+						<button class="like-button ${comment.isLiked ? '-active-like' : ''}">
+						</button>
+					</div>
+				</div>
+			</li>
+			`;
+		}).join('');
+		
+
+		const commentsList = document.querySelector('.comments');
+		commentsList.innerHTML = commentsListHtml;
+		replyHandler();
+
+		const commentListItems = commentsList.querySelectorAll('.comment');
+		for (const commentListItem of commentListItems) {
+			const likeButton = commentListItem.querySelector('.like-button');
+			const commentIndex = commentListItem.dataset.index;
+			const comment = comments[commentIndex];
+
+			likeButton.addEventListener('click', (event) => {
+				event.stopPropagation();				
+
+				if (comment.isLiked) {
+					comment.isLiked = false;
+					comment.likesCount--;
+				} else {
+					comment.isLiked = true;
+					comment.likesCount++;
+				}
+
+				renderComments();
+			});
+		}
+	}
+    
+
+
+    function fetchComments () {
+      return fetch("https://wedev-api.sky.pro/api/v1/anastasija-pelyak/comments", {
       method: "GET"
       }).then((response) => {
         response.json().then((responseData) => {
@@ -91,26 +131,11 @@
         renderComments();
         });
     });
+    }
+    fetchComments()
     
     
     
-    const comments = [
-      {
-        name: 'Глеб Фокин',
-        date: '12.02.22 12:18',
-        comment: 'Это будет первый комментарий на этой странице',
-        likesCount: 3,
-        isLiked: false,
-      },
-      {
-        name: 'Варвара Н.',
-        date: '13.02.22 19:22',
-        comment: 'Мне нравится как оформлена эта страница! ❤',
-        likesCount: 75,
-        isLiked: true,
-      },
-    
-    ]
     const initEventListeners = () => {
       const buttonElements = document.querySelectorAll('.like-button');
     
