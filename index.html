@@ -141,14 +141,14 @@
         {
           method: "POST",
           body: JSON.stringify({
-            text: document.querySelector(".add-form-text").value
+            text: commentTextInput.value
               .replaceAll("&", "&amp;")
               .replaceAll("<", "&lt;")
               .replaceAll(">", "&gt;")
               .replaceAll('"', "&quot;")
               .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
               .replaceAll("QUOTE_END", "</div>"),
-              name: document.querySelector(".add-form-text").value
+              name: commentNameInput.value
               .replaceAll("&", "&amp;")
               .replaceAll("<", "&lt;")
               .replaceAll(">", "&gt;")
@@ -168,9 +168,9 @@
     
       for (const buttonElement of buttonElements) {
         buttonElement.addEventListener('click', () => {
-          // индекс = номер обьекта в массиве, получаем из дата атрибута кнопки на которую нажимаем
+          
           const index = buttonElement.dataset.index;
-          // обращаемся к свойству isLaked обьекта массива, кот мы получили из массива comments по индексу
+          
           if (comments[index].isLiked) {
             comments[index].isLiked = false;
             comments[index].likes--;
@@ -185,7 +185,7 @@
     };        
     
     addButton.addEventListener("click", () => {
-      //alert (commentNameInput.value, commentTextInput.value)
+      
       commentNameInput.classList.remove("error");
 
       if (commentNameInput.value === "") {
@@ -197,23 +197,7 @@
         return;
       }
       postComment();
-      /* commentsBox.innerHTML += `<li class="comment">
-      <div class="comment-header">
-        <div>${commentNameInput.value}</div>
-        <div>${newDate}</div>
-      </div>
-      <div class="comment-body">
-        <div class="comment-text">
-          ${commentTextInput.value}
-        </div>
-      </div>
-      <div class="comment-footer">
-        <div class="likes">
-          <span class="likes-counter">0</span>
-          <button class="like-button"></button>
-        </div>
-      </div>
-    </li>`; */
+      
       commentNameInput.value = "";
       commentTextInput.value = "";
     });
