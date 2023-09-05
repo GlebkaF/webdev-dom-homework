@@ -52,7 +52,7 @@ body {
 
   .comment-footer {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
   }
 
   .comment-body {
@@ -111,6 +111,19 @@ body {
     padding: 11px 22px;
   }
 
+  .edit-comment {
+    width: -webkit-fill-available;
+    padding: 11px 22px;
+    margin-top: 12px;
+    padding: 22px;
+    resize: none;
+    font-size: 16px;
+    font-family: Helvetica;
+    border-radius: 8px;
+    border: none;
+  }
+
+
   .add-form-text {
     margin-top: 12px;
     padding: 22px;
@@ -132,6 +145,15 @@ body {
     cursor: pointer;
   }
 
+  .edit-button, .save-comment-button {
+    font-size: 14px;
+    padding: 5px 10px;
+    background-color: #bcec30;
+    border: none;
+    border-radius: 18px;
+    cursor: pointer;
+  }
+
   .add-form-button:hover {
     opacity: 0.9;
   }
@@ -144,4 +166,8 @@ body {
     border: none;
     border-radius: 18px;
     cursor: pointer;
+  }
+
+  .display_none {
+    display: none;
   }
