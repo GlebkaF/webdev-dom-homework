@@ -8,9 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
-        
-      </ul>
+      <ul class="comments"></ul>
       <div class="add-form">
         <input
           type="text"
@@ -45,21 +43,22 @@
         name: 'Глеб Фокин',
         date: '12.02.22 12:18',
         comment: 'Это будет первый комментарий на этой странице',
-        likesCount: 3,
+        likes: 3,
         isLiked: false,
       },
       {
         name: 'Варвара Н.',
         date: '13.02.22 19:22',
         comment: 'Мне нравится как оформлена эта страница! ❤',
-        likesCount: 75,
+        likes: 75,
         isLiked: true,
       },
     */
     ]
     
     function renderComments() {
-		const commentsListHtml = comments.map((comment, index) => {
+		const commentsListHtml = comments
+    .map((comment, index) => {
 			console.log(comment)
       return `
 			<li class="comment" data-name="${comment.name}" data-text="${comment.text}" data-index="${index}">
@@ -85,7 +84,7 @@
 		
 		const commentsList = document.querySelector('.comments');
 		commentsList.innerHTML = commentsListHtml;
-		replyHandler();
+		
 
 		const commentListItems = commentsList.querySelectorAll('.comment');
 		for (const commentListItem of commentListItems) {
@@ -98,10 +97,10 @@
 
 				if (comment.isLiked) {
 					comment.isLiked = false;
-					comment.likesCount--;
+					comment.likes--;
 				} else {
 					comment.isLiked = true;
-					comment.likesCount++;
+					comment.likes++;
 				}
 
 				renderComments();
@@ -112,27 +111,58 @@
 
 
     function fetchComments () {
-      return fetch("https://wedev-api.sky.pro/api/v1/anastasija-pelyak/comments", {
-      method: "GET"
-      }).then((response) => {
+      return fetch(
+        "https://wedev-api.sky.pro/api/v1/anastasija-pelyak/comments", 
+        {
+          method: "GET"
+        }
+      ).then((response) => {
         response.json().then((responseData) => {
     
-      const appComments = responseData.comments.map((comment) => {
-      return {
-          name: comment.author.name,
-          date: new Date(comment.date),
-          likes: comment.likes,
-          isLiked: false,
-          text: comment.text,
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: new Date(comment.date),
+            likes: comment.likes,
+            isLiked: false,
+            text: comment.text,
           };
-      });
-      comments = appComments;
+        });
+        comments = appComments;
         renderComments();
         });
-    });
+      });
     }
-    fetchComments()
+    fetchComments();
     
+    function postComment() {
+      return fetch(
+        "https://wedev-api.sky.pro/api/v1/anastasija-pelyak/comments",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            text: document.querySelector(".add-form-text").value
+              .replaceAll("&", "&amp;")
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;")
+              .replaceAll('"', "&quot;")
+              .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+              .replaceAll("QUOTE_END", "</div>"),
+              name: document.querySelector(".add-form-text").value
+              .replaceAll("&", "&amp;")
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;")
+              .replaceAll('"', "&quot;")
+              .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+              .replaceAll("QUOTE_END", "</div>"),
+          }),
+        }
+        ).then((response) => {
+          response.json().then((responseData) => {
+            fetchComments();
+          });
+		    });
+    }
     
     
     const initEventListeners = () => {
@@ -145,10 +175,10 @@
           // обращаемся к свойству isLaked обьекта массива, кот мы получили из массива comments по индексу
           if (comments[index].isLiked) {
             comments[index].isLiked = false;
-            comments[index].likesCount--;
+            comments[index].likes--;
           } else {
             comments[index].isLiked = true;
-            comments[index].likesCount++;
+            comments[index].likes++;
           }
     
           renderComments();
@@ -156,10 +186,10 @@
       }
     };        
     
-    addButton.addEventListener ('click', () => {
+    addButton.addEventListener("click", () => {
       //alert (commentNameInput.value, commentTextInput.value)
       commentNameInput.classList.remove("error");
-    
+
       if (commentNameInput.value === "") {
         commentNameInput.classList.add("error");
         return;
@@ -168,7 +198,8 @@
         commentTextInput.classList.add("error");
         return;
       }
-      commentsBox.innerHTML += `<li class="comment">
+      postComment();
+      /* commentsBox.innerHTML += `<li class="comment">
       <div class="comment-header">
         <div>${commentNameInput.value}</div>
         <div>${newDate}</div>
@@ -184,9 +215,9 @@
           <button class="like-button"></button>
         </div>
       </div>
-    </li>`;
-    commentNameInput.value = "";
-    commentTextInput.value = "";    
-    })
-    </script>
+    </li>`; */
+      commentNameInput.value = "";
+      commentTextInput.value = "";
+    });
+  </script>
 </html>
