@@ -133,25 +133,32 @@
         buttonElement.disabled = true;
     }
  
-  
-
-    
 
   //Добавление комментария кнопкой "Написать"
         buttonElement.addEventListener("click", () => {
         addComment();
     })
 
-//Удаление последнего комментария
-    buttonDeleteElement.addEventListener('click', deleteLastComment)
-  
+ //Выключение кнопки
+ buttonElement.disabled = true;
+buttonElement.classList.add("inactive-button");
+
  //Проверка полей ввода на наличие введенных данных
  nameInputElement.addEventListener('input', activeButton);
  commentInputElement.addEventListener('input', activeButton);
+
+
  
     console.log("It works!");
   
   </script>
 </html>
+
+
+
+
+
+
+
 
 
