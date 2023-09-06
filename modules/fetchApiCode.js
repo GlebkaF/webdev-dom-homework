@@ -1,6 +1,7 @@
+let userName = "levchenko";
 export const methodApiGet = () => {
   return fetch(
-    "https://wedev-api.sky.pro/api/v2/levchenko-kirill/comments",
+    `https://wedev-api.sky.pro/api/v2/${userName}/comments`,
     {
       method: "GET",
     }
@@ -11,7 +12,7 @@ export const methodApiGet = () => {
 
 export const methodApiPost = (nameInput, commitInput) => {
   return fetch(
-    "https://wedev-api.sky.pro/api/v2/levchenko-kirill/comments",
+    `https://wedev-api.sky.pro/api/v2/${userName}/comments`,
     {
       method: "POST",
       body: JSON.stringify({

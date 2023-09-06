@@ -13,14 +13,12 @@ import {
 } from "./modules/variables.js";
 
 const btn = document.querySelector("#write-button");
-const preview = document.getElementById("preview-comments");
 
 let comments = [];
 
 let countTriesConnect = 0;
 
 preLoaderText.textContent = "Загрузка комментариев ...";
-
 
 const getFetchApi = () => {
   methodApiGet()
@@ -39,8 +37,6 @@ const getFetchApi = () => {
     })
     .then(() => {
       preLoaderText.textContent = "";
-      preview.innerHTML = `Чтобы написать комментарий, пожалуйста, 
-        <a href="./authorization.html" class="click-auth" id="buttonLetAuth">авторизуйтесь</a>`;
       preLoaderText.classList.remove("margin");
     });
 };
