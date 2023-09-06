@@ -1,6 +1,14 @@
+const host = "https://wedev-api.sky.pro/api/v2/lana-olhowko/comments";
+const userURL = "https://wedev-api.sky.pro/api/user";
+
+export let token;
+
 export function getComments() {
-  return fetch("https://wedev-api.sky.pro/api/v1/lana-olhowko/comments",   {
+  return fetch(host, {
     method: "GET",
+    headers: {
+      Auto
+    }
   })
     .then((response) => {
       // containerPreloader.textContent = '';
@@ -10,9 +18,12 @@ export function getComments() {
 
 
 export function postComments({ name, text }) {
-  return fetch("https://wedev-api.sky.pro/api/v1/lana-olhowko/comments", {
+  return fetch(host, {
     method: "POST",
-    body: JSON.stringify({
+    headers: {
+      Authorization: token,
+    }
+      body: JSON.stringify({
       name: name.replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
@@ -39,5 +50,19 @@ export function postComments({ name, text }) {
       if (response.status === 201) {
         return response.json();
       }
+    })
+}
+
+
+export function login({ login, password }) {
+  return fetch(userURL, {
+    method: "POST",
+    body: JSON.stringify({
+      login,
+      password,
+    }),
+  })
+    .then((response) => {
+      return response.json();
     })
 }

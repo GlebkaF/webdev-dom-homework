@@ -243,7 +243,7 @@ buttonAddElement.addEventListener('click', () => {
 
 
 buttonAddElement.disabled = true;
-buttonAddElement.textContent = 'Комментарий добавляется..';
+// buttonAddElement.textContent = 'Комментарий добавляется..';
 
 
 const fetchPromise = () => {
