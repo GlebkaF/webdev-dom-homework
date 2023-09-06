@@ -52,7 +52,7 @@ body {
 
   .comment-footer {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
   }
 
   .comment-body {
@@ -62,6 +62,7 @@ body {
 
   .comment-text {
     font-size: 32px;
+    white-space: pre-line;
   }
 
   .likes {
@@ -147,4 +148,34 @@ body {
 
   .add-form-error {
     background: radial-gradient( 75.42% 75.42% at 50% 42.37%, rgba(53, 53, 53, 0) 22.92%, #e31251 100% );
+  }
+
+  .edit-button {
+    border: none;
+    background-color: transparent;
+    color: white;
+  }
+
+  .save-edit-button{
+    border: none;
+    background-color: transparent;
+    color: white;
+  }
+
+  .hide-elem {
+    display: none;
+  }
+
+  .comment-edit-text {
+    background-color: white;
+    opacity: .3;
+    color: black;
+    resize: none;
+    width: calc(100% - 48px);
+    margin-top: 12px;
+    padding: 22px;
+    font-size: 20px;
+    font-family: Helvetica;
+    border-radius: 8px;
+    border: 5px wheat;
   }
