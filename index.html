@@ -111,12 +111,14 @@
 
 
     function fetchComments () {
+      document.querySelector('.comments').textContent = 'Комментарии загружаются';
       return fetch(
         "https://wedev-api.sky.pro/api/v1/anastasija-pelyak/comments", 
         {
           method: "GET"
         }
-      ).then((response) => {
+      ).then((response) => {        
+        console.log (document.querySelector('.comments'));
         response.json().then((responseData) => {
     
         const appComments = responseData.comments.map((comment) => {
@@ -197,6 +199,11 @@
         return;
       }
       postComment();
+
+      addButton.disabled = true;
+      addButton.textContent = 'Комментарий добавляется';
+
+
       
       commentNameInput.value = "";
       commentTextInput.value = "";
