@@ -38,7 +38,9 @@ body {
   }
 
   .comment,
-  .add-form {
+  .add-form,
+  .authorization-form,
+  .registration-form {
     width: 596px;
     box-sizing: border-box;
     background: radial-gradient(
@@ -114,7 +116,9 @@ body {
   }
 
 
-  .add-form {
+  .add-form,
+  .authorization-form,
+  .registration-form {
     padding: 20px;
     margin-top: 48px;
     display: flex;
@@ -122,7 +126,13 @@ body {
   }
 
   .add-form-name,
-  .add-form-text {
+  .add-form-text,
+  .authorization-form-login,
+  .authorization-form-password,
+  .authorization-form-name,
+  .registration-form-login,
+  .registration-form-password,
+  .registration-form-name {
     font-size: 16px;
     font-family: Helvetica;
     border-radius: 8px;
@@ -134,18 +144,28 @@ body {
     padding: 11px 22px;
   }
 
-  .add-form-text {
+  .add-form-text,
+  .authorization-form-login,
+  .authorization-form-password,
+  .authorization-form-name,
+  .registration-form-login,
+  .registration-form-password,
+  .registration-form-name {
     margin-top: 12px;
     padding: 22px;
     resize: none;
   }
 
-  .add-form-row {
+  .add-form-row,
+  .authorization-form-row,
+  .registration-form-row {
     display: flex;
     justify-content: flex-end;
   }
 
-  .add-form-button {
+  .add-form-button,
+  .authorization-form-button,
+  .registration-form-button {
     margin-top: 24px;
     font-size: 24px;
     padding: 10px 20px;
@@ -213,9 +233,42 @@ body {
     display: none;
   }
 
-  .none {
+  .none
+  /* .form, */
+  /* .authorization, */
+  /* .registration, */
+  {
     display: none;
   }
 
+  .authorization-form-row,
+  .registration-form-row{
+    display: flex;
+    flex-direction: column;
+  }
+
+  .authorization-form-button2,
+  .registration-form-button2{
+    background-color: transparent;
+    border: none;
+    color: #ffffff;
+    text-decoration: underline;
+    padding-top: 20px;
+    font-size: 20px;
+  }
+
+  .authorization-form-title,
+  .registration-form-title{
+    font-weight: 900;
+  }
+
+  .go-authorization-button{
+    background-color: transparent;
+    border: none;
+    color: #ffffff;
+    text-decoration: underline;
+    font-size: 20px;
+    padding-top: 20px;
+  }
 
 

@@ -7,10 +7,10 @@ import { renderComments } from './render.js';
 const loading = document.getElementById("loading");
 const loadingForm = document.getElementById("loadingForm");
 const addFormButtonElement = document.getElementById("add-form-button");
-const nameInputElement = document.getElementById("add-form-name");
-const textInputElement = document.getElementById("add-form-text");
-const form = document.getElementById("add-form");
-const deleteCommentButton = document.getElementById("delete-comment-button");
+// const nameInputElement = document.getElementById("add-form-name");
+// const textInputElement = document.getElementById("add-form-text");
+// const form = document.getElementById("add-form");
+// const deleteCommentButton = document.getElementById("delete-comment-button");
 let quote = "";
 let currentDate = new Date();
 
@@ -21,7 +21,7 @@ let comments = [
 
 loading.textContent = "Комментарии загружаются...";
 
-const fetchGet = () => {
+ export const fetchGet = () => {
   getTodos().then((responseData) => {
     const appComments = responseData.comments.map((comment) => {
       return {
@@ -79,7 +79,7 @@ const replyToComment = () => {
   }
 };
 
-const renderAllComments = () => {
+ export const renderAllComments = () => {
   renderComments({ comments });
   clickLike();
   replyToComment();
@@ -87,102 +87,103 @@ const renderAllComments = () => {
 
 renderAllComments();
 
-addFormButtonElement.classList.add("empty");
-addFormButtonElement.disabled = true;
 
-const check = (elem) => {
-  elem.addEventListener('input', () => {
-    if (textInputElement.value === "" || nameInputElement.value === "") {
-      addFormButtonElement.classList.add("empty");
-      addFormButtonElement.disabled = true;
-    } else {
-      addFormButtonElement.classList.remove("empty");
-      addFormButtonElement.disabled = false;
-    }
-  });
-}
+// addFormButtonElement.classList.add("empty");
+// addFormButtonElement.disabled = true;
 
-check(textInputElement)
-check(nameInputElement)
+// const check = (elem) => {
+//   elem.addEventListener('input', () => {
+//     if (textInputElement.value === "" || nameInputElement.value === "") {
+//       addFormButtonElement.classList.add("empty");
+//       addFormButtonElement.disabled = true;
+//     } else {
+//       addFormButtonElement.classList.remove("empty");
+//       addFormButtonElement.disabled = false;
+//     }
+//   });
+// }
 
-
-
-nameInputElement.addEventListener('input', () => {
-  if (nameInputElement.value !== "") {
-    nameInputElement.classList.remove("emptyTextName");
-  }
-});
-
-textInputElement.addEventListener('input', () => {
-  if (textInputElement.value !== "") {
-    textInputElement.classList.remove("emptyTextName");
-  }
-});
+// check(textInputElement)
+// check(nameInputElement)
 
 
 
-const addNewComment = () => {
+// nameInputElement.addEventListener('input', () => {
+//   if (nameInputElement.value !== "") {
+//     nameInputElement.classList.remove("emptyTextName");
+//   }
+// });
+
+// textInputElement.addEventListener('input', () => {
+//   if (textInputElement.value !== "") {
+//     textInputElement.classList.remove("emptyTextName");
+//   }
+// });
 
 
-  textInputElement.classList.remove("emptyTextName");
-  nameInputElement.classList.remove("emptyTextName");
-  const validation = () => {
-    if (nameInputElement.value.length < 3) {
-      nameInputElement.classList.add("emptyTextName");
-    };
-    if (textInputElement.value.length < 3) {
-      textInputElement.classList.add("emptyTextName");
-    };
-  }
 
-  validation();
-  form.disabled = true;
-  form.classList.add('none');
-  loadingForm.textContent = 'Комментарий добавляется...';
-
-  const post = (text) => {
-    postTodo({
-      name: nameInputElement.value,
-      text: textInputElement.value
-    })
-      .then((responseData) => {
-        return fetchGet();
-      })
-      .then(() => {
-        loadingForm.textContent = '';
-        form.classList.remove('none');
-        textInputElement.value = "";
-        nameInputElement.value = "";
-      }).catch((error) => {
-        if (error.message === "Сервер упал") {
-          // Пробуем снова, если сервер сломался
-          post(text);
-        };
-        if (window.navigator.onLine === false) {
-          alert('Проблемы с интернетом, проверьте подключение')
-        };
-
-        console.warn(error);
-        loadingForm.textContent = '';
-        form.classList.remove('none');
-      });
-  }
-
-  post();
-
-  renderAllComments();
-}
+// export const addNewComment = () => {
 
 
-addFormButtonElement.addEventListener("click", addNewComment);
+//   textInputElement.classList.remove("emptyTextName");
+//   nameInputElement.classList.remove("emptyTextName");
+//   const validation = () => {
+//     if (nameInputElement.value.length < 3) {
+//       nameInputElement.classList.add("emptyTextName");
+//     };
+//     if (textInputElement.value.length < 3) {
+//       textInputElement.classList.add("emptyTextName");
+//     };
+//   }
 
-form.addEventListener("keyup", (e) => {
-  if (e.code === "Enter") addNewComment();
-});
+//   validation();
+//   form.disabled = true;
+//   form.classList.add('none');
+//   loadingForm.textContent = 'Комментарий добавляется...';
 
-deleteCommentButton.addEventListener('click', () => {
-  comments.pop();
-  renderAllComments();
-});
+//   const post = (text) => {
+//     postTodo({
+//       name: nameInputElement.value,
+//       text: textInputElement.value
+//     })
+//       .then((responseData) => {
+//         return fetchGet();
+//       })
+//       .then(() => {
+//         loadingForm.textContent = '';
+//         form.classList.remove('none');
+//         textInputElement.value = "";
+//         nameInputElement.value = "";
+//       }).catch((error) => {
+//         if (error.message === "Сервер упал") {
+//           // Пробуем снова, если сервер сломался
+//           post(text);
+//         };
+//         if (window.navigator.onLine === false) {
+//           alert('Проблемы с интернетом, проверьте подключение')
+//         };
+
+//         console.warn(error);
+//         loadingForm.textContent = '';
+//         form.classList.remove('none');
+//       });
+//   }
+
+//   post();
+
+//   renderAllComments();
+// }
+
+
+// addFormButtonElement.addEventListener("click", addNewComment);
+
+// form.addEventListener("keyup", (e) => {
+//   if (e.code === "Enter") addNewComment();
+// });
+
+// deleteCommentButton.addEventListener('click', () => {
+//   comments.pop();
+//   renderAllComments();
+// });
 
 
