@@ -1,5 +1,5 @@
-import { postComments } from "./api.js";
-import { getComments } from "./api.js";
+import { postComments, getComments } from "./api.js";
+import { renderComments } from "./renderComments.js";
 
 
 //        ОБЪЯВЛЕНИЕ ВСЕХ CONST
@@ -57,28 +57,9 @@ function delay(interval = 300) {
     });
 }
 
-
-//        АКТУАЛЬНАЯ DATA
-
-// let myDate = new Date();
-// let month = myDate.getMonth();
-
-// if (month < 10) {
-//   month = "0" + month;
-// }
-
-// let fullDate = myDate.getDate() + "." + month + "." + myDate.getFullYear() + " ";
-// let minute = myDate.getMinutes();
-
-// if (minute < 10) {
-//   minute = "0" + minute;
-// }
-
-// let fullTime = myDate.getHours() + ":" + minute;
-
 //        ОБРАБОТЧИК на LIKES,  РЕАЛИЗАЦИЯ ЛАЙКОВ
 
-const initLikesButtonListeners = () => {
+export const initLikesButtonListeners = () => {
 
     const buttonElements = document.querySelectorAll(".like-button");
 
@@ -107,7 +88,7 @@ const initLikesButtonListeners = () => {
 
 //        РЕДАКТИРОВАНИЕ КОММЕНТАРИЕВ
 
-const initEditButtonListeners = () => {
+export const initEditButtonListeners = () => {
     const buttonEditElements = document.querySelectorAll(".edit-comment");
 
     for (const buttonEditElement of buttonEditElements) {
@@ -136,7 +117,7 @@ const initEditButtonListeners = () => {
 
 //        Ответы на комменты
 
-const initEditCommentListeners = () => {
+export const initEditCommentListeners = () => {
     const answerElements = document.querySelectorAll(".comment");
 
 
@@ -171,36 +152,37 @@ const initEditCommentListeners = () => {
 
 let comments = [];
 
-const renderComments = () => {
-    const commentsHtml = comments.map((comment, index) => {
-        return `<li class="comment" data-text="${comment.text}" data-name="${comment.name}" data-index="${index}"">
-      <div class="comment-header">
-        <div> ${comment.name} </div>
-        <div>${comment.date}</div>
-      </div>
-      <div class="comment-body">
-        ${comment.isEdit ? `<textarea class="edit-text" id="textarea-${index}">${comment.text}</textarea>` : `<div class="comment-text">
-          ${comment.text}
-        </div>`}
-      </div>
-      <div class="comment-footer">
-        <div class="likes">
-          <span class="likes-counter">${comment.like}</span>
-          <button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index="${index}"></button>
-        </div>
-      </div>
-      <div class="add-form-row">
-      <button class="add-form-button edit-comment" data-index="${index}">${comment.isEdit ? 'Сохранить' : 'Редактировать'} </button>
-    </div>
-    </li>`
-    }).join(' ');
 
-    listElement.innerHTML = commentsHtml;
+// const renderComments = () => {
+//     const commentsHtml = comments.map((comment, index) => {
+//         return `<li class="comment" data-text="${comment.text}" data-name="${comment.name}" data-index="${index}"">
+//       <div class="comment-header">
+//         <div> ${comment.name} </div>
+//         <div>${comment.date}</div>
+//       </div>
+//       <div class="comment-body">
+//         ${comment.isEdit ? `<textarea class="edit-text" id="textarea-${index}">${comment.text}</textarea>` : `<div class="comment-text">
+//           ${comment.text}
+//         </div>`}
+//       </div>
+//       <div class="comment-footer">
+//         <div class="likes">
+//           <span class="likes-counter">${comment.like}</span>
+//           <button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index="${index}"></button>
+//         </div>
+//       </div>
+//       <div class="add-form-row">
+//       <button class="add-form-button edit-comment" data-index="${index}">${comment.isEdit ? 'Сохранить' : 'Редактировать'} </button>
+//     </div>
+//     </li>`
+//     }).join(' ');
 
-    initLikesButtonListeners();
-    initEditButtonListeners();
-    initEditCommentListeners();
-}
+//     listElement.innerHTML = commentsHtml;
+
+//     initLikesButtonListeners();
+//     initEditButtonListeners();
+//     initEditCommentListeners();
+// }
 
 fetchAndRenderComments();
 renderComments();
