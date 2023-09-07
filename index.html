@@ -9,40 +9,7 @@
   <body>
     <div class="container">
       <ul id="comments" class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+       <!-- Список рендерится из JS-->
       </ul>
       <div class="add-form">
         <input
@@ -77,21 +44,80 @@
     const commentsElement = document.getElementById("comments");
     const nameInputElement = document.getElementById("name-input");
     const textareaInputElement = document.getElementById("textarea-input");
+    const counterElement = document.getElementById("likes-counter");
     
     const commentElements = document.querySelectorAll('.comment');
+    
+
+    const comments = [
+      {
+        name: "Глеб",
+        date: "12.02.22 12:18",
+        text: "Это будет первый комментарий на этой странице",
+        likes: "3",
+      },
+      {
+        name: "Варвара",
+        date: "13.02.22 19:22",
+        text: "Мне нравится как оформлена эта страница! ❤",
+        likes: "75",
+      },
+    ];
+
+    const renderComments = () => {
+      const commentsHtml = comments.map((comment, index) => {
+        return  ` <li class="comment" data-likes="comment.likes">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>
+          </div>
+          <div class="comment-body">
+            
+            <div class="comment-text">
+            ${comment.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${index}</span>
+              <button data-index="${index}" class="like-button -active-like"></button>
+            </div>
+          </div>
+        </li> `
+      }).join("");
+
+      commentsElement.innerHTML = commentsHtml;
+
+      initEventListeners();
+      initLikeButtonsListeners();
+    };
+      
 
     const initEventListeners = () => {
       const commentElements = document.querySelectorAll('.comment');
     for (const commentElement of commentElements) {
       commentElement.addEventListener("click", () => {
-        console.log(1);
+        
         });
       }
     }
 
-    initEventListeners();
     
+    const initLikeButtonsListeners = () => {
+      const likeButtonsElements = document.querySelectorAll(".like-button");
+      for (const likeButtonElement of likeButtonsElements) {
+        
+        likeButtonElement.addEventListener('click', () => {
+          likeButtonElement.classList.toggle('-active-like');
+          
+          const index = likeButtonElement.dataset.index;
+          console.log(index);
+        })
+      }
+    }
+    renderComments();
 
+   
     function formatDate(date) {
     var dd = date.getDate();
     if (dd < 10) dd = '0' + dd;
@@ -122,7 +148,7 @@
     // дополнительно //
     buttonElement.setAttribute('disabled', true);
     nameInputElement.oninput = function(){
-      if (nameInputElement.value === ''){
+      if (nameInputElement.value === '' && textareaInputElement.value === ''){
         buttonElement.setAttribute('disabled', true);
         return;
       }else{
@@ -131,42 +157,21 @@
       }
     }
   
-    buttonElement.setAttribute('disabled', true);
-    textareaInputElement.oninput = function(){
-      if (textareaInputElement.value === ''){
-        buttonElement.setAttribute('disabled', true);
-        return;
-      }else{
-        buttonElement.removeAttribute('disabled');
-        return;
-      }
-    }
+    
     /////////////////////////////////////////////
 
-    const oldCommentsHTML = commentsElement.innerHTML;
-      commentsElement.innerHTML = oldCommentsHTML +
-       ` <li class="comment">${nameInputElement.value}
-          <div class="comment-header">
-            <div></div>
-            <div>${formatDate(d)} </div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${textareaInputElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li> `
+    comments.push({
+      name: nameInputElement.value,
+      text: textareaInputElement.value,
+      date: formatDate(d),
+      likes: "likes",
+    });
 
+    renderComments();
     
-        initEventListeners();
-        nameInputElement.value = "";
-        textareaInputElement.value = "";
+    
+    nameInputElement.value = "";
+    textareaInputElement.value = "";
     });
     
   </script>
