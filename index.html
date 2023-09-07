@@ -78,7 +78,6 @@
             isEdit: false
         }
     ]
-    
     //Функция определения текущей даты
     function getDate() {
         let currentDate = new Date();
@@ -93,7 +92,6 @@
         currentDate = currentDate.getDate() + "." + month + "." + String(currentDate.getFullYear()).split('').slice(2).join('') + " " + hour + ":" + minute;
         return currentDate;
     }
-    
     //Функция включения кнопки
     function activeButton() {
         if (nameInputElement.value && commentInputElement.value) {
@@ -104,7 +102,6 @@
             buttonElement.disabled = true;
         }
     }
-
 
     //Общая функция добавления комментария
     function addComment() {
@@ -150,7 +147,6 @@ buttonElement.classList.add("inactive-button");
 
  
     console.log("It works!");
-  
   </script>
 </html>
 
