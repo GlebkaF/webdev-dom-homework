@@ -47,6 +47,20 @@
     const counterElement = document.getElementById("likes-counter");
     
     const commentElements = document.querySelectorAll('.comment');
+
+    const initEventlikes = () => {
+      const likeButtons = document.querySelectorAll(".like-button");
+      const likeCount = document.querySelectorAll(".likes-counter");
+
+      likeButtons.forEach((button, index) => {
+        button.addEventListener('click', () => {
+          button.classList.toggle('-active-like');
+          const current = Number(likeCount[index].innerHTML);
+          const plus = button.classList.contains('-active-like') ? + 1 : - 1;
+          likeCount[index].innerHTML = current + plus;
+        });
+      });
+    }
     
 
     const comments = [
@@ -66,7 +80,7 @@
 
     const renderComments = () => {
       const commentsHtml = comments.map((comment, index) => {
-        return  ` <li class="comment" data-likes="comment.likes">
+        return  ` <li class="comment">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.date}</div>
@@ -79,8 +93,8 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">${index}</span>
-              <button data-index="${index}" class="like-button -active-like"></button>
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
             </div>
           </div>
         </li> `
@@ -88,8 +102,7 @@
 
       commentsElement.innerHTML = commentsHtml;
 
-      initEventListeners();
-      initLikeButtonsListeners();
+      initEventlikes();
     };
       
 
@@ -102,19 +115,9 @@
       }
     }
 
+  
     
-    const initLikeButtonsListeners = () => {
-      const likeButtonsElements = document.querySelectorAll(".like-button");
-      for (const likeButtonElement of likeButtonsElements) {
-        
-        likeButtonElement.addEventListener('click', () => {
-          likeButtonElement.classList.toggle('-active-like');
-          
-          const index = likeButtonElement.dataset.index;
-          console.log(index);
-        })
-      }
-    }
+    
     renderComments();
 
    
