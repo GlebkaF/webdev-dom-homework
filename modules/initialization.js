@@ -11,13 +11,15 @@ export const initializator = (listCom, comments, commitInput) => {
               </div>
               <div class="comment-body">
                 <div class="comment-text">
-                  <a class="scroll-commenting" href="#scroll">${comment.text}</a>
+                  <a class="scroll-commenting" href="#scroll">${
+                    comment.text
+                  }</a>
                 </div>
               </div>
               <div class="comment-footer">
                 <div class="likes">
                   <span class="likes-counter">${comment.likes}</span>
-                  <button data-index ="${index}" class="like-button ${
+                  <button data-index ="${index}" id="${comment.id}" data-token="${comment.token}" class="like-button ${
           comment.isLiked === true ? "-active-like" : ""
         }"></button>
                 </div>
@@ -39,13 +41,23 @@ export const initializator = (listCom, comments, commitInput) => {
     for (const buttonLike of buttonLikes) {
       buttonLike.addEventListener("click", (event) => {
         event.stopPropagation();
-        if (comments[buttonLike.dataset.index].isLiked === true) {
-          comments[buttonLike.dataset.index].isLiked = false;
-          comments[buttonLike.dataset.index].likes--;
-        } else if (comments[buttonLike.dataset.index].isLiked === false) {
-          comments[buttonLike.dataset.index].isLiked = true;
-          comments[buttonLike.dataset.index].likes++;
-        }
+        fetch(`https://wedev-api.sky.pro/api/v2/levchenko5/comments/${buttonLike.id}/toggle-like`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${buttonLike.dataset.token}`,
+            }
+          }).then((response) => {
+            return response.json();
+          }).then((response) => {
+            const isLikedStatus = [response.result.isLiked, response.result.likes];
+            return isLikedStatus;
+          }).then((isLikedStatus) => {
+              comments[buttonLike.dataset.index].isLiked = isLikedStatus[0];
+              comments[buttonLike.dataset.index].likes = isLikedStatus[1];
+              initializator(listCom, comments, commitInput);
+
+        })
         renderComments();
         answerToComment();
         likeButtons();
