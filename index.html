@@ -1,113 +1,196 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
-      <ul id="comment-id" class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div class="add-form">
-        <input id="name-input"
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea id="comment-input"
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button id="add-button" class="add-form-button">Написать</button>
-        </div>
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <ul id="comments" class="comments">
+
+    </ul>
+    <div class="add-form">
+      <input id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+      <textarea id="comment-input" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+        rows="4"></textarea>
+      <div class="add-form-row">
+        <button id="add-form-button" class="add-form-button">Написать</button>
       </div>
     </div>
-  </body>
+  </div>
+</body>
 <style>
   .error {
     background-color: red;
   }
 </style>
-  <script>
-    "use strict";
-    const buttonElement = document.getElementById('add-button');
-    const commentElement = document.getElementById('comment-id');
-    const nameInputElement = document.getElementById('name-input');
-    const commentInputElement = document.getElementById('comment-input');
-    const newDate = new Date();
+<script>
 
-    buttonElement.addEventListener("click", () => {
+  const buttonElement = document.getElementById('add-form-button');
+  const commentElement = document.getElementById('comments');
+  const nameInputElement = document.getElementById('name-input');
+  const commentInputElement = document.getElementById('comment-input');
+  const newDate = new Date().toLocaleDateString().slice(0, 6) + new Date().toLocaleDateString().slice(-2);
+  const myDate = newDate + ' ' + new Date().toLocaleTimeString().slice(0, -3);
+  const listElement = document.getElementById("comments");
+  const likesElements = document.querySelectorAll(".likes");
+  let comments = [];
 
-      nameInputElement.classList.remove("error");
-      commentInputElement.classList.remove("error");
+  const fetchPromise = () => fetch("https://wedev-api.sky.pro/api/v1/VasiliyZykin/comments", {
+    method: "GET"
+  }).then((response) => {
+    response.json().then((responseData) => {
+      console.log(responseData);
 
-      if (nameInputElement.value === "") {
-        nameInputElement.classList.add("error");
-        return;
-      }
-      if (commentInputElement.value === "") {
-        commentInputElement.classList.add("error");
-        return;
-      }
+      const appComments = responseData.comments.map((comment) => {
+        return {
+          id: comment.autor.id,
+          name: comment.autor.name
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;"),
+          date: myDate,
+          text: comment.text
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;"),
+          like: comment.like,
+          isLike: comment.isLike,
+        };
+      });
 
-      const oldCommentHtml = commentElement.innerHTML;
-      commentElement.innerHTML = oldCommentHtml + `<li class="comment">
-          <div class="comment-header">
-            <div> ${nameInputElement.value} </div>
-            <div> ${newDate}</div>
+
+      comments = appComments;
+      renderComments();
+    });
+  });
+
+ // const comments = [
+ //   {
+ //     name: "Глеб Фокин",
+ //     date: "12.02.22 12:18",
+ //     comment: "Это будет первый комментарий на этой странице",
+ //     like: 3,
+ //     isLiked: false,
+ //   },
+ //   {
+ //     name: "Варвара Н.",
+//      date: "13.02.22 19:22",
+ //     comment: "Мне нравится как оформлена эта страница! ❤",
+ //     like: 75,
+ //     isLiked: true,
+ //   },
+ // ];
+
+  const initEventListeners = () => {
+    const buttonElements = document.querySelectorAll(".like-button");
+    for (const buttonElement of buttonElements) {
+      buttonElement.addEventListener("click", (event) => {
+        const index = buttonElement.dataset.index;
+        if (comments[index].isLiked) {
+          comments[index].isLiked = false;
+          comments[index].like--;
+        } else {
+          comments[index].isLiked = true;
+          comments[index].like++;
+        }
+
+        event.stopPropagation();
+
+        renderComments();
+      });
+    }
+
+    const answerElements = document.querySelectorAll(".comment");
+    for (const answerElement of answerElements) {
+      answerElement.addEventListener("click", () => {
+        document.getElementById('comment-input').value = '>' + answerElement.dataset.text + ' ' + answerElement.dataset.name;
+      })
+    }
+
+  };
+
+  const renderComments = () => {
+    const commentsHtml = comments.map((comment, index) => {
+      return `<li class="comment" data-name="${comment.name}" data-text="${comment.comment}">
+            <div class="comment-header">
+           <div class="comment-name"> ${comment.name} </div>
+            <div> ${comment.date}</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
-              ${commentInputElement.value}
+            <div class="comment-text">${comment.comment}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
+              <span class="likes-counter">${comment.like}</span>
+              <button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index="${index}"></button>
             </div>
           </div>
-        </li>`;
-    })
-    console.log("It works!");
-  </script>
+                 </li>`
+    }).join('');
+
+    listElement.innerHTML = commentsHtml;
+
+    initEventListeners();
+  };
+
+
+  renderComments();
+
+
+  buttonElement.addEventListener("click", () => {
+
+    nameInputElement.classList.remove("error");
+    commentInputElement.classList.remove("error");
+
+    if (nameInputElement.value === "") {
+      nameInputElement.classList.add("error");
+      return;
+    }
+    if (commentInputElement.value === "") {
+      commentInputElement.classList.add("error");
+      return;
+    }
+
+    //comments.push({
+    //  name: nameInputElement.value.replaceAll("&", "&amp;")
+    //    .replaceAll("<", "&lt;")
+    //    .replaceAll(">", "&gt;")
+    //    .replaceAll('"', "&quot;"),
+    //  date: myDate,
+    //  comment: commentInputElement.value.replaceAll("&", "&amp;")
+    //    .replaceAll("<", "&lt;")
+    //    .replaceAll(">", "&gt;")
+    //    .replaceAll('"', "&quot;"),
+    //  like: 0,
+    //  isLike: false,
+    //});
+
+    fetch("https://wedev-api.sky.pro/api/v1/VasiliyZykin/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        name: nameInputElement.value,
+        text: commentInputElement.value,
+      }),
+    }).then(() => {
+      fetchPromise();
+      renderComments();
+    });
+
+    document.getElementById('name-input').value = '';
+    document.getElementById('comment-input').value = '';
+
+    renderComments();
+
+  });
+
+
+</script>
+
 </html>
