@@ -78,7 +78,7 @@ const btnErrAdd = () => {
 // Крестик
 const getDelCard = (element) => {
     setTimeout(() => {
-        element.classList.add('del-card');
+    element.classList.add('del-card');
     }, 300)
     element.classList.remove('del');
     element.classList.add('exet-del');
@@ -209,36 +209,19 @@ const clickEventAddComment = () => {
     inputText.classList.remove("error");// очистка
     inputName.classList.remove("error");// класса
     if (inputText.value.length === 0 && inputName.value.length === 0) {
-        inputName.classList.add("error");
-        inputText.classList.add("error");
-        btnErrAdd()
-        return;
-    }
-    if (inputName.value.length === 0) {
-        inputName.classList.add("error");
-        btnErrAdd();
-        return;
-    }
-    if (inputText.value.length === 0) {
-        inputText.classList.add("error");
-        btnErrAdd()
-        return;
-    }
-    if (inputText.value.length > 0 && inputName.value.length > 0)
-        {
         alert("Введите текст");
         inputName.classList.add("error");
         inputText.classList.add("error");
         btnErrAdd()
         return;
     }
-    if (inputName.value.length > 0) {
+    if (inputName.value.length === 0) {
         alert("Кажется ты забыл ввести Имя");
         inputName.classList.add("error");
         btnErrAdd();
         return;
     }
-    if (inputText.value.length > 0) {
+    if (inputText.value.length === 0) {
         alert("Тут нехватает текста!");
         inputText.classList.add("error");
         btnErrAdd()
@@ -260,11 +243,12 @@ const clickEventAddComment = () => {
             isAnswers: test(),
             isReduction: true
             }
-    )};
-    
+    )
+    addComment();
+    renderComments();
+} 
     const addComment = () => {
-
-    }
+   
     btnElement.disabled = true;
     fetch(apiUrl,
     {   
@@ -306,10 +290,11 @@ const clickEventAddComment = () => {
             alert("Ваше интернет соединение плохое");
             return;
         }
-      });
-    renderComments();
-    
-    comments[comments.length - 1].animationClass = "";
+      }); 
+}
+renderComments();
+
+    // comments[comments.length - 1].animationClass = "";
     document.getElementById("nameTextId").value = '';
     document.getElementById("commentTextId").value = '';
     textAnswerHtml = ""
@@ -318,6 +303,7 @@ const clickEventAddComment = () => {
         clickEventAddComment()
     }
 })
+
 btnElement.addEventListener( 'click', () => clickEventAddComment())
 console.log("It works!");
 
