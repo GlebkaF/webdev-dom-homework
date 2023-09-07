@@ -1,6 +1,6 @@
 
 // ------------------
-"use strict"
+"use strict";
 // Добавляем ДОМ элементы
 let comments = [];
 const cardElements = document.getElementById("commentsId");
@@ -12,11 +12,20 @@ const likeElement = document.getElementsByClassName("like-button");
 const formBg = document.querySelector('.add-form'); 
 let textAnswerHtml = "";
 let indexOld = 0;
+let loadVars = true;
 const apiUrl = "https://wedev-api.sky.pro/api/v1/kekcsik/comments";
-
+// Получаем список комментариев с API
 const getComments = () => {
-    
-fetch(apiUrl, { 
+    if (loadVars) {
+        document.getElementById("commentsId").innerHTML =
+        `<div class="preloader">
+        <div class="preloader__image">
+        </div>
+        </div>`;
+        document.querySelector(".add-form").style.display = "none";
+        document.querySelector(".add-form-row").style.display = "none";
+    }
+    fetch(apiUrl, { 
     method: "GET",})
     .then((response) => { response.json()
         .then((responseData) => {
@@ -28,45 +37,24 @@ fetch(apiUrl, {
                   likes: comments.likes, 
                   isLiked: false, }; 
                 }); 
-                comments = appComments; 
+                comments = appComments;
+                loadVars = false; 
                 renderComments();
                 pLoad.textContent = "";
                 btnElement.disabled = false;
                 btnElement.textContent = "Написать";
-            });
-    });
-}
+            })  .then(() => {
+                    document.querySelector(".form-loading").style.display = "none";
+                    document.querySelector(".add-form").style.display = "block";
+                    document.querySelector(".add-form-row").style.display = "block";
+                  }); 
+                
+            }) 
+    };
 getComments();
 
-// массив людей оставивших комменты
-
-    // {
-    //     name: 'Глеб Фокин',
-    //     data: '12.02.22 12:18',
-    //     text: "Это будет первый комментарий на этой странице",
-    //     likes: 3,
-    //     LikeActive: false,
-    //     isEdit: false,
-    //     isQuote: false,
-    //     animationClass: "",
-    //     isAnswers: "",
-    //     isReduction: true
-        
-    // },
-    // {
-    //     name: 'Варвара Н.',
-    //     data: '13.02.22 19:22',
-    //     text: "Мне нравится как оформлена эта страница! ❤",
-    //     likes: 75,
-    //     LikeActive: true,
-    //     isEdit: false,
-    //     isQuote: false,
-    //     animationClass: "",
-    //     isAnswers: "",
-    //     isReduction: true
-    // }
-
 // Вспомогательные функции
+// --Добавляем дату--
 const addDate = () =>{
     const date = new Date();
     let time = {
@@ -77,15 +65,17 @@ const addDate = () =>{
         year: '2-digit',
         month: 'numeric',
         day: 'numeric'
-    }
+    }// Выводим дату в нужной для нас форме и русской локализацией
     return  date.toLocaleString("ru", year) + " " + date.toLocaleString('ru', time);
 }
+// Выделение ошибки
 const btnErrAdd = () => {
     btnElement.classList.add("btn-error");
     setTimeout(() =>{
         btnElement.classList.remove("btn-error");
     },500)
 }
+// Крестик
 const getDelCard = (element) => {
     setTimeout(() => {
         element.classList.add('del-card');
@@ -93,6 +83,7 @@ const getDelCard = (element) => {
     element.classList.remove('del');
     element.classList.add('exet-del');
 }
+// Удаляем комент
 const commentDel = () => {
     const btnFormElement = document.querySelectorAll(".del");
     // console.log(btnFormElement);
@@ -135,7 +126,7 @@ const getLikeClass = (element) => {
     return element ? "like-button -active-like" : "like-button";
 }
 function renderComments () {
-    
+
     const commentatorsHtml = comments.map((commentator, index) => {
         const edit = commentator.isEdit;
         return `<li class="comment ${commentator.animationClass}" data-index="${index}">
@@ -186,11 +177,9 @@ const clickEventEditComment = () => {
         })
     })
 }
-// ${commentator.isAnswers.length !== 0 ? `<div class="c">${commentator.isAnswers}</div>`: ""}
-// ${edit ? `<textarea type="textarea" class="add-form-text add-edit" placeholder="Введите ваш коментарий" rows="4">${commentator.text}</textarea>` : `<div class="comment-text">${commentator.text}</div>`}
 
 renderComments();
-
+// Добавляем исключения
 const eventErrors = (element) => {
     return element
         .replaceAll("&", "&amp;")
@@ -217,8 +206,8 @@ function answerComment() {
       
 // Функция добавления нового комментария
 const clickEventAddComment = () => {
-    inputText.classList.remove("error");
-    inputName.classList.remove("error");
+    inputText.classList.remove("error");// очистка
+    inputName.classList.remove("error");// класса
     if (inputText.value.length === 0 && inputName.value.length === 0) {
         inputName.classList.add("error");
         inputText.classList.add("error");
@@ -235,21 +224,22 @@ const clickEventAddComment = () => {
         btnErrAdd()
         return;
     }
-    if ((inputText.value.length > 0 && inputText.value.length < 3) && (inputName.value.length > 0 && inputName.value.length < 3)) {
-        alert("Имя и комментарий должны быть не короче 3 символов");
+    if (inputText.value.length > 0 && inputName.value.length > 0)
+        {
+        alert("Введите текст");
         inputName.classList.add("error");
         inputText.classList.add("error");
         btnErrAdd()
         return;
     }
-    if (inputName.value.length > 0 && inputName.value.length < 3) {
-        alert("Имя и комментарий должны быть не короче 3 символов");
+    if (inputName.value.length > 0) {
+        alert("Кажется ты забыл ввести Имя");
         inputName.classList.add("error");
         btnErrAdd();
         return;
     }
-    if (inputText.value.length > 0 && inputText.value.length < 3) {
-        alert("Имя и комментарий должны быть не короче 3 символов");
+    if (inputText.value.length > 0) {
+        alert("Тут нехватает текста!");
         inputText.classList.add("error");
         btnErrAdd()
         return;
@@ -257,7 +247,7 @@ const clickEventAddComment = () => {
     formBg.classList.remove('comment-new-bg');
     inputText.placeholder = 'Введите ваш коментарий'
     const commentText = document.querySelectorAll('.comment-text');
-                const isAnswerTest =  commentText[indexOld].innerText === textAnswerHtml;
+    const isAnswerTest =  commentText[indexOld].innerText === textAnswerHtml;
     const test = () => isAnswerTest ? textAnswerHtml : "";
     comments.push(
         {
@@ -270,8 +260,11 @@ const clickEventAddComment = () => {
             isAnswers: test(),
             isReduction: true
             }
-    )
+    )};
     
+    const addComment = () => {
+
+    }
     btnElement.disabled = true;
     fetch(apiUrl,
     {   
@@ -280,17 +273,19 @@ const clickEventAddComment = () => {
         name: inputName.value,
         text: inputText.value, 
         datе: new Date(),
-        forceError: true,
+        forceError: false,
       })
     })
     .then((response) => {
-        if (response.status === 400) {
-            throw new Error ("Network response was no ok");
+        if (response.status === 200 || response.status === 201) {
+            return Promise.reject(200);
+        } else if (response.status === 400) {
+            return Promise.reject(400);
+        } else if (response.status === 500) {
+            return Promise.reject(500);
+        } else {
+            return Promise.reject(error);
         }
-        if (response.status === 500) {
-            throw new Error ("Server Andrey");
-        }
-    return response.json();
     })
       .then((responseData) => {
         comments = responseData.comment;
@@ -300,14 +295,14 @@ const clickEventAddComment = () => {
       })
       .catch((error) => {
         btnElement.disabled = false;
-        error.message = "Server Andrey";
+        // error.message = "Server Andrey";
         // console.warn(error);
         // alert("Что-то пошло не так...");
-        if (error.message === "Server Andrey") {
+        if (error === 500) {
             alert("Сервер сломался, попробуй позже");
             return;
         }
-        if (error.message === "Network response was no ok") {
+        if (error === 400) {
             alert("Ваше интернет соединение плохое");
             return;
         }
@@ -318,8 +313,7 @@ const clickEventAddComment = () => {
     document.getElementById("nameTextId").value = '';
     document.getElementById("commentTextId").value = '';
     textAnswerHtml = ""
-}
-document.addEventListener('keyup', (key) => {
+    document.addEventListener('keyup', (key) => {
     if(key.code === 'Enter'){
         clickEventAddComment()
     }
