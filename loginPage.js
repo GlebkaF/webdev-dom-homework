@@ -1,4 +1,4 @@
-import { login } from "./apiv2.js";
+import { login, setToken, token } from "./api.js";
 
 const buttonElement = document.getElementById("login-button");
 const loginInputElement = document.getElementById("login-input");
@@ -10,7 +10,8 @@ buttonElement.addEventListener("click", () => {
         login: loginInputElement.value,
         password: passwordInputElement.value,
     }).then((responseData) => {
-        console.log(responseData);
-        token = responseData.user.token;
+        console.log(token);
+        setToken(responseData.user.token);
+        console.log(token);
     })
 })

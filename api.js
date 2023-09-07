@@ -1,6 +1,18 @@
+const host = "https://wedev-api.sky.pro/api/v2/lana-olhowko/comments";
+const userURL = "https://wedev-api.sky.pro/api/user";
+
+export let token;
+
+export const setToken = (newToken) => {
+  token = newToken;
+}
+
 export function getComments() {
-  return fetch("https://wedev-api.sky.pro/api/v1/lana-olhowko/comments",   {
+  return fetch(host, {
     method: "GET",
+    headers: {
+      Authorization: token,
+    }
   })
     .then((response) => {
       // containerPreloader.textContent = '';
@@ -10,8 +22,11 @@ export function getComments() {
 
 
 export function postComments({ name, text }) {
-  return fetch("https://wedev-api.sky.pro/api/v1/lana-olhowko/comments", {
+  return fetch(host, {
     method: "POST",
+    headers: {
+      Authorization: token,
+    },
     body: JSON.stringify({
       name: name.replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
@@ -26,18 +41,24 @@ export function postComments({ name, text }) {
         .replaceAll('"', "&quot;")
         .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
         .replaceAll("QUOTE_END", "</div>"),
-      forceError: true,
+      forceError: false,
     }),
   })
     .then((response) => {
-      if (response.status === 400) {
-        throw new Error('Неверный запрос');
-      }
-      if (response.status === 500) {
-        throw new Error('Ошибка сервера');
-      }
-      if (response.status === 201) {
-        return response.json();
-      }
+      return response.json();
+    })
+}
+
+
+export function login({ login, password }) {
+  return fetch(userURL, {
+    method: "POST",
+    body: JSON.stringify({
+      login,
+      password,
+    }),
+  })
+    .then((response) => {
+      return response.json();
     })
 }
