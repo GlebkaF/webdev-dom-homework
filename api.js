@@ -1,6 +1,10 @@
 const host = "https://wedev-api.sky.pro/api/v2/lana-olhowko/comments";
 const userURL = "https://wedev-api.sky.pro/api/user";
 
+const containerPreloader = document.getElementById('container-preloader');
+
+containerPreloader.textContent = 'Пожалуйста подождите, загружаю комментарии...';
+
 export let token;
 
 export const setToken = (newToken) => {
@@ -15,7 +19,7 @@ export function getComments() {
     }
   })
     .then((response) => {
-      // containerPreloader.textContent = '';
+      containerPreloader.textContent = '';
       return response.json();
     });
 }

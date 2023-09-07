@@ -14,11 +14,11 @@ const addFormElement = document.querySelector('.add-form');
 const myDate = new Date().toLocaleDateString().slice(0, 6) + new Date().toLocaleDateString().slice(-2);
 const nowDate = myDate + ' ' + new Date().toLocaleTimeString().slice(0, -3);
 
-// const containerPreloader = document.getElementById('container-preloader');
-// const containerPreloaderPost = document.getElementById('container-preloader-post');
+const containerPreloader = document.getElementById('container-preloader');
+const containerPreloaderPost = document.getElementById('container-preloader-post');
 
 
-// containerPreloader.textContent = 'Пожалуйста подождите, загружаю комментарии...';
+containerPreloader.textContent = 'Пожалуйста подождите, загружаю комментарии...';
 
 //      GET
 
@@ -42,7 +42,7 @@ const fetchAndRenderComments = () => {
 
         comments = appComments;
 
-        renderComments();
+        renderComments({ comments, fetchAndRenderComments });
     })
 }
 
@@ -79,7 +79,7 @@ export const initLikesButtonListeners = () => {
                 comments[index].like++;
             }
 
-            renderComments();
+            renderComments({ comments, fetchAndRenderComments });
         })
     }
 
@@ -103,12 +103,12 @@ export const initEditButtonListeners = () => {
                 comments[index].isEdit = false;
                 comments[index].text = textarea.value;
 
-                renderComments()
+                renderComments({ comments, fetchAndRenderComments })
             } else {
                 comments[index].isEdit = true;
             }
 
-            renderComments();
+            renderComments({ comments, fetchAndRenderComments });
         })
     }
 }
@@ -137,7 +137,7 @@ export const initEditCommentListeners = () => {
 
                 commentInputElement.value = `BEGIN_QUOTE ${text} ${name} QUOTE_END`;
 
-                renderComments();
+                renderComments({ comments, fetchAndRenderComments });
 
             }
 
@@ -185,7 +185,7 @@ let comments = [];
 // }
 
 fetchAndRenderComments();
-renderComments();
+renderComments({ comments, fetchAndRenderComments });
 initLikesButtonListeners();
 initEditButtonListeners();
 initEditCommentListeners();
@@ -225,11 +225,11 @@ buttonAddElement.addEventListener('click', () => {
 
 
 buttonAddElement.disabled = true;
-// buttonAddElement.textContent = 'Комментарий добавляется..';
+buttonAddElement.textContent = 'Комментарий добавляется..';
 
 
 const fetchPromise = () => {
-    // containerPreloaderPost.textContent = 'Добавляется комментарий...';
+    containerPreloaderPost.textContent = 'Добавляется комментарий...';
 
     postComments({
         name: nameInputElement.value,
@@ -251,15 +251,15 @@ const fetchPromise = () => {
             return fetchAndRenderComments();
         })
         .then((data) => {
-            //   containerPreloaderPost.textContent = '';
-            //   addFormElement.classList.remove('form-none');
+              containerPreloaderPost.textContent = '';
+              addFormElement.classList.remove('form-none');
             nameInputElement.value = '';
             commentInputElement.value = '';
         })
         .catch((error) => {
 
-            // containerPreloaderPost.textContent = '';
-            // addFormElement.classList.remove('form-none');
+            containerPreloaderPost.textContent = '';
+            addFormElement.classList.remove('form-none');
 
             console.warn(error);
 
@@ -277,7 +277,7 @@ const fetchPromise = () => {
 }
 
 fetchPromise();
-renderComments();
+renderComments({ comments, fetchAndRenderComments });
 initLikesButtonListeners();
 initEditButtonListeners();
 

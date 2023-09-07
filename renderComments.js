@@ -1,10 +1,9 @@
 import { initLikesButtonListeners, initEditButtonListeners, initEditCommentListeners } from "./main.js";
 
 const listElement = document.getElementById("list");
-let comments = [];
 
 
-export const renderComments = () => {
+export const renderComments = ({ comments, fetchAndRenderComments }) => {
     const commentsHtml = comments.map((comment, index) => {
         return `<li class="comment" data-text="${comment.text}" data-name="${comment.name}" data-index="${index}"">
       <div class="comment-header">
