@@ -72,8 +72,27 @@
     const commInputElement = document.getElementById("comm-input");
     const buttonElement = document.getElementById("publish-button");
     const listElement = document.getElementById("list");
-    
 
+//     const likeCounts = document.getElementById("likes-counter");
+//     const likeButtons = document.getElementById("like-button");
+
+//     likeButtons.forEach((button, index) => {
+//     let liked = false;
+    
+//     button.addEventListener('click', () => {
+//         if (liked) {
+//             // Убираем лайк
+//             liked = false;
+//             button.classList.remove('liked');
+//             likeCounts[index].textContent = parseInt(likeCounts[index].textContent) - 1;
+//         } else {
+//             // Ставим лайк
+//             liked = true;
+//             button.classList.add('liked');
+//             likeCounts[index].textContent = parseInt(likeCounts[index].textContent) + 1;
+//         }
+//     });
+// });
 
 
     function formatDate(date) {
@@ -123,6 +142,30 @@
         `
 
       });
+
+
+
+    const likeCounts = document.querySelectorAll(".likes-counter");
+    const likeButtons = document.querySelectorAll(".like-button");
+
+    likeButtons.forEach((button, index) => {
+    let liked = false;
+    
+    button.addEventListener('click', () => {
+        if (liked) {
+            
+            liked = false;
+            button.classList.remove('liked');
+            likeCounts[index].textContent = parseInt(likeCounts[index].textContent) - 1;
+        } else {
+            
+            liked = true;
+            button.classList.add('liked');
+            likeCounts[index].textContent = parseInt(likeCounts[index].textContent) + 1;
+        }
+    });
+});
+
     console.log("It works!");
   </script>
 
