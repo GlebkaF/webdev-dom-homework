@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Проект "Комменты"</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="styles.css"/>
+</head>
+
+<body>
+<div class="container">
+    <ul id="list" class="comments">
+        <li class="comment">
+            <div class="comment-header">
+                <div>Глеб Фокин</div>
+                <div id="comment-date-1">12.02.22 12:18</div>
+            </div>
+            <div class="comment-body">
+                <div class="comment-text">
+                    Это будет первый комментарий на этой странице
+                </div>
+            </div>
+            <div class="comment-footer">
+                <div class="likes">
+                    <span class="likes-counter">3</span>
+                    <button class="like-button"></button>
+                </div>
+            </div>
+        </li>
+        <li class="comment">
+            <div class="comment-header">
+                <div>Варвара Н.</div>
+                <div>13.02.22 19:22</div>
+            </div>
+            <div class="comment-body">
+                <div class="comment-text">
+                    Мне нравится как оформлена эта страница! ❤️
+                </div>
+            </div>
+            <div class="comment-footer">
+                <div class="likes">
+                    <span class="likes-counter">75</span>
+                    <button class="like-button -active-like"></button>
+                </div>
+            </div>
+        </li>
+    </ul>
+    <div class="add-form">
+        <input
+                type="text" id="name-input"
+                class="add-form-name"
+                placeholder="Введите ваше имя"
+        />
+        <textarea
+                id="comm-input"
+                class="add-form-text"
+                placeholder="Введите ваш коментарий"
+                rows="4"
+        ></textarea>
+        <div class="add-form-row">
+            <button id="publish-button" class="add-form-button">Написать</button>
+        </div>
+    </div>
+</div>
+</body>
+
+<script>
+    const nameInputElement = document.getElementById("name-input");
+    const commInputElement = document.getElementById("comm-input");
+    const buttonElement = document.getElementById("publish-button");
+    const listElement = document.getElementById("list");
+
+    function formatDate(date) {
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = String(date.getFullYear()).slice(-2);
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return ${day}.${month}.${year} ${hours}:${minutes};
+    };
+
+    function attachLikeHandler(button, counter) {
+        let liked = false;
+        button.addEventListener('click', () => {
+            if (liked) {
+                liked = false;
+                button.classList.remove('liked');
+                counter.textContent = parseInt(counter.textContent) - 1;
+            } else {
+                liked = true;
+                button.classList.add('liked');
+                counter.textContent = parseInt(counter.textContent) + 1;
+            }
+        });
+    }
+
+    function createComment(name, text) {
+        const comment = document.createElement('li');
+        comment.className = 'comment';
+
+        const header = document.createElement('div');
+        header.className = 'comment-header';
+        header.innerHTML = <div>${name}</div><div>${formatDate(new Date())}</div>;
+
+        const body = document.createElement('div');
+        body.className = 'comment-body';
+        body.innerHTML = <div class="comment-text">${text}</div>;
+
+        const footer = document.createElement('div');
+        footer.className = 'comment-footer';
+        footer.innerHTML = `
+        <div class="likes">
+            <span class="likes-counter">0</span>
+            <button class="like-button"></button>
+        </div>`;
+
+comment.appendChild(header);
+        comment.appendChild(body);
+        comment.appendChild(footer);
+
+        // Attach the like handler
+        const likeButton = footer.querySelector('.like-button');
+        const likeCount = footer.querySelector('.likes-counter');
+        attachLikeHandler(likeButton, likeCount);
+
+        return comment;
+    }
+
+    buttonElement.addEventListener("click", () => {
+        commInputElement.style.backgroundColor = "";
+        nameInputElement.style.backgroundColor = "";
+        if (!commInputElement.value.trim() || !nameInputElement.value.trim()) {
+            commInputElement.style.backgroundColor = "red";
+            nameInputElement.style.backgroundColor = "red";
+            return;
+        }
+
+        const newComment = createComment(nameInputElement.value, commInputElement.value);
+        listElement.appendChild(newComment);
+
+        // Optionally, clear input fields after publishing
+        commInputElement.value = '';
+        nameInputElement.value = '';
+    });
+
+
+    const likeButtons = document.querySelectorAll(".like-button");
+    const likeCounts = document.querySelectorAll(".likes-counter");
+    likeButtons.forEach((button, index) => {
+        attachLikeHandler(button, likeCounts[index]);
+    });
+
+    console.log("It works!");
+
+</script>
+</html>
