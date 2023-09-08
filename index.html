@@ -11,6 +11,7 @@
       <ul id="comments" class="comments">
        <!-- Список рендерится из JS-->
       </ul>
+      <button class="delete-button">Удалить последний элемент</button>
       <div class="add-form">
         <input
           type="text" id="name-input"
@@ -25,10 +26,9 @@
         ></textarea>
         <div class="add-form-row">
           <button id="add-button" class="add-form-button">Написать</button>
-          
         </div>
+       </div>
       </div>
-    </div>
   </body>
 
 
@@ -62,6 +62,17 @@
         });
       });
     }
+
+  const initDeliteButtonsListeners = () => {
+    const deleteButtonsElements = document.querySelectorAll(".delete-button");
+  
+  for (const deleteButtonElement of deleteButtonsElements) {
+    deleteButtonElement.addEventListener('click', () => {
+    });
+    }
+  };
+
+  initDeliteButtonsListeners();
 
    
     const comments = [
@@ -98,6 +109,8 @@
             </div>
           </div>
         </li> `
+        
+
       }).join("");
 
       commentsElement.innerHTML = commentsHtml;
@@ -105,11 +118,11 @@
       initEventlikes();
     };
       
-    const pressEnter = (event) => {
-      if (event.button === "Enter") {
-        renderComments();
+    
+    /*const pressEnter = (event) => {
+      if (event.pressEnter === "Enter") {
       }
-    }
+    }*/
 
     const initEventListeners = () => {
       const commentElements = document.querySelectorAll('.comment');
