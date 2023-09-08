@@ -73,41 +73,27 @@
     const buttonElement = document.getElementById("publish-button");
     const listElement = document.getElementById("list");
 
-//     const likeCounts = document.getElementById("likes-counter");
-//     const likeButtons = document.getElementById("like-button");
 
-//     likeButtons.forEach((button, index) => {
-//     let liked = false;
+
+
+    let myDate = new Date();
+function formatDate(date) {
+  let day = date.getDate();
+  day = day < 10 ? '0' + day : day;
+  let month = date.getMonth() + 1; 
+  month = month < 10 ? '0' + month : month;
+  let year = date.getFullYear();
+  year = year < 10 ? '0' + year : year.toString().slice(-2);
+  let hours = date.getHours();
+  hours = hours < 10 ? '0' + hours : hours;
+  let minutes = date.getMinutes();
+  minutes = minutes < 10 ? '0' + minutes : minutes;
+
+  let fullDate = `${day}.${month}.${year} ${hours}:${minutes}`;
+  return fullDate;
+}
+;
     
-//     button.addEventListener('click', () => {
-//         if (liked) {
-//             // Убираем лайк
-//             liked = false;
-//             button.classList.remove('liked');
-//             likeCounts[index].textContent = parseInt(likeCounts[index].textContent) - 1;
-//         } else {
-//             // Ставим лайк
-//             liked = true;
-//             button.classList.add('liked');
-//             likeCounts[index].textContent = parseInt(likeCounts[index].textContent) + 1;
-//         }
-//     });
-// });
-
-
-    function formatDate(date) {
-      let day = date.getDate();
-      if(day < 10) day = '0'+ day;
-      let mon = date.getMonth() +1;
-      if(mon < 10) mon = '0'+ mon;
-      let year = date.getFullYear() % 100;
-      if(year < 10) year = '0'+ year;
-      let hour = date.getHours();
-      let min = date.getMinutes();
-      if (min < 10) min = '0' + min;
-      return day + '.' + mon + '.' + year + ' ' + hour + ':' + min;
-    }
-    let d = new Date();
     
    
     buttonElement.addEventListener("click", () => {
@@ -125,7 +111,7 @@
         `<li class="comment">
           <div class="comment-header">
             <div>${nameInputElement.value}</div>
-            <div>${d}</div>
+            <div>${formatDate(myDate)}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -148,6 +134,9 @@
     const likeCounts = document.querySelectorAll(".likes-counter");
     const likeButtons = document.querySelectorAll(".like-button");
 
+    
+    
+
     likeButtons.forEach((button, index) => {
     let liked = false;
     
@@ -166,6 +155,29 @@
     });
 });
 
+
+
+// const initEventListeners = () => {
+      
+//       const likeButtons = document.querySelectorAll(".like-button");
+//       for (const likeButton of likeButtons){
+//         likeButton.addEventListener('click', () => {
+//           if (liked) {
+              
+//               liked = false;
+//               button.classList.remove('liked');
+//               likeCounts[index].textContent = parseInt(likeCounts[index].textContent) - 1;
+//           } else {
+              
+//               liked = true;
+//               button.classList.add('liked');
+//               likeCounts[index].textContent = parseInt(likeCounts[index].textContent) + 1;
+//           }
+//       });
+//       }
+//       };
+//       initEventListeners();
+  
     console.log("It works!");
   </script>
 
