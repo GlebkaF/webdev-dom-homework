@@ -44,6 +44,7 @@
     const commentsElement = document.getElementById("comments");
     const nameInputElement = document.getElementById("name-input");
     const textareaInputElement = document.getElementById("textarea-input");
+    const forms = document.querySelector(".add-form");
 
 
     const commentElements = document.querySelectorAll('.comment');
@@ -61,8 +62,8 @@
         });
       });
     }
-    
 
+   
     const comments = [
       {
         name: "Глеб",
@@ -93,17 +94,22 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${comment.likes}</span>
-              <button class="like-button ${comment.likeCount ? '-active-like' : ''}" data-index=${index}></button>
+              <button class="like-button"></button>
             </div>
           </div>
         </li> `
       }).join("");
 
       commentsElement.innerHTML = commentsHtml;
-
+      
       initEventlikes();
     };
       
+    const pressEnter = (event) => {
+      if (event.button === "Enter") {
+        renderComments();
+      }
+    }
 
     const initEventListeners = () => {
       const commentElements = document.querySelectorAll('.comment');
@@ -114,10 +120,7 @@
       }
     }
 
-  
-    
-    
-    renderComments();
+  renderComments();
 
    
     function formatDate(date) {
@@ -166,7 +169,7 @@
       name: nameInputElement.value,
       text: textareaInputElement.value,
       date: formatDate(d),
-      likes: "likes",
+      likes: "0",
     });
 
     renderComments();
@@ -174,7 +177,7 @@
     
     nameInputElement.value = "";
     textareaInputElement.value = "";
-    });
+});
     
   </script>
 </html>
