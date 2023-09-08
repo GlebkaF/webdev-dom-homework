@@ -1,8 +1,5 @@
-import { postComments, getComments } from "./api.js";
+import { getComments } from "./api.js";
 import { renderComments } from "./renderComments.js";
-
-
-
 
 
 
@@ -119,7 +116,6 @@ export const initEditCommentListeners = () => {
 }
 
 
-// HOMEWORK 2.10
 
 //        ФОРМИРОВАНИЕ НОВОГО СПИСКА КОММЕНТОВ
 
@@ -128,46 +124,20 @@ let comments = [];
 
 fetchAndRenderComments();
 renderComments({ comments, fetchAndRenderComments });
-initLikesButtonListeners();
-initEditButtonListeners();
-initEditCommentListeners();
 
 
-
-
-
-//        ДОБАВИТЬ С ПОМОЩЬЮ КЛАВИШИ ENTER + ВОЗВРАТ АКТИВНОСТИ КНОПКИ
-
-// document.addEventListener("keyup", function (e) {
-//     if (e.keyCode === 13) {
-//         document.getElementById("add-comment").click();
-//     }
-// });
-
-// nameInputElement.addEventListener('input', () => {
-
-//     buttonAddElement.disabled = false;
-//     buttonAddElement.style.backgroundColor = '';
-//     nameInputElement.classList.remove('error');
-
-// })
-
-// commentInputElement.addEventListener('input', () => {
-
-//     buttonAddElement.disabled = false;
-//     buttonAddElement.style.backgroundColor = '';
-//     commentInputElement.classList.remove('error');
-
-// })
 
 // //       РЕАЛИЗАЦИЯ - КНОПКА УДАЛИТЬ
 
-// buttonDelComment.addEventListener('click', () => {
+const buttonDelComment = document.getElementById("del-comment");
 
-//     let lastComment = listElement.lastChild;
-//     lastComment.parentNode.removeChild(lastComment);
 
-// })
+buttonDelComment.addEventListener('click', () => {
+
+    let lastComment = listElement.lastChild;
+    lastComment.parentNode.removeChild(lastComment);
+
+})
 
 
 console.log("It works!");

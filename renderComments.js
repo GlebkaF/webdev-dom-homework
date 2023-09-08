@@ -64,7 +64,6 @@ export const renderComments = ({ comments, fetchAndRenderComments }) => {
     const listElement = document.getElementById("list");
     const nameInputElement = document.getElementById("name-input");
     const commentInputElement = document.getElementById("comment-input");
-    const buttonDelComment = document.getElementById("del-comment");
     const addFormElement = document.querySelector('.add-form');
 
 
@@ -118,6 +117,31 @@ function btnElementInit(buttonAddElement, commentInputElement, nameInputElement,
         buttonAddElement.disabled = true;
         buttonAddElement.textContent = 'Комментарий добавляется..';
 
+        //        ДОБАВИТЬ С ПОМОЩЬЮ КЛАВИШИ ENTER + ВОЗВРАТ АКТИВНОСТИ КНОПКИ
+
+        document.addEventListener("keyup", function (e) {
+            if (e.keyCode === 13) {
+                document.getElementById("add-comment").click();
+            }
+        });
+
+        nameInputElement.addEventListener('input', () => {
+
+            buttonAddElement.disabled = false;
+            buttonAddElement.style.backgroundColor = '';
+            nameInputElement.classList.remove('error');
+
+        })
+
+        commentInputElement.addEventListener('input', () => {
+
+            buttonAddElement.disabled = false;
+            buttonAddElement.style.backgroundColor = '';
+            commentInputElement.classList.remove('error');
+
+        })
+
+
 
         const fetchPromise = () => {
             // containerPreloaderPost.textContent = 'Добавляется комментарий...';
@@ -161,7 +185,7 @@ function btnElementInit(buttonAddElement, commentInputElement, nameInputElement,
                         alert('Сломался сервер , попробуйте позже');
                         fetchPromise();
                     }
-                    else  {
+                    else {
                         // (window.navigator.onLine === false)
                         // alert('Проблемы с интернетом, проверьте подключение');
                         console.error(error);
