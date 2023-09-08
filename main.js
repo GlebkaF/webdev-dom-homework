@@ -1,6 +1,6 @@
-"use strict";
+import { postComments, getComments } from "./api.js";
+import { renderComments } from "./renderComments.js";
 
-import { postComments } from "./api";
 
 //        ОБЪЯВЛЕНИЕ ВСЕХ CONST
 const buttonAddElement = document.getElementById("add-comment");
@@ -14,11 +14,11 @@ const addFormElement = document.querySelector('.add-form');
 const myDate = new Date().toLocaleDateString().slice(0, 6) + new Date().toLocaleDateString().slice(-2);
 const nowDate = myDate + ' ' + new Date().toLocaleTimeString().slice(0, -3);
 
-// const containerPreloader = document.getElementById('container-preloader');
-// const containerPreloaderPost = document.getElementById('container-preloader-post');
+const containerPreloader = document.getElementById('container-preloader');
+const containerPreloaderPost = document.getElementById('container-preloader-post');
 
 
-// containerPreloader.textContent = 'Пожалуйста подождите, загружаю комментарии...';
+containerPreloader.textContent = 'Пожалуйста подождите, загружаю комментарии...';
 
 //      GET
 
@@ -42,7 +42,7 @@ const fetchAndRenderComments = () => {
 
         comments = appComments;
 
-        renderComments();
+        renderComments({ comments, fetchAndRenderComments });
     })
 }
 
@@ -57,28 +57,9 @@ function delay(interval = 300) {
     });
 }
 
-
-//        АКТУАЛЬНАЯ DATA
-
-// let myDate = new Date();
-// let month = myDate.getMonth();
-
-// if (month < 10) {
-//   month = "0" + month;
-// }
-
-// let fullDate = myDate.getDate() + "." + month + "." + myDate.getFullYear() + " ";
-// let minute = myDate.getMinutes();
-
-// if (minute < 10) {
-//   minute = "0" + minute;
-// }
-
-// let fullTime = myDate.getHours() + ":" + minute;
-
 //        ОБРАБОТЧИК на LIKES,  РЕАЛИЗАЦИЯ ЛАЙКОВ
 
-const initLikesButtonListeners = () => {
+export const initLikesButtonListeners = () => {
 
     const buttonElements = document.querySelectorAll(".like-button");
 
@@ -98,7 +79,7 @@ const initLikesButtonListeners = () => {
                 comments[index].like++;
             }
 
-            renderComments();
+            renderComments({ comments, fetchAndRenderComments });
         })
     }
 
@@ -107,7 +88,7 @@ const initLikesButtonListeners = () => {
 
 //        РЕДАКТИРОВАНИЕ КОММЕНТАРИЕВ
 
-const initEditButtonListeners = () => {
+export const initEditButtonListeners = () => {
     const buttonEditElements = document.querySelectorAll(".edit-comment");
 
     for (const buttonEditElement of buttonEditElements) {
@@ -122,12 +103,12 @@ const initEditButtonListeners = () => {
                 comments[index].isEdit = false;
                 comments[index].text = textarea.value;
 
-                renderComments()
+                renderComments({ comments, fetchAndRenderComments })
             } else {
                 comments[index].isEdit = true;
             }
 
-            renderComments();
+            renderComments({ comments, fetchAndRenderComments });
         })
     }
 }
@@ -136,7 +117,7 @@ const initEditButtonListeners = () => {
 
 //        Ответы на комменты
 
-const initEditCommentListeners = () => {
+export const initEditCommentListeners = () => {
     const answerElements = document.querySelectorAll(".comment");
 
 
@@ -156,7 +137,7 @@ const initEditCommentListeners = () => {
 
                 commentInputElement.value = `BEGIN_QUOTE ${text} ${name} QUOTE_END`;
 
-                renderComments();
+                renderComments({ comments, fetchAndRenderComments });
 
             }
 
@@ -171,39 +152,40 @@ const initEditCommentListeners = () => {
 
 let comments = [];
 
-const renderComments = () => {
-    const commentsHtml = comments.map((comment, index) => {
-        return `<li class="comment" data-text="${comment.text}" data-name="${comment.name}" data-index="${index}"">
-      <div class="comment-header">
-        <div> ${comment.name} </div>
-        <div>${comment.date}</div>
-      </div>
-      <div class="comment-body">
-        ${comment.isEdit ? `<textarea class="edit-text" id="textarea-${index}">${comment.text}</textarea>` : `<div class="comment-text">
-          ${comment.text}
-        </div>`}
-      </div>
-      <div class="comment-footer">
-        <div class="likes">
-          <span class="likes-counter">${comment.like}</span>
-          <button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index="${index}"></button>
-        </div>
-      </div>
-      <div class="add-form-row">
-      <button class="add-form-button edit-comment" data-index="${index}">${comment.isEdit ? 'Сохранить' : 'Редактировать'} </button>
-    </div>
-    </li>`
-    }).join(' ');
 
-    listElement.innerHTML = commentsHtml;
+// const renderComments = () => {
+//     const commentsHtml = comments.map((comment, index) => {
+//         return `<li class="comment" data-text="${comment.text}" data-name="${comment.name}" data-index="${index}"">
+//       <div class="comment-header">
+//         <div> ${comment.name} </div>
+//         <div>${comment.date}</div>
+//       </div>
+//       <div class="comment-body">
+//         ${comment.isEdit ? `<textarea class="edit-text" id="textarea-${index}">${comment.text}</textarea>` : `<div class="comment-text">
+//           ${comment.text}
+//         </div>`}
+//       </div>
+//       <div class="comment-footer">
+//         <div class="likes">
+//           <span class="likes-counter">${comment.like}</span>
+//           <button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index="${index}"></button>
+//         </div>
+//       </div>
+//       <div class="add-form-row">
+//       <button class="add-form-button edit-comment" data-index="${index}">${comment.isEdit ? 'Сохранить' : 'Редактировать'} </button>
+//     </div>
+//     </li>`
+//     }).join(' ');
 
-    initLikesButtonListeners();
-    initEditButtonListeners();
-    initEditCommentListeners();
-}
+//     listElement.innerHTML = commentsHtml;
+
+//     initLikesButtonListeners();
+//     initEditButtonListeners();
+//     initEditCommentListeners();
+// }
 
 fetchAndRenderComments();
-renderComments();
+renderComments({ comments, fetchAndRenderComments });
 initLikesButtonListeners();
 initEditButtonListeners();
 initEditCommentListeners();
@@ -247,7 +229,7 @@ buttonAddElement.textContent = 'Комментарий добавляется..'
 
 
 const fetchPromise = () => {
-    // containerPreloaderPost.textContent = 'Добавляется комментарий...';
+    containerPreloaderPost.textContent = 'Добавляется комментарий...';
 
     postComments({
         name: nameInputElement.value,
@@ -269,15 +251,15 @@ const fetchPromise = () => {
             return fetchAndRenderComments();
         })
         .then((data) => {
-            //   containerPreloaderPost.textContent = '';
-            //   addFormElement.classList.remove('form-none');
+              containerPreloaderPost.textContent = '';
+              addFormElement.classList.remove('form-none');
             nameInputElement.value = '';
             commentInputElement.value = '';
         })
         .catch((error) => {
 
-            // containerPreloaderPost.textContent = '';
-            // addFormElement.classList.remove('form-none');
+            containerPreloaderPost.textContent = '';
+            addFormElement.classList.remove('form-none');
 
             console.warn(error);
 
@@ -295,7 +277,7 @@ const fetchPromise = () => {
 }
 
 fetchPromise();
-renderComments();
+renderComments({ comments, fetchAndRenderComments });
 initLikesButtonListeners();
 initEditButtonListeners();
 
