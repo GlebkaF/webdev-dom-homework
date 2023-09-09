@@ -271,11 +271,11 @@ const clickEventAddComment = () => {
     .then (() => {
         getComments();
     })
-      .then((responseData) => {
-        comments = responseData.comment;
-        btnElement.disabled = false;
-        btnElement.textContent = "Элемент добавлятся...";
-      })
+    //   .then((responseData) => {
+    //     comments = responseData.comment;
+    //     btnElement.disabled = false;
+    //     btnElement.textContent = "Элемент добавлятся...";
+    //   })
       .catch((error) => {
         btnElement.disabled = false;
         if (error === 500) {
