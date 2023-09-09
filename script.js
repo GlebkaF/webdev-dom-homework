@@ -13,7 +13,7 @@ const formBg = document.querySelector('.add-form');
 let textAnswerHtml = "";
 let indexOld = 0;
 let loadVars = true;
-const apiUrl = "https://wedev-api.sky.pro/api/v1/kekcsik/comments";
+const apiUrl = "https://wedev-api.sky.pro/api/v1/kekcsik1/comments";
 // Получаем список комментариев с API
 const getComments = () => {
     if (loadVars) {
@@ -43,13 +43,13 @@ const getComments = () => {
                 pLoad.textContent = "";
                 btnElement.disabled = false;
                 btnElement.textContent = "Написать";
-            })  .then(() => {
-                    document.querySelector(".form-loading").style.display = "none";
-                    document.querySelector(".add-form").style.display = "block";
-                    document.querySelector(".add-form-row").style.display = "block";
-                  }); 
+            })  
                 
-            }) 
+            }) .then(() => {
+                document.querySelector(".form-loading").style.display = "none";
+                document.querySelector(".add-form").style.display = "block";
+                document.querySelector(".add-form-row").style.display = "block";
+              }); 
     };
 getComments();
 
@@ -258,38 +258,35 @@ const clickEventAddComment = () => {
         text: inputText.value, 
         datе: new Date(),
         forceError: false,
-      })
+      }),
     })
     .then((response) => {
-        if (response.status === 200 || response.status === 201) {
-            return Promise.reject(200);
-        } else if (response.status === 400) {
-            return Promise.reject(400);
-        } else if (response.status === 500) {
-            return Promise.reject(500);
-        } else {
-            return Promise.reject(error);
+        if (response.status === 500) {
+          return Promise.reject(500);
         }
+        if (response.status === 400) {
+          return Promise.reject(400);
+        }
+      })
+    .then (() => {
+        getComments();
     })
       .then((responseData) => {
         comments = responseData.comment;
-        getComments();
         btnElement.disabled = false;
         btnElement.textContent = "Элемент добавлятся...";
       })
       .catch((error) => {
         btnElement.disabled = false;
-        // error.message = "Server Andrey";
-        // console.warn(error);
-        // alert("Что-то пошло не так...");
         if (error === 500) {
             alert("Сервер сломался, попробуй позже");
             return;
         }
         if (error === 400) {
-            alert("Ваше интернет соединение плохое");
+            alert("Имя и комментарий должны быть не короче 3 символов");
             return;
         }
+        alert('Кажется, у Вас сломался интернет');
       }); 
 }
 renderComments();
