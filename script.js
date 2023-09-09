@@ -3,21 +3,65 @@ const listElement = document.getElementById("list");
 const nameInputEl = document.getElementById("name-input");
 const textInputEl = document.getElementById("text-input");
 
-const comments = [
-    {
-        name: "Глеб Фокин",
-        date: "12.02.22 12:18",
-        comment: "Это будет первый комментарий на этой странице",
-        likes: "3",
-        likeCheck: false,
-    },
-    {
-        name: "Варвара Н.",
-        date: "13.02.22 19:22",
-        comment: "Мне нравится как оформлена эта страница! ❤",
-        likes: "75",
-        likeCheck: true,
-    },
+const plus0 = (el) => {
+    return el < 10 ? `0${el}` : el;
+};
+
+
+
+const commentDate = (currentDate) => {
+    //let currentDate = new Date();
+    let date = plus0(currentDate.getDate());
+    let month = plus0(currentDate.getMonth() + 1);
+    let year = plus0(currentDate.getFullYear());
+    let hour = plus0(currentDate.getHours());
+    let minute = plus0(currentDate.getMinutes());
+    return `${date}.${month}.${year} ${hour}:${minute}`
+};
+
+let currentDate = new Date();
+
+const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/almash/comments", {
+    method: "GET"
+});
+
+fetchPromise.then((response) => {
+
+    const jsonPromise = response.json();
+
+    jsonPromise.then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+            return {
+                name: comment.author.name,
+                date: commentDate (new Date (comment.date)),
+                text: comment.text,
+                likes: comment.likes,
+                likeCheck: false,
+            };
+        });
+
+        comments = appComments;
+        console.log(responseData);
+        renderComments();
+    });
+
+});
+
+let comments = [
+    // {
+    //     name: "Глеб Фокин",
+    //     date: "12.02.22 12:18",
+    //     comment: "Это будет первый комментарий на этой странице",
+    //     likes: "3",
+    //     likeCheck: false,
+    // },
+    // {
+    //     name: "Варвара Н.",
+    //     date: "13.02.22 19:22",
+    //     comment: "Мне нравится как оформлена эта страница! ❤",
+    //     likes: "75",
+    //     likeCheck: true,
+    // },
 ];
 
 const renderComments = () => {
@@ -27,9 +71,9 @@ const renderComments = () => {
         <div>${comment.name}</div>
         <div>${comment.date}</div>
         </div>
-        <div class="comment-body" data-body = '${comment.comment}, ${comment.name}'>
+        <div class="comment-body" data-body = '${comment.text}, ${comment.name}'>
         <div class="comment-text">
-            ${comment.comment}
+            ${comment.text}
         </div>
         </div>
         <div class="comment-footer">
@@ -53,12 +97,10 @@ const commentAnswerElement = () => {
     for (const commentAnswer of commentAnswers) {
         commentAnswer.addEventListener("click", () => {
             const index = commentAnswer.dataset.body;
-            textInputEl.value += `${index}`;
+            textInputEl.value += `${index} \n`;
         })
     }
 }
-
-commentAnswerElement();
 
 const initMyLikeListeners = () => {
     const likeButtons = document.querySelectorAll(".like-button");
@@ -78,17 +120,6 @@ renderComments();
 
 commentElement.addEventListener("click", () => {
 
-    const plus0 = (el) => {
-        return el < 10 ? `0${el}` : el;
-    };
-
-    let currentDate = new Date();
-    let date = plus0(currentDate.getDate());
-    let month = plus0(currentDate.getMonth());
-    let year = plus0(currentDate.getFullYear());
-    let hour = plus0(currentDate.getHours());
-    let minute = plus0(currentDate.getMinutes());
-
     nameInputEl.classList.remove("error");
     if (nameInputEl.value === "") {
         nameInputEl.classList.add("error");
@@ -101,13 +132,39 @@ commentElement.addEventListener("click", () => {
         return;
     };
 
-    comments.push({
-        name: nameInputEl.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
-        date: `${date}.${month}.${year} ${hour}:${minute}`,
-        comment: textInputEl.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
-        likes: 0,
-        likeCheck: false,
-    });
+    // comments.push({
+    //     name: nameInputEl.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
+    //     date: commentDate(currentDate),
+    //     comment: textInputEl.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
+    //     likes: 0,
+    //     likeCheck: false,
+    // });
+
+    fetch("https://wedev-api.sky.pro/api/v1/almash/comments",
+        {
+            method: "POST",
+            body: JSON.stringify({
+                text: textInputEl.value,
+                name: nameInputEl.value,
+            }),
+        }).then((response) => {
+            response.json().then((responseData) => {
+
+                const appComments = responseData.comments.map((comment) => {
+                    return {
+                        name: comment.author.name,
+                        date: commentDate (new Date (comment.date)),
+                        text: comment.text,
+                        likes: comment.likes,
+                        likeCheck: false,
+                    };
+                });
+
+                comments = appComments;
+                renderComments();
+            });
+
+        });
 
     renderComments();
 
