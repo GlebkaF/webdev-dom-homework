@@ -1,6 +1,7 @@
 import { postComments } from "./api.js";
 import { initLikesButtonListeners, initEditButtonListeners, initEditCommentListeners } from "./main.js";
 
+const listElement = document.getElementById("list");
 
 
 export const renderComments = ({ comments, fetchAndRenderComments }) => {
@@ -61,7 +62,6 @@ export const renderComments = ({ comments, fetchAndRenderComments }) => {
 
     //        ОБЪЯВЛЕНИЕ ВСЕХ CONST
     const buttonAddElement = document.getElementById("add-comment");
-    const listElement = document.getElementById("list");
     const nameInputElement = document.getElementById("name-input");
     const commentInputElement = document.getElementById("comment-input");
     const addFormElement = document.querySelector('.add-form');
@@ -150,18 +150,18 @@ function btnElementInit(buttonAddElement, commentInputElement, nameInputElement,
                 name: nameInputElement.value,
                 text: commentInputElement.value,
             })
-                .then((response) => {
-                    if (response.status === 400) {
-                        throw new Error('Неверный запрос')
-                    }
-                    if (response.status === 500) {
-                        throw new Error('Ошибка сервера')
-                    }
-                    if (response.status === 201) {
-                        return response.json();
-                    }
+                // .then((response) => {
+                //     if (response.status === 400) {
+                //         throw new Error('Неверный запрос')
+                //     }
+                //     if (response.status === 500) {
+                //         throw new Error('Ошибка сервера')
+                //     }
+                //     if (response.status === 201) {
+                //         return response.json();
+                //     }
 
-                })
+                // })
                 .then((responseData) => {
                     return fetchAndRenderComments();
                 })

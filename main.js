@@ -1,4 +1,5 @@
 import { getComments } from "./api.js";
+import { renderLogin } from "./loginPage.js";
 import { renderComments } from "./renderComments.js";
 
 
@@ -27,6 +28,8 @@ const fetchAndRenderComments = () => {
     })
 }
 
+renderLogin({ fetchAndRenderComments });
+
 //        ОБРАБОТЧИК на LIKES,  РЕАЛИЗАЦИЯ ЛАЙКОВ
 
 export const initLikesButtonListeners = () => {
@@ -51,6 +54,9 @@ export const initLikesButtonListeners = () => {
 
             renderComments({ comments, fetchAndRenderComments });
         })
+
+        renderComments({ comments, fetchAndRenderComments });
+
     }
 
 }
