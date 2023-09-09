@@ -98,7 +98,7 @@ export const renderComments = ({ comments, clickLike }) => {
 renderLogin({ getDateApi });
   })
   });
-
+if (token) {
   const commentElements = document.querySelectorAll(".comment");
 
   for (const commentElement of commentElements) {
@@ -165,9 +165,7 @@ renderLogin({ getDateApi });
         alert("Кажется, у вас сломался интернет, попробуйте позже");
       });
       
-      buttonElement.addEventListener("click", () => {
-        getElement();
-      });
+      buttonElement.addEventListener("click", getElement);
     
       nameInputElement.addEventListener("input", () => {
         buttonElement.disabled = false;
@@ -192,4 +190,6 @@ renderLogin({ getDateApi });
         }
       });
   };
+}
+  
 };
