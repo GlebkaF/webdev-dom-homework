@@ -43,12 +43,27 @@
     const buttonElement = document.getElementById("add-button");
     const commentsElement = document.getElementById("comments");
     const nameInputElement = document.getElementById("name-input");
+    const textInputElement = document.querySelector(".add-form-text");
     const textareaInputElement = document.getElementById("textarea-input");
-    const forms = document.querySelector(".add-form");
+    const formsInputElement = document.querySelector(".add-form");
+    const commentEditText = document.querySelectorAll("comment-edit-text");
+
+      // Ответ на комментарий
+    const answerText = () => {
+    const textTextElement = document.querySelectorAll('.comment-text');
+    const textNameElement = document.querySelectorAll('.comment-name');
+    for (const text of textTextElement) {
+      text.addEventListener("click", () => {
+        const index = text.dataset.index;
+
+        textInputElement.value = 
+        `>${textTextElement[index].innerHTML} ${textNameElement[index].innerHTML}`;
+      })
+    }
+    };
 
 
-    const commentElements = document.querySelectorAll('.comment');
-
+    // Кнопка лайков работает
     const initEventlikes = () => {
       const likeButtons = Array.from(document.querySelectorAll(".like-button"));
       const likeCount = Array.from(document.querySelectorAll(".likes-counter"));
@@ -74,7 +89,7 @@
 
   initDeliteButtonsListeners();*/
 
-   
+    // Массив
     const comments = [
       {
         name: "Глеб",
@@ -89,18 +104,19 @@
         likes: "75",
       },
     ];
-
+      // Рендер
     const renderComments = () => {
       const commentsHtml = comments.map((comment, index) => {
         return  ` <li class="comment">
           <div class="comment-header">
-            <div>${comment.name}</div>
+            <div class="comment-name" data-index="${index}">${comment.name}</div>
             <div>${comment.date}</div>
           </div>
           <div class="comment-body">
-          <div class="comment-text">
+          <div class="comment-text" data-index="${index}">
             ${comment.text}
             </div>
+          </div>  
           </div>
           <div class="comment-footer">
             <div class="likes">
@@ -110,11 +126,11 @@
           </div>
         </li> `
         
-
+      
       }).join("");
 
       commentsElement.innerHTML = commentsHtml;
-      
+      answerText();
       initEventlikes();
     };
       
@@ -123,6 +139,7 @@
       if (event.pressEnter === "Enter") {
       }
     }*/
+
 
     const initEventListeners = () => {
       const commentElements = document.querySelectorAll('.comment');
@@ -135,7 +152,7 @@
 
   renderComments();
 
-   
+    // Текущая дата
     function formatDate(date) {
     var dd = date.getDate();
     if (dd < 10) dd = '0' + dd;
@@ -150,6 +167,8 @@
 }   
     var d = new Date();
 
+
+    // поле ввода окрашивается, если ничего не введено
     buttonElement.addEventListener('click', () => {
      nameInputElement.classList.remove("error");
     if (nameInputElement.value === '') {
@@ -163,7 +182,7 @@
     }
 
 
-    // дополнительно //
+    // дополнительно кнопка написать не активна при пустых значениях //
     buttonElement.setAttribute('disabled', true);
     nameInputElement.oninput = function(){
       if (nameInputElement.value === '' && textareaInputElement.value === ''){
@@ -189,11 +208,12 @@
 
       date: formatDate(d),
       likes: "0",
+      
     });
 
     renderComments();
     
-    
+    // обнуляет введенные значения
     nameInputElement.value = "";
     textareaInputElement.value = "";
 });
