@@ -213,7 +213,7 @@
         return;
       }
 
-      renderComments();
+      // renderComments();
       getLikeButton();
 
       fetch("https://wedev-api.sky.pro/api/v1/dmitrii-the-best-sass/comments", {
@@ -227,17 +227,19 @@
         }),
       });
 
-      function fetchArrPromise() {
-        const fetchPromise = fetch(
-          "https://wedev-api.sky.pro/api/v1/dmitrii-the-best-sass/comments",
-          {
-            method: "GET",
-          }
-        );
+      fetchPromise.then((response) => {
+        response.json().then((responseData) => {
+          fetchArrPromise();
+        });
 
-        nameInputElement.value = "";
-        textareaInputElement.value = "";
-      }
+        // comments = appComments;
+        renderComments();
+      });
+
+      // renderComments();
+
+      nameInputElement.value = "";
+      textareaInputElement.value = "";
     });
 
     console.log("It works!");
