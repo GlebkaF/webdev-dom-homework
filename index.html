@@ -63,7 +63,7 @@
       });
     }
 
-  const initDeliteButtonsListeners = () => {
+  /*const initDeliteButtonsListeners = () => {
     const deleteButtonsElements = document.querySelectorAll(".delete-button");
   
   for (const deleteButtonElement of deleteButtonsElements) {
@@ -72,7 +72,7 @@
     }
   };
 
-  initDeliteButtonsListeners();
+  initDeliteButtonsListeners();*/
 
    
     const comments = [
@@ -179,8 +179,14 @@
     /////////////////////////////////////////////
 
     comments.push({
-      name: nameInputElement.value,
-      text: textareaInputElement.value,
+      name: nameInputElement.value
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;"),
+
+      text: textareaInputElement.value
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;"),
+
       date: formatDate(d),
       likes: "0",
     });
