@@ -7,10 +7,7 @@ const plus0 = (el) => {
     return el < 10 ? `0${el}` : el;
 };
 
-
-
 const commentDate = (currentDate) => {
-    //let currentDate = new Date();
     let date = plus0(currentDate.getDate());
     let month = plus0(currentDate.getMonth() + 1);
     let year = plus0(currentDate.getFullYear());
@@ -18,34 +15,38 @@ const commentDate = (currentDate) => {
     let minute = plus0(currentDate.getMinutes());
     return `${date}.${month}.${year} ${hour}:${minute}`
 };
-
 let currentDate = new Date();
 
-const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/almash/comments", {
-    method: "GET"
-});
-
-fetchPromise.then((response) => {
-
-    const jsonPromise = response.json();
-
-    jsonPromise.then((responseData) => {
-        const appComments = responseData.comments.map((comment) => {
-            return {
-                name: comment.author.name,
-                date: commentDate (new Date (comment.date)),
-                text: comment.text,
-                likes: comment.likes,
-                likeCheck: false,
-            };
-        });
-
-        comments = appComments;
-        console.log(responseData);
-        renderComments();
+function getComments() {
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/almash/comments", {
+        method: "GET"
     });
 
-});
+    fetchPromise.then((response) => {
+
+        const jsonPromise = response.json();
+
+        jsonPromise.then((responseData) => {
+            const appComments = responseData.comments.map((comment) => {
+                return {
+                    name: comment.author.name,
+                    date: commentDate(new Date(comment.date)),
+                    text: comment.text,
+                    likes: comment.likes,
+                    likeCheck: false,
+                };
+            });
+
+            comments = appComments;
+            console.log(responseData);
+            renderComments();
+        });
+
+    });
+};
+
+getComments();
+
 
 let comments = [
     // {
@@ -115,8 +116,6 @@ const initMyLikeListeners = () => {
     };
 };
 
-renderComments();
-
 
 commentElement.addEventListener("click", () => {
 
@@ -148,25 +147,14 @@ commentElement.addEventListener("click", () => {
                 name: nameInputEl.value,
             }),
         }).then((response) => {
-            response.json().then((responseData) => {
+            response.json().then(() => {
 
-                const appComments = responseData.comments.map((comment) => {
-                    return {
-                        name: comment.author.name,
-                        date: commentDate (new Date (comment.date)),
-                        text: comment.text,
-                        likes: comment.likes,
-                        likeCheck: false,
-                    };
-                });
-
-                comments = appComments;
-                renderComments();
+                getComments();
             });
 
         });
 
-    renderComments();
+    //renderComments();
 
     nameInputEl.value = "";
     textInputEl.value = "";
