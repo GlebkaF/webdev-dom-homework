@@ -25,6 +25,8 @@ const fetchAndRenderComments = () => {
         comments = appComments;
 
         renderComments({ comments, fetchAndRenderComments });
+
+        return true;
     })
 }
 
