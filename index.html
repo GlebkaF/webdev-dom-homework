@@ -26,7 +26,11 @@
                     <button class="like-button"></button>
                 </div>
             </div>
+
         </li>
+       
+           
+
         <li class="comment">
             <div class="comment-header">
                 <div>Варвара Н.</div>
@@ -40,9 +44,10 @@
             <div class="comment-footer">
                 <div class="likes">
                     <span class="likes-counter">75</span>
-                    <button class="like-button -active-like"></button>
+                    <button class="like-button"></button>
                 </div>
             </div>
+            
         </li>
     </ul>
     <div class="add-form">
@@ -96,6 +101,39 @@
         });
     }
 
+    
+    function attachCommentClickHandler(comment) {
+    comment.addEventListener('click', () => {
+        
+        const name = comment.querySelector('.comment-header div:first-child').textContent;
+        const text = comment.querySelector('.comment-text').textContent;
+
+        
+        commInputElement.value = `${name}: ${text}`;
+        
+    });
+}
+
+
+document.querySelectorAll('.comment').forEach(attachCommentClickHandler);
+
+buttonElement.addEventListener("click", () => {
+    commInputElement.style.backgroundColor = "";
+    nameInputElement.style.backgroundColor = "";
+    if (!commInputElement.value.trim() || !nameInputElement.value.trim()) {
+        commInputElement.style.backgroundColor = "red";
+        nameInputElement.style.backgroundColor = "red";
+        return;
+    }
+
+    const newComment = createComment(nameInputElement.value, commInputElement.value);
+    listElement.appendChild(newComment);
+    attachCommentClickHandler(newComment);
+    commInputElement.value = '';
+    nameInputElement.value = '';
+});
+
+
     function createComment(name, text) {
         const comment = document.createElement('li');
         comment.className = 'comment';
@@ -120,7 +158,7 @@
         comment.appendChild(body);
         comment.appendChild(footer);
 
-        // Attach the like handler
+      
         const likeButton = footer.querySelector('.like-button');
         const likeCount = footer.querySelector('.likes-counter');
         attachLikeHandler(likeButton, likeCount);
@@ -140,7 +178,7 @@
         const newComment = createComment(nameInputElement.value, commInputElement.value);
         listElement.appendChild(newComment);
 
-        // Optionally, clear input fields after publishing
+       
         commInputElement.value = '';
         nameInputElement.value = '';
     });
@@ -151,6 +189,13 @@
     likeButtons.forEach((button, index) => {
         attachLikeHandler(button, likeCounts[index]);
     });
+
+    
+
+
+
+
+    
 
     console.log("It works!");
 
