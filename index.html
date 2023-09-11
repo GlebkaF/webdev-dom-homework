@@ -136,8 +136,7 @@
       const likesButton = document.querySelectorAll(".like-button");
 
       for (const like of likesButton) {
-        like.addEventListener("click", (event) => {
-          event.stopPropagation();
+        like.addEventListener("click", () => {
           const likeIndex = like.dataset.index;
           const commentsElement = comments[likeIndex];
 
@@ -163,7 +162,7 @@
     const renderComments = () => {
       const commentsHtml = comments
         .map((comment, index) => {
-          return `<li class="comment" data-index="${index}">
+          return `<li class="comment">
       <div class="comment-header">
         <div>${comment.name}</div>
         <div>${comment.date}</div>
@@ -184,11 +183,11 @@
     </li>`;
         })
         .join("");
-
+      // <button data-index="${index}" class="like-button -no-active-like"></button>
       commentsElement.innerHTML = commentsHtml;
       getLikeButton();
-      replyComments();
     };
+
     renderComments();
 
     buttonElement.addEventListener("click", () => {
