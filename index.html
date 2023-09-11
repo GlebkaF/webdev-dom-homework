@@ -214,32 +214,40 @@
         return;
       }
 
-
-      renderComments();
       getLikeButton();
 
-      fetch("https://wedev-api.sky.pro/api/v1/dmitrii-the-best-sass/comments", {
-        method: "POST",
-        body: JSON.stringify({
-          name: nameInputElement.value,
-          date: getCurrentDate(new Date()),
-          text: textareaInputElement.value,
-          currentLike: false,
-          likes: 0,
-        }),
+      const fetchPromise = fetch(
+        "https://wedev-api.sky.pro/api/v1/dmitrii-the-best-sass/comments",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            name: nameInputElement.value
+              .replaceAll("&", "&amp;")
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;")
+              .replaceAll('"', "&quot;"),
+            date: getCurrentDate(new Date()),
+            text: textareaInputElement.value
+              .replaceAll("&", "&amp;")
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;")
+              .replaceAll('"', "&quot;")
+              .replaceAll("QUOTE_BEGIN", "<div class='comment-quote'><b>")
+              .replaceAll("QUOTE_END", "</b></div>"),
+            currentLike: false,
+            likes: 0,
+          }),
+        }
+      );
+
+      fetchPromise.then((response) => {
+        response.json().then((responseData) => {
+          fetchArrPromise();
+        });
       });
 
-      function fetchArrPromise() {
-        const fetchPromise = fetch(
-          "https://wedev-api.sky.pro/api/v1/dmitrii-the-best-sass/comments",
-          {
-            method: "GET",
-          }
-        );
-
-        nameInputElement.value = "";
-        textareaInputElement.value = "";
-      }
+      nameInputElement.value = "";
+      textareaInputElement.value = "";
     });
 
     console.log("It works!");
