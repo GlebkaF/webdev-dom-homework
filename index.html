@@ -100,6 +100,34 @@
       );
     };
 
+    // function fetchArrPromise() {
+    //   const fetchPromise = fetch(
+    //     "https://wedev-api.sky.pro/api/v1/dmitrii-the-best-sass/comments",
+    //     {
+    //       method: "GET",
+    //     }
+    //   );
+
+    //   fetchPromise.then((response) => {
+    //     response.json().then((responseData) => {
+    //       const appComments = responseData.comments.map((comment) => {
+    //         return {
+    //           name: comment.author.name,
+    //           date: getCurrentDate(new Date(comment.date)),
+    //           text: comment.text,
+    //           likes: comment.likes,
+    //           isLiked: false,
+    //         };
+    //       });
+
+    //       comments = appComments;
+    //       renderComments();
+    //     });
+    //   });
+    // }
+
+    // fetchArrPromise();
+
     // массив данных с комментариями
     let comments = [];
 
@@ -109,6 +137,7 @@
         {
           method: "GET",
         }
+        
       );
 
       fetchPromise.then((response) => {
@@ -216,12 +245,22 @@
       // renderComments();
       getLikeButton();
 
-      fetch("https://wedev-api.sky.pro/api/v1/dmitrii-the-best-sass/comments", {
+      const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/dmitrii-the-best-sass/comments", {
         method: "POST",
         body: JSON.stringify({
-          name: nameInputElement.value,
+          name: nameInputElement.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;"),
           date: getCurrentDate(new Date()),
-          text: textareaInputElement.value,
+          text: textareaInputElement.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("QUOTE_BEGIN", "<div class='comment-quote'><b>")
+            .replaceAll("QUOTE_END", "</b></div>"),
           currentLike: false,
           likes: 0,
         }),
@@ -231,12 +270,7 @@
         response.json().then((responseData) => {
           fetchArrPromise();
         });
-
-        // comments = appComments;
-        renderComments();
       });
-
-      // renderComments();
 
       nameInputElement.value = "";
       textareaInputElement.value = "";
