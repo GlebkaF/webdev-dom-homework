@@ -2,6 +2,9 @@ const commentElement = document.getElementById("addComment");
 const listElement = document.getElementById("list");
 const nameInputEl = document.getElementById("name-input");
 const textInputEl = document.getElementById("text-input");
+const disabledEl = document.getElementById("disabled");
+const disabledComment = document.getElementById("disabled-add-comment");
+const commentInput = document.getElementById("add-form")
 
 const plus0 = (el) => {
     return el < 10 ? `0${el}` : el;
@@ -18,6 +21,7 @@ const commentDate = (currentDate) => {
 let currentDate = new Date();
 
 function getComments() {
+
     const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/almash/comments", {
         method: "GET"
     });
@@ -40,13 +44,19 @@ function getComments() {
             comments = appComments;
             console.log(responseData);
             renderComments();
+            
+        }).then(() => {
+            disabledEl.disabled = false;
+            disabledEl.textContent = "";
         });
 
     });
 };
 
-getComments();
+disabledEl.disabled = true;
+disabledEl.textContent = "Пожалуйта подождите, загружаю комментарии...";
 
+getComments();
 
 let comments = [
     // {
@@ -117,6 +127,7 @@ const initMyLikeListeners = () => {
 };
 
 
+
 commentElement.addEventListener("click", () => {
 
     nameInputEl.classList.remove("error");
@@ -130,6 +141,9 @@ commentElement.addEventListener("click", () => {
         textInputEl.classList.add("error");
         return;
     };
+
+    commentInput.style.display = "none";
+    disabledComment.textContent = "Комментарий добавляется..."
 
     // comments.push({
     //     name: nameInputEl.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
@@ -146,13 +160,17 @@ commentElement.addEventListener("click", () => {
                 text: textInputEl.value,
                 name: nameInputEl.value,
             }),
-        }).then((response) => {
-            response.json().then(() => {
-
-                getComments();
-            });
-
-        });
+        })
+        .then((response) => {
+            return response.json();
+        })
+        .then(() => {
+            return getComments();
+        })
+        .then(() => {
+            commentInput.style.display = "block";
+            disabledComment.textContent = "";
+        })
 
     //renderComments();
 
