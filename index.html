@@ -10,7 +10,6 @@
 <body>
   <div class="container">
     <ul class="comments">
-
     </ul>
     <div class="delete-last">
       <button class="delete-last__form-button">Удалить последний элемент</button>
@@ -27,11 +26,11 @@
 
 <script>
   "use strict";
-  let formName = document.getElementsByClassName('add-form-name')[0];
-  let formText = document.getElementsByClassName('add-form-text')[0];
-  let comments = document.getElementsByClassName('comments')[0];
-  let formButton = document.getElementsByClassName('add-form-button')[0];
-  let deleteLastBotton = document.getElementsByClassName('delete-last__form-button')[0];
+  let formName = document.querySelector('.add-form-name');
+  let formText = document.querySelector('.add-form-text');
+  let comments = document.querySelector('.comments');
+  let formButton = document.querySelector('.add-form-button');
+  let deleteLastBotton = document.querySelector('.delete-last__form-button');
 
   let commentsArr = [
     {
@@ -116,7 +115,7 @@
     }
   };
 
-  const deleteLastBottonFunc = () => {
+  const deleteLastButtonFunc = () => {
     commentsArr.pop();
     renderComments();
   };
@@ -157,7 +156,7 @@
     formName.addEventListener('keyup', keyEnter);
     formText.addEventListener('keyup', keyEnter);
 
-    deleteLastBotton.addEventListener('click', deleteLastBottonFunc);
+    deleteLastBotton.addEventListener('click', deleteLastButtonFunc);
 
     likeButtonsListener();
     editButtonsListener();
