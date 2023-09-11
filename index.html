@@ -46,21 +46,22 @@
       console.log(responseData);
 
       const appComments = responseData.comments.map((comment) => {
+        console.log(comment);
         return {
-          id: comment.autor.id,
-          name: comment.autor.name
+          id: comment.id,
+          name: comment.author.name
             .replaceAll("&", "&amp;")
             .replaceAll("<", "&lt;")
             .replaceAll(">", "&gt;")
             .replaceAll('"', "&quot;"),
-          date: myDate,
+          date: comment.date,
           text: comment.text
             .replaceAll("&", "&amp;")
             .replaceAll("<", "&lt;")
             .replaceAll(">", "&gt;")
             .replaceAll('"', "&quot;"),
-          like: comment.like,
-          isLike: comment.isLike,
+          like: comment.likes,
+          isLike: comment.isLiked,
         };
       });
 
@@ -69,6 +70,8 @@
       renderComments();
     });
   });
+ 
+  fetchPromise();
 
  // const comments = [
  //   {
@@ -117,13 +120,13 @@
 
   const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
-      return `<li class="comment" data-name="${comment.name}" data-text="${comment.comment}">
+      return `<li class="comment" data-name="${comment.name}" data-text="${comment.text}">
             <div class="comment-header">
            <div class="comment-name"> ${comment.name} </div>
             <div> ${comment.date}</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">${comment.comment}
+            <div class="comment-text">${comment.text}
             </div>
           </div>
           <div class="comment-footer">
