@@ -159,12 +159,47 @@
               .replaceAll("QUOTE_END", "</div>"),
           }),
         }
-        ).then((response) => {
-          response.json().then((responseData) => {
+        )
+        .then((response) => {
+          response.json()
+          .then((responseData) => {
             fetchComments();
-          });
+          })         
+
+          .then((response) => {
+            if (response.status === 500) {
+              throw new Error("Сервер сломался");
+            }
+
+            if (response.status === 400) {
+              throw new Error("Плохой запрос");
+            }
+            return response.json();
+          })
+
+
+          .then(() => {
+            addButton.disabled = false;
+            addButton.textContent = "Написать";
+            commentNameInput.value = "";
+            commentTextInput.value = ""
+          })
+          .catch((error) => {
+            addButton.disabled = false;
+            addButton.textContent = "Написать";
+            alert("Кажется что-то пошло не так, попробуй позже");
+          })
+          .catch((error) =>{
+            if (commentNameInput.value.length < 4 || commentTextInput.value.length < 4) {
+            alert('Введите больше 4 символов');
+            addFormElement.classList.remove('form-none');
+            return;
+      }
+          })
+          
 		    });
-    }        
+    }
+
     const initEventListeners = () => {
       const buttonElements = document.querySelectorAll('.like-button');
     
@@ -198,7 +233,7 @@
         commentTextInput.classList.add("error");
         return;
       }
-      postComment();
+      postComment();     
 
       addButton.disabled = true;
       addButton.textContent = 'Комментарий добавляется';
