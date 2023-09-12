@@ -22,34 +22,31 @@ let currentDate = new Date();
 
 function getComments() {
 
-    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/almash/comments", {
+    return fetch("https://wedev-api.sky.pro/api/v1/almash/comments", {
         method: "GET"
-    });
-
-    fetchPromise.then((response) => {
-
-        const jsonPromise = response.json();
-
-        jsonPromise.then((responseData) => {
-            const appComments = responseData.comments.map((comment) => {
-                return {
-                    name: comment.author.name,
-                    date: commentDate(new Date(comment.date)),
-                    text: comment.text,
-                    likes: comment.likes,
-                    likeCheck: false,
-                };
-            });
-
-            comments = appComments;
-            console.log(responseData);
-            renderComments();
-            
-        }).then(() => {
-            disabledEl.disabled = false;
-            disabledEl.textContent = "";
+    })
+    .then((response) => {
+        return response.json();
+    })
+    .then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+            return {
+                name: comment.author.name,
+                date: commentDate(new Date(comment.date)),
+                text: comment.text,
+                likes: comment.likes,
+                likeCheck: false,
+            };
         });
 
+        comments = appComments;
+        console.log(responseData);
+        renderComments();
+
+    })
+    .then(() => {
+        disabledEl.disabled = false;
+        disabledEl.textContent = "";
     });
 };
 
@@ -168,11 +165,10 @@ commentElement.addEventListener("click", () => {
             return getComments();
         })
         .then(() => {
-            commentInput.style.display = "block";
+            commentInput.style.display = "flex";
             disabledComment.textContent = "";
-        })
-
-    //renderComments();
+            renderComments();
+        });
 
     nameInputEl.value = "";
     textInputEl.value = "";
