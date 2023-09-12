@@ -82,190 +82,173 @@
     }
   </style>
 
-  <script>
-    "use strict";
-const addFormNameElement = document.getElementById("add-form-name");
-const buttonElement = document.getElementById("add-form-button");
-const addFormTextElement = document.getElementById("add-form-text");
-const listElement = document.getElementById("comments");
-const loadingMessage = document.getElementById("loading-message");
-const addFormElement = document.getElementById("add-form");
-const addingCommentElement = document.getElementById("adding-comment");
+<script>
+  "use strict";
+  const addFormNameElement = document.getElementById("add-form-name");
+  const buttonElement = document.getElementById("add-form-button");
+  const addFormTextElement = document.getElementById("add-form-text");
+  const listElement = document.getElementById("comments");
+  const loadingMessage = document.getElementById("loading-message");
+  const addFormElement = document.getElementById("add-form");
+  const addingCommentElement = document.getElementById("adding-comment");
 
-let comments = [
-  {
-    name: "Глеб Фокин",
-    date: "12.02.22 12:18",
-    text: "Это будет первый комментарий на этой странице",
-    likes: 3,
-    liked: false,
-  },
-  {
-    name: "Варвара Н.",
-    date: "13.02.22 19:22",
-    text: "Мне нравится как оформлена эта страница! ❤",
-    likes: 75,
-    liked: true,
-  },
-];
+  let comments = [];
 
-const plusZero = (str) => {
-  return str < 10 ? `0${str}` : str;
-};
+  const plusZero = (str) => {
+    return str < 10 ? `0${str}` : str;
+  };
 
-const now = (currentDate) => {
-  let date = plusZero(currentDate.getDate());
-  let month = plusZero(currentDate.getMonth() + 1);
-  let hours = plusZero(currentDate.getHours());
-  let mins = plusZero(currentDate.getMinutes());
-  return `${date}.${month}.${currentDate.getFullYear() % 100} ${hours}:${mins}`;
-};
+  const now = () => {
+    const currentDate = new Date();
+    let date = plusZero(currentDate.getDate());
+    let month = plusZero(currentDate.getMonth() + 1);
+    let hours = plusZero(currentDate.getHours());
+    let mins = plusZero(currentDate.getMinutes());
+    return `${date}.${month}.${currentDate.getFullYear() % 100} ${hours}:${mins}`;
+  };
 
-const fetchComments = () => {
-  loadingMessage.style.display = "block"; // Отображаем сообщение о загрузке
-  return fetch("https://wedev-api.sky.pro/api/v1/ford-ekaterina/comments", {
-    method: "GET",
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Failed to fetch comments");
-      }
-      return response.json();
+  const fetchComments = () => {
+    loadingMessage.style.display = "block"; 
+    return fetch("https://wedev-api.sky.pro/api/v1/ford-ekaterina/comments", {
+      method: "GET",
     })
-    .then((responseData) => {
-      const appComments = responseData.comments.map((comment) => {
-        return {
-          name: comment.author.name,
-          date: now(new Date(comment.date)),
-          text: comment.text,
-          likes: 0,
-          activeLike: false,
-          isLoading: false,
-        };
+      .then((response) => {
+        if (!response.ok) {
+          if (response.status === 500) {
+            throw new Error("Сервер сломался, попробуй позже");
+          } else {
+            throw new Error("Failed to fetch comments");
+          }
+        }
+        return response.json();
+      })
+      .then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: now(new Date(comment.date)),
+            text: comment.text,
+            likes: 0,
+            liked: false,
+          };
+        });
+
+        comments = appComments;
+        renderComments();
+        buttonElement.disabled = false;
+        buttonElement.formContent = "Написать";
+        loadingMessage.style.display = "none";
+      })
+      .catch((error) => {
+        console.error("Error fetching comments:", error);
+        loadingMessage.style.display = "none";
+        alert("Кажется, у вас сломался интернет, попробуйте позже");
       });
+  };
 
-      comments = appComments;
-      renderComments();
-      buttonElement.disabled = false;
-      buttonElement.formContent = "Написать";
-      loadingMessage.style.display = "none"; // Скрываем сообщение о загрузке после получения комментариев
-    })
-    .catch((error) => {
-      console.error("Error fetching comments:", error);
-      loadingMessage.style.display = "none"; // Скрываем сообщение о загрузке при ошибке
-    });
-};
+  const initEventListeners = () => {
+    const likesButton = document.querySelectorAll(".like-button");
+    for (const likeButton of likesButton) {
+      likeButton.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const index = parseInt(likeButton.getAttribute("data-index"));
+        const comment = comments[index];
+        comment.liked = !comment.liked;
+        if (comment.liked) {
+          comment.likes++;
+        } else {
+          comment.likes--;
+        }
+        renderComments();
+      });
+    }
+  };
 
-const initEventListeners = () => {
-  const likesButton = document.querySelectorAll(".like-button");
-  for (const likeButton of likesButton) {
-    likeButton.addEventListener("click", (event) => {
-      event.stopPropagation();
-      const comment = comments[likeButton.dataset.index];
-      comment.myLike ? --comment.likes : ++comment.likes;
-      comment.myLike = !comment.myLike;
-      renderComments();
-    });
-  }
-};
-
-const replyToComment = () => {
-  const commentsBody = document.querySelectorAll(".comment");
-  for (const commentBody of commentsBody) {
-    commentBody.addEventListener("click", () => {
-      const oldComment = commentBody.dataset.text;
-      const oldName = commentBody.dataset.name;
-      addFormTextElement.value += `${oldComment}\n${oldName}:\n `;
-      document.querySelector(".add-form-text").focus();
-    });
-  }
-};
-
-const renderComments = () => {
-  const commentsHTML = comments
-    .map((comment, index) => {
-      return `<ul class="comments">
-        <li class="comment" id="comment" data-text="${comment.text}" data-name="${comment.name}">
+  const renderComments = () => {
+    const commentsHTML = comments
+      .map((comment, index) => {
+        return `<li class="comment">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.date}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-            ${comment.text}
+              ${comment.text}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${comment.likes}</span>
-              <button data-index="${index}" class="${comment.myLike ? 'like-button -active-like' : 'like-button'}"></button>
+              <button data-index="${index}" class="like-button ${comment.liked ? '-active-like' : ''}"></button>
             </div>
           </div>
-        </li>
-      </ul>`;
+        </li>`;
+      })
+      .join("");
+    listElement.innerHTML = commentsHTML;
+    initEventListeners();
+  };
+
+  buttonElement.addEventListener("click", () => {
+    addFormNameElement.classList.remove("error");
+    if (addFormNameElement.value.length < 3) {
+      addFormNameElement.classList.add("error");
+      alert("Имя и комментарий должны быть не короче 3 символов");
+      return;
+    }
+    addFormTextElement.classList.remove("error");
+    if (addFormTextElement.value.length < 3) {
+      addFormTextElement.classList.add("error");
+      alert("Имя и комментарий должны быть не короче 3 символов");
+      return;
+    }
+
+    renderComments();
+    buttonElement.disabled = true;
+    buttonElement.formContent = "Элемент добавляется ...";
+
+    addFormElement.style.display = "none";
+    addingCommentElement.style.display = "block";
+
+    fetch("https://wedev-api.sky.pro/api/v1/ford-ekaterina/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        name: addFormNameElement.value,
+        text: addFormTextElement.value,
+      }),
     })
-    .join("");
-  listElement.innerHTML = commentsHTML;
-  initEventListeners();
-  replyToComment();
-};
+      .then((response) => {
+        if (!response.ok) {
+          if (response.status === 400) {
+            throw new Error("Имя и комментарий должны быть не короче 3 символов");
+          } else {
+            throw new Error("Failed to add a new comment");
+          }
+        }
+        return response.json();
+      })
+      .then(() => {
+        return fetchComments();
+      })
+      .then(() => {
+        buttonElement.disabled = false;
+        buttonElement.formContent = "Написать";
+        addFormNameElement.value = "";
+        addFormTextElement.value = "";
 
-buttonElement.addEventListener("click", () => {
-  addFormNameElement.classList.remove("error");
-  if (addFormNameElement.value === "") {
-    addFormNameElement.classList.add("error");
-    return;
-  }
-  addFormTextElement.classList.remove("error");
-  if (addFormTextElement.value === "") {
-    addFormTextElement.classList.add("error");
-    return;
-  }
+        addFormElement.style.display = "block";
+        addingCommentElement.style.display = "none";
+      })
+      .catch((error) => {
+        console.error("Error adding a new comment:", error);
+        alert(error.message);
+      });
+  });
 
-  renderComments();
-  buttonElement.disabled = true;
-  buttonElement.formContent = "Элемент добавляется ...";
+  fetchComments();
 
-  // Скрываем форму добавления и отображаем сообщение "Комментарий добавляется"
-  addFormElement.style.display = "none";
-  addingCommentElement.style.display = "block";
-
-  fetch("https://wedev-api.sky.pro/api/v1/ford-ekaterina/comments", {
-    method: "POST",
-    body: JSON.stringify({
-      name: addFormNameElement.value,
-      text: addFormTextElement.value,
-    }),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Failed to add a new comment");
-      }
-      return response.json();
-    })
-    .then(() => {
-      // Fetch comments again after successfully adding a new comment
-      return fetchComments();
-    })
-    .then(() => {
-      buttonElement.disabled = false;
-      buttonElement.formContent = "Написать";
-      addFormNameElement.value = "";
-      addFormTextElement.value = "";
-
-      // Отображаем форму добавления и скрываем сообщение "Комментарий добавляется"
-      addFormElement.style.display = "block";
-      addingCommentElement.style.display = "none";
-    })
-    .catch((error) => {
-      console.error("Error adding a new comment:", error);
-    });
-});
-
-// Fetch comments when the page loads
-fetchComments();
-
-console.log("It works!");
+  console.log("It works!");
 </script>
 
 </body>
