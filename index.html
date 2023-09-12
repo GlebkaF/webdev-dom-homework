@@ -72,6 +72,16 @@
 
    
     buttonElement.addEventListener('click', ()=>{
+      nameInputElement.classList.remove('error');
+      if (nameInputElement.value === '') {
+        nameInputElement.classList.add('error')
+   return;
+      }
+      commentInputElement.classList.remove('error');
+      if (commentInputElement.value === '') {
+        commentInputElement.classList.add('error');
+   return;
+      }
       const oldListHtml = listElement.innerHTML;
   listElement.innerHTML = oldListHtml + 
   `<li class="comment">
