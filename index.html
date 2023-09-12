@@ -166,15 +166,17 @@
             fetchComments();
           })         
 
-          .then((response) => {
-            if (response.status === 500) {
-              throw new Error("Сервер сломался");
+          .then((response)=>{
+            if(response.status === 400 ) {
+              throw new Error('Неверный запрос')
+            }
+            if ( response.status === 500 ) {
+              throw new Error('Ошибка сервера')
+            }
+            if ( response.status === 201 ) {
+              return response.json();
             }
 
-            if (response.status === 400) {
-              throw new Error("Плохой запрос");
-            }
-            return response.json();
           })
 
 
@@ -189,12 +191,18 @@
             addButton.textContent = "Написать";
             alert("Кажется что-то пошло не так, попробуй позже");
           })
-          .catch((error) =>{
-            if (commentNameInput.value.length < 4 || commentTextInput.value.length < 4) {
-            alert('Введите больше 4 символов');
-            addFormElement.classList.remove('form-none');
-            return;
-      }
+          .catch((error) => {
+            console.warn(error);
+            if(error.message === "Неверный запрос") {
+              alert('Короткое имя или текст комментария, минимум 3 символа')
+            }
+            if(error.message === "Ошибка сервера") {
+              alert('Сломался сервер , попробуйте позже')
+              postComment()
+            }
+            if(window.navigator.onLine === false ) {
+              alert('Проблемы с интернетом, проверьте подключение')
+            }
           })
           
 		    });
