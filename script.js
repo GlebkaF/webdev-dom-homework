@@ -25,29 +25,29 @@ function getComments() {
     return fetch("https://wedev-api.sky.pro/api/v1/almash/comments", {
         method: "GET"
     })
-    .then((response) => {
-        return response.json();
-    })
-    .then((responseData) => {
-        const appComments = responseData.comments.map((comment) => {
-            return {
-                name: comment.author.name,
-                date: commentDate(new Date(comment.date)),
-                text: comment.text,
-                likes: comment.likes,
-                likeCheck: false,
-            };
+        .then((response) => {
+            return response.json();
+        })
+        .then((responseData) => {
+            const appComments = responseData.comments.map((comment) => {
+                return {
+                    name: comment.author.name,
+                    date: commentDate(new Date(comment.date)),
+                    text: comment.text,
+                    likes: comment.likes,
+                    likeCheck: false,
+                };
+            });
+
+            comments = appComments;
+            console.log(responseData);
+            renderComments();
+
+        })
+        .then(() => {
+            disabledEl.disabled = false;
+            disabledEl.textContent = "";
         });
-
-        comments = appComments;
-        console.log(responseData);
-        renderComments();
-
-    })
-    .then(() => {
-        disabledEl.disabled = false;
-        disabledEl.textContent = "";
-    });
 };
 
 disabledEl.disabled = true;
@@ -150,16 +150,34 @@ commentElement.addEventListener("click", () => {
     //     likeCheck: false,
     // });
 
-    fetch("https://wedev-api.sky.pro/api/v1/almash/comments",
-        {
-            method: "POST",
-            body: JSON.stringify({
-                text: textInputEl.value,
-                name: nameInputEl.value,
-            }),
-        })
+    fetch("https://wedev-api.sky.pro/api/v1/almash/comments", {
+        method: "POST",
+        body: JSON.stringify({
+            text: textInputEl.value,
+            name: nameInputEl.value,
+            forceError: true,
+        }),
+    })
         .then((response) => {
-            return response.json();
+            console.log(response);
+            if (response.status === 201) {
+                return response.json();
+            } else if (response.status === 400) {
+                //этот вариант почему-то не работает 
+                //(response.text.length <= 2 || response.name.length <= 2) 
+                alert("Имя и комментарий должны быть не короче 3х символов")
+                if (textInputEl.value.length < 3) {
+                    textInputEl.classList.add("error");
+                }
+                if (nameInputEl.value.length < 3) {
+                    nameInputEl.classList.add("error");
+                }
+                return Promise.reject(new Error("Имя и комментарий должны быть не короче 3х символов"));
+            } else {
+                alert("Сервер упал");
+                return Promise.reject(new Error("Сервер упал"));
+            };
+
         })
         .then(() => {
             return getComments();
@@ -167,9 +185,12 @@ commentElement.addEventListener("click", () => {
         .then(() => {
             commentInput.style.display = "flex";
             disabledComment.textContent = "";
+            nameInputEl.value = "";
+            textInputEl.value = "";
             renderComments();
-        });
-
-    nameInputEl.value = "";
-    textInputEl.value = "";
+        }).catch((error) => {
+            commentInput.style.display = "flex";
+            disabledComment.textContent = "";
+            console.warn(error);
+        })
 });
