@@ -78,15 +78,14 @@ const shortDateTime = new Intl.DateTimeFormat("ru", {dateStyle: "short", timeSty
 
    
 
-commentInputElement.addEventListener('keyup',()=>{buttonElement.click('');})
-function checkFields (){
-  if (nameInputElement.value === '' || commentInputElement.value === ''){
-    buttonElement.disabled = true;
-  } else {buttonElement.disabled = false;
-}}
-nameInputElement.addEventListener ('input',checkFields)
-    buttonElement.addEventListener('click', ()=>{
+commentInputElement.addEventListener('keyup',() => {buttonElement.click('');})
 
+nameInputElement.addEventListener ('input', () => {
+  if (nameInputElement.value === '' || commentInputElement.value === '') { 
+    buttonElement.disabled = true; } 
+    else {buttonElement.disabled = false;}})
+   
+    buttonElement.addEventListener('click', () => {
       nameInputElement.classList.remove('error');
       if (nameInputElement.value === '') {
         nameInputElement.classList.add('error')
