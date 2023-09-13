@@ -26,18 +26,19 @@
         </div>
       </div>
     </div>
+    <script type="module" src="./main.js"></script>
   </body>
 
   <script>
     "use strict";
     // Код писать здесь
     console.log("It works!");
-    const commentNameInput = document.querySelector (".add-form-name");
-    const commentTextInput = document.querySelector (".add-form-text");
-    const addButton = document.querySelector (".add-form-button");
-    const commentsBox = document.querySelector (".comments");
+    const commentNameInput = document.querySelector(".add-form-name");
+    const commentTextInput = document.querySelector(".add-form-text");
+    const addButton = document.querySelector(".add-form-button");
+    const commentsBox = document.querySelector(".comments");
     const newDate = new Date().toLocaleString().slice(0, -3);
-       
+
     let comments = [
       /*{
         name: 'Глеб Фокин',
@@ -54,14 +55,16 @@
         isLiked: true,
       },
     */
-    ]
-    
+    ];
+
     function renderComments() {
-		const commentsListHtml = comments
-    .map((comment, index) => {
-			console.log(comment)
-      return `
-			<li class="comment" data-name="${comment.name}" data-text="${comment.text}" data-index="${index}">
+      const commentsListHtml = comments
+        .map((comment, index) => {
+          console.log(comment);
+          return `
+			<li class="comment" data-name="${comment.name}" data-text="${
+            comment.text
+          }" data-index="${index}">
 				<div class="comment-header">
 					<div>${comment.name}</div>
 					<div>${comment.date}</div>
@@ -74,69 +77,67 @@
 				<div class="comment-footer">
 					<div class="likes">
 						<span class="likes-counter">${comment.likes}</span>
-						<button class="like-button ${comment.isLiked ? '-active-like' : ''}">
+						<button class="like-button ${comment.isLiked ? "-active-like" : ""}">
 						</button>
 					</div>
 				</div>
 			</li>
 			`;
-		}).join('');
-		
-		const commentsList = document.querySelector('.comments');
-		commentsList.innerHTML = commentsListHtml;
-		
+        })
+        .join("");
 
-		const commentListItems = commentsList.querySelectorAll('.comment');
-		for (const commentListItem of commentListItems) {
-			const likeButton = commentListItem.querySelector('.like-button');
-			const commentIndex = commentListItem.dataset.index;
-			const comment = comments[commentIndex];
+      const commentsList = document.querySelector(".comments");
+      commentsList.innerHTML = commentsListHtml;
 
-			likeButton.addEventListener('click', (event) => {
-				event.stopPropagation();				
+      const commentListItems = commentsList.querySelectorAll(".comment");
+      for (const commentListItem of commentListItems) {
+        const likeButton = commentListItem.querySelector(".like-button");
+        const commentIndex = commentListItem.dataset.index;
+        const comment = comments[commentIndex];
 
-				if (comment.isLiked) {
-					comment.isLiked = false;
-					comment.likes--;
-				} else {
-					comment.isLiked = true;
-					comment.likes++;
-				}
+        likeButton.addEventListener("click", (event) => {
+          event.stopPropagation();
 
-				renderComments();
-			});
-		}
-	}
-    
+          if (comment.isLiked) {
+            comment.isLiked = false;
+            comment.likes--;
+          } else {
+            comment.isLiked = true;
+            comment.likes++;
+          }
 
-
-    function fetchComments () {
-      document.querySelector('.comments').textContent = 'Комментарии загружаются';
-      return fetch(
-        "https://wedev-api.sky.pro/api/v1/anastasija-pelyak/comments", 
-        {
-          method: "GET"
-        }
-      ).then((response) => {        
-        console.log (document.querySelector('.comments'));
-        response.json().then((responseData) => {
-    
-        const appComments = responseData.comments.map((comment) => {
-          return {
-            name: comment.author.name,
-            date: new Date(comment.date),
-            likes: comment.likes,
-            isLiked: false,
-            text: comment.text,
-          };
+          renderComments();
         });
-        comments = appComments;
-        renderComments();
+      }
+    }
+
+    function fetchComments() {
+      document.querySelector(".comments").textContent =
+        "Комментарии загружаются";
+      return fetch(
+        "https://wedev-api.sky.pro/api/v1/anastasija-pelyak/comments",
+        {
+          method: "GET",
+        }
+      ).then((response) => {
+        console.log(document.querySelector(".comments"));
+        response.json().then((responseData) => {
+          const appComments = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: new Date(comment.date),
+              likes: comment.likes,
+              isLiked: false,
+              text: comment.text,
+            };
+          });
+          comments = appComments;
+          renderComments();
         });
       });
     }
     fetchComments();
-    
+
     function postComment() {
       return fetch(
         "https://wedev-api.sky.pro/api/v1/anastasija-pelyak/comments",
@@ -150,71 +151,63 @@
               .replaceAll('"', "&quot;")
               .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
               .replaceAll("QUOTE_END", "</div>"),
-              name: commentNameInput.value
+            name: commentNameInput.value
               .replaceAll("&", "&amp;")
               .replaceAll("<", "&lt;")
               .replaceAll(">", "&gt;")
               .replaceAll('"', "&quot;")
               .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
               .replaceAll("QUOTE_END", "</div>"),
+            forceError: true,
           }),
         }
-        )
+      )
         .then((response) => {
-          response.json()
-          .then((responseData) => {
-            fetchComments();
-          })         
+          console.log(response);
+          if (response.status === 400) {
+            throw new Error("Неверный запрос");
+          }
+          if (response.status === 500) {
+            throw new Error("Ошибка сервера");
+          }
+          if (response.status === 201) {
+            return response.json();
+          }
+        })
+        .then(() => {
+          fetchComments();
+        })
 
-          .then((response)=>{
-            if(response.status === 400 ) {
-              throw new Error('Неверный запрос')
-            }
-            if ( response.status === 500 ) {
-              throw new Error('Ошибка сервера')
-            }
-            if ( response.status === 201 ) {
-              return response.json();
-            }
+        .then(() => {
+          addButton.disabled = false;
+          addButton.textContent = "Написать";
+          commentNameInput.value = "";
+          commentTextInput.value = "";
+        })
 
-          })
-
-
-          .then(() => {
-            addButton.disabled = false;
-            addButton.textContent = "Написать";
-            commentNameInput.value = "";
-            commentTextInput.value = ""
-          })
-          .catch((error) => {
-            addButton.disabled = false;
-            addButton.textContent = "Написать";
-            alert("Кажется что-то пошло не так, попробуй позже");
-          })
-          .catch((error) => {
-            console.warn(error);
-            if(error.message === "Неверный запрос") {
-              alert('Короткое имя или текст комментария, минимум 3 символа')
-            }
-            if(error.message === "Ошибка сервера") {
-              alert('Сломался сервер , попробуйте позже')
-              postComment()
-            }
-            if(window.navigator.onLine === false ) {
-              alert('Проблемы с интернетом, проверьте подключение')
-            }
-          })
-          
-		    });
+        .catch((error) => {
+          addButton.disabled = false;
+          addButton.textContent = "Написать";
+          console.warn(error);
+          console.log(error);
+          if (error.message === "Неверный запрос") {
+            alert("Короткое имя или текст комментария, минимум 3 символа");
+          }
+          if (error.message === "Ошибка сервера") {
+            alert("Сломался сервер , попробуйте позже");
+          }
+          if (window.navigator.onLine === false) {
+            alert("Проблемы с интернетом, проверьте подключение");
+          }
+        });
     }
     const initEventListeners = () => {
-      const buttonElements = document.querySelectorAll('.like-button');
-    
+      const buttonElements = document.querySelectorAll(".like-button");
+
       for (const buttonElement of buttonElements) {
-        buttonElement.addEventListener('click', () => {
-          
+        buttonElement.addEventListener("click", () => {
           const index = buttonElement.dataset.index;
-          
+
           if (comments[index].isLiked) {
             comments[index].isLiked = false;
             comments[index].likes--;
@@ -222,14 +215,13 @@
             comments[index].isLiked = true;
             comments[index].likes++;
           }
-    
+
           renderComments();
         });
       }
-    };        
-    
+    };
+
     addButton.addEventListener("click", () => {
-      
       commentNameInput.classList.remove("error");
 
       if (commentNameInput.value === "") {
@@ -240,13 +232,11 @@
         commentTextInput.classList.add("error");
         return;
       }
-      postComment();     
+      postComment();
 
       addButton.disabled = true;
-      addButton.textContent = 'Комментарий добавляется';
+      addButton.textContent = "Комментарий добавляется";
 
-
-      
       commentNameInput.value = "";
       commentTextInput.value = "";
     });
