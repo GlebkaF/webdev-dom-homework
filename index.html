@@ -59,12 +59,16 @@
         <div class="add-form-row">
           <button id ='add-button'  class="add-form-button">Написать</button>
         </div>
+        <div class="add-form-row">
+        </div>
       </div>
+      <button id ='delete-button'  class="add-form-button">Удалить последний комментарий</button>
     </div>
   </body>
 
   <script>
     "use strict";
+    const deleteButtonElement = document.getElementById('delete-button');
     const buttonElement = document.getElementById('add-button');
     const listElement = document.getElementById('list');
     const nameInputElement = document.getElementById('name-input');
@@ -112,6 +116,9 @@ nameInputElement.addEventListener ('input',checkFields)
             </div>
           </div>
         </li>`
+    })
+    deleteButtonElement.addEventListener('click', ()=>{ const lastItem  = list.lastElementChild;
+      if (lastItem) {list.removeChild(lastItem);}
     })
   </script>
 </html>
