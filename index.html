@@ -78,7 +78,7 @@ const shortDateTime = new Intl.DateTimeFormat("ru", {dateStyle: "short", timeSty
 
    
 
-
+commentInputElement.addEventListener('keyup',()=>{buttonElement.click('');})
 function checkFields (){
   if (nameInputElement.value === '' || commentInputElement.value === ''){
     buttonElement.disabled = true;
