@@ -1,71 +1,166 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
-      <ul class="comments">
-        <li class="comment">
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <ul class="comments">
+      <li class="comment">
+        <div class="comment-header">
+          <div>Глеб Фокин</div>
+          <div>12.02.22 12:18</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Это будет первый комментарий на этой странице
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">3</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>
+      <li class="comment">
+        <div class="comment-header">
+          <div>Варвара Н.</div>
+          <div>13.02.22 19:22</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Мне нравится как оформлена эта страница! ❤
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">75</span>
+            <button class="like-button -active-like"></button>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <div class="add-form">
+      <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
+      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
+      <div class="add-form-row">
+        <button class="add-form-button">Написать</button>
+      </div>
+    </div>
+    <button class="remove-form-button">Удалить последний комментарий</button>
+  </div>
+</body>
+
+<script>
+  "use strict";
+  const addFormName = document.querySelector('.add-form-name');
+  const addFormText = document.querySelector('.add-form-text');
+  const addFormButton = document.querySelector('.add-form-button');
+  const removeFormButton = document.querySelector('.remove-form-button')
+  const comments = document.querySelector('.comments');
+
+
+  const options = {
+    year: '2-digit',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+  }
+  addFormButton.setAttribute('disabled', true);
+
+  addFormName.addEventListener('input', (e) => {
+    if (addFormName.value === '') {
+      addFormButton.setAttribute('disabled', true);
+    } else {
+      addFormButton.removeAttribute('disabled')
+    }
+  });
+
+  addFormButton.addEventListener('click', () => {
+    const newDate = new Date();
+    addFormName.classList.remove('error');
+    addFormText.classList.remove('error');
+
+    if (addFormName.value === '' || addFormText.value === '') {
+      addFormName.classList.add('error');
+      addFormText.classList.add('error');
+      return;
+    }
+
+    const oldComments = comments.innerHTML;
+    comments.innerHTML = oldComments +
+      `<li class="comment">
           <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
+            <div>${addFormName.value}</div>
+            <div>${newDate.toLocaleDateString('ru-RU', options).replace(',', '')}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              Это будет первый комментарий на этой странице
+              ${addFormText.value}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">3</span>
+              <span class="likes-counter">0</span>
               <button class="like-button"></button>
             </div>
           </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
-        </div>
-      </div>
-    </div>
-  </body>
+        </li>`;
 
-  <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
-  </script>
+    addFormName.value = '';
+    addFormText.value = '';
+  })
+
+  document.addEventListener('keydown', (e) => {
+    if (e.keyCode === 13) {
+      e.preventDefault()
+      const newDate = new Date();
+      addFormName.classList.remove('error');
+      addFormText.classList.remove('error');
+
+      if (addFormName.value === '' || addFormText.value === '') {
+        addFormName.classList.add('error');
+        addFormText.classList.add('error');
+        return;
+      }
+
+      const oldComments = comments.innerHTML;
+      comments.innerHTML = oldComments +
+        `<li class="comment">
+            <div class="comment-header">
+              <div>${addFormName.value}</div>
+              <div>${newDate.toLocaleDateString('ru-RU', options).replace(',', '')}</div>
+            </div>
+            <div class="comment-body">
+              <div class="comment-text">
+                ${addFormText.value}
+              </div>
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">0</span>
+                <button class="like-button"></button>
+              </div>
+            </div>
+          </li>`;
+
+      addFormName.value = '';
+      addFormText.value = '';
+    };
+  });
+
+  removeFormButton.addEventListener('click', () => {
+    const lastChild = comments.lastChild;
+    lastChild.remove();
+  })
+
+  console.log("It works!");
+</script>
+
 </html>
