@@ -17,8 +17,7 @@
 
     .like-button.active {
       background-color: rgba(255, 0, 0, 0.566);    }
-  </style>
-  // я все добавил и забыл создать сперва ветку, поэтому сразу сохраняю все задание. 
+  </style> 
 </head>
 
 <body>
@@ -37,85 +36,100 @@
   </div>
 
   <script>
-    const addCommentButton = document.getElementById("add-comment-button");
-    const nameInput = document.getElementById("name-input");
-    const commentInput = document.getElementById("comment-input");
-    const commentsList = document.getElementById("comments-list");
-    const deleteCommentButton = document.getElementById("deleteCommentButton");
+ const addCommentButton = document.getElementById("add-comment-button");
+const nameInput = document.getElementById("name-input");
+const commentInput = document.getElementById("comment-input");
+const commentsList = document.getElementById("comments-list");
+const deleteCommentButton = document.getElementById("deleteCommentButton");
 
-    function addComment() {
-      const name = nameInput.value.trim();
-      const comment = commentInput.value.trim();
+function sanitizeInput(input) {
+  return input.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+}
 
-      if (name === "" || comment === "") {
-        if (name === "") {
-          nameInput.classList.add("error");
-          addCommentButton.classList.add("disabled");
-        }
-        if (comment === "") {
-          commentInput.classList.add("error");
-          addCommentButton.classList.add("disabled");
-        } else {
-          addCommentButton.classList.remove("disabled");
-        }
-        return;
-      }
-      nameInput.classList.remove("error");
-      commentInput.classList.remove("error");
+function addComment() {
+  const name = sanitizeInput(nameInput.value.trim());
+  const comment = sanitizeInput(commentInput.value.trim());
 
-      const currentDate = new Date();
-      const formattedDate = `${currentDate.getDate()}.${currentDate.getMonth() + 1}.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
-
-      const newCommentHtml = `
-          <li class="comment">
-            <div class="comment-header">
-              <div>${name}</div>
-              <div>${formattedDate}</div>
-            </div>
-            <div class="comment-body">
-              <div class="comment-text">${comment}</div>
-            </div>
-            <div class="comment-footer">
-              <div class="likes">
-                <span class="likes-counter">0</span>
-                <button class="like-button"></button>
-              </div>
-            </div>
-          </li>
-        `;
-
-      commentsList.innerHTML += newCommentHtml;
-
-      nameInput.value = "";
-      commentInput.value = "";
-      addCommentButton.classList.remove("disabled");
-
-      const likeButtons = document.querySelectorAll(".like-button");
-
-      likeButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-          const likesCounter = button.parentElement.querySelector(".likes-counter");
-          const currentLikes = parseInt(likesCounter.textContent, 10);
-
-          if (button.classList.contains("active")) {
-            button.classList.remove("active");
-            likesCounter.textContent = currentLikes - 1;
-          } else {
-            button.classList.add("active");
-            likesCounter.textContent = currentLikes + 1;
-          }
-        });
-      });
+  if (name === "" || comment === "") {
+    if (name === "") {
+      nameInput.classList.add("error");
+      addCommentButton.classList.add("disabled");
     }
+    if (comment === "") {
+      commentInput.classList.add("error");
+      addCommentButton.classList.add("disabled");
+    } else {
+      addCommentButton.classList.remove("disabled");
+    }
+    return;
+  }
+  nameInput.classList.remove("error");
+  commentInput.classList.remove("error");
 
-    addCommentButton.addEventListener("click", addComment);
+  const currentDate = new Date();
+  const formattedDate = `${currentDate.getDate()}.${currentDate.getMonth() + 1}.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
 
-    deleteCommentButton.addEventListener("click", () => {
-      const lastComment = commentsList.lastElementChild;
-      if (lastComment) {
-        commentsList.removeChild(lastComment);
-      }
-    });
+  const newCommentHtml = `
+      <li class="comment" onclick="replyToComment(this)">
+        <div class="comment-header">
+          <div>${name}</div>
+          <div>${formattedDate}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">${comment}</div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">0</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>
+    `;
+
+  commentsList.innerHTML += newCommentHtml;
+
+  nameInput.value = "";
+  commentInput.value = "";
+  addCommentButton.classList.remove("disabled");
+
+  const likeButtons = document.querySelectorAll(".like-button");
+
+  likeButtons.forEach((button) => {
+  button.addEventListener("click", (event) => {
+    event.stopPropagation(); 
+    const likesCounter = button.parentElement.querySelector(".likes-counter");
+    const currentLikes = parseInt(likesCounter.textContent, 10);
+
+    if (button.classList.contains("active")) {
+      button.classList.remove("active");
+      likesCounter.textContent = currentLikes - 1;
+    } else {
+      button.classList.add("active");
+      likesCounter.textContent = currentLikes + 1;
+    }
+  });
+});
+}
+
+addCommentButton.addEventListener("click", addComment);
+
+deleteCommentButton.addEventListener("click", () => {
+  const lastComment = commentsList.lastElementChild;
+  if (lastComment) {
+    commentsList.removeChild(lastComment);
+  }
+});
+function replyToComment(commentElement) {
+  const authorElement = commentElement.querySelector('.comment-header div:first-child');
+  const commentTextElement = commentElement.querySelector('.comment-text');
+
+  const authorName = authorElement.textContent;
+  const originalCommentText = commentTextElement.textContent;
+
+  nameInput.value = authorName;
+  commentInput.value = `@${authorName}: ${originalCommentText}`;
+}
   </script>
 </body>
 
