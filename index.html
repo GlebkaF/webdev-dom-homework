@@ -58,8 +58,8 @@
         ></textarea>
         <div class="add-form-row">
           <button id ='add-button'  class="add-form-button">Написать</button>
+          <button id ='delete-button'  class="delete-form-button">Удалить последний комментарий</button>
         </div>
-        <button id ='delete-button'  class="delete-form-button">Удалить последний комментарий</button>
         <div class="add-form-row">
         </div>
       </div>
@@ -81,9 +81,9 @@ const shortDateTime = new Intl.DateTimeFormat("ru", {dateStyle: "short", timeSty
 commentInputElement.addEventListener('keyup',() => {buttonElement.click('');})
 
 nameInputElement.addEventListener ('input', () => {
-  if (nameInputElement.value === '' || commentInputElement.value === '') { 
-    buttonElement.disabled = true; } 
-    else {buttonElement.disabled = false;}})
+  if (nameInputElement.value && commentInputElement.value) { 
+    buttonElement.disabled = false; } 
+    else {buttonElement.disabled = true;}})
    
     buttonElement.addEventListener('click', () => {
       nameInputElement.classList.remove('error');
