@@ -78,16 +78,18 @@
       });
     }
 
-  /*const initDeliteButtonsListeners = () => {
-    const deleteButtonsElements = document.querySelectorAll(".delete-button");
+  const initDeliteButtonsListeners = () => {
+    const deleteButtonElement = document.querySelector(".delete-button");
   
-  for (const deleteButtonElement of deleteButtonsElements) {
+ 
     deleteButtonElement.addEventListener('click', () => {
+      comments.pop();
+      renderComments();
     });
-    }
+    
   };
 
-  initDeliteButtonsListeners();*/
+  
 
     // Массив
     const comments = [
@@ -132,45 +134,16 @@
       commentsElement.innerHTML = commentsHtml;
       answerText();
       initEventlikes();
+      initDeliteButtonsListeners();
     };
       
     
-    /*const pressEnter = (event) => {
-      if (event.pressEnter === "Enter") {
-      }
-    }*/
 
-
-    const initEventListeners = () => {
-      const commentElements = document.querySelectorAll('.comment');
-    for (const commentElement of commentElements) {
-      commentElement.addEventListener("click", () => {
-        
-        });
-      }
-    }
-
-  renderComments();
-
-    // Текущая дата
-    function formatDate(date) {
-    var dd = date.getDate();
-    if (dd < 10) dd = '0' + dd;
-    var mm = date.getMonth() + 1;
-    if (mm < 10) mm = '0' + mm;
-    var yy = date.getFullYear() % 100;
-    if (yy < 10) yy = '0' + yy;
-    var hour = date.getHours();
-    var min = date.getMinutes();
-    if (min < 10) min = '0' + min;
-    return dd + '.' + mm + '.' + yy + ' ' + hour + ':' + min;
-}   
-    var d = new Date();
-
-
-    // поле ввода окрашивается, если ничего не введено
-    buttonElement.addEventListener('click', () => {
-     nameInputElement.classList.remove("error");
+    /* код для проверки, что комментарий не пустой и отправки комментария 
+    скопировали код nameInput чтобы не писать его дважды, тк одно действие и те же проверки
+    */
+    const onSubmit = () => {
+      nameInputElement.classList.remove("error");
     if (nameInputElement.value === '') {
       nameInputElement.classList.add("error"); 
       return;
@@ -216,7 +189,44 @@
     // обнуляет введенные значения
     nameInputElement.value = "";
     textareaInputElement.value = "";
-});
+    }
+
+    document.addEventListener("keydown", (event) => {
+     
+     if (event.key === "Enter") {
+       onSubmit();
+     }
+   })
+
+    const initEventListeners = () => {
+      const commentElements = document.querySelectorAll('.comment');
+    for (const commentElement of commentElements) {
+      commentElement.addEventListener("click", () => {
+        
+        });
+      }
+    }
+
+  renderComments();
+
+    // Текущая дата
+    function formatDate(date) {
+    var dd = date.getDate();
+    if (dd < 10) dd = '0' + dd;
+    var mm = date.getMonth() + 1;
+    if (mm < 10) mm = '0' + mm;
+    var yy = date.getFullYear() % 100;
+    if (yy < 10) yy = '0' + yy;
+    var hour = date.getHours();
+    var min = date.getMinutes();
+    if (min < 10) min = '0' + min;
+    return dd + '.' + mm + '.' + yy + ' ' + hour + ':' + min;
+}   
+    var d = new Date();
+
+
+    // Вынесли код обработчика в отдельную функцию onSubmit - (enterPress)
+    buttonElement.addEventListener('click', onSubmit);
     
   </script>
 </html>
