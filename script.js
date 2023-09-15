@@ -4,26 +4,32 @@ let formText = document.querySelector('.add-form-text');
 let comments = document.querySelector('.comments');
 let formButton = document.querySelector('.add-form-button');
 let deleteLastBotton = document.querySelector('.delete-last__form-button');
+let loadingForm = document.querySelector('.loading');
+let addForm = document.querySelector('.add-form');
 let quoteEdit;
 
-let commentsArr = [
-    {
-        name: "Глеб Фокин",
-        created: "12.02.22 12:18",
-        comment: "Это будет первый комментарий на этой странице",
-        countLikes: 3,
-        likeSet: false,
-        editComment: false
-    },
-    {
-        name: "Варвара Н.",
-        created: "13.02.22 19:22",
-        comment: "Мне нравится как оформлена эта страница! ❤",
-        countLikes: 75,
-        likeSet: false,
-        editComment: false
-    }
-];
+let commentsArr = [];
+
+const getData = () => {
+    fetch('https://wedev-api.sky.pro/api/v1/evgeniy-zaretskiy/comments', {
+        method: 'GET'
+    }).then((response) => {
+        response.json().then((responseData) => {
+            commentsArr = responseData.comments.map((comment) => {
+                return {
+                    id: comment.id,
+                    created: new Date(comment.date).toLocaleString("ru", { year: '2-digit', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(',', ''),
+                    countLikes: comment.likes,
+                    likeSet: comment.isLiked,
+                    editComment: false,
+                    comment: comment.text,
+                    name: comment.author.name
+                }
+            });
+            renderComments();
+        });
+    });
+};
 
 const likeButtonsListener = () => {
     let likeBottons = document.querySelectorAll('.like-button');
@@ -97,17 +103,18 @@ const buttonDisable = () => {
 
 const addComment = () => {
     if (!formButton.disabled) {
-        commentsArr.push({
-            name: formName.value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
-            created: new Date().toLocaleString("ru", { year: '2-digit', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(',', ''),
-            comment: formText.value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
-            countLikes: 0
+        addForm.classList.add('display_none');
+        loadingForm.classList.remove('display_none');
+        fetch('https://wedev-api.sky.pro/api/v1/evgeniy-zaretskiy/comments', {
+            method: 'POST',
+            body: JSON.stringify({ text: formText.value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;'), name: formName.value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;') })
+        }).then((response) => {
+            formName.value = '';
+            formText.value = '';
+            getData();
+            addForm.classList.remove('display_none');
+            loadingForm.classList.add('display_none');
         });
-
-        formName.value = '';
-        formText.value = '';
-
-        renderComments();
     }
 };
 
@@ -162,4 +169,4 @@ const renderComments = () => {
     buttonDisable();
 };
 
-renderComments();
+getData();
