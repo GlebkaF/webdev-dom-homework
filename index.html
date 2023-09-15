@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="ul-list" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -45,19 +45,19 @@
         </li>
       </ul>
       <div class="add-form">
-        <input
+        <input id="form-name"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
-        <textarea
+        <textarea id="form-comment"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="add-button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
@@ -65,7 +65,25 @@
 
   <script>
     "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const buttonEl = document.getElementById('add-button');
+    const ulList = document.getElementById('ul-list');
+    const formName = document.getElementById('form-name');
+    const formComment = document.getElementById('form-comment');
+    const myDate = new Date().toLocaleDateString();
+    const myTime = new Date().toLocaleTimeString().slice(0,-3);
+
+
+    buttonEl.addEventListener('click', () => {
+      const oldList = ulList.innerHTML;
+      formName.classList.remove("error");
+      formComment.classList.remove("error");
+    if (formName.value === "") { 
+        formName.classList.add("error");
+    } else if (formComment.value === "") {
+        formComment.classList.add("error");
+    }else {
+      ulList.innerHTML = oldList + `<li class="comment"> <div class="comment-header"><div> ${formName.value}</div><div>${myDate} ${myTime}</div></div><div class="comment-body"><div class="comment-text">${formComment.value}</div></div><div class="comment-footer"><div class="likes"><span class="likes-counter">0</span><button class="like-button"></button></div></div></li>`
+      }
+    })
   </script>
 </html>
