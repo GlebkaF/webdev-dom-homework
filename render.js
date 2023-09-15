@@ -53,3 +53,22 @@ export function renderComments() {
     });
   }
 }
+const initEventListeners = () => {
+  const buttonElements = document.querySelectorAll(".like-button");
+
+  for (const buttonElement of buttonElements) {
+    buttonElement.addEventListener("click", () => {
+      const index = buttonElement.dataset.index;
+
+      if (comments[index].isLiked) {
+        comments[index].isLiked = false;
+        comments[index].likes--;
+      } else {
+        comments[index].isLiked = true;
+        comments[index].likes++;
+      }
+
+      renderComments();
+    });
+  }
+};

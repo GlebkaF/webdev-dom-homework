@@ -1,5 +1,5 @@
 import { fetchComments } from "./api.js";
-import { fetchComments } from "./render.js";
+import {} from "./render.js";
 
 const commentNameInput = document.querySelector(".add-form-name");
 const commentTextInput = document.querySelector(".add-form-text");
@@ -11,25 +11,7 @@ let comments = [];
 
 fetchComments();
 
-const initEventListeners = () => {
-  const buttonElements = document.querySelectorAll(".like-button");
-
-  for (const buttonElement of buttonElements) {
-    buttonElement.addEventListener("click", () => {
-      const index = buttonElement.dataset.index;
-
-      if (comments[index].isLiked) {
-        comments[index].isLiked = false;
-        comments[index].likes--;
-      } else {
-        comments[index].isLiked = true;
-        comments[index].likes++;
-      }
-
-      renderComments();
-    });
-  }
-};
+renderComments();
 
 addButton.addEventListener("click", () => {
   commentNameInput.classList.remove("error");
