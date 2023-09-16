@@ -18,6 +18,24 @@
     .like-button.active {
       background-color: rgba(255, 0, 0, 0.566);
     }
+    @keyframes rotating {
+    from {
+      transform: rotate(0deg);
+    }
+    25% {
+      transform: rotate(30deg);;
+    }
+    75% {
+      transform: rotate(-30deg);;
+    }
+    to {
+      transform: rotate(0deg);
+    }
+  }
+
+  .-loading-like {
+    animation: rotating 2s linear infinite;
+  }
   </style>
 </head>
 
