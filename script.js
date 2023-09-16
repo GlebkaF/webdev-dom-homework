@@ -7,7 +7,7 @@ let deleteLastBotton = document.querySelector('.delete-last__form-button');
 let loadingForm = document.querySelector('.loading');
 let addForm = document.querySelector('.add-form');
 let quoteEdit;
-let baseUrl = 'https://wedev-api.sky.pro/api/v1/evgeniy-zaretskiy6/comments';
+let baseUrl = 'https://wedev-api.sky.pro/api/v1/evgeniy-zaretskiy7/comments';
 let commentsArr = [];
 
 const delay = (interval = 300) => {
@@ -197,4 +197,3 @@ window.addEventListener('load', () => {
             loaderText.remove();
         });
 });
-
