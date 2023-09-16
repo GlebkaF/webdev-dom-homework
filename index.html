@@ -8,42 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
+      <ul class="comments"></ul>
       <div class="add-form">
         <input
           type="text"
@@ -72,47 +37,161 @@
     const addText = document.querySelector(".add-form-text");
     let buttonReset = document.querySelector(".add-form-button_reset");
 
-    buttonReset.addEventListener("click", () => {
-      let newList = list.innerHTML;
-      let lastIndex = newList.lastIndexOf(`<li class="comment">`);
-      if(lastIndex !== -1){
-        list.innerHTML = newList.slice(0, lastIndex);
+    // Создание масиива с обьектами пользователей который будет рендерится через функцию renderElements()
+
+    let listOfObject = [
+      {
+        name: "Глеб Фокин",
+        data:  "12.02.22 12:18",
+        comment: "Это будет первый комментарий на этой странице",
+        like: 3,
+        isLiked: false,
+        isEdit: false,
+      },
+      {
+        name: "Варвара Н.",
+        data:  "13.02.22 19:22",
+        comment: "Мне нравится как оформлена эта страница! ❤",
+        like: 75,
+        isLiked: true,
+        isEdit: false,
+      },
+    ];
+
+    //Сама функция renderElements которая массив обьетов listOfObject рендерит в разметку HTML
+
+    function renderElements(){
+      
+      let listOfElements = listOfObject.map((element, index) => {
+          return `<li class="comment">
+        <div class="comment-header">
+          <div>${element.name}</div>
+          <div>${element.data}</div>
+        </div>
+        <div class="comment-body">
+          ${element.isEdit ? ` <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4">${element.comment}</textarea>` : `<div class="comment-text">${element.comment}</div>`}
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${element.like}</span>
+            <button data-index="${index}" class="like-button ${element.isLiked ? "-active-like" : ""}"></button> 
+          </div>
+        </div>
+        <button data-index="${index}"class="change-comment-button">${element.isEdit ? "Сохранить" : "Редактировать"}</button>
+      </li>`;
+        })
+        .join("");
+        list.innerHTML = listOfElements;
+        likeButtons();
+        changeComments();
+    }
+    renderElements();
+
+        // Валидация формы на предмет пустых значений в полях имени и текста //
+
+  function validation() {
+      if (!addName.value || !addText.value) {
+        button.disabled = true;
+      } else {
+        button.disabled = false;
       }
-    });
+    }
+     addName.addEventListener("input", validation);
+     addText.addEventListener("input", validation);
 
-    button.addEventListener("click", () => {
-        addText.classList.remove("error");
-        addName.classList.remove("error");
-      if(!addName.value || !addText.value){
-        addText.classList.add("error");
-        addName.classList.add("error");
-        return;
+    validation();
+
+
+    
+
+      // Обработчик событий на кнопку Отправить.
+
+      function addComment() {
+          button.addEventListener("click", () => {
+            addText.classList.remove("error");
+            addName.classList.remove("error");
+            if (!addName.value || !addText.value) {
+              addText.classList.add("error");
+              addName.classList.add("error");
+              return;
+            };
+
+            listOfObject.push({
+              name: addName.value,
+              data: new Date().toLocaleString().replace(",", ""),
+              comment: addText.value,
+              like: 0,
+              isLiked: false,
+              isEdit: false,
+            })
+            renderElements();
+            addName.value = "";
+            addText.value = "";
+          });
+        }
+        addComment();
+      
+
+
+      //Функция для проставки лайка
+
+      function likeButtons(){
+        let likeButtons = document.querySelectorAll(".like-button");
+        for(let likeButton of likeButtons){
+          let index = likeButton.dataset.index; 
+          let comment = listOfObject[index];
+          likeButton.addEventListener("click", () => {
+           if(comment.isLiked){
+            comment.isLiked = false;
+            comment.like --;
+          }else{
+            comment.isLiked = true;
+            comment.like ++;
+          }
+          renderElements();
+          });
+        };
       }
-      let currentDate = new Date().toLocaleString().replace(",", "")
-      const oldList = list.innerHTML;
-       list.innerHTML = oldList +
-        `<li class="comment">
-          <div class="comment-header">
-            <div>${addName.value}</div>
-            <div>${currentDate}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${addText.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
-       addName.value = "";
-       addText.value = "";
-    })
 
 
+
+
+      // Функция для удаления комментария//
+
+      function removeComments(){
+          buttonReset.addEventListener("click", () => {
+            listOfObject.pop();
+            renderElements();
+          })
+      }
+      removeComments();
+
+
+      //Функция редактирования комментария
+
+
+  function changeComments() {
+    let changeButtons = document.querySelectorAll(".change-comment-button");
+    const addText = document.querySelector(".add-form-text");
+    for (let changeButton of changeButtons) {
+      changeButton.addEventListener("click", () => {
+        let index = changeButton.dataset.index;
+        let comment = listOfObject[index]
+        if (comment.isEdit) {
+          comment.isEdit = false;
+          comment.comment = addText.value;
+          comment.data = new Date().toLocaleString().replace(",", "");
+        } else {
+          comment.isEdit = true;
+        }
+        renderElements();
+      })
+    }
+  }
     console.log("It works!");
   </script>
 </html>
+
+
+
+
