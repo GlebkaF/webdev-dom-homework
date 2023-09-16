@@ -1,3 +1,18 @@
+@keyframes rotating {
+  from {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(30deg);
+  }
+  75% {
+    transform: rotate(-30deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
 body {
     margin: 0;
   }
@@ -53,6 +68,11 @@ body {
 
   .loading__text {
     font-size: 16px;
+  }
+
+  .startLoader {
+    font-size: 16px;
+    color: white;
   }
 
   .comment-footer {
@@ -198,3 +218,4 @@ body {
   .quote:hover {
     cursor: default;
   }
+
