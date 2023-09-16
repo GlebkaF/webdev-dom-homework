@@ -7,11 +7,11 @@ let deleteLastBotton = document.querySelector('.delete-last__form-button');
 let loadingForm = document.querySelector('.loading');
 let addForm = document.querySelector('.add-form');
 let quoteEdit;
-
+let baseUrl = 'https://wedev-api.sky.pro/api/v1/evgeniy-zaretskiy/comments';
 let commentsArr = [];
 
 const getData = () => {
-    fetch('https://wedev-api.sky.pro/api/v1/evgeniy-zaretskiy/comments', {
+    fetch(baseUrl, {
         method: 'GET'
     }).then((response) => {
         response.json().then((responseData) => {
@@ -105,7 +105,7 @@ const addComment = () => {
     if (!formButton.disabled) {
         addForm.classList.add('display_none');
         loadingForm.classList.remove('display_none');
-        fetch('https://wedev-api.sky.pro/api/v1/evgeniy-zaretskiy/comments', {
+        fetch(baseUrl, {
             method: 'POST',
             body: JSON.stringify({ text: formText.value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;'), name: formName.value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;') })
         }).then((response) => {
