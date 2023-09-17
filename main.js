@@ -1,5 +1,4 @@
 import { fetchComments } from "./api.js";
-import {} from "./render.js";
 
 const commentNameInput = document.querySelector(".add-form-name");
 const commentTextInput = document.querySelector(".add-form-text");
@@ -10,8 +9,6 @@ const newDate = new Date().toLocaleString().slice(0, -3);
 let comments = [];
 
 fetchComments();
-
-renderComments();
 
 addButton.addEventListener("click", () => {
   commentNameInput.classList.remove("error");
