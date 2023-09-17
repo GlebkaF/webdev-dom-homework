@@ -58,7 +58,7 @@ fetchPromise.then((response) => {
     jsonPromise.then((responseData) => {
           // Получили данные и рендерим
           commentsArray = responseData.comments
-          console.log(commentsArray); 
+          console.log(commentsArray);
           renderList();
         });
     });
@@ -159,11 +159,22 @@ const buttonListener = buttonInputElement.addEventListener("click", () => {
             text: commentInputElement.value,
             name: nameInputElement.value,
             })
-    }).then((response) => {
-        response.json().then((responseData) => {
-          commentsArray = responseData.comments;
-          renderList();
-        });
+    })
+    // Когда пришел ответ, что всё ок, запрашваем обновленный массив
+    .then((response) => {
+        fetch("https://wedev-api.sky.pro/api/v1/vladimir-rychkov/comments", {
+            method: "GET"
+          }).then((response) => {
+            // Переводим данные от API в json формат
+            const jsonPromise = response.json();
+            // Подписываемся на результат преобразования
+            jsonPromise.then((responseData) => {
+                  // Получили данные и рендерим
+                  commentsArray = responseData.comments
+                  console.log(commentsArray);
+                  renderList();
+                });
+            });
     })
 
   // Очищаем форму от последнего комментария
