@@ -18,24 +18,30 @@
     .like-button.active {
       background-color: rgba(255, 0, 0, 0.566);
     }
-    @keyframes rotating {
-    from {
-      transform: rotate(0deg);
-    }
-    25% {
-      transform: rotate(30deg);;
-    }
-    75% {
-      transform: rotate(-30deg);;
-    }
-    to {
-      transform: rotate(0deg);
-    }
-  }
 
-  .-loading-like {
-    animation: rotating 2s linear infinite;
-  }
+    @keyframes rotating {
+      from {
+        transform: rotate(0deg);
+      }
+
+      25% {
+        transform: rotate(30deg);
+        ;
+      }
+
+      75% {
+        transform: rotate(-30deg);
+        ;
+      }
+
+      to {
+        transform: rotate(0deg);
+      }
+    }
+
+    .-loading-like {
+      animation: rotating 2s linear infinite;
+    }
   </style>
 </head>
 
@@ -60,6 +66,47 @@
     let commentInput = document.getElementById("comment-input");
     let commentsList = document.getElementById("comments-list");
     let deleteCommentButton = document.getElementById("deleteCommentButton");
+    const likeButtons = document.querySelectorAll(".like-button");
+
+    
+
+    likeButtons.forEach((button) => {
+  button.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const likesCounter = button.parentElement.querySelector(".likes-counter");
+    const currentLikes = parseInt(likesCounter.textContent, 10);
+
+    if (button.classList.contains("active")) {
+      button.classList.remove("active", "loading-like");
+      likesCounter.textContent = currentLikes - 1;
+    } else {
+      button.classList.add("active", "loading-like");
+      likesCounter.textContent = currentLikes + 1;
+    }
+
+    // Get the comment ID associated with this like button
+    const commentId = button.closest(".comment").dataset.commentId;
+
+    // Simulate updating the like on the server (replace this with actual server code)
+    
+      .then((response) => response.json())
+      .then((responseData) => {
+        // Remove the loading-like class if needed
+        button.classList.remove("loading-like");
+        // Check the updated like status from the server response and update the UI accordingly
+        if (responseData.isLiked) {
+          button.classList.add("active");
+        } else {
+          button.classList.remove("active");
+        }
+      })
+      .catch((error) => {
+        console.error("Error updating like:", error);
+        // Handle errors here
+      });
+  });
+});
+
 
     function sanitizeInput(input) {
       return input.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
@@ -96,51 +143,51 @@
     }
 
     function addComment() {
-  const name = sanitizeInput(nameInput.value.trim());
-  const comment = sanitizeInput(commentInput.value.trim());
+      const name = sanitizeInput(nameInput.value.trim());
+      const comment = sanitizeInput(commentInput.value.trim());
 
-  if (name === "" || comment === "") {
-    if (name === "") {
-      nameInput.classList.add("error");
-      addCommentButton.classList.add("disabled");
+      if (name === "" || comment === "") {
+        if (name === "") {
+          nameInput.classList.add("error");
+          addCommentButton.classList.add("disabled");
+        }
+        if (comment === "") {
+          commentInput.classList.add("error");
+          addCommentButton.classList.add("disabled");
+        } else {
+          addCommentButton.classList.remove("disabled");
+        }
+        return;
+      }
+      nameInput.classList.remove("error");
+      commentInput.classList.remove("error");
+
+      const currentDate = new Date();
+      const formattedDate = `${currentDate.getDate()}.${currentDate.getMonth() + 1}.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+
+      const newComment = {
+        name: name,
+        author: { name: name },
+        text: comment,
+        date: formattedDate,
+        likes: 0,
+        isLiked: false,
+      };
+
+      fetch("https://wedev-api.sky.pro/api/v1/atamyrat-isayev/comments", {
+        method: "POST",
+        body: JSON.stringify(newComment),
+      })
+        .then((response) => response.json())
+        .then((responseData) => {
+          console.log("New comment added:", responseData);
+
+          fetchComments();
+        })
+        .catch((error) => {
+          console.error("Error adding new comment:", error);
+        });
     }
-    if (comment === "") {
-      commentInput.classList.add("error");
-      addCommentButton.classList.add("disabled");
-    } else {
-      addCommentButton.classList.remove("disabled");
-    }
-    return;
-  }
-  nameInput.classList.remove("error");
-  commentInput.classList.remove("error");
-
-  const currentDate = new Date();
-  const formattedDate = `${currentDate.getDate()}.${currentDate.getMonth() + 1}.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
-
-  const newComment = {
-    name: name, 
-    author: { name: name },
-    text: comment,
-    date: formattedDate,
-    likes: 0,
-    isLiked: false,
-  };
-
-  fetch("https://wedev-api.sky.pro/api/v1/atamyrat-isayev/comments", {
-    method: "POST",
-    body: JSON.stringify(newComment),
-  })
-    .then((response) => response.json())
-    .then((responseData) => {
-      console.log("New comment added:", responseData);
-
-      fetchComments();
-    })
-    .catch((error) => {
-      console.error("Error adding new comment:", error);
-    });
-}   
 
     addCommentButton.addEventListener("click", addComment);
 
