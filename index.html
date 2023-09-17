@@ -69,21 +69,27 @@
     const ulList = document.getElementById('ul-list');
     const formName = document.getElementById('form-name');
     const formComment = document.getElementById('form-comment');
-    const myDate = new Date().toLocaleDateString();
-    const myTime = new Date().toLocaleTimeString().slice(0,-3);
+    
 
 
     buttonEl.addEventListener('click', () => {
+      const myDate = new Date().toLocaleDateString();
+    const myTime = new Date().toLocaleTimeString().slice(0,-3);
       const oldList = ulList.innerHTML;
       formName.classList.remove("error");
       formComment.classList.remove("error");
+      
     if (formName.value === "") { 
         formName.classList.add("error");
+     
     } else if (formComment.value === "") {
         formComment.classList.add("error");
+        
     }else {
       ulList.innerHTML = oldList + `<li class="comment"> <div class="comment-header"><div> ${formName.value}</div><div>${myDate} ${myTime}</div></div><div class="comment-body"><div class="comment-text">${formComment.value}</div></div><div class="comment-footer"><div class="likes"><span class="likes-counter">0</span><button class="like-button"></button></div></div></li>`
-      }
+      formName.value = "";
+      formComment.value = "";
+     }
     })
   </script>
 </html>
