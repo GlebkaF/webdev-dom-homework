@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul id="comments" class="comments">
+      <ul class="comments" id="comments">
        <!-- Список рендерится из JS-->
       </ul>
       <button class="delete-button">Удалить последний элемент</button>
@@ -80,19 +80,17 @@
 
   const initDeliteButtonsListeners = () => {
     const deleteButtonElement = document.querySelector(".delete-button");
-  
- 
+    
+    
     deleteButtonElement.addEventListener('click', () => {
       comments.pop();
       renderComments();
     });
     
   };
-
-  
-
-    // Массив
-    const comments = [
+    
+    // Массив TODO получать из хранилища данных
+    let comments = [
       {
         name: "Глеб",
         date: "12.02.22 12:18",
@@ -106,7 +104,34 @@
         likes: "75",
       },
     ];
-      // Рендер
+
+    const fetchPromise = fetch(
+    'https://wedev-api.sky.pro/api/v1/evgeniya-ko/comments',
+    {
+      method: "GET"
+    });
+    fetchPromise.then((response) => {
+
+    const jsonPromise = response.json();
+      console.log(jsonPromise);
+    jsonPromise.then((responseData) => {
+      const appComments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: comment.date,
+          text: comment.text,
+          likes: comment.likes,
+        };
+       
+      });
+
+      comments = responseData.comments;
+      comments = appComments;
+      renderComments();
+    });
+});
+
+    // Рендер
     const renderComments = () => {
       const commentsHtml = comments.map((comment, index) => {
         return  ` <li class="comment">
@@ -169,6 +194,7 @@
   
     
     /////////////////////////////////////////////
+    // TODO добавлять задачу в хранилище данных
 
     comments.push({
       name: nameInputElement.value
@@ -184,7 +210,25 @@
       
     });
 
-    renderComments();
+    const fetchPromise = fetch(
+    'https://wedev-api.sky.pro/api/v1/evgeniya-ko/comments',
+    {
+      method: "POST",
+      body: JSON.stringify({
+        name: nameInputElement.value,
+        text: textInputElement.value,
+      }),
+    });
+
+    fetchPromise.then((response) => {
+      const jsonPromise = response.json();
+      jsonPromise.then((responseData) => {
+        comments = responseData.comments;
+    
+      });
+  });
+
+  renderComments();
     
     // обнуляет введенные значения
     nameInputElement.value = "";
