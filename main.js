@@ -6,6 +6,8 @@ const nameInputElement = document.querySelector('.add-form-name');
 const commentInputElement = document.querySelector('.add-form-text');
 const buttonInputElement = document.querySelector('.add-form-button');
 const formInputElement = document.querySelector('.add-form');
+const loaderListElement = document.querySelector('.loader_list');
+const loaderFormElement = document.querySelector('.loader_form');
 
 // Получили дату и привели в нужный формат
 let dateString = (string) => {
@@ -45,23 +47,22 @@ let dateString = (string) => {
 // Массив с комментариями
 let commentsArray = [];
 
-// Запрос в API
-const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/vladimir-rychkov/comments", {
+// Запрос в API и рендер
+const fetchAdnRenderComments = () => {
+  return fetch("https://wedev-api.sky.pro/api/v1/vladimir-rychkov/comments", {
     method: "GET"
-  });
+  })
+  .then((response) => response.json())
+  .then((response) => {
+    commentsArray = response.comments
+    renderList();
+  })
+};
 
-// Подписываемся на успешное завершение запроса с помощью then
-fetchPromise.then((response) => {
-    // Переводим данные от API в json формат
-    const jsonPromise = response.json();
-    // Подписываемся на результат преобразования
-    jsonPromise.then((responseData) => {
-          // Получили данные и рендерим
-          commentsArray = responseData.comments
-          console.log(commentsArray);
-          renderList();
-        });
-    });
+fetchAdnRenderComments()
+.then(() => {
+  loaderListElement.classList.add('hide-elem');
+});
 
 // Функция лайка
 const likeListener = () => {
@@ -150,31 +151,28 @@ const buttonListener = buttonInputElement.addEventListener("click", () => {
   if (nameInputElement.value.trim() === '' || commentInputElement.value.trim() === '') {
     formInputElement.classList.add("add-form-error");
     return;
-  };
-  
+  };  
+
+  // Убрали форму
+  formInputElement.classList.add('hide-elem');
+  loaderFormElement.classList.remove('hide-elem');
+
   // Отправили новый объект на сервер
     fetch("https://wedev-api.sky.pro/api/v1/vladimir-rychkov/comments", {
         method: "POST",
         body: JSON.stringify({
             text: commentInputElement.value,
             name: nameInputElement.value,
-            })
+        })
     })
-    // Когда пришел ответ, что всё ок, запрашваем обновленный массив
-    .then((response) => {
-        fetch("https://wedev-api.sky.pro/api/v1/vladimir-rychkov/comments", {
-            method: "GET"
-          }).then((response) => {
-            // Переводим данные от API в json формат
-            const jsonPromise = response.json();
-            // Подписываемся на результат преобразования
-            jsonPromise.then((responseData) => {
-                  // Получили данные и рендерим
-                  commentsArray = responseData.comments
-                  console.log(commentsArray);
-                  renderList();
-                });
-            });
+    // Запросили обновленный массив
+    .then(() => {
+      return fetchAdnRenderComments()
+    })
+    // Вернули форму
+    .then(() => {
+      formInputElement.classList.remove('hide-elem');
+      loaderFormElement.classList.add('hide-elem');
     })
 
   // Очищаем форму от последнего комментария
