@@ -10,40 +10,7 @@
 <body>
   <div class="container">
     <ul id="list" class="comments">
-      <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>
+      <!-- Cписок рендерится из JS -->
     </ul>
     <div>
       <button id="button-delete" class="add-form-button inactive-form-button">Удалить последний комментарий</button>
@@ -57,32 +24,92 @@
       </div>
     </div>
   </div>
-</body>
+
+  <script>
+    "use strict";
 
 
-<script>
-  "use strict";
-
-  // поиск элементов
-  const nameInputElement = document.getElementById("input-name");
-  const commentInputElement = document.getElementById("input-comment");
-  const listElement = document.getElementById("list");
-  const writeButtonElement = document.getElementById("button-write");
-
-  // устанавливаем начальные свойства кнопки добавить комментарий
-  writeButtonElement.classList.add("add-form-button");
-  writeButtonElement.disabled = false;
+    //РЕНДЕР СПИСКА КОММЕНТАРИЕВ
 
 
-  // добавляем обработчик клика на кнопку добавления комментария
-  writeButtonElement.addEventListener("click", () => {
+    // Список имеющихся на странице комментариев 
+    const comments = [
+      {
+        name: "Глеб Фокин",
+        date: "12.02.22 12:18",
+        text: "Это будет первый комментарий на этой странице",
+        like: 3,
+      },
+      {
+        name: "Варвара Н.",
+        date: "13.02.22 19:22",
+        text: "Мне нравится как оформлена эта страница! ❤",
+        like: 75,
+      },
+    ]
 
-    // устанавливаем начальные свойства полей ввода
-    nameInputElement.classList.remove("error");
-    commentInputElement.classList.remove("error");
+    // рендер-функция 
+    const renderComments = () => {
+
+      // поиск элемента списка
+      const listElement = document.getElementById("list");
+
+      // формирование HTML строки
+      const commentsHTML = comments.map((comment, index) => {
+        return `
+<li class="comment">
+  <div class="comment-header">
+    <div>${comment.name}</div>
+    <div>${comment.date}</div>
+  </div>
+  <div class="comment-body">
+    <div class="comment-text">
+      <span class="comment-content">${comment.text}</span>
+      <textarea class="comment-edit" style="display: none;"></textarea>
+    </div>
+  </div>
+  <div class="comment-footer">
+    <div class="likes">
+      <span class="likes-counter">${comment.like}</span>
+      <button data-index="${index}" class="like-button"></button>
+    </div>
+    <button data-index="${index}" class="edit-button">Редактировать</button>
+    <button data-index="${index}" class="save-button">Сохранить</button>
+  </div>
+</li>
+`
+      })
+        .join('');
+
+      // отрисовка HTML строки на экране
+      listElement.innerHTML = commentsHTML;
+
+      addLikeEventListeners();
+    }
+
+    // Рендерим комментарии при загрузке страницы
+    renderComments();
 
 
+
+
+
+
+    // КНОПКА "НАПИСАТЬ" + ENTER
+
+    // поиск элементов
+    const nameInputElement = document.getElementById("input-name");
+    const commentInputElement = document.getElementById("input-comment");
+    const writeButtonElement = document.getElementById("button-write");
+
+
+    // установка начальных свойств кнопки "Написать"
+    writeButtonElement.classList.add("add-form-button");
+    writeButtonElement.disabled = false;
+
+    // функция добавления комментария
     function addComment() {
+      const listElement = document.getElementById("list");
       const oldListHtml = listElement.innerHTML;
       const currentDate = new Date();
       let todayDay = currentDate.getDate();
@@ -96,126 +123,296 @@
       todayHours = todayHours < 10 ? "0" + todayHours : todayHours;
       todayMinutes = todayMinutes < 10 ? "0" + todayMinutes : todayMinutes;
 
-      let formattedDate = `${todayDay}.${todayMonth}.${todayYear} ${todayHours}:${todayMinutes}`;
+      let formattedDate = `${todayDay}.${todayMonth}.${todayYear} ${todayHours}:${todayMinutes} `;
 
-      listElement.innerHTML =
-        oldListHtml +
-        `<li class="comment">
-        <div class="comment-header">
-          <div>${nameInputElement.value}</div>
-          <div>${formattedDate}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${commentInputElement.value}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>`;
+      comments.push({
+        name: nameInputElement.value,
+        date: formattedDate,
+        text: commentInputElement.value,
+        like: 0,
+      });
+
+      // Добавляем HTML нового комментария
+      const newCommentHTML = `<li class="comment">
+                <div class="comment-header">
+                  <div>${comments[comments.length - 1].name}</div>
+                  <div>${comments[comments.length - 1].date}</div>
+                </div>
+                <div class="comment-body">
+                  <div class="comment-text">
+                    ${comments[comments.length - 1].text}
+                  </div>
+                </div>
+                <div class="comment-footer">
+                  <div class="likes">
+                    <span class="likes-counter">${comments[comments.length - 1].like}</span>
+                    <button data-index="${comments.length - 1}" class="like-button"></button>
+                  </div>
+                <button  class="button-edit add-form-button inactive-form-button">Редактировать</button>
+                </div>
+              </li>`;
+
+
+      // Добавляем новый комментарий к списку
+      listElement.innerHTML = oldListHtml + newCommentHTML;
+
+      // Очищаем поля ввода
+      nameInputElement.value = "";
+      commentInputElement.value = "";
+
+      // Проверяем, остались ли комментарии после добавления нового
+      isCommentEmpty();
     }
 
-    // проверка полей ввода на заполнение, если поля не заполнены - подсвечивает красным, кнопку делает неактивной и серой
-    if (nameInputElement.value.trim() === "" && commentInputElement.value.trim() === "") {
-      nameInputElement.classList.add("error");
-      commentInputElement.classList.add("error");
-      writeButtonElement.disabled = true;
-      writeButtonElement.classList.remove("add-form-button");
-      writeButtonElement.classList.add("inactive-form-button");
-      return;
+    // добавление обработчика клика при нажатии на Enter в поле заполнения имени
+    nameInputElement.addEventListener("keyup", (event) => {
+      if (event.key === "Enter" && !event.shiftKey && !event.ctrlKey && !event.altKey) {
+        isInputFieldEmpty(event);
 
-    } else if (commentInputElement.value.trim() === "") {
-      commentInputElement.classList.add("error");
-      writeButtonElement.disabled = true;
-      writeButtonElement.classList.remove("add-form-button");
-      writeButtonElement.classList.add("inactive-form-button");
-      return;
+      }
+    });
 
-    } else if (nameInputElement.value.trim() === "") {
-      nameInputElement.classList.add("error");
-      writeButtonElement.disabled = true;
-      writeButtonElement.classList.remove("add-form-button");
-      writeButtonElement.classList.add("inactive-form-button");
-      return;
+    // добавление обработчика клика при нажатии на Enter в поле заполнения комментария
+    commentInputElement.addEventListener("keyup", (event) => {
+      if (event.key === "Enter" && !event.shiftKey && !event.ctrlKey && !event.altKey) {
+        isInputFieldEmpty(event);
 
-      // вывод комментария, если все поля заполнены, c указанием даты в необходимом формате
-    } else {
-      addComment();
+      }
+    });
+
+    // добавление обработчика клика при нажатии на кнопку "написать"
+    writeButtonElement.addEventListener("click", (event) => {
+      isInputFieldEmpty(event);
+    });
+
+
+    // Общая функция добавления комментария если заполнены оба поля
+    function isInputFieldEmpty(event) {
+      // устанавливаем начальные свойства полей ввода
+      nameInputElement.classList.remove("error");
+      commentInputElement.classList.remove("error");
+
+      // проверка полей ввода на заполнение, если поля не заполнены - подсвечивает красным, кнопку делает неактивной и серой
+      if (nameInputElement.value.trim() === "" && commentInputElement.value.trim() === "") {
+        nameInputElement.classList.add("error");
+        commentInputElement.classList.add("error");
+        writeButtonElement.disabled = true;
+        writeButtonElement.classList.remove("add-form-button");
+        writeButtonElement.classList.add("inactive-form-button");
+        return;
+
+      } else if (commentInputElement.value.trim() === "") {
+        commentInputElement.classList.add("error");
+        writeButtonElement.disabled = true;
+        writeButtonElement.classList.remove("add-form-button");
+        writeButtonElement.classList.add("inactive-form-button");
+        return;
+
+      } else if (nameInputElement.value.trim() === "") {
+        nameInputElement.classList.add("error");
+        writeButtonElement.disabled = true;
+        writeButtonElement.classList.remove("add-form-button");
+        writeButtonElement.classList.add("inactive-form-button");
+        return;
+
+        // вывод комментария, если все поля заполнены, c указанием даты в необходимом формате, проверка на наличие комментариев,
+      } else {
+        addComment();
+        addLikeEventListeners();
+        isCommentEmpty();
+      }
     }
 
-    // сброс красного цвета с полей, если поля заполнены
-    nameInputElement.value = "";
-    commentInputElement.value = "";
-  });
 
-  // callback функция для возвращения зеленого цвета и активности кнопки при заполненных полях ввода
-  function inputEvent(event) {
-    if (nameInputElement.value.trim() !== "" && commentInputElement.value.trim() !== "") {
-      writeButtonElement.disabled = false;
-      writeButtonElement.classList.add("add-form-button");
-      return;
+    // callback функция для возвращения зеленого цвета и активности кнопки при заполненных полях ввода
+    function inputEvent(event) {
+      if (nameInputElement.value.trim() !== "" && commentInputElement.value.trim() !== "") {
+        writeButtonElement.disabled = false;
+        writeButtonElement.classList.add("add-form-button");
+        return;
+      }
     }
-  }
 
-  nameInputElement.addEventListener("input", inputEvent);
-  commentInputElement.addEventListener("input", inputEvent);
+    nameInputElement.addEventListener("input", inputEvent);
+    commentInputElement.addEventListener("input", inputEvent);
 
 
-  // поиск элемента кнопки delete и всех комментариев с классом comment
-  const deleteButtonElement = document.getElementById("button-delete");
-  const comments = document.getElementsByClassName("comment");
 
-  // устанавливаем начальные свойства кнопки
-  deleteButtonElement.classList.add("add-form-button");
-  deleteButtonElement.disabled = false;
+    // КНОПКА "Удалить последний комментарий"
 
-  // добавляем обработчик клика на кнопку удаления комментария
-  deleteButtonElement.addEventListener("click", () => {
-    if (comments.length > 0) {
-      // Находим индекс последнего комментария и удаляем его
-      const lastIndex = comments.length - 1;
-      listElement.removeChild(comments[lastIndex]);
-    }
+    // поиск элемента кнопки delete и всех комментариев с классом comment
+    const deleteButtonElement = document.getElementById("button-delete");
+
+
+    // устанавливаем начальные свойства кнопки "Удалить последний комментарий"
+    deleteButtonElement.classList.add("add-form-button");
+    deleteButtonElement.disabled = false; // Начально делаем кнопку активной
+
+    // добавляем обработчик клика на кнопку "Удалить последний комментарий"
+    deleteButtonElement.addEventListener("click", () => {
+
+      //поиск элементов
+      const listElement = document.getElementById("list");
+      const commentsElements = listElement.getElementsByClassName("comment");
+
+
+      // проверка на наличие комментариев
+      if (commentsElements.length > 0) {
+        // Находим индекс последнего комментария 
+        const lastIndex = commentsElements.length - 1;
+        // удаляем последний дочерний элемент списка DOM
+        listElement.removeChild(commentsElements[lastIndex]);
+
+        // обновляем массив comments, удалив последний комментарий из этого массива
+        comments.pop();
+
+        // Проверяем наличие комментариев после удаления последнего комментария
+        isCommentEmpty();
+      }
+    });
 
     // проверяем остались ли комментарии, при отсутствии комментариев делаем кнопку серой и неактивной
-    const remainingComments = listElement.getElementsByClassName("comment");
-    if (remainingComments.length === 0) {
-      deleteButtonElement.disabled = true;
-      deleteButtonElement.classList.remove("add-form-button");
-      deleteButtonElement.classList.add("inactive-form-button");
+    function isCommentEmpty() {
+      const listElement = document.getElementById("list");
+      const remainingComments = listElement.getElementsByClassName("comment");
+      if (remainingComments.length === 0) {
+        deleteButtonElement.disabled = true;
+        deleteButtonElement.classList.remove("add-form-button");
+        deleteButtonElement.classList.add("inactive-form-button");
+      } else {
+        deleteButtonElement.disabled = false;
+        deleteButtonElement.classList.remove("inactive-form-button");
+        deleteButtonElement.classList.add("add-form-button");
+      }
+    };
+
+
+
+    //ДОБАВЛЕНИЕ И СНЯТИЕ ЛАЙКА НА КОММЕНТАРИИ
+
+    // Функция для добавления лайка
+    function addLike(index) {
+      const likeButtons = document.querySelectorAll(".like-button");
+      const likeButton = likeButtons[index];
+
+      if (!likeButton.classList.contains("-active-like")) {
+        likeButton.classList.add("-active-like");
+        comments[index].like += 1;
+      } else {
+        likeButton.classList.remove("-active-like");
+        comments[index].like -= 1;
+      }
+
+      // Обновляем счетчик лайков
+      const likeCounter = likeButton.previousElementSibling;
+      likeCounter.textContent = comments[index].like;
     }
-    /* Активация кнопки Удаление комментария в случае добавления комментария
-      else {
-      deleteButtonElement.disabled = false;
-      deleteButtonElement.classList.remove("inactive-form-button"); 
-      deleteButtonElement.classList.add("add-form-button");
-    }  */
-  });
+
+    // Функция для привязки обработчиков событий к кнопкам "лайк"
+    function addLikeEventListeners() {
+      const likeButtons = document.querySelectorAll(".like-button");
+
+      likeButtons.forEach((likeButton, index) => {
+        likeButton.addEventListener("click", () => {
+          addLike(index);
+        });
+      });
+    }
 
 
-  /* Добавление элемента в список по нажатию Enter
-  
-    // Добавить обработчик события keyup для поля имени
-    nameInputElement.addEventListener("keyup", (event) => {
-      if (event.key === "Enter") {
-        addComment();
-      }
+    //Реализация кнопки редактирования
+
+    // Обработчик кнопки "Редактировать"
+    function handleEditClick(event) {
+      const index = event.target.dataset.index;
+      const commentElement = document.querySelector(`.comment:nth-child(${Number(index) + 1})`);
+      const commentContentElement = commentElement.querySelector(".comment-content");
+      const commentEditElement = commentElement.querySelector(".comment-edit");
+      const editButtonElement = commentElement.querySelector(".edit-button");
+      const saveButtonElement = commentElement.querySelector(".save-button");
+
+      // Переключаем видимость элементов
+      commentContentElement.style.display = "none";
+      commentEditElement.style.display = "block";
+      editButtonElement.style.display = "none";
+      saveButtonElement.style.display = "inline-block";
+
+      // Устанавливаем текст комментария в textarea для редактирования
+      commentEditElement.value = comments[index].text;
+
+      // Устанавливаем флаг редактирования в true
+      comments[index].isEdit = true;
+    }
+
+    // Обработчик кнопки "Сохранить"
+    function handleSaveClick(event) {
+      const index = event.target.dataset.index;
+      const commentElement = document.querySelector(`.comment:nth-child(${Number(index) + 1})`);
+      const commentContentElement = commentElement.querySelector(".comment-content");
+      const commentEditElement = commentElement.querySelector(".comment-edit");
+      const editButtonElement = commentElement.querySelector(".edit-button");
+      const saveButtonElement = commentElement.querySelector(".save-button");
+
+      // Обновляем текст комментария из textarea
+      comments[index].text = commentEditElement.value;
+
+      // Обновляем текст комментария в UI
+      commentContentElement.textContent = comments[index].text;
+
+      // Переключаем видимость элементов
+      commentContentElement.style.display = "block";
+      commentEditElement.style.display = "none";
+      editButtonElement.style.display = "inline-block";
+      saveButtonElement.style.display = "none";
+
+      // Устанавливаем флаг редактирования в false
+      comments[index].isEdit = false;
+    }
+
+    // Добавляем обработчики событий для кнопок "Редактировать" и "Сохранить"
+    const editButtons = document.querySelectorAll(".edit-button");
+    const saveButtons = document.querySelectorAll(".save-button");
+
+    editButtons.forEach((editButton) => {
+      editButton.addEventListener("click", handleEditClick);
     });
-  
-    // Добавить обработчик события keyup для поля комментария
-    commentInputElement.addEventListener("keyup", (event) => {
-      if (event.key === "Enter") {
-        addComment();
-      }
+
+    saveButtons.forEach((saveButton) => {
+      saveButton.addEventListener("click", handleSaveClick);
     });
-  
-    */
 
+    // Инициализация полей isEdit для комментариев
+    comments.forEach((comment) => {
+      comment.isEdit = false;
+    });
 
-</script>
+    // Проверка и установка начального состояния для комментариев
+    function checkAndSetInitialState() {
+      comments.forEach((comment, index) => {
+        const commentElement = document.querySelector(`.comment:nth-child(${Number(index) + 1})`);
+        const commentContentElement = commentElement.querySelector(".comment-content");
+        const commentEditElement = commentElement.querySelector(".comment-edit");
+        const editButtonElement = commentElement.querySelector(".edit-button");
+        const saveButtonElement = commentElement.querySelector(".save-button");
+
+        if (comment.isEdit) {
+          commentContentElement.style.display = "none";
+          commentEditElement.style.display = "block";
+          editButtonElement.style.display = "none";
+          saveButtonElement.style.display = "inline-block";
+        } else {
+          commentContentElement.style.display = "block";
+          commentEditElement.style.display = "none";
+          editButtonElement.style.display = "inline-block";
+          saveButtonElement.style.display = "none";
+        }
+      });
+    }
+
+    // Вызываем функцию для установки начального состояния
+    checkAndSetInitialState();
+
+  </script>
+</body>
 
 </html>
