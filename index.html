@@ -2,222 +2,255 @@
 <html>
   <head>
     <title>Проект "Комменты"</title>
-    <meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
     <link rel="stylesheet" href="styles.css" />
-	<title>COmmentariii</title>
   </head>
 
   <body>
-	<div class="container">
-    	<div id="container-preloader"></div>
-    	<ul id="list" class="comments"></ul>
-    	<div id="container-preloader-post"></div>
-		<div class="add-form">
-			<input
-			type="text"
-			class="add-form-name"
-			placeholder="Введите ваше имя"
-			value=""
-			/>
-			<textarea
-			type="textarea"
-			class="add-form-text"
-			placeholder="Введите ваш коментарий"
-			rows="4"
-			>
-			</textarea>
-       		<div class="add-form-row">
-        		<button class="add-form-button">Написать</button>
-        	</div>
-		</div>	
-	</div>
+    <div class="container" >
+       <ul class="comments" id="comments" >
+      </ul>
+      <div class="add-form">
+        <input
+          type="text"
+          class="add-form-name"
+          placeholder="Введите ваше имя"
+          id="add-form-name"
+          ;
+        />
+        <textarea
+          type="textarea"
+          class="add-form-text"
+          id="add-form-text"
+          placeholder="Введите ваш коментарий"
+          rows="4"
+          id="add-form-text"
+        ></textarea>
+        <div class="add-form-row">
+          <button class="add-form-button" id="add-button">Написать</button>
+          <button class="add-form-button" id="delete-button">Удалить</button>
+        </div>
+      </div>
+    </div>
   </body>
 
   <script>
-	"use strict";
-	const btnElement = document.querySelector('.add-form-button');
-	const nameInputElement = document.querySelector('.add-form-name');
-	const nameTextAreaElement = document.querySelector('.add-form-text');
-	const myDate = new Date().toLocaleDateString().slice(0, 6) + new Date().toLocaleDateString().slice(-2);
-	const nowDate = myDate + ' ' + new Date().toLocaleTimeString().slice(0, -3);
-
-	const listElement = document.getElementById('list');
-
-	
-	const containerPreloader = document.getElementById('container-preloader');
-	const containerPreloaderPost = document.getElementById('container-preloader-post');
-	const addFormElement = document.querySelector('.add-form');
-
-	let comments = [];
-
-	containerPreloader.textContent = `Идет загрузка комментария...`;
-
-	const fetchAndRendetTasks = () => {
-		return fetch("https://wedev-api.sky.pro/api/v1/elnur-kakhramanov/comments", {
-			method: "GET"
-		})
-
-			.then((response) => {
-				containerPreloader.textContent = '';
-				return response.json();
-			})
-			.then((responseData) => {
-
-				const appComments = responseData.comments.map((comment) => {
-					return {
-						name: comment.author.name,
-						date: new Date(comment.date),
-						likes: comment.likes,
-						isLiked: false,
-						text: comment.text,
-					};
-				});
-
-				comments = appComments;
-				renderComments();
-			});
-	}
+    "use strict";
+    const name = document.getElementById("add-form-name");
+    const commentText = document.getElementById("add-form-text");
+    const comments = document.getElementById("comments");
+    const buttonElement = document.getElementById("add-button");
+    const likeButton = document.getElementById("likeButton");
+    const likesContainer = document.getElementById("likes-container");
+    const addFormTexts = document.getElementById("add-form-text");
 
 
-	const initEventListeners = () => {
 
-		const buttonElements = document.querySelectorAll('.like-button');
+    let people = [
+    ];
 
-		for (const buttonElement of buttonElements) {
-			buttonElement.addEventListener('click', (event) => {
-				event.stopPropagation();
-				const index = buttonElement.dataset.index;
-				if (comments[index].isLiked) {
-					comments[index].isLiked = false;
-					comments[index].likes--;
-				} else {
-					comments[index].isLiked = true;
-					comments[index].likes++;
-				}
+      const renderComments = () => {
 
-				renderComments();
-			});
-		}
+const likesUlHTML = people.map((comment, index) =>{
 
-		const answerElements = document.querySelectorAll('.comment');
-
-		for (const answer of answerElements) {
-			answer.addEventListener('click', () => {
-				const index = answer.dataset.index;
-				nameTextAreaElement.value = `QUOTE_BEGIN${comments[index].name}:\n${comments[index].comment}QUOTE_END`;
-			});
-		}
-	};
-
-	const renderComments = () => {
-		const commentsHtml = comments.map((comment, index) => {
-			return `<li class="comment" data-index='${index}'>
-						<div class="comment-header">
-							<div>${comment.name}</div>
-							<div>${comment.date.toLocaleDateString()} ${comment.date.toLocaleTimeString()}</div>
-						</div>
-						<div class="comment-body">
-						${comment.isEdit ? `<textarea class='add-form-text comment-edit-text'>${comment.text}</textarea>` : `<div class="comment-text" style="white-space:pre-line">
-							${comment.text}
-						</div>`}
-						</div>
-						<button class="add-form-button edits" data-index='${index}'>${comment.isEdit ? 'Сохранить' : 'Редактировать'}</button>
-						<div class="comment-footer">
-							<div class="likes">
-								<span class="likes-counter">${comment.likes}</span>
-								<button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index='${index}'>
-								</button>
-							</div>
-						</div>
-					</li>`;
-		}).join('');			
-
-		listElement.innerHTML = commentsHtml;
-		initEventListeners();
-		functionEdit();
-	}
-
-	function functionEdit() {
-		const commentEditText = document.querySelector('.comment-edit-text');
-		const editElements = document.querySelectorAll('.edits');
-		for (const edit of editElements) {
-			edit.addEventListener('click', () => {
-				const index = edit.dataset.index;
-				console.log(index);
-
-				if (comments[index].isEdit) {
-					comments[index].isEdit = false;
-					comments[index].text = commentEditText.value;
-				} else {
-					comments[index].isEdit = true;
-				}
-				renderComments();
-			});
-		}
-	}
-
-	fetchAndRendetTasks();
-	renderComments();
-
-	const likesElements = document.querySelectorAll('.likes');
+  return `
+   <li class="comment">
+  <div>${comment.author.name}</div>
+        <div>${comment.date}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text" id="answer" data-index=${index}>
+          ${comment.text}
+        </div>
+      </div>
+      <div class="comment-footer">
+  <div class="likes" data-like="${index}">
+          <span class="likes-counter" id="likes-counter">${comment.likes}</span>
+          <button class="like-button ${ comment.isLiked ? '-active-like' : '' }" id="likeButton"></button>
+        </div>
+      </li>
+      `;
+    })
+    .join("");
+    comments.innerHTML = likesUlHTML;
+    likeEventListeners();
+    commentEventListeners()
+  };
+  getAPI()
+  
+    function getAPI(){
+      buttonElement.disabled = true;
+      buttonElement.textContent = 'Комментарии загружаются...';
+      const fetchPromiseGet = fetch(
+        'https://wedev-api.sky.pro/api/v1/elnur-kakhrmanov/comments',
+        {
+          method: "GET"
+        }
+      );
+      fetchPromiseGet     
+        .then((response) => {
+          if (!response.ok) {
+            if (response.status === 500) {
+              /* текст ошибки */
+              throw new Error('Ошибка 500');
+            }
+          }
+          /*возвращаем данные при успешном выполнеии запроса*/
+          return response.json();
+        })
 
 
-	btnElement.addEventListener('click', () => {
-		addFormElement.classList.add('form-none');
-		nameInputElement.classList.remove('error');
-		nameTextAreaElement.classList.remove('error');
+      .then((responseData) => {
+          console.log(responseData);
+          people = responseData.comments; //comments это ключ массива в документации
+          renderComments()
+        })
+      .then((data) => {
+        buttonElement.disabled = false;
+        buttonElement.textContent = 'Написать';
 
-		if (nameInputElement.value === '') {
-			nameInputElement.classList.add('error');
-			return;
-		}
-		if (nameTextAreaElement.value === '') {
-			nameTextAreaElement.classList.add('error');
-			return;
-		}
+  })
+  .catch((error) => {
+    buttonElement.disabled = false;
+    buttonElement.textContent = 'Написать';
+    if (error.message === 'Ошибка 500') {
+            alert('Ошибка при получении комментариев, пожалуйста, попробуйте позже');
+          }
+          console.error(error.message);
+  });
+  /* тут возможна только 500 ошибка*/
 
 
-		const addTodo = () => {
-			containerPreloader.textContent = 'Добавляется комментарий...';
-			
-			return fetch("https://wedev-api.sky.pro/api/v1/elnur-kakhramanov/comments", {
-				method: "POST",
-				body: JSON.stringify({
-					text: nameTextAreaElement.value.replaceAll("&", "&amp;")
-						.replaceAll("<", "&lt;")
-						.replaceAll(">", "&gt;")
-						.replaceAll('"', "&quot;")
-						.replaceAll("QUOTE_BEGIN", "<div class='quote'>")
-						.replaceAll("QUOTE_END", "</div>"),
-					name: nameInputElement.value.replaceAll("&", "&amp;")
-						.replaceAll("<", "&lt;")
-						.replaceAll(">", "&gt;")
-						.replaceAll('"', "&quot;")
-						.replaceAll("QUOTE_BEGIN", "<div class='quote'>")
-						.replaceAll("QUOTE_END", "</div>"),
-				})
-			})
-				.then((responseData) => {
-					return responseData;
-				})
-				.then((response) => {
-					return response.json();
-				})
-				.then((responseData) => {
-					return fetchAndRendetTasks();
-				})
-				.then((data) => {
-					containerPreloaderPost.textContent = '';
-					addFormElement.classList.remove('form-none');
-				})
-		}
-			
-		addTodo();
-		renderComments();
-		nameInputElement.value = '';
-		nameTextAreaElement.value = '';
-	
-	});
+    };
+
+
+    buttonElement.addEventListener("click", () => {
+      if (name.value === "") {
+        name.style.backgroundColor = "#ff7d7d";
+        return;
+      }
+      if (commentText.value === "") {
+        commentText.style.backgroundColor = "#ff7d7d";
+        return;
+      }
+
+      let date = new Date();
+    let output =
+      String(date.getDate()) +
+      "." +
+      String(date.getMonth() + 1) +
+      "." +
+      date.getFullYear() +
+      " " +
+      date.getHours() +
+      ":" +
+      date.getMinutes();
+
+
+//Отключаем кнопку, пока идет загрузка запроса, чтобы пользователь с медленным интернетом видел
+buttonElement.disabled = true;
+buttonElement.textContent = 'Элемент добавляется...';
+// Выкидываем все на сервер API Post
+const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/elnur-kakhrmanov/comments', {
+        method: 'POST',
+        body: JSON.stringify({
+          text: commentText.value,
+          name: name.value,
+          forceError: true, //добавили при 500 ошибке
+        }),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            /* Имеет смысл задавать короткое название ошибок, так как дальше мы будем их разбирать */
+            if (response.status === 500) {
+              throw new Error('Ошибка 500');
+            } else if (response.status === 400) {
+              throw new Error('Ошибка 400');
+            }
+          }
+
+          return response.json();
+        })
+        .then((responseData) => {
+          console.log(responseData);
+          getAPI();
+        })
+        .then(() => {
+          buttonElement.disabled = false;
+          buttonElement.textContent = 'Написать';
+          commentText.value = '';
+        })
+        .catch((error) => {
+          buttonElement.disabled = false;
+          buttonElement.textContent = 'Написать';
+
+          /* расшифровка ошибки */
+
+          if (error.message === 'Ошибка 500') {
+            alert('Ошибка сервера, попробуйте позже');
+            /*return, ибо проверять другие ошибки уже будет не нужно */
+            return;
+          }
+
+          if (error.message === 'Ошибка 400') {
+            /*причина этой ошибки */
+            alert('Имя и комментарий должны быть не короче 3 символов');
+            return;
+          }
+
+          alert('Кажется, у вас сломался интернет, попробуйте позже');
+
+          console.log(error);
+        });
+
+      likeEventListeners();
+      renderComments();
+    });
+
+      likeEventListeners();
+      renderComments();
+
+    function likeEventListeners() {
+      const likeElements = document.querySelectorAll(".likes");
+      for (const likeElement of likeElements) {
+        likeElement.addEventListener("click", () => {
+          const index = likeElement.dataset.like;
+          console.log(index);
+
+
+          if(people[index].isLiked === false){
+            people[index].likes++
+            people[index].isLiked = true;
+            }
+            else {
+            people[index].likes--
+            people[index].isLiked = false;
+            }
+            console.log(people[index].likes);
+            renderComments();
+        });
+      }
+    }
+
+
+    function commentEventListeners(){
+      const addFormTexts = document.querySelectorAll(".comment-text");
+      for (const addFormText of addFormTexts){
+      addFormText.addEventListener("click", (event) =>{
+        event.stopPropagation()
+        console.log(addFormText.dataset.index);
+        console.log(event);
+        document.getElementById('add-form-text').value = ">" + people[addFormText.dataset.index].descr + ",";
+
+      })
+    }
+  }
+
+  commentEventListeners()
+
+
+
+    renderComments();
+    likeEventListeners();
   </script>
 </html>
