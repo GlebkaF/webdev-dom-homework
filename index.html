@@ -113,22 +113,25 @@
     fetchPromise.then((response) => {
 
     const jsonPromise = response.json();
-      console.log(jsonPromise);
+
     jsonPromise.then((responseData) => {
       const appComments = responseData.comments.map((comment) => {
         return {
           name: comment.author.name,
-          date: comment.date,
+          date: new Date(comment.date).toLocaleString(),
           text: comment.text,
           likes: comment.likes,
         };
-       
+    
       });
 
       comments = responseData.comments;
       comments = appComments;
       renderComments();
+
     });
+    renderComments();
+
 });
 
     // Рендер
@@ -151,10 +154,9 @@
               <button class="like-button"></button>
             </div>
           </div>
-        </li> `
-        
-      
-      }).join("");
+        </li> `;
+        })
+        .join("");
 
       commentsElement.innerHTML = commentsHtml;
       answerText();
@@ -196,7 +198,7 @@
     /////////////////////////////////////////////
     // TODO добавлять задачу в хранилище данных
 
-    comments.push({
+      comments.push({
       name: nameInputElement.value
       .replaceAll("<", "&lt;")
       .replaceAll(">", "&gt;"),
@@ -223,12 +225,14 @@
     fetchPromise.then((response) => {
       const jsonPromise = response.json();
       jsonPromise.then((responseData) => {
+        
         comments = responseData.comments;
-    
+        
       });
-  });
+    });
 
-  renderComments();
+    renderComments();
+ 
     
     // обнуляет введенные значения
     nameInputElement.value = "";
@@ -264,7 +268,8 @@
     var hour = date.getHours();
     var min = date.getMinutes();
     if (min < 10) min = '0' + min;
-    return dd + '.' + mm + '.' + yy + ' ' + hour + ':' + min;
+    var sec = date.getSeconds();
+    return dd + '.' + mm + '.' + yy + ', ' + hour + ':' + min + ':' + sec;
 }   
     var d = new Date();
 
