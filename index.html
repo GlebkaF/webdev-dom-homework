@@ -74,7 +74,7 @@
     const commInputElement = document.getElementById("comm-input");
     const buttonElement = document.getElementById("publish-button");
     const listElement = document.getElementById("list");
-
+ 
     function formatDate(date) {
         const day = String(date.getDate()).padStart(2, '0');
         const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -117,20 +117,31 @@
 
 document.querySelectorAll('.comment').forEach(attachCommentClickHandler);
 
+
+
 buttonElement.addEventListener("click", () => {
     commInputElement.style.backgroundColor = "";
     nameInputElement.style.backgroundColor = "";
-    if (!commInputElement.value.trim() || !nameInputElement.value.trim()) {
+    if (commInputElement.value === "" || nameInputElement.value === "") {
         commInputElement.style.backgroundColor = "red";
         nameInputElement.style.backgroundColor = "red";
+       
         return;
     }
 
-    const newComment = createComment(nameInputElement.value, commInputElement.value);
+    
+
+
+    const newComment = createComment(nameInputElement.value
+    .replaceAll("<", "&lt;") 
+    .replaceAll(">", "&gt;"), 
+    commInputElement.value 
+    .replaceAll("<", "&lt;") 
+    .replaceAll(">", "&gt;"));
     listElement.appendChild(newComment);
     attachCommentClickHandler(newComment);
-    commInputElement.value = '';
-    nameInputElement.value = '';
+    commInputElement.value = "";
+    nameInputElement.value = "";
 });
 
 
@@ -169,7 +180,7 @@ buttonElement.addEventListener("click", () => {
     buttonElement.addEventListener("click", () => {
         commInputElement.style.backgroundColor = "";
         nameInputElement.style.backgroundColor = "";
-        if (!commInputElement.value.trim() || !nameInputElement.value.trim()) {
+        if (commInputElement.value === "" || nameInputElement.value === "") {
             commInputElement.style.backgroundColor = "red";
             nameInputElement.style.backgroundColor = "red";
             return;
@@ -178,9 +189,8 @@ buttonElement.addEventListener("click", () => {
         const newComment = createComment(nameInputElement.value, commInputElement.value);
         listElement.appendChild(newComment);
 
-       
-        commInputElement.value = '';
-        nameInputElement.value = '';
+        commInputElement.value = "";
+        nameInputElement.value = "";
     });
 
 
