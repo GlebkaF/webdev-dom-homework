@@ -7,14 +7,23 @@ let deleteLastBotton = document.querySelector('.delete-last__form-button');
 let loadingForm = document.querySelector('.loading');
 let addForm = document.querySelector('.add-form');
 let quoteEdit;
-let baseUrl = 'https://wedev-api.sky.pro/api/v1/evgeniy-zaretskiy/comments';
+let baseUrl = 'https://wedev-api.sky.pro/api/v1/evgeniy-zaretskiy7/comments';
 let commentsArr = [];
 
+const delay = (interval = 300) => {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve();
+        }, interval);
+    });
+};
+
 const getData = () => {
-    fetch(baseUrl, {
+    return fetch(baseUrl, {
         method: 'GET'
-    }).then((response) => {
-        response.json().then((responseData) => {
+    })
+        .then((response) => response.json())
+        .then((responseData) => {
             commentsArr = responseData.comments.map((comment) => {
                 return {
                     id: comment.id,
@@ -26,9 +35,10 @@ const getData = () => {
                     name: comment.author.name
                 }
             });
+        })
+        .then(() => {
             renderComments();
         });
-    });
 };
 
 const likeButtonsListener = () => {
@@ -36,15 +46,18 @@ const likeButtonsListener = () => {
 
     for (let likeBotton of likeBottons) {
         likeBotton.addEventListener('click', () => {
-            if (commentsArr[likeBotton.dataset.indx].likeSet) {
-                commentsArr[likeBotton.dataset.indx].countLikes -= 1;
-                commentsArr[likeBotton.dataset.indx].likeSet = false;
-            }
-            else {
-                commentsArr[likeBotton.dataset.indx].countLikes += 1;
-                commentsArr[likeBotton.dataset.indx].likeSet = true;
-            }
-            renderComments();
+            likeBotton.style.animation = 'rotating 2s linear infinite';
+            delay(2000).then(() => {
+                if (commentsArr[likeBotton.dataset.indx].likeSet) {
+                    commentsArr[likeBotton.dataset.indx].countLikes -= 1;
+                    commentsArr[likeBotton.dataset.indx].likeSet = false;
+                }
+                else {
+                    commentsArr[likeBotton.dataset.indx].countLikes += 1;
+                    commentsArr[likeBotton.dataset.indx].likeSet = true;
+                }
+                renderComments();
+            });
         });
     }
 };
@@ -108,13 +121,17 @@ const addComment = () => {
         fetch(baseUrl, {
             method: 'POST',
             body: JSON.stringify({ text: formText.value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;'), name: formName.value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;') })
-        }).then((response) => {
-            formName.value = '';
-            formText.value = '';
-            getData();
-            addForm.classList.remove('display_none');
-            loadingForm.classList.add('display_none');
-        });
+        })
+            .then((response) => {
+                formName.value = '';
+                formText.value = '';
+                return getData();
+            })
+            .then(() => {
+                addForm.classList.remove('display_none');
+                loadingForm.classList.add('display_none');
+                addForm.scrollIntoView();
+            });
     }
 };
 
@@ -124,8 +141,9 @@ const deleteLastButtonFunc = () => {
 };
 
 const keyEnter = (event) => {
-    if (event.code === 'Enter')
+    if (event.code === 'Enter') {
         addComment();
+    }
 };
 
 const renderComments = () => {
@@ -169,4 +187,13 @@ const renderComments = () => {
     buttonDisable();
 };
 
-getData();
+window.addEventListener('load', () => {
+    let loaderText = document.createElement('p');
+    loaderText.className = 'startLoader';
+    loaderText.textContent = 'Пожалуйста подождите, загружаю комментарии...';
+    comments.before(loaderText);
+    getData()
+        .then(() => {
+            loaderText.remove();
+        });
+});
