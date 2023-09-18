@@ -1,3 +1,6 @@
+
+
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -9,40 +12,8 @@
   <body>
     <div class="container">
       <ul class="comments" id="list">
-        <li class="comment" id="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+        <!-- Список рендерится из JS -->
+      
       </ul>
       <div class="add-form">
         <input id="name-input"
@@ -73,51 +44,122 @@
     const listElement = document.getElementById('list');
     const nameInputElement = document.getElementById('name-input');
     const commentInputElement = document.getElementById('comment-input');
+    
     const currentDate = new Date();
-const shortDateTime = new Intl.DateTimeFormat("ru", {dateStyle: "short", timeStyle: "short"}).format(currentDate);
+    const shortDateTime = new Intl.DateTimeFormat("ru", {dateStyle: "short", timeStyle: "short"}).format(currentDate);
 
+
+
+const comments = [
+     {
+       name: 'Глеб Фокин',
+       dateOfСreation: '12.02.22 12:18',
+       textComment: 'Это будет первый комментарий на этой страницe',
+       likeComment: false,
+       likesNumber: 3,
+       propertyLikeImage: 'like-button -no-active-like',
+     },
+     {
+       name: 'Варвара Н.',
+       dateOfСreation: '13.02.22 19:22',
+       textComment: 'Мне нравится как оформлена эта страница! ❤',
+       likeComment: false,
+       likesNumber: 75,
+       propertyLikeImage: 'like-button -no-active-like',
+     },
+   ];
+   
    
 
-commentInputElement.addEventListener('keyup',() => {buttonElement.click('');})
 
-nameInputElement.addEventListener ('input', () => {
-  if (nameInputElement.value && commentInputElement.value) { 
-    buttonElement.disabled = false; } 
-    else {buttonElement.disabled = true;}})
+
+function getLikes() {    
+
+const likesButton = document.querySelectorAll('.like-button');
+
+for (const like of likesButton) {
+
+  like.addEventListener("click", () => {
+    const likeIndex = like.dataset.index;
+    const commentsElement = comments[likeIndex];
+
+    if (commentsElement.likeComment) 
+    { commentsElement.likesNumber -= 1; 
+      commentsElement.likeComment = false; 
+      commentsElement.propertyLikeImage = 'like-button -no-active-like'; } 
+      else { commentsElement.likesNumber += 1; 
+        commentsElement.likeComment = true; 
+        commentsElement.propertyLikeImage = 'like-button -active-like'; } 
+    renderComments();       
+         })
+        }
+     };
+   getLikes();
+
+   const renderComments = () => {
+
+const commentsHtml = comments.map( (comment, index) => {return `<li class="comment">
+       <div class="comment-header">
+         <div>${comment.name}</div>
+         <div>${comment.dateOfСreation}</div>
+       </div>
+       <div class="comment-body">
+         <div class="comment-text">
+           ${comment.textComment}
+         </div>
+       </div>
+       <div class="comment-footer">
+         <div class="likes">
+           <span class="likes-counter">${comment.likesNumber}</span>
+           <button data-index ="${index}" class='${comment.propertyLikeImage}'></button>
+         </div>
+       </div>
+     </li>`}
+ ).join('');
+ listElement.innerHTML = commentsHtml;
+ getLikes();
+};
+renderComments();
+
+
+
+      
+    
+
+          
    
-    buttonElement.addEventListener('click', () => {
-      nameInputElement.classList.remove('error');
-      if (nameInputElement.value === '') {
-        nameInputElement.classList.add('error')
-   return;
-      }
-      commentInputElement.classList.remove('error');
-      if (commentInputElement.value === '') {
-        commentInputElement.classList.add('error');
-   return;
-      }
-      const oldListHtml = listElement.innerHTML;
-  listElement.innerHTML = oldListHtml + 
-  `<li class="comment">
-          <div class="comment-header">
-            <div>${nameInputElement.value}</div>
-            <div>${shortDateTime}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${commentInputElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>`
-    })
-    deleteButtonElement.addEventListener('click', ()=>{ const lastItem  = list.lastElementChild;
-      if (lastItem) {list.removeChild(lastItem);}
-    })
+buttonElement.addEventListener("click", () => {
+
+comments.push({
+  name: nameInputElement.value,
+  dateСreation: currentDate,
+  textComment: commentInputElement.value,
+  likeComment: false,
+  likesNumber: 0,
+  propertyColorLike: 'like-button -no-active-like',
+});
+renderComments();
+inputNameElement.value = "";
+     inputTextElement.value = "";
+
+
+   });
+
+  
+     document.addEventListener("keyup", function (enter) {
+     if (enter.keyCode == 13) {
+       buttonElement.click();
+     }
+   });
+
+
+   deleteButtonElement.addEventListener("click", () => {
+comments.pop();
+renderComments();
+});
+
+   
   </script>
 </html>
+
+
