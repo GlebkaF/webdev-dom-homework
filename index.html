@@ -41,8 +41,11 @@
 
   const fetchPromise = () => fetch("https://wedev-api.sky.pro/api/v1/VasiliyZykin/comments", {
     method: "GET"
-  }).then((response) => {
-    response.json().then((responseData) => {
+  })
+    .then((response) => {
+      return response.json()
+    })
+    .then((responseData) => {
       console.log(responseData);
 
       const appComments = responseData.comments.map((comment) => {
@@ -69,26 +72,25 @@
       comments = appComments;
       renderComments();
     });
-  });
- 
+
   fetchPromise();
 
- // const comments = [
- //   {
- //     name: "Глеб Фокин",
- //     date: "12.02.22 12:18",
- //     comment: "Это будет первый комментарий на этой странице",
- //     like: 3,
- //     isLiked: false,
- //   },
- //   {
- //     name: "Варвара Н.",
-//      date: "13.02.22 19:22",
- //     comment: "Мне нравится как оформлена эта страница! ❤",
- //     like: 75,
- //     isLiked: true,
- //   },
- // ];
+  // const comments = [
+  //   {
+  //     name: "Глеб Фокин",
+  //     date: "12.02.22 12:18",
+  //     comment: "Это будет первый комментарий на этой странице",
+  //     like: 3,
+  //     isLiked: false,
+  //   },
+  //   {
+  //     name: "Варвара Н.",
+  //      date: "13.02.22 19:22",
+  //     comment: "Мне нравится как оформлена эта страница! ❤",
+  //     like: 75,
+  //     isLiked: true,
+  //   },
+  // ];
 
   const initEventListeners = () => {
     const buttonElements = document.querySelectorAll(".like-button");
@@ -161,19 +163,8 @@
       return;
     }
 
-    //comments.push({
-    //  name: nameInputElement.value.replaceAll("&", "&amp;")
-    //    .replaceAll("<", "&lt;")
-    //    .replaceAll(">", "&gt;")
-    //    .replaceAll('"', "&quot;"),
-    //  date: myDate,
-    //  comment: commentInputElement.value.replaceAll("&", "&amp;")
-    //    .replaceAll("<", "&lt;")
-    //    .replaceAll(">", "&gt;")
-    //    .replaceAll('"', "&quot;"),
-    //  like: 0,
-    //  isLike: false,
-    //});
+    buttonElement.disabled = true;
+    buttonElement.textContent = "Комментарий добавляется...";
 
     fetch("https://wedev-api.sky.pro/api/v1/VasiliyZykin/comments", {
       method: "POST",
@@ -181,10 +172,17 @@
         name: nameInputElement.value,
         text: commentInputElement.value,
       }),
-    }).then(() => {
-      fetchPromise();
-      renderComments();
-    });
+    })
+      .then(() => {
+        return fetchPromise();
+      })
+      .then(() => {
+        return renderComments();
+      })
+      .then(() => {
+        buttonElement.disabled = false;
+        buttonElement.textContent = "Написать";
+      });
 
     document.getElementById('name-input').value = '';
     document.getElementById('comment-input').value = '';
