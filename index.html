@@ -60,171 +60,195 @@
     </div>
   </div>
 
-  <script>
-    let addCommentButton = document.getElementById("add-comment-button");
-    let nameInput = document.getElementById("name-input");
-    let commentInput = document.getElementById("comment-input");
-    let commentsList = document.getElementById("comments-list");
-    let deleteCommentButton = document.getElementById("deleteCommentButton");
-    const likeButtons = document.querySelectorAll(".like-button");
-    let isAddingComment = false; 
+  <!-- ... (previous HTML code) ... -->
 
-    likeButtons.forEach((button) => {
-      button.addEventListener("click", (event) => {
-        event.stopPropagation();
-        const likesCounter = button.parentElement.querySelector(".likes-counter");
-        const currentLikes = parseInt(likesCounter.textContent, 10);
+<!-- ... (previous HTML code) ... -->
 
-        if (button.classList.contains("active")) {
-          button.classList.remove("active", "loading-like");
-          likesCounter.textContent = currentLikes - 1;
-        } else {
-          button.classList.add("active", "loading-like");
-          likesCounter.textContent = currentLikes + 1;
-        }
+<script>
+  let addCommentButton = document.getElementById("add-comment-button");
+  let nameInput = document.getElementById("name-input");
+  let commentInput = document.getElementById("comment-input");
+  let commentsList = document.getElementById("comments-list");
+  let deleteCommentButton = document.getElementById("deleteCommentButton");
+  const likeButtons = document.querySelectorAll(".like-button");
+  let isAddingComment = false;
+  let pendingName = "";
+  let pendingComment = "";
 
-        setTimeout(() => {
-          button.classList.remove("loading-like");
-        }, 2000);
-      });
+  likeButtons.forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const likesCounter = button.parentElement.querySelector(".likes-counter");
+      const currentLikes = parseInt(likesCounter.textContent, 10);
+
+      if (button.classList.contains("active")) {
+        button.classList.remove("active", "loading-like");
+        likesCounter.textContent = currentLikes - 1;
+      } else {
+        button.classList.add("active", "loading-like");
+        likesCounter.textContent = currentLikes + 1;
+      }
+
+      setTimeout(() => {
+        button.classList.remove("loading-like");
+      }, 2000);
     });
+  });
 
-    function sanitizeInput(input) {
-      return input.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+  function sanitizeInput(input) {
+    return input.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+  }
+
+  function displayComments(comments) {
+    const commentsList = document.getElementById("comments-list");
+    commentsList.innerHTML = "";
+
+    comments.forEach((comment) => {
+      const { author, date, text, likes } = comment;
+      const formattedDate = new Date(date).toLocaleString();
+
+      const commentHtml = `
+        <li class="comment">
+          <div class="comment-header">
+            <div>${author.name}</div>
+            <div>${formattedDate}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">${text}</div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${likes}</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>
+      `;
+
+      commentsList.innerHTML += commentHtml;
+    });
+  }
+
+  async function addComment() {
+    if (isAddingComment) {
+      return;
     }
 
-    function displayComments(comments) {
-      const commentsList = document.getElementById("comments-list");
-      commentsList.innerHTML = "";
+    const name = sanitizeInput(nameInput.value.trim());
+    const comment = sanitizeInput(commentInput.value.trim());
 
-      comments.forEach((comment) => {
-        const { author, date, text, likes } = comment;
-        const formattedDate = new Date(date).toLocaleString();
+    if (name.length < 3 || comment.length < 3) {
+      alert("Имя и комментарий должны быть не короче 3 символов");
+      return;
+    }
 
-        const commentHtml = `
-          <li class="comment">
-            <div class="comment-header">
-              <div>${author.name}</div>
-              <div>${formattedDate}</div>
-            </div>
-            <div class="comment-body">
-              <div class="comment-text">${text}</div>
-            </div>
-            <div class="comment-footer">
-              <div class="likes">
-                <span class="likes-counter">${likes}</span>
-                <button class="like-button"></button>
-              </div>
-            </div>
-          </li>
-        `;
+    nameInput.classList.remove("error");
+    commentInput.classList.remove("error");
 
-        commentsList.innerHTML += commentHtml;
+    const currentDate = new Date();
+    const formattedDate = `${currentDate.getDate()}.${currentDate.getMonth() + 1}.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+
+    const newComment = {
+      name: name,
+      author: { name: name },
+      text: comment,
+      date: formattedDate,
+      likes: 0,
+      isLiked: false,
+    };
+
+    isAddingComment = true;
+
+    commentsList.textContent = "Добавляю...";
+    addCommentButton.textContent = "Добавляю...";
+    nameInput.value = "Добавляю...";
+    commentInput.value = "Добавляю...";
+    nameInput.disabled = true;
+    commentInput.disabled = true;
+
+    try {
+      const response = await fetch("https://wedev-api.sky.pro/api/v1/atamyrat-isayev/comments", {
+        method: "POST",
+        body: JSON.stringify(newComment),
       });
-    }
 
-    async function addComment() {
-      if (isAddingComment) {
-        return;
-      }
-
-      const name = sanitizeInput(nameInput.value.trim());
-      const comment = sanitizeInput(commentInput.value.trim());
-
-      if (name === "" || comment === "") {
-        if (name === "") {
-          nameInput.classList.add("error");
-          addCommentButton.classList.add("disabled");
-        }
-        if (comment === "") {
-          commentInput.classList.add("error");
-          addCommentButton.classList.add("disabled");
-        } else {
-          addCommentButton.classList.remove("disabled");
-        }
-        return;
-      }
-      nameInput.classList.remove("error");
-      commentInput.classList.remove("error");
-
-      const currentDate = new Date();
-      const formattedDate = `${currentDate.getDate()}.${currentDate.getMonth() + 1}.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
-
-      const newComment = {
-        name: name,
-        author: { name: name },
-        text: comment,
-        date: formattedDate,
-        likes: 0,
-        isLiked: false,
-      };
-
-      isAddingComment = true;
-
-      addCommentButton.textContent = "Добавляю...";
-      nameInput.value = "Добавляю...";
-      commentInput.value = "Добавляю...";
-      nameInput.disabled = true;
-      commentInput.disabled = true;
-
-      try {
-        const response = await fetch("https://wedev-api.sky.pro/api/v1/atamyrat-isayev/comments", {
-          method: "POST",
-          body: JSON.stringify(newComment),
-        });
-
+      if (response.status === 400) {
+        alert("Имя и комментарий должны быть не короче 3 символов");
+        pendingName = name;
+        pendingComment = comment;
+      } else if (response.status === 500) {
+        alert("Сервер сломался, попробуйте позже");
+        pendingName = name;
+        pendingComment = comment;
+      } else {
         const responseData = await response.json();
-
         console.log("New comment added:", responseData);
-
         fetchComments();
-      } catch (error) {
-        alert.error("Кажется что то пошло не так", error);
-      } finally {
-        isAddingComment = false;
-
-        addCommentButton.textContent = "Написать";
         nameInput.value = "";
         commentInput.value = "";
-        nameInput.disabled = false;
-        commentInput.disabled = false;
       }
+    } catch (error) {
+      alert("Кажется, у вас сломался интернет, попробуйте позже");
+      pendingName = name;
+      pendingComment = comment;
+    } finally {
+      isAddingComment = false;
+
+      if (pendingName !== "") {
+        nameInput.value = pendingName;
+      }
+      if (pendingComment !== "") {
+        commentInput.value = pendingComment;
+      }
+
+      addCommentButton.textContent = "Написать";
+      nameInput.disabled = false;
+      commentInput.disabled = false;
+
+      // Reset pending values
+      pendingName = "";
+      pendingComment = "";
+    }
+  }
+
+  addCommentButton.addEventListener("click", addComment);
+
+  deleteCommentButton.addEventListener("click", () => {
+    const lastComment = commentsList.lastElementChild;
+    if (lastComment) {
+      commentsList.removeChild(lastComment);
     }
 
-    addCommentButton.addEventListener("click", addComment);
-
-    deleteCommentButton.addEventListener("click", () => {
-      const lastComment = commentsList.lastElementChild;
-      if (lastComment) {
-        commentsList.removeChild(lastComment);
-      }
-
-      fetch("https://wedev-api.sky.pro/api/v1/atamyrat-isayev/comments", {
-        method: "DELETE",
+    fetch("https://wedev-api.sky.pro/api/v1/atamyrat-isayev/comments", {
+      method: "DELETE",
+    })
+      .then(() => {
+        console.log("Last comment deleted.");
+        fetchComments();
       })
-        .then(() => {
-          console.log("Last comment deleted.");
+      .catch((error) => {
+        console.error("Error deleting last comment:", error);
+      });
+  });
 
-          fetchComments();
-        })
-        .catch((error) => {
-          console.error("Error deleting last comment:", error);
-        });
-    });
+  async function fetchComments() {
+    try {
+      const response = await fetch("https://wedev-api.sky.pro/api/v1/atamyrat-isayev/comments");
 
-    async function fetchComments() {
-      try {
-        const response = await fetch("https://wedev-api.sky.pro/api/v1/atamyrat-isayev/comments");
-        const comments = await response.json();
-
-        displayComments(comments.comments);
-      } catch (error) {
-        console.error("Error fetching comments:", error);
+      if (response.status === 500) {
+        alert("Сервер сломался, попробуйте позже");
+        return;
       }
+
+      const comments = await response.json();
+      displayComments(comments.comments);
+    } catch (error) {
+      alert("Кажется, у вас сломался интернет, попробуйте позже");
     }
+  }
 
-    fetchComments();
-  </script>
+  fetchComments();
+</script>
 </body>
-
 </html>
+
