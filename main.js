@@ -6,8 +6,6 @@ const addButton = document.querySelector(".add-form-button");
 const commentsBox = document.querySelector(".comments");
 const newDate = new Date().toLocaleString().slice(0, -3);
 
-let comments = [];
-
 fetchComments();
 
 addButton.addEventListener("click", () => {
