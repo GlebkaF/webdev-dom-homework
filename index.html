@@ -25,7 +25,6 @@
         ></textarea>
         <div class="add-form-row">
           <button id="add-button" class="add-form-button">Написать</button>
-          <button id="add-button" class="add-form-button delete-button">Удалить</button>
         </div>
       </div>
     </div>
@@ -60,16 +59,17 @@
         islike: true
     }
 ];
+
    const listElements = document.getElementById("list");
    const nameElement = document.querySelector('.add-form-name');
-  const textElement = document.querySelector('.add-form-text');
+   const textElement = document.querySelector('.add-form-text');
    const buttonElements = document.querySelector('.add-form-button');
    const deleteButtonElement = document.querySelector('.delete-button')
    
 
 function renderElements (){
     const g = comments.map((element, index)=>{
-        return `<li class="comment">
+        return `<li class="comment" data-index="${index}" >
         <div class="comment-header">
           <div>${element.name}</div>
           <div>${element.date}</div>
@@ -83,19 +83,24 @@ function renderElements (){
           <div class="likes">
             <span class="likes-counter">${element.likes}</span>
             <button data-index="${index}" class="like-button ${element.islike ? "-active-like" : ""}"></button>
+            
           </div>
         </div>
+        <button data-index="${index}" class="add-form-button delete-button">Удалить</button>
       </li>`
       
     }).join("");
     list.innerHTML = g;
     addLike();
+    commentOnComment();
+    deleteComment();
 }
 renderElements();
 function addLike () {
   const likeElements = document.querySelectorAll('.like-button');
   for(let like of likeElements) {
-    like.addEventListener('click', () => { 
+    like.addEventListener('click', (event) => { 
+      event.stopPropagation();
       let index = like.dataset.index 
       let object = comments[index];
       if (object.islike){
@@ -108,33 +113,27 @@ function addLike () {
       renderElements();
     })
   }
+
 }
 
-
-
-
-
-
-   const initEventListeners = () => {
-    const likeElements = document.querySelectorAll('.like-button');
-   console.log(likeElements);
-   
-   for (const likeElement of likeElements) {
-    console.log(likeElement);
-    likeElement.addEventListener('click', () => {
-      
-      
-    })
-   }
-  }
-
-  const likeCount = () => {
-    const countElements = document.querySelectorAll('.likes-counter');
-    for (const countElement of countElements ) {
-     
+ function commentOnComment() {
+    const commentOnComment = document.querySelectorAll('.comment');
+     for(let comment of commentOnComment) {
+     comment.addEventListener('click', () => {
+       let index = comment.dataset.index
+     let object = comments[index];
+      commentInputElement.value = `${object.comment}  ${object.name}`
+     renderElements();
+     })
+    
     }
-  }
-  initEventListeners();
+ }
+
+
+
+
+
+
 
     const buttonElement = document.getElementById("add-button");
     const listElement = document.getElementById("list");
@@ -154,9 +153,17 @@ function addLike () {
         return;
        }
       comments.push({
-        name: nameElement.value,
+        name: nameElement.value
+        .replaceAll("<", "&lt")
+        .replaceAll(">", "&gt")
+        .replaceAll("&", "&amp;")
+        .replaceAll('"', "&quot;"),
         date: currentDate,
-        comment: textElement.value,
+        comment: textElement.value
+        .replaceAll("<", "&lt")
+        .replaceAll(">", "&gt")
+        .replaceAll("&", "&amp;")
+        .replaceAll('"', "&quot;"),
         likes: 0,
         islike: false
       });
@@ -169,31 +176,20 @@ function addLike () {
    addComment();
 
    function deleteComment () {
-    deleteButtonElement.addEventListener('click', () => {
-      comments.pop();
-      renderElements();
-    })
+    const buttonDelete = document.querySelectorAll('.delete-button');
+    for( let button of buttonDelete) {
+      button.addEventListener('click', (event) => {
+        let index = button.dataset.index
+        comments.splice(index, 1);
+        event.stopPropagation();
+       renderElements();
+      })
+    }
+      
    };
-   deleteComment(); 
+   
 
-      // const oldListHtml = listElement.innerHTML;
-      //listElement.innerHTML = oldListHtml + `<li class="comment">
-        //  <div class="comment-header">
-          //<div>${nameInputElement.value}</div>
-            //<div>${currentDate}</div>
-          //</div>
-          //<div class="comment-body">
-          //   <div class="comment-text">
-          //     ${commentInputElement.value}
-          //   </div>
-          // </div>
-          // <div class="comment-footer">
-          //   <div class="likes">
-          //     <span id="count" class="likes-counter"></span>
-          //     <button class="like-button"></button>
-          //   </div>`
-
-          //   initEventListeners() ;
+      
             
   
     console.log("It works!");
