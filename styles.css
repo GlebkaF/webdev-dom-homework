@@ -1,3 +1,19 @@
+@keyframes rotating {
+  from {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(30deg);;
+  }
+  75% {
+    transform: rotate(-30deg);;
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+
 body {
     margin: 0;
   }
@@ -22,13 +38,16 @@ body {
   }
 
   .comment,
-  .add-form {
+  .add-form,
+  .authorization-form,
+  .registration-form {
     width: 596px;
     box-sizing: border-box;
     background: radial-gradient(
       75.42% 75.42% at 50% 42.37%,
       rgba(53, 53, 53, 0) 22.92%,
       #7334ea 100%
+    
     );
     filter: drop-shadow(0px 20px 67px rgba(0, 0, 0, 0.08));
     border-radius: 20px;
@@ -37,7 +56,7 @@ body {
   .comments {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 24px;    
   }
 
   .comment {
@@ -62,6 +81,7 @@ body {
 
   .comment-text {
     font-size: 32px;
+    white-space: pre-line;
   }
 
   .likes {
@@ -87,11 +107,18 @@ body {
     height: 22px;
   }
 
+  .-loading-like {
+    animation: rotating 2s linear infinite;
+  }
+
   .-active-like {
     background-image: url("data:image/svg+xml,%3Csvg width='22' height='20' viewBox='0 0 22 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15.95 0C14.036 0 12.199 0.882834 11 2.26703C9.801 0.882834 7.964 0 6.05 0C2.662 0 0 2.6267 0 5.99455C0 10.1035 3.74 13.4714 9.405 18.5613L11 20L12.595 18.5613C18.26 13.4714 22 10.1035 22 5.99455C22 2.6267 19.338 0 15.95 0Z' fill='%23BCEC30'/%3E%3C/svg%3E");
   }
 
-  .add-form {
+
+  .add-form,
+  .authorization-form,
+  .registration-form {
     padding: 20px;
     margin-top: 48px;
     display: flex;
@@ -99,7 +126,13 @@ body {
   }
 
   .add-form-name,
-  .add-form-text {
+  .add-form-text,
+  .authorization-form-login,
+  .authorization-form-password,
+  .authorization-form-name,
+  .registration-form-login,
+  .registration-form-password,
+  .registration-form-name {
     font-size: 16px;
     font-family: Helvetica;
     border-radius: 8px;
@@ -111,18 +144,28 @@ body {
     padding: 11px 22px;
   }
 
-  .add-form-text {
+  .add-form-text,
+  .authorization-form-login,
+  .authorization-form-password,
+  .authorization-form-name,
+  .registration-form-login,
+  .registration-form-password,
+  .registration-form-name {
     margin-top: 12px;
     padding: 22px;
     resize: none;
   }
 
-  .add-form-row {
+  .add-form-row,
+  .authorization-form-row,
+  .registration-form-row {
     display: flex;
     justify-content: flex-end;
   }
 
-  .add-form-button {
+  .add-form-button,
+  .authorization-form-button,
+  .registration-form-button {
     margin-top: 24px;
     font-size: 24px;
     padding: 10px 20px;
@@ -136,6 +179,94 @@ body {
     opacity: 0.9;
   }
 
-  .error {
-    background-color: lightcoral;
+  .empty {
+    background: gray;
+  }
+  .emptyTextName {
+    background: #c2fd92;
+  }
+  .delete-comment-button {
+    margin-top: 24px;
+    font-size: 24px;
+    padding: 10px 20px;
+    background-color: #bcec30;
+    border: none;
+    border-radius: 18px;
+    cursor: pointer;
+  }
+
+  .change-comment-button,
+  .save-comment-button {
+    font-size: 24px;
+    padding: 10px 20px;
+    background-color: #bcec30;
+    border: none;
+    border-radius: 18px;
+    cursor: pointer;
+    margin-right: 50px;
+  }
+
+  .change-form-text {
+    font-size: 16px;
+    font-family: Helvetica;
+    border-radius: 8px;
+    border: none;
+    margin-top: 12px;
+    padding: 22px;
+    resize: none;
+    width: 457px;
+    margin-bottom: 12px;
+  }
+
+  .quote {
+    background-color: #ffffff;
+    color: black;
+  }
+  .sending {
+    font-size: 24px;
+    padding: 10px 20px;
+    background-color: #bcec30;
+    border: none;
+    border-radius: 18px;
+    cursor: pointer;
+    margin-right: 50px;
+    display: none;
+  }
+
+  .none
+  /* .form, */
+  /* .authorization, */
+  /* .registration, */
+  {
+    display: none;
+  }
+
+  .authorization-form-row,
+  .registration-form-row{
+    display: flex;
+    flex-direction: column;
+  }
+
+  .authorization-form-button2,
+  .registration-form-button2{
+    background-color: transparent;
+    border: none;
+    color: #ffffff;
+    text-decoration: underline;
+    padding-top: 20px;
+    font-size: 20px;
+  }
+
+  .authorization-form-title,
+  .registration-form-title{
+    font-weight: 900;
+  }
+
+  .go-authorization-button{
+    background-color: transparent;
+    border: none;
+    color: #ffffff;
+    text-decoration: underline;
+    font-size: 20px;
+    padding-top: 20px;
   }
