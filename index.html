@@ -212,7 +212,7 @@
       
     });
 
-    const fetchPromise = fetch(
+   /* const fetchPromise = fetch(
     'https://wedev-api.sky.pro/api/v1/evgeniya-ko/comments',
     {
       method: "POST",
@@ -220,20 +220,50 @@
         name: nameInputElement.value,
         text: textInputElement.value,
       }),
-    });
-
-    fetchPromise.then((response) => {
-      const jsonPromise = response.json();
-      jsonPromise.then((responseData) => {
-        
-        comments = responseData.comments;
-        
+    }).then((response) => {
+      response.json().then((responseData) => {
+        fetch('https://wedev-api.sky.pro/api/v1/evgeniya-ko/comments', {
+          method: "GET",
+        }).then((response) => {
+          response.json().then((responseData) => {
+            comments = responseData.comments;
+            return(fetchPromise);
+            renderComments();
+          });
+        });
       });
     });
-
-    renderComments();
- 
     
+    renderComments();*/
+
+    fetch('https://wedev-api.sky.pro/api/v1/evgeniya-ko/comments', {
+      method: "POST",
+      body: JSON.stringify({
+        name: nameInputElement.value,
+        text: textInputElement.value,
+      }),
+    })
+        .then((response) => {
+          return response.json();
+        })
+        .then((responseData) => {
+          return fetch('https://wedev-api.sky.pro/api/v1/evgeniya-ko/comments', {
+            method: "GET",
+          });
+        })
+        .then((response) => {
+          return response.json();
+        })
+        .then((responseData) => {
+          
+          comments = responseData.comments;
+          return(fetch);
+          renderComments();
+        });
+
+        renderComments();
+    
+
     // обнуляет введенные значения
     nameInputElement.value = "";
     textareaInputElement.value = "";
