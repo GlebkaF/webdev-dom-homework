@@ -124,7 +124,7 @@
         };
     
       });
-
+     
       comments = responseData.comments;
       comments = appComments;
       renderComments();
@@ -254,9 +254,9 @@
           return response;
         })
         .then((responseData) => {
-          
-          comments = responseData.comments;
           return(fetch);
+          comments = responseData.comments;
+          
           renderComments();
         })
         .then((data) => {
@@ -264,7 +264,7 @@
           buttonElement.textContent = 'Написать';
         });
         
-
+      
         renderComments();
     
 
