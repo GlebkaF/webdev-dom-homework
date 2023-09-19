@@ -1,5 +1,6 @@
 export let comments = [];
 
+
 export function fetchComments() {
   document.querySelector(".comments").textContent = "Комментарии загружаются";
   return fetch("https://wedev-api.sky.pro/api/v1/anastasija-pelyak/comments", {
