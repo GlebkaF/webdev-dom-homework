@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="list">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -49,23 +49,105 @@
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          id="input-name"
         />
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+          id="input-comment"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="add-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
+  
+  <style>
+    .error {
+        background-color: red;
+    }
 
+</style>
   <script>
     "use strict";
     // Код писать здесь
-    console.log("It works!");
+    const buttonElement = document.getElementById("add-button");
+    const listElement = document.getElementById("list");
+    const nameInputElemnt = document.getElementById("input-name");
+    const commentInputElement = document.getElementById("input-comment");
+    const currentDate = new Date ().toLocaleString().slice(0, -3);
+   
+
+
+    buttonElement.addEventListener('click', () => {
+      
+      let data = new Date();
+
+    let formatDay;
+      if (data.getDate() < 10) {
+        formatDay = "0" + data.getDate();
+      } else {formatDay = data.getDate()}
+
+    let formatMonth;
+      if (data.getMonth() < 10) {
+        formatMonth = "0" + (data.getMonth() + 1);
+      } else {formatMonth = data.getMonth() + 1}
+
+    let formatHours;
+      if (data.getHours() < 10) {
+        formatHours = "0" + data.getHours();
+      } else {formatHours = data.getHours()}
+
+    let formatMinutes;
+      if (data.getMinutes() < 10) {
+        formatMinutes = "0" + data.getMinutes();
+      } else {formatMinutes = data.getMinutes()}
+
+    let formatYear;
+      formatYear = data.getFullYear().toString().substr(2,2)
+
+
+      let formatDate = formatDay + "." + formatMonth + "." + formatYear + " " + formatHours + ":" + formatMinutes;
+      
+     
+
+nameInputElemnt.classList.remove("error");
+commentInputElement.classList.remove("error");
+if (nameInputElemnt.value === "" || commentInputElement.value ==="") {
+  //nameInputElemnt.classList.add("error");
+  alert("Заполните ИМЯ и ваш комментарий, пожалуйста.")
+  return;
+}
+
+      const oldListHTML = listElement.innerHTML;
+      listElement.innerHTML = oldListHTML + 
+
+      `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputElemnt.value}</div>
+            <div>
+              ${formatDate}
+            </div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${commentInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+       
+        nameInputElemnt.value = "";
+        commentInputElement.value = "";
+    })
+    
   </script>
 </html>
