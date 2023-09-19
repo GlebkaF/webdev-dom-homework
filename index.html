@@ -26,6 +26,7 @@
   </div>
 
   <script>
+
     "use strict";
 
 
@@ -68,7 +69,7 @@
           </div>
           <div class="comment-body">
             <div class="comment-text">
-            <span class="comment-content">${comment.text}</span>
+            <span class="comment-content">${comment.text.replaceAll("BEGIN_QUOTE--", "<div class='quote'>").replaceAll("--END_QUOTE", "</div>")}</span>
             <textarea class="comment-edit" style="display: none;"></textarea>
             </div>
           </div>
@@ -83,14 +84,23 @@
         </li>`
       }).join('');
 
+
+
+
       // отрисовка HTML строки на экране
       listElement.innerHTML = commentsHTML;
 
       addLikeEventListeners();
+      addEditAndSaveEventListeners();
     }
 
     // Рендерим комментарии при загрузке страницы
     renderComments();
+    addEditAndSaveEventListeners();
+    addAnswerEventListeners();
+
+
+
 
 
 
@@ -125,9 +135,17 @@
       let formattedDate = `${todayDay}.${todayMonth}.${todayYear} ${todayHours}:${todayMinutes} `;
 
       comments.push({
-        name: nameInputElement.value,
+        name: nameInputElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
         date: formattedDate,
-        text: commentInputElement.value,
+        text: commentInputElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
         like: 0,
         isLiked: false,
         isEdit: false,
@@ -135,23 +153,26 @@
 
       // Добавляем HTML нового комментария
       const newCommentHTML = `<li class="comment">
-                <div class="comment-header">
-                  <div>${comments[comments.length - 1].name}</div>
-                  <div>${comments[comments.length - 1].date}</div>
-                </div>
-                <div class="comment-body">
-                  <div class="comment-text">
-                    ${comments[comments.length - 1].text}
-                  </div>
-                </div>
-                <div class="comment-footer">
-                  <div class="likes">
-                    <span class="likes-counter">${comments[comments.length - 1].like}</span>
-                    <button data-index="${comments.length - 1}" class="like-button"></button>
-                  </div>
-                <button data-index="${comments.length - 1}" class="button-edit add-form-button inactive-form-button">Редактировать</button>
-                </div>
-              </li>`;
+        <div class="comment-header">
+          <div>${comments[comments.length - 1].name}</div>
+          <div>${comments[comments.length - 1].date}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            <span class="comment-content">${comments[comments.length - 1].text.replaceAll("BEGIN_QUOTE--", "<div class='quote'>").replaceAll("--END_QUOTE", "</div>")}</span>
+            <textarea class="comment-edit" style="display: none;"></textarea>
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+          <span class="likes-counter">${comments[comments.length - 1].like}</span>
+          <button data-index="${comments.length - 1}" class="like-button"></button>
+        </div>
+          <button data-index="${comments.length - 1}" class="edit-button">Редактировать</button>
+          <button data-index="${comments.length - 1}" class="save-button">Сохранить</button>
+        </div>
+      </li>`;
+
 
 
       // Добавляем новый комментарий к списку
@@ -163,7 +184,9 @@
 
       // Проверяем, остались ли комментарии после добавления нового
       isCommentEmpty();
+      addEditAndSaveEventListeners();
     }
+
 
     // добавление обработчика клика при нажатии на Enter в поле заполнения имени
     nameInputElement.addEventListener("keyup", (event) => {
@@ -219,8 +242,7 @@
         addComment();
         addLikeEventListeners();
         isCommentEmpty();
-        handleEditClick();
-        handleSaveClick();
+        addAnswerEventListeners();
       }
     }
 
@@ -289,6 +311,7 @@
 
 
 
+
     //ДОБАВЛЕНИЕ И СНЯТИЕ ЛАЙКА НА КОММЕНТАРИИ
 
     // Функция для добавления лайка
@@ -326,71 +349,113 @@
     }
 
 
-    //Реализация кнопки редактирования
 
-    // Обработчик кнопки "Редактировать"
-    function handleEditClick(event) {
-      const index = event.target.dataset.index;
-      const commentElement = document.querySelector(`.comment:nth-child(${Number(index) + 1})`);
+    //РЕДАКТИРОВАНИЕ КОММЕНТАРИЕВ
+
+    // функция добавляющая обработчики клика редактирования и сохранения
+    function addEditAndSaveEventListeners() {
+      // Получаем все кнопки "Редактировать" и "Сохранить" после рендеринга
+      const editButtons = document.querySelectorAll(".edit-button");
+      const saveButtons = document.querySelectorAll(".save-button");
+
+      // Добавляем обработчики событий для кнопок "Редактировать"
+      editButtons.forEach((editButton, index) => {
+        editButton.addEventListener("click", () => {
+          editComment(index);
+        })
+      });
+
+      // Добавляем обработчики событий для кнопок "Сохранить"
+      saveButtons.forEach((saveButton, index) => {
+        saveButton.addEventListener("click", () => {
+          saveComment(index);
+        });
+      });
+    }
+
+    //функция редактирования комментария
+    function editComment(index) {
+      // Получаем элементы комментария, который нужно отредактировать
+      const commentElement = document.querySelector(`.comment:nth-child(${index + 1})`);
       const commentContentElement = commentElement.querySelector(".comment-content");
       const commentEditElement = commentElement.querySelector(".comment-edit");
       const editButtonElement = commentElement.querySelector(".edit-button");
       const saveButtonElement = commentElement.querySelector(".save-button");
 
-      // Переключаем видимость элементов
+      // Скрываем содержимое комментария и отображаем текстовое поле для редактирования
       commentContentElement.style.display = "none";
       commentEditElement.style.display = "block";
+
+      // Скрываем кнопку "Редактировать" и отображаем кнопку "Сохранить"
       editButtonElement.style.display = "none";
       saveButtonElement.style.display = "inline-block";
 
-      // Устанавливаем текст комментария в textarea для редактирования
+      // Устанавливаем текст комментария в поле для редактирования
       commentEditElement.value = comments[index].text;
 
-      // Устанавливаем флаг редактирования в true
       comments[index].isEdit = true;
     }
 
-    // Обработчик кнопки "Сохранить"
-    function handleSaveClick(index) {
-      const commentElement = document.querySelector(`.comment:nth-child(${Number(index) + 1})`);
+    //функция сохранения отредактированного комментария
+    function saveComment(index) {
+      // Получаем элементы комментария, который нужно сохранить
+      const commentElement = document.querySelector(`.comment:nth-child(${index + 1})`);
       const commentContentElement = commentElement.querySelector(".comment-content");
       const commentEditElement = commentElement.querySelector(".comment-edit");
       const editButtonElement = commentElement.querySelector(".edit-button");
       const saveButtonElement = commentElement.querySelector(".save-button");
 
-      // Обновляем текст комментария из textarea
-      comments[index].text = commentEditElement.value;
+      //проверка на пустую строку
+      if (commentEditElement.value.trim() !== "") {
+        // Обновляем текст комментария из текстового поля для редактирования
+        comments[index].text = commentEditElement.value;
 
-      // Обновляем текст комментария в UI
-      commentContentElement.textContent = comments[index].text;
+        // Обновляем содержимое комментария в пользовательском интерфейсе
+        commentContentElement.textContent = comments[index].text.replaceAll("BEGIN_QUOTE--", "<div class='quote'>").replaceAll("--END_QUOTE", "</div>");
 
-      // Переключаем видимость элементов
-      commentContentElement.style.display = "block";
-      commentEditElement.style.display = "none";
-      editButtonElement.style.display = "inline-block";
-      saveButtonElement.style.display = "none";
+        // Скрываем текстовое поле для редактирования и отображаем содержимое комментария
+        commentEditElement.style.display = "none";
+        commentContentElement.style.display = "block";
 
-      // Устанавливаем флаг редактирования в false
-      comments[index].isEdit = false;
+        // Скрываем кнопку "Сохранить" и отображаем кнопку "Редактировать"
+        saveButtonElement.style.display = "none";
+        editButtonElement.style.display = "inline-block";
+
+        // Устанавливаем флаг isEdit в значение false
+        comments[index].isEdit = false;
+      }
+      renderComments();
     }
 
-    // Добавляем обработчики событий для кнопок "Редактировать" и "Сохранить"
-    const editButtons = document.querySelectorAll(".edit-button");
-    const saveButtons = document.querySelectorAll(".save-button");
 
-    editButtons.forEach((editButton, index) => {
-      editButton.addEventListener("click", (event) => {
-        handleEditClick(event, index);
+    // ОТВЕТЫ НА КОММЕНТАРИИ
+
+    function answerComment(index) {
+      const commentElement = document.querySelector(`.comment:nth-child(${index + 1})`);
+      const currentCommentText = commentElement.querySelector(".comment-content").textContent;
+      const currentCommentAuthor = commentElement.querySelector(".comment-header div:first-child").textContent;
+      const commentInputElement = document.getElementById("input-comment");
+
+      // Копируем текст комментария и имя автора в поле ввода для комментария
+      const commentTextToCopy = `BEGIN_QUOTE--${currentCommentAuthor}:\n${currentCommentText}--END_QUOTE\n\n`;
+      commentInputElement.value = commentTextToCopy;
+
+
+      // Переводим фокус на поле ввода комментария, чтобы пользователь мог сразу писать ответ
+      commentInputElement.focus();
+    }
+
+    function addAnswerEventListeners() {
+      // Добавляем обработчики событий для комментариев
+      const commentContentElements = document.querySelectorAll(".comment-content");
+
+      commentContentElements.forEach((commentContentElement, index) => {
+        commentContentElement.addEventListener("click", (event) => {
+          event.stopPropagation();
+          answerComment(index);
+        });
       });
-    });
-
-    saveButtons.forEach((saveButton, index) => {
-      saveButton.addEventListener("click", () => {
-        handleSaveClick(index);
-      });
-    });
-
-
+    }
 
 
   </script>
