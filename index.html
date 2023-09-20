@@ -195,16 +195,17 @@
   // Функция ответа на комментарий //
 
   function answerOnCommnets() {
-    let commentElements = document.querySelectorAll(".comment")
+    let commentElements = document.querySelectorAll(".comment-text")
     for (let commentElement of commentElements) {
       commentElement.addEventListener("click", () => {
-        let index = commentElement.dataset.index;
+        let index = commentElement.closest('.comment').dataset.index;
         let comment = listOfObject[index];
         addText.value = `${comment.comment} ${comment.name}`;
         renderElements();
       })
     }
   }
+  
 
   console.log("It works!");
 </script>
