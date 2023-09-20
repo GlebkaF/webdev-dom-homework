@@ -18,6 +18,30 @@
     .like-button.active {
       background-color: rgba(255, 0, 0, 0.566);
     }
+
+    @keyframes rotating {
+      from {
+        transform: rotate(0deg);
+      }
+
+      25% {
+        transform: rotate(30deg);
+        ;
+      }
+
+      75% {
+        transform: rotate(-30deg);
+        ;
+      }
+
+      to {
+        transform: rotate(0deg);
+      }
+    }
+
+    .-loading-like {
+      animation: rotating 2s linear infinite;
+    }
   </style>
 </head>
 
@@ -42,6 +66,28 @@
     let commentInput = document.getElementById("comment-input");
     let commentsList = document.getElementById("comments-list");
     let deleteCommentButton = document.getElementById("deleteCommentButton");
+    const likeButtons = document.querySelectorAll(".like-button");
+    let isAddingComment = false; 
+
+    likeButtons.forEach((button) => {
+      button.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const likesCounter = button.parentElement.querySelector(".likes-counter");
+        const currentLikes = parseInt(likesCounter.textContent, 10);
+
+        if (button.classList.contains("active")) {
+          button.classList.remove("active", "loading-like");
+          likesCounter.textContent = currentLikes - 1;
+        } else {
+          button.classList.add("active", "loading-like");
+          likesCounter.textContent = currentLikes + 1;
+        }
+
+        setTimeout(() => {
+          button.classList.remove("loading-like");
+        }, 2000);
+      });
+    });
 
     function sanitizeInput(input) {
       return input.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
@@ -77,52 +123,74 @@
       });
     }
 
-    function addComment() {
-  const name = sanitizeInput(nameInput.value.trim());
-  const comment = sanitizeInput(commentInput.value.trim());
+    async function addComment() {
+      if (isAddingComment) {
+        return;
+      }
 
-  if (name === "" || comment === "") {
-    if (name === "") {
-      nameInput.classList.add("error");
-      addCommentButton.classList.add("disabled");
+      const name = sanitizeInput(nameInput.value.trim());
+      const comment = sanitizeInput(commentInput.value.trim());
+
+      if (name === "" || comment === "") {
+        if (name === "") {
+          nameInput.classList.add("error");
+          addCommentButton.classList.add("disabled");
+        }
+        if (comment === "") {
+          commentInput.classList.add("error");
+          addCommentButton.classList.add("disabled");
+        } else {
+          addCommentButton.classList.remove("disabled");
+        }
+        return;
+      }
+      nameInput.classList.remove("error");
+      commentInput.classList.remove("error");
+
+      const currentDate = new Date();
+      const formattedDate = `${currentDate.getDate()}.${currentDate.getMonth() + 1}.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+
+      const newComment = {
+        name: name,
+        author: { name: name },
+        text: comment,
+        date: formattedDate,
+        likes: 0,
+        isLiked: false,
+      };
+
+      isAddingComment = true;
+
+      commentsList.textContent = "Добавляю..."
+      addCommentButton.textContent = "Добавляю...";
+      nameInput.value = "Добавляю...";
+      commentInput.value = "Добавляю...";
+      nameInput.disabled = true;
+      commentInput.disabled = true;
+
+      try {
+        const response = await fetch("https://wedev-api.sky.pro/api/v1/atamyrat-isayev/comments", {
+          method: "POST",
+          body: JSON.stringify(newComment),
+        });
+
+        const responseData = await response.json();
+
+        console.log("New comment added:", responseData);
+
+        fetchComments();
+      } catch (error) {
+        alert.error("Кажется что то пошло не так", error);
+      } finally {
+        isAddingComment = false;
+
+        addCommentButton.textContent = "Написать";
+        nameInput.value = "";
+        commentInput.value = "";
+        nameInput.disabled = false;
+        commentInput.disabled = false;
+      }
     }
-    if (comment === "") {
-      commentInput.classList.add("error");
-      addCommentButton.classList.add("disabled");
-    } else {
-      addCommentButton.classList.remove("disabled");
-    }
-    return;
-  }
-  nameInput.classList.remove("error");
-  commentInput.classList.remove("error");
-
-  const currentDate = new Date();
-  const formattedDate = `${currentDate.getDate()}.${currentDate.getMonth() + 1}.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
-
-  const newComment = {
-    name: name, 
-    author: { name: name },
-    text: comment,
-    date: formattedDate,
-    likes: 0,
-    isLiked: false,
-  };
-
-  fetch("https://wedev-api.sky.pro/api/v1/atamyrat-isayev/comments", {
-    method: "POST",
-    body: JSON.stringify(newComment),
-  })
-    .then((response) => response.json())
-    .then((responseData) => {
-      console.log("New comment added:", responseData);
-
-      fetchComments();
-    })
-    .catch((error) => {
-      console.error("Error adding new comment:", error);
-    });
-}   
 
     addCommentButton.addEventListener("click", addComment);
 
@@ -145,15 +213,15 @@
         });
     });
 
-    function fetchComments() {
-      fetch("https://wedev-api.sky.pro/api/v1/atamyrat-isayev/comments")
-        .then((response) => response.json())
-        .then((comments) => {
-          displayComments(comments.comments);
-        })
-        .catch((error) => {
-          console.error("Error fetching comments:", error);
-        });
+    async function fetchComments() {
+      try {
+        const response = await fetch("https://wedev-api.sky.pro/api/v1/atamyrat-isayev/comments");
+        const comments = await response.json();
+
+        displayComments(comments.comments);
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      }
     }
 
     fetchComments();
