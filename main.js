@@ -1,4 +1,5 @@
 import { fetchComments } from "./api.js";
+import { renderComments } from "./render.js";
 
 const commentNameInput = document.querySelector(".add-form-name");
 const commentTextInput = document.querySelector(".add-form-text");
