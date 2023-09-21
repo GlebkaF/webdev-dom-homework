@@ -1,95 +1,117 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
-      <ul id="ul-list" class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div class="add-form">
-        <input id="form-name"
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea id="form-comment"
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button id="add-button" class="add-form-button">Написать</button>
-        </div>
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <ul id="ul-list" class="comments">
+
+    </ul>
+    <div class="add-form">
+      <input id="form-name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+      <textarea id="form-comment" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+        rows="4"></textarea>
+      <div class="add-form-row">
+        <button id="add-button" class="add-form-button">Написать</button>
       </div>
     </div>
-  </body>
+  </div>
+</body>
 
-  <script>
-    "use strict";
-    const buttonEl = document.getElementById('add-button');
-    const ulList = document.getElementById('ul-list');
-    const formName = document.getElementById('form-name');
-    const formComment = document.getElementById('form-comment');
-    
+<script>
+  "use strict";
+  const buttonEl = document.getElementById('add-button');
+  const ulList = document.getElementById('ul-list');
+  const formName = document.getElementById('form-name');
+  const formComment = document.getElementById('form-comment');
+
+  const listComents = [
+    {
+      nameUser: "Глеб Фокин",
+      dataTimeComents: "12.02.22 12:18",
+      comentUser: "Это будет первый комментарий на этой странице",
+      like: 12,
+      isLike: false,
+
+    },
+    {
+      nameUser: "Варвара Н.",
+      dataTimeComents: "13.02.22 19:22",
+      comentUser: "Мне нравится как оформлена эта страница! ❤",
+      like: 77,
+      isLike: true,
+
+    },
+  ];
 
 
-    buttonEl.addEventListener('click', () => {
-      const myDate = new Date().toLocaleDateString();
-    const myTime = new Date().toLocaleTimeString().slice(0,-3);
-      const oldList = ulList.innerHTML;
-      formName.classList.remove("error");
-      formComment.classList.remove("error");
-      
-    if (formName.value === "") { 
-        formName.classList.add("error");
-     
+  const addLike = () => {
+    const quantityLikesElement = document.querySelectorAll('.likes-counter');
+    const likesElement = document.querySelectorAll('.like-button');
+    for (const like of likesElement) {
+      like.addEventListener('click', () => {
+        let index = like.dataset.index
+        let object = listComents[index];
+        if (object.isLike) {
+          object.isLike = false;
+          object.like--;
+        } else {
+          object.isLike = true;
+          object.like++;
+        }
+        rendLists();
+      })
+
+    }
+  };
+
+  const rendLists = () => {
+    const listHtml = listComents.map((coment, index) => {
+      return `<li class="comment"> <div class="comment-header"><div> ${coment.nameUser}</div>
+  <div>${coment.dataTimeComents}</div></div><div class="comment-body"><div class="comment-text">${coment.comentUser}</div></div>
+  <div class="comment-footer"><div class="likes"><span class="likes-counter">${coment.like}</span>
+    <button data-index="${index}" class="like-button ${coment.isLike ? "-active-like" : ""}" ></button></div></div></li>`
+    })
+      .join('');
+    ulList.innerHTML = listHtml;
+    addLike();
+  }
+
+  rendLists();
+
+
+
+  buttonEl.addEventListener('click', () => {
+    const myDate = new Date().toLocaleString().slice(0, -3);
+    const oldList = ulList.innerHTML;
+    formName.classList.remove("error");
+    formComment.classList.remove("error");
+
+    if (formName.value === "") {
+      formName.classList.add("error");
+
     } else if (formComment.value === "") {
-        formComment.classList.add("error");
-        
-    }else {
-      ulList.innerHTML = oldList + `<li class="comment"> <div class="comment-header"><div> ${formName.value}</div><div>${myDate} ${myTime}</div></div><div class="comment-body"><div class="comment-text">${formComment.value}</div></div><div class="comment-footer"><div class="likes"><span class="likes-counter">0</span><button class="like-button"></button></div></div></li>`
+      formComment.classList.add("error");
+
+    } else {
+      listComents.push({
+        nameUser: formName.value,
+        dataTimeComents: myDate,
+        comentUser: formComment.value,
+        like: 0,
+        isLike: false,
+      })
       formName.value = "";
       formComment.value = "";
-     }
-    })
-  </script>
+      rendLists();
+    }
+
+  })
+</script>
+
 </html>
