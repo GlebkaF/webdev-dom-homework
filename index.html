@@ -48,6 +48,7 @@
   const addFormButton = document.querySelector('.add-form-button');
   const removeFormButton = document.querySelector('.remove-form-button')
   const listComments = document.querySelector('.comments');
+  
 
   const options = {
     year: '2-digit',
@@ -61,23 +62,23 @@
 
   const renderComments = () => {
     const commentsHTML = comments.map((comment) => {
-      return `<li class="comment" data-id="${comment.id}">
+      return `<li class="comment" data-id="${comment.id}" data-name="${comment.name}">
           <div class="comment-header">
-            <div>${comment.name}</div>
+           <div>${comment.name}</div>
             <div>${comment.dateTime}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${comment.textComment}
+             ${comment.textComment}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">${comment.countLike}</span>
+             <span class="likes-counter">${comment.countLike}</span>
               <button class="like-button" data-like="${comment.isLike}"></button>
             </div>
           </div>
-        </li>`
+            </li>`
     }).join('');
     listComments.innerHTML = commentsHTML;
     addFormName.value = '';
@@ -97,11 +98,19 @@
     }
     comments.push({
       id: ++idCounter,
-      name: addFormName.value,
+      name: addFormName.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       dateTime: newDate.toLocaleDateString('ru-RU', options).replace(',', ''),
-      textComment: addFormText.value,
+      textComment: addFormText.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       countLike: 0,
-      isLike: false,
+      isLike: false,     
     })
 
     renderComments();
@@ -134,24 +143,45 @@
     comments.pop();
   })
 
-  const addLikesElements = (e) => {
-    const target = e.target;
-    if (!target) return;
-    if (!target.classList.contains('like-button')) return;
-    const commentBlock = target.closest('.comment');
-    const commentId = commentBlock.dataset.id;
-    const com = comments.find(c => c.id == commentId);
-    if (!com) return;
-    if (com.isLike) {
-      com.countLike--;
-    } else {
-      com.countLike++;
-    }
-    com.isLike = !com.isLike;
-    renderComments();
+  const switcher = (event) => {
+  if (!event || !event.target) return;
+  const target = event.target;
+  
+  if (target.classList.contains('like-button')) {
+    addLikesElements(target);
+    return;
   }
+  
+  if (target.classList.contains('comment-text')) {
+    areaFunction(target);
+    return;
+  }
+}
 
-  document.addEventListener('click', addLikesElements);
+  const areaFunction = (target) => {
+  const commentBlock = target.closest('.comment');
+  const commentId = commentBlock.dataset.name;
+  addFormText.value = `${'>'}` + target.innerHTML.trim().replaceAll("&amp;", "&")
+        .replaceAll("&lt;", "<")
+        .replaceAll("&gt;", ">")
+        .replaceAll("&quot;",'"') +' \n'+ commentId;
+}
+
+  const addLikesElements = (target) => {
+  const commentBlock = target.closest('.comment');
+  const commentId = commentBlock.dataset.id;
+  const com = comments.find(c => c.id == commentId);
+  if (!com) return;
+  if (com.isLike) {
+    com.countLike--;
+  } else {
+    com.countLike++;
+  }
+  com.isLike = !com.isLike;
+  renderComments();
+}
+
+  listComments.addEventListener('click', switcher);
 
   console.log("It works!");
 </script>
