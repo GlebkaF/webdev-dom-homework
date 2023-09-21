@@ -1,11 +1,9 @@
-import { fetchComments } from "./api.js";
-import { renderComments } from "./render.js";
+import { fetchComments, postComment } from "./api.js";
 
 const commentNameInput = document.querySelector(".add-form-name");
 const commentTextInput = document.querySelector(".add-form-text");
 const addButton = document.querySelector(".add-form-button");
-const commentsBox = document.querySelector(".comments");
-const newDate = new Date().toLocaleString().slice(0, -3);
+
 
 fetchComments();
 

@@ -1,12 +1,10 @@
-export let comments = [];
-
+import { renderComments } from "./render.js";
 
 export function fetchComments() {
   document.querySelector(".comments").textContent = "Комментарии загружаются";
   return fetch("https://wedev-api.sky.pro/api/v1/anastasija-pelyak/comments", {
     method: "GET",
   }).then((response) => {
-    console.log(document.querySelector(".comments"));
     response.json().then((responseData) => {
       const appComments = responseData.comments.map((comment) => {
         return {
@@ -17,12 +15,15 @@ export function fetchComments() {
           text: comment.text,
         };
       });
-      comments = appComments;
-      renderComments();
+
+      renderComments(appComments);
     });
   });
 }
 export function postComment() {
+  const commentTextInput = document.querySelector(".add-form-text");
+  const commentNameInput = document.querySelector(".add-form-name");
+  const addButton = document.querySelector(".add-form-button");
   return fetch("https://wedev-api.sky.pro/api/v1/anastasija-pelyak/comments", {
     method: "POST",
     body: JSON.stringify({

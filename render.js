@@ -1,4 +1,20 @@
-export function renderComments() {
+function padTo2Digits(num) {
+  return num.toString().padStart(2, "0");
+}
+
+function formatDate(date) {
+  return (
+    [
+      padTo2Digits(date.getDate()),
+      padTo2Digits(date.getMonth() + 1),
+      date.getFullYear(),
+    ].join(".") +
+    " " +
+    [padTo2Digits(date.getHours()), padTo2Digits(date.getMinutes())].join(":")
+  );
+}
+
+export function renderComments(comments) {
   const commentsListHtml = comments
     .map((comment, index) => {
       console.log(comment);
@@ -8,7 +24,7 @@ export function renderComments() {
       }" data-index="${index}">
               <div class="comment-header">
                   <div>${comment.name}</div>
-                  <div>${comment.date}</div>
+                  <div>${formatDate(comment.date)}</div>
               </div>
               <div class="comment-body">
                   <div class="comment-text" style="white-space:pre-line">
@@ -49,26 +65,7 @@ export function renderComments() {
         comment.likes++;
       }
 
-      renderComments();
+      renderComments(comments);
     });
   }
 }
-const initEventListeners = () => {
-  const buttonElements = document.querySelectorAll(".like-button");
-
-  for (const buttonElement of buttonElements) {
-    buttonElement.addEventListener("click", () => {
-      const index = buttonElement.dataset.index;
-
-      if (comments[index].isLiked) {
-        comments[index].isLiked = false;
-        comments[index].likes--;
-      } else {
-        comments[index].isLiked = true;
-        comments[index].likes++;
-      }
-
-      renderComments();
-    });
-  }
-};
