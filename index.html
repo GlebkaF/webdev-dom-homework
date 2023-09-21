@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <title>Проект "Комменты"</title>
     <meta charset="utf-8" />
@@ -25,8 +25,8 @@
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button id="add-button" class="add-form-button">Написать</button>
-          <button id="delete-button" class="delete-form-button">Удалить последний комментарий</button>
+          <button id="add-button" class="add-form-button" disabled>Написать</button>
+          <button id="delete-button" class="add-form-button delete-form-button">Удалить последний комментарий</button>
         </div>
       </div>
     </div>
@@ -38,11 +38,14 @@
       const nameInputElement = document.getElementById("name-input");
       const commentInputElement = document.getElementById("comment-input");
 
-      const currentDate = new Date();
-      const shortDateTime = new Intl.DateTimeFormat("ru", {
-        dateStyle: "short",
-        timeStyle: "short",
-      }).format(currentDate);
+      const shortDateTime =
+        new Date().getDate().toString().padStart(2, "0") +
+        "." +
+        (new Date().getMonth() + 1).toString().padStart(2, "0") +
+        "." +
+        new Date().getFullYear().toString().slice(-2) +
+        " " +
+        new Date().toLocaleTimeString().slice(0, -3);
 
       const comments = [
         {
@@ -85,7 +88,6 @@
           });
         }
       }
-      getLikes();
 
       function replyToComment() {
         let commentElements = document.querySelectorAll(".comment");
@@ -96,7 +98,6 @@
           });
         }
       }
-      replyToComment();
 
       const renderComments = () => {
         const commentsHtml = comments
@@ -124,7 +125,7 @@
               <div class="comment-footer">
                 <div class="likes">
                   <span class="likes-counter">${comment.likesNumber}</span>
-                  <button data-index="${index}" class="${comment.propertyLikeImage}"></button>
+                  <button data-index="${index}" class="like-button ${comment.propertyLikeImage}" alt="Like"></button>
                 </div>
               </div>
             </li>`;
@@ -133,12 +134,32 @@
         listElement.innerHTML = commentsHtml;
         getLikes();
         replyToComment();
+
+        nameInputElement.value = "";
+        commentInputElement.value = "";
+        buttonElement.disabled = true;
+        if (nameInputElement.value.length > 0 && commentInputElement.value.length > 0) {
+          buttonElement.disabled = false;
+        }
       };
 
       renderComments();
 
-      buttonElement.addEventListener("click", () => {
+      nameInputElement.addEventListener("input", () => {
+        buttonElement.disabled = true;
+        if (nameInputElement.value.length > 0 && commentInputElement.value.length > 0) {
+          buttonElement.disabled = false;
+        }
+      });
 
+      commentInputElement.addEventListener("input", () => {
+        buttonElement.disabled = true;
+        if (nameInputElement.value.length > 0 && commentInputElement.value.length > 0) {
+          buttonElement.disabled = false;
+        }
+      });
+
+      buttonElement.addEventListener("click", () => {
         comments.push({
           name: nameInputElement.value,
           dateOfCreation: shortDateTime,
@@ -148,8 +169,6 @@
           propertyLikeImage: "like-button -no-active-like",
         });
         renderComments();
-        nameInputElement.value = "";
-        commentInputElement.value = "";
       });
 
       document.addEventListener("keyup", function (enter) {
