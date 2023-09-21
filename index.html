@@ -48,20 +48,7 @@
     const formsInputElement = document.querySelector(".add-form");
     const commentEditText = document.querySelectorAll("comment-edit-text");
 
-      // Ответ на комментарий
-    const answerText = () => {
-    const textTextElement = document.querySelectorAll('.comment-text');
-    const textNameElement = document.querySelectorAll('.comment-name');
-    for (const text of textTextElement) {
-      text.addEventListener("click", () => {
-        const index = text.dataset.index;
-
-        textInputElement.value = 
-        `>${textTextElement[index].innerHTML} ${textNameElement[index].innerHTML}`;
-      })
-    }
-    };
-
+     
 
     // Кнопка лайков работает
     const initEventlikes = () => {
@@ -90,20 +77,7 @@
   };
     
     // Массив TODO получать из хранилища данных
-    let comments = [
-      {
-        name: "Глеб",
-        date: "12.02.22 12:18",
-        text: "Это будет первый комментарий на этой странице",
-        likes: "3",
-      },
-      {
-        name: "Варвара",
-        date: "13.02.22 19:22",
-        text: "Мне нравится как оформлена эта страница! ❤",
-        likes: "75",
-      },
-    ];
+    let comments = [];
 
     const fetchPromise = fetch(
     'https://wedev-api.sky.pro/api/v1/evgeniya-ko/comments',
@@ -125,7 +99,7 @@
     
       });
      
-      comments = responseData.comments;
+      
       comments = appComments;
       renderComments();
 
@@ -159,7 +133,7 @@
         .join("");
 
       commentsElement.innerHTML = commentsHtml;
-      answerText();
+      
       initEventlikes();
       initDeliteButtonsListeners();
     };
@@ -180,8 +154,8 @@
       textareaInputElement.classList.add("error"); 
       return;
     }
-
-
+    
+    
     // дополнительно кнопка написать не активна при пустых значениях //
     buttonElement.setAttribute('disabled', true);
     nameInputElement.oninput = function(){
@@ -213,6 +187,20 @@
     });
 
   
+     // Ответ на комментарий
+    const answerText = () => {
+    const textTextElement = document.querySelectorAll('.comment-text');
+    const textNameElement = document.querySelectorAll('.comment-name');
+    for (const text of textTextElement) {
+      text.addEventListener("click", () => {
+        const index = text.dataset.index;
+
+        textInputElement.value = 
+        `>${textTextElement[index].innerHTML} ${textNameElement[index].innerHTML}`;
+      })
+        
+    }
+    };
     const startAt = Date.now();
     console.log("Делаем запрос");
 
@@ -264,21 +252,22 @@
           buttonElement.textContent = 'Написать';
         });
         
-      
+        answerText();
         renderComments();
     
 
     // обнуляет введенные значения
     nameInputElement.value = "";
     textareaInputElement.value = "";
-    }
+    };
 
     document.addEventListener("keydown", (event) => {
      
      if (event.key === "Enter") {
        onSubmit();
      }
-   })
+   }
+   )
 
     const initEventListeners = () => {
       const commentElements = document.querySelectorAll('.comment');
@@ -310,6 +299,6 @@
 
     // Вынесли код обработчика в отдельную функцию onSubmit - (enterPress)
     buttonElement.addEventListener('click', onSubmit);
-    
+   
   </script>
 </html>
