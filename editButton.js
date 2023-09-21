@@ -18,7 +18,7 @@ export const editButton = ({ comments }) => {
       } else if (comments[index].isEdit === false) {
         comments[index].isEdit = true;
       }
-      renderFunction({ comments });
+       renderFunction({ comments, apiCommentsGet});
   
   })
     }

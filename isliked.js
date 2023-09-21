@@ -14,7 +14,7 @@ export const likedFunction = ({ comments }) => {
         comments[index].like++;
         comments[index].isLiked = true;
       }
-     renderFunction({ comments });
+       renderFunction({ comments, apiCommentsGet});
     })
     
   }
