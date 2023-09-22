@@ -1,65 +1,24 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-  <title>Проект "Комменты"</title>
-  <meta charset="utf-8" />
-  <link rel="stylesheet" href="styles.css" />
-  <style>
-    .error {
-      background-color: red;
-    }
-
-    .disabled {
-      background-color: gray;
-      pointer-events: none;
-    }
-
-    .like-button.active {
-      background-color: rgba(255, 0, 0, 0.566);
-    }
-
-    @keyframes rotating {
-      from {
-        transform: rotate(0deg);
-      }
-
-      25% {
-        transform: rotate(30deg);
-      }
-
-      75% {
-        transform: rotate(-30deg);
-      }
-
-      to {
-        transform: rotate(0deg);
-      }
-    }
-
-    .-loading-like {
-      animation: rotating 2s linear infinite;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comments Project</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
-  <div class="container">
-    <ul class="comments" id="comments-list">
-    </ul>
-    <div class="add-form">
-      <input type="text" class="add-form-name" id="name-input" placeholder="Введите ваше имя" />
-      <textarea type="textarea" class="add-form-text" id="comment-input" placeholder="Введите ваш комментарий"
-        rows="4"></textarea>
-      <div class="add-form-row">
-        <button class="add-form-button" id="add-comment-button">Написать</button>
-        <button class="deleteCommentButton" id="deleteCommentButton">Удалить последний комментарий</button>
-      </div>
+    <div class="container">
+        <ul class="comments" id="comments-list">
+        </ul>
+        <div class="add-form">
+            <input type="text" class="add-form-name" id="name-input" placeholder="Enter your name" />
+            <textarea type="textarea" class="add-form-text" id="comment-input" placeholder="Enter your comment" rows="4"></textarea>
+            <div class="add-form-row">
+                <button class="add-form-button" id="add-comment-button">Add Comment</button>
+                <button class="deleteCommentButton" id="deleteCommentButton">Delete Last Comment</button>
+            </div>
+        </div>
     </div>
-  </div>
-
-  <script src="./main.jsx">
-  </script>
+    <script src="./main.js"></script>
 </body>
-
 </html>
