@@ -102,6 +102,7 @@
       const renderComments = () => {
         const commentsHtml = comments
           .map((comment, index) => {
+            
             return `<li class="comment" data-index="${index}">
               <div class="comment-header" data-index="${index}">
                 <div>${comment.name
@@ -160,6 +161,14 @@
       });
 
       buttonElement.addEventListener("click", () => {
+        const shortDateTime =
+        new Date().getDate().toString().padStart(2, "0") +
+        "." +
+        (new Date().getMonth() + 1).toString().padStart(2, "0") +
+        "." +
+        new Date().getFullYear().toString().slice(-2) +
+        " " +
+        new Date().toLocaleTimeString().slice(0, -3);
         comments.push({
           name: nameInputElement.value,
           dateOfCreation: shortDateTime,
