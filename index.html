@@ -81,15 +81,17 @@
       if (str < 10)
       return `0${str}`;
     }
+    
+    const getDateNow = () => { 
     let currentDate = new Date();
-    const now = (currentDate) => {
-    let minute = plusZero(currentDate.getMinutes());
-    let hours = plusZero(currentDate.getHours());
-    let date = plusZero(currentDate.getDate());
-    let month = plusZero(currentDate.getMonth());
-    return `${date}.${month}.${currentDate.getFullYear() % 100} ${hours}:${minute};`
-    }
-
+    // let minute = plusZero(currentDate.getMinutes());
+    // let hours = plusZero(currentDate.getHours());
+    // let date = plusZero(currentDate.getDate());
+    // let month = plusZero(currentDate.getMonth());
+   
+    console.log(currentDate.toLocaleDateString(),currentDate.toLocaleTimeString());
+    return `${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString().slice(0,5)}`
+}
    
 
    nameInputElement.classList.remove("error");
@@ -108,8 +110,9 @@
       listElement.innerHTML = oldListHtml + `<li class="comment">
           <div class="comment-header">
             <div>${nameInputElement.value}</div>
-            </div>
-            <div>${now(currentDate)}</div>
+            
+            <div>${getDateNow()}</div>
+          </div>
           <div class = "comment-body">
             <div class = "comment-text">
               ${commentInputElement.value}
