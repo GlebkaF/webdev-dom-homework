@@ -26,12 +26,10 @@
 
       25% {
         transform: rotate(30deg);
-        ;
       }
 
       75% {
         transform: rotate(-30deg);
-        ;
       }
 
       to {
@@ -60,37 +58,17 @@
     </div>
   </div>
 
-
   <script>
     let addCommentButton = document.getElementById("add-comment-button");
     let nameInput = document.getElementById("name-input");
     let commentInput = document.getElementById("comment-input");
     let commentsList = document.getElementById("comments-list");
     let deleteCommentButton = document.getElementById("deleteCommentButton");
-    const likeButtons = document.querySelectorAll(".like-button");
+    let likeButtons = [];
+
     let isAddingComment = false;
     let pendingName = "";
     let pendingComment = "";
-
-    likeButtons.forEach((button) => {
-      button.addEventListener("click", (event) => {
-        event.stopPropagation();
-        const likesCounter = button.parentElement.querySelector(".likes-counter");
-        const currentLikes = parseInt(likesCounter.textContent, 10);
-
-        if (button.classList.contains("active")) {
-          button.classList.remove("active", "loading-like");
-          likesCounter.textContent = currentLikes - 1;
-        } else {
-          button.classList.add("active", "loading-like");
-          likesCounter.textContent = currentLikes + 1;
-        }
-
-        setTimeout(() => {
-          button.classList.remove("loading-like");
-        }, 2000);
-      });
-    });
 
     function sanitizeInput(input) {
       return input.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
@@ -101,11 +79,13 @@
       commentsList.innerHTML = "";
 
       comments.forEach((comment) => {
-        const { author, date, text, likes } = comment;
+        const { id, author, date, text, likes } = comment;
         const formattedDate = new Date(date).toLocaleString();
 
+        
+
         const commentHtml = `
-        <li class="comment">
+        <li class="comment" data-comment-id="${id}">
           <div class="comment-header">
             <div>${author.name}</div>
             <div>${formattedDate}</div>
@@ -123,6 +103,14 @@
       `;
 
         commentsList.innerHTML += commentHtml;
+      });
+
+      // Add event listeners to all like buttons
+      likeButtons = document.querySelectorAll(".like-button");
+      likeButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          handleLikeButtonClick(button);
+        });
       });
     }
 
@@ -155,7 +143,7 @@
       };
 
       isAddingComment = true;
-      commentsList.textContent =  "Добавляю...";
+      commentsList.textContent = "Добавляю...";
       addCommentButton.textContent = "Добавляю...";
       nameInput.value = "Добавляю...";
       commentInput.value = "Добавляю...";
@@ -206,24 +194,79 @@
       }
     }
 
+    function handleLikeButtonClick(button) {
+    const likesCounter = button.parentElement.querySelector(".likes-counter");
+    const currentLikes = parseInt(likesCounter.textContent, 10);
+
+    if (button.classList.contains("active")) {
+      button.classList.remove("active", "loading-like");
+      likesCounter.textContent = currentLikes - 1;
+    } else {
+      button.classList.add("active", "loading-like");
+      likesCounter.textContent = currentLikes + 1;
+    }
+
+    setTimeout(() => {
+      button.classList.remove("loading-like");
+    }, 2000);
+  }
+
+  addCommentButton.addEventListener("click", addComment);
+
+  deleteCommentButton.addEventListener("click", async () => {
+    deleteCommentButton.textContent = "Удаляю...";
+
+    // Check if there are comments to delete
+    const lastComment = commentsList.lastElementChild;
+    if (lastComment) {
+      // Get the ID of the last comment from the data attribute
+      const commentId = lastComment.getAttribute("data-comment-id");
+
+      try {
+        // Delete the last comment from the API
+        await fetch(`https://wedev-api.sky.pro/api/v1/atamyrat-isayev/comments/${commentId}`, {
+          method: "DELETE",
+        });
+
+        // Remove the last comment from the UI
+        commentsList.removeChild(lastComment);
+
+        deleteCommentButton.textContent = "Удалить последний комментарий";
+      } catch (error) {
+        console.error("Error deleting comment:", error);
+        alert("Ошибка при удалении комментария");
+        deleteCommentButton.textContent = "Удалить последний комментарий";
+      }
+    }
+  }); 
+
     addCommentButton.addEventListener("click", addComment);
 
-    deleteCommentButton.addEventListener("click", () => {
+    deleteCommentButton.addEventListener("click", async () => {
+      deleteCommentButton.textContent = "Удаляю...";
+
+      // Check if there are comments to delete
       const lastComment = commentsList.lastElementChild;
       if (lastComment) {
-        commentsList.removeChild(lastComment);
-      }
+        // Get the ID of the last comment from the data attribute
+        const commentId = lastComment.getAttribute("data-comment-id");
 
-      fetch("https://wedev-api.sky.pro/api/v1/atamyrat-isayev/comments", {
-        method: "DELETE",
-      })
-        .then(() => {
-          console.log("Last comment deleted.");
-          fetchComments();
-        })
-        .catch((error) => {
-          console.error("Error deleting last comment:", error);
-        });
+        try {
+          // Delete the last comment from the API
+          await fetch(`https://wedev-api.sky.pro/api/v1/atamyrat-isayev/comments/${commentId}`, {
+            method: "DELETE",
+          });
+
+          // Remove the last comment from the UI
+          commentsList.removeChild(lastComment);
+
+          deleteCommentButton.textContent = "Удалить последний комментарий";
+        } catch (error) {
+          console.error("Error deleting comment:", error);
+          alert("Ошибка при удалении комментария");
+          deleteCommentButton.textContent = "Удалить последний комментарий";
+        }
+      }
     });
 
     async function fetchComments() {
