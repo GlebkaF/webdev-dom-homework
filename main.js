@@ -52,10 +52,21 @@ const fetchAdnRenderComments = () => {
   return fetch("https://wedev-api.sky.pro/api/v1/vladimir-rychkov/comments", {
     method: "GET"
   })
-  .then((response) => response.json())
+  .then((response) => {
+    if (response.status === 500) {
+      alert ('Сервер сломался, попробуй позже');
+      throw new Error("Ошибка на сервере")
+    } else {
+      return response.json();
+    }
+  })
   .then((response) => {
     commentsArray = response.comments
     renderList();
+  })
+  .catch((error) => {
+    alert('Нет соединения с интернетом');
+    console.log(error);
   })
 };
 
@@ -163,21 +174,39 @@ const buttonListener = buttonInputElement.addEventListener("click", () => {
         body: JSON.stringify({
             text: commentInputElement.value,
             name: nameInputElement.value,
+            // forceError: true,
         })
     })
-    // Запросили обновленный массив
-    .then(() => {
-      return fetchAdnRenderComments()
+    .then((response) => {
+      // Проверили статус 
+      switch (response.status) {
+        case 400:
+          alert ('Имя и комментарий должны быть не короче 3 символов');
+          throw new Error("name должен содержать хотя бы 3 символа")
+          break;
+        case 500:
+          alert ('Сервер сломался, попробуй позже');
+          throw new Error("Ошибка на сервере")
+          break;
+        default:
+          return fetchAdnRenderComments();
+      }
     })
     // Вернули форму
     .then(() => {
       formInputElement.classList.remove('hide-elem');
       loaderFormElement.classList.add('hide-elem');
-    })
 
-  // Очищаем форму от последнего комментария
-  nameInputElement.value = '';
-  commentInputElement.value = '';
+      // Очищаем форму от последнего комментария
+      nameInputElement.value = '';
+      commentInputElement.value = '';
+    })
+    .catch((error) => {
+      formInputElement.classList.remove('hide-elem');
+      loaderFormElement.classList.add('hide-elem');
+      alert('Нет соединения с интернетом');
+      console.log(error);
+    });
 });
 
 // Функция кнопки "Удалить последний комментарий"
