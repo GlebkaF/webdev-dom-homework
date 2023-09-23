@@ -22,7 +22,12 @@ const getData = () => {
     return fetch(baseUrl, {
         method: 'GET'
     })
-        .then((response) => response.json())
+        .then((response) => {
+            if (response.status === 500) {
+                throw new Error('Сервер недоступен');
+            }
+            return response.json();
+        })
         .then((responseData) => {
             commentsArr = responseData.comments.map((comment) => {
                 return {
@@ -38,6 +43,10 @@ const getData = () => {
         })
         .then(() => {
             renderComments();
+        })
+        .catch((error) => {
+            console.error(error);
+            alert(error);
         });
 };
 
@@ -46,6 +55,7 @@ const likeButtonsListener = () => {
 
     for (let likeBotton of likeBottons) {
         likeBotton.addEventListener('click', () => {
+            //Почему-то когда добавляю классом не применяется
             likeBotton.style.animation = 'rotating 2s linear infinite';
             delay(2000).then(() => {
                 if (commentsArr[likeBotton.dataset.indx].likeSet) {
@@ -118,11 +128,18 @@ const addComment = () => {
     if (!formButton.disabled) {
         addForm.classList.add('display_none');
         loadingForm.classList.remove('display_none');
-        fetch(baseUrl, {
+        const postData = () => fetch(baseUrl, {
             method: 'POST',
-            body: JSON.stringify({ text: formText.value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;'), name: formName.value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;') })
+            body: JSON.stringify({ text: formText.value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;'), name: formName.value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;'), forceError: true })
         })
             .then((response) => {
+                switch (response.status) {
+                    case 400:
+                        return Promise.reject('Произошла ошибка, повторите попытку позже');
+                    case 500:
+                        return Promise.reject('Сервер недоступен');
+                }
+
                 formName.value = '';
                 formText.value = '';
                 return getData();
@@ -131,7 +148,20 @@ const addComment = () => {
                 addForm.classList.remove('display_none');
                 loadingForm.classList.add('display_none');
                 addForm.scrollIntoView();
+            })
+            .catch((error) => {
+                console.error(error);
+                if (error === 'Сервер недоступен') {
+                    postData();
+                }
+                else {
+                    alert(error);
+                    addForm.classList.remove('display_none');
+                    loadingForm.classList.add('display_none');
+                }
             });
+
+        postData();
     }
 };
 
