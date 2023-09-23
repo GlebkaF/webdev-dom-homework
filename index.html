@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 
-<body>
+<body id="body">
   <div class="container">
     <ul id="comments" class="comments">
 
@@ -37,6 +37,8 @@
   const myDate = newDate + ' ' + new Date().toLocaleTimeString().slice(0, -3);
   const listElement = document.getElementById("comments");
   const likesElements = document.querySelectorAll(".likes");
+  const display = document.getElementById('body');
+
   let comments = [];
 
   const fetchPromise = () => fetch("https://wedev-api.sky.pro/api/v1/VasiliyZykin/comments", {
@@ -66,9 +68,8 @@
           like: comment.likes,
           isLike: comment.isLiked,
         };
-      });
-
-
+      })
+ 
       comments = appComments;
       renderComments();
     });
@@ -175,9 +176,6 @@
     })
       .then(() => {
         return fetchPromise();
-      })
-      .then(() => {
-        return renderComments();
       })
       .then(() => {
         buttonElement.disabled = false;
