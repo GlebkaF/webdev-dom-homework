@@ -197,6 +197,7 @@ let formatYear;
     const buttonDelete = document.querySelectorAll('.delete-button');
     for( let button of buttonDelete) {
       button.addEventListener('click', (event) => {
+
         let index = button.dataset.index
         comments.splice(index, 1);
         event.stopPropagation();
