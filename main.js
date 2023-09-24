@@ -9,7 +9,7 @@ addCommentButton.addEventListener("click", () => {
 
 const commentsList = document.getElementById("comments-list");
 commentsList.addEventListener("click", (event) => {
-  const target = event.target;
+  const target = event.target;  
   if (target.classList.contains("like-button")) {
     handleLikeButtonClick(target);
   }
