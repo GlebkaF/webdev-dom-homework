@@ -10,7 +10,7 @@
 <body>
   <div class="container">
     <ul id="list" class="comments">
-      <li class="comment">
+      <!-- <li class="comment">
         <div class="comment-header">
           <div>Глеб Фокин</div>
           <div>12.02.22 12:18</div>
@@ -43,7 +43,7 @@
             <button class="like-button -active-like"></button>
           </div>
         </div>
-      </li>
+      </li> -->
     </ul>
     <div>
       <div>
@@ -64,6 +64,7 @@
 
 <script>
   "use strict";
+
   const buttonElement = document.getElementById('addMessage');
   const nameElement = document.getElementById('name-input');
   const commentElement = document.getElementById('comment-input');
@@ -71,9 +72,99 @@
   const commentForm = document.getElementById('comment-form');
   const deleteElement = document.getElementById('delete-comment');
 
+  const comments = [
+    {
+      name: 'Глеб Фокин',
+      date: new Date(2022, 1, 12, 12, 18),
+      comment: 'Это будет первый комментарий на этой странице',
+      likeCount: 3,
+      isLike: false,
+      isEdit: false
+    },
+    {
+      name: 'Варвара',
+      date: new Date(2022, 1, 13, 19, 22),
+      comment: 'Мне нравится как оформлена эта страница! ❤',
+      likeCount: 78,
+      isLike: true,
+      isEdit: false
+    }
+  ];
+
+  const initDeleteLike = () => {
+    const deleteLikes = document.querySelectorAll(".like-button");
+    for (const deleteLike of deleteLikes) {
+      deleteLike.addEventListener('click', () => {
+        const index = deleteLike.dataset.index;
+        if (comments[index].isLike) {
+          comments[index].likeCount--;
+        } else {
+          comments[index].likeCount++;
+        }
+        comments[index].isLike = !comments[index].isLike;
+        render();
+      });
+    };
+  };
+  const initEditElements = () => {
+    const editButtonElements = document.querySelectorAll('.edit-form-button');
+    for (const editButton of editButtonElements) {
+      editButton.addEventListener('click', () => {
+        const index = editButton.dataset.index;
+        comments[index].isEdit = true;
+        render();
+      });
+    }
+  };
+  const initSaveButtons = () => {
+    const saveButtons = document.querySelectorAll(".save-form-button");
+    for (const saveButton of saveButtons) {
+      saveButton.addEventListener('click', () => {
+        const index = saveButton.dataset.index;
+        comments[index].isEdit = false;
+        comments[index].comment = listElements.querySelectorAll('.comment')[index].querySelector('textarea').value;
+        render();
+      });
+    }
+  };
+  const render = () => {
+    listElements.innerHTML = comments.map((comment, index) => {
+      let d = comment.date;
+      let currentTime = `${d.getDate().toString().padStart(2, 0)}.${(d.getMonth() + 1).toString().padStart(2, 0)}.${d.getFullYear().toString().substr(-2)} ${d.getHours()}:${d.getMinutes()}`;
+
+      return `<li class="comment">
+        <div class="comment-header">
+          <div>${comment.name}</div>
+          <div>${currentTime}</div>
+        </div>
+        <div class="comment-body">
+          ${comment.isEdit
+          ? `<textarea type="textarea"  class="add-form-text" placeholder="Введите ваш коментарий" rows="4">${comment.comment}</textarea>`
+          : `<div class="comment-text"> ${comment.comment} </div>`}
+        </div>
+        <div class="comment-footer">
+          ${comment.isEdit
+          ? `<button  class="save-form-button" data-index="${index}">Сохранить</button>`
+          : `<button  class="edit-form-button" data-index="${index}">Редактировать</button>`
+        }
+          <div class="likes">
+            <span class="likes-counter">${comment.likeCount}</span>
+            <button class="like-button ${comment.isLike ? '-active-like' : ''}" data-index="${index}"></button>
+          </div>
+        </div>
+      </li>`;
+    }).join('');
+
+    initDeleteLike();
+    initEditElements();
+    initSaveButtons();
+  };
+  render();
+
+
 
   const formCallback = (e) => {
-    if (e.key !== "Enter" && e.srcElement.id !== "addMessage")  {
+    if (e.key !== "Enter" && e.srcElement.id !== "addMessage") {
       return;
     }
 
@@ -93,26 +184,14 @@
       return;
     }
 
-    let d = new Date();
-    let currentTime = `${d.getDay().toString().padStart(2, 0)}.${(d.getMonth() + 1).toString().padStart(2, 0)}.${d.getFullYear().toString().substr(-2)} ${d.getHours()}:${d.getMinutes()}`;
-    const oldList = listElements.innerHTML;
-    listElements.innerHTML = oldList + `<li class="comment">
-        <div class="comment-header">
-          <div>${nameElement.value} </div>
-          <div>${currentTime}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${commentElement.value}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>`;
+    comments.push({
+      name: nameElement.value,
+      date: new Date(),
+      comment: commentElement.value,
+      likeCount: 0,
+      isLike: false
+    });
+    render();
 
     nameElement.value = "";
     commentElement.value = "";
