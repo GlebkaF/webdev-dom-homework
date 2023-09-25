@@ -12,7 +12,7 @@ const loaderListElement = document.querySelector('.loader_list');
 const loaderFormElement = document.querySelector('.loader_form');
 
 // Массив с комментариями
-let commentsArray = [];
+export let commentsArray = [];
 
 // Запрос в API и рендер
 const fetchAdnRenderComments = () => {
@@ -32,7 +32,7 @@ fetchAdnRenderComments()
 });
 
 // Enter в поле комментария означает клик на кнопку "Написать"
-const enterListener = commentInputElement.addEventListener("keyup", () => {
+commentInputElement.addEventListener("keyup", () => {
 if (event.keyCode === 13) {
     buttonInputElement.click();
 }
@@ -90,5 +90,4 @@ document.querySelector('.delete-comment-button').addEventListener("click", () =>
   lastList.remove();
 });
 
-renderList({commentsArray, commentsElement});
 console.log("It works!");

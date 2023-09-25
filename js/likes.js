@@ -1,5 +1,7 @@
 // Функция лайка
-export function likeListener () {
+import {renderList} from "./render.js";
+
+export function likeListener ({commentsArray, commentsElement}) {
     const likeElements = document.querySelectorAll('.like-button');
     for (let like of likeElements) {
       like.addEventListener("click", (event) => {
@@ -20,6 +22,6 @@ export function likeListener () {
   // Функция для окрашивания лайка в зависимости от значения activeLike
   export function activeLike (comment) {
       if (comment.isLiked === true) {
-        return '-active-like'
-      } 
+        return '-active-like';
+      };
   };

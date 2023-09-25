@@ -1,5 +1,7 @@
+import {renderList} from "./render.js";
+
 // Функция кнопки "Редактировать"
-export function editComment () {
+export function editComment ({commentsArray, commentsElement}) {
 
     // Находим кнопки "Редактировать", "Сохранить", существующие комменты и поля для ввода новых.
     const editElements = document.querySelectorAll(".edit-button");
@@ -23,7 +25,7 @@ export function editComment () {
   
             // Запрещаем всплытие
             event.stopPropagation();
-  
+            
             // Меняем значение comment на новое значение
             commentsArray[index].comment = commentEditText[index].value
             .replaceAll("&", "&amp;")
@@ -37,7 +39,7 @@ export function editComment () {
             editElements[index].classList.remove('hide-elem');
             saveEditElements[index].classList.add('hide-elem');
   
-            renderList({commentsArray, commentsElement, })
+            renderList({commentsArray, commentsElement});
           });
       });
     };

@@ -4,7 +4,7 @@ import { activeLike } from "./likes.js";
 import { answerComment } from "./answers.js";
 import { editComment } from "./edit.js";
 
-export function  renderList({commentsArray, commentsElement, }) {
+export function renderList({commentsArray, commentsElement}) {
       const commentsHtml = commentsArray.map((comment, index) => {
     
         return `<li class="comment">
@@ -28,9 +28,9 @@ export function  renderList({commentsArray, commentsElement, }) {
           </div>
         </li>`
       }).join('');
-      
+
       commentsElement.innerHTML = commentsHtml; 
-      likeListener();
+      likeListener({commentsArray, commentsElement});
       answerComment();
-      editComment();
+      editComment({commentsArray, commentsElement});
     };
