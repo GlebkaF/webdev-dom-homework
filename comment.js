@@ -1,8 +1,24 @@
+const commentsList = document.getElementById("comments-list");
 let isAddingComment = false;
 let pendingName = "";
 let pendingComment = "";
 
-export async function  addComment() {
+export async function fetchComments() {
+  try {
+    const response = await fetch("https://wedev-api.sky.pro/api/v1/atamyrat-isayev/comments");
+
+    if (response.status === 500) {
+      throw new Error("Server is down, please try again later");
+    }
+
+    const comments = await response.json();
+    return comments.comments;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function addComment() {
   if (isAddingComment) {
     return;
   }
@@ -107,14 +123,13 @@ commentsList.addEventListener("click", (event) => {
     handleLikeButtonClick(target);
   }
 });
-const commentId = lastComment.getAttribute("data-comment-id");
 
 export async function deleteComment(commentId) {
-    deleteCommentButton.addEventListener("click", () => {
+  deleteCommentButton.addEventListener("click", () => {
     deleteCommentButton.textContent = "Удаляю...";
     const lastComment = commentsList.lastElementChild;
     if (lastComment) {
-      
+      const commentId = lastComment.getAttribute("data-comment-id");
 
       fetch(`https://wedev-api.sky.pro/api/v1/atamyrat-isayev/comments/${commentId}`, {
         method: "DELETE",
@@ -132,34 +147,5 @@ export async function deleteComment(commentId) {
       alert("Нет комментариев для удаления");
       deleteCommentButton.textContent = "Удалить последний комментарий";
     }
-  });
-}
-
-export async function displayComments(comments) {
-  commentsList.innerHTML = "";
-
-  comments.forEach((comment) => {
-    const { id, author, date, text, likes } = comment;
-    const formattedDate = new Date(date).toLocaleString();
-
-    const commentHtml = `
-    <li class="comment" data-comment-id="${id}">
-      <div class="comment-header">
-        <div>${author.name}</div>
-        <div>${formattedDate}</div>
-      </div>
-      <div class="comment-body">
-        <div class="comment-text">${text}</div>
-      </div>
-      <div class="comment-footer">
-        <div class="likes">
-          <span class="likes-counter">${likes}</span>
-          <button class="like-button"></button>
-        </div>
-      </div>
-    </li>
-  `;
-
-    commentsList.innerHTML += commentHtml;
   });
 }

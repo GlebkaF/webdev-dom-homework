@@ -1,4 +1,6 @@
-import { addComment, handleLikeButtonClick, deleteComment, fetchComments } from './comment.js';
+import { addComment, handleLikeButtonClick, fetchComments } from './comment.js';
+import { deleteComment} from './API.js';
+
 
 const addCommentButton = document.getElementById("add-comment-button");
 const deleteCommentButton = document.getElementById("deleteCommentButton");
@@ -15,5 +17,7 @@ commentsList.addEventListener("click", (event) => {
     handleLikeButtonClick(target);
   }
 });
+
+
 
 fetchComments();
