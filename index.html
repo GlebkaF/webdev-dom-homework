@@ -54,7 +54,6 @@
     const initEventlikes = () => {
       const likeButtons = Array.from(document.querySelectorAll(".like-button"));
       const likeCount = Array.from(document.querySelectorAll(".likes-counter"));
-
       likeButtons.forEach((button, index) => {
         button.addEventListener('click', () => {
           button.classList.toggle('-active-like');
@@ -67,13 +66,10 @@
 
   const initDeliteButtonsListeners = () => {
     const deleteButtonElement = document.querySelector(".delete-button");
-    
-    
     deleteButtonElement.addEventListener('click', () => {
       comments.pop();
       renderComments();
     });
-    
   };
     
     // Массив TODO получать из хранилища данных
@@ -85,9 +81,7 @@
       method: "GET"
     });
     fetchPromise.then((response) => {
-
     const jsonPromise = response.json();
-
     jsonPromise.then((responseData) => {
       const appComments = responseData.comments.map((comment) => {
         return {
@@ -96,16 +90,9 @@
           text: comment.text,
           likes: comment.likes,
         };
-    
       });
-     
-      
-      comments = appComments;
-      renderComments();
-
-    });
     renderComments();
-
+  });
 });
 
     // Рендер
@@ -172,37 +159,7 @@
     /////////////////////////////////////////////
     // TODO добавлять задачу в хранилище данных
 
-      comments.push({
-      name: nameInputElement.value
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;"),
-
-      text: textareaInputElement.value
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;"),
-
-      date: formatDate(d),
-      likes: "0",
-      
-    });
-
-  
-     // Ответ на комментарий
-    const answerText = () => {
-    const textTextElement = document.querySelectorAll('.comment-text');
-    const textNameElement = document.querySelectorAll('.comment-name');
-    for (const text of textTextElement) {
-      text.addEventListener("click", () => {
-        const index = text.dataset.index;
-
-        textInputElement.value = 
-        `>${textTextElement[index].innerHTML} ${textNameElement[index].innerHTML}`;
-      })
-        
-    }
-    };
     const startAt = Date.now();
-    console.log("Делаем запрос");
 
     buttonElement.disabled = true;
     buttonElement.textContent = 'Элемент добавляется...';
@@ -242,19 +199,13 @@
           return response;
         })
         .then((responseData) => {
-          return(fetch);
           comments = responseData.comments;
-          
-          renderComments();
         })
         .then((data) => {
           buttonElement.disabled = false;
           buttonElement.textContent = 'Написать';
         });
         
-        answerText();
-        renderComments();
-    
 
     // обнуляет введенные значения
     nameInputElement.value = "";
@@ -273,7 +224,6 @@
       const commentElements = document.querySelectorAll('.comment');
     for (const commentElement of commentElements) {
       commentElement.addEventListener("click", () => {
-        
         });
       }
     }
