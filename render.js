@@ -1,14 +1,12 @@
 import { likeButtonsListener, commentsListener, quoteListener, editButtonsListener, saveCommentButtonsListener, buttonDisable, deleteLastButtonFunc, keyEnter } from './listeners.js'
 import { addComment } from './utilities.js'
-import { commentsArr } from './main.js';
-  
+import { commentsArr } from './globalVariables.js';
+
 let formName = document.querySelector('.add-form-name');
 let formText = document.querySelector('.add-form-text');
 let comments = document.querySelector('.comments');
 let formButton = document.querySelector('.add-form-button');
 let deleteLastBotton = document.querySelector('.delete-last__form-button');
-let loadingForm = document.querySelector('.loading');
-let addForm = document.querySelector('.add-form');
 
 const renderComments = () => {
   comments.innerHTML = '';

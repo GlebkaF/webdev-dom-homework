@@ -1,6 +1,6 @@
 import { renderComments } from './render.js';
 import { delay, addComment } from './utilities.js';
-import { commentsArr } from './main.js';
+import { commentsArr } from './globalVariables.js';
 
 let formName = document.querySelector('.add-form-name');
 let formText = document.querySelector('.add-form-text');
