@@ -1,4 +1,6 @@
-"use strict";
+import {dateString} from "./date.js";
+import {getComments} from "./api.js";
+import {postComments} from "./api.js";
 
 // Создаём переменные обращаясь к классу
 const commentsElement = document.querySelector('.comments');
@@ -9,57 +11,12 @@ const formInputElement = document.querySelector('.add-form');
 const loaderListElement = document.querySelector('.loader_list');
 const loaderFormElement = document.querySelector('.loader_form');
 
-// Получили дату и привели в нужный формат
-let dateString = (string) => {
-    let date = new Date(string);
-    let dateDay = (date) => {
-      if (date.getDate().toString().length === 1) {
-        return "0" + date.getDate();
-      } else {
-        return date.getDate();
-      }
-    };
-    let dateMonth = (date) => {
-      if (date.getMonth().toString().length === 1) {
-        return '0' + (date.getMonth()+1)
-      } else {
-        return date.getMonth()+1;
-      }
-    };
-    let dateHour = (date) => {
-      if (date.getHours().toString().length === 1) {
-        return `0${date.getHours()}`
-      } else {
-        return date.getHours();
-      }
-    };
-    let dateMinute = (date) => {
-      if (date.getMinutes().toString().length === 1) {
-        return `0${date.getMinutes()}`
-      } else {
-        return date.getMinutes();
-      }
-    };
-
-    return `${dateDay(date)}.${dateMonth(date)}.${date.getFullYear() - 2000} ${dateHour(date)}:${dateMinute(date)}`
-};
-
 // Массив с комментариями
 let commentsArray = [];
 
 // Запрос в API и рендер
 const fetchAdnRenderComments = () => {
-  return fetch("https://wedev-api.sky.pro/api/v1/vladimir-rychkov/comments", {
-    method: "GET"
-  })
-  .then((response) => {
-    if (response.status === 500) {
-      alert ('Сервер сломался, попробуй позже');
-      throw new Error("Ошибка на сервере")
-    } else {
-      return response.json();
-    }
-  })
+  return getComments()
   .then((response) => {
     commentsArray = response.comments
     renderList();
@@ -169,24 +126,15 @@ const buttonListener = buttonInputElement.addEventListener("click", () => {
   loaderFormElement.classList.remove('hide-elem');
 
   // Отправили новый объект на сервер
-    fetch("https://wedev-api.sky.pro/api/v1/vladimir-rychkov/comments", {
-        method: "POST",
-        body: JSON.stringify({
-            text: commentInputElement.value,
-            name: nameInputElement.value,
-            // forceError: true,
-        })
-    })
+    postComments(commentInputElement.value, nameInputElement.value)
     .then((response) => {
       // Проверили статус 
       switch (response.status) {
         case 400:
-          alert ('Имя и комментарий должны быть не короче 3 символов');
-          throw new Error("name должен содержать хотя бы 3 символа")
+          throw new Error("Имя и комментарий должен содержать хотя бы 3 символа")
           break;
         case 500:
-          alert ('Сервер сломался, попробуй позже');
-          throw new Error("Ошибка на сервере")
+          throw new Error("Сервер сломался, попробуй позже")
           break;
         default:
           return fetchAdnRenderComments();
@@ -204,7 +152,7 @@ const buttonListener = buttonInputElement.addEventListener("click", () => {
     .catch((error) => {
       formInputElement.classList.remove('hide-elem');
       loaderFormElement.classList.add('hide-elem');
-      alert('Нет соединения с интернетом');
+      alert(error);
       console.log(error);
     });
 });
