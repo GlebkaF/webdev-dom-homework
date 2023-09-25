@@ -1,6 +1,6 @@
-import {dateString} from "./date.js";
 import {getComments} from "./api.js";
 import {postComments} from "./api.js";
+import {renderList} from "./render.js";
 
 // Создаём переменные обращаясь к классу
 const commentsElement = document.querySelector('.comments');
@@ -19,10 +19,9 @@ const fetchAdnRenderComments = () => {
   return getComments()
   .then((response) => {
     commentsArray = response.comments
-    renderList();
+    renderList({commentsArray, commentsElement});
   })
   .catch((error) => {
-    alert('Нет соединения с интернетом');
     console.log(error);
   })
 };
@@ -31,78 +30,6 @@ fetchAdnRenderComments()
 .then(() => {
   loaderListElement.classList.add('hide-elem');
 });
-
-// Функция лайка
-const likeListener = () => {
-  const likeElements = document.querySelectorAll('.like-button');
-  for (let like of likeElements) {
-    like.addEventListener("click", (event) => {
-        event.stopPropagation();
-        const index = like.dataset.index;
-        if (commentsArray[index].isLiked === false) {
-          commentsArray[index].isLiked = true;
-          commentsArray[index].likes++;
-        } else {
-          commentsArray[index].isLiked = false;
-          commentsArray[index].likes--;
-        }
-        renderList();
-    });
-  }
-}; 
-
-// Функция ответа на комментарий
-const answerComment = () => {
-    const commentTextElement = document.querySelectorAll('.comment-text');
-    const commentNameElement = document.querySelectorAll('.comment-name');
-    for (const comment of commentTextElement) {
-      comment.addEventListener("click", () => {
-        const index = comment.dataset.index;
-
-        commentInputElement.value = 
-        `>${commentTextElement[index].innerHTML} ${commentNameElement[index].innerHTML}`;
-      })
-    } 
-};
-
-// Функция для окрашивания лайка в зависимости от значения activeLike
-const activeLike = (comment) => {
-    if (comment.isLiked === true) {
-      return '-active-like'
-    } 
-}
-
-// Рендер списка на основе массива 
-const renderList = () => {
-  const commentsHtml = commentsArray.map((comment, index) => {
-
-    return `<li class="comment">
-      <div class="comment-header">
-        <div class="comment-name" data-index="${index}">${comment.author.name}</div>
-        <div>${dateString(comment.date)}</div>
-      </div>
-      <div class="comment-body">
-        <div class="comment-text" data-index="${index}">
-          ${comment.text}
-        </div>
-        <textarea class="comment-edit-text hide-elem">${commentsArray[index].text}</textarea>
-      </div>
-      <div class="comment-footer">
-        <button class="edit-button" data-index="${index}">Редактировать</button>
-        <button class="save-edit-button hide-elem" data-index="${index}">Сохранить</button>
-        <div class="likes">
-          <span class="likes-counter">${comment.likes}</span>
-          <button class="like-button ${activeLike(comment)}" data-index="${index}"></button>
-        </div>
-      </div>
-    </li>`
-  }).join('');
-  
-  commentsElement.innerHTML = commentsHtml; 
-  likeListener();
-  answerComment();
-  editComment();
-};
 
 // Enter в поле комментария означает клик на кнопку "Написать"
 const enterListener = commentInputElement.addEventListener("keyup", () => {
@@ -163,50 +90,5 @@ document.querySelector('.delete-comment-button').addEventListener("click", () =>
   lastList.remove();
 });
 
-// Функция кнопки "Редактировать"
-const editComment = () => {
-
-  // Находим кнопки "Редактировать", "Сохранить", существующие комменты и поля для ввода новых.
-  const editElements = document.querySelectorAll(".edit-button");
-  const saveEditElements = document.querySelectorAll(".save-edit-button");
-  const commentText = document.querySelectorAll(".comment-text");
-  const commentEditText = document.querySelectorAll(".comment-edit-text")
-
-  // На каждую кнопу "Редактировать" вешаем слушатель событий
-  for (let edit of editElements) {
-    const index = edit.dataset.index;
-    edit.addEventListener("click", () => {
-
-      // Меняем видимость кнопок и полей местами 
-      commentText[index].classList.add('hide-elem');
-      commentEditText[index].classList.remove('hide-elem');
-      editElements[index].classList.add('hide-elem');
-      saveEditElements[index].classList.remove('hide-elem');
-
-        // На открытую кнопу "Сохранить" вешаем слушатель событий
-        saveEditElements[index].addEventListener("click", (event) => {
-
-          // Запрещаем всплытие
-          event.stopPropagation();
-
-          // Меняем значение comment на новое значение
-          commentsArray[index].comment = commentEditText[index].value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;");
-
-          // Меняем видимость кнопок и полей обратно
-          commentText[index].classList.remove('hide-elem');
-          commentEditText[index].classList.add('hide-elem');
-          editElements[index].classList.remove('hide-elem');
-          saveEditElements[index].classList.add('hide-elem');
-
-          renderList();
-        });
-    });
-  };
-};
-
-renderList();
+renderList({commentsArray, commentsElement});
 console.log("It works!");

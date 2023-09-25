@@ -1,3 +1,4 @@
+// Принимает строку и возвращает дату в нужном формате
 export function dateString (string) {
     let date = new Date(string);
     let dateDay = (date) => {
