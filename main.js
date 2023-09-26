@@ -4,11 +4,10 @@ import { fetchComments } from './API.js';
 const addCommentButton = document.getElementById("add-comment-button"); 
 const deleteCommentButton = document.getElementById("deleteCommentButton");
 
-addCommentButton.addEventListener("click", () => {
-  addComment(); 
-});
+
 
 handleLikeButtonClick ();
+
 deleteCommentButton.addEventListener("click", () => {
   deleteLastComment();
 });
@@ -16,4 +15,9 @@ deleteCommentButton.addEventListener("click", () => {
 const comments = await fetchComments();
 
 displayComments (comments);
+
+addCommentButton.addEventListener("click", () => {
+  addComment(); 
+  return;
+});
 

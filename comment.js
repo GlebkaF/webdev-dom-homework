@@ -1,5 +1,5 @@
 import { fetchComments, postComment, deleteComment } from './API.js';
-import { date } from './data.js';
+import { getFormattedDate } from './logicDate.js';
 
 const nameInput = document.getElementById("name-input");
 const commentInput = document.getElementById("comment-input");
@@ -61,8 +61,9 @@ export async function addComment() {
 
   nameInput.classList.remove("error");
   commentInput.classList.remove("error");
-
- date ();
+  
+  getFormattedDate();
+  const formattedDate = getFormattedDate();
 
   const newComment = {
     name: name,
@@ -80,7 +81,7 @@ export async function addComment() {
   commentInput.value = "Добавляю...";
   nameInput.disabled = true;
   commentInput.disabled = true;
-
+  
   try {
     const responseData = await postComment(newComment);
     console.log("New comment added:", responseData);
@@ -91,23 +92,26 @@ export async function addComment() {
     alert(error.message);
     pendingName = name;
     pendingComment = comment;
+
   } finally {
-    isAddingComment = false;
+  isAddingComment = false;
 
-    if (pendingName !== "") {
-      nameInput.value = pendingName;
-    }
-    if (pendingComment !== "") {
-      commentInput.value = pendingComment;
-    }
-
-    addCommentButton.textContent = "Написать";
-    nameInput.disabled = false;
-    commentInput.disabled = false;
-
-    pendingName = "";
-    pendingComment = "";
+  if (pendingName !== "") {
+    nameInput.value = pendingName;
   }
+  if (pendingComment !== "") {
+    commentInput.value = pendingComment;
+  }
+
+  addCommentButton.textContent = "Написать";
+  nameInput.disabled = false;
+  commentInput.disabled = false;
+
+  commentsList.textContent = "";
+
+  pendingName = "";
+  pendingComment = "";
+}
 }
 
 export async function handleLikeButtonClick(button) {
