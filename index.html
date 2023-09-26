@@ -122,19 +122,18 @@
         </li>`;
     })
 
-    // buttonElement.addEventListener("input", () => {
-    //   if(nameInputElement.value === '') {
-    //   buttonElement.disabled = !this.value;
-    //   false;
-    //   }
+    buttonElement.addEventListener("input", (event) => {
+      if(nameInputElement.value === '') {
+      buttonElement.disabled = this.value;
+      return;
+      }
 
-    //   if(commentInputElement.value === '') {
-    //   buttonElement.disabled = !this.value;
-    //   false;
-    //   }
-    // })
+      if(commentInputElement.value === '') {
+      buttonElement.disabled = this.value;
+      return;
+      }
+    })
 
 console.log('It works!');
-
   </script>
 </html>
