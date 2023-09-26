@@ -1,30 +1,58 @@
+import { fetchComments, postComment, deleteComment } from './API.js';
+import { date } from './data.js';
+
+const nameInput = document.getElementById("name-input");
+const commentInput = document.getElementById("comment-input");
 const commentsList = document.getElementById("comments-list");
+const addCommentButton = document.getElementById("add-comment-button");
+
+export function displayComments(comments) {
+  const commentsList = document.getElementById("comments-list");
+  commentsList.innerHTML = "";
+
+  comments.forEach((comment) => {
+    const { author, date, text, likes } = comment;
+    const formattedDate = new Date(date).toLocaleString();
+
+    const commentHtml = `
+    <li class="comment">
+      <div class="comment-header">
+        <div>${author.name}</div>
+        <div>${formattedDate}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">${text}</div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">${likes}</span>
+          <button class="like-button"></button>
+        </div>
+      </div>
+    </li>
+  `;
+
+
+    commentsList.innerHTML += commentHtml;
+  });
+}
+
+
 let isAddingComment = false;
 let pendingName = "";
 let pendingComment = "";
 
-export async function fetchComments() {
-  try {
-    const response = await fetch("https://wedev-api.sky.pro/api/v1/atamyrat-isayev/comments");
-
-    if (response.status === 500) {
-      throw new Error("Server is down, please try again later");
-    }
-
-    const comments = await response.json();
-    return comments.comments;
-  } catch (error) {
-    throw error;
-  }
-}
 
 export async function addComment() {
   if (isAddingComment) {
     return;
   }
+  function sanitizeInput(input) {
+    return input.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+  }
 
-  const name = sanitizeInput(nameInput.value.trim());
-  const comment = sanitizeInput(commentInput.value.trim());
+  const name = sanitizeInput(nameInput.value);
+  const comment = sanitizeInput(commentInput.value);
 
   if (name.length < 3 || comment.length < 3) {
     alert("Имя и комментарий должны быть не короче 3 символов");
@@ -34,8 +62,7 @@ export async function addComment() {
   nameInput.classList.remove("error");
   commentInput.classList.remove("error");
 
-  const currentDate = new Date();
-  const formattedDate = `${currentDate.getDate()}.${currentDate.getMonth() + 1}.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+ date ();
 
   const newComment = {
     name: name,
@@ -55,28 +82,13 @@ export async function addComment() {
   commentInput.disabled = true;
 
   try {
-    const response = await fetch("https://wedev-api.sky.pro/api/v1/atamyrat-isayev/comments", {
-      method: "POST",
-      body: JSON.stringify(newComment),
-    });
-
-    if (response.status === 400) {
-      alert("Имя и комментарий должны быть не короче 3 символов");
-      pendingName = name;
-      pendingComment = comment;
-    } else if (response.status === 500) {
-      alert("Сервер сломался, попробуйте позже");
-      pendingName = name;
-      pendingComment = comment;
-    } else {
-      const responseData = await response.json();
-      console.log("New comment added:", responseData);
-      fetchComments();
-      nameInput.value = "";
-      commentInput.value = "";
-    }
+    const responseData = await postComment(newComment);
+    console.log("New comment added:", responseData);
+    fetchComments();
+    nameInput.value = "";
+    commentInput.value = "";
   } catch (error) {
-    alert("Кажется, у вас сломался интернет, попробуйте позже");
+    alert(error.message);
     pendingName = name;
     pendingComment = comment;
   } finally {
@@ -99,20 +111,22 @@ export async function addComment() {
 }
 
 export async function handleLikeButtonClick(button) {
-  const likesCounter = button.parentElement.querySelector(".likes-counter");
-  const currentLikes = parseInt(likesCounter.textContent, 10);
+  if (button && button.parentElement) {
+    const likesCounter = button.parentElement.querySelector(".likes-counter");
+    const currentLikes = parseInt(likesCounter.textContent, 10);
 
-  if (button.classList.contains("active")) {
-    button.classList.remove("active", "loading-like");
-    likesCounter.textContent = currentLikes - 1;
-  } else {
-    button.classList.add("active", "loading-like");
-    likesCounter.textContent = currentLikes + 1;
+    if (button.classList.contains("active")) {
+      button.classList.remove("active", "loading-like");
+      likesCounter.textContent = currentLikes - 1;
+    } else {
+      button.classList.add("active", "loading-like");
+      likesCounter.textContent = currentLikes + 1;
+    }
+
+    setTimeout(() => {
+      button.classList.remove("loading-like");
+    }, 2000);
   }
-
-  setTimeout(() => {
-    button.classList.remove("loading-like");
-  }, 2000);
 }
 
 commentsList.addEventListener("click", (event) => {
@@ -124,28 +138,24 @@ commentsList.addEventListener("click", (event) => {
   }
 });
 
-export async function deleteComment(commentId) {
-  deleteCommentButton.addEventListener("click", () => {
-    deleteCommentButton.textContent = "Удаляю...";
-    const lastComment = commentsList.lastElementChild;
-    if (lastComment) {
-      const commentId = lastComment.getAttribute("data-comment-id");
 
-      fetch(`https://wedev-api.sky.pro/api/v1/atamyrat-isayev/comments/${commentId}`, {
-        method: "DELETE",
-      })
-        .then(() => {
-          commentsList.removeChild(lastComment);
-          deleteCommentButton.textContent = "Удалить последний комментарий";
-        })
-        .catch((error) => {
-          console.error("Error deleting comment:", error);
-          alert("Ошибка при удалении комментария");
-          deleteCommentButton.textContent = "Удалить последний комментарий";
-        });
-    } else {
-      alert("Нет комментариев для удаления");
-      deleteCommentButton.textContent = "Удалить последний комментарий";
+export async function deleteLastComment() {
+  const lastComment = commentsList.lastElementChild;
+  if (lastComment) {
+    const commentId = lastComment.getAttribute("data-comment-id");
+
+    try {
+      await deleteComment(commentId);
+      commentsList.removeChild(lastComment);
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+      alert("Ошибка при удалении комментария");
     }
-  });
+  } else {
+    alert("Нет комментариев для удаления");
+  }
 }
+
+
+
+

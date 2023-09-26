@@ -1,23 +1,19 @@
-import { addComment, handleLikeButtonClick, fetchComments } from './comment.js';
-import { deleteComment} from './API.js';
+import { addComment, handleLikeButtonClick, deleteLastComment, displayComments } from './comment.js';
+import { fetchComments } from './API.js';
 
-
-const addCommentButton = document.getElementById("add-comment-button");
+const addCommentButton = document.getElementById("add-comment-button"); 
 const deleteCommentButton = document.getElementById("deleteCommentButton");
 
 addCommentButton.addEventListener("click", () => {
-  
-  addComment();
+  addComment(); 
 });
 
-const commentsList = document.getElementById("comments-list");
-commentsList.addEventListener("click", (event) => {
-  const target = event.target;
-  if (target.classList.contains("like-button")) {
-    handleLikeButtonClick(target);
-  }
+handleLikeButtonClick ();
+deleteCommentButton.addEventListener("click", () => {
+  deleteLastComment();
 });
 
+const comments = await fetchComments();
 
+displayComments (comments);
 
-fetchComments();
