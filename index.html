@@ -15,6 +15,7 @@
     <div>
       <button id="button-delete" class="add-form-button inactive-form-button">Удалить последний комментарий</button>
     </div>
+    <div class="loading-indicator"></div>
     <div class="add-form">
       <input id="input-name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
       <textarea id="input-comment" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
@@ -33,28 +34,8 @@
     //РЕНДЕР СПИСКА КОММЕНТАРИЕВ
 
 
-    // Список имеющихся на странице комментариев 
-    const comments = [
-      {
-        name: "Глеб Фокин",
-        date: "12.02.22 12:18",
-        text: "Это будет первый комментарий на этой странице",
-        like: 3,
-        isLiked: false,
-        isEdit: false,
-      },
-      {
-        name: "Варвара Н.",
-        date: "13.02.22 19:22",
-        text: "Мне нравится как оформлена эта страница! ❤",
-        like: 75,
-        isLiked: false,
-        isEdit: false,
-      },
-    ]
-
     // рендер-функция 
-    const renderComments = () => {
+    function renderComments() {
 
       // поиск элемента списка
       const listElement = document.getElementById("list");
@@ -84,9 +65,6 @@
         </li>`
       }).join('');
 
-
-
-
       // отрисовка HTML строки на экране
       listElement.innerHTML = commentsHTML;
 
@@ -94,14 +72,42 @@
       addEditAndSaveEventListeners();
     }
 
-    // Рендерим комментарии при загрузке страницы
-    renderComments();
+
+
+    // рендер имеющихся на сервере комментариев 
+
+    let comments = [];
+
+    function getFetch() {
+
+      const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/christina-ermolenko/comments', {
+        method: "GET"
+      });
+
+      fetchPromise.then((response) => {
+
+        response.json().then((responseData) => {
+          const appComment = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: correctDate(comment.date),
+              text: comment.text,
+              like: comment.likes,
+              isLiked: false,
+            }
+          });
+
+          comments = appComment;
+          renderComments();
+        });
+      });
+    }
+
+    getFetch();
+
+    // добавляем обработчики на полученные комментарии
     addEditAndSaveEventListeners();
     addAnswerEventListeners();
-
-
-
-
 
 
     // КНОПКА "НАПИСАТЬ" + ENTER
@@ -116,11 +122,10 @@
     writeButtonElement.classList.add("add-form-button");
     writeButtonElement.disabled = false;
 
-    // функция добавления комментария
-    function addComment() {
-      const listElement = document.getElementById("list");
-      const oldListHtml = listElement.innerHTML;
-      const currentDate = new Date();
+
+    // изменение формата даты
+    function correctDate(date) {
+      let currentDate = new Date(date);
       let todayDay = currentDate.getDate();
       let todayMonth = currentDate.getMonth() + 1;
       let todayYear = String(currentDate.getFullYear()).slice(-2);
@@ -133,45 +138,103 @@
       todayMinutes = todayMinutes < 10 ? "0" + todayMinutes : todayMinutes;
 
       let formattedDate = `${todayDay}.${todayMonth}.${todayYear} ${todayHours}:${todayMinutes} `;
+      return formattedDate;
+    }
 
-      comments.push({
-        name: nameInputElement.value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;"),
-        date: formattedDate,
-        text: commentInputElement.value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;"),
-        like: 0,
-        isLiked: false,
-        isEdit: false,
+    //функция добавления анимации загрузки
+    function showLoadingIndicator() {
+      const addForm = document.querySelector(".add-form");
+      const loadingIndicator = document.querySelector(".loading-indicator");
+
+      addForm.style.display = "none";
+      loadingIndicator.style.display = "flex";
+    }
+
+    //функция отмены анимации загрузки
+    function hideLoadingIndicator() {
+      const addForm = document.querySelector(".add-form");
+      const loadingIndicator = document.querySelector(".loading-indicator");
+
+      loadingIndicator.style.display = "none";
+      addForm.style.display = "flex";
+    }
+
+
+
+    // функция добавления комментария на сервер
+    function addComment() {
+
+      showLoadingIndicator();
+      let nowDate = new Date;
+
+      fetch('https://wedev-api.sky.pro/api/v1/christina-ermolenko/comments', {
+        method: "POST",
+        body: JSON.stringify({
+          name: nameInputElement.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;"),
+          date: correctDate(nowDate),
+          text: commentInputElement.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;"),
+          like: 0,
+          isLiked: false,
+        }),
+      }).then((response) => {
+
+        response.json().then((responseData) => {
+          comments.push({
+            name: nameInputElement.value
+              .replaceAll("&", "&amp;")
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;")
+              .replaceAll('"', "&quot;"),
+            date: correctDate(nowDate),
+            text: commentInputElement.value
+              .replaceAll("&", "&amp;")
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;")
+              .replaceAll('"', "&quot;"),
+            like: 0,
+            isLiked: false,
+          });
+          hideLoadingIndicator();
+          renderComments();
+
+          // Очищаем поля ввода
+          nameInputElement.value = "";
+          commentInputElement.value = "";
+        });
       });
+
+      getFetch();
+
 
       // Добавляем HTML нового комментария
       const newCommentHTML = `<li class="comment">
-        <div class="comment-header">
-          <div>${comments[comments.length - 1].name}</div>
-          <div>${comments[comments.length - 1].date}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            <span class="comment-content">${comments[comments.length - 1].text.replaceAll("BEGIN_QUOTE--", "<div class='quote'>").replaceAll("--END_QUOTE", "</div>")}</span>
-            <textarea class="comment-edit" style="display: none;"></textarea>
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-          <span class="likes-counter">${comments[comments.length - 1].like}</span>
-          <button data-index="${comments.length - 1}" class="like-button"></button>
-        </div>
-          <button data-index="${comments.length - 1}" class="edit-button">Редактировать</button>
-          <button data-index="${comments.length - 1}" class="save-button">Сохранить</button>
-        </div>
-      </li>`;
+           <div class="comment-header">
+             <div>${comments[comments.length - 1].name}</div>
+             <div>${comments[comments.length - 1].date}</div>
+           </div>
+           <div class="comment-body">
+             <div class="comment-text">
+               <span class="comment-content">${comments[comments.length - 1].text.replaceAll("BEGIN_QUOTE--", "<div class='quote'>").replaceAll("--END_QUOTE", "</div>")}</span>
+               <textarea class="comment-edit" style="display: none;"></textarea>
+             </div>
+           </div>
+           <div class="comment-footer">
+             <div class="likes">
+             <span class="likes-counter">${comments[comments.length - 1].like}</span>
+             <button data-index="${comments.length - 1}" class="like-button"></button>
+           </div>
+             <button data-index="${comments.length - 1}" class="edit-button">Редактировать</button>
+             <button data-index="${comments.length - 1}" class="save-button">Сохранить</button>
+           </div>
+         </li>`;
 
 
 
@@ -239,6 +302,7 @@
 
         // вывод комментария, если все поля заполнены, c указанием даты в необходимом формате, проверка на наличие комментариев,
       } else {
+
         addComment();
         addLikeEventListeners();
         isCommentEmpty();
@@ -391,8 +455,10 @@
       saveButtonElement.style.display = "inline-block";
 
       // Устанавливаем текст комментария в поле для редактирования
-      commentEditElement.value = comments[index].text;
-
+      commentEditElement.value = comments[index].text.replaceAll("&amp;", "&").replaceAll("&lt;", "<")
+        .replaceAll("&gt;", ">")
+        .replaceAll("&quot;", '"');
+      commentEditElement.value
       comments[index].isEdit = true;
     }
 
@@ -408,7 +474,9 @@
       //проверка на пустую строку
       if (commentEditElement.value.trim() !== "") {
         // Обновляем текст комментария из текстового поля для редактирования
-        comments[index].text = commentEditElement.value;
+        comments[index].text = commentEditElement.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;");
 
         // Обновляем содержимое комментария в пользовательском интерфейсе
         commentContentElement.textContent = comments[index].text.replaceAll("BEGIN_QUOTE--", "<div class='quote'>").replaceAll("--END_QUOTE", "</div>");
@@ -434,11 +502,12 @@
       const commentElement = document.querySelector(`.comment:nth-child(${index + 1})`);
       const currentCommentText = commentElement.querySelector(".comment-content").textContent;
       const currentCommentAuthor = commentElement.querySelector(".comment-header div:first-child").textContent;
-      const commentInputElement = document.getElementById("input-comment");
+
 
       // Копируем текст комментария и имя автора в поле ввода для комментария
       const commentTextToCopy = `BEGIN_QUOTE--${currentCommentAuthor}:\n${currentCommentText}--END_QUOTE\n\n`;
       commentInputElement.value = commentTextToCopy;
+
 
 
       // Переводим фокус на поле ввода комментария, чтобы пользователь мог сразу писать ответ
