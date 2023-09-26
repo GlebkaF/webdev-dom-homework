@@ -1,6 +1,6 @@
 import { renderComments } from './render.js'
 import { postComment, getComments } from './API.js'
-import { commentsArr, baseUrl, changeCommentsArr } from './globalVariables.js';
+import { baseUrl, changeCommentsArr } from './globalVariables.js';
 
 let formName = document.querySelector('.add-form-name');
 let formText = document.querySelector('.add-form-text');
@@ -16,13 +16,15 @@ const delay = (interval = 300) => {
     });
 };
 
+const changeDataToLocal = (date) => new Date(date).toLocaleString("ru", { year: '2-digit', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(',', '');
+
 const getData = () => {
     return getComments({ baseUrl })
         .then((responseData) => {
             changeCommentsArr(responseData.comments.map((comment) => {
                 return {
                     id: comment.id,
-                    created: new Date(comment.date).toLocaleString("ru", { year: '2-digit', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(',', ''),
+                    created: changeDataToLocal(comment.date),
                     countLikes: comment.likes,
                     likeSet: comment.isLiked,
                     editComment: false,
@@ -78,4 +80,4 @@ const addComment = () => {
     }
 };
 
-export { delay, getData, addComment };
+export { delay, getData, addComment, changeDataToLocal };
