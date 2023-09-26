@@ -48,7 +48,6 @@
   const removeFormButton = document.querySelector('.remove-form-button')
   const listComments = document.querySelector('.comments');
 
-
   const options = {
     year: '2-digit',
     month: 'numeric',
@@ -65,7 +64,7 @@
       return `<li class="comment" data-id="${comment.id}" data-name="${comment.author.name}">
           <div class="comment-header">
            <div>${comment.author.name}</div>
-            <div>${comment.date}</div>
+            <div>${new Date(comment.date).toLocaleDateString('ru-RU', options).replace(',', '')}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -99,7 +98,6 @@
     .replaceAll("&quot;", '"')
 
   const AddComment = () => {
-    const newDate = new Date();
     addFormName.classList.remove('error');
     addFormText.classList.remove('error');
 
@@ -114,6 +112,7 @@
       body: JSON.stringify({
         name: getSafeString(addFormName.value),
         text: getSafeString(addFormText.value),
+        date: new Date(),
       }),
     }).then((response) => {
       response.json().then((responseData) => {
