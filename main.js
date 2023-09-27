@@ -14,10 +14,14 @@ deleteCommentButton.addEventListener("click", () => {
 
 const comments = await fetchComments();
 
-displayComments (comments);
+
 
 addCommentButton.addEventListener("click", () => {
   addComment(); 
-  return;
 });
+
+fetchComments ();
+
+displayComments (comments);
+
 

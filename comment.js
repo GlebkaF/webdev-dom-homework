@@ -61,57 +61,58 @@ export async function addComment() {
 
   nameInput.classList.remove("error");
   commentInput.classList.remove("error");
-  
-  getFormattedDate();
-  const formattedDate = getFormattedDate();
 
-  const newComment = {
-    name: name,
-    author: { name: name },
-    text: comment,
-    date: formattedDate,
-    likes: 0,
-    isLiked: false,
-  };
+  getFormattedDate().then((formattedDate) => {
+    const newComment = {
+      name: name,
+      author: { name: name },
+      text: comment,
+      date: formattedDate,
+      likes: 0,
+      isLiked: false,
+    };
 
-  isAddingComment = true;
-  commentsList.textContent = "Добавляю...";
-  addCommentButton.textContent = "Добавляю...";
-  nameInput.value = "Добавляю...";
-  commentInput.value = "Добавляю...";
-  nameInput.disabled = true;
-  commentInput.disabled = true;
-  
-  try {
-    const responseData = await postComment(newComment);
-    console.log("New comment added:", responseData);
-    fetchComments();
-    nameInput.value = "";
-    commentInput.value = "";
-  } catch (error) {
-    alert(error.message);
-    pendingName = name;
-    pendingComment = comment;
+    isAddingComment = true;
+    commentsList.textContent = "Добавляю...";
+    addCommentButton.textContent = "Добавляю...";
+    nameInput.value = "Добавляю...";
+    commentInput.value = "Добавляю...";
+    nameInput.disabled = true;
+    commentInput.disabled = true;
 
-  } finally {
-  isAddingComment = false;
+    postComment(newComment)
+      .then((responseData) => {
+        console.log("New comment added:", responseData);
+        return fetchComments();
+      })
+      .then((comments) => {
+        nameInput.value = "";
+        commentInput.value = "";
+        displayComments(comments);
+      })
+      .catch((error) => {
+        alert(error.message);
+        pendingName = name;
+        pendingComment = comment;
+      })
+      .finally(() => {
+        isAddingComment = false;
 
-  if (pendingName !== "") {
-    nameInput.value = pendingName;
-  }
-  if (pendingComment !== "") {
-    commentInput.value = pendingComment;
-  }
+        if (pendingName !== "") {
+          nameInput.value = pendingName;
+        }
+        if (pendingComment !== "") {
+          commentInput.value = pendingComment;
+        }
 
-  addCommentButton.textContent = "Написать";
-  nameInput.disabled = false;
-  commentInput.disabled = false;
+        addCommentButton.textContent = "Написать";
+        nameInput.disabled = false;
+        commentInput.disabled = false;
 
-  commentsList.textContent = "";
-
-  pendingName = "";
-  pendingComment = "";
-}
+        pendingName = "";
+        pendingComment = "";
+      });
+  });
 }
 
 export async function handleLikeButtonClick(button) {
