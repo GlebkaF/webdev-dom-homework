@@ -172,15 +172,15 @@ let formatYear;
   let formatDate = formatDay + "." + formatMonth + "." + formatYear + " " + formatHours + ":" + formatMinutes + ":" + formatSeconds;
       comments.push({
         name: nameElement.value
-        .replaceAll("<", "&lt")
-        .replaceAll(">", "&gt")
         .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;"),
         date: formatDate,
         comment: textElement.value
-        .replaceAll("<", "&lt")
-        .replaceAll(">", "&gt")
         .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;"),
         likes: 0,
         islike: false
