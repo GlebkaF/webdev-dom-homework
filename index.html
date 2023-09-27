@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Проект "Комменты"</title>
   <meta charset="utf-8" />
@@ -83,15 +84,34 @@
   }
   let dateComment = `${day}.${month}.${yaer} ${hour}:${minute}`;
 
-  btnAddCommentElement.addEventListener("click", () => {
+  btnAddCommentElement.disabled = true; 
+
+  nameInputElement.addEventListener("input", () => {
+
+    if (nameInputElement.value === '') {
+  btnAddCommentElement.disabled = true; 
+    }
+
+    if (nameInputElement.value !== '' && textInputElement.value !== '') {
+      btnAddCommentElement.disabled = false;
+    }
+
+  })
+  textInputElement.addEventListener("input", () => {
+
+    if (textInputElement.value === '') {
+  btnAddCommentElement.disabled = true; 
+    }
+
+    if (nameInputElement.value !== '' && textInputElement.value !== '') {
+      btnAddCommentElement.disabled = false;
+    }
     
+  })
 
-    if (nameInputElement.value === "" || textInputElement.value === "") {
-      // btnAddCommentElement.disabled = true;
-        return;
-      }
+  btnAddCommentElement.addEventListener("click", () => {
+
     const oldListHtml = listElement.innerHTML;
-
     listElement.innerHTML =
       oldListHtml +
       `<li class="comment">
@@ -111,7 +131,8 @@
             </div>
           </div>
         </li>`;
-
+   
+  btnAddCommentElement.disabled = true; 
   })
 
 
