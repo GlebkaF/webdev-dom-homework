@@ -15,7 +15,6 @@
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
       <div class="add-form-row">
         <button class="add-form-button">Написать</button>
-        <button class="add-form-button add-form-button_reset">Удалить коментарий</button>
       </div>
     </div>
   </div>
@@ -27,32 +26,36 @@
   const button = document.querySelector(".add-form-button");
   const addName = document.querySelector(".add-form-name");
   const addText = document.querySelector(".add-form-text");
-  let buttonReset = document.querySelector(".add-form-button_reset");
+  
 
   // Создание масиива с обьектами пользователей который будет рендерится через функцию renderElements()
 
   let listOfObject = [
-    {
-      name: "Глеб Фокин",
-      data: "12.02.22 12:18",
-      comment: "Это будет первый комментарий на этой странице",
-      like: 3,
-      isLiked: false,
-      isEdit: false,
-    },
-    {
-      name: "Варвара Н.",
-      data: "13.02.22 19:22",
-      comment: "Мне нравится как оформлена эта страница! ❤",
-      like: 75,
-      isLiked: true,
-      isEdit: false,
-    },
+    // {
+    //   name: "Глеб Фокин",
+    //   data: "12.02.22 12:18",
+    //   comment: "Это будет первый комментарий на этой странице",
+    //   like: 3,
+    //   isLiked: false,
+    //   isEdit: false,
+    // },
+    // {
+    //   name: "Варвара Н.",
+    //   data: "13.02.22 19:22",
+    //   comment: "Мне нравится как оформлена эта страница! ❤",
+    //   like: 75,
+    //   isLiked: true,
+    //   isEdit: false,
+    // },
   ];
 
   //Сама функция renderElements которая массив обьетов listOfObject рендерит в разметку HTML
 
   function renderElements() {
+
+    if(!listOfObject){
+      return;
+    }
 
     let listOfElements = listOfObject.map((element, index) => {
       return `<li data-index="${index}" class="comment">
@@ -69,7 +72,10 @@
             <button data-index="${index}" class="like-button ${element.isLiked ? "-active-like" : ""}"></button> 
           </div>
         </div>
-        <button data-index="${index}"class="change-comment-button">${element.isEdit ? "Сохранить" : "Редактировать"}</button>
+        <div class="block-btn">
+          <button data-index="${index}"class="change-comment-button">${element.isEdit ? "Сохранить" : "Редактировать"}</button>
+        <button data-index="${index}" class="add-form-button add-form-button_reset">Удалить</button>
+          </div>
       </li>`;
     })
       .join("");
@@ -77,8 +83,11 @@
     likeButtons();
     changeComments();
     answerOnCommnets();
+    removeComments();
   }
   renderElements();
+
+  
 
   // Валидация формы на предмет пустых значений в полях имени и текста //
 
@@ -95,43 +104,81 @@
   validation();
 
 
-  // Обработчик событий на кнопку Отправить.
 
-  function addComment() {
-    addText.classList.remove("error");
-    addName.classList.remove("error");
-    if (!addName.value || !addText.value) {
-      addText.classList.add("error");
-      addName.classList.add("error");
-      return;
-    };
+  // Создание fetch запроса к API //
 
-    listOfObject.push({
-      name: addName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-      data: new Date().toLocaleString().replace(",", ""),
-      comment: addText.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-      like: 0,
-      isLiked: false,
-      isEdit: false,
+  function getFetchPromise(){
+    const getPromise = fetch("https://wedev-api.sky.pro/api/v1/alexander-potapov/comments", {
+      method: "GET",
     })
-    renderElements();
-    addName.value = "";
-    addText.value = "";
+    .then((response) => response.json()
+    .then((dataResponse) => {
+      console.log(dataResponse);
 
+      const newList = dataResponse.comments.map((element) => {
+        return {
+          name: element.author.name.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+          data: new Date(element.date).toLocaleString().replace(",", ""),
+          comment: element.text.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+          like: element.likes,
+          isLiked: false,
+          id: element.id
+        } 
+      })
+        listOfObject = newList;
+        renderElements()
+    }))
   }
+  getFetchPromise();
 
-  //Функция добавления коментария с помощью кнопки ENTER //
 
-  function pressEnter(event) {
-    if (event.keyCode === 13) {
+  // Обработчик событий на кнопку Отправить + мы обращаемся к нашему API что бы отправить в API  новый комметарий используя метод POST
+
+      function addComment() {
+
+        button.addEventListener("click", () => {
+
+          addText.classList.remove("error");
+          addName.classList.remove("error");
+          if (!addName.value || !addText.value) {
+            addText.classList.add("error");
+            addName.classList.add("error");
+            return;
+          };
+
+          const getPromise = fetch("https://wedev-api.sky.pro/api/v1/alexander-potapov/comments", {
+            method: "POST",
+            body: JSON.stringify({
+              text: addText.value,
+              name: addName.value,
+            })
+          })
+            .then((response) => response.json())
+            .then((dataResponse) => {
+              console.log(dataResponse);
+              getFetchPromise();
+              addName.value = "";
+              addText.value = "";
+            })
+        })
+      }
       addComment()
+
+
+
+ // Функция для удаления комментария//
+
+ function removeComments() {
+      const buttonResets = document.querySelectorAll(".add-form-button_reset");
+      for (let buttonReset of buttonResets) {
+        buttonReset.addEventListener("click", () => {
+          let index = buttonReset.dataset.index;
+
+          listOfObject.splice(index, 1)
+          renderElements()
+        })
+      }
     }
-  }
-
-
-  button.addEventListener("click", addComment);
-  addName.addEventListener("keyup", pressEnter);
-  addText.addEventListener("keyup", pressEnter);
 
 
 
@@ -157,15 +204,6 @@
   }
 
 
-
-
-  // Функция для удаления комментария//
-
-  function removeComments() {
-    listOfObject.pop();
-    renderElements();
-  }
-  buttonReset.addEventListener("click", removeComments);
 
 
   //Функция редактирования комментария
@@ -207,9 +245,8 @@
   }
   
 
-  console.log("It works!");
+  // console.log("It works!");
 </script>
-
 </html>
 
 
