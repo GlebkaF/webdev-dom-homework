@@ -2,99 +2,100 @@
 <html>
 
 <head>
-  <title>Проект "Комменты"</title>
-  <meta charset="utf-8" />
-  <link rel="stylesheet" href="styles.css" />
+    <title>Проект "Комменты"</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-  <div class="container">
-    <ul class="comments">
-      <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
+    <div class="container">
+        <ul class="comments">
+            <li class="comment">
+                <div class="comment-header">
+                    <div>Глеб Фокин</div>
+                    <div>12.02.22 12:18</div>
+                </div>
+                <div class="comment-body">
+                    <div class="comment-text">
+                        Это будет первый комментарий на этой странице
+                    </div>
+                </div>
+                <div class="comment-footer">
+                    <div class="likes">
+                        <span class="likes-counter">3</span>
+                        <button class="like-button"></button>
+                    </div>
+                </div>
+            </li>
+            <li class="comment">
+                <div class="comment-header">
+                    <div>Варвара Н.</div>
+                    <div>13.02.22 19:22</div>
+                </div>
+                <div class="comment-body">
+                    <div class="comment-text">
+                        Мне нравится как оформлена эта страница! ❤
+                    </div>
+                </div>
+                <div class="comment-footer">
+                    <div class="likes">
+                        <span class="likes-counter">75</span>
+                        <button class="like-button -active-like"></button>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <div class="add-form">
+            <input id="input-name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+            <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
+            <div class="add-form-row">
+                <button class="add-form-button">Написать</button>
+            </div>
+            <div class="del-form-row">
+                <button class="del-form-button" style="margin-left: 10px;">Удалить</button>
+            </div>
         </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>
-    </ul>
-    <div class="add-form">
-      <input id="input-name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
-      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
-      <div class="add-form-row">
-        <button class="add-form-button">Написать</button>
-      </div>
-      <div class="del-form-row">
-        <button class="del-form-button" style="margin-left: 10px;">Удалить</button>
-      </div>
     </div>
-  </div>
 </body>
 
 <script>
-  "use strict";
+    "use strict";
 
-  const inputNameElement = document.getElementById("input-name");
-  const inputTextElement = document.querySelector(".add-form-text");
-  const buttonElement = document.querySelector(".add-form-button");
-  const buttonDelElement = document.querySelector(".del-form-button");
-  const listElement = document.querySelector(".comments");
+    const inputNameElement = document.getElementById("input-name");
+    const inputTextElement = document.querySelector(".add-form-text");
+    const buttonElement = document.querySelector(".add-form-button");
+    const buttonDelElement = document.querySelector(".del-form-button");
+    const listElement = document.querySelector(".comments");
 
 
-  buttonElement.addEventListener("click", () => {
-    const nameUser = inputNameElement.value;
-    const textUser = inputTextElement.value;
-    const oldListHtml = listElement.innerHTML;
+    buttonElement.addEventListener("click", () => {
+        const nameUser = inputNameElement.value;
+        const textUser = inputTextElement.value;
+        const oldListHtml = listElement.innerHTML;
 
-    const currentDate = new Date();
-    const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
-    const date = currentDate.toLocaleDateString('ru-RU', options);
+        const currentDate = new Date();
+        const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+        const date = currentDate.toLocaleDateString('ru-RU', options);
 
-    const hour = currentDate.getHours();
-    const minutes = currentDate.getMinutes();
+        const hour = currentDate.getHours();
+        const minutes = currentDate.getMinutes();
 
-    if (hour < 10) {
-      hour = "0" + hour;
-    }
-    if (minutes < 10) {
-      minutes = "0" + minutes;
-    }
+        if (hour < 10 && hour > 0) {
+            hour = "0" + hour;
+        }
+        if (minutes < 10) {
+            minutes = "0" + minutes;
+        }
 
-    if (inputNameElement.value === "" || inputTextElement.value === "") {
-      buttonElement.classList.add('disabled');
-      buttonElement.setAttribute("disabled");
-    }
+        if (inputNameElement.value === "" || inputTextElement.value === "") {
+            buttonElement.classList.add('disabled');
+            buttonElement.setAttribute("disabled");
+        }
 
-    buttonElement.classList.remove('disabled');
+        buttonElement.classList.remove('disabled');
 
-    listElement.innerHTML = oldListHtml + `<li class="comment">
+
+        listElement.innerHTML = oldListHtml + `<li class="comment">
         <div class="comment-header">
             <div>${nameUser}</div>
             <div>${date} ${hour}:${minutes}</div>
@@ -110,20 +111,20 @@
         </div>
     </li>`;
 
-    inputNameElement.value = "";
-    inputTextElement.value = "";
-  })
+        inputNameElement.value = "";
+        inputTextElement.value = "";
+    })
 
-  // Над этим пока работаю
+    // Над этим пока работаю
 
-  buttonDelElement.addEventListener("click", () => {
-    const comments = listElement.innerHTML;
-    let lastListElement = comments.lastIndexOf('comment-text');
-    console.log(lastListElement);
-
-  })
-  // Код писать здесь
-  console.log("It works!");
+    buttonDelElement.addEventListener("click", () => {
+        let commentsList = listElement.innerHTML;
+        const indexLastListElement = commentsList.lastIndexOf('<li class="comment">');
+        const lastComment = commentsList.slice(indexLastListElement, -1);
+        commentsList = commentsList.replace(lastComment, '');
+    })
+    // Код писать здесь
+    console.log("It works!");
 </script>
 
 </html>
