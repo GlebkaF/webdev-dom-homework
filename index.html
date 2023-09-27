@@ -49,9 +49,10 @@
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
       <div class="add-form-row">
-        <button class="add-form-button" id="write-comment">Написать</button>
+        <button class="add-form-button">Написать</button>
       </div>
     </div>
+      <button class="delete-form-button">Удалить последний коментарий</button> 
   </div>
 </body>
 
@@ -61,6 +62,7 @@
   const listElement = document.querySelector(".comments");
   const nameInputElement = document.querySelector(".add-form-name");
   const textInputElement = document.querySelector(".add-form-text");
+  const btnDelCommentElement = document.querySelector(".delete-form-button");
 
   let date = new Date();
   let day = date.getDate();
@@ -84,12 +86,12 @@
   }
   let dateComment = `${day}.${month}.${yaer} ${hour}:${minute}`;
 
-  btnAddCommentElement.disabled = true; 
+  btnAddCommentElement.disabled = true;
 
   nameInputElement.addEventListener("input", () => {
 
     if (nameInputElement.value === '') {
-  btnAddCommentElement.disabled = true; 
+      btnAddCommentElement.disabled = true;
     }
 
     if (nameInputElement.value !== '' && textInputElement.value !== '') {
@@ -100,17 +102,16 @@
   textInputElement.addEventListener("input", () => {
 
     if (textInputElement.value === '') {
-  btnAddCommentElement.disabled = true; 
+      btnAddCommentElement.disabled = true;
     }
 
     if (nameInputElement.value !== '' && textInputElement.value !== '') {
       btnAddCommentElement.disabled = false;
     }
-    
+
   })
 
-  btnAddCommentElement.addEventListener("click", () => {
-
+  function addComment() {
     const oldListHtml = listElement.innerHTML;
     listElement.innerHTML =
       oldListHtml +
@@ -131,11 +132,22 @@
             </div>
           </div>
         </li>`;
-   
-  btnAddCommentElement.disabled = true; 
+
+    btnAddCommentElement.disabled = true;
+  }
+
+  document.addEventListener("keyup", (event) => {
+    if (event.code === 'Enter') {
+      addComment();
+    }
   })
+  btnAddCommentElement.addEventListener("click", addComment);
 
-
+btnDelCommentElement.addEventListener("click", () => {
+  const oldListHtml = listElement.innerHTML;
+  const deleteElement = oldListHtml.lastIndexOf('<li class="comment">');
+    listElement.innerHTML = oldListHtml.substring(0, deleteElement);
+})
 </script>
 
 </html>
