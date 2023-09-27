@@ -87,12 +87,6 @@
       minutes = "0" + minutes;
     }
 
-    inputNameElement.addEventListener("input", updateValue);
-
-    function updateValue(e) {
-      log.textContent = e.target.value;
-    }
-
     if (inputNameElement.value === "" || inputTextElement.value === "") {
       buttonElement.classList.add('disabled');
       buttonElement.setAttribute("disabled");
@@ -101,29 +95,30 @@
     buttonElement.classList.remove('disabled');
 
     listElement.innerHTML = oldListHtml + `<li class="comment">
-                                            <div class="comment-header">
-                                              <div>${nameUser}</div>
-                                              <div>${date} ${hour}:${minutes}</div>
-                                            </div>
-                                            <div class="comment-body">
-                                              <div class="comment-text">
-                                                ${textUser}
-                                              </div>
-                                            </div>
-                                            <div class="comment-footer">
-                                              <div class="likes">
-                                                <span class="likes-counter">0</span>
-                                                <button class="like-button -active-like"></button>
-                                              </div>
-                                            </div>
-                                          </li>`;
+        <div class="comment-header">
+            <div>${nameUser}</div>
+            <div>${date} ${hour}:${minutes}</div>
+        </div>
+        <div class="comment-body">
+            <div class="comment-text">${textUser}</div>
+        </div>
+        <div class="comment-footer">
+            <div class="likes">
+                <span class="likes-counter">0</span>
+                <button class="like-button -active-like"></button>
+            </div>
+        </div>
+    </li>`;
 
     inputNameElement.value = "";
     inputTextElement.value = "";
   })
 
+  // Над этим пока работаю
+
   buttonDelElement.addEventListener("click", () => {
-    const lastListElement = listElement.innerHTML.lastIndexOf();
+    const comments = listElement.innerHTML;
+    let lastListElement = comments.lastIndexOf('comment-text');
     console.log(lastListElement);
 
   })
