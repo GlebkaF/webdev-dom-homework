@@ -190,6 +190,31 @@
         comments.pop();
         renderComments();
       });
+
+      const fetchPromise = fetch ( 'https://wedev-api.sky.pro/api/v1/diaa-semenova/comments', {
+       method: GET,
+       });
+       fetchPromise.then((response)=> {
+        const jsonPromise = response.json()
+        jsonPromise.then((resonseData)=>{
+          const appComments = responseData.comments.map((comment) => {
+           return {
+             name: comment.author.name,
+             dateСreation: getCurrentDate(new Date(comment.date)),
+             text: comment.text,
+             likeComment: comment.isLiked,
+             likesNumber: comment.likes,
+             propertyColorLike: 'like-button no-active-like',
+           }
+         });
+         comments = appComments;
+         renderComments();
+  
+        })
+
+       });
+       fetchPromise();
+
     </script>
   </body>
 </html>
