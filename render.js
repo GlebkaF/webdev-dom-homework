@@ -1,3 +1,6 @@
+import { token } from "./api.js";
+import { initEventListeners } from "./main.js";
+import { renderRegister } from "./loginPage.js";
 function padTo2Digits(num) {
   return num.toString().padStart(2, "0");
 }
@@ -44,6 +47,38 @@ export function renderComments(comments) {
           `;
     })
     .join("");
+  const appElement = document.getElementById("app");
+  const appHtml = `
+		<div class='container'>
+		<div id='container-preloader'>Пожалуйста подождите, загружаю комментарии..</div>
+		<ul class='comments' id='list'>${commentsListHtml}
+		</ul>
+		<div id='container-preloader-post'></div>
+		${
+      token
+        ? `<div class='add-form'>
+			<input type='text' class='add-form-name' placeholder='Введите ваше имя' disabled value='${name}' />
+			<textarea type='textarea' class='add-form-text' placeholder='Введите ваш коментарий' rows='4'></textarea>
+					<div class='add-form-row'>
+						<button class='add-form-button' id='add-button'>Написать</button>
+					</div>
+				</div>`
+        : `<div class='authorization'>Чтобы добавить комментарий, <a href='index.html' id='authorization-link'>авторизуйтесь</a></div>`
+    }
+		</div>`;
+
+  appElement.innerHTML = appHtml;
+  const addForm = document.querySelector(".add-form");
+  if (addForm) {
+    initEventListeners();
+  }
+  const authorization = document.querySelector("#authorization-link");
+  if (authorization) {
+    authorization.addEventListener("click", (e) => {
+      e.preventDefault();
+      renderRegister();
+    });
+  }
 
   const commentsList = document.querySelector(".comments");
   commentsList.innerHTML = commentsListHtml;
