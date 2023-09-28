@@ -74,7 +74,7 @@
       return;
     }
     const oldComment = commentSection.innerHTML;
-    commentSection.innerHTML = `<li class="comment">
+    commentSection.innerHTML = oldComment + `<li class="comment">
           <div class="comment-header">
             <div>${nameInput.value}</div>
             <div>${current}</div>
@@ -99,7 +99,5 @@
   });
 
   console.log("It works!");
-
-  
 </script>
 </html>
