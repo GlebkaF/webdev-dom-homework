@@ -1,71 +1,194 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
-      <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <ul class="comments" id="add-comment">
+      <li class="comment">
+        <div class="comment-header">
+          <div>Глеб Фокин</div>
+          <div>12.02.22 12:18</div>
         </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Это будет первый комментарий на этой странице
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">3</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>
+      <li class="comment">
+        <div class="comment-header">
+          <div>Варвара Н.</div>
+          <div>13.02.22 19:22</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Мне нравится как оформлена эта страница! ❤
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">75</span>
+            <button class="like-button -active-like"></button>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <div class="add-form">
+      <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="form-name" />
+      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
+        id="form-text"></textarea>
+      <div class="add-form-row">
+        <button class="add-form-button" id="add-button">Написать</button>
       </div>
     </div>
-  </body>
+    <button class="add-form-button" id="add-button-delete">Удалить последний комментарий</button>
+  </div>
+</body>
 
-  <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
-  </script>
+
+//СТИЛИ
+<style>
+  .error {
+    outline: 3px solid rgb(228, 67, 67);
+  }
+
+  .btn {
+    background-color: #b9b9b9;
+  }
+</style>
+
+<script>
+  "use strict"; //СТР
+
+  //ПЕРЕМЕННЫЕ
+  const nameElement = document.getElementById('form-name');
+  const textElement = document.getElementById('form-text');
+  const buttonElement = document.getElementById('add-button');
+  const buttonDeleteElement = document.getElementById('add-button-delete');
+  const formCommentElement = document.getElementById('add-comment');
+
+  // ШАБЛОН ВЫВОДА ДАТЫ СОЗДАНИЯ КОММЕНТАРИЯ
+  const currentDate = new Date().toLocaleString('ru-RU', { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).replace(',', '');
+
+  //СОБЫТИЕ 1 - КЛИК
+
+  buttonElement.addEventListener('click', () => {
+
+    //ВАЛИДАЦИЯ
+    //remove для удаления классовэ
+    //trim() для избежания добавления комментариев состоящих из пустых симовлов (пробелов)
+    nameElement.classList.remove('error');
+    textElement.classList.remove('error');
+    if (nameElement.value.trim() === '' && textElement.value.trim() === '') {
+      buttonElement.disabled = true;
+      buttonElement.classList.add('btn')
+      return;
+    } else if (nameElement.value.trim() === '') {
+      nameElement.classList.add('error');
+      nameElement.placeholder = '* Имя является обязательным!'
+      return;
+    } else if (textElement.value.trim() === '') {
+      textElement.classList.add('error');
+      textElement.placeholder = '* Комментраий является обязательным!'
+      return;
+    };
+
+    //ВЫВОД
+    const oldFormCommentElement = formCommentElement.innerHTML;
+    formCommentElement.innerHTML = oldFormCommentElement +
+      `<li class="comment">
+        <div class="comment-header">
+          <div>${nameElement.value}</div>
+          <div>${currentDate}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${textElement.value}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">0</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>`
+    
+    nameElement.value = ''; //очищаем форму (имя);
+    textElement.value = ''; //очищаем форму (текст);
+    nameElement.setAttribute('placeholder','Введите ваше имя'); //возвращаем placeholder к стандарту после добаваления комментария
+    textElement.setAttribute('placeholder','Введите ваш коментарий',);//возвращаем placeholder к стандарту после добаваления комментария
+  });
+
+//УДАЛИТЬ ПОСЛЕДНИЙ КОММЕНТАРИЙ
+  buttonDeleteElement.addEventListener('click', () => {
+  const comments = document.getElementsByClassName('comment');
+  if (comments.length > 0) {
+    const lastComment = comments[comments.length - 1];
+    lastComment.parentNode.removeChild(lastComment);
+  }
+});
+
+  //СОБЫТИЕ 2 - ДОБАВЛЕНИЕ СОБЫТИЯ ПО КЛАВИШЕ ENTER
+
+  document.addEventListener('keyup', (event) => {
+    if (event.key === 'Enter') {
+      //ВАЛИДАЦИЯ
+      nameElement.classList.remove('error');
+      textElement.classList.remove('error');
+      if (nameElement.value.trim() === '' && textElement.value.trim() === '') {
+        buttonElement.disabled = true;
+        buttonElement.classList.add('btn')
+        return;
+      } else if (nameElement.value.trim() === '') {
+        nameElement.classList.add('error');
+        nameElement.placeholder = '* Имя является обязательным!'
+        return;
+      } else if (textElement.value.trim() === '') {
+        textElement.classList.add('error');
+        textElement.placeholder = '* Комментраий является обязательным!'
+        return;
+      };
+
+      //ВЫВОД
+      const oldFormCommentElement = formCommentElement.innerHTML;
+      formCommentElement.innerHTML = oldFormCommentElement +
+        `<li class="comment">
+      <div class="comment-header">
+        <div>${nameElement.value}</div>
+        <div>${currentDate}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">
+          ${textElement.value}
+        </div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">0</span>
+          <button class="like-button"></button>
+        </div>
+      </div>
+    </li>`
+
+      nameElement.value = ''; //очищаем форму (имя);
+      textElement.value = ''; //очищаем форму (текст);
+      nameElement.setAttribute('placeholder', 'Введите ваше имя'); //возвращаем placeholder к стандарту после добаваления комментария
+      textElement.setAttribute('placeholder', 'Введите ваш коментарий',);//возвращаем placeholder к стандарту после добаваления комментария
+    }
+  });
+</script>
+
 </html>
