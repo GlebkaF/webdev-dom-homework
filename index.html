@@ -9,7 +9,7 @@
 
 <body>
   <div class="container">
-    <ul class="comments">
+    <ul class="comments" id="list">
       <li class="comment">
         <div class="comment-header">
           <div>Глеб Фокин</div>
@@ -46,8 +46,9 @@
       </li>
     </ul>
     <div class="add-form">
-      <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
-      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
+      <input type="text" class="add-form-name" id="name-input" placeholder="Введите ваше имя" />
+      <textarea type="textarea" class="add-form-text" id="comment-input" placeholder="Введите ваш коментарий"
+        rows="4"></textarea>
       <div class="add-form-row">
         <button class="add-form-button" id="add-button">Написать</button>
       </div>
@@ -60,6 +61,8 @@
   // Код писать здесь
   const buttonElement = document.getElementById("add-button");
   const listElement = document.getElementById("list");
+  const nameInputElement = document.getElementById("name-input");
+  const commentInputElement = document.getElementById("comment-input");
 
   buttonElement.addEventListener('click', () => {
     let newDate = new Date();
@@ -84,8 +87,27 @@
     }
     let fullDate = date + "." + month + "." + year + " " + hour + ":" + minute;
 
+    const oldListHtml = listElement.innerHTML;
+    listElement.innerHTML = oldListHtml + `<li class="comment">
+        <div class="comment-header">
+          <div>${nameInputElement.value}</div>
+          <div>${fullDate}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">${commentInputElement.value}</div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">0</span>
+            <button class="like-button -active-like"></button>
+          </div>
+        </div>
+      </li>`;
+    //nameInputElement.value = '';// Очиска формы после ввода данных
 
     console.log(fullDate);
+
+
   })
 
   console.log("It works!");
