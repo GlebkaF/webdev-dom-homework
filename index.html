@@ -52,7 +52,7 @@
         <button class="add-form-button">Написать</button>
       </div>
     </div>
-      <button class="delete-form-button">Удалить последний коментарий</button> 
+    <button class="delete-form-button">Удалить последний коментарий</button>
   </div>
 </body>
 
@@ -132,7 +132,8 @@
             </div>
           </div>
         </li>`;
-
+    textInputElement.value = '';
+    nameInputElement.value = '';
     btnAddCommentElement.disabled = true;
   }
 
@@ -143,11 +144,11 @@
   })
   btnAddCommentElement.addEventListener("click", addComment);
 
-btnDelCommentElement.addEventListener("click", () => {
-  const oldListHtml = listElement.innerHTML;
-  const deleteElement = oldListHtml.lastIndexOf('<li class="comment">');
+  btnDelCommentElement.addEventListener("click", () => {
+    const oldListHtml = listElement.innerHTML;
+    const deleteElement = oldListHtml.lastIndexOf('<li class="comment">');
     listElement.innerHTML = oldListHtml.substring(0, deleteElement);
-})
+  })
 </script>
 
 </html>
