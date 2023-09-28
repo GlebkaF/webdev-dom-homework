@@ -65,8 +65,20 @@
   const commentInputElement = document.getElementById("comment-input");
 
   buttonElement.addEventListener('click', () => {
-    let newDate = new Date();
 
+    nameInputElement.classList.remove('error');
+    commentInputElement.classList.remove('error');
+    // 6. Чтение значения атрибутов HTML элементов;
+    if (nameInputElement.value === '' || nameInputElement.value === 'Введите ваше имя') {
+      nameInputElement.classList.add('error');
+      return;
+    }
+    if (commentInputElement.value === '' || commentInputElement.value === 'Введите ваш коментарий') {//Проверка на корректность ввода данных в форму (валидация)
+      commentInputElement.classList.add('error');// И подсветить флорму красным цветом
+      return;
+    }
+
+    let newDate = new Date();
     let date = newDate.getDate();
     let month = newDate.getMonth();
     let year = newDate.getFullYear() - 2000;
@@ -103,9 +115,9 @@
           </div>
         </div>
       </li>`;
-    //nameInputElement.value = '';// Очиска формы после ввода данных
+    nameInputElement.value = 'Введите ваше имя';// Очиска формы имени после ввода данных
+    commentInputElement.value = 'Введите ваш коментарий';// Очиска формы коментария после ввода данных
 
-    console.log(fullDate);
 
 
   })
