@@ -8,11 +8,11 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="add-comment">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
+            <div>12.02.22 12:18 </div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -45,19 +45,15 @@
         </li>
       </ul>
       <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
+        <input type="text" class="add-form-name"
+          placeholder="Введите ваше имя"  id="form-name"
         />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
+        <textarea type="textarea" class="add-form-text"
+          placeholder="Введите ваш коментарий" 
+          rows="4" id="form-textarea"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="add-button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
@@ -66,6 +62,34 @@
   <script>
     "use strict";
     // Код писать здесь
-    console.log("It works!");
+    const buttonElement = document.getElementById('add-button');
+    const CommentElement = document.getElementById('add-comment');
+    const nameElement = document.getElementById('form-name');
+    const textareaElement = document.getElementById('form-textarea');
+    const currentDate = new Date().toLocaleDateString('ru-RU', {year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false}).replace(',','')
+
+    buttonElement.addEventListener('click', () => {
+      const oldCommentElement = CommentElement.innerHTML;
+      CommentElement.innerHTML = oldCommentElement +
+       `<li class="comment">
+        <div class="comment-header">
+            <div>${nameElement.value}</div>
+            <div> ${currentDate}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textareaElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button -active-like"></button>
+            </div> 
+            </div/>
+            </li>`
+    
+    })
+
   </script>
 </html>
