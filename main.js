@@ -1,16 +1,13 @@
 //main.js
 
 import { getTodos, postTodo } from './api.js';
-import { now } from './date.js';
+import { format } from "date-fns";
 import { renderComments } from './render.js';
 
 const loading = document.getElementById("loading");
 const loadingForm = document.getElementById("loadingForm");
 const addFormButtonElement = document.getElementById("add-form-button");
 let quote = "";
-let currentDate = new Date();
-
-now(currentDate);
 
 let comments = [
 ];
@@ -22,7 +19,7 @@ loading.textContent = "Комментарии загружаются...";
     const appComments = responseData.comments.map((comment) => {
       return {
         name: comment.author.name,
-        date: now(new Date(comment.date)),
+        date: format(new Date(comment.date), "yyyy-MM-dd HH:mm:ss"),
         text: comment.text,
         likes: 0,
         isLiked: false,
