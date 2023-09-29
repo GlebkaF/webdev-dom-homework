@@ -1,7 +1,9 @@
 import {getComments} from "./api.js";
 import {postComments} from "./api.js";
 import {renderList} from "./render.js";
+import {buttonToAutorizationListener} from "./render.js";
 
+buttonToAutorizationListener();
 // Создаём переменные обращаясь к классу
 const commentsElement = document.querySelector('.comments');
 const nameInputElement = document.querySelector('.add-form-name');
@@ -10,6 +12,7 @@ const buttonInputElement = document.querySelector('.add-form-button');
 const formInputElement = document.querySelector('.add-form');
 const loaderListElement = document.querySelector('.loader_list');
 const loaderFormElement = document.querySelector('.loader_form');
+
 
 // Массив с комментариями
 export let commentsArray = [];
