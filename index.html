@@ -82,27 +82,40 @@
   // ШАБЛОН ВЫВОДА ДАТЫ СОЗДАНИЯ КОММЕНТАРИЯ
   const currentDate = new Date().toLocaleString('ru-RU', { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).replace(',', '');
 
-  //СОБЫТИЕ 1 - КЛИК
 
   function addComment() {
     //ВАЛИДАЦИЯ
-    //remove для удаления классовэ
+    //remove для удаления классов
     //trim() для избежания добавления комментариев состоящих из пустых симовлов (пробелов)
     nameElement.classList.remove('error');
     textElement.classList.remove('error');
-    if (nameElement.value.trim() === '' && textElement.value.trim() === '') {
+    if (nameElement.value.trim() === '' || textElement.value.trim() === '') { // если хоть одна ошибка есть
+      if (nameElement.value.trim() === '') { // если нет имени
+        nameElement.classList.add('error');
+        nameElement.placeholder = '* Имя является обязательным!'
+      }
+      if (textElement.value.trim() === '') { // если нет текста
+        textElement.classList.add('error');
+        textElement.placeholder = '* Комментраий является обязательным!'
+      };
+      // сюда дойдет всегда если нет хоть одного поля
       buttonElement.disabled = true;
       buttonElement.classList.add('btn')
-      return;
-    } else if (nameElement.value.trim() === '') {
-      nameElement.classList.add('error');
-      nameElement.placeholder = '* Имя является обязательным!'
-      return;
-    } else if (textElement.value.trim() === '') {
-      textElement.classList.add('error');
-      textElement.placeholder = '* Комментраий является обязательным!'
-      return;
-    };
+
+      // разблокировка кнопки + удаление обводки
+      nameElement.addEventListener('click', () => {
+        buttonElement.disabled = false;
+        buttonElement.classList.remove('btn');
+        textElement.classList.remove('error');
+      });
+      textElement.addEventListener('click', () => {
+        buttonElement.disabled = false;
+        buttonElement.classList.remove('btn');
+        nameElement.classList.remove('error');
+      });
+
+      return; // и один раз return сработает, чтобы код дальше не сработал
+    }
 
     //ВЫВОД
     const oldFormCommentElement = formCommentElement.innerHTML;
