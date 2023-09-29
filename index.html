@@ -129,21 +129,22 @@
         return;
       }
         comments.push({
-        name: nameInput.value,
+        name: nameInput.value
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;"),
         date: formatedDate,
-        text: textInput.value,
+        text: textInput.value
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;"),
         isLike: 0,
         isLiked: false,
       });
       
+      
       renderComments();
 
         nameInput.value = ""
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;"),
         textInput.value = ""
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
     });
 
     console.log("It works!");
