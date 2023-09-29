@@ -200,8 +200,36 @@ buttonElement.addEventListener("click", () => {
         attachLikeHandler(button, likeCounts[index]);
     });
 
+const fetchPromise = fetch ("https://wedev-api.sky.pro/api/v1/yana-orlova/comments",
+{
+method: "GET",
+});
+fetchPromise.then((response) => {
+    const jsonPromise = response.json();
 
+jsonPromise.then((responseData) => {
+    console.log(responseData);
+    tasks = responseData.todos;
+    renderTasks();
+});
+});
 
+const fetch2Promise = fetch (" https://wedev-api.sky.pro/api/todos",
+{
+method: "POST",
+body: {
+    text: commInputElement.value && nameInputElement.value,
+},
+});
+fetch2Promise.then((response) => {
+    const jsonPromise = response.json();
+
+jsonPromise.then((responseData) => {
+    console.log(responseData);
+    tasks = responseData.todos;
+    renderTasks();
+});
+});
     console.log("It works!");
 
 </script>
