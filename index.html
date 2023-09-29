@@ -76,7 +76,7 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <button class="like-button" data-index="${index}"></button>
+              <button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index="${index}"></button>
               <span class="likes-counter">${comment.isLike}</span>
             </div>
           </div>
@@ -99,6 +99,7 @@
           comment.isLiked = false;
           comment.isLike--;
         }
+        
 
       renderComments(); // После обновления лайков перерисовываем комментарии
 
@@ -112,7 +113,6 @@
     const newDate = new Date;
     const formatedDate = `${newDate.getDate()}.${newDate.getMonth() + 1}.${newDate.getFullYear()} ${newDate.getHours()}:${newDate.getMinutes()}`;
 
-
     addCommentButton.addEventListener("click", () => {
       nameInput.classList.remove("error");
       textInput.classList.remove("error");
@@ -124,7 +124,6 @@
         textInput.classList.add("error");
         return;
       }
-
         comments.push({
         name: nameInput.value,
         date: formatedDate,
