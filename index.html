@@ -41,34 +41,57 @@
 
   <script>
     "use strict";
-  
-
-    const comments = [
-    {
-        name: 'Глеб Фокин',
-        date: "12.02.22 12:18",
-        comment: 'Это будет первый комментарий на этой странице',
-        likes: 3,
-        islike: false
-    },
-    {
-        name: 'Варвара Н',
-        date: "13.02.22 19:22",
-        comment: 'Мне нравится как оформлена эта страница! ❤',
-        likes: 75,
-        islike: true
-    }
-];
+   
 
    const listElements = document.getElementById("list");
    const nameElement = document.querySelector('.add-form-name');
    const textElement = document.querySelector('.add-form-text');
    const buttonElements = document.querySelector('.add-form-button');
-   const deleteButtonElement = document.querySelector('.delete-button')
+   const deleteButtonElement = document.querySelector('.delete-button');
+   let comments = [];
+
+   function correctDate(date) {
+       let currentDate = new Date(date);
+       let todayDay = currentDate.getDate();
+       let todayMonth = currentDate.getMonth() + 1;
+       let todayYear = String(currentDate.getFullYear()).slice(-2);
+      let todayHours = currentDate.getHours();
+      let todayMinutes = currentDate.getMinutes();
+      todayDay = todayDay < 10 ? "0" + todayDay : todayDay;
+      todayMonth = todayMonth < 10 ? "0" + todayMonth : todayMonth;
+      todayHours = todayHours < 10 ? "0" + todayHours : todayHours;
+       todayMinutes = todayMinutes < 10 ? "0" + todayMinutes : todayMinutes;
+
+       let formattedDate = `${todayDay}.${todayMonth}.${todayYear} ${todayHours}:${todayMinutes} `;
+       return formattedDate;
+     }
+   
+   function getFetch() {
    
 
+    const fetchPromise =  fetch("https://wedev-api.sky.pro/api/v1/liza-moguchaya/comments", {
+    method: "GET"
+     });
+     fetchPromise.then((response) => response.json()) 
+     .then((responseData) => {
+          const appComment = responseData.comments.map((comment) => {
+        
+            return {
+               name: comment.author.name,
+               date: correctDate(comment.date),
+               text: comment.text,
+               likes: comment.likes,
+               islike: false,
+             }
+           });
+comments = appComment
+renderElements();
+}) 
+
+}
+getFetch();
 function renderElements (){
-    const g = comments.map((element, index)=>{
+  const commentsHTML = comments.map((element, index)=>{
         return `<li class="comment" data-index="${index}" >
         <div class="comment-header">
           <div>${element.name}</div>
@@ -76,7 +99,7 @@ function renderElements (){
         </div>
         <div class="comment-body">
           <div class="comment-text">
-            ${element.comment}
+            ${element.text}
           </div>
         </div>
         <div class="comment-footer">
@@ -90,13 +113,18 @@ function renderElements (){
       </li>`
       
     }).join("");
-    list.innerHTML = g;
-    addLike();
+    list.innerHTML = commentsHTML;
     commentOnComment();
     deleteComment();
-}
-renderElements();
+    addLike();
+    addComment();
+ }
+
+   
+
+
 function addLike () {
+ 
   const likeElements = document.querySelectorAll('.like-button');
   for(let like of likeElements) {
     like.addEventListener('click', (event) => { 
@@ -116,13 +144,14 @@ function addLike () {
 
 }
 
+
  function commentOnComment() {
     const commentOnComment = document.querySelectorAll('.comment');
      for(let comment of commentOnComment) {
      comment.addEventListener('click', () => {
        let index = comment.dataset.index
      let object = comments[index];
-      commentInputElement.value = `${object.comment}  ${object.name}`
+      commentInputElement.value = `${object.text}  ${object.name}`
      renderElements();
      })
     
@@ -142,9 +171,8 @@ function addLike () {
     const currentDate = new Date ().toLocaleString().slice(0, -3);
     
 
-    function addComment () {
-
-    buttonElement.addEventListener('click', () => {
+function addComment() {
+  buttonElement.addEventListener('click', () => {
       nameInputElement.classList.remove("error");
       commentInputElement.classList.remove("error");
        if (nameInputElement.value === '' || commentInputElement.value === '') {
@@ -152,28 +180,40 @@ function addLike () {
         commentInputElement.classList.add("error");
         return;
        }
-      comments.push({
-        name: nameElement.value
+       const nameInComment = nameElement.value 
+       const textInComment = textElement.value
+       fetch('https://wedev-api.sky.pro/api/v1/liza-moguchaya/comments', {
+       method: "POST",
+        body:JSON.stringify ({
+       text: textInComment
         .replaceAll("<", "&lt")
         .replaceAll(">", "&gt")
         .replaceAll("&", "&amp;")
         .replaceAll('"', "&quot;"),
-        date: currentDate,
-        comment: textElement.value
+       name: nameInComment
         .replaceAll("<", "&lt")
         .replaceAll(">", "&gt")
         .replaceAll("&", "&amp;")
         .replaceAll('"', "&quot;"),
-        likes: 0,
-        islike: false
-      });
-      renderElements();
+       })
+       
+  }
+  
+  )
+  .then(() => {
       nameElement.value = "";
       textElement.value = "";
-      })
-      
-  }
-   addComment();
+      getFetch(); 
+       })
+      });
+
+  
+}
+
+
+   
+  
+   
 
    function deleteComment () {
     const buttonDelete = document.querySelectorAll('.delete-button');
