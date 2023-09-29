@@ -37,6 +37,7 @@
     // рендер-функция 
     function renderComments() {
 
+
       // поиск элемента списка
       const listElement = document.getElementById("list");
 
@@ -78,7 +79,9 @@
 
     let comments = [];
 
+
     function getFetch() {
+      showLoadingIndicator();
 
       const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/christina-ermolenko/comments', {
         method: "GET"
@@ -98,16 +101,21 @@
           });
 
           comments = appComment;
+
           renderComments();
+          hideLoadingIndicator();
         });
       });
     }
 
     getFetch();
 
+
     // добавляем обработчики на полученные комментарии
     addEditAndSaveEventListeners();
     addAnswerEventListeners();
+
+
 
 
     // КНОПКА "НАПИСАТЬ" + ENTER
@@ -141,28 +149,39 @@
       return formattedDate;
     }
 
-    //функция добавления анимации загрузки
+    //функция добавления лоадера и неактивности кнопки "Написать"
     function showLoadingIndicator() {
       const addForm = document.querySelector(".add-form");
       const loadingIndicator = document.querySelector(".loading-indicator");
+      const writeButtonElement = document.getElementById("button-write");
 
-      addForm.style.display = "none";
+
+
       loadingIndicator.style.display = "flex";
+      writeButtonElement.disabled = true;
+      writeButtonElement.classList.remove("add-form-button");
+      writeButtonElement.classList.add("inactive-form-button");
     }
 
-    //функция отмены анимации загрузки
+    //функция отмены лоадера и активности кнопки "Написать"
     function hideLoadingIndicator() {
       const addForm = document.querySelector(".add-form");
       const loadingIndicator = document.querySelector(".loading-indicator");
+      const writeButtonElement = document.getElementById("button-write");
+
 
       loadingIndicator.style.display = "none";
-      addForm.style.display = "flex";
+      writeButtonElement.disabled = false;
+      writeButtonElement.classList.remove("inactive-form-button");
+      writeButtonElement.classList.add("add-form-button");
     }
 
 
+    const listElement = document.getElementById("list");
 
     // функция добавления комментария на сервер
     function addComment() {
+
 
       showLoadingIndicator();
       let nowDate = new Date;
@@ -239,6 +258,7 @@
 
 
       // Добавляем новый комментарий к списку
+      const oldListHtml = listElement.innerHTML;
       listElement.innerHTML = oldListHtml + newCommentHTML;
 
       // Очищаем поля ввода
