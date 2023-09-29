@@ -24,31 +24,29 @@
 <script>
   "use strict";
   let idCounter = 2;
-  const comments = [
-    {
-      id: 1,
-      name: 'Глеб Фокин',
-      dateTime: '12.02.22 12:18',
-      textComment: 'Это будет первый комментарий на этой странице',
-      countLike: 3,
-      isLike: false,
-    },
-    {
-      id: 2,
-      name: 'Варвара Н.',
-      dateTime: '13.02.22 19:22',
-      textComment: 'Мне нравится как оформлена эта страница! ❤',
-      countLike: 75,
-      isLike: true,
-    },
-  ]
+  const commentsUrl = 'https://wedev-api.sky.pro/api/v1/lyubov-khusnullina/comments';
+  let comments = [];
+
+  const getComments = () => {
+    fetch(commentsUrl, {
+      method: 'GET'
+    }, 1000).then((response) => {
+      response.json().then((responseData) => {
+        comments = responseData.comments;
+        renderComments();
+      });
+    }).catch((err) => {
+      console.error('Errorororor', err);
+    });
+  }
+
+  getComments();
 
   const addFormName = document.querySelector('.add-form-name');
   const addFormText = document.querySelector('.add-form-text');
   const addFormButton = document.querySelector('.add-form-button');
   const removeFormButton = document.querySelector('.remove-form-button')
   const listComments = document.querySelector('.comments');
-  
 
   const options = {
     year: '2-digit',
@@ -61,21 +59,22 @@
   addFormButton.setAttribute('disabled', true);
 
   const renderComments = () => {
+    if (!comments) return;
     const commentsHTML = comments.map((comment) => {
-      return `<li class="comment" data-id="${comment.id}" data-name="${comment.name}">
+      return `<li class="comment" data-id="${comment.id}" data-name="${comment.author.name}">
           <div class="comment-header">
-           <div>${comment.name}</div>
-            <div>${comment.dateTime}</div>
+           <div>${comment.author.name}</div>
+            <div>${new Date(comment.date).toLocaleDateString('ru-RU', options).replace(',', '')}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-             ${comment.textComment}
+             ${comment.text}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-             <span class="likes-counter">${comment.countLike}</span>
-              <button class="like-button" data-like="${comment.isLike}"></button>
+             <span class="likes-counter">${comment.likes}</span>
+              <button class="like-button" data-like="${comment.isLiked}"></button>
             </div>
           </div>
             </li>`
@@ -86,8 +85,19 @@
   }
   renderComments();
 
+  const getSafeString = (str) => str.trim()
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+
+  const getUnsafeString = (str) => str.trim()
+    .replaceAll("&amp;", "&")
+    .replaceAll("&lt;", "<")
+    .replaceAll("&gt;", ">")
+    .replaceAll("&quot;", '"')
+
   const AddComment = () => {
-    const newDate = new Date();
     addFormName.classList.remove('error');
     addFormText.classList.remove('error');
 
@@ -96,26 +106,27 @@
       addFormText.classList.add('error');
       return;
     }
-    comments.push({
-      id: ++idCounter,
-      name: addFormName.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-      dateTime: newDate.toLocaleDateString('ru-RU', options).replace(',', ''),
-      textComment: addFormText.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-      countLike: 0,
-      isLike: false,     
-    })
 
-    renderComments();
+    fetch(commentsUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        name: getSafeString(addFormName.value),
+        text: getSafeString(addFormText.value),
+        date: new Date(),
+      }),
+    }).then((response) => {
+      response.json().then((responseData) => {
+        comments = responseData.comments;
+        renderComments();
+      });
+    }).catch((err) => {
+      console.error('ОШИБКА!', err);
+    });
+
     addFormName.value = '';
     addFormText.value = '';
+
+    getComments();
   }
 
   addFormName.addEventListener('input', (e) => {
@@ -144,42 +155,39 @@
   })
 
   const switcher = (event) => {
-  if (!event || !event.target) return;
-  const target = event.target;
-  
-  if (target.classList.contains('like-button')) {
-    addLikesElements(target);
-    return;
+    if (!event || !event.target) return;
+    const target = event.target;
+
+    if (target.classList.contains('like-button')) {
+      addLikesElements(target);
+      return;
+    }
+
+    if (target.classList.contains('comment-text')) {
+      areaFunction(target);
+      return;
+    }
   }
-  
-  if (target.classList.contains('comment-text')) {
-    areaFunction(target);
-    return;
-  }
-}
 
   const areaFunction = (target) => {
-  const commentBlock = target.closest('.comment');
-  const commentId = commentBlock.dataset.name;
-  addFormText.value = `${'>'}` + target.innerHTML.trim().replaceAll("&amp;", "&")
-        .replaceAll("&lt;", "<")
-        .replaceAll("&gt;", ">")
-        .replaceAll("&quot;",'"') +' \n'+ commentId;
-}
+    const commentBlock = target.closest('.comment');
+    const commentId = commentBlock.dataset.name;
+    addFormText.value = `${'>'}` + getUnsafeString(target.innerHTML) + ' \n' + commentId;
+  }
 
   const addLikesElements = (target) => {
-  const commentBlock = target.closest('.comment');
-  const commentId = commentBlock.dataset.id;
-  const com = comments.find(c => c.id == commentId);
-  if (!com) return;
-  if (com.isLike) {
-    com.countLike--;
-  } else {
-    com.countLike++;
+    const commentBlock = target.closest('.comment');
+    const commentId = commentBlock.dataset.id;
+    const com = comments.find(c => c.id == commentId);
+    if (!com) return;
+    if (com.isLiked) {
+      com.likes--;
+    } else {
+      com.likes++;
+    }
+    com.isLiked = !com.isLiked;
+    renderComments();
   }
-  com.isLike = !com.isLike;
-  renderComments();
-}
 
   listComments.addEventListener('click', switcher);
 
