@@ -160,7 +160,3 @@ export async function deleteLastComment() {
     alert("Нет комментариев для удаления");
   }
 }
-
-
-
-
