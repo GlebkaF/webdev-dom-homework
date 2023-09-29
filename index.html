@@ -83,7 +83,6 @@
         const index = commentElement.dataset.index;
         if (index !== null) {
           const comment = comments[index];
-          console.log(comment);
           const textInput = document.getElementById("text-input");
           textInput.value = `QUOTE_BEGIN ${comment.name} : ${comment.text} QUOTE_END`;
         renderComments();
@@ -139,8 +138,12 @@
       
       renderComments();
 
-        nameInput.value = "";
-        textInput.value = "";
+        nameInput.value = ""
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;"),
+        textInput.value = ""
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
     });
 
     console.log("It works!");
