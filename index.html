@@ -62,7 +62,7 @@
             <div>${comment.date}</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
+            <div class="comment-text" data-index="${index}">
               ${comment.text}
             </div>
           </div>
@@ -83,8 +83,7 @@
         const index = commentElement.dataset.index;
         if (index !== null) {
           const comment = comments[index];
-          const textInput = document.getElementById("text-input");
-          textInput.value = `QUOTE_BEGIN ${comment.name} : ${comment.text} QUOTE_END`;
+          textInput.value = `${comment.name} : ${comment.text}`;
         renderComments();
         }
       });
