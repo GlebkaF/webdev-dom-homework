@@ -11,16 +11,8 @@
       <ul id="list" class="comments">
       </ul>
       <div class="add-form">
-        <input id="name-input"
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea id="text-input"
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
+        <input id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+        <textarea id="text-input" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
         ></textarea>
         <div class="add-form-row">
           <button id="comment-button" class="add-form-button">Написать</button>
@@ -55,7 +47,7 @@
       {
         name: "Варвара",
         date: "13.02.22 19:22",
-        text: "Мне нравится как оформлена эта страница!",
+        text: "Мне нравится как оформлена эта страница! ❤",
         isLike: "75",
         isLiked: false,
       },
@@ -85,6 +77,20 @@
       
       addComment.innerHTML = commentsHtml;
 
+    const commentsElements = document.querySelectorAll(".comment-text");
+    for (const commentElement of commentsElements) {
+      commentElement.addEventListener("click", () => {
+        const index = commentElement.dataset.index;
+        if (index !== null) {
+          const comment = comments[index];
+          console.log(comment);
+          const textInput = document.getElementById("text-input");
+          textInput.value = `QUOTE_BEGIN ${comment.name} : ${comment.text} QUOTE_END`;
+        renderComments();
+        }
+      });
+    }
+
     // Добавляем обработчик событий для кнопок лайка
     const likeButtons = document.querySelectorAll(".like-button");
     for (const likeButton of likeButtons) {
@@ -100,7 +106,6 @@
           comment.isLike--;
         }
         
-
       renderComments(); // После обновления лайков перерисовываем комментарии
 
         }
