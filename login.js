@@ -1,19 +1,21 @@
 import { login, setToken } from "./API";
 
 export const renderLogin = () => {
-  const appElement = document.getElementById("app");
+  const appElement = document.getElementById("appReg");
   const loginHTML = `
     <div class="containerRegister">
-      <div class="add-formRegister">
-        <input type="text" class="add-form-nameRegister" id="login-input" placeholder="Введите ваш логин" />
-        <input type="password" class="add-form-textRegister" id="password-input" placeholder="Введите ваш пароль" />
-        <div class="add-form-rowRegister">
-          <button class="login-button" id="login-button">Вход</button>
+      <form id="login-form"> <!-- Wrap the form around the login inputs -->
+        <div class="add-formRegister">
+          <input type="text" class="add-form-nameRegister" id="login-input" placeholder="Введите ваш логин" />
+          <input type="password" class="add-form-textRegister" id="password-input" placeholder="Введите ваш пароль" />
+          <div class="add-form-rowRegister">
+            <button class="login-button" id="login-button">Вход</button>
+          </div>
+          <div class="add-form-rowRegister">
+            <button class="register-button" id="register-button">Регистрация</button>
+          </div>
         </div>
-        <div class="add-form-rowRegister">
-          <button class="register-button" id="register-button">Регистрация</button>
-        </div>
-      </div>
+      </form> <!-- Close the form tag -->
     </div>
   `;
   appElement.innerHTML = loginHTML;
