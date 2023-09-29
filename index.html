@@ -46,8 +46,8 @@
       </li>
     </ul>
     <div class="add-form">
-      <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
-      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
+      <input type="text" class="add-form-name" placeholder="Введите ваше имя" onchange="turnOnOff()" />
+      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4" onchange="turnOnOff()"></textarea>
       <div class="add-form-row">
         <button class="add-form-button">Написать</button>
       </div>
@@ -86,7 +86,7 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter"></span>
+              <span class="likes-counter">0</span>
               <button class="like-button"></button>
             </div>
           </div>
@@ -94,10 +94,19 @@
 
     nameInput.value = "";
     commentInput.value = "";
-
-    addButton.disabled = !this.value;
   });
 
+  function turnOnOff() {
+    let username = document.querySelector('.nameInput').value;
+    let comment = document.querySelector('.commentInput').value;
+
+    if (username && comment) {
+      document.querySelector(".add-form-button").disabled = false;
+    } else {
+      document.querySelector(".add-form-button").disabled = true;
+    }
+  }
   console.log("It works!");
 </script>
+
 </html>
