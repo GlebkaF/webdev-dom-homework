@@ -219,8 +219,7 @@ buttonElement.addEventListener("click", () => {
     
     const getComments = () => {
 //fetch запускает запрос в апи
-const fetchPromise = fetch ("https://wedev-api.sky.pro/api/v1/yana-orlova/comments",
-{
+const fetchPromise = fetch ("https://wedev-api.sky.pro/api/v1/yana-orlova/comments", {
 method: "GET",
 });
 //подписываемся на успешное завершение запроса
@@ -238,6 +237,8 @@ jsonPromise.then((responseData) => {
     }
     getComments();
 
+
+    function postComment(commentData) {
 fetch("https://wedev-api.sky.pro/api/v1/yana-orlova/comments", {
 method: "POST",
 body: JSON.stringify({
@@ -249,6 +250,17 @@ body: JSON.stringify({
     tasks = responseData.comments;
 });
 });
+    };
+postComment();
+
+const newCommentData = {
+    name: 'Имя пользователя',
+    text: 'Текст комментария',
+};
+postComment(newCommentData);
+
+
+
     console.log("It works!");
 
 </script>
