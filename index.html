@@ -38,6 +38,7 @@
       data: '12.02.22 12:18',
       likesCounter: 3,
       isLiked: false,
+      isEdit: false,
     },
     {
       name: 'Варвара Н.',
@@ -45,6 +46,7 @@
       data: '13.02.22 19:22',
       likesCounter: 75,
       isLiked: true,
+      isEdit: false,
     },
   ];
 
@@ -77,7 +79,7 @@
     for (const likesButtonElement of likesButtonElements) {
       likesButtonElement.addEventListener('click', () => {
         const index = likesButtonElement.dataset.index;
-        if (comments[index].isLiked === true) {
+        if (comments[index].isLiked) {
           comments[index].likesCounter -= 1;
           comments[index].isLiked = false;
         } else {
@@ -89,18 +91,60 @@
     }
   }
 
+  const initEdit = () => {
+    const editButtonElements = document.querySelectorAll(".edit-button");
+
+    for (const editButtonElement of editButtonElements) {
+      editButtonElement.addEventListener("click", () => {
+        const index = editButtonElement.dataset.index;
+        comments[index].isEdit = true;
+        renderComments();
+      })
+    }
+  }
+
+  const initSave = () => {
+    const saveButtonElements = document.querySelectorAll(".save-button");
+
+    for (const saveButtonElement of saveButtonElements) {
+      saveButtonElement.addEventListener("click", () => {
+        const index = saveButtonElement.dataset.index;
+        const textEditElement = document.querySelector(".edit-form-text");
+        comments[index].isEdit = false;
+        comments[index].text = textEditElement.value;
+        renderComments();
+      })
+    }
+  }
+
   const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
       let likeActive = comment.isLiked ? `-active-like` : ``;
+      let editInput;
+      let editButton;
+
+      if (comment.isEdit) {
+        editInput = `<textarea type="textarea" class="edit-form-text"  value="" id="editTextArea">${comment.text}</textarea>`;
+        const textarea = document.querySelector("#editTextArea");
+        console.log(textarea);
+        // textarea.addEventListener('keyup', () => {
+        //   if (this.scrollTop > 0) {
+        //     this.style.height = this.scrollHeight + "px";
+        //   }
+        // })
+        editButton = `<button class="save-button" data-index="${index}">Coхранить</button>`;
+      } else {
+        editInput = `<div class="comment-text">${comment.text}</div>`;
+        editButton = `<button class="edit-button" data-index="${index}">Редактировать</button>`;
+      }
+
       return `<li class="comment">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.data}</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
-             ${comment.text}
-            </div>
+            ${editInput}
           </div>
           <div class="comment-footer">
             <div class="likes">
@@ -108,6 +152,7 @@
               <button class="like-button ${likeActive}" data-index="${index}"></button>
             </div>
           </div>
+          ${editButton}
         </li>`
 
     }).join('');
@@ -118,7 +163,8 @@
     nameInputElement.value = '';
     btnAddCommentElement.disabled = true;
     initAddLikes();
-
+    initEdit();
+    initSave();
   };
 
   renderComments();
@@ -154,6 +200,7 @@
       data: dateComment,
       likesCounter: 0,
       isLiked: false,
+      isEdit: false,
     });
 
     renderComments();
