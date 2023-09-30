@@ -67,8 +67,17 @@
     const buttonDelElement = document.querySelector(".del-form-button");
     const listElement = document.querySelector(".comments");
 
-
-    buttonElement.addEventListener("click", () => {
+    buttonElement.disabled = true;
+    
+    document.addEventListener("input", () => {
+        if (inputNameElement.value !== "" && inputTextElement.value !== "") {
+            buttonElement.disabled = false;
+        } else {
+            buttonElement.disabled = true;
+        }
+    });
+    
+    const addNewComment = () => {
         const nameUser = inputNameElement.value;
         const textUser = inputTextElement.value;
         const oldListHtml = listElement.innerHTML;
@@ -89,14 +98,6 @@
         };
 
 
-        if (inputNameElement.value === "" || inputTextElement.value === "") {
-            buttonElement.classList.add('disabled');
-            buttonElement.setAttribute('disabled', '');
-        };
-
-        buttonElement.classList.remove('disabled');
-
-
         listElement.innerHTML = oldListHtml + `<li class="comment">
         <div class="comment-header">
             <div>${nameUser}</div>
@@ -115,6 +116,11 @@
 
         inputNameElement.value = "";
         inputTextElement.value = "";
+    };
+
+    buttonElement.addEventListener("click", () => {
+        addNewComment();
+        buttonElement.disabled = true;
     })
 
     buttonDelElement.addEventListener("click", () => {
@@ -123,108 +129,22 @@
         const lastComment = commentsList.slice(indexLastListElement);
         listElement.innerHTML = commentsList.replace(lastComment, '');
         return;
-    })
+    });
 
 
     inputTextElement.addEventListener("keyup", enter => {
 
-        if (enter.code === 'Enter') {
-            const nameUser = inputNameElement.value;
-            const textUser = inputTextElement.value;
-            const oldListHtml = listElement.innerHTML;
-
-            const currentDate = new Date();
-            const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
-            const date = currentDate.toLocaleDateString('ru-RU', options);
-
-            let hour = currentDate.getHours();
-            let minutes = currentDate.getMinutes();
-
-            if (hour < 10 && hour > 0) {
-                hour = "0" + hour;
-            };
-
-            if (minutes < 10) {
-                minutes = "0" + minutes;
-            };
-
-            if (inputNameElement.value === "" || inputTextElement.value === "") {
-                buttonElement.classList.add('disabled');
-                buttonElement.setAttribute('disabled', '');
-            };
-
-            buttonElement.classList.remove('disabled');
-
-
-            listElement.innerHTML = oldListHtml + `<li class="comment">
-            <div class="comment-header">
-                <div>${nameUser}</div>
-                <div>${date} ${hour}:${minutes}</div>
-            </div>
-            <div class="comment-body">
-                <div class="comment-text">${textUser}</div>
-            </div>
-            <div class="comment-footer">
-                <div class="likes">
-                    <span class="likes-counter">0</span>
-                    <button class="like-button -active-like"></button>
-                </div>
-            </div>
-        </li>`;
-
-            inputNameElement.value = "";
-            inputTextElement.value = "";
+        if (enter.code === 'Enter' && inputNameElement.value !== "" && inputTextElement.value !== "") {
+            addNewComment();
+            buttonElement.disabled = true;
         }
-    })
+    });
 
     inputNameElement.addEventListener("keyup", enter => {
 
-        if (enter.code === 'Enter') {
-            const nameUser = inputNameElement.value;
-            const textUser = inputTextElement.value;
-            const oldListHtml = listElement.innerHTML;
-
-            const currentDate = new Date();
-            const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
-            const date = currentDate.toLocaleDateString('ru-RU', options);
-
-            let hour = currentDate.getHours();
-            let minutes = currentDate.getMinutes();
-
-            if (hour < 10 && hour > 0) {
-                hour = "0" + hour;
-            };
-
-            if (minutes < 10) {
-                minutes = "0" + minutes;
-            };
-
-            if (inputNameElement.value === "" || inputTextElement.value === "") {
-                buttonElement.classList.add('disabled');
-                buttonElement.setAttribute('disabled', '');
-            };
-
-            buttonElement.classList.remove('disabled');
-
-
-            listElement.innerHTML = oldListHtml + `<li class="comment">
-    <div class="comment-header">
-        <div>${nameUser}</div>
-        <div>${date} ${hour}:${minutes}</div>
-    </div>
-    <div class="comment-body">
-        <div class="comment-text">${textUser}</div>
-    </div>
-    <div class="comment-footer">
-        <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button -active-like"></button>
-        </div>
-    </div>
-</li>`;
-
-            inputNameElement.value = "";
-            inputTextElement.value = "";
+        if (enter.code === 'Enter' && inputNameElement.value !== "" && inputTextElement.value !== "") {
+            addNewComment();
+            buttonElement.disabled = true;
         }
     })
 
