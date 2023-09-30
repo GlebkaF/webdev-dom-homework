@@ -241,9 +241,7 @@ jsonPromise.then((responseData) => {
     function postComment(commentData) {
 fetch("https://wedev-api.sky.pro/api/v1/yana-orlova/comments", {
 method: "POST",
-body: JSON.stringify({
-    text: commInputElement.value && nameInputElement.value,
-}),
+body: JSON.stringify(commentData),
 
 }).then((response) => {
     response.json().then((responseData) => {
@@ -251,7 +249,7 @@ body: JSON.stringify({
 });
 });
     };
-postComment();
+
 
 const newCommentData = {
     name: 'Имя пользователя',
