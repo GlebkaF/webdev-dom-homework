@@ -129,9 +129,7 @@ buttonElement.addEventListener("click", () => {
         return;
     }
 
-    
-
-
+    //добавлять коммент в хранилище данных
     const newComment = createComment(nameInputElement.value
     .replaceAll("<", "&lt;") 
     .replaceAll(">", "&gt;"), 
@@ -143,6 +141,23 @@ buttonElement.addEventListener("click", () => {
     commInputElement.value = "";
     nameInputElement.value = "";
 });
+
+// const fetchPromise1 = fetch ("https://wedev-api.sky.pro/api/v1/yana-orlova/comments",
+// {
+// method: "POST",
+// body: JSON.stringify( {
+//     text: commInputElement.value && nameInputElement.value,
+// }),
+// });
+// fetchPromise1.then((response) => {
+//     const jsonPromise = response.json();
+
+// jsonPromise.then((responseData) => {
+//     console.log(responseData);
+//     tasks = responseData.todos;
+    
+// });
+// });
 
 
     function createComment(name, text) {
@@ -200,34 +215,38 @@ buttonElement.addEventListener("click", () => {
         attachLikeHandler(button, likeCounts[index]);
     });
 
+
+    
+    const getComments = () => {
+//fetch запускает запрос в апи
 const fetchPromise = fetch ("https://wedev-api.sky.pro/api/v1/yana-orlova/comments",
 {
 method: "GET",
 });
+//подписываемся на успешное завершение запроса
 fetchPromise.then((response) => {
-    const jsonPromise = response.json();
-
+    //запускаем преобразовываем сырые данные от апи в js
+const jsonPromise = response.json();
+//подписываемся на резуьтат преобразовния
 jsonPromise.then((responseData) => {
-    console.log(responseData);
-    tasks = responseData.todos;
-    renderTasks();
+    
+    // получили данные и ренерим их в приложении
+    tasks = responseData.comments;
+    
 });
 });
+    }
+    getComments();
 
-const fetch2Promise = fetch (" https://wedev-api.sky.pro/api/todos",
-{
+fetch("https://wedev-api.sky.pro/api/v1/yana-orlova/comments", {
 method: "POST",
-body: {
+body: JSON.stringify({
     text: commInputElement.value && nameInputElement.value,
-},
-});
-fetch2Promise.then((response) => {
-    const jsonPromise = response.json();
+}),
 
-jsonPromise.then((responseData) => {
-    console.log(responseData);
-    tasks = responseData.todos;
-    renderTasks();
+}).then((response) => {
+    response.json().then((responseData) => {
+    tasks = responseData.comments;
 });
 });
     console.log("It works!");
