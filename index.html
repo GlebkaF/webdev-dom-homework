@@ -125,13 +125,6 @@
 
       if (comment.isEdit) {
         editInput = `<textarea type="textarea" class="edit-form-text"  value="" id="editTextArea">${comment.text}</textarea>`;
-        const textarea = document.querySelector("#editTextArea");
-        console.log(textarea);
-        // textarea.addEventListener('keyup', () => {
-        //   if (this.scrollTop > 0) {
-        //     this.style.height = this.scrollHeight + "px";
-        //   }
-        // })
         editButton = `<button class="save-button" data-index="${index}">Coхранить</button>`;
       } else {
         editInput = `<div class="comment-text">${comment.text}</div>`;
