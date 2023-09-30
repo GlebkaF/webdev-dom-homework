@@ -83,7 +83,7 @@
         const index = commentElement.dataset.index;
         if (index !== null) {
           const comment = comments[index];
-          textInput.value = `${comment.name} : ${comment.text}`;
+          textInput.value = `QUOTE_BEGIN ${comment.name} : ${comment.text} QUOTE_END`;
         renderComments();
         }
       });
@@ -134,7 +134,8 @@
         date: formatedDate,
         text: textInput.value
         .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;"),
+        .replaceAll(">", "&gt;")
+        .style("white-space: pre-line"),
         isLike: 0,
         isLiked: false,
       });
