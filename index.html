@@ -24,6 +24,12 @@
     .error {
       background-color: rgb(221, 87, 87);
     }
+    
+    .quote {
+      box-sizing: border-box;
+      background-color: white;
+    }
+    
   </style>
   <script>
     "use strict";
@@ -83,8 +89,9 @@
         const index = commentElement.dataset.index;
         if (index !== null) {
           const comment = comments[index];
-          textInput.value = `QUOTE_BEGIN ${comment.name} : ${comment.text} QUOTE_END`;
+          textInput.value = `> ${comment.name} : ${comment.text}`;
         renderComments();
+        comment.text.replace("BEGIN_QUOTE", "<div class='quote'>");
         }
       });
     }
@@ -134,8 +141,7 @@
         date: formatedDate,
         text: textInput.value
         .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .style("white-space: pre-line"),
+        .replaceAll(">", "&gt;"),
         isLike: 0,
         isLiked: false,
       });
