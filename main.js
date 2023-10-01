@@ -1,27 +1,29 @@
-import { fetchComments, postComment } from "./api.js";
+import { getComments } from "./api.js";
+import { renderComments } from "./renderComments.js";
 
-fetchComments();
-export function initEventListeners() {
-  const commentNameInput = document.querySelector(".add-form-name");
-  const commentTextInput = document.querySelector(".add-form-text");
-  const addButton = document.querySelector(".add-form-button");
-  addButton.addEventListener("click", () => {
-    commentNameInput.classList.remove("error");
+let comments = [];
 
-    if (commentNameInput.value === "") {
-      commentNameInput.classList.add("error");
-      return;
-    }
-    if (commentTextInput.value === "") {
-      commentTextInput.classList.add("error");
-      return;
-    }
-    postComment();
+const RUDate = Intl.DateTimeFormat();
 
-    addButton.disabled = true;
-    addButton.textContent = "Комментарий добавляется";
+function fetchAndRenderTasks() {
+  getComments().then((responseData) => {
+    const appComments = responseData.comments.map((comment) => {
+      return {
+        name: comment.author.name,
+        date: RUDate.format(new Date(comment.date)),
+        likes: comment.likes,
+        isLiked: false,
+        text: comment.text,
+      };
+    });
 
-    commentNameInput.value = "";
-    commentTextInput.value = "";
+    comments = appComments;
+
+    renderComments({ comments, fetchAndRenderTasks, name: window.userName });
+
+    const containerPreloader = document.getElementById("container-preloader");
+    containerPreloader.textContent = "";
   });
 }
+
+fetchAndRenderTasks();
