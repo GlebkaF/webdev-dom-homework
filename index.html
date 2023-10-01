@@ -17,7 +17,7 @@
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
-        <textarea minlength="1" maxlength="35" id="comment-input"
+        <textarea minlength="1" maxlength="200" id="comment-input"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
@@ -131,9 +131,17 @@ if (nameInputElement.value === "" || commentInputElement.value === "") {
   return;
 }
 comments.push({
-        name: nameInputElement.value,
+        name: nameInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
         date: currentDate,
-        comment: commentInputElement.value,
+        comment: commentInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
         likes: 0,
         islike: false
       });
