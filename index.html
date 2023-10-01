@@ -33,14 +33,14 @@
     fetch(commentsUrl, {
       method: 'GET'
     })
-    .then((response) => {
-      return response.json()
-    })
-    .then((responseData) => {
-      waiter.style.display = 'none';
-      comments = responseData.comments;
-      renderComments();
-    })
+      .then((response) => {
+        return response.json()
+      })
+      .then((responseData) => {
+        waiter.style.display = 'none';
+        comments = responseData.comments;
+        renderComments();
+      })
   }
 
   getComments();
@@ -125,17 +125,17 @@
         date: new Date(),
       }),
     })
-    .then((response) => {
-      return response.json();
-    })
-    .then((responseData) => {
-      comments = responseData.comments;
-      renderComments();
-    })
-    .then((data) => {
-      addForm.style.display = 'flex';
-      wait.textContent = '';
-    });
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
+        comments = responseData.comments;
+        renderComments();
+      })
+      .then((data) => {
+        addForm.style.display = 'flex';
+        wait.textContent = '';
+      });
 
     addFormName.value = '';
     addFormText.value = '';
@@ -192,15 +192,30 @@
   const addLikesElements = (target) => {
     const commentBlock = target.closest('.comment');
     const commentId = commentBlock.dataset.id;
+    const likes = commentBlock.querySelector('.like-button');
     const com = comments.find(c => c.id == commentId);
     if (!com) return;
-    if (com.isLiked) {
-      com.likes--;
-    } else {
-      com.likes++;
-    }
-    com.isLiked = !com.isLiked;
-    renderComments();
+    
+    likes.classList.add('-loading-like');
+
+    delay(2000).then(() => {
+      if (com.isLiked) {
+        com.likes--;
+      } else {
+        com.likes++;
+      }
+      com.isLiked = !com.isLiked;
+      com.isLikeLoading = false;
+      renderComments();
+    });
+  }
+
+  function delay(interval = 300) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, interval);
+    });
   }
 
   listComments.addEventListener('click', switcher);
