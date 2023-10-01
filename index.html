@@ -64,6 +64,23 @@
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
 
+  const comments = [
+      {
+        userName: "Глеб Фокин",
+        checkLike: false,
+        textComment: "Это будет первый комментарий на этой странице",
+        countLikes: 3,
+        dateBox: "12.02.22 12:18",
+      },
+      {
+        userName: "Варвара Н.",
+        checkLike: true,
+        textComment: "Мне нравится как оформлена эта страница! ❤",
+        countLikes: 75,
+        dateBox: "13.02.22 19:22",
+      },
+    ];
+
   buttonElement.addEventListener('click', () => {
 
     nameInputElement.classList.remove('error');
