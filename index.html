@@ -10,40 +10,7 @@
 <body>
   <div class="container">
     <ul class="comments" id="list">
-      <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>
+
     </ul>
     <div class="add-form">
       <input type="text" class="add-form-name" id="name-input" placeholder="Введите ваше имя" />
@@ -65,21 +32,45 @@
   const commentInputElement = document.getElementById("comment-input");
 
   const comments = [
-      {
-        userName: "Глеб Фокин",
-        checkLike: false,
-        textComment: "Это будет первый комментарий на этой странице",
-        countLikes: 3,
-        dateBox: "12.02.22 12:18",
-      },
-      {
-        userName: "Варвара Н.",
-        checkLike: true,
-        textComment: "Мне нравится как оформлена эта страница! ❤",
-        countLikes: 75,
-        dateBox: "13.02.22 19:22",
-      },
-    ];
+    {
+      userName: "Глеб Фокин",
+      checkLike: false,
+      textComment: "Это будет первый комментарий на этой странице",
+      countLikes: 3,
+      fullDate: "12.02.22 12:18",
+    },
+    {
+      userName: "Варвара Н.",
+      checkLike: true,
+      textComment: "Мне нравится как оформлена эта страница! ❤",
+      countLikes: 75,
+      fullDate: "13.02.22 19:22",
+    },
+  ];
+
+  const renderComments = () => {
+    const commensHtml = comments.map((comment) => {
+      return `<li class="comment">
+        <div class="comment-header">
+          <div>${comment.userName}</div>
+          <div>${comment.fullDate}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">${comment.textComment}</div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${comment.countLikes}</span>
+            <button class="like-button -active-like"></button>
+          </div>
+        </div>
+      </li>`;
+    })
+      .join('');
+    listElement.innerHTML = commensHtml;
+  };
+
+  renderComments();
 
   buttonElement.addEventListener('click', () => {
 
