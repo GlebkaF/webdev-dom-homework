@@ -1,8 +1,6 @@
-import { register } from "./API";
+import { register, setToken } from "./API";
 
-
-
-const buttonElement = document.getElementById("add-comment-button");
+const buttonElement = document.getElementById("registerCommentButton");
 const loginInputElement = document.getElementById("login-input");
 const passwordInputElement = document.getElementById("password-input");
 
@@ -21,10 +19,10 @@ buttonElement.addEventListener("click", () => {
         setToken(responseData.user.token);
         window.location.href = "indexPass.html";
       } else {
-        alert("Ошибка входа. Проверьте правильность введенных данных.");
+        alert("Ошибка регистрации. Проверьте правильность введенных данных.");
       }
     })
     .catch((error) => {
-      alert(`Ошибка входа: ${error.message}`);
+      alert(`Ошибка регистрации: ${error.message}`);
     });
 });

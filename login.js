@@ -20,12 +20,12 @@ export const renderLogin = () => {
   `;
   appElement.innerHTML = loginHTML;
 
-  const buttonElement = document.getElementById("login-button");
+  const passwordButtonElement = document.getElementById("login-button");
   const registerButtonElement = document.getElementById("register-button");
   const loginInputElement = document.getElementById("login-input");
   const passwordInputElement = document.getElementById("password-input");
 
-  buttonElement.addEventListener("click", () => {
+  passwordButtonElement.addEventListener("click", () => {
     const loginValue = loginInputElement.value;
     const passwordValue = passwordInputElement.value;
 
@@ -41,7 +41,6 @@ export const renderLogin = () => {
           window.location.href = "indexPass.html";
         } else {
           alert("Ошибка входа. Проверьте правильность введенных данных.");
-          
         }
       })
       .catch((error) => {

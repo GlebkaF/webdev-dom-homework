@@ -1,4 +1,4 @@
-const BASE_URL_COMMENTS = "https://wedev-api.sky.pro/api/v2/atamyrat-isayev/comments";
+const BASE_URL_COMMENTS = "https://wedev-api.sky.pro/api/v2/gleb-fokin/comments";
 const BASE_URL_USER = "https://wedev-api.sky.pro/api/user";
 
 export let token;
@@ -35,6 +35,7 @@ export async function register({ login, password, name }) {
     const response = await fetch(`${BASE_URL_USER}`, {
       method: "POST",
       headers: {
+        Authorization: `Bearer ${token}`, 
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ login, password, name }),
@@ -73,7 +74,7 @@ export async function postComment(newComment) {
     const response = await fetch(BASE_URL_COMMENTS, {
       method: "POST",
       headers: {
-        authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(newComment),
@@ -98,7 +99,7 @@ export async function deleteComment(commentId) {
     const response = await fetch(`${BASE_URL_COMMENTS}/${commentId}`, {
       method: "DELETE",
       headers: {
-        authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
