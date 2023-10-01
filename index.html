@@ -89,9 +89,10 @@
         const index = commentElement.dataset.index;
         if (index !== null) {
           const comment = comments[index];
-          textInput.value = `> ${comment.name} : ${comment.text}`;
+          textInput.value = `> ${comment.text} \n ${comment.name}.,`;
         renderComments();
-        comment.text.replace("BEGIN_QUOTE", "<div class='quote'>");
+        comment.text.replace("<div class='quote'</div>");
+        const styleQuote = document.querySelectorAll(".quote");
         }
       });
     }
