@@ -3,19 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Проект "Комменты"</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="add-form">
-        <input type="text" class="add-form-name" id="name-input" placeholder="Введите ваше имя" />
-        <input type="text" class="add-form-login" id="login-input" placeholder="Введите ваш логин" />
-        <input type="text" class="add-form-password" id="password-input" placeholder="Введите ваш пароль" rows="4"></input>
-
-        <div class="add-form-row">
-            <button class="add-form-button" id="add-comment-button">зарегистрироваться</button>
-            <button class="deleteCommentButton" id="deleteCommentButton">войти</button>
+    <div class="container">
+        <ul class="comments" id="comments-list">
+        </ul>
+        <div class="add-form">
+            <input type="text" class="add-form-name" id="name-input" placeholder="Введите ваше имя" />
+            <textarea type="textarea" class="add-form-text" id="comment-input" placeholder="Введите ваш комментарий" rows="4"></textarea>
+            <div class="add-form-row">
+                <button class="add-form-button" id="add-comment-button">Написать</button>
+                <button class="deleteCommentButton" id="deleteCommentButton">Удалить последний комментарий</button>
+            </div>
         </div>
-        <script type="module" src="./register.js"></script>
+    </div>
+    <div id="app"></div>
+   
+    <script type="module" src="./main.js"></script>
 </body>
 </html>

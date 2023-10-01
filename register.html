@@ -3,25 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>регистрация</title>
+    <title>Document</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="containerRegister">
-    <div class="add-formRegister">
-      <input type="text" class="add-form-nameRegister" id="login-input" placeholder="Введите ваш логин" />
-      <input type="password" class="add-form-textRegister" id="password-input" placeholder="Введите ваш пароль" />
-      <div class="add-form-rowRegister">
-        <button class="login-button" id="login-button">Вход</button>
-      </div>
-      <div class="add-form-rowRegister">
-        <button class="register-button" onclick="window.location.href = 'indexPass.html';" id="register-button">Регистрация</button>
-      </div>
-    </div>
-  </div>  
+    <div class="add-form">
+        <input type="text" class="add-form-name" id="name-input" placeholder="Введите ваше имя" />
+        <input type="text" class="add-form-login" id="login-input" placeholder="Введите ваш логин" />
+        <input type="text" class="add-form-password" id="password-input" placeholder="Введите ваш пароль" rows="4"></input>
 
-<div id="appReg"></div>
-
-    <script type="module" src="./login.js"></script>
+        <div class="add-form-row">
+            <button class=" deleteCommentButton" id="registerCommentButton">зарегистрироваться</button>
+            <button class="add-form-button" onclick="window.location.href = 'login.html';"id="add-comment-button">войти</button>
+        </div>
+        <script type="module" src="./register.js"></script>
 </body>
 </html>

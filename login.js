@@ -38,9 +38,10 @@ export const renderLogin = () => {
       .then((responseData) => {
         if (responseData.user && responseData.user.token) {
           setToken(responseData.user.token);
-          window.location.href = "index.html";
+          window.location.href = "indexPass.html";
         } else {
           alert("Ошибка входа. Проверьте правильность введенных данных.");
+          
         }
       })
       .catch((error) => {
