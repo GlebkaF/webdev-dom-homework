@@ -70,22 +70,27 @@
     // Код писать здесь
     // console.log("It works!");
     const input = document.getElementById("nameInput");
-    const textArea = document.getElementById("commintInput");
     const button = document.getElementById("button");
-    const ul = document.getElementById("ul");
-    button.addEventListener("click", () => {
+    function addComment() {
+      const textArea = document.getElementById("commintInput");
+      const ul = document.getElementById("ul");
+      button.style.backgroundColor = "";
       input.style.backgroundColor = "";
       textArea.style.backgroundColor = "";
-      //Снизу условие, если мы ничего не ввели в форму, то форма окрашивается
-      if (input.value === "") {
-        input.style.backgroundColor = "red";
+
+      if (input.value === "" && textArea.value === "") {
+        button.style.backgroundColor = "grey";
+        input.style.backgroundColor = "#FFB6C1";
+        textArea.style.backgroundColor = "#FFB6C1";
+        return;
+      } else if (input.value === "") {
+        input.style.backgroundColor = "#FFB6C1";
         return;
       } else if (textArea.value === "") {
-        textArea.style.backgroundColor = "red";
+        textArea.style.backgroundColor = "#FFB6C1";
         return;
       }
 
-      //Реализация даты и времени!
       let currentDate = new Date();
       let day = currentDate.getDate();
       let month = currentDate.getMonth() + 1;
@@ -110,26 +115,113 @@
       ul.innerHTML =
         oldList +
         `<li class="comment">
-          <div class="comment-header">
-            <div> ${input.value} </div>
-            <div>${formattedDate}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${textArea.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
+      <div class="comment-header">
+        <div>${input.value}</div>
+        <div>${formattedDate}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">
+          ${textArea.value}
+        </div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">0</span>
+          <button class="like-button"></button>
+        </div>
+      </div>
+    </li>`;
       input.value = "";
       textArea.value = "";
-      //Пробуем по новой
-      //Дубль 3
+    }
+
+    input.addEventListener("keydown", function (event) {
+      if (event.keyCode === 13) {
+        // Enter key code
+        addComment();
+      }
     });
+
+    button.addEventListener("click", function () {
+      addComment();
+    });
+    // const input = document.getElementById("nameInput");
+    // const textArea = document.getElementById("commintInput");
+    // const button = document.getElementById("button");
+    // const ul = document.getElementById("ul");
+    // button.addEventListener("keydown", function (event) {
+    //   if (event.keyCode === 13) {
+    //     button.style.backgroundColor = "";
+    //     input.style.backgroundColor = "";
+    //     textArea.style.backgroundColor = "";
+    //     //Снизу условие, если мы ничего не ввели в форму, то форма окрашивается
+    //     // if (input.value === "") {
+    //     //   input.style.backgroundColor = "red";
+    //     //   return;
+    //     // } else if (textArea.value === "") {
+    //     //   textArea.style.backgroundColor = "red";
+    //     //   return;
+    //     // }
+    //     if (input.value === "" && textArea.value === "") {
+    //       // button.style.backgroundColor = "grey";
+    //       button.style.backgroundColor = "grey";
+    //       input.style.backgroundColor = "#FFB6C1";
+    //       textArea.style.backgroundColor = "#FFB6C1";
+    //       return;
+    //     } else if (input.value === "") {
+    //       input.style.backgroundColor = "#FFB6C1";
+    //       return;
+    //     } else if (textArea.value === "") {
+    //       textArea.style.backgroundColor = "#FFB6C1";
+    //       return;
+    //     }
+
+    //     //Реализация даты и времени!
+    //     let currentDate = new Date();
+    //     let day = currentDate.getDate();
+    //     let month = currentDate.getMonth() + 1;
+    //     let year = currentDate.getFullYear();
+    //     let hours = currentDate.getHours();
+    //     let minutes = currentDate.getMinutes();
+    //     if (day < 10) {
+    //       day = "0" + day;
+    //     }
+    //     if (month < 10) {
+    //       month = "0" + month;
+    //     }
+    //     if (hours < 10) {
+    //       hours = "0" + hours;
+    //     }
+    //     if (minutes < 10) {
+    //       minutes = "0" + minutes;
+    //     }
+    //     let formattedDate =
+    //       day + "." + month + "." + year + " " + hours + ":" + minutes;
+    //     const oldList = ul.innerHTML;
+    //     ul.innerHTML =
+    //       oldList +
+    //       `<li class="comment">
+    //       <div class="comment-header">
+    //         <div> ${input.value} </div>
+    //         <div>${formattedDate}</div>
+    //       </div>
+    //       <div class="comment-body">
+    //         <div class="comment-text">
+    //           ${textArea.value}
+    //         </div>
+    //       </div>
+    //       <div class="comment-footer">
+    //         <div class="likes">
+    //           <span class="likes-counter">0</span>
+    //           <button class="like-button"></button>
+    //         </div>
+    //       </div>
+    //     </li>`;
+    //     input.value = "";
+    //     textArea.value = "";
+    //     //Пробуем по новой
+    //     //Дубль 3
+    //   }
+    // });
   </script>
 </html>
