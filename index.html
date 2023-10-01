@@ -61,6 +61,9 @@
         <div class="add-form-row">
           <button id="button" class="add-form-button">Написать</button>
         </div>
+        <button id="deleteButton" class="add-form-button">
+          Удалить последний комментарий
+        </button>
       </div>
     </div>
   </body>
@@ -69,6 +72,7 @@
     "use strict";
     // Код писать здесь
     // console.log("It works!");
+    // Это кнопка НАПИСАТЬ
     const input = document.getElementById("nameInput");
     const button = document.getElementById("button");
     function addComment() {
@@ -134,7 +138,6 @@
       input.value = "";
       textArea.value = "";
     }
-
     input.addEventListener("keydown", function (event) {
       if (event.keyCode === 13) {
         // Enter key code
@@ -145,6 +148,18 @@
     button.addEventListener("click", function () {
       addComment();
     });
+
+    // Это кнопка будет Удалить
+    const delCom = document.getElementById("deleteButton");
+    function deleteCommit() {
+      const ul = document.getElementById("ul");
+      let latComm = ul.getElementsByTagName("li").length - 1;
+      ul.getElementsByTagName("li")[latComm].remove();
+    }
+    delCom.addEventListener("click", function () {
+      deleteCommit();
+    });
+
     // const input = document.getElementById("nameInput");
     // const textArea = document.getElementById("commintInput");
     // const button = document.getElementById("button");
