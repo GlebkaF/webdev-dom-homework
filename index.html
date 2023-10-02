@@ -29,7 +29,7 @@
   const nameInputElement = document.querySelector(".add-form-name");
   const textInputElement = document.querySelector(".add-form-text");
   const btnDelCommentElement = document.querySelector(".delete-form-button");
-  
+
 
 
 
@@ -128,7 +128,7 @@
       commentElement.addEventListener('click', () => {
         const index = commentElement.dataset.index;
         const text = comments[index].text;
-        textInputElement.value = text
+        textInputElement.value = text;
       })
     }
   }
@@ -168,8 +168,6 @@
 
     listElement.innerHTML = commentsHtml;
 
-
- 
     btnAddCommentElement.disabled = true;
     initAddLikes();
     initEdit();
@@ -204,8 +202,16 @@
 
 
     comments.push({
-      name: nameInputElement.value,
-      text: textInputElement.value,
+      name: nameInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
+      text: textInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       data: dateComment,
       likesCounter: 0,
       isLiked: false,
@@ -224,10 +230,13 @@
   btnAddCommentElement.addEventListener("click", addComment);
 
   btnDelCommentElement.addEventListener("click", () => {
-    const oldListHtml = listElement.innerHTML;
-    const deleteElement = oldListHtml.lastIndexOf('<li class="comment">');
-    listElement.innerHTML = oldListHtml.substring(0, deleteElement);
-  })
+    
+    comments.pop();
+
+    renderComments();
+
+  })   
+
 </script>
 
 </html>
