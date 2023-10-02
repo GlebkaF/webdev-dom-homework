@@ -9,8 +9,8 @@
 
 <body>
 <div class="container">
-    <ul id="list" class="comments">
-        <li class="comment">
+     <ul id="list" class="comments">
+        <!-- <li class="comment">
             <div class="comment-header">
                 <div>Глеб Фокин</div>
                 <div id="comment-date-1">12.02.22 12:18</div>
@@ -29,7 +29,7 @@
 
         </li>
        
-           
+          
 
         <li class="comment">
             <div class="comment-header">
@@ -48,7 +48,7 @@
                 </div>
             </div>
             
-        </li>
+        </li> -->
     </ul>
     <div class="add-form">
         <input
@@ -142,22 +142,7 @@ buttonElement.addEventListener("click", () => {
     nameInputElement.value = "";
 });
 
-// const fetchPromise1 = fetch ("https://wedev-api.sky.pro/api/v1/yana-orlova/comments",
-// {
-// method: "POST",
-// body: JSON.stringify( {
-//     text: commInputElement.value && nameInputElement.value,
-// }),
-// });
-// fetchPromise1.then((response) => {
-//     const jsonPromise = response.json();
 
-// jsonPromise.then((responseData) => {
-//     console.log(responseData);
-//     tasks = responseData.todos;
-    
-// });
-// });
 
 
     function createComment(name, text) {
@@ -192,22 +177,20 @@ buttonElement.addEventListener("click", () => {
         return comment;
     }
 
-    buttonElement.addEventListener("click", () => {
-        commInputElement.style.backgroundColor = "";
-        nameInputElement.style.backgroundColor = "";
-        if (commInputElement.value === "" || nameInputElement.value === "") {
-            commInputElement.style.backgroundColor = "red";
-            nameInputElement.style.backgroundColor = "red";
-            return;
-        }
 
-        const newComment = createComment(nameInputElement.value, commInputElement.value);
-        listElement.appendChild(newComment);
 
-        commInputElement.value = "";
-        nameInputElement.value = "";
-    });
-
+    function renderComments(commentData) {
+        listElement.innerHTML = "";
+        commentData.forEach((comment) => {
+            const commentElement = createComment(comment.name, comment.text);
+            listElement.appendChild(commentElement);
+        });
+    }
+    const commentsData = [
+        { name: "Глеб Фокин", text: "Это будет первый комментарий на этой странице" },
+        { name: "Варвара Н.", text: "Мне нравится как оформлена эта страница! ❤️" },
+    ];
+    renderComments(commentsData);
 
     const likeButtons = document.querySelectorAll(".like-button");
     const likeCounts = document.querySelectorAll(".likes-counter");
@@ -216,48 +199,34 @@ buttonElement.addEventListener("click", () => {
     });
 
 
+const getComments = () => {
+    let fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/:yana-orlova/comments", {
+        method: "GET",
+    });
+
+    fetchPromise.then((response) => {
+        response.json().then((responseData) => {
+            let appComments = responseData.comments.map((comment) => {
+                return {
+                    name: comment.author.name,
+                    comment: comment.text,
+                    date: comment.date,
+                    likes: comment.likes,
+                }
+            });
+
+commentsData = appComments;
+console.log(responseData);
+
+renderComments();
+        });
+    });
+}
+
+ getComments();
+
+
     
-    const getComments = () => {
-//fetch запускает запрос в апи
-const fetchPromise = fetch ("https://wedev-api.sky.pro/api/v1/yana-orlova/comments", {
-method: "GET",
-});
-//подписываемся на успешное завершение запроса
-fetchPromise.then((response) => {
-    //запускаем преобразовываем сырые данные от апи в js
-const jsonPromise = response.json();
-//подписываемся на резуьтат преобразовния
-jsonPromise.then((responseData) => {
-    
-    // получили данные и ренерим их в приложении
-    tasks = responseData.comments;
-    
-});
-});
-    }
-    getComments();
-
-
-    function postComment(commentData) {
-fetch("https://wedev-api.sky.pro/api/v1/yana-orlova/comments", {
-method: "POST",
-body: JSON.stringify(commentData),
-
-}).then((response) => {
-    response.json().then((responseData) => {
-    tasks = responseData.comments;
-});
-});
-    };
-
-
-const newCommentData = {
-    name: 'Имя пользователя',
-    text: 'Текст комментария',
-};
-postComment(newCommentData);
-
-
 
     console.log("It works!");
 
