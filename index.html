@@ -65,6 +65,18 @@
 <script>
   "use strict";
 
+
+  const comment = {
+    text: "Это комментарий к цитате."
+  };
+
+  const QUOTE_BEGIN = "QUOTE_BEGIN";
+  const QUOTE_END = "QUOTE_END";
+
+  // Создаем строку с использованием шаблонных строк
+  const formattedComment = `${QUOTE_BEGIN} ${comment.text} ${QUOTE_END}`;
+
+  console.log(formattedComment);
   const buttonElement = document.getElementById('addMessage');
   const nameElement = document.getElementById('name-input');
   const commentElement = document.getElementById('comment-input');
@@ -94,7 +106,8 @@
   const initDeleteLike = () => {
     const deleteLikes = document.querySelectorAll(".like-button");
     for (const deleteLike of deleteLikes) {
-      deleteLike.addEventListener('click', () => {
+      deleteLike.addEventListener('click', (event) => {
+        event.stopPropagation();
         const index = deleteLike.dataset.index;
         if (comments[index].isLike) {
           comments[index].likeCount--;
@@ -127,6 +140,20 @@
       });
     }
   };
+
+  const initCommentClickListener = () => {
+    const clickElemets = document.querySelectorAll('.comment-text');
+    for (const clicks of clickElemets) {
+      clicks.addEventListener('click', () => {
+        const index = clicks.dataset.index;
+        commentElement.value = `QUOTE_BEGIN` + comments[index].name + '\n' + `>` + comments[index].comment + 'QUOTE_END\n';
+        commentElement.focus();
+        render();
+      });
+    }
+  };
+
+
   const render = () => {
     listElements.innerHTML = comments.map((comment, index) => {
       let d = comment.date;
@@ -140,7 +167,7 @@
         <div class="comment-body">
           ${comment.isEdit
           ? `<textarea type="textarea"  class="add-form-text" placeholder="Введите ваш коментарий" rows="4">${comment.comment}</textarea>`
-          : `<div class="comment-text"> ${comment.comment} </div>`}
+          : `<div class="comment-text" data-index="${index}"> ${comment.comment.replaceAll("QUOTE_BEGIN", "<div class='quote'>").replaceAll("QUOTE_END", "</div>")} </div>`}
         </div>
         <div class="comment-footer">
           ${comment.isEdit
@@ -158,6 +185,8 @@
     initDeleteLike();
     initEditElements();
     initSaveButtons();
+    initCommentClickListener();
+
   };
   render();
 
@@ -184,13 +213,15 @@
       return;
     }
 
-    comments.push({
-      name: nameElement.value,
+    let newComment = {
+      name: nameElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
       date: new Date(),
-      comment: commentElement.value,
+      comment: commentElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
       likeCount: 0,
       isLike: false
-    });
+    };
+
+    comments.push(newComment);
     render();
 
     nameElement.value = "";
