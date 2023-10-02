@@ -9,8 +9,9 @@
 
 <body>
   <div class="container">
+    <a class="link-for-form" href="#formUser">К форме</a>
     <ul class="comments"></ul>
-    <div class="add-form">
+    <div class="add-form" id="formUser">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
       <div class="add-form-row">
@@ -26,28 +27,25 @@
   const button = document.querySelector(".add-form-button");
   const addName = document.querySelector(".add-form-name");
   const addText = document.querySelector(".add-form-text");
+  const addForm = document.querySelector(".add-form");
+  let isLoader = true; // влияет на отрисовку лоадера или списка комментариев (формы заполнения данных) //
+  // Работает isLoader только при первичной загрузке приложения что бы показать что список загружается  //
+
+
+
+  // Создаю новый параграф который будет отображаться при добавлении комментария //
+  let textForLoading = document.createElement("p");
+  textForLoading.textContent = "Комментарий добавляется....Подождите";
+  textForLoading.classList.add("hidden");
+  list.parentNode.insertBefore(textForLoading, addForm);
   
+
+  
+
 
   // Создание масиива с обьектами пользователей который будет рендерится через функцию renderElements()
 
-  let listOfObject = [
-    // {
-    //   name: "Глеб Фокин",
-    //   data: "12.02.22 12:18",
-    //   comment: "Это будет первый комментарий на этой странице",
-    //   like: 3,
-    //   isLiked: false,
-    //   isEdit: false,
-    // },
-    // {
-    //   name: "Варвара Н.",
-    //   data: "13.02.22 19:22",
-    //   comment: "Мне нравится как оформлена эта страница! ❤",
-    //   like: 75,
-    //   isLiked: true,
-    //   isEdit: false,
-    // },
-  ];
+  let listOfObject = [];
 
   //Сама функция renderElements которая массив обьетов listOfObject рендерит в разметку HTML
 
@@ -87,7 +85,6 @@
   }
   renderElements();
 
-  
 
   // Валидация формы на предмет пустых значений в полях имени и текста //
 
@@ -105,13 +102,18 @@
 
 
 
-  // Создание fetch запроса к API //
+  // Создание fetch запроса к API + перед выполнением запроса  мы выводим сообщение пользователю о загрузке списка комментариев //
+  
+
+    if(isLoader){
+      list.innerHTML = `<p>Список комментариев загружается</p>`
+    }  
 
   function getFetchPromise(){
-    const getPromise = fetch("https://wedev-api.sky.pro/api/v1/alexander-potapov/comments", {
+    return fetch("https://wedev-api.sky.pro/api/v1/alexander-potapov/comments", {
       method: "GET",
     })
-    .then((response) => response.json()
+    .then((response) => response.json())
     .then((dataResponse) => {
       console.log(dataResponse);
 
@@ -126,17 +128,23 @@
         } 
       })
         listOfObject = newList;
-        renderElements()
-    }))
+        renderElements();
+        isLoader = false;
+    })
   }
   getFetchPromise();
+
+
 
 
   // Обработчик событий на кнопку Отправить + мы обращаемся к нашему API что бы отправить в API  новый комметарий используя метод POST
 
       function addComment() {
+        
+         button.addEventListener("click", () => {
 
-        button.addEventListener("click", () => {
+          textForLoading.classList.remove("hidden");
+          addForm.classList.add("hidden");
 
           addText.classList.remove("error");
           addName.classList.remove("error");
@@ -146,27 +154,27 @@
             return;
           };
 
-          const getPromise = fetch("https://wedev-api.sky.pro/api/v1/alexander-potapov/comments", {
+            return fetch("https://wedev-api.sky.pro/api/v1/alexander-potapov/comments", {
             method: "POST",
             body: JSON.stringify({
               text: addText.value,
               name: addName.value,
             })
-          })
+            })
             .then((response) => response.json())
             .then((dataResponse) => {
               console.log(dataResponse);
               getFetchPromise();
               addName.value = "";
               addText.value = "";
+              textForLoading.classList.add("hidden");
+              addForm.classList.remove("hidden");
             })
         })
       }
       addComment()
-
-
-
- // Функция для удаления комментария//
+      
+      // Функция для удаления комментария//
 
  function removeComments() {
       const buttonResets = document.querySelectorAll(".add-form-button_reset");
@@ -246,7 +254,3 @@
   // console.log("It works!");
 </script>
 </html>
-
-
-
-
