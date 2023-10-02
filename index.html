@@ -210,6 +210,7 @@
           console.log(response);
           if (nameInputElement.value.length < "3" || textInputElement.value.length < "3") {
           alert("Имя и комментарий должны быть не короче 3 символов");
+            throw new Error('Ошибка');
           } else {
             console.log("Время: " + (Date.now() - startAt));
           return response;
@@ -266,8 +267,12 @@
         .catch((error) => {
           buttonElement.disabled = false;
           buttonElement.textContent = 'Написать';
-          alert("Пропал интернет, попробуй позже");
-          console.warn(error);
+          if (response.status === 400) {
+            alert("Пропал интернет, попробуй позже");
+          }
+          else{
+            return pesponse;
+          }
         });
 
         renderComments();
