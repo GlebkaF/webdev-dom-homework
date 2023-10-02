@@ -84,24 +84,28 @@
   const commentForm = document.getElementById('comment-form');
   const deleteElement = document.getElementById('delete-comment');
 
-  const comments = [
-    {
-      name: 'Глеб Фокин',
-      date: new Date(2022, 1, 12, 12, 18),
-      comment: 'Это будет первый комментарий на этой странице',
-      likeCount: 3,
-      isLike: false,
-      isEdit: false
-    },
-    {
-      name: 'Варвара',
-      date: new Date(2022, 1, 13, 19, 22),
-      comment: 'Мне нравится как оформлена эта страница! ❤',
-      likeCount: 78,
-      isLike: true,
-      isEdit: false
-    }
-  ];
+  let comments = [];
+
+  const getComments = () => {
+    fetch(" https://wedev-api.sky.pro/api/v1/denis-vasilev/comments", {
+      method: 'GET',
+    }).then((response) => {
+      response.json().then((responseData) => {
+        comments = responseData.comments.map((el) => {
+          return {
+            name: el.author.name,
+            date: new Date(el.date),
+            comment: el.text,
+            likeCount: el.likes,
+            isLike: false,
+            isEdit: false
+          };
+        });
+        render();
+      });
+    });
+  };
+  getComments();
 
   const initDeleteLike = () => {
     const deleteLikes = document.querySelectorAll(".like-button");
@@ -213,16 +217,29 @@
       return;
     }
 
-    let newComment = {
-      name: nameElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-      date: new Date(),
-      comment: commentElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-      likeCount: 0,
-      isLike: false
-    };
+    // let newComment = {
+    //   name: nameElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+    //   date: new Date(),
+    //   comment: commentElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+    //   likeCount: 0,
+    //   isLike: false
+    // };
 
-    comments.push(newComment);
-    render();
+    // comments.push(newComment);
+
+
+    fetch(" https://wedev-api.sky.pro/api/v1/denis-vasilev/comments", {
+      method: 'POST',
+      body: JSON.stringify({
+        text: commentElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+        name: nameElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;")
+      })
+    }).then((response) => {
+      response.json().then((responseData) => {
+        console.log(responseData);
+        getComments();
+      });
+    });
 
     nameElement.value = "";
     commentElement.value = "";
