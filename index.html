@@ -29,7 +29,9 @@
   const nameInputElement = document.querySelector(".add-form-name");
   const textInputElement = document.querySelector(".add-form-text");
   const btnDelCommentElement = document.querySelector(".delete-form-button");
-  let userLikes = 0;
+  
+
+
 
   const comments = [
     {
@@ -86,6 +88,7 @@
           comments[index].likesCounter += 1;
           comments[index].isLiked = true;
         }
+        event.stopPropagation();
         renderComments();
       })
     }
@@ -98,6 +101,7 @@
       editButtonElement.addEventListener("click", () => {
         const index = editButtonElement.dataset.index;
         comments[index].isEdit = true;
+        event.stopPropagation();
         renderComments();
       })
     }
@@ -112,7 +116,19 @@
         const textEditElement = document.querySelector(".edit-form-text");
         comments[index].isEdit = false;
         comments[index].text = textEditElement.value;
+        event.stopPropagation();
         renderComments();
+      })
+    }
+  }
+  const responsToComment = () => {
+    const commentElements = document.querySelectorAll(".comment");
+
+    for (const commentElement of commentElements) {
+      commentElement.addEventListener('click', () => {
+        const index = commentElement.dataset.index;
+        const text = comments[index].text;
+        textInputElement.value = text
       })
     }
   }
@@ -131,7 +147,7 @@
         editButton = `<button class="edit-button" data-index="${index}">Редактировать</button>`;
       }
 
-      return `<li class="comment">
+      return `<li class="comment" data-index="${index}">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.data}</div>
@@ -152,16 +168,16 @@
 
     listElement.innerHTML = commentsHtml;
 
-    textInputElement.value = '';
-    nameInputElement.value = '';
+
+ 
     btnAddCommentElement.disabled = true;
     initAddLikes();
     initEdit();
     initSave();
+    responsToComment();
   };
 
   renderComments();
-
 
   function addComment() {
     let date = new Date();
@@ -195,7 +211,8 @@
       isLiked: false,
       isEdit: false,
     });
-
+    textInputElement.value = '';
+    nameInputElement.value = '';
     renderComments();
   }
 
