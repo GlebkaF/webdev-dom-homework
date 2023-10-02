@@ -8,10 +8,13 @@
  
   <body>
     <div class="container">
+      <div class="list-loader hidden">
+        <span>Комментарии загружаются...</span>
+      </div>
       <ul id="list" class="comments">
-        
+
       </ul>
-      <div class="add-form">
+      <div class="add-form hidden">
         <input id="name-input"
           type="text"
           class="add-form-name"
@@ -24,10 +27,14 @@
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button id="add-button" class="add-form-button">Написать</button>
+          <button id="add-button" class="add-form-button " >Написать</button>
         </div>
       </div>
+      <div class="comment-loader hidden">
+        <span>Комментарий отправляется</span>
+      </div>
     </div>
+    
     
   </body>
   <style>
@@ -50,6 +57,36 @@
    const deleteButtonElement = document.querySelector('.delete-button');
    let comments = [];
 
+   function hideAddForm (){
+    const form = document.querySelector(".add-form");
+    form.classList.add("hidden");
+   }
+   function showAddForm(){
+    const form = document.querySelector(".add-form");
+    form.classList.remove("hidden");
+   }
+
+   function showLoadingIndicatorComments() {
+    const loader = document.querySelector(".comment-loader");
+    loader.classList.remove("hidden");
+   }
+   function deleteLoadingIndicatorComments(){
+    const loader = document.querySelector(".comment-loader");
+      loader.classList.add("hidden");
+
+   }
+
+   function showLoadingIndicator() {
+    const loader = document.querySelector(".list-loader");
+    loader.classList.remove("hidden");
+  
+    }
+
+    function deleteLoadingIndicator() {
+      const loader = document.querySelector(".list-loader");
+      loader.classList.add("hidden");
+    }
+
    function correctDate(date) {
        let currentDate = new Date(date);
        let todayDay = currentDate.getDate();
@@ -67,12 +104,13 @@
      }
    
    function getFetch() {
-   
+   showLoadingIndicator();
+   hideAddForm();
 
-    const fetchPromise =  fetch("https://wedev-api.sky.pro/api/v1/liza-moguchaya/comments", {
+   fetch("https://wedev-api.sky.pro/api/v1/liza-moguchaya/comments", {
     method: "GET"
-     });
-     fetchPromise.then((response) => response.json()) 
+     })
+     .then((response) => response.json()) 
      .then((responseData) => {
           const appComment = responseData.comments.map((comment) => {
         
@@ -86,6 +124,8 @@
            });
 comments = appComment
 renderElements();
+deleteLoadingIndicator(); 
+showAddForm();
 }) 
 
 }
@@ -182,6 +222,8 @@ function addComment() {
        }
        const nameInComment = nameElement.value 
        const textInComment = textElement.value
+       showLoadingIndicatorComments();
+       hideAddForm();
        fetch('https://wedev-api.sky.pro/api/v1/liza-moguchaya/comments', {
        method: "POST",
         body:JSON.stringify ({
@@ -197,13 +239,14 @@ function addComment() {
         .replaceAll('"', "&quot;"),
        })
        
-  }
-  
-  )
+  })
   .then(() => {
+    deleteLoadingIndicatorComments();
+    showAddForm();
       nameElement.value = "";
       textElement.value = "";
-      getFetch(); 
+      getFetch();
+      deleteLoadingIndicator();  
        })
       });
 
