@@ -50,8 +50,8 @@
 
   const renderComments = () => {
     const commensHtml = comments.map((comment, index) => {
-      if (comment.checkLike === false) {
-        return `<li class="comment">
+      return (comment.checkLike === true) ?
+        `<li class="comment">
         <div class="comment-header">
           <div>${comment.userName}</div>
           <div>${comment.fullDate}</div>
@@ -65,8 +65,9 @@
             <button data-index ="${index}" class="like-button"></button>
           </div>
         </div>
-      </li>`} else {
-        return `<li class="comment">
+      </li>`
+        :
+        `<li class="comment">
         <div class="comment-header">
           <div>${comment.userName}</div>
           <div>${comment.fullDate}</div>
@@ -80,7 +81,7 @@
             <button data-index ="${index}" class="like-button -active-like"></button>
           </div>
         </div>
-      </li>`}
+      </li>`
     })
       .join('');
     listElement.innerHTML = commensHtml;
@@ -97,6 +98,7 @@
           comments[buttonLike.dataset.index].checkLike = true;
           comments[buttonLike.dataset.index].countLikes++;
         }
+
         renderComments();
         likeButtons();
       });
@@ -122,12 +124,12 @@
 
     let newDate = new Date();
     let date = newDate.getDate();
-    let month = newDate.getMonth();
+    let month = newDate.getMonth() + 1;
     let year = newDate.getFullYear() - 2000;
     let hour = newDate.getHours(); // получаем час из нашей даты
     let minute = newDate.getMinutes(); // получаем минуты
 
-    console.log(newDate);
+
 
     if (date < 10) {
       date = "0" + date;
@@ -142,8 +144,8 @@
       minute = "0" + minute; // то перед ними поставим 0
     }
     let fullDate = date + "." + month + "." + year + " " + hour + ":" + minute;
-    console.log(fullDate);
-    
+
+
     comments.push({
       userName: nameInputElement.value,
       checkLike: false,
