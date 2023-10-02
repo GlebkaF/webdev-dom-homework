@@ -1,9 +1,11 @@
-import {getComments} from "./api.js";
-import {postComments} from "./api.js";
-import {renderList} from "./render.js";
-import {buttonToAutorizationListener} from "./render.js";
+import {getComments} from "./api.js"; // Получает комментарии от API
+import {postComments} from "./api.js"; // Публикует новый комментарий через API
+import {renderList} from "./render.js"; // Рисует полученные комментарии
+import {buttonToAutorizationListener} from "./render.js"; // Ждёт нажатия на кнопку "авторизуйтесь"
 
+//Ждём нажатия на кнопку "авторизуйтесь"
 buttonToAutorizationListener();
+
 // Создаём переменные обращаясь к классу
 const commentsElement = document.querySelector('.comments');
 const nameInputElement = document.querySelector('.add-form-name');
@@ -76,7 +78,6 @@ const buttonListener = buttonInputElement.addEventListener("click", () => {
       loaderFormElement.classList.add('hide-elem');
 
       // Очищаем форму от последнего комментария
-      nameInputElement.value = '';
       commentInputElement.value = '';
     })
     .catch((error) => {
@@ -87,10 +88,5 @@ const buttonListener = buttonInputElement.addEventListener("click", () => {
     });
 });
 
-// Функция кнопки "Удалить последний комментарий"
-document.querySelector('.delete-comment-button').addEventListener("click", () => {
-  let lastList = document.querySelector('li:last-child');
-  lastList.remove();
-});
 
 console.log("It works!");

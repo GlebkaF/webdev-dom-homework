@@ -3,6 +3,8 @@ import { likeListener } from "./likes.js";
 import { activeLike } from "./likes.js";
 import { answerComment } from "./answers.js";
 import { editComment } from "./edit.js";
+import { registration } from "./login.js";
+import { autorization } from "./login.js";
 
 const buttonToAutorization = document.querySelector('.button_to_autorization');
 const formElement = document.querySelector('.login_form_box');
@@ -40,7 +42,9 @@ export function renderList({commentsArray, commentsElement}) {
 
 export function buttonToAutorizationListener() { 
       buttonToAutorization.addEventListener("click", () => {
+
       document.querySelector('.move_to_autorization_box').classList.add("hide-elem");
+      document.querySelector('.comments').classList.add('hide-elem');
       
       const autorizationForm = 
       `<div class="autorization_form">
@@ -53,26 +57,33 @@ export function buttonToAutorizationListener() {
   
       formElement.innerHTML = autorizationForm;
 
-      buttonToRegitrationListener()
+      autorization();
+      buttonToRegistrationListener()
   });
   };
 
-export function buttonToRegitrationListener() {
-    const buttonToRegitration = document.querySelector('.reg_button');
-    buttonToRegitration.addEventListener("click", () => {
+export function buttonToRegistrationListener() {
+
+    const buttonToRegistration = document.querySelector('.reg_button');
+    buttonToRegistration.addEventListener("click", () => {
+
       const registrationForm = 
       `<div class="autorization_form">
       <p class="form_tittle">Форма регистрации</p>
       <input type="text" id="name" class="form_input" placeholder="Введите имя">
       <input type="text" id="login" class="form_input" placeholder="Введите логин">
       <input type="text" id="password" class="form_input" placeholder="Введите пароль">
-      <button class="add-form-button-in">Зарегистрироваться</button>
+      <button class="add-form-button-reg">Зарегистрироваться</button>
       <button class="autorization_button">Войти</button>
       </div>`;
 
       formElement.innerHTML = registrationForm;
+
       document.querySelector('.autorization_button').addEventListener("click", () => {
         buttonToAutorization.click();
-      })
+      });
+
+      registration();
+
     })
   }

@@ -9,7 +9,7 @@ export function dateString (string) {
       }
     };
     let dateMonth = (date) => {
-      if (date.getMonth().toString().length === 1) {
+      if (date.getMonth().toString() < 9) {
         return '0' + (date.getMonth()+1)
       } else {
         return date.getMonth()+1;

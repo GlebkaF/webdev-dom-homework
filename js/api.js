@@ -1,8 +1,13 @@
-const host = "https://wedev-api.sky.pro/api/v2/vladimir-rychkov/comments"
+import { token } from "./login.js"; 
+
+const host = "https://wedev-api.sky.pro/api/v2/vladimir-rychkov/comments";
 
 export function getComments() {
     return fetch(host, {
-    method: "GET"
+    method: "GET", 
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
   })
   .then((response) => {
     if (response.status === 500) {
@@ -15,8 +20,12 @@ export function getComments() {
 };
 
 export function postComments(text, name) {
+  console.log(token);
     return fetch(host, {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
         body: JSON.stringify({
             text: text,
             name: name,

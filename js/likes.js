@@ -1,5 +1,6 @@
 // Функция лайка
-import {renderList} from "./render.js";
+import { renderList } from "./render.js";
+import { token } from "./login.js";
 
 export function likeListener ({commentsArray, commentsElement}) {
     const likeElements = document.querySelectorAll('.like-button');
@@ -7,13 +8,22 @@ export function likeListener ({commentsArray, commentsElement}) {
       like.addEventListener("click", (event) => {
           event.stopPropagation();
           const index = like.dataset.index;
-          if (commentsArray[index].isLiked === false) {
-            commentsArray[index].isLiked = true;
-            commentsArray[index].likes++;
-          } else {
-            commentsArray[index].isLiked = false;
-            commentsArray[index].likes--;
-          }
+          let id = commentsArray[index].id;
+          fetch(`https://wedev-api.sky.pro/api/v2/vladimir-rychkov/comments/:${id}/toggle-like`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`
+            },
+          })
+          .then((response) => {
+            if (response.status === 401) {
+              throw new Error('Для этого нужна авторизация')
+            }
+          })
+          .catch((Error) => {
+            alert(Error)
+          })
+
           renderList({commentsArray, commentsElement})
       });
     }
