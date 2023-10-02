@@ -2,6 +2,10 @@ import {getComments} from "./api.js"; // Получает комментарии
 import {postComments} from "./api.js"; // Публикует новый комментарий через API
 import {renderList} from "./render.js"; // Рисует полученные комментарии
 import {buttonToAutorizationListener} from "./render.js"; // Ждёт нажатия на кнопку "авторизуйтесь"
+import { alreadyLoggedIn } from "./login.js"; // Проверяет была ли пройдена авторизация 
+
+// Проверяем была ли пройдена авторизация 
+alreadyLoggedIn(); 
 
 //Ждём нажатия на кнопку "авторизуйтесь"
 buttonToAutorizationListener();

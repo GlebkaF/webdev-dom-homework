@@ -20,7 +20,6 @@ export function getComments() {
 };
 
 export function postComments(text, name) {
-  console.log(token);
     return fetch(host, {
         method: "POST",
         headers: {
