@@ -1,10 +1,6 @@
-import { renderComments } from './render.js';
+import { renderComments } from './renderComments.js';
 import { delay, addComment } from './utilities.js';
-import { commentsArr } from './globalVariables.js';
-
-let formName = document.querySelector('.add-form-name');
-let formText = document.querySelector('.add-form-text');
-let formButton = document.querySelector('.add-form-button');
+import { commentsArr, token } from './globalVariables.js';
 
 const likeButtonsListener = () => {
     let likeBottons = document.querySelectorAll('.like-button');
@@ -30,6 +26,7 @@ const likeButtonsListener = () => {
 
 const commentsListener = () => {
     let comments = document.querySelectorAll('.comment-text');
+    let formText = document.querySelector('.add-form-text');
 
     for (let comment of comments) {
         comment.addEventListener('click', () => {
@@ -53,10 +50,12 @@ const editButtonsListener = () => {
     let editBottons = document.querySelectorAll('.edit-button');
 
     for (let editBotton of editBottons) {
+        if (!token) {
+            editBotton.disabled = true;
+        }
         editBotton.addEventListener('click', () => {
             commentsArr[editBotton.dataset.indx].editComment = true;
-            quoteEdit =
-                renderComments();
+            renderComments();
         });
     }
 };
@@ -74,6 +73,10 @@ const saveCommentButtonsListener = () => {
 };
 
 const buttonDisable = () => {
+    let formName = document.querySelector('.add-form-name');
+    let formText = document.querySelector('.add-form-text');
+    let formButton = document.querySelector('.add-form-button');
+
     if (formName.value === "" || formText.value === "")
         formButton.disabled = true;
     else

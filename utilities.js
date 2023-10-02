@@ -1,4 +1,4 @@
-import { renderComments } from './render.js'
+import { renderComments } from './renderComments.js'
 import { postComment, getComments } from './API.js'
 import { baseUrl, changeCommentsArr } from './globalVariables.js';
 
@@ -19,7 +19,7 @@ const delay = (interval = 300) => {
 const changeDataToLocal = (date) => new Date(date).toLocaleString("ru", { year: '2-digit', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(',', '');
 
 const getData = () => {
-    return getComments({ baseUrl })
+    return getComments()
         .then((responseData) => {
             changeCommentsArr(responseData.comments.map((comment) => {
                 return {
@@ -46,7 +46,7 @@ const addComment = () => {
     if (!formButton.disabled) {
         addForm.classList.add('display_none');
         loadingForm.classList.remove('display_none');
-        const postData = () => postComment({ baseUrl })
+        const postData = () => postComment()
             .then((response) => {
                 switch (response.status) {
                     case 400:

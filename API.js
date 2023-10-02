@@ -1,8 +1,10 @@
+import { login, loginUrl, token, baseUrl } from "./globalVariables.js";
+
 let formName = document.querySelector('.add-form-name');
 let formText = document.querySelector('.add-form-text');
 
-const getComments = ({ baseUrl }) => {
-    return fetch(baseUrl, {
+export const getComments = () => {
+    return fetch(`${baseUrl}${login}/comments`, {
         method: 'GET'
     })
         .then((response) => {
@@ -13,11 +15,23 @@ const getComments = ({ baseUrl }) => {
         });
 };
 
-const postComment = ({ baseUrl }) => {
-    return fetch(baseUrl, {
+export const postComment = () => {
+    formText = document.querySelector('.add-form-text');
+    return fetch(`${baseUrl}${login}/comments`, {
         method: 'POST',
-        body: JSON.stringify({ text: formText.value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;'), name: formName.value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;'), forceError: true })
+        headers: {
+            Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ text: formText.value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;'), name: formName.value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;') })
     });
 };
 
-export { getComments, postComment };
+export const loginUser = ({ loginInput, passwordInput }) => {
+    return fetch(loginUrl, {
+        method: 'POST',
+        body: JSON.stringify({ login: loginInput, password: passwordInput })
+    })
+        .then((responseData) => {
+            return responseData.json();
+        });
+};
