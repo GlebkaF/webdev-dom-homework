@@ -2,12 +2,6 @@ import { renderComments } from './renderComments.js'
 import { postComment, getComments } from './API.js'
 import { baseUrl, changeCommentsArr } from './globalVariables.js';
 
-let formName = document.querySelector('.add-form-name');
-let formText = document.querySelector('.add-form-text');
-let formButton = document.querySelector('.add-form-button');
-let loadingForm = document.querySelector('.loading');
-let addForm = document.querySelector('.add-form');
-
 const delay = (interval = 300) => {
     return new Promise((resolve) => {
         setTimeout(() => {
@@ -43,6 +37,11 @@ const getData = () => {
 };
 
 const addComment = () => {
+    let formName = document.querySelector('.add-form-name');
+    let formText = document.querySelector('.add-form-text');
+    let formButton = document.querySelector('.add-form-button');
+    let loadingForm = document.querySelector('.loading');
+    let addForm = document.querySelector('.add-form');
     if (!formButton.disabled) {
         addForm.classList.add('display_none');
         loadingForm.classList.remove('display_none');

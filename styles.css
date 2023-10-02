@@ -31,7 +31,8 @@ body {
 
   .comments,
   .comment,
-  .login-form {
+  .login-form,
+  .reg-form {
     margin: 0;
     padding: 0;
     list-style: none;
@@ -40,7 +41,8 @@ body {
   .comment,
   .add-form,
   .loading,
-  .login-form {
+  .login-form,
+  .reg-form {
     width: 596px;
     box-sizing: border-box;
     background: radial-gradient(
@@ -58,7 +60,8 @@ body {
     gap: 24px;
   }
 
-  .login-form {
+  .login-form,
+  .reg-form {
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -68,7 +71,8 @@ body {
     padding: 48px;
   }
 
-  .login-form {
+  .login-form,
+  .reg-form {
     padding: 24px;
   }
 
@@ -143,7 +147,10 @@ body {
   .add-form-name,
   .add-form-text,
   .login-form__login,
-  .login-form__password {
+  .login-form__password,
+  .reg-form__name,
+  .reg-form__login,
+  .reg-form__password {
     font-size: 16px;
     font-family: Helvetica;
     border-radius: 8px;
@@ -250,22 +257,24 @@ body {
 }
 
 
-.login-form__text {
+.login-form__text,
+.reg-form__text {
   padding: 0;
   margin: 0;
-}
-
-.login-form__login,
-.login-form__password {
-  padding: 22px 22px;
-}
-
-.login-form__text {
   font-weight: bold;
   font-size: 18px;
 }
 
-.login-form__link {
+.login-form__login,
+.login-form__password,
+.reg-form__name,
+.reg-form__login,
+.reg-form__password {
+  padding: 22px 22px;
+}
+
+.login-form__reg-button,
+.reg-form__login-button {
   color: white;
   background-color: transparent;
   border: none;
@@ -274,7 +283,8 @@ body {
   text-decoration: underline;
 }
 
-.login-form__button {
+.login-form__button,
+.reg-form__button {
   margin-top: 12px;
   margin-bottom: 24px;
   font-size: 18px;

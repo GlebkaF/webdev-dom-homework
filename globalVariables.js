@@ -1,5 +1,5 @@
 let baseUrl = 'https://wedev-api.sky.pro/api/v2/';
-let loginUrl = 'https://wedev-api.sky.pro/api/user/login';
+let userUrl = 'https://wedev-api.sky.pro/api/user';
 let commentsArr = [];
 let token;
 let login = "default";
@@ -21,4 +21,4 @@ let changeUserName = (newUserName) => {
     userName = newUserName;
 };
 
-export { baseUrl, commentsArr, changeCommentsArr, loginUrl, token, changeToken, login, changeLogin, changeUserName, userName };
+export { baseUrl, commentsArr, changeCommentsArr, userUrl, token, changeToken, login, changeLogin, changeUserName, userName };

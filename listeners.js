@@ -1,6 +1,8 @@
 import { renderComments } from './renderComments.js';
-import { delay, addComment } from './utilities.js';
-import { commentsArr, token } from './globalVariables.js';
+import { delay, addComment, getData } from './utilities.js';
+import { commentsArr, token, changeLogin, changeToken, changeUserName } from './globalVariables.js';
+import { loginUser, registrateUser } from "./API.js";
+import { renderLogin } from './renderLogin.js';
 
 const likeButtonsListener = () => {
     let likeBottons = document.querySelectorAll('.like-button');
@@ -94,4 +96,34 @@ const keyEnter = (event) => {
     }
 };
 
-export { likeButtonsListener, commentsListener, quoteListener, editButtonsListener, saveCommentButtonsListener, buttonDisable, deleteLastButtonFunc, keyEnter };
+const login = () => {
+    let loginInput = document.querySelector('.login-form__login').value;
+    let passwordInput = document.querySelector('.login-form__password').value;
+    loginUser({ loginInput, passwordInput })
+        .then((responseJson) => {
+            if (responseJson.error) {
+                alert(responseJson.error);
+            }
+            changeUserName(responseJson.user.name);
+            changeToken(responseJson.user.token);
+            changeLogin(loginInput);
+            getData();
+        });
+};
+
+
+const registrate = () => {
+    let loginInput = document.querySelector('.reg-form__login').value;
+    let passwordInput = document.querySelector('.reg-form__password').value;
+    let nameInput = document.querySelector('.reg-form__name').value;
+
+    registrateUser({ loginInput, passwordInput, nameInput })
+        .then((responseJson) => {
+            if (responseJson.error) {
+                alert(responseJson.error);
+            }
+            renderLogin();
+        });
+}
+
+export { likeButtonsListener, commentsListener, quoteListener, editButtonsListener, saveCommentButtonsListener, buttonDisable, deleteLastButtonFunc, keyEnter, login, registrate };

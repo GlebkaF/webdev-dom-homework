@@ -8,9 +8,6 @@ const renderComments = () => {
 
   conteinerHtml.innerHTML = `<ul class="comments">
   </ul>
-  <div class="delete-last">
-    <button class="delete-last__form-button display_none">Удалить последний элемент</button>
-  </div>
   <div class="add-form display_none">
     <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
     <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
@@ -34,7 +31,6 @@ const renderComments = () => {
   let authorizationButton = document.querySelector('.authorization__button');
   let addForm = document.querySelector('.add-form');
   let authorizationForm = document.querySelector('.authorization');
-  let deleteLastButtor = document.querySelector('.delete-last__form-button');
 
   comments.innerHTML = '';
   comments.innerHTML = comments.innerHTML + commentsArr.map((el, indx) => `<li class="comment">
@@ -66,12 +62,10 @@ const renderComments = () => {
   formName.addEventListener('keyup', keyEnter);
   formText.addEventListener('keyup', keyEnter);
 
-  deleteLastBotton.addEventListener('click', deleteLastButtonFunc);
   authorizationButton.addEventListener('click', renderLogin);
 
   if (token) {
     addForm.classList.remove('display_none');
-    deleteLastButtor.classList.remove('display_none');
     authorizationForm.classList.add('display_none');
     formName.value = userName;
     formName.disabled = true;
