@@ -57,7 +57,7 @@
           <div>${comment.fullDate}</div>
         </div>
         <div class="comment-body">
-          <div class="comment-text">${comment.textComment}</div>
+          <div class="comment-text" data-text="${comment.textComment}">${comment.textComment}</div>
         </div>
         <div class="comment-footer">
           <div class="likes">
@@ -73,7 +73,7 @@
           <div>${comment.fullDate}</div>
         </div>
         <div class="comment-body">
-          <div class="comment-text">${comment.textComment}</div>
+          <div class="comment-text" data-text="${comment.textComment}">${comment.textComment}</div>
         </div>
         <div class="comment-footer">
           <div class="likes">
@@ -85,7 +85,19 @@
     })
       .join('');
     listElement.innerHTML = commensHtml;
+
+    //Обработчик событий при нажатии на текст коментария
+    const commentsElements = document.querySelectorAll(".comment-text");
+    for (const comment of commentsElements) {
+      comment.addEventListener('click', () => {
+        const dataComment = comment.dataset.text;
+        console.log(`${dataComment}`);
+      });
+    };
+
+
   };
+  renderComments();
 
   const likeButtons = () => {
     const buttonLikes = document.querySelectorAll(".like-button");
@@ -105,16 +117,14 @@
     }
   };
 
-  const commentsElements = document.querySelectorAll(".comment-text");
-  for (coment of commentsElements) {
-    coment.addEventListener('click', () => {
-      
-      alert("q");
-    })
-  };
+
 
   renderComments();
   likeButtons();
+
+
+
+
 
   buttonElement.addEventListener('click', () => {
 
