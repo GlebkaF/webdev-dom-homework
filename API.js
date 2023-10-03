@@ -4,7 +4,7 @@ let formName = document.querySelector('.add-form-name');
 let formText = document.querySelector('.add-form-text');
 
 export const getComments = () => {
-    return fetch(`${baseUrl}${login}/comments`, {
+    return fetch(`${baseUrl}${window.localStorage.getItem("login") ? window.localStorage.getItem("login") : "default"}/comments`, {
         method: 'GET'
     })
         .then((response) => {
@@ -16,10 +16,10 @@ export const getComments = () => {
 };
 
 export const deleteComment = (index) => {
-    return fetch(`${baseUrl}${login}/comments/${index}`, {
+    return fetch(`${baseUrl}${window.localStorage.getItem("login") ? window.localStorage.getItem("login") : "default"}/comments/${index}`, {
         method: 'DELETE',
         headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${window.localStorage.getItem("Token")}`
         }
     })
         .then((response) => {
@@ -31,10 +31,10 @@ export const deleteComment = (index) => {
 
 export const postComment = () => {
     formText = document.querySelector('.add-form-text');
-    return fetch(`${baseUrl}${login}/comments`, {
+    return fetch(`${baseUrl}${window.localStorage.getItem("login") ? window.localStorage.getItem("login") : "default"}/comments`, {
         method: 'POST',
         headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${window.localStorage.getItem("Token")}`
         },
         body: JSON.stringify({ text: formText.value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;') })
     });
@@ -46,6 +46,9 @@ export const loginUser = ({ loginInput, passwordInput }) => {
         body: JSON.stringify({ login: loginInput, password: passwordInput })
     })
         .then((responseData) => {
+            if (responseData.status === 500) {
+                throw new Error('Сервер недоступен');
+            }
             return responseData.json();
         });
 };
@@ -56,6 +59,24 @@ export const registrateUser = ({ loginInput, passwordInput, nameInput }) => {
         body: JSON.stringify({ login: loginInput, password: passwordInput, name: nameInput })
     })
         .then((responseData) => {
+            if (responseData.status === 500) {
+                throw new Error('Сервер недоступен');
+            }
+            return responseData.json();
+        });
+};
+
+export const toggleLike = (index) => {
+    return fetch(`${baseUrl}${window.localStorage.getItem("login") ? window.localStorage.getItem("login") : "default"}/comments/${index}/toggle-like`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${window.localStorage.getItem("Token")}`
+        }
+    })
+        .then((responseData) => {
+            if (responseData.status === 500) {
+                throw new Error('Сервер недоступен');
+            }
             return responseData.json();
         });
 };

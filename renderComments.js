@@ -66,10 +66,10 @@ const renderComments = () => {
 
   authorizationButton.addEventListener('click', renderLogin);
 
-  if (token) {
+  if (window.localStorage.getItem("Token")) {
     addForm.classList.remove('display_none');
     authorizationForm.classList.add('display_none');
-    formName.value = userName;
+    formName.value = window.localStorage.getItem("userName");
     formName.disabled = true;
 
     likeButtonsListener();
@@ -77,7 +77,6 @@ const renderComments = () => {
     commentsListener();
     quoteListener();
     buttonDisable();
-    deleteButtonsListener();
   }
 
   editButtonsListener();

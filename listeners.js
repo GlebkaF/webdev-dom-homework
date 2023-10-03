@@ -1,7 +1,7 @@
 import { renderComments } from './renderComments.js';
 import { delay, addComment, getData } from './utilities.js';
 import { commentsArr, token, changeLogin, changeToken, changeUserName } from './globalVariables.js';
-import { loginUser, registrateUser, deleteComment } from "./API.js";
+import { loginUser, registrateUser, deleteComment, toggleLike } from "./API.js";
 import { renderLogin } from './renderLogin.js';
 
 const likeButtonsListener = () => {
@@ -12,15 +12,8 @@ const likeButtonsListener = () => {
             //Почему-то когда добавляю классом не применяется
             likeBotton.style.animation = 'rotating 2s linear infinite';
             delay(2000).then(() => {
-                if (commentsArr[likeBotton.dataset.indx].likeSet) {
-                    commentsArr[likeBotton.dataset.indx].countLikes -= 1;
-                    commentsArr[likeBotton.dataset.indx].likeSet = false;
-                }
-                else {
-                    commentsArr[likeBotton.dataset.indx].countLikes += 1;
-                    commentsArr[likeBotton.dataset.indx].likeSet = true;
-                }
-                renderComments();
+                toggleLike(likeBotton.dataset.indx);
+                getData();
             });
         });
     }
@@ -52,9 +45,9 @@ const editButtonsListener = () => {
     let editBottons = document.querySelectorAll('.edit-button');
 
     for (let editBotton of editBottons) {
-        if (!token) {
+       // if (!token) {
             editBotton.disabled = true;
-        }
+        //}
         editBotton.addEventListener('click', () => {
             commentsArr[editBotton.dataset.indx].editComment = true;
             renderComments();
@@ -104,9 +97,9 @@ const login = () => {
             if (responseJson.error) {
                 alert(responseJson.error);
             }
-            changeUserName(responseJson.user.name);
-            changeToken(responseJson.user.token);
-            changeLogin(loginInput);
+            window.localStorage.setItem("Token", responseJson.user.token);
+            window.localStorage.setItem("userName", responseJson.user.name);
+            window.localStorage.setItem("login", responseJson.user.login);
             getData();
         });
 };
@@ -122,7 +115,10 @@ const registrate = () => {
             if (responseJson.error) {
                 alert(responseJson.error);
             }
-            renderLogin();
+            window.localStorage.setItem("Token", responseJson.user.token);
+            window.localStorage.setItem("userName", responseJson.user.name);
+            window.localStorage.setItem("login", responseJson.user.login);
+            getData();
         });
 }
 
@@ -154,13 +150,13 @@ const deleteButtonsListener = () => {
     let deleteBottons = document.querySelectorAll('.delete-button');
 
     for (let deleteBotton of deleteBottons) {
-        if (!token) {
+        if (!window.localStorage.getItem("Token")) {
             deleteBotton.disabled = true;
         }
         deleteBotton.addEventListener('click', () => {
             deleteComment(deleteBotton.dataset.indx)
                 .then(() => {
-                    renderComments();
+                    getData();
                 });
         });
     }
