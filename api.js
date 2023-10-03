@@ -12,9 +12,6 @@ export const setToken = (newToken) => {
 export function getComments() {
   return fetch(commentsUrl, {
     method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
   }).then((response) => {
     if (response.status === 401) {
       throw new Error("Нет авторизации");

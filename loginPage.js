@@ -1,5 +1,5 @@
 import { login, setToken } from "./api.js";
-import { renderRegister } from "../renderRegistr.js";
+import { renderRegister } from "./renderRegistr.js";
 
 export function setName(newName) {
   window.userName = newName;

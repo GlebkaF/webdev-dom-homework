@@ -144,7 +144,7 @@ function btnElementInit(
   });
 }
 
-function initEventListeners() {
+function initEventListeners(comments, fetchAndRenderTasks) {
   const buttonElements = document.querySelectorAll(".like-button");
 
   for (const buttonElement of buttonElements) {

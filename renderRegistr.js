@@ -1,5 +1,5 @@
-import { register, setToken } from "./js/api.js";
-import { setName } from "./js/loginPage.js";
+import { register, setToken } from "./api.js";
+import { setName } from "./loginPage.js";
 
 export function renderRegister({ fetchAndRenderTasks }) {
   const appElement = document.getElementById("app");
