@@ -152,7 +152,9 @@
         // всяких нехороших вещей в HTML-коде, в данном случае управляющие символы разметки "<" и ">"
         .replaceAll(">", "&gt"),// меняются на их коды, а браузер всёравно выводит эти символы
       checkLike: false,
-      textComment: commentInputElement.value,
+      textComment: commentInputElement.value
+        .replaceAll("<", "&lt")
+        .replaceAll(">", "&gt"),
       countLikes: 0,
       fullDate: fullDate,
     });
