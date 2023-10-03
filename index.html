@@ -105,6 +105,13 @@
     }
   };
 
+  const commentsElements = document.querySelectorAll(".comment-text");
+  for (coment of ommentsElements) {
+    coment.addEventListener('click', () => {
+
+    })
+  };
+
   renderComments();
   likeButtons();
 
@@ -124,7 +131,7 @@
 
     let newDate = new Date();
     let date = newDate.getDate();
-    let month = newDate.getMonth() + 1;
+    let month = newDate.getMonth() + 1;// +1 т.к. нумерация месяцев начинается с нуля
     let year = newDate.getFullYear() - 2000;
     let hour = newDate.getHours(); // получаем час из нашей даты
     let minute = newDate.getMinutes(); // получаем минуты
