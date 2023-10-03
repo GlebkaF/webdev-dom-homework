@@ -9,6 +9,7 @@
 
 <body>
   <div class="container">
+    <div class="waiter">Пожалуйста подождите, загружаю комментарии...</div>
     <ul class="comments"></ul>
     <div class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
@@ -17,6 +18,7 @@
         <button class="add-form-button">Написать</button>
       </div>
     </div>
+    <div class="wait"></div>
     <button class="remove-form-button">Удалить последний комментарий</button>
   </div>
 </body>
@@ -30,23 +32,27 @@
   const getComments = () => {
     fetch(commentsUrl, {
       method: 'GET'
-    }, 1000).then((response) => {
-      response.json().then((responseData) => {
+    })
+      .then((response) => {
+        return response.json()
+      })
+      .then((responseData) => {
+        waiter.style.display = 'none';
         comments = responseData.comments;
         renderComments();
-      });
-    }).catch((err) => {
-      console.error('Errorororor', err);
-    });
+      })
   }
 
   getComments();
 
+  const addForm = document.querySelector('.add-form');
   const addFormName = document.querySelector('.add-form-name');
   const addFormText = document.querySelector('.add-form-text');
   const addFormButton = document.querySelector('.add-form-button');
   const removeFormButton = document.querySelector('.remove-form-button')
   const listComments = document.querySelector('.comments');
+  const waiter = document.querySelector('.waiter');
+  const wait = document.querySelector('.wait');
 
   const options = {
     year: '2-digit',
@@ -98,8 +104,12 @@
     .replaceAll("&quot;", '"')
 
   const AddComment = () => {
+
     addFormName.classList.remove('error');
     addFormText.classList.remove('error');
+
+    addForm.style.display = 'none';
+    wait.textContent = 'Комментарий добавляется...';
 
     if (addFormName.value === '' || addFormText.value === '') {
       addFormName.classList.add('error');
@@ -114,14 +124,18 @@
         text: getSafeString(addFormText.value),
         date: new Date(),
       }),
-    }).then((response) => {
-      response.json().then((responseData) => {
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
         comments = responseData.comments;
         renderComments();
+      })
+      .then((data) => {
+        addForm.style.display = 'flex';
+        wait.textContent = '';
       });
-    }).catch((err) => {
-      console.error('ОШИБКА!', err);
-    });
 
     addFormName.value = '';
     addFormText.value = '';
@@ -178,15 +192,30 @@
   const addLikesElements = (target) => {
     const commentBlock = target.closest('.comment');
     const commentId = commentBlock.dataset.id;
+    const likes = commentBlock.querySelector('.like-button');
     const com = comments.find(c => c.id == commentId);
     if (!com) return;
-    if (com.isLiked) {
-      com.likes--;
-    } else {
-      com.likes++;
-    }
-    com.isLiked = !com.isLiked;
-    renderComments();
+    
+    likes.classList.add('-loading-like');
+
+    delay(2000).then(() => {
+      if (com.isLiked) {
+        com.likes--;
+      } else {
+        com.likes++;
+      }
+      com.isLiked = !com.isLiked;
+      com.isLikeLoading = false;
+      renderComments();
+    });
+  }
+
+  function delay(interval = 300) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, interval);
+    });
   }
 
   listComments.addEventListener('click', switcher);
