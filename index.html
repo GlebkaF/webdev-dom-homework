@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="comment-list" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -38,7 +38,7 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">75</span>
+              <span id = "likesCounter" class="likes-counter">75</span>
               <button class="like-button -active-like"></button>
             </div>
           </div>
@@ -46,26 +46,93 @@
       </ul>
       <div class="add-form">
         <input
+          id="add-name"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          value=""
         />
         <textarea
+          id="add-text"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+          value=""
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="add-button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
-
+  <style>
+    .error{
+      background-color: #FFA07A;
+    }
+  </style>
   <script>
-    "use strict";
-    // Код писать здесь
+    const buttonElement = document.getElementById("add-button");
+    const listElement = document.getElementById("comment-list");
+    const nameInputElement = document.getElementById("add-name");
+    const commentInput = document.getElementById("add-text");
+    let likeValue = document.getElementById('likesCounter');
+    likeValue.value = '0';
+
+    buttonElement.addEventListener("click", () => {
+      nameInputElement.classList.remove('error');
+      commentInput.classList.remove('error');
+
+      if((nameInputElement.value === '') && (commentInput.value === '')) {
+        nameInputElement.classList.add('error');
+        commentInput.classList.add('error');
+        return
+      }else if(commentInput.value === '') {
+        commentInput.classList.add('error');
+        return
+      } else if(nameInputElement.value === ''){
+        nameInputElement.classList.add('error');
+        return
+      }
+      const nowDate = new Date();
+      let dayNumb = nowDate.getDate();
+      let monthNumb = nowDate.getMonth();
+      let year = Math.abs(2000 - nowDate.getFullYear());
+      if(dayNumb < 10){
+        dayNumb = "0" + dayNumb
+      }
+      if(monthNumb < 10){
+        monthNumb = "0" + monthNumb
+      };
+      const fullDate =  dayNumb + "." + monthNumb + "." + year;
+      let hour = nowDate.getHours(); 
+      let minute = nowDate.getMinutes(); 
+      if (minute < 10) {
+        minute = "0" + minute;
+      };
+      const time = hour + ":" + minute;
+      const oldListHtml = listElement.innerHTML;
+      listElement.innerHTML = oldListHtml + 
+        `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${fullDate} ${time}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${commentInput.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${likeValue.value}</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+      nameInputElement.value = '';
+      commentInput.value = '';
+    })    
     console.log("It works!");
   </script>
 </html>
