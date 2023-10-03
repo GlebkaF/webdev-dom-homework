@@ -60,7 +60,8 @@
         const likeListener = () => {
       const likeElements = document.querySelectorAll('.like-button');
       for (let like of likeElements) {
-        like.addEventListener("click", () => {
+        like.addEventListener("click", (event) => {
+            event.stopPropagation();
             const index = like.dataset.index;
             if (commentsArray[index].activeLike === false) {
               commentsArray[index].activeLike = true;
@@ -81,20 +82,38 @@
         } 
     };
 
+    // Функция ответа на комментарий
+    const answerComment = () => {
+        const commentTextElement = document.querySelectorAll('.comment-text');
+        const commentNameElement = document.querySelectorAll('.comment-name');
+        for (const comment of commentTextElement) {
+          comment.addEventListener("click", () => {
+            const index = comment.dataset.index;
+
+            commentInputElement.value = 
+            `>${commentTextElement[index].innerHTML} ${commentNameElement[index].innerHTML}`;
+          })
+        }
+    };
+
     // Создем рендер списка на основе массива 
     const renderList = () => {
       const commentsHtml = commentsArray.map((comment, index) => {
+
         return `<li class="comment">
           <div class="comment-header">
-            <div>${comment.name}</div>
+            <div class="comment-name" data-index="${index}">${comment.name}</div>
             <div>${comment.date}</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
+            <div class="comment-text" data-index="${index}">
               ${comment.comment}
             </div>
+            <textarea class="comment-edit-text hide-elem">${commentsArray[index].comment}</textarea>
           </div>
           <div class="comment-footer">
+            <button class="edit-button" data-index="${index}">Редактировать</button>
+            <button class="save-edit-button hide-elem" data-index="${index}">Сохранить</button>
             <div class="likes">
               <span class="likes-counter">${comment.likes}</span>
               <button class="like-button ${activeLike(comment)}" data-index="${index}"></button>
@@ -105,6 +124,8 @@
 
       commentsElement.innerHTML = commentsHtml; 
       likeListener();
+      answerComment();
+      editComment();
     };
 
 
@@ -126,15 +147,54 @@
         return;
       }
 
-      let date = new Date();
-      let dateString = `${"0" + date.getDate()}.${date.getMonth()+1}.${date.getFullYear() - 2000} ${date.getHours()}:${date.getMinutes()}`;
+      let dateString = () => {
+        let date = new Date();
+        let dateDay = (date) => {
+          if (date.getDate().toString().length === 1) {
+            return "0" + date.getDate();
+          } else {
+            return date.getDate();
+          }
+        };
+        let dateMonth = (date) => {
+          if (date.getMonth().toString().length === 1) {
+            return '0' + (date.getMonth()+1)
+          } else {
+            return date.getMonth()+1;
+          }
+        };
+        let dateHour = (date) => {
+          if (date.getHours().toString().length === 1) {
+            return `0${date.getHours()}`
+          } else {
+            return date.getHours();
+          }
+        };
+        let dateMinute = (date) => {
+          if (date.getMinutes().toString().length === 1) {
+            return `0${date.getMinutes()}`
+          } else {
+            return date.getMinutes();
+          }
+        };
+
+        return `${dateDay(date)}.${dateMonth(date)}.${date.getFullYear() - 2000} ${dateHour(date)}:${dateMinute(date)}`
+      }
 
       //Добавили новый объект в массив
       commentsArray.push({
-        name: nameInputElement.value,
-        comment: commentInputElement.value,
+        name: nameInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
+        comment: commentInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
         likes: 0,
-        date: dateString,
+        date: dateString(),
         activeLike: false,
       });
 
@@ -149,6 +209,52 @@
       let lastList = document.querySelector('li:last-child');
       lastList.remove();
     });
+
+    // Функция кнопки "Редактировать"
+    const editComment = () => {
+
+// Находим кнопки "Редактировать", "Сохранить", существующие комменты и поля для ввода новых.
+const editElements = document.querySelectorAll(".edit-button");
+const saveEditElements = document.querySelectorAll(".save-edit-button");
+const commentText = document.querySelectorAll(".comment-text");
+const commentEditText = document.querySelectorAll(".comment-edit-text")
+
+// На каждую кнопу "Редактировать" вешаем слушатель событий
+for (let edit of editElements) {
+  const index = edit.dataset.index;
+  edit.addEventListener("click", () => {
+
+    // Меняем видимость кнопок и полей местами 
+    commentText[index].classList.add('hide-elem');
+    commentEditText[index].classList.remove('hide-elem');
+    editElements[index].classList.add('hide-elem');
+    saveEditElements[index].classList.remove('hide-elem');
+
+      // На открытую кнопу "Сохранить" вешаем слушатель событий
+      saveEditElements[index].addEventListener("click", (event) => {
+
+        // Запрещаем всплытие
+        event.stopPropagation();
+
+        // Меняем значение comment на новое значение
+        commentsArray[index].comment = commentEditText[index].value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+
+        // Меняем видимость кнопок и полей обратно
+        commentText[index].classList.remove('hide-elem');
+        commentEditText[index].classList.add('hide-elem');
+        editElements[index].classList.remove('hide-elem');
+        saveEditElements[index].classList.add('hide-elem');
+
+        renderList();
+      });
+  });
+};
+};
+
     renderList();
     console.log("It works!");
   </script>
