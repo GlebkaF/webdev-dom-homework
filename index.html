@@ -122,11 +122,15 @@
                islike: false,
              }
            });
-comments = appComment
-renderElements();
-deleteLoadingIndicator(); 
-showAddForm();
-}) 
+            comments = appComment
+            renderElements();
+            deleteLoadingIndicator(); 
+            showAddForm();
+         }) 
+      .catch((error) => {
+        alert('Что-то пошло не так, попробуйте позже');
+       });
+
 
 }
 getFetch();
@@ -240,17 +244,32 @@ function addComment() {
        })
        
   })
-  .then(() => {
-    deleteLoadingIndicatorComments();
-    showAddForm();
-      nameElement.value = "";
-      textElement.value = "";
-      getFetch();
-      deleteLoadingIndicator();  
+       .then((response) => {
+       if(response.status === 500){
+           alert("Сервер упал, попробуй позже");
+         } else if(response.status === 400){
+          alert("Что-то не то, попробуй ввести данные заново")
+         } else{
+         return response.json();
+         };
        })
-      });
+        .then((responseData) => {
+        
+       deleteLoadingIndicatorComments();
+       showAddForm();
+       nameElement.value = "";
+       textElement.value = "";
+       getFetch();
+       deleteLoadingIndicator();  
+       })
+       .catch((error) => {
+        showAddForm();
+        deleteLoadingIndicatorComments();
+        buttonElement.disabled = false;
+        alert('Что-то пошло не так, попробуйте позже');
+       });
 
-  
+      });
 }
 
 
