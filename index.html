@@ -147,7 +147,10 @@
 
 
     comments.push({
-      userName: nameInputElement.value,
+      userName: nameInputElement.value
+        .replaceAll("<", "&lt") // элементарная обработка пользовательского ввода на предмет
+        // всяких нехороших вещей в HTML-коде, в данном случае управляющие символы разметки "<" и ">"
+        .replaceAll(">", "&gt"),// меняются на их коды, а браузер всёравно выводит эти символы
       checkLike: false,
       textComment: commentInputElement.value,
       countLikes: 0,
