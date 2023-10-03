@@ -115,7 +115,7 @@
 }
 
 
-document.querySelectorAll('.comment').forEach(attachCommentClickHandler);
+// document.querySelectorAll('.comment').forEach(attachCommentClickHandler);
 
 
 
@@ -130,19 +130,27 @@ buttonElement.addEventListener("click", () => {
     }
 
     //добавлять коммент в хранилище данных
-    const newComment = createComment(nameInputElement.value
-    .replaceAll("<", "&lt;") 
-    .replaceAll(">", "&gt;"), 
-    commInputElement.value 
-    .replaceAll("<", "&lt;") 
-    .replaceAll(">", "&gt;"));
-    listElement.appendChild(newComment);
-    attachCommentClickHandler(newComment);
-    commInputElement.value = "";
-    nameInputElement.value = "";
-});
+//     const newComment = createComment(nameInputElement.value
+//     .replaceAll("<", "&lt;") 
+//     .replaceAll(">", "&gt;"), 
+//     commInputElement.value 
+//     .replaceAll("<", "&lt;") 
+//     .replaceAll(">", "&gt;"));
+//     listElement.appendChild(newComment);
+//     attachCommentClickHandler(newComment);
+//     commInputElement.value = "";
+//     nameInputElement.value = "";
+// });
 
-
+const newComment = createComment(
+            nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+            commInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;")
+        );
+        listElement.appendChild(newComment);
+        attachCommentClickHandler(newComment);
+        commInputElement.value = "";
+        nameInputElement.value = "";
+    });
 
 
     function createComment(name, text) {
@@ -186,10 +194,8 @@ buttonElement.addEventListener("click", () => {
             listElement.appendChild(commentElement);
         });
     }
-    const commentsData = [
-        { name: "Глеб Фокин", text: "Это будет первый комментарий на этой странице" },
-        { name: "Варвара Н.", text: "Мне нравится как оформлена эта страница! ❤️" },
-    ];
+
+    let commentsData = [];
     renderComments(commentsData);
 
     const likeButtons = document.querySelectorAll(".like-button");
@@ -199,33 +205,128 @@ buttonElement.addEventListener("click", () => {
     });
 
 
-const getComments = () => {
-    let fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/:yana-orlova/comments", {
-        method: "GET",
-    });
+// const getComments = () => {
+//     let fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/yana-orlova/comments", {
+//         method: "GET",
+//     });
+//     fetchPromise.then((response) => {
+//             if (!response.ok) {
+//                 throw new Error("Network response was not ok");
+//             }
+//             return response.json();
+//         }).then((responseData) => {
+//             let appComments = responseData.comments.map((comment) => {
+//                 return {
+//                     name: comment.author.name,
+//                     text: comment.text,
+//                     date: comment.date,
+//                     likes: comment.likes,
+//                 }
+//             });
 
-    fetchPromise.then((response) => {
-        response.json().then((responseData) => {
-            let appComments = responseData.comments.map((comment) => {
-                return {
-                    name: comment.author.name,
-                    comment: comment.text,
-                    date: comment.date,
-                    likes: comment.likes,
-                }
-            });
+//             commentsData = appComments;
+//             renderComments(commentsData);
+//         }).catch((error) => {
+//             console.error("Fetch error:", error);
+//         });
+//     }
 
-commentsData = appComments;
-console.log(responseData);
+//     getComments();
+//     fetchPromise.then((response) => {
+//         response.json().then((responseData) => {
+//             let appComments = responseData.comments.map((comment) => {
+//                 return {
+//                     name: comment.author.name,
+//                     comment: comment.text,
+//                     date: comment.date,
+//                     likes: comment.likes,
+//                 }
+//             });
 
-renderComments(commentsData);
+// commentsData = appComments;
+
+function sendCommentToServer(comment) {
+        const postData = {
+            name: comment.querySelector('.comment-header div:first-child').textContent,
+            text: comment.querySelector('.comment-text').textContent,
+            date: formatDate(new Date()),
+        };
+
+        fetch("https://wedev-api.sky.pro/api/v1/yana-orlova/comments", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(postData),
+        }).then((response) => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.json();
+        }).then((responseData) => {
+            // Обработка успешной отправки комментария (если нужно)
+            console.log("Comment sent successfully:", responseData);
+        }).catch((error) => {
+            console.error("Fetch error:", error);
         });
+    }
+
+    function getCommentsFromServer() {
+    fetch("https://wedev-api.sky.pro/api/v1/yana-orlova/comments", {
+        method: "GET",
+    })
+    .then((response) => {
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+        return response.json();
+    })
+    .then((responseData) => {
+        let appComments = responseData.comments.map((comment) => {
+            return {
+                name: comment.author.name,
+                text: comment.text,
+                date: comment.date,
+                likes: comment.likes,
+            };
+        });
+
+        commentsData = appComments;
+        renderComments(commentsData);
+    })
+    .catch((error) => {
+        console.error("Fetch error:", error);
     });
 }
 
- getComments();
+// Вызываем getCommentsFromServer для загрузки комментариев при загрузке страницы
+getCommentsFromServer();
 
+// Функция для добавления нового комментария и отправки его на сервер
+function addCommentAndSendToServer(name, text) {
+    const newComment = createComment(name, text);
+    listElement.appendChild(newComment);
 
+    // Отправляем комментарий на сервер
+    sendCommentToServer(newComment);
+}
+
+// Обновляем обработчик кнопки "Написать" для добавления и отправки нового комментария
+buttonElement.addEventListener("click", () => {
+    commInputElement.style.backgroundColor = "";
+    nameInputElement.style.backgroundColor = "";
+    if (commInputElement.value === "" || nameInputElement.value === "") {
+        commInputElement.style.backgroundColor = "red";
+        nameInputElement.style.backgroundColor = "red";
+        return;
+    }
+
+    addCommentAndSendToServer(nameInputElement.value, commInputElement.value);
+
+    // Очищаем поля ввода
+    commInputElement.value = "";
+    nameInputElement.value = "";
+});
     
 
     console.log("It works!");
