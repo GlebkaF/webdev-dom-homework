@@ -7,9 +7,6 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 
-
-
-
 <body>
   <div class="container">
     <ul id="comments" class="comments">
@@ -17,11 +14,10 @@
     </ul>
 
     <div class="add-form">
-      <input type="text" class="add-form-name" placeholder="Введите ваше имя" onchange="turnOnOff()" />
-      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
-        onchange="turnOnOff()"></textarea>
+      <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
+      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
       <div class="add-form-row">
-        <button class="add-form-button">Написать</button>
+        <button class="add-form-button" disabled>Написать</button>
       </div>
     </div>
   </div>
@@ -29,6 +25,8 @@
 
 <script>
   "use strict";
+
+
 
   let nameInput = document.querySelector(".add-form-name");
   let commentInput = document.querySelector(".add-form-text");
@@ -59,19 +57,19 @@
     const commentsHtml = comments
       .map((comment, index) => {
         return `<li class="comment">
-          <div class="comment-header"> 
-            <div>${comment.name}</div> 
-            <div>${comment.date}</div> 
-          </div> 
-          <div class="comment-body"> 
-            <div class="comment-text"> 
-              ${comment.text} 
-            </div> 
-          </div> 
-          <div class="comment-footer"> 
-            <div class="likes"> 
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
               <span class="likes-counter">${comment.likesCount}</span>
-              <button class="like-button" ${comment.isLiked ? '-active-like' : ''} onclick="likeComment(${index})"></button>
+              <button class="like-button ${comment.isLiked ? '-active-like' : ''}"></button>
             </div>
           </div>
         </li>`
@@ -79,38 +77,32 @@
       .join('');
 
     commentSection.innerHTML = commentsHtml;
-    const likeCounter = document.querySelector('.likes-counter');
-    const likeButton = document.querySelector('.like-button');
+    const likeButtons = document.querySelectorAll('.like-button');
 
-    likeButton.addEventListener('click', () => {
-      const currentCount = parseInt(likeCounter.textContent, 10);
-      likeCounter.textContent = currentCount + 1;
+    likeButtons.forEach((likeButton, index) => {
+      likeButton.addEventListener('click', () => {
+        likeComment(index);
+        renderComments();
+      });
     });
-
   }
+
   const likeComment = (index) => {
+    // click по первому элементу, то index = 0
+    // click по второму элементу, то index = 1
     const comment = comments[index];
-    const likeButton = document.querySelectorAll('.like-button')[index];
-    const likeCounter = likeButton.previousElementSibling;
 
     if (comment.isLiked) {
       comment.likesCount--;
       comment.isLiked = false;
-      likeButton.classList.remove('-active-like');
     } else {
       comment.likesCount++;
       comment.isLiked = true;
-      likeButton.classList.add('-active-like');
     }
-
-    likeCounter.textContent = comment.likesCount;
   }
-
 
   renderComments();
 
-
-  // ПРОБЛЕМ НИЖЕ НЕТ (ВРОДЕ)
 
   addButton.addEventListener("click", () => {
 
@@ -125,7 +117,7 @@
       date: current,
       text: commentInput.value,
       isLiked: false,
-      likes: likeNumber
+      likesCount: 0,
     })
     renderComments();
 
@@ -133,9 +125,17 @@
     commentInput.value = "";
   });
 
+  nameInput.addEventListener('input', () => {
+    turnOnOff();
+  });
+
+  commentInput.addEventListener('input', () => {
+    turnOnOff();
+  });
+
   function turnOnOff() {
-    let username = document.querySelector('.nameInput').value;
-    let comment = document.querySelector('.commentInput').value;
+    let username = nameInput.value;
+    let comment = commentInput.value;
 
     if (username && comment) {
       document.querySelector(".add-form-button").disabled = false;
