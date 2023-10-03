@@ -1,7 +1,7 @@
 import { renderComments } from './renderComments.js';
 import { delay, addComment, getData } from './utilities.js';
 import { commentsArr, token, changeLogin, changeToken, changeUserName } from './globalVariables.js';
-import { loginUser, registrateUser } from "./API.js";
+import { loginUser, registrateUser, deleteComment } from "./API.js";
 import { renderLogin } from './renderLogin.js';
 
 const likeButtonsListener = () => {
@@ -126,4 +126,44 @@ const registrate = () => {
         });
 }
 
-export { likeButtonsListener, commentsListener, quoteListener, editButtonsListener, saveCommentButtonsListener, buttonDisable, deleteLastButtonFunc, keyEnter, login, registrate };
+
+const regButtonDisable = () => {
+    let formName = document.querySelector('.reg-form__name');
+    let formLogin = document.querySelector('.reg-form__login');
+    let formPassword = document.querySelector('.reg-form__password');
+    let formButton = document.querySelector('.reg-form__button');
+
+    if (formName.value === "" || formLogin.value === "" || formPassword.value.length < 5)
+        formButton.disabled = true;
+    else
+        formButton.disabled = false;
+};
+
+const loginButtonDisable = () => {
+    let formLogin = document.querySelector('.login-form__login');
+    let formPassword = document.querySelector('.login-form__password');
+    let formButton = document.querySelector('.login-form__button');
+
+    if (formPassword.value === "" || formLogin.value === "")
+        formButton.disabled = true;
+    else
+        formButton.disabled = false;
+};
+
+const deleteButtonsListener = () => {
+    let deleteBottons = document.querySelectorAll('.delete-button');
+
+    for (let deleteBotton of deleteBottons) {
+        if (!token) {
+            deleteBotton.disabled = true;
+        }
+        deleteBotton.addEventListener('click', () => {
+            deleteComment(deleteBotton.dataset.indx)
+                .then(() => {
+                    renderComments();
+                });
+        });
+    }
+};
+
+export { likeButtonsListener, commentsListener, quoteListener, editButtonsListener, saveCommentButtonsListener, buttonDisable, deleteLastButtonFunc, keyEnter, login, registrate, regButtonDisable, loginButtonDisable, deleteButtonsListener };

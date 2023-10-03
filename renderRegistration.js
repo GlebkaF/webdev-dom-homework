@@ -1,5 +1,5 @@
 import { renderLogin } from "./renderLogin.js";
-import { registrate } from "./listeners.js";
+import { registrate, regButtonDisable } from "./listeners.js";
 
 export const renderRegistration = () => {
     let conteinerHtml = document.querySelector('.container');
@@ -15,7 +15,15 @@ export const renderRegistration = () => {
 
     let loginButton = document.querySelector('.reg-form__login-button');
     let regButton = document.querySelector('.reg-form__button');
+    let regName = document.querySelector('.reg-form__name');
+    let regLogin = document.querySelector('.reg-form__login');
+    let regPassword = document.querySelector('.reg-form__password');
 
+    regButtonDisable();
+
+    regName.addEventListener('input', regButtonDisable);
+    regLogin.addEventListener('input', regButtonDisable);
+    regPassword.addEventListener('input', regButtonDisable);
     regButton.addEventListener('click', registrate);
     loginButton.addEventListener('click', renderLogin);
 }

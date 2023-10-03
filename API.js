@@ -15,6 +15,20 @@ export const getComments = () => {
         });
 };
 
+export const deleteComment = (index) => {
+    return fetch(`${baseUrl}${login}/comments/${index}`, {
+        method: 'DELETE',
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    })
+        .then((response) => {
+            if (response.status === 500) {
+                throw new Error('Сервер недоступен');
+            }
+        });
+};
+
 export const postComment = () => {
     formText = document.querySelector('.add-form-text');
     return fetch(`${baseUrl}${login}/comments`, {

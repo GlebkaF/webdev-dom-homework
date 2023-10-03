@@ -1,4 +1,4 @@
-import { login } from "./listeners.js";
+import { login, loginButtonDisable } from "./listeners.js";
 import { renderRegistration } from "./renderRegistration.js";
 
 export const renderLogin = () => {
@@ -14,6 +14,13 @@ export const renderLogin = () => {
 
     let loginButton = document.querySelector('.login-form__button');
     let regButton = document.querySelector('.login-form__reg-button');
+    let loginLogin = document.querySelector('.login-form__login');
+    let loginPassword = document.querySelector('.login-form__password');
+
+    loginButtonDisable();
+
+    loginLogin.addEventListener('input', loginButtonDisable);
+    loginPassword.addEventListener('input', loginButtonDisable);
 
     loginButton.addEventListener('click', login);
     regButton.addEventListener('click', renderRegistration);

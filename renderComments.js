@@ -1,4 +1,4 @@
-import { likeButtonsListener, commentsListener, quoteListener, editButtonsListener, saveCommentButtonsListener, buttonDisable, deleteLastButtonFunc, keyEnter } from './listeners.js'
+import { likeButtonsListener, commentsListener, quoteListener, editButtonsListener, saveCommentButtonsListener, buttonDisable, deleteLastButtonFunc, keyEnter, deleteButtonsListener } from './listeners.js'
 import { addComment } from './utilities.js'
 import { commentsArr, token, login, userName } from './globalVariables.js';
 import { renderLogin } from './renderLogin.js';
@@ -27,7 +27,6 @@ const renderComments = () => {
   let formText = document.querySelector('.add-form-text');
   let comments = document.querySelector('.comments');
   let formButton = document.querySelector('.add-form-button');
-  let deleteLastBotton = document.querySelector('.delete-last__form-button');
   let authorizationButton = document.querySelector('.authorization__button');
   let addForm = document.querySelector('.add-form');
   let authorizationForm = document.querySelector('.authorization');
@@ -45,11 +44,14 @@ const renderComments = () => {
             <textarea class="edit-comment ${!el.editComment ? 'display_none' : ''}" type="textarea" rows="1">${el.comment.replace(el.comment.slice(el.comment.indexOf('QUOTE_BEGIN'), el.comment.lastIndexOf('QUOTE_END') > -1 ? el.comment.lastIndexOf('QUOTE_END') + 9 : -1), '')}</textarea>
           </div>
           <div class="comment-footer">
+            <div class="comment-buttons">
             <button class="edit-button ${el.editComment ? 'display_none' : ''}" data-comment_text="${el.comment}"  data-indx=${indx}>Редактировать</button>
-            <button class="save-comment-button ${!el.editComment ? 'display_none' : ''}" data-indx=${indx} data-quote="${el.comment.slice(el.comment.indexOf('QUOTE_BEGIN'), el.comment.lastIndexOf('QUOTE_END') > -1 ? el.comment.lastIndexOf('QUOTE_END') + 9 : -1)}">Сохранить</button>
+            <button class="delete-button ${el.editComment ? 'display_none' : ''}" data-comment_text="${el.comment}"  data-indx=${el.id}>Удалить</button>
+            <button class="save-comment-button ${!el.editComment ? 'display_none' : ''}" data-indx=${el.id} data-quote="${el.comment.slice(el.comment.indexOf('QUOTE_BEGIN'), el.comment.lastIndexOf('QUOTE_END') > -1 ? el.comment.lastIndexOf('QUOTE_END') + 9 : -1)}">Сохранить</button>
+            </div>
             <div class="likes">
               <span class="likes-counter">${el.countLikes}</span>
-              <button class="like-button ${el.likeSet ? '-active-like' : ''}" data-indx=${indx}></button>
+              <button class="like-button ${el.likeSet ? '-active-like' : ''}" data-indx=${el.id}></button>
             </div>
           </div>
         </li >`).join('');
@@ -75,9 +77,11 @@ const renderComments = () => {
     commentsListener();
     quoteListener();
     buttonDisable();
+    deleteButtonsListener();
   }
 
   editButtonsListener();
+  deleteButtonsListener();
 };
 
 export { renderComments };
