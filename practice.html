@@ -1,4 +1,4 @@
-<html>
+<!-- <html>
   <head>
     <meta charset="utf-8" />
     <title>Книжки</title>
@@ -27,18 +27,12 @@
 
     let totalPrice = 0;
 
-    for (let price of books) {
-        
+    for (let item of books) {
+    totalPrice += item.price;
     }
-    /* Допишите код: используйте цикл for...of, чтобы посчитать общую стоимость книг в массиве books */
+    console.log(totalPrice);
 
-    // Должен выводить в консоль 2980
-    console.log(totalPrice)
-
-    /* Допишите код: используйте методы массива map + join, чтобы получить строчку, список всех книг через запятую */
-    const booksList = ...;
-
-    // Должен выводить строку "Искусство программирования, Тихо!, Ночной дозор"
+    const booksList = books.map((item) => item.title).join(", ");
     console.log(booksList)
 
     /*
@@ -48,6 +42,267 @@
      * «Искусство программирования, Тихо!, Ночной дозор = 2980 рублей»
      * */
     const buttonElement = document.getElementById('show-button');
-    ...
+    const plug = document.getElementById('books');
+    
+    buttonElement.addEventListener("click", () => {
+
+    const buttonChange = plug.innerHTML;
+    plug.innerHTML = 'Искусство программирования, Тихо!, Ночной дозор = 2980 рублей';
+    });
+
+  </script>
+</html> -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Урок "Динамические обработчики событий и всплытие"</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <h1>Любимые цвета студентов</h1>
+    <ul class="students" id="list">
+      <!-- Список рендерится из JS -->
+    </ul>
+
+    <div class="form">
+      <h3 class="form-title">Форма добавления</h3>
+      <div class="form-row">
+        Имя:&nbsp;&nbsp;
+        <input
+          type="text"
+          id="name-input"
+          class="input"
+          placeholder="Василий"
+        />
+      </div>
+      <div class="form-row">
+        Цвет:&nbsp;
+        <input type="color" id="color-input" class="color-input input" />
+        <br /><br />
+      </div>
+      <button class="button" id="add-button">Добавить</button>
+    </div>
+  </body>
+
+  <script>
+    const buttonElement = document.getElementById("add-button");
+    const listElement = document.getElementById("list");
+    const nameInputElement = document.getElementById("name-input");
+    const colorInputElement = document.getElementById("color-input");
+
+    const studentElements = document.querySelectorAll(".student");
+
+    const students = [
+      {
+        name: "Глеб",
+        color: "#ff2600"
+      },
+      {
+        name: "Иван",
+        color: "#00f900"
+      },
+      {
+        name: "Люси",
+        color: "#0432ff"
+      }
+    ];
+
+    // Добавляет обработчики кликов ко всем элементам с классом student
+    const initEventListeners = () => {
+      // Находит все элементы с классом student в разметке
+      const studentElements = document.querySelectorAll(".student");
+
+      // Цикл for проходит по каждому элементу в списке
+      for (const studentElement of studentElements) {
+        // Добавляет обработчик клика на конкретный элемент в списке
+        studentElement.addEventListener("click", () => {
+          console.log(studentElement.dataset.color);
+        });
+      }
+    };
+
+    const initClearButtonsListeners = () => { 
+  const clearButtonsElements = document.querySelectorAll(".clear-button"); 
+
+for (const clearButtonElement of clearButtonsElements) { 
+  clearButtonElement.addEventListener("click", () => { 
+    const index = clearButtonElement.dataset.index; 
+    students[index].name = "Неизвестный студент"; 
+    renderStudents(); 
+  }); 
+} 
+};
+
+    const renderStudents = () => {
+      const studentsHtml = students
+        .map((student, index) => {
+          return `<li class="student" data-color="${student.color}">
+            <p class="student-name">
+              ${student.name}, любимый цвет
+              <span style="color: ${student.color}"> ${student.color}</span>
+            </p>
+            <button data-index="${index}" class="clear-button">Стереть имя</button>           </li>`;
+        })
+        .join("");
+
+      listElement.innerHTML = studentsHtml;
+
+      initEventListeners();
+      initClearButtonsListeners();
+    };
+
+    renderStudents();
+
+    buttonElement.addEventListener("click", () => {
+      nameInputElement.classList.remove("input-error");
+
+      if (nameInputElement.value === "") {
+        nameInputElement.classList.add("input-error");
+        return;
+      }
+
+      students.push({
+        name: nameInputElement.value,
+        color: colorInputElement.value
+      });
+
+      renderStudents();
+
+      nameInputElement.value = "";
+    });
   </script>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Урок "Динамические обработчики событий и всплытие"</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <h1>Любимые цвета студентов</h1>
+  <ul class="students" id="list">
+    <li class="student" data-color="#ff2600">
+      <p class="student-name">
+        Глеб, любимый цвет
+        <span style="color: #ff2600;">#ff2600</span>
+      </p>
+      <button class="button-hello" data-name="Глеб">Привет</button>
+    </li>
+    <li class="student" data-color="#00f900">
+      <p class="student-name">
+        Иван, любимый цвет
+        <span style="color: #00f900;">#00f900</span>
+      </p>
+      <button class="button-hello" data-name="Иван">Привет</button>
+    </li>
+    <li class="student" data-color="#0432ff">
+      <p class="student-name">
+        Люси, любимый цвет
+        <span style="color: #0432ff;"> #0432ff</span>
+      </p>
+      <button class="button-hello" data-name="Люси">Привет</button>
+    </li>
+  </ul>
+
+  <div class="form">
+    <h3 class="form-title">Форма добавления</h3>
+    <div class="form-row">
+      Имя:&nbsp;&nbsp;
+      <input type="text" id="name-input" class="input" placeholder="Василий" />
+    </div>
+    <div class="form-row">
+      Цвет:&nbsp;
+      <input type="color" id="color-input" class="color-input input" />
+      <br /><br />
+    </div>
+    <button class="button" id="add-button">Добавить</button>
+  </div>
+</body>
+
+<script>
+  const buttonElement = document.getElementById("add-button");
+  const listElement = document.getElementById("list");
+  const nameInputElement = document.getElementById("name-input");
+  const colorInputElement = document.getElementById("color-input");
+
+  const studentElements = document.querySelectorAll(".student");
+
+  // Добавляет обработчики кликов ко всем элементам с классом student
+  const initEventListeners = () => {
+    // Находит все элементы с классом student в разметке
+    const studentElements = document.querySelectorAll(".student");
+    const helloButton = document.querySelectorAll(".button-hello");
+
+    // Цикл for проходит по каждому элементу в списке
+    for (const studentElement of studentElements) {
+      // Добавляет обработчик клика на конкретный элемент в списке
+      studentElement.addEventListener("click", () => {
+        // Достает data-color из элемента
+        const color = studentElement.dataset.color;
+        console.log(color);
+      });
+
+      studentElement.addEventListener("click", () => {
+      // Достает data-color из элемента
+      const name = helloButton.dataset.name;
+      alert(`Привет, ${name}`);
+    });
+    }
+  };
+
+  initEventListeners();
+
+ 
+
+  buttonElement.addEventListener("click", () => {
+    nameInputElement.classList.remove("input-error");
+
+    if (nameInputElement.value === "") {
+      nameInputElement.classList.add("input-error");
+      return;
+    }
+
+    listElement.innerHTML =
+      listElement.innerHTML +
+      `<li class="student" data-color="${colorInputElement.value}">
+            <p class="student-name">
+              ${nameInputElement.value}, любимый цвет
+              <span style="color: ${colorInputElement.value}"> ${colorInputElement.value}</span>
+            </p>
+            <button class="button-hello" data-name="${nameInputElement.value}"> Привет </button>
+          </li>`;
+
+    initEventListeners();
+
+    nameInputElement.value = "";
+  });
+</script>
+
+</html> -->
