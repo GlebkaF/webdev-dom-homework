@@ -102,7 +102,7 @@
     .replaceAll("&quot;", '"')
 
   const AddComment = () => {
-    addForm.style.display = 'none';
+    addForm.classList.add('add-form_disabled');
     wait.textContent = 'Комментарий добавляется...';
 
     fetch(commentsUrl, {
@@ -128,14 +128,14 @@
         renderComments();
       })
       .then((data) => {
-        addForm.style.display = 'flex';
+        addForm.classList.remove('add-form_disabled');
         addFormName.value = '';
         addFormText.value = '';
         addFormName.classList.remove('error');
         addFormText.classList.remove('error');
       })
       .catch((error) => {
-        addForm.style.display = 'flex';
+        addForm.classList.remove('add-form_disabled');
 
         if (error.message === 'Bad Request') {
           if (addFormName.value === '' || addFormName.value.length < 3) {
