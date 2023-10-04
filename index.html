@@ -53,27 +53,11 @@
       return (comment.checkLike === true) ?
         `<li class="comment">
         <div class="comment-header">
-          <div data-name="${comment.userName}">${comment.userName}</div>
+          <div>${comment.userName}</div>
           <div>${comment.fullDate}</div>
         </div>
         <div class="comment-body">
-          <div class="comment-text" data-text="${comment.textComment}">${comment.textComment}</div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">${comment.countLikes}</span>
-            <button data-index ="${index}" class="like-button"></button>
-          </div>
-        </div>
-      </li>`
-        :
-        `<li class="comment">
-        <div class="comment-header">
-          <div data-name="${comment.userName}">${comment.userName}</div>
-          <div>${comment.fullDate}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text" data-text="${comment.textComment}">${comment.textComment}</div>
+          <div class="comment-text" data-text="${comment.textComment}" data-name="${comment.userName}">${comment.textComment}</div>
         </div>
         <div class="comment-footer">
           <div class="likes">
@@ -82,6 +66,22 @@
           </div>
         </div>
       </li>`
+        :
+        `<li class="comment">
+        <div class="comment-header">
+          <div>${comment.userName}</div>
+          <div>${comment.fullDate}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text" data-text="${comment.textComment}" data-name="${comment.userName}">${comment.textComment}</div >
+        </div >
+    <div class="comment-footer">
+      <div class="likes">
+        <span class="likes-counter">${comment.countLikes}</span>
+        <button data-index="${index}" class="like-button"></button>
+      </div>
+    </div>
+      </li > `
     })
       .join('');
     listElement.innerHTML = commensHtml;
@@ -92,8 +92,9 @@
       comment.addEventListener('click', () => {
         const dataComment = comment.dataset.text;
         const dataName = comment.dataset.name;
-        commentInputElement.value = `> ${dataComment} 
-        ${dataName}`;
+
+        event.stopPropagation();//Отключение дочерних событий
+        commentInputElement.value = `> ${dataComment} ${dataName}`;
         console.log(`> ${dataComment} ${dataName}`);
       });
     };
