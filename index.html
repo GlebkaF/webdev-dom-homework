@@ -91,7 +91,11 @@
       method: "GET",
     })
       .then((response) => {
+        if (response.status === 500) {
+          throw new Error("Что то с сервером")
+        } else {
           return response.json();
+        }
       })
       .then((dataResponse) => {
         console.log(dataResponse);
@@ -110,6 +114,9 @@
         isLoader = false;
       })
       .catch((error) => {
+        if (error.message === "Что то с сервером") {
+          alert("Сервер сломался попробуй позже");
+        }
         console.log(error);
       })
   }
