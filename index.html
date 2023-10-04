@@ -94,8 +94,9 @@
         const dataName = comment.dataset.name;
 
         event.stopPropagation();//Отключение дочерних событий
-        commentInputElement.value = `> ${dataComment} ${dataName}`;
-        console.log(`> ${dataComment} ${dataName}`);
+
+        commentInputElement.value = `> ${dataComment}\n\n${dataName}`;
+        console.log(`> ${dataComment}\n\n${dataName}`);
       });
     };
 
@@ -173,14 +174,14 @@
         .replaceAll("<", "&lt") // элементарная обработка пользовательского ввода на предмет
         // всяких нехороших вещей в HTML-коде, в данном случае управляющие символы разметки "<" и ">"
         .replaceAll(">", "&gt")// меняются на их коды, а браузер всёравно выводит эти символы
-        .replaceAll("&", "&amp;")
-        .replaceAll('"', "&quot;"),
+        .replaceAll("&", "&amp")
+        .replaceAll('"', "&quot"),
       checkLike: false,
       textComment: commentInputElement.value
         .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
+        .replaceAll("<", "&lt")
+        .replaceAll(">", "&gt")
+        .replaceAll('"', "&quot"),
       countLikes: 0,
       fullDate: fullDate,
     });
