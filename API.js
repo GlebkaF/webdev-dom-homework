@@ -26,6 +26,7 @@ export const deleteComment = (index) => {
             if (response.status === 500) {
                 throw new Error('Сервер недоступен');
             }
+            return response.json();
         });
 };
 

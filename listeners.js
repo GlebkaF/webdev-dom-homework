@@ -12,8 +12,10 @@ const likeButtonsListener = () => {
             //Почему-то когда добавляю классом не применяется
             likeBotton.style.animation = 'rotating 2s linear infinite';
             delay(2000).then(() => {
-                toggleLike(likeBotton.dataset.indx);
-                getData();
+                toggleLike(likeBotton.dataset.indx)
+                .then(() => {
+                    getData();
+                });
             });
         });
     }
