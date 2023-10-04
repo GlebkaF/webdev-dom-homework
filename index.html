@@ -53,7 +53,7 @@
       return (comment.checkLike === true) ?
         `<li class="comment">
         <div class="comment-header">
-          <div>${comment.userName}</div>
+          <div data-name="${comment.userName}">${comment.userName}</div>
           <div>${comment.fullDate}</div>
         </div>
         <div class="comment-body">
@@ -69,7 +69,7 @@
         :
         `<li class="comment">
         <div class="comment-header">
-          <div>${comment.userName}</div>
+          <div data-name="${comment.userName}">${comment.userName}</div>
           <div>${comment.fullDate}</div>
         </div>
         <div class="comment-body">
@@ -91,7 +91,10 @@
     for (const comment of commentsElements) {
       comment.addEventListener('click', () => {
         const dataComment = comment.dataset.text;
-        console.log(`${dataComment}`);
+        const dataName = comment.dataset.name;
+        commentInputElement.value = `> ${dataComment} 
+        ${dataName}`;
+        console.log(`> ${dataComment} ${dataName}`);
       });
     };
 
@@ -168,11 +171,15 @@
       userName: nameInputElement.value
         .replaceAll("<", "&lt") // элементарная обработка пользовательского ввода на предмет
         // всяких нехороших вещей в HTML-коде, в данном случае управляющие символы разметки "<" и ">"
-        .replaceAll(">", "&gt"),// меняются на их коды, а браузер всёравно выводит эти символы
+        .replaceAll(">", "&gt")// меняются на их коды, а браузер всёравно выводит эти символы
+        .replaceAll("&", "&amp;")
+        .replaceAll('"', "&quot;"),
       checkLike: false,
       textComment: commentInputElement.value
-        .replaceAll("<", "&lt")
-        .replaceAll(">", "&gt"),
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       countLikes: 0,
       fullDate: fullDate,
     });
