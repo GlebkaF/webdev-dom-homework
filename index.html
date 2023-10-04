@@ -90,10 +90,11 @@
     return fetch("https://wedev-api.sky.pro/api/v1/alexander-potapov/comments", {
       method: "GET",
     })
-      .then((response) => response.json())
+      .then((response) => {
+          return response.json();
+      })
       .then((dataResponse) => {
         console.log(dataResponse);
-
         const newList = dataResponse.comments.map((element) => {
           return {
             name: element.author.name.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
@@ -107,6 +108,9 @@
         listOfObject = newList;
         renderElements();
         isLoader = false;
+      })
+      .catch((error) => {
+        console.log(error);
       })
   }
   getFetchPromise();
@@ -131,34 +135,59 @@
   function addComment() {
 
     button.addEventListener("click", () => {
-
       addText.classList.remove("error");
       addName.classList.remove("error");
-      if (!addName.value || !addText.value) {
-        addText.classList.add("error");
-        addName.classList.add("error");
-        return;
-      };
 
       textForLoading.classList.remove("hidden");
       addForm.classList.add("hidden");
 
-      return fetch("https://wedev-api.sky.pro/api/v1/alexander-potapov/comments", {
-        method: "POST",
-        body: JSON.stringify({
-          text: addText.value,
-          name: addName.value,
+      function postComment() {
+        return fetch("https://wedev-api.sky.pro/api/v1/alexander-potapov/comments", {
+          method: "POST",
+          body: JSON.stringify({
+            text: addText.value,
+            name: addName.value,
+            forceError: true,
+          })
         })
-      })
-        .then((response) => response.json())
-        .then((dataResponse) => {
-          console.log(dataResponse);
-          getFetchPromise();
-          addName.value = "";
-          addText.value = "";
-          textForLoading.classList.add("hidden");
-          addForm.classList.remove("hidden");
-        })
+          .then((response) => {
+            if (response.status === 201) {
+              return response.json();
+            } else if (response.status === 400) {
+              addText.classList.add("error");
+              addName.classList.add("error");
+              throw new Error("Короткое имя");
+            } else if (response.status === 500) {
+              throw new Error("Что то с сервером")
+            } else if (response.status === "Ошибка сервера") {
+              throw new Error("Failed to fetch")
+            }
+          })
+          .then((dataResponse) => {
+            console.log(dataResponse);
+            getFetchPromise();
+            addName.value = "";
+            addText.value = "";
+            textForLoading.classList.add("hidden");
+            addForm.classList.remove("hidden");
+          })
+          .catch((error) => {
+            if (error.message === "Короткое имя") {
+              alert("Имя и комментарий должны быть не короче 3 символов");
+            }
+            if (error.message === "Что то с сервером") {
+              alert("Сервер сломался попробуй позже");
+              postComment();
+            }
+            if (error.message === "Failed to fetch") {
+              alert("Кажется, у вас сломался интернет, попробуйте позже")
+            }
+            textForLoading.classList.add("hidden");
+            addForm.classList.remove("hidden");
+            console.log(error);
+          })
+      }
+      postComment();
     })
   }
   addComment()
