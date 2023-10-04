@@ -161,7 +161,7 @@ function renderElements (){
     commentOnComment();
     deleteComment();
     addLike();
-    addComment();
+    
  }
 
    
@@ -246,9 +246,11 @@ function addComment() {
   })
        .then((response) => {
        if(response.status === 500){
+        throw new Error ("Сервер упал, попробуй позже");
            alert("Сервер упал, попробуй позже");
          } else if(response.status === 400){
-          alert("Что-то не то, попробуй ввести данные заново")
+          throw new Error("Что-то не то, попробуй ввести данные заново");
+          alert("Что-то не то, попробуй ввести данные заново");
          } else{
          return response.json();
          };
@@ -271,6 +273,7 @@ function addComment() {
 
       });
 }
+addComment();
 
 
    
