@@ -97,7 +97,7 @@
     const renderComments = () => {
       const commentsHtml = comments.map((comment, index) => {
         let liked = comment.isLike ? `-active-like` : ``;
-        return `<li class="comment">
+        return `<li class="comment" data-index="${index}">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.date}</div>
@@ -141,12 +141,27 @@
                 comments[index].likes += 1;
                 comments[index].isLike = true;
               }
+              event.stopPropagation();
               renderComments();
             });
           }
         };
 
     renderComments();
+
+    const commentElements = document.querySelectorAll(".comment");
+    for (const commentElement of commentElements) {
+      commentElement.addEventListener('click', () => {
+        const index = commentElement.dataset.index;
+        if (index !== null) {
+          const comment = comments[index];
+          commentInputElement.value = `>>${comment.text} \nto: ${comment.name},`;
+
+          comment.text.replace("<div class='quote'</div>");
+          const styleQuote = document.querySelectorAll(".quote");
+        }
+      })
+    }
 
     function addZero(z) {
       return (z < 10) ? '0' + z : z;
@@ -179,15 +194,23 @@
       }
 
       comments.push({
-        name: nameInputElement.value,
-        text: commentInputElement.value,
+        name: nameInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
+        text: commentInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
         date: currentDate(),
         likes: 0,
         isLike: false
-      })
+      });
 
       renderComments();
-    })
+    });
 
     buttonElement.addEventListener("input", (event) => {
       if(nameInputElement.value === '') {
@@ -199,7 +222,7 @@
       buttonElement.disabled = this.value;
       return;
       }
-    })
+    });
 
 console.log('It works!');
   </script>
