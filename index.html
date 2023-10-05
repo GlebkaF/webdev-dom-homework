@@ -20,6 +20,7 @@
         <button class="add-form-button" disabled>Написать</button>
       </div>
     </div>
+    <button class="delete-form-button">Удалить последний комментарий</button>
   </div>
 </body>
 
@@ -32,6 +33,7 @@
   let commentInput = document.querySelector(".add-form-text");
   let commentSection = document.querySelector(".comments");
   let addButton = document.querySelector(".add-form-button");
+  const deleteButton = document.querySelector(".delete-form-button");
   const newComment = document.querySelector(".comment-header");
   const current = new Date().toLocaleString();
   const likeNumber = document.querySelector(".likes-counter");
@@ -56,7 +58,7 @@
   const renderComments = () => {
     const commentsHtml = comments
       .map((comment, index) => {
-        return `<li class="comment">
+        return `<li class="comment" id="comment" data-index="${index}">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.date}</div>
@@ -77,19 +79,38 @@
       .join('');
 
     commentSection.innerHTML = commentsHtml;
+    // кнопка лайка
+
     const likeButtons = document.querySelectorAll('.like-button');
 
     likeButtons.forEach((likeButton, index) => {
-      likeButton.addEventListener('click', () => {
+      likeButton.addEventListener('click', (event) => {
+        event.stopPropagation();
         likeComment(index);
         renderComments();
       });
     });
+   
+  
+const answerCommentListener = () => {
+    const commentsElement = document.querySelectorAll(".comment");
+    for (const commentElement of commentsElement) {
+      commentElement.addEventListener("click", () => {
+        const index = commentElement.dataset.index;
+        let commentInput = document.querySelector(".add-form-text");
+        commentInput.value =`QUOTE_BEGIN ${comments[index].name}: \n ${comments[index].text} QUOTE_END`;
+        renderComments();
+      })
+    }
+
+  };
+  answerCommentListener();
+ 
+
   }
 
   const likeComment = (index) => {
-    // click по первому элементу, то index = 0
-    // click по второму элементу, то index = 1
+
     const comment = comments[index];
 
     if (comment.isLiked) {
@@ -101,11 +122,23 @@
     }
   }
 
+  // вызов рендер функции
+
   renderComments();
 
-
   addButton.addEventListener("click", () => {
+    errorSolving();
+  });
 
+  addButton.addEventListener('keyup', function (event) {
+    if (event.which === 13) {
+      errorSolving();
+    }
+  });
+
+  // появление красных полей, если они пустые 
+
+  function errorSolving() {
     if (nameInput.value === "" && commentInput.value === "") {
       nameInput.classList.add("error");
       commentInput.classList.add("error");
@@ -113,9 +146,19 @@
     }
 
     comments.push({
-      name: nameInput.value,
+      name: nameInput.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       date: current,
-      text: commentInput.value,
+      text: commentInput.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+        .replaceAll("QUOTE_END", "</div>"),
       isLiked: false,
       likesCount: 0,
     })
@@ -123,7 +166,20 @@
 
     nameInput.value = "";
     commentInput.value = "";
-  });
+  }
+
+
+
+  const DeleteButtonsListeners = () => {
+      deleteButton.addEventListener("click", () => {
+          const index = deleteButton.dataset.index;
+          comments.splice(index, 1);
+          renderStudents();
+        });
+      }
+
+
+  // отключение кнопки
 
   nameInput.addEventListener('input', () => {
     turnOnOff();
@@ -145,5 +201,4 @@
   }
   console.log("It works!");
 </script>
-
 </html>
