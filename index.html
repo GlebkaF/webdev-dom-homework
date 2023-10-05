@@ -50,14 +50,14 @@
 
   const renderComments = () => {
     const commensHtml = comments.map((comment, index) => {
-      return (comment.checkLike === true) ?
-        `<li class="comment">
+      return (comment.checkLike) ?
+        `<li class="comment" data-text="${comment.textComment}" data-name="${comment.userName}">
         <div class="comment-header">
           <div>${comment.userName}</div>
           <div>${comment.fullDate}</div>
         </div>
         <div class="comment-body">
-          <div class="comment-text" data-text="${comment.textComment}" data-name="${comment.userName}">${comment.textComment}</div>
+          <div class="comment-text">${comment.textComment}</div>
         </div>
         <div class="comment-footer">
           <div class="likes">
@@ -67,27 +67,27 @@
         </div>
       </li>`
         :
-        `<li class="comment">
-        <div class="comment-header">
-          <div>${comment.userName}</div>
-          <div>${comment.fullDate}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text" data-text="${comment.textComment}" data-name="${comment.userName}">${comment.textComment}</div >
-        </div >
-    <div class="comment-footer">
-      <div class="likes">
-        <span class="likes-counter">${comment.countLikes}</span>
-        <button data-index="${index}" class="like-button"></button>
+        `<li class="comment" data-text="${comment.textComment}" data-name="${comment.userName}">
+      <div class="comment-header">
+        <div>${comment.userName}</div>
+        <div>${comment.fullDate}</div>
       </div>
-    </div>
+      <div class="comment-body">
+        <div class="comment-text">${comment.textComment}</div >
+      </div >
+      <div class="comment-footer">
+      <div class="likes">
+       <span class="likes-counter">${comment.countLikes}</span>
+      <button data-index="${index}" class="like-button"></button>
+      </div>
+      </div>
       </li > `
     })
       .join('');
     listElement.innerHTML = commensHtml;
 
     //Обработчик событий при нажатии на текст коментария
-    const commentsElements = document.querySelectorAll(".comment-text");
+    const commentsElements = document.querySelectorAll(".comment");
     for (const comment of commentsElements) {
       comment.addEventListener('click', () => {
         const dataComment = comment.dataset.text;
@@ -108,6 +108,7 @@
     const buttonLikes = document.querySelectorAll(".like-button");
     for (const buttonLike of buttonLikes) {
       buttonLike.addEventListener("click", () => {
+        event.stopPropagation();//Отключение дочерних событий
         if (comments[buttonLike.dataset.index].checkLike === true) {
           comments[buttonLike.dataset.index].checkLike = false;
           comments[buttonLike.dataset.index].countLikes--;
@@ -168,20 +169,20 @@
     }
     let fullDate = date + "." + month + "." + year + " " + hour + ":" + minute;
 
+    const sanitizeHtml = (htmlString) => {
+      return htmlString.replaceAll("<", "&lt")// элементарная обработка пользовательского ввода на предмет
+        .replaceAll(">", "&gt") // всяких нехороших вещей в HTML-коде, в данном случае управляющие символы разметки "<" и ">"
+        .replaceAll("&", "&amp")
+        .replaceAll('"', "&quot");// меняются на их коды, а браузер всёравно выводит эти символы
+    };
 
     comments.push({
-      userName: nameInputElement.value
-        .replaceAll("<", "&lt") // элементарная обработка пользовательского ввода на предмет
-        // всяких нехороших вещей в HTML-коде, в данном случае управляющие символы разметки "<" и ">"
-        .replaceAll(">", "&gt")// меняются на их коды, а браузер всёравно выводит эти символы
-        .replaceAll("&", "&amp")
-        .replaceAll('"', "&quot"),
+      userName: sanitizeHtml(nameInputElement.value),//Вызывается функция проверки
+
+
       checkLike: false,
-      textComment: commentInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt")
-        .replaceAll(">", "&gt")
-        .replaceAll('"', "&quot"),
+      textComment: sanitizeHtml(commentInputElement.value),
+
       countLikes: 0,
       fullDate: fullDate,
     });
