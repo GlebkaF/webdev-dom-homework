@@ -34,12 +34,19 @@
       method: 'GET'
     })
       .then((response) => {
+        if (response.status === 500) {
+          throw new Error('Сервер упал');
+        }
         return response.json()
       })
       .then((responseData) => {
         waiter.style.display = 'none';
         comments = responseData.comments;
         renderComments();
+      })
+      .catch((error)=> {
+        alert('Сервер сломался, попробуй позже');
+        return;
       })
   }
 
@@ -111,7 +118,7 @@
         name: getSafeString(addFormName.value),
         text: getSafeString(addFormText.value),
         date: new Date(),
-        forceError: true,
+        forceError: false,
       }),
     })
       .then((response) => {
@@ -153,6 +160,9 @@
           return;
         }
 
+        alert('Ошибка соединения, попробуй позже');
+        return;
+        
       })
       .finally(() => {
         wait.textContent = '';
