@@ -1,4 +1,4 @@
-import { appElement, containerFormsElement  } from "./ui.js";
+import { appComment, appFormElement  } from "./ui.js";
 import { initLikeComments, initReplyComment, deleteComment } from "./renderComments.js";
 
 
@@ -32,7 +32,7 @@ export { renderComments, renderForms };
         }).join("");
 
     
-      appElement.innerHTML = `<ul class="comments">${commentsHTML}</ul>
+      appComment.innerHTML = `<ul class="comments">${commentsHTML}</ul>
       <div class="delete-form">
       <button class="delete-form-button">Удалить последний комментарий</button>
       </div>`;
@@ -44,7 +44,7 @@ export { renderComments, renderForms };
     }
 
     function renderForms() {         
-        containerFormsElement.innerHTML = `
+        appFormElement.innerHTML = `
         <div class="add-form">
           <input type="text" class="add-form-name"> 
           <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
@@ -55,9 +55,5 @@ export { renderComments, renderForms };
         <div class="add-form-progress">
         <p>Ваш комментарий добавляется...</p>
         </div>`;
-
-
-        // value="Имя и пользователя получить с сервера" readonly
-
-  
+ 
   }

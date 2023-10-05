@@ -1,6 +1,6 @@
 import { renderComments } from "./render.js";
 import { postApi, deleteCommentApi } from "./api.js";
-import { appElement } from "./ui.js";
+import { appComment } from "./ui.js";
 import { fetchAndRenderComments } from "./main.js";
 
 
@@ -162,7 +162,7 @@ function deleteComment({ comments }) {
 }
 
 export function initLoaderComments() {
-  appElement.innerHTML = `
+  appComment.innerHTML = `
   <div class="comments-progress">
     <p>Подождите, комментарии загружаются...</p>
   </div>`;

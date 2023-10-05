@@ -1,6 +1,6 @@
 import { login, setToken, registration, token } from "./api.js";
 import { fetchAndRenderComments, globalAdd } from "../main.js";
-import { appElement } from "./vars.js";
+import { appComment } from "./ui.js";
 
 export const initRenderLoginForm = () => {
     const containerFormsElement = document.querySelector('div[class="containerForms"]');
@@ -32,7 +32,7 @@ export const initRenderLoginForm = () => {
 
 
     function loadLoginForm() {
-        appElement.style.display = 'none';
+        appComment.style.display = 'none';
         containerFormsElement.innerHTML = enterFormHTML;
 
         const enterFormButton = document.getElementById("enter-form-button");
@@ -50,10 +50,11 @@ export const initRenderLoginForm = () => {
                 console.log(responseData);
             })
             .then(() => {
-                appElement.style.display = 'flex';
+                appComment.style.display = 'flex';
                 fetchAndRenderComments();
                 globalAdd();
             })
+            
             .catch((error) => {
                 if (error.message === "Плохой запрос") {
                     alert("Введен неправильный логин или пароль, скорректируйте ввод");
@@ -90,9 +91,10 @@ export const initRenderLoginForm = () => {
             })
             .then((responseData) => {
                 setToken(responseData.user.token);
+
             })
             .then(() => {
-                appElement.style.display = 'flex';
+                appComment.style.display = 'flex';
                 fetchAndRenderComments();
                 globalAdd();
             })

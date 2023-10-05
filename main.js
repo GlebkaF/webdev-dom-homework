@@ -1,6 +1,6 @@
 import { getComments } from "./api.js";
 import { renderComments, renderForms } from "./render.js";
-import { checkInput, addComment, initLoaderComments } from "./actions.js";
+import { checkInput, addComment, initLoaderComments } from "./renderComments.js";
 import { initRenderLoginForm } from "./renderLogin.js";
 
 
