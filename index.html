@@ -130,28 +130,30 @@
       return;
     }
 
-    let newDate = new Date();
-    let date = newDate.getDate();
-    let month = newDate.getMonth() + 1;// +1 т.к. нумерация месяцев начинается с нуля
-    let year = newDate.getFullYear() - 2000;
-    let hour = newDate.getHours(); // получаем час из нашей даты
-    let minute = newDate.getMinutes(); // получаем минуты
+    const fullDate = () => {
 
+      let newDate = new Date();
+      let date = newDate.getDate();
+      let month = newDate.getMonth() + 1;// +1 т.к. нумерация месяцев начинается с нуля
+      let year = newDate.getFullYear() - 2000;
+      let hour = newDate.getHours(); // получаем час из нашей даты
+      let minute = newDate.getMinutes(); // получаем минуты
 
-
-    if (date < 10) {
-      date = "0" + date;
-    }
-    if (month < 10) {
-      month = "0" + month;
-    }
-    if (hour < 10) { // если будет меньше 10,
-      hour = "0" + hour; // то перед ними поставим 0
-    }
-    if (minute < 10) { // если минут будет меньше 10,
-      minute = "0" + minute; // то перед ними поставим 0
-    }
-    let fullDate = date + "." + month + "." + year + " " + hour + ":" + minute;
+      if (date < 10) {
+        date = "0" + date;
+      }
+      if (month < 10) {
+        month = "0" + month;
+      }
+      if (hour < 10) { // если будет меньше 10,
+        hour = "0" + hour; // то перед ними поставим 0
+      }
+      if (minute < 10) { // если минут будет меньше 10,
+        minute = "0" + minute; // то перед ними поставим 0
+      }
+      //Функция fullDate возвращает текущую дату и время: 
+      return date + "." + month + "." + year + " " + hour + ":" + minute;
+    };
 
     const sanitizeHtml = (htmlString) => {
       return htmlString.replaceAll("<", "&lt")// элементарная обработка пользовательского ввода на предмет
@@ -168,7 +170,7 @@
       textComment: sanitizeHtml(commentInputElement.value),
 
       countLikes: 0,
-      fullDate: fullDate,
+      fullDate: fullDate(),//Функция с текущей датой и временем
     });
 
     nameInputElement.value = '';// Очиска формы имени после ввода данных
