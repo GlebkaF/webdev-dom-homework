@@ -1,112 +1,99 @@
-const BASE_URL_COMMENTS = "https://wedev-api.sky.pro/api/v2/gleb-fokin/comments";
-const BASE_URL_USER = "https://wedev-api.sky.pro/api/user";
+const baseUrl = 'https://wedev-api.sky.pro/api/v2/:atamyrat-isayev';
+const userUrl = 'https://wedev-api.sky.pro/api/user';
 
 export let token;
-
 export const setToken = (newToken) => {
-  token = newToken;
+  token = newToken
 };
 
-export async function login({ login, password }) {
-  try {
-    const response = await fetch(`${BASE_URL_USER}/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ login, password }),
-    });
 
-    if (response.status === 201) {
-      const data = await response.json();
-      return data.user.token;
-    } else if (response.status === 400) {
-      throw new Error("Invalid login or password");
-    } else {
-      throw new Error(`Login failed with status ${response.status}`);
-    }
-  } catch (error) {
-    throw error;
-  }
+export async function getComments() {
+    return fetch(`${baseUrl}/comments`,     
+    {
+      method: "GET",
+    })
+    .then((response) => {
+      return response.json();
+    })
 }
 
-export async function register({ login, password, name }) {
-  try {
-    const response = await fetch(`${BASE_URL_USER}`, {
+export async function postApi({ name, text }) {
+    return fetch(`${baseUrl}/comments`,      
+    {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`, 
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ login, password, name }),
-    });
-
-    if (response.status === 201) {
-      const data = await response.json();
-      return data.user;
-    } else if (response.status === 400) {
-      throw new Error("User with the same login already exists");
-    } else {
-      throw new Error(`Registration failed with status ${response.status}`);
-    }
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function fetchComments() {
-  try {
-    const response = await fetch(BASE_URL_COMMENTS);
-
-    if (response.status === 500) {
-      throw new Error("Server is down, please try again later");
-    }
-
-    const comments = await response.json();
-    return comments.comments;
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function postComment(newComment) {
-  try {
-    const response = await fetch(BASE_URL_COMMENTS, {
-      method: "POST",
+      body: JSON.stringify({
+        name: name
+              .replaceAll("&", "&amp;")
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;")
+              .replaceAll('"', "&quot;"),
+        text: text
+              .replaceAll("&", "&amp;")
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;")
+              .replaceAll('"', "&quot;"),
+        isLiked:	false,
+        likes: 0,
+      }),
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
       },
-      body: JSON.stringify(newComment),
-    });
+    })
+    .then((response) => {
+      if (response.status === 500) {
+        throw new Error("Сервер сломался");
+      }
+      if (response.status === 400) {
+        throw new Error("Плохой запрос");
+      }
+      return response.json();
+    })
+}
 
+export async function login({login, password}) {
+  return fetch(`${userUrl}/login`, {
+    method: "POST",
+    body: JSON.stringify({
+      login,
+      password,
+    }),
+  })
+  .then((response) => {
     if (response.status === 400) {
-      throw new Error("Имя и комментарий должны быть не короче 3 символов");
-    } else if (response.status === 500) {
-      throw new Error("Сервер сломался, попробуйте позже");
-    } else if (!response.ok) {
-      throw new Error(`Error adding comment: ${response.status}`);
-    }
-
+      throw new Error("Плохой запрос");
+    };
     return response.json();
-  } catch (error) {
-    throw error;
-  }
+  });
 }
 
-export async function deleteComment(commentId) {
-  try {
-    const response = await fetch(`${BASE_URL_COMMENTS}/${commentId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+export async function registration({login, name, password}) {
+  return fetch(userUrl, {
+    method: "POST",
+    body: JSON.stringify({
+      login,
+      name,
+      password,
+    }),
+  })
+  .then((response) => {
+    if (response.status === 400) {
+      throw new Error("Плохой запрос");
+    };
+    return response.json();
+  });
+}
 
-    if (!response.ok) {
-      throw new Error(`Error deleting comment: ${response.status}`);
+export async function deleteCommentApi({ id }) {
+  return fetch(`${baseUrl}/comments/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },    
+  })
+  .then((response) => {
+    if (response.status === 401) {
+      throw new Error("Нет авторизации");
     }
-  } catch (error) {
-    throw error;
-  }
+    return response.json();
+  });
 }
