@@ -4,9 +4,22 @@ let formName = document.querySelector('.add-form-name');
 let formText = document.querySelector('.add-form-text');
 
 export const getComments = () => {
-    return fetch(`${baseUrl}${window.localStorage.getItem("login") ? window.localStorage.getItem("login") : "default"}/comments`, {
-        method: 'GET'
-    })
+    let requestParams;
+    if (window.localStorage.getItem("Token") === "") {
+        requestParams = {
+            method: 'GET'
+        };
+    }
+    else {
+        requestParams = {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${window.localStorage.getItem("Token")}`
+            }
+        };
+    }
+
+    return fetch(`${baseUrl}${window.localStorage.getItem("login") ? window.localStorage.getItem("login") : "default"}/comments`, requestParams)
         .then((response) => {
             if (response.status === 500) {
                 throw new Error('Сервер недоступен');
