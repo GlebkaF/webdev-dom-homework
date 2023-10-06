@@ -1,5 +1,6 @@
-import { login, setToken, registration, token } from "./api.js";
-import { fetchAndRenderComments, globalAdd } from "../main.js";
+import { login, setToken, registration, token , userName, setUserName } from "./api.js";
+import { fetchAndRenderComments, globalAdd } from "./main.js";
+import { renderForms } from "./render.js";
 import { appComment } from "./ui.js";
 
 export const initRenderLoginForm = () => {
@@ -34,44 +35,47 @@ export const initRenderLoginForm = () => {
     function loadLoginForm() {
         appComment.style.display = 'none';
         containerFormsElement.innerHTML = enterFormHTML;
-
+      
         const enterFormButton = document.getElementById("enter-form-button");
-
+      
         const loginInputElement = document.getElementById("enter-form-login");
         const passwordInputElement = document.getElementById("enter-form-password");
-        
+      
         enterFormButton.addEventListener("click", () => {
-            login({
-                login: loginInputElement.value,
-                password: passwordInputElement.value,
-            })
+          login({
+            login: loginInputElement.value,
+            password: passwordInputElement.value,
+          })
             .then((responseData) => {
-                setToken(responseData.user.token);
-                console.log(responseData);
+              setToken(responseData.user.token);
+              console.log(responseData);
+              setUserName(responseData.user.name);
+
             })
             .then(() => {
-                appComment.style.display = 'flex';
-                fetchAndRenderComments();
-                globalAdd();
+              appComment.style.display = 'flex';
+              fetchAndRenderComments();
+              globalAdd();
+              const userLogin = loginInputElement.value;
+              renderForms (userLogin, userName);
             })
-            
+      
             .catch((error) => {
-                if (error.message === "Плохой запрос") {
-                    alert("Введен неправильный логин или пароль, скорректируйте ввод");
-                    return;    
-                } else {
-                    alert("Кажется, у вас сломался интернет, попробуйте позже");
-                }
-                console.warn(error);
+              if (error.message === "Плохой запрос") {
+                alert("Введен неправильный логин или пароль, скорректируйте ввод");
+                return;
+              } else {
+                alert("Кажется, у вас сломался интернет, попробуйте позже");
+              }
+              console.warn(error);
             });
         });
-
+      
         const enterRegistLink = document.getElementById("enter-form-link");
         enterRegistLink.addEventListener("click", () => {
-            loadRegisterForm();
+          loadRegisterForm();
         });
-
-    };
+      }
 
 
     function loadRegisterForm() {
@@ -97,6 +101,9 @@ export const initRenderLoginForm = () => {
                 appComment.style.display = 'flex';
                 fetchAndRenderComments();
                 globalAdd();
+                const userLogin = loginInputElement.value;
+                const userName = nameInputElement.value;
+                renderForms (userLogin, userName);
             })
             .catch((error) => {
                 if (error.message === "Плохой запрос") {

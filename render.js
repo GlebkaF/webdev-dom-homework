@@ -1,6 +1,6 @@
 import { appComment, appFormElement  } from "./ui.js";
 import { initLikeComments, initReplyComment, deleteComment } from "./renderComments.js";
-import { format } from 'date-fns';
+
 
 
 
@@ -11,7 +11,7 @@ export { renderComments, renderForms };
       const commentsHTML = comments
           .map((comment, ind) => {
           let currentTime = new Date(comment.date);
-          let commentTime = format(new Date(comment.date), 'yyyy-MM-dd HH.mm.ss');
+          let commentTime = `${currentTime.toLocaleDateString('ru-Ru', { day: "2-digit", month: "2-digit", year: "2-digit" })} ${currentTime.toLocaleTimeString('ru-Ru', { hour: "2-digit", minute: "2-digit" })}`;
           return `
               <li data-index="${comment.id}" class="comment">
                   <div class="comment-header">
@@ -44,17 +44,16 @@ export { renderComments, renderForms };
     
     }
 
-    function renderForms() {         
-        appFormElement.innerHTML = `
+    function renderForms(userName, userLogin) {
+      appFormElement.innerHTML = `
         <div class="add-form">
-          <input type="text" class="add-form-name"> 
-          <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
+          <input type="text" readonly class="add-form-name" id="userNameInput" value="${userLogin ? `${userLogin} (${userName})` : ''}">
+          <textarea type="textarea" class="add-form-text" placeholder="Введите ваш комментарий" rows="4"></textarea>
           <div class="add-form-row">
             <button class="add-form-button">Написать</button>
           </div>
         </div>
         <div class="add-form-progress">
-        <p>Ваш комментарий добавляется...</p>
+          <p>Ваш комментарий добавляется...</p>
         </div>`;
- 
-  }
+    }

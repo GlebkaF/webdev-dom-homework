@@ -6,6 +6,11 @@ export const setToken = (newToken) => {
   token = newToken
 };
 
+export let userName;
+export const setUserName = (newUserName) => {
+  userName = newUserName
+};
+
 
 export async function getComments() {
     return fetch(`${baseUrl}/comments`,     
@@ -81,6 +86,7 @@ export async function registration({login, name, password}) {
     };
     return response.json();
   });
+  
 }
 
 export async function deleteCommentApi({ id }) {
