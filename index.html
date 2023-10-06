@@ -67,7 +67,15 @@
       isLike: false,
     }
   ];
-
+  const replyToComment = (index) => {
+  const commentElements = document.querySelectorAll('.comment-text');
+  for (const commentElement of commentElements) {
+    commentElement.addEventListener('click', () => {
+      const commentText = commentElement.innerText;
+      document.getElementById('form-text').value = `>${commentText}\n ${comments[index].name}:`;
+    });
+  }
+};
   function addLike() {
     const likeElements = document.querySelectorAll('.like-button');
     for (let likeElement of likeElements) {
@@ -142,9 +150,17 @@
       return;
     };
     comments.push({
-      name: nameElement.value,
+      name: nameElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       date: currentDate,
-      text: textElement.value,
+      text: textElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       likeCount: 0,
       isLike: false
     });
@@ -168,7 +184,7 @@
         <div class="comment-body">
           ${comment.isEdit
           ? `<textarea type="textarea"  class="add-form-text" placeholder="Введите ваш коментарий" rows="4">${comment.text}</textarea>`
-          : `<div class="comment-text"> ${comment.text} </div>`}
+          : `<div class="comment-text"onclick="replyToComment(${index})"> ${comment.text} </div>`}
         </div>
         <div class="comment-footer">
           ${comment.isEdit
@@ -185,6 +201,7 @@
     addLike()
     initEditElements()
     initSaveButtons()
+    replyToComment()
   };
 
   renderComments();
