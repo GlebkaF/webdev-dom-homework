@@ -1,9 +1,39 @@
+import { login, userUrl, token, baseUrl } from "./globalVariables.js";
+
 let formName = document.querySelector('.add-form-name');
 let formText = document.querySelector('.add-form-text');
 
-const getComments = ({ baseUrl }) => {
-    return fetch(baseUrl, {
-        method: 'GET'
+export const getComments = () => {
+    let requestParams;
+    if (window.localStorage.getItem("Token") === "") {
+        requestParams = {
+            method: 'GET'
+        };
+    }
+    else {
+        requestParams = {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${window.localStorage.getItem("Token")}`
+            }
+        };
+    }
+
+    return fetch(`${baseUrl}${window.localStorage.getItem("login") ? window.localStorage.getItem("login") : "default"}/comments`, requestParams)
+        .then((response) => {
+            if (response.status === 500) {
+                throw new Error('Сервер недоступен');
+            }
+            return response.json();
+        });
+};
+
+export const deleteComment = (index) => {
+    return fetch(`${baseUrl}${window.localStorage.getItem("login") ? window.localStorage.getItem("login") : "default"}/comments/${index}`, {
+        method: 'DELETE',
+        headers: {
+            Authorization: `Bearer ${window.localStorage.getItem("Token")}`
+        }
     })
         .then((response) => {
             if (response.status === 500) {
@@ -13,11 +43,54 @@ const getComments = ({ baseUrl }) => {
         });
 };
 
-const postComment = ({ baseUrl }) => {
-    return fetch(baseUrl, {
+export const postComment = () => {
+    formText = document.querySelector('.add-form-text');
+    return fetch(`${baseUrl}${window.localStorage.getItem("login") ? window.localStorage.getItem("login") : "default"}/comments`, {
         method: 'POST',
-        body: JSON.stringify({ text: formText.value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;'), name: formName.value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;'), forceError: true })
+        headers: {
+            Authorization: `Bearer ${window.localStorage.getItem("Token")}`
+        },
+        body: JSON.stringify({ text: formText.value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;') })
     });
 };
 
-export { getComments, postComment };
+export const loginUser = ({ loginInput, passwordInput }) => {
+    return fetch(`${userUrl}/login`, {
+        method: 'POST',
+        body: JSON.stringify({ login: loginInput, password: passwordInput })
+    })
+        .then((responseData) => {
+            if (responseData.status === 500) {
+                throw new Error('Сервер недоступен');
+            }
+            return responseData.json();
+        });
+};
+
+export const registrateUser = ({ loginInput, passwordInput, nameInput }) => {
+    return fetch(userUrl, {
+        method: 'POST',
+        body: JSON.stringify({ login: loginInput, password: passwordInput, name: nameInput })
+    })
+        .then((responseData) => {
+            if (responseData.status === 500) {
+                throw new Error('Сервер недоступен');
+            }
+            return responseData.json();
+        });
+};
+
+export const toggleLike = (index) => {
+    return fetch(`${baseUrl}${window.localStorage.getItem("login") ? window.localStorage.getItem("login") : "default"}/comments/${index}/toggle-like`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${window.localStorage.getItem("Token")}`
+        }
+    })
+        .then((responseData) => {
+            if (responseData.status === 500) {
+                throw new Error('Сервер недоступен');
+            }
+            return responseData.json();
+        });
+};

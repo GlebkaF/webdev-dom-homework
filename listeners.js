@@ -1,10 +1,8 @@
-import { renderComments } from './render.js';
-import { delay, addComment } from './utilities.js';
-import { commentsArr } from './globalVariables.js';
-
-let formName = document.querySelector('.add-form-name');
-let formText = document.querySelector('.add-form-text');
-let formButton = document.querySelector('.add-form-button');
+import { renderComments } from './renderComments.js';
+import { delay, addComment, getData } from './utilities.js';
+import { commentsArr, token, changeLogin, changeToken, changeUserName } from './globalVariables.js';
+import { loginUser, registrateUser, deleteComment, toggleLike } from "./API.js";
+import { renderLogin } from './renderLogin.js';
 
 const likeButtonsListener = () => {
     let likeBottons = document.querySelectorAll('.like-button');
@@ -14,15 +12,10 @@ const likeButtonsListener = () => {
             //Почему-то когда добавляю классом не применяется
             likeBotton.style.animation = 'rotating 2s linear infinite';
             delay(2000).then(() => {
-                if (commentsArr[likeBotton.dataset.indx].likeSet) {
-                    commentsArr[likeBotton.dataset.indx].countLikes -= 1;
-                    commentsArr[likeBotton.dataset.indx].likeSet = false;
-                }
-                else {
-                    commentsArr[likeBotton.dataset.indx].countLikes += 1;
-                    commentsArr[likeBotton.dataset.indx].likeSet = true;
-                }
-                renderComments();
+                toggleLike(likeBotton.dataset.indx)
+                .then(() => {
+                    getData();
+                });
             });
         });
     }
@@ -30,6 +23,7 @@ const likeButtonsListener = () => {
 
 const commentsListener = () => {
     let comments = document.querySelectorAll('.comment-text');
+    let formText = document.querySelector('.add-form-text');
 
     for (let comment of comments) {
         comment.addEventListener('click', () => {
@@ -53,10 +47,12 @@ const editButtonsListener = () => {
     let editBottons = document.querySelectorAll('.edit-button');
 
     for (let editBotton of editBottons) {
+       // if (!token) {
+            editBotton.disabled = true;
+        //}
         editBotton.addEventListener('click', () => {
             commentsArr[editBotton.dataset.indx].editComment = true;
-            quoteEdit =
-                renderComments();
+            renderComments();
         });
     }
 };
@@ -74,6 +70,10 @@ const saveCommentButtonsListener = () => {
 };
 
 const buttonDisable = () => {
+    let formName = document.querySelector('.add-form-name');
+    let formText = document.querySelector('.add-form-text');
+    let formButton = document.querySelector('.add-form-button');
+
     if (formName.value === "" || formText.value === "")
         formButton.disabled = true;
     else
@@ -91,4 +91,77 @@ const keyEnter = (event) => {
     }
 };
 
-export { likeButtonsListener, commentsListener, quoteListener, editButtonsListener, saveCommentButtonsListener, buttonDisable, deleteLastButtonFunc, keyEnter };
+const login = () => {
+    let loginInput = document.querySelector('.login-form__login').value;
+    let passwordInput = document.querySelector('.login-form__password').value;
+    loginUser({ loginInput, passwordInput })
+        .then((responseJson) => {
+            if (responseJson.error) {
+                alert(responseJson.error);
+            }
+            window.localStorage.setItem("Token", responseJson.user.token);
+            window.localStorage.setItem("userName", responseJson.user.name);
+            window.localStorage.setItem("login", responseJson.user.login);
+            getData();
+        });
+};
+
+
+const registrate = () => {
+    let loginInput = document.querySelector('.reg-form__login').value;
+    let passwordInput = document.querySelector('.reg-form__password').value;
+    let nameInput = document.querySelector('.reg-form__name').value;
+
+    registrateUser({ loginInput, passwordInput, nameInput })
+        .then((responseJson) => {
+            if (responseJson.error) {
+                alert(responseJson.error);
+            }
+            window.localStorage.setItem("Token", responseJson.user.token);
+            window.localStorage.setItem("userName", responseJson.user.name);
+            window.localStorage.setItem("login", responseJson.user.login);
+            getData();
+        });
+}
+
+
+const regButtonDisable = () => {
+    let formName = document.querySelector('.reg-form__name');
+    let formLogin = document.querySelector('.reg-form__login');
+    let formPassword = document.querySelector('.reg-form__password');
+    let formButton = document.querySelector('.reg-form__button');
+
+    if (formName.value === "" || formLogin.value === "" || formPassword.value.length < 5)
+        formButton.disabled = true;
+    else
+        formButton.disabled = false;
+};
+
+const loginButtonDisable = () => {
+    let formLogin = document.querySelector('.login-form__login');
+    let formPassword = document.querySelector('.login-form__password');
+    let formButton = document.querySelector('.login-form__button');
+
+    if (formPassword.value === "" || formLogin.value === "")
+        formButton.disabled = true;
+    else
+        formButton.disabled = false;
+};
+
+const deleteButtonsListener = () => {
+    let deleteBottons = document.querySelectorAll('.delete-button');
+
+    for (let deleteBotton of deleteBottons) {
+        if (!window.localStorage.getItem("Token")) {
+            deleteBotton.disabled = true;
+        }
+        deleteBotton.addEventListener('click', () => {
+            deleteComment(deleteBotton.dataset.indx)
+                .then(() => {
+                    getData();
+                });
+        });
+    }
+};
+
+export { likeButtonsListener, commentsListener, quoteListener, editButtonsListener, saveCommentButtonsListener, buttonDisable, deleteLastButtonFunc, keyEnter, login, registrate, regButtonDisable, loginButtonDisable, deleteButtonsListener };

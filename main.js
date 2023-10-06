@@ -1,6 +1,8 @@
 import { getData } from './utilities.js';
+import { renderLogin } from './renderLogin.js';
 
 let comments = document.querySelector('.comments');
+
 
 window.addEventListener('load', () => {
     let loaderText = document.createElement('p');
