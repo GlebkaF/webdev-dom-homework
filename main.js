@@ -1,14 +1,14 @@
     "use strict";
 
 import { getComments } from "./api.js";
+import { postComment } from "./api.js";
 
     const buttonElement = document.getElementById("add-button");
     const commentsElement = document.getElementById("comments");
     const nameInputElement = document.getElementById("name-input");
     const textInputElement = document.querySelector(".add-form-text");
     const textareaInputElement = document.getElementById("textarea-input");
-    const formsInputElement = document.querySelector(".add-form");
-    const commentEditText = document.querySelectorAll("comment-edit-text");
+
 
         // Ответ на комментарий
     const answerText = () => {
@@ -154,30 +154,11 @@ import { getComments } from "./api.js";
     buttonElement.disabled = true;
     buttonElement.textContent = 'Элемент добавляется...';
 
-    fetch('https://wedev-api.sky.pro/api/v1/evgeniya-ko/comments', {
-      method: "POST",
-      body: JSON.stringify({
+    
+      postComment({
         name: nameInputElement.value,
         text: textInputElement.value,
-        forceError: false,
-      }),
-    })
-        .then((response) => {
-          console.log(response);
-          if (nameInputElement.value.length < "3" || textInputElement.value.length < "3") {
-          alert("Имя и комментарий должны быть не короче 3 символов");
-            throw new Error('Ошибка');
-          }
-            if (response.status === 500) {
-            throw new Error("Сервер упал");
-          }
-          console.log("Время: " + (Date.now() - startAt));
-          return response;
-        })
-        .then((response) => {
-          return response.json();
-        })
-        .then((response) => {
+      }).then((response) => {
           console.log("Время: " + (Date.now() - startAt));
           return response;
         })
