@@ -34,12 +34,19 @@
       method: 'GET'
     })
       .then((response) => {
+        if (response.status === 500) {
+          throw new Error('Сервер упал');
+        }
         return response.json()
       })
       .then((responseData) => {
         waiter.style.display = 'none';
         comments = responseData.comments;
         renderComments();
+      })
+      .catch((error)=> {
+        alert('Сервер сломался, попробуй позже');
+        return;
       })
   }
 
@@ -86,8 +93,6 @@
             </li>`
     }).join('');
     listComments.innerHTML = commentsHTML;
-    addFormName.value = '';
-    addFormText.value = '';
   }
   renderComments();
 
@@ -104,18 +109,8 @@
     .replaceAll("&quot;", '"')
 
   const AddComment = () => {
-
-    addFormName.classList.remove('error');
-    addFormText.classList.remove('error');
-
-    addForm.style.display = 'none';
+    addForm.classList.add('add-form_disabled');
     wait.textContent = 'Комментарий добавляется...';
-
-    if (addFormName.value === '' || addFormText.value === '') {
-      addFormName.classList.add('error');
-      addFormText.classList.add('error');
-      return;
-    }
 
     fetch(commentsUrl, {
       method: 'POST',
@@ -123,9 +118,16 @@
         name: getSafeString(addFormName.value),
         text: getSafeString(addFormText.value),
         date: new Date(),
+        forceError: false,
       }),
     })
       .then((response) => {
+        if (response.status === 500) {
+          throw new Error('Сервер упал');
+        }
+        if (response.status === 400) {
+          throw new Error('Bad Request');
+        }
         return response.json();
       })
       .then((responseData) => {
@@ -133,12 +135,38 @@
         renderComments();
       })
       .then((data) => {
-        addForm.style.display = 'flex';
+        addForm.classList.remove('add-form_disabled');
+        addFormName.value = '';
+        addFormText.value = '';
+        addFormName.classList.remove('error');
+        addFormText.classList.remove('error');
+      })
+      .catch((error) => {
+        addForm.classList.remove('add-form_disabled');
+
+        if (error.message === 'Bad Request') {
+          if (addFormName.value === '' || addFormName.value.length < 3) {
+            addFormName.classList.add('error');
+          }
+          if (addFormText.value === '' || addFormText.value.length < 3) {
+            addFormText.classList.add('error');
+          }
+          alert('Имя и комментарий должны быть не короче 3 символов');
+          return;
+        }
+
+        if (error.message === 'Сервер упал') {
+          alert('Сервер сломался, попробуй позже');
+          return;
+        }
+
+        alert('Ошибка соединения, попробуй позже');
+        return;
+        
+      })
+      .finally(() => {
         wait.textContent = '';
       });
-
-    addFormName.value = '';
-    addFormText.value = '';
 
     getComments();
   }
@@ -195,7 +223,7 @@
     const likes = commentBlock.querySelector('.like-button');
     const com = comments.find(c => c.id == commentId);
     if (!com) return;
-    
+
     likes.classList.add('-loading-like');
 
     delay(2000).then(() => {
