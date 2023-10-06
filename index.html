@@ -128,75 +128,78 @@ buttonElement.addEventListener("click", () => {
        
         return;
     }
+    sendCommentToServer()
+})
 
-    //добавлять коммент в хранилище данных
-//     const newComment = createComment(nameInputElement.value
-//     .replaceAll("<", "&lt;") 
-//     .replaceAll(">", "&gt;"), 
-//     commInputElement.value 
-//     .replaceAll("<", "&lt;") 
-//     .replaceAll(">", "&gt;"));
-//     listElement.appendChild(newComment);
-//     attachCommentClickHandler(newComment);
-//     commInputElement.value = "";
-//     nameInputElement.value = "";
-// });
-
-const newComment = createComment(
-            nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-            commInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;")
-        );
-        listElement.appendChild(newComment);
-        attachCommentClickHandler(newComment);
-        commInputElement.value = "";
-        nameInputElement.value = "";
-    });
+// const newComment = createComment(
+//             nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+//             commInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;")
+//         listElement.appendChild(newComment);
+//         attachCommentClickHandler(newComment);
+//         commInputElement.value = "";
+//         nameInputElement.value = "";
+//     );
 
 
-    function createComment(name, text) {
-        const comment = document.createElement('li');
-        comment.className = 'comment';
+//     function createComment(name, text) {
+//         const comment = document.createElement('li');
+//         comment.className = 'comment';
 
-        const header = document.createElement('div');
-        header.className = 'comment-header';
-        header.innerHTML = `<div>${name}</div><div>${formatDate(new Date())}</div>`;
+//         const header = document.createElement('div');
+//         header.className = 'comment-header';
+//         header.innerHTML = `<div>${name}</div><div>${formatDate(new Date())}</div>`;
 
-        const body = document.createElement('div');
-        body.className = 'comment-body';
-        body.innerHTML = `<div class="comment-text">${text}</div>`;
+//         const body = document.createElement('div');
+//         body.className = 'comment-body';
+//         body.innerHTML = `<div class="comment-text">${text}</div>`;
 
-        const footer = document.createElement('div');
-        footer.className = 'comment-footer';
-        footer.innerHTML = `
-        <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button"></button>
-        </div>`;
+//         const footer = document.createElement('div');
+//         footer.className = 'comment-footer';
+//         footer.innerHTML = `
+//         <div class="likes">
+//             <span class="likes-counter">0</span>
+//             <button class="like-button"></button>
+//         </div>`;
 
-        comment.appendChild(header);
-        comment.appendChild(body);
-        comment.appendChild(footer);
+//         comment.appendChild(header);
+//         comment.appendChild(body);
+//         comment.appendChild(footer);
 
       
-        const likeButton = footer.querySelector('.like-button');
-        const likeCount = footer.querySelector('.likes-counter');
-        attachLikeHandler(likeButton, likeCount);
+//         const likeButton = footer.querySelector('.like-button');
+//         const likeCount = footer.querySelector('.likes-counter');
+//         attachLikeHandler(likeButton, likeCount);
 
-        return comment;
-    }
-
+//         return comment;
 
 
-    function renderComments(commentData) {
-        listElement.innerHTML = "";
-        commentData.forEach((comment) => {
-            const commentElement = createComment(comment.name, comment.text);
-            listElement.appendChild(commentElement);
-        });
+
+
+    function renderComments() {
+        const allCommentsHtml = commentsData.map(comment => {
+            return `<li class="comment">
+            <div class="comment-header">
+               <div>${comment.name}</div>
+                <div id="comment-date-1">${comment.date}</div>
+            </div>
+            <div class="comment-body">
+                <div class="comment-text">
+                    ${comment.text}
+                </div>
+            </div>
+            <div class="comment-footer">
+                <div class="likes">
+                    <span class="likes-counter">${comment.likes}</span>
+                    <button class="like-button"></button>
+                </div>
+            </div>
+        </li>`
+        }).join("")
+        listElement.innerHTML = allCommentsHtml;
     }
 
     let commentsData = [];
-    renderComments(commentsData);
+   
 
     const likeButtons = document.querySelectorAll(".like-button");
     const likeCounts = document.querySelectorAll(".likes-counter");
@@ -205,67 +208,32 @@ const newComment = createComment(
     });
 
 
-// const getComments = () => {
-//     let fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/yana-orlova/comments", {
-//         method: "GET",
-//     });
-//     fetchPromise.then((response) => {
-//             if (!response.ok) {
-//                 throw new Error("Network response was not ok");
-//             }
-//             return response.json();
-//         }).then((responseData) => {
-//             let appComments = responseData.comments.map((comment) => {
-//                 return {
-//                     name: comment.author.name,
-//                     text: comment.text,
-//                     date: comment.date,
-//                     likes: comment.likes,
-//                 }
-//             });
 
-//             commentsData = appComments;
-//             renderComments(commentsData);
-//         }).catch((error) => {
-//             console.error("Fetch error:", error);
-//         });
-//     }
 
-//     getComments();
-//     fetchPromise.then((response) => {
-//         response.json().then((responseData) => {
-//             let appComments = responseData.comments.map((comment) => {
-//                 return {
-//                     name: comment.author.name,
-//                     comment: comment.text,
-//                     date: comment.date,
-//                     likes: comment.likes,
-//                 }
-//             });
-
-// commentsData = appComments;
-
-function sendCommentToServer(comment) {
+    function sendCommentToServer(comment) {
         const postData = {
-            name: comment.querySelector('.comment-header div:first-child').textContent,
-            text: comment.querySelector('.comment-text').textContent,
-            date: formatDate(new Date()),
+            name: nameInputElement.value,
+            text: commInputElement.value,
         };
 
         fetch("https://wedev-api.sky.pro/api/v1/yana-orlova/comments", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
+            // headers: {
+            //     "Content-Type": "application/json",
+            // },
             body: JSON.stringify(postData),
         }).then((response) => {
             if (!response.ok) {
                 throw new Error("Network response was not ok");
             }
-            return response.json();
-        }).then((responseData) => {
-            // Обработка успешной отправки комментария (если нужно)
-            console.log("Comment sent successfully:", responseData);
+            
+        }).then(() => {
+            // Обработка успешной отправки комментария 
+            // Очищаем поля ввода
+            commInputElement.value = "";
+            nameInputElement.value = "";
+            getCommentsFromServer()
+            console.log("Comment sent successfully:");
         }).catch((error) => {
             console.error("Fetch error:", error);
         });
@@ -288,11 +256,12 @@ function sendCommentToServer(comment) {
                 text: comment.text,
                 date: comment.date,
                 likes: comment.likes,
+                isLike: comment.isLike,
             };
         });
 
         commentsData = appComments;
-        renderComments(commentsData);
+        renderComments();
     })
     .catch((error) => {
         console.error("Fetch error:", error);
@@ -302,31 +271,7 @@ function sendCommentToServer(comment) {
 // Вызываем getCommentsFromServer для загрузки комментариев при загрузке страницы
 getCommentsFromServer();
 
-// Функция для добавления нового комментария и отправки его на сервер
-function addCommentAndSendToServer(name, text) {
-    const newComment = createComment(name, text);
-    listElement.appendChild(newComment);
 
-    // Отправляем комментарий на сервер
-    sendCommentToServer(newComment);
-}
-
-// Обновляем обработчик кнопки "Написать" для добавления и отправки нового комментария
-buttonElement.addEventListener("click", () => {
-    commInputElement.style.backgroundColor = "";
-    nameInputElement.style.backgroundColor = "";
-    if (commInputElement.value === "" || nameInputElement.value === "") {
-        commInputElement.style.backgroundColor = "red";
-        nameInputElement.style.backgroundColor = "red";
-        return;
-    }
-
-    addCommentAndSendToServer(nameInputElement.value, commInputElement.value);
-
-    // Очищаем поля ввода
-    commInputElement.value = "";
-    nameInputElement.value = "";
-});
     
 
     console.log("It works!");
