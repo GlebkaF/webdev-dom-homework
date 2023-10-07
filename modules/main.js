@@ -1,16 +1,16 @@
 "use strict";
 
 import { getApiComments, postApiComment } from "./api.js";
+import { renderComments } from "./comments.js";
 
 let idCounter = 2;
-// const commentsUrl = 'https://wedev-api.sky.pro/api/v1/lyubov-khusnullina/comments';
 let comments = [];
 
 const getComments = () => {
     getApiComments().then((responseData) => {
         waiter.style.display = 'none';
         comments = responseData.comments;
-        renderComments();
+        renderComments({ comments });
     })
     .catch(()=> {
         alert('Сервер сломался, попробуй позже');
@@ -29,40 +29,10 @@ const listComments = document.querySelector('.comments');
 const waiter = document.querySelector('.waiter');
 const wait = document.querySelector('.wait');
 
-const options = {
-    year: '2-digit',
-    month: 'numeric',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-}
 
 addFormButton.setAttribute('disabled', true);
 
-const renderComments = () => {
-    if (!comments) return;
-    const commentsHTML = comments.map((comment) => {
-    return `<li class="comment" data-id="${comment.id}" data-name="${comment.author.name}">
-        <div class="comment-header">
-        <div>${comment.author.name}</div>
-        <div>${new Date(comment.date).toLocaleDateString('ru-RU', options).replace(',', '')}</div>
-        </div>
-        <div class="comment-body">
-        <div class="comment-text">
-            ${comment.text}
-        </div>
-        </div>
-        <div class="comment-footer">
-        <div class="likes">
-            <span class="likes-counter">${comment.likes}</span>
-            <button class="like-button" data-like="${comment.isLiked}"></button>
-        </div>
-        </div>
-        </li>`
-    }).join('');
-    listComments.innerHTML = commentsHTML;
-}
-renderComments();
+renderComments({ comments });
 
 const getSafeString = (str) => str.trim()
 .replaceAll("&", "&amp;")
@@ -110,7 +80,7 @@ const AddComment = () => {
             alert('Сервер сломался, попробуй позже');
             return;
         }
-        
+
         alert('Ошибка соединения, попробуй позже');
         return;
 
