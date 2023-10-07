@@ -1,16 +1,14 @@
 import { getComments } from "./api.js";
 import { renderComments } from "./renderComments.js";
-
+import { format } from "date-fns";
 let comments = [];
-
-const RUDate = Intl.DateTimeFormat();
 
 function fetchAndRenderTasks() {
   getComments().then((responseData) => {
     const appComments = responseData.comments.map((comment) => {
       return {
         name: comment.author.name,
-        date: RUDate.format(new Date(comment.date)),
+        date: format(new Date(comment.date), "dd/MM/yyyy hh:mm"),
         likes: comment.likes,
         isLiked: false,
         text: comment.text,
