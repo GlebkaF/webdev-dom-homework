@@ -1,23 +1,22 @@
 "use strict";
 
 import { getApiComments, postApiComment } from "./api.js";
-import { renderComments } from "./comments.js";
+import { renderComments, switcher } from "./comments.js";
 
 let idCounter = 2;
-let comments = [];
+// let comments = [];
 
 const getComments = () => {
     getApiComments().then((responseData) => {
         waiter.style.display = 'none';
-        comments = responseData.comments;
+        const comments = responseData.comments;
         renderComments({ comments });
     })
     .catch(()=> {
-        alert('Сервер сломался, попробуй позже');
+        //alert('Сервер сломался, попробуй позже');
         return;
     })
 }
-
 getComments();
 
 const addForm = document.querySelector('.add-form');
@@ -32,7 +31,7 @@ const wait = document.querySelector('.wait');
 
 addFormButton.setAttribute('disabled', true);
 
-renderComments({ comments });
+
 
 const getSafeString = (str) => str.trim()
 .replaceAll("&", "&amp;")
@@ -116,56 +115,6 @@ removeFormButton.addEventListener('click', () => {
     lastChild.remove();
     comments.pop();
 })
-
-const switcher = (event) => {
-    if (!event || !event.target) return;
-    const target = event.target;
-
-    if (target.classList.contains('like-button')) {
-        addLikesElements(target);
-        return;
-    }
-
-    if (target.classList.contains('comment-text')) {
-        areaFunction(target);
-        return;
-    }
-}
-
-const areaFunction = (target) => {
-    const commentBlock = target.closest('.comment');
-    const commentId = commentBlock.dataset.name;
-    addFormText.value = `${'>'}` + getUnsafeString(target.innerHTML) + ' \n' + commentId;
-}
-
-const addLikesElements = (target) => {
-    const commentBlock = target.closest('.comment');
-    const commentId = commentBlock.dataset.id;
-    const likes = commentBlock.querySelector('.like-button');
-    const com = comments.find(c => c.id == commentId);
-    if (!com) return;
-
-    likes.classList.add('-loading-like');
-
-    delay(2000).then(() => {
-        if (com.isLiked) {
-        com.likes--;
-        } else {
-        com.likes++;
-        }
-        com.isLiked = !com.isLiked;
-        com.isLikeLoading = false;
-        renderComments();
-    });
-}
-
-function delay(interval = 300) {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-        resolve();
-        }, interval);
-    });
-}
 
 listComments.addEventListener('click', switcher);
 
