@@ -16,8 +16,8 @@ export function renderComments({ comments, fetchAndRenderTasks, name }) {
               comment.isEdit
                 ? `<textarea class='add-form-text comment-edit-text'>${comment.text}</textarea>`
                 : `<div class="comment-text" style="white-space:pre-line">
-							${comment.text}
-						</div>`
+                                            ${comment.text}
+                                        </div>`
             }
 					</div>
 					<button class="add-form-button edits" data-index='${index}'>${

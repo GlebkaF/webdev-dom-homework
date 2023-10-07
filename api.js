@@ -62,7 +62,14 @@ export function login({ login, password }) {
       password,
     }),
   }).then((response) => {
-    return response.json();
+    if (response.status === 500) {
+      throw new Error("Ошибка сервера");
+    } else if (response.status === 400) {
+      alert("Неверный логин или пароль!");
+      throw new Error("Неверный запрос!");
+    } else {
+      return response.json();
+    }
   });
 }
 
@@ -75,6 +82,12 @@ export function register({ login, password, name }) {
       name,
     }),
   }).then((response) => {
-    return response.json();
+    if (response.status === 500) {
+      throw new Error("Ошибка сервера");
+    } else if (response.status === 400) {
+      throw new Error("Неверный запрос!");
+    } else {
+      return response.json();
+    }
   });
 }

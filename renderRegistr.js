@@ -23,6 +23,18 @@ export function renderRegister({ fetchAndRenderTasks }) {
   const nameRegisterElement = document.getElementById("login-name");
 
   btnLoginElement.addEventListener("click", () => {
+    if (loginInputElement.value.length < 3) {
+      alert("Логин не может быть меньше 3 символов!");
+      return;
+    }
+    if (passwordInputElement.value.length < 3) {
+      alert("Пароль не может быть меньше 3 символов!");
+      return;
+    }
+    if (nameRegisterElement.value.length < 3) {
+      alert("Имя не может быть меньше 3 символов!");
+      return;
+    }
     register({
       login: loginInputElement.value,
       password: passwordInputElement.value,
