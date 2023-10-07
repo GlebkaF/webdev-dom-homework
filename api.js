@@ -12,10 +12,6 @@ export function getComments() {
   });
 }
 
-
-
-
-
  export function postComment(firstValue, secondValue, addForm, textForLoading) {
     return fetch(
       "https://wedev-api.sky.pro/api/v1/alexander-potapov/comments",
