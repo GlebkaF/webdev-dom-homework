@@ -1,34 +1,41 @@
-import { getApiComments, postApiComment } from "./api.js";
-import { renderComments, switcher } from "./comments.js";
+import { postApiComment } from "./api.js";
+import { loadComments } from "./comments.js";
+
 
 const addForm = document.querySelector('.add-form');
 const addFormName = document.querySelector('.add-form-name');
 const addFormText = document.querySelector('.add-form-text');
 const addFormButton = document.querySelector('.add-form-button');
-const listComments = document.querySelector('.comments');
-const waiter = document.querySelector('.waiter');
 const wait = document.querySelector('.wait');
 
 const getSafeString = (str) => str.trim()
-.replaceAll("&", "&amp;")
-.replaceAll("<", "&lt;")
-.replaceAll(">", "&gt;")
-.replaceAll('"', "&quot;");
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;");
 
+export const init = () => {
+    addFormButton.setAttribute('disabled', true);
 
-export const getComments = () => {
-    getApiComments().then((responseData) => {
-        waiter.style.display = 'none';
-        const comments = responseData.comments;
-        renderComments({ comments });
+    document.addEventListener('keydown', (e) => {
+        if (e.keyCode === 13) {
+            e.preventDefault();
+            AddComment();
+        }
+    });
+
+    addFormButton.addEventListener('click', () => {
+        AddComment();
     })
-    .catch(()=> {
-        //alert('Сервер сломался, попробуй позже');
-        return;
-    })
+
+    addFormName.addEventListener('input', (e) => {
+        if (addFormName.value === '') {
+            addFormButton.setAttribute('disabled', true);
+        } else {
+            addFormButton.removeAttribute('disabled')
+        }
+    });
 }
-
-addFormButton.setAttribute('disabled', true);
 
 export const AddComment = () => {
     addForm.classList.add('add-form_disabled');
@@ -38,7 +45,7 @@ export const AddComment = () => {
         name: getSafeString(addFormName.value),
         text: getSafeString(addFormText.value),
         date: new Date(),
-        forceError: false, 
+        forceError: false,
     }).then(() => {
         addForm.classList.remove('add-form_disabled');
         addFormName.value = '';
@@ -68,33 +75,14 @@ export const AddComment = () => {
         alert('Ошибка соединения, попробуй позже');
         return;
 
-        })
-        .finally(() => {
-            wait.textContent = '';
-        });
-    
-    getComments();
+    })
+    .finally(() => {
+        wait.textContent = '';
+    });
+
+    loadComments();
 }
 
-
-
-addFormName.addEventListener('input', (e) => {
-    if (addFormName.value === '') {
-        addFormButton.setAttribute('disabled', true);
-    } else {
-        addFormButton.removeAttribute('disabled')
-    }
-});
-
-addFormButton.addEventListener('click', () => {
-    AddComment();
-})
-
-document.addEventListener('keydown', (e) => {
-    if (e.keyCode === 13) {
-        e.preventDefault();
-        AddComment();
-    }
-});
-
-listComments.addEventListener('click', switcher);
+export const addCommentText = (text) => {
+    addFormText.value = `${'>'}` + text;
+}

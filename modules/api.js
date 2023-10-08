@@ -1,15 +1,18 @@
+import { renderComments } from "./comments.js";
+
 const commentsUrl = 'https://wedev-api.sky.pro/api/v1/lyubov-khusnullina/comments';
 
 export function getApiComments() {
     return fetch(commentsUrl, {
-    method: 'GET'
-})
-    .then((response) => {
-        if (response.status === 500) {
-            throw new Error('Сервер упал');
-        }
-        return response.json()
+        method: 'GET'
     })
+        .then((response) => {
+            if (response.status === 500) {
+                throw new Error('Сервер упал');
+            }
+            const res = response.json();
+            return res;
+        })
 }
 
 export function postApiComment({ name, text, date, forceError }) {
@@ -19,22 +22,21 @@ export function postApiComment({ name, text, date, forceError }) {
             name: name,
             text: text,
             date: date,
-            forceError: forceError, 
+            forceError: forceError,
         }),
     })
-    .then((response) => {
-        if (response.status === 500) {
-            throw new Error('Сервер упал');
-        }
-        if (response.status === 400) {
-            throw new Error('Bad Request');
-        }
-        return response.json();
-    })
-    .then((responseData) => {
-        comments = responseData.comments;
-        renderComments();
-    })
+        .then((response) => {
+            if (response.status === 500) {
+                throw new Error('Сервер упал');
+            }
+            if (response.status === 400) {
+                throw new Error('Bad Request');
+            }
+            return response.json();
+        })
+        .then(() => {
+            renderComments();
+        })
 }
 
 
