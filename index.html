@@ -196,16 +196,23 @@ buttonElement.addEventListener("click", () => {
         </li>`
         }).join("")
         listElement.innerHTML = allCommentsHtml;
+        
+        const likeButtons = document.querySelectorAll(".like-button");
+        const likeCounts = document.querySelectorAll(".likes-counter");
+        likeButtons.forEach((button, index) => {
+        attachLikeHandler(button, likeCounts[index]);
+    });
+        
     }
 
     let commentsData = [];
    
 
-    const likeButtons = document.querySelectorAll(".like-button");
-    const likeCounts = document.querySelectorAll(".likes-counter");
-    likeButtons.forEach((button, index) => {
-        attachLikeHandler(button, likeCounts[index]);
-    });
+    // const likeButtons = document.querySelectorAll(".like-button");
+    // const likeCounts = document.querySelectorAll(".likes-counter");
+    // likeButtons.forEach((button, index) => {
+    //     attachLikeHandler(button, likeCounts[index]);
+    // });
 
 
 
