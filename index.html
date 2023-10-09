@@ -94,29 +94,53 @@
     // -active-like"
     const renderComments = () => {
       const commentsHTML = comments
-        .map((comment) => {
-          return `<li class="comment">
-      <div class="comment-header">
-        <div>${comment.name}</div>
-        <div>${comment.date}</div>
-      </div>
-      <div class="comment-body">
-        <div class="comment-text">
-          ${comment.text}
-        </div>
-      </div>
-      <div class="comment-footer">
-        <div class="likes">
-          <span class="likes-counter">${comment.likes}</span>
-          <button class="like-button"></button>
-        </div>
-      </div>
-    </li>`;
+        .map((comment, index) => {
+          return `<li class="comment" id ="comment" data-index="${index}">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.likes}</span>
+              <button class="like-button ${
+                comment.isLike ? "-active-like" : ""
+              }" ></button>
+            </div>
+          </div>
+        </li>`;
         })
         .join("");
       ulElements.innerHTML = commentsHTML;
+
+      const likeButtons = document.querySelectorAll(".like-button");
+      likeButtons.forEach((likeButton, index) => {
+        likeButton.addEventListener("click", (event) => {
+          event.stopPropagation();
+          likeComment(index);
+          renderComments();
+        });
+      });
+    };
+
+    const likeComment = (index) => {
+      const comment = comments[index];
+      if (comment.isLike) {
+        comment.likes--;
+        comment.isLike = false;
+      } else {
+        comment.likes++;
+        comment.isLike = true;
+      }
     };
     renderComments();
+
+    // renderComments();
 
     //Логика, которая отрабатывает после того, когда нажимается кнопки!
     const input = document.getElementById("nameInput");
