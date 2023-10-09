@@ -8,10 +8,13 @@
  
   <body>
     <div class="container">
+      <div class="list-loader hidden">
+        <span>Комментарии загружаются...</span>
+      </div>
       <ul id="list" class="comments">
-        
+
       </ul>
-      <div class="add-form">
+      <div class="add-form hidden">
         <input id="name-input"
           type="text"
           class="add-form-name"
@@ -24,10 +27,14 @@
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button id="add-button" class="add-form-button">Написать</button>
+          <button id="add-button" class="add-form-button " >Написать</button>
         </div>
       </div>
+      <div class="comment-loader hidden">
+        <span>Комментарий отправляется</span>
+      </div>
     </div>
+    
     
   </body>
   <style>
@@ -41,34 +48,90 @@
 
   <script>
     "use strict";
-  
-
-    const comments = [
-    {
-        name: 'Глеб Фокин',
-        date: "12.02.22 12:18",
-        comment: 'Это будет первый комментарий на этой странице',
-        likes: 3,
-        islike: false
-    },
-    {
-        name: 'Варвара Н',
-        date: "13.02.22 19:22",
-        comment: 'Мне нравится как оформлена эта страница! ❤',
-        likes: 75,
-        islike: true
-    }
-];
+   
 
    const listElements = document.getElementById("list");
    const nameElement = document.querySelector('.add-form-name');
    const textElement = document.querySelector('.add-form-text');
    const buttonElements = document.querySelector('.add-form-button');
-   const deleteButtonElement = document.querySelector('.delete-button')
-   
+   const deleteButtonElement = document.querySelector('.delete-button');
+   let comments = [];
 
+   function hideAddForm (){
+    const form = document.querySelector(".add-form");
+    form.classList.add("hidden");
+   }
+   function showAddForm(){
+    const form = document.querySelector(".add-form");
+    form.classList.remove("hidden");
+   }
+
+   function showLoadingIndicatorComments() {
+    const loader = document.querySelector(".comment-loader");
+    loader.classList.remove("hidden");
+   }
+   function deleteLoadingIndicatorComments(){
+    const loader = document.querySelector(".comment-loader");
+      loader.classList.add("hidden");
+
+   }
+
+   function showLoadingIndicator() {
+    const loader = document.querySelector(".list-loader");
+    loader.classList.remove("hidden");
+  
+    }
+
+    function deleteLoadingIndicator() {
+      const loader = document.querySelector(".list-loader");
+      loader.classList.add("hidden");
+    }
+
+   function correctDate(date) {
+       let currentDate = new Date(date);
+       let todayDay = currentDate.getDate();
+       let todayMonth = currentDate.getMonth() + 1;
+       let todayYear = String(currentDate.getFullYear()).slice(-2);
+      let todayHours = currentDate.getHours();
+      let todayMinutes = currentDate.getMinutes();
+      todayDay = todayDay < 10 ? "0" + todayDay : todayDay;
+      todayMonth = todayMonth < 10 ? "0" + todayMonth : todayMonth;
+      todayHours = todayHours < 10 ? "0" + todayHours : todayHours;
+       todayMinutes = todayMinutes < 10 ? "0" + todayMinutes : todayMinutes;
+
+       let formattedDate = `${todayDay}.${todayMonth}.${todayYear} ${todayHours}:${todayMinutes} `;
+       return formattedDate;
+     }
+   
+   function getFetch() {
+   showLoadingIndicator();
+   hideAddForm();
+
+   fetch('https://wedev-api.sky.pro/api/v1/alexandr-trankov/comments', {
+    method: "GET"
+     })
+     .then((response) => response.json()) 
+     .then((responseData) => {
+          const appComment = responseData.comments.map((comment) => {
+        
+            return {
+               name: comment.author.name,
+               date: correctDate(comment.date),
+               text: comment.text,
+               likes: comment.likes,
+               islike: false,
+             }
+           });
+comments = appComment
+renderElements();
+deleteLoadingIndicator(); 
+showAddForm();
+}) 
+
+}
+getFetch();
 function renderElements (){
-    const g = comments.map((element, index)=>{
+  const commentsHTML = comments.map((element, index)=>{
         return `<li class="comment" data-index="${index}" >
         <div class="comment-header">
           <div>${element.name}</div>
@@ -76,7 +139,7 @@ function renderElements (){
         </div>
         <div class="comment-body">
           <div class="comment-text">
-            ${element.comment}
+            ${element.text}
           </div>
         </div>
         <div class="comment-footer">
@@ -90,13 +153,15 @@ function renderElements (){
       </li>`
       
     }).join("");
-    list.innerHTML = g;
-    addLike();
+    list.innerHTML = commentsHTML;
     commentOnComment();
     deleteComment();
-}
-renderElements();
+    addLike();
+    addComment();
+ }
+
 function addLike () {
+ 
   const likeElements = document.querySelectorAll('.like-button');
   for(let like of likeElements) {
     like.addEventListener('click', (event) => { 
@@ -112,99 +177,75 @@ function addLike () {
       }
       renderElements();
     })
-  }
-
-}
-
+  }}
+  
  function commentOnComment() {
     const commentOnComment = document.querySelectorAll('.comment');
      for(let comment of commentOnComment) {
      comment.addEventListener('click', () => {
        let index = comment.dataset.index
      let object = comments[index];
-      commentInputElement.value = `${object.comment}  ${object.name}`
+      commentInputElement.value = `${object.text}  ${object.name}`
      renderElements();
      })
-    
     }
  }
-
     const buttonElement = document.getElementById("add-button");
     const listElement = document.getElementById("list");
     const nameInputElement = document.getElementById("name-input");
     const commentInputElement = document.getElementById("comment-input");
-    const currentDate = new Date ().toLocaleString();
+    const currentDate = new Date ().toLocaleString().slice(0, -3);
+    
 
-    function addComment () {
-
-    buttonElement.addEventListener('click', () => {
-      let data = new Date(); 
- 
-let formatDay; 
-  if (data.getDate() < 10) { 
-    formatDay = "0" + data.getDate(); 
-  } else {formatDay = data.getDate()} 
-
-let formatMonth; 
-  if (data.getMonth() < 10) { 
-    formatMonth = "0" + (data.getMonth() + 1); 
-  } else {formatMonth = data.getMonth() + 1} 
-
-let formatHours; 
-  if (data.getHours() < 10) { 
-    formatHours = "0" + data.getHours(); 
-  } else {formatHours = data.getHours()} 
-
-let formatMinutes; 
-  if (data.getMinutes() < 10) { 
-    formatMinutes = "0" + data.getMinutes(); 
-  } else {formatMinutes = data.getMinutes()} 
-  
-  let formatSeconds; 
-  if (data.getSeconds() < 10) { 
-    formatSeconds = "0" + data.getSeconds(); 
-  } else {formatSeconds = data.getSeconds()} 
-
-let formatYear; 
-  formatYear = data.getFullYear().toString().substr(2,2) 
-
-
-  let formatDate = formatDay + "." + formatMonth + "." + formatYear + " " + formatHours + ":" + formatMinutes + ":" + formatSeconds;
-      comments.push({
-        name: nameElement.value
+function addComment() {
+  buttonElement.addEventListener('click', () => {
+      nameInputElement.classList.remove("error");
+      commentInputElement.classList.remove("error");
+       if (nameInputElement.value === '' || commentInputElement.value === '') {
+        nameInputElement.classList.add("error");
+        commentInputElement.classList.add("error");
+        return;
+       }
+       const nameInComment = nameElement.value 
+       const textInComment = textElement.value
+       showLoadingIndicatorComments();
+       hideAddForm();
+       fetch('https://wedev-api.sky.pro/api/v1/alexandr-trankov/comments', {
+       method: "POST",
+        body:JSON.stringify ({
+       text: textInComment
+        .replaceAll("<", "&lt")
+        .replaceAll(">", "&gt")
         .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;"),
-        date: formatDate,
-        comment: textElement.value
+       name: nameInComment
+        .replaceAll("<", "&lt")
+        .replaceAll(">", "&gt")
         .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;"),
-        likes: 0,
-        islike: false
-      });
-      renderElements();
+       })
+       
+  })
+  .then(() => {
+    deleteLoadingIndicatorComments();
+    showAddForm();
       nameElement.value = "";
       textElement.value = "";
-      })
-      
-  }
-   addComment();
+      getFetch();
+      deleteLoadingIndicator();  
+       })
+      });
+}
 
    function deleteComment () {
     const buttonDelete = document.querySelectorAll('.delete-button');
     for( let button of buttonDelete) {
       button.addEventListener('click', (event) => {
-
         let index = button.dataset.index
         comments.splice(index, 1);
         event.stopPropagation();
        renderElements();
       })
-    }
-   };
-   
+    }};
   </script>
 </html>
