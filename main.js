@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
             event.preventDefault();
             if (event.keyCode === 13) {
                 document.getElementById("addCommentButton").click();
-            }
+            } 
         });
 
 
