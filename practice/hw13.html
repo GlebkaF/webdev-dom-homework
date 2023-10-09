@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Урок "Асинхронность"</title>
+  </head>
+
+  <body>
+    <h1 id="page-title">Список задач</h1>
+    <ul class="tasks" id="list">
+      <!-- Список рендерится из JS -->
+    </ul>
+    <br />
+    <div class="form">
+      <h3 class="form-title">Форма добавления</h3>
+      <div class="form-row">
+        Что нужно сделать:
+        <input
+          type="text"
+          id="text-input"
+          class="input"
+          placeholder="Выпить кофе"
+        />
+      </div>
+      <br />
+      <button class="button" id="add-button">Добавить</button>
+    </div>
+  </body>
+
+  <script>
+    const buttonElement = document.getElementById("add-button");
+    const listElement = document.getElementById("list");
+    const textInputElement = document.getElementById("text-input");
+
+//     Для асинхронных запросов к API в JavaScript есть глобальная функция 
+// fetch  Функция принимает адрес API и параметры запроса, а возвращает 
+// Promise результата (дословный перевод — «обещание результата»):
+    //  const fetchPromise = fetch (
+    //      // 'https://webdev-hw-api.vercel.app',
+    //      // 'https://wedev-api.sky.pro',
+    //      'https://wedev-api.sky.pro/api/todos',
+    //      //'https://wedev-api.sky.pro/api/tasks/random-red',
+    //      {
+    //          metod: "GET",
+    //      }
+    //  );
+    //  console.log(fetchPromise);
+    //    //Подписываюсь на успешное завершение запроса с помощью THEN
+    //  fetchPromise.then((response) => {
+    //      console.log(response);
+    //      // Запускаем, преобразовываем сырые данные от API в JSON-формат
+    //      const jsonPromise = response.json();
+    //     // Подписываемся на результат преобразования с помощью THEN
+    //      jsonPromise.then((responseData) => {
+    //          console.log(responseData.color);
+    //          document.body.style.background = responseData.color;
+    // tasks = responseData.todos;
+    // //tasks.push(responseData.todos);
+    // renderTasks();
+    // console.log(tasks);
+    //      });
+    //  });
+
+    
+    //// ТЕст перевода объекста в JSON строку и спаршу JSON строку обратно в объект
+    const obj = {
+        name: "asd",
+        list: [{id: 1}, {id: 2}],
+    };
+
+//     //перевожу объект в JSON строку
+    // const jsonObj = JSON.stringify(obj);
+    // console.log(jsonObj);
+
+//     //паршу JSON строку в объект
+  //  const objFormJson = JSON.parse(jsonObj);
+  //   console.log(objFormJson);
+
+const fetchPromise = fetch(
+  //'https://wedev-api.sky.pro/api/todos',
+   ////'https://webdev-hw-api.vercel.app',
+   ////'https://wedev-api.sky.pro',
+   'https://webdev-hw-api.vercel.app/api/todos', //сделать выпить заварить
+      {
+      method: "GET"
+      });
+
+      fetchPromise.then((response) => {
+      console.log(response);
+
+      //Получить данные из API в приложение 
+const jsonPromise = response.json();
+      jsonPromise.then((responseData) => {
+          console.log(responseData);
+      tasks = responseData.todos;
+      renderTasks();
+    });
+
+});
+
+
+    let tasks = [
+      // их можно удалить чтоб нен моргали при загрузке приложения
+      // {
+      //   text: "Купить чай"
+      // },
+      // {
+      //   text: "Заварить чай"
+      // },
+      // {
+      //   text: "Выпить чай"
+      // }
+    ];
+
+    const renderTasks = () => { //Начало рендера------//Изменил для удаления по API <button data-index="${index}" class="button delete-button">Удалить</button>-----------------
+      const tasksHtml = tasks
+        .map((task) => {
+          return `
+          <li class="task">
+            <p class="task-text">
+              ${task.text
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")}
+                
+                 <button data-id="${task.id}" class="button delete-button">Удалить</button>
+              
+            </p>
+          </li>`;
+        })
+        .join("");
+
+      listElement.innerHTML = tasksHtml;
+      const deleteButtons = document.querySelectorAll(".delete-button");
+
+      for (const deleteButton of deleteButtons) {
+        deleteButton.addEventListener("click", (event) => {
+          event.stopPropagation();
+deleteButton.innerHTML = "Задача удаляется...";
+setTimeout(() => {
+          // меняю на удаление по id
+          //const index = deleteButton.dataset.index;
+          //Создаю переменную для удаления по id и Подписываемся на успешное завершение запроса
+            const id = deleteButton.dataset.id; 
+
+//Этот код удаления из локольного хранилища меняю на код удаления из удаленного хранилища по API
+          //TODO: Удалить из локального хранилища данных
+          // tasks.splice(index, 1);
+
+//Создаю переменную для удаления по id и Подписываемся на успешное завершение запроса
+
+
+          fetch("https://webdev-hw-api.vercel.app/api/todos/" + id,
+      {
+      method: "DELETE",
+      }).then((response) => {
+      //Получить данные из API в приложение 
+response.json().then((responseData) => {
+          console.log(responseData);
+          
+//Получили данные и рендерим их в приложении
+      tasks = responseData.todos;
+      renderTasks();
+    });
+});
+
+          renderTasks();
+            }, 1000);
+        });
+      };
+
+const pageTitleEl = document.getElementById('page-title');
+  pageTitleEl.addEventListener ('click', () => {
+        pageTitleEl.textContent ="3";
+        setTimeout(() => {
+            pageTitleEl.textContent = "2";
+            setTimeout(() => {
+                pageTitleEl.textContent = "1";
+                setTimeout (() => {
+                    pageTitleEl.textContent = "Список задач";
+                    
+                }, 1000);
+            }, 1000);
+        }, 1000);
+        
+    });
+
+
+    }//Конец рендера-----------------------
+    renderTasks();
+
+    buttonElement.addEventListener("click", () => {
+      if (textInputElement.value === "") {
+        return;
+      }
+
+
+      //// Так как передаю данные на удаленное хранилище по API, то коментирую эти строки передачи данных на локальное хранилище.
+      // tasks.push({
+      //   text: textInputElement.value
+      //           .replaceAll("&", "&amp;")
+      //           .replaceAll("<", "&lt;")
+      //           .replaceAll(">", "&gt;")
+      //           .replaceAll('"', "&quot;"),
+      // }); //// Конец передачи на локальное хранилище
+
+
+      ////ЗДЕСЬ СЛИШКОМ МНОГО ВЛОЖЕННОСТИ, ПОЭТОМУ НИЖЕ ПРИМЕР ЭТОГО КОДА ЧЕРЕЗ ЦЕПОЧКУ ПРОМИСОВ
+//      fetch(
+//   //'https://wedev-api.sky.pro/api/todos',
+//    'https://webdev-hw-api.vercel.app/api/todos', //1 часть урока - сделать выпить заварить
+//       {
+//       method: "POST",
+//       body: JSON.stringify({
+//           text: textInputElement.value
+//         }),
+//       }).then((response) => {
+//       //Получить данные из API в приложение 
+// response.json().then((responseData) => {
+
+//   fetch("https://webdev-hw-api.vercel.app/api/todos",
+//       {
+//       method: "GET"
+//       }).then((response) => {
+// response.json().then((responseData) => {
+//       tasks = responseData.todos;
+//       renderTasks();
+//     });
+
+// });        
+
+//       tasks = responseData.todos;
+//       renderTasks();
+//     });
+// });
+
+
+////Пример 1 цепочки промиссов-------------------------------
+
+// fetch("https://webdev-hw-api.vercel.app/api/todos",
+// {
+//   method: "POST",
+//   body: JSON.stringify({
+//     text: textInputElement.value
+//   }),
+// }) //функция фетч возвращает промис и я подписываюсь на нее через респонс
+//   .then((response) => {
+//   return response.json() // тоже возвращает промис
+// })
+//   .then((responseData) => {//вызовится после завершения предыдущего промиса
+//     return fetch("https://webdev-hw-api.vercel.app/api/todos",
+//       {
+//       method: "GET",
+//       });
+// })
+//   .then((response) => {
+//     return response.json()
+// })
+//   .then((responseData) => {
+//     tasks = responseData.todos;
+//     renderTasks();
+//   });
+
+  ////Пример 2 цепочки промиссов------------------------------
+const startTime = Date.now();
+console.log("Начинаем делать запрос");
+buttonElement.disabled = true;
+buttonElement.textContent = "Элемент добавляется..."
+
+
+fetch("https://webdev-hw-api.vercel.app/api/todos",
+{
+  method: "POST",
+  body: JSON.stringify({
+    text: textInputElement.value
+  }),
+}) //функция фетч возвращает промис и я подписываюсь на нее через респонс
+          .then((response) => {
+            console.log("Время: " + (Date.now() - startTime));
+            return response;
+          })  
+.then((response) => {
+  return response.json() // тоже возвращает промис
+})
+          .then((response) => {
+            console.log("Время: " + (Date.now() - startTime));
+            return response;
+          })  
+  .then((responseData) => {//вызовится после завершения предыдущего промиса
+    return fetch("https://webdev-hw-api.vercel.app/api/todos",
+      {
+      method: "GET",
+      });
+})
+          .then((response) => {
+            console.log("Время: " + (Date.now() - startTime));
+            return response;
+          })  
+  .then((response) => {
+    return response.json()
+})
+          .then((response) => {
+            console.log("Время: " + (Date.now() - startTime));
+            return response;
+          })  
+  .then((responseData) => {
+    tasks = responseData.todos;
+    renderTasks();
+    return "Блокировка кнопки при добавлении";
+  })
+            .then((response) => {
+            console.log("Время: " + (Date.now() - startTime));
+            return response;
+          })  
+    .then((data) => {
+      console.log(data);
+      buttonElement.disabled = false;
+      buttonElement.textContent = "Добавить еще элемент"
+    });
+  
+
+
+
+      renderTasks();
+
+      textInputElement.value = "";
+    });
+  </script>
+</html>

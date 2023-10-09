@@ -1,0 +1,248 @@
+                              <!-- 1 -->
+<!-- //Юра написал приложение-счетчик, но код работает с ошибкой: обратный отсчет перескакивает с 4 сразу на 1. Почему код, который написал Юра, не сработал? Исправьте ошибку. 💡 Функция delay возвращает промис, который выполнится через переданное количество миллисекунд, не изменяйте внутренности функции delay. -->
+<!-- <!DOCTYPE html>
+<html>
+  <head>
+    <title>Counter</title>
+  </head>
+
+  <body>
+    <button>Click me</button>
+  </body>
+
+  <script>
+    document.querySelector("button").addEventListener("click", () => {
+      document.body.innerHTML = "6";
+      delay(1000)
+        .then(() => {
+          document.body.innerHTML = "5";
+          return delay(1000);
+        })
+        .then(() => {
+          document.body.innerHTML = "4";
+          return delay(1000);
+        })
+        .then(() => {
+          document.body.innerHTML = "3";
+          return delay(1000);
+        })
+        .then(() => {
+          document.body.innerHTML = "2";
+          return delay(1000);
+        })
+        .then(() => {
+          document.body.innerHTML = "1";
+          return delay(1000);
+        })
+        .then(() => {
+          document.body.innerHTML = "Done";
+        });
+    });
+
+    function delay(interval = 1000) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, interval);
+      });
+    }
+  </script>
+</html> -->
+
+                                  <!-- 2 -->
+
+<!-- //Юра отрефакторил код из предыдущего задания, чтобы избавиться от дублирующихся вызовов delay(1000), но код сломался, счетчик не работает.
+Что случилось? Исправьте ошибку. -->
+<!-- <!DOCTYPE html>
+<html>
+  <head>
+    <title>Counter</title>
+  </head>
+
+  <body>
+    <button>Click me</button>
+  </body>
+
+  <script>
+    document.querySelector("button").addEventListener("click", () => {
+      document.body.innerHTML = "6";
+      delayForSecond()
+
+      .then(() =>{  
+          document.body.innerHTML = "5";
+          return delayForSecond();
+        })
+        .then(() => {
+          document.body.innerHTML = "4";
+          return delayForSecond();
+        })
+        .then(() => {
+          document.body.innerHTML = "3";
+          return delayForSecond();
+        })
+        .then(() => {
+          document.body.innerHTML = "2";
+          return delayForSecond();
+        })
+        .then(() => {
+          document.body.innerHTML = "1";
+          return delayForSecond();
+        })
+        .then(() => {
+          document.body.innerHTML = "0";
+        });
+      });
+
+    function delayForSecond() {
+    return  delay(1000); //тут return был пропущен
+    }
+
+    function delay(interval = 1000) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, interval);
+      });
+    }
+  </script>
+</html> -->
+
+                                    <!-- 3 -->
+              <!-- Поменяйте код с урока так, чтобы запросы на удаление и добавление нового элемента были внутри функций deleteTodo() и addTodo(). -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Урок «Асинхронность»</title>
+  </head>
+
+  <body>
+    <h1>Список задач</h1>
+    <ul class="tasks" id="list">
+      <!— Список рендерится из JS —>
+    </ul>
+    <br />
+    <div class="form">
+      <h3 class="form-title">Форма добавления</h3>
+      <div class="form-row">
+        Что нужно сделать:
+        <input
+          type="text"
+          id="text-input"
+          class="input"
+          placeholder="Выпить кофе"
+        />
+      </div>
+      <br />
+      <button class="button" id="add-button">Добавить</button>
+    </div>
+  </body>
+
+  <script>
+    const buttonElement = document.getElementById("add-button");
+    const listElement = document.getElementById("list");
+    const textInputElement = document.getElementById("text-input");
+
+    let tasks = [];
+
+    const fetchAndRenderTasks = () => {
+      return fetch("https://webdev-hw-api.vercel.app/api/todos", {
+        method: "GET",
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((responseData) => {
+          tasks = responseData.todos;
+          renderTasks();
+        });
+    };
+
+    const renderTasks = () => {
+      const tasksHtml = tasks
+        .map((task) => {
+          return `
+          <li class="task">
+            <p class="task-text">
+              ${task.text}
+              <button data-id="${task.id}" class="button delete-button">Удалить</button>
+            </p>
+          </li>`;
+        })
+        .join("");
+
+      listElement.innerHTML = tasksHtml;
+      
+      const deleteButtons = document.querySelectorAll(".delete-button");
+
+      for (const deleteButton of deleteButtons) {
+        deleteButton.addEventListener("click", (event) => {
+          event.stopPropagation();
+
+          const id = deleteButton.dataset.id;
+
+          fetch("https://webdev-hw-api.vercel.app/api/todos/" + id, {
+            method: "DELETE",
+          }).then((response) => {
+            response.json().then((responseData) => {
+              // { result: 'ok' }
+              // tasks = responseData.todos;
+              renderTasks();
+            });
+          });
+
+          renderTasks();
+        });
+      }
+    };
+
+    fetchAndRenderTasks();
+    renderTasks();
+
+    buttonElement.addEventListener("click", () => {
+      if (textInputElement.value === "") {
+        return;
+      }
+
+      const startAt = Date.now();
+      console.log("Начинаем делать запрос");
+
+      buttonElement.disabled = true;
+      buttonElement.textContent = "Элемент добавлятся...";
+      // Пример, код выше, переписанный на цепочку промисов:
+      
+      
+      const addTodo = () => {
+        console.log("мы в функции");
+      fetch("https://webdev-hw-api.vercel.app/api/todos", {
+        method: "POST",
+        body: JSON.stringify({
+          text: textInputElement.value,
+        }),
+      })
+        .then((response) => {
+          console.log("Время: " + (Date.now() - startAt));
+          return response;
+        })
+        .then((response) => {
+          return response.json();
+        })
+        .then((response) => {
+          console.log("Время: " + (Date.now() - startAt));
+          return response;
+        })
+        .then(() => {
+          return fetchAndRenderTasks();
+        })
+        .then(() => {
+          buttonElement.disabled = false;
+          buttonElement.textContent = "Добавить";
+        });
+      };
+      addTodo();
+      renderTasks();
+
+      textInputElement.value = "";
+    });
+  </script>
+</html>           
