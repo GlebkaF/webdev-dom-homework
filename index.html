@@ -47,7 +47,7 @@
   const formCommentElement = document.getElementById('add-comment');
 
   // ШАБЛОН ВЫВОДА ДАТЫ СОЗДАНИЯ КОММЕНТАРИЯ
-  const currentDate = new Date().toLocaleString('ru-RU', { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).replace(',', '');
+  // const currentDate = new Date().toLocaleString('ru-RU', { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).replace(',', '');
 
   //РЕНДЕР ДАННЫХ ИЗ МАССИВА ОБЪЕКТОВ
   const comments = [
@@ -114,7 +114,8 @@
   const initEditElements = () => {
     const editButtonElements = document.querySelectorAll('.edit-form-button');
     for (const editButton of editButtonElements) {
-      editButton.addEventListener('click', () => {
+      editButton.addEventListener('click', (event) => {
+        event.stopPropagation();
         const index = editButton.dataset.index;
         comments[index].isEdit = true;
         renderComments();
@@ -126,7 +127,8 @@
   const initSaveButtons = () => {
     const saveButtons = document.querySelectorAll(".save-form-button");
     for (const saveButton of saveButtons) {
-      saveButton.addEventListener('click', () => {
+      saveButton.addEventListener('click', (event) => {
+        event.stopPropagation();
         const index = saveButton.dataset.index;
         comments[index].isEdit = false;
         comments[index].text = formCommentElement.querySelectorAll('.comment')[index].querySelector('textarea').value;
@@ -170,7 +172,7 @@
     };
     comments.push({
       name: nameElement.value,
-      date: currentDate,
+      date: new Date().toLocaleString('ru-RU', { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).replace(',', ''),
       text: textElement.value,
       likeCount: 0,
       isLike: false
