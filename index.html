@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="ul" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -46,18 +46,20 @@
       </ul>
       <div class="add-form">
         <input
+          id="inputName"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
+          id="inputText"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="buttonPush" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
@@ -65,7 +67,65 @@
 
   <script>
     "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const nameElement = document.getElementById("inputName");
+    const textElement = document.getElementById("inputText");
+    const buttonElement = document.getElementById("buttonPush");
+    const ulElement = document.getElementById("ul");
+    buttonElement.addEventListener("click",()=>{
+      nameElement.style.backgroundColor="";
+      textElement.style.backgroundColor="";
+      if(nameElement.value ===""){
+        nameElement.style.backgroundColor = "red";
+        return;
+      }
+        else if (textElement.value===""){
+          textElement.style.backgroundColor ="red";
+          return;
+        }
+      let currentDate = new Date();
+      let day = currentDate.getDate();
+      let month = currentDate.getMonth() + 1;
+      let year = currentDate.getFullYear();
+      let hours = currentDate.getHours();
+      let minutes = currentDate.getMinutes();
+      
+      if (day < 10) {
+        day = "0" + day;
+      }
+      if (month < 10) {
+        month = "0" + month;
+      }
+      if (hours < 10) {
+        hours = "0" + hours;
+      }
+      if (minutes < 10) {
+        minutes = "0" + minutes;
+      }
+      let newformatDate = day + "." + month + "." + year + " " + hours + ":" + minutes;
+
+
+      const lastList = ulElement.innerHTML;
+      ulElement.innerHTML =
+        lastList +
+        `<li class="comment">
+          <div class="comment-header">
+            <div> ${nameElement.value} </div>
+            <div>${newformatDate}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+      nameElement.value = "";
+      textElement.value = "";
+    });
   </script>
 </html>
