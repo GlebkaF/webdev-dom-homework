@@ -1,3 +1,6 @@
+
+
+
 document.addEventListener("DOMContentLoaded", function () {
     const nameInput = document.getElementById("nameInput");
     const commentInput = document.getElementById("commentInput");
@@ -12,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
             event.preventDefault();
             if (event.keyCode === 13) {
                 document.getElementById("addCommentButton").click();
-            } 
+            }
         });
 
 
@@ -20,6 +23,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     addCommentButton.addEventListener("click", function () {
+
+
         const name = nameInput.value.trim();
         const comment = commentInput.value.trim();
         nameInput.classList.remove('error');
@@ -43,8 +48,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
         commentList.appendChild(newComment);
 
+        newComment.classList.add('comment', `comments`, `comment-header`, 'comment-body', 'comment-text', 'comment-footer' );
+    
+    
 
         nameInput.value = "";
         commentInput.value = "";
+
     });
 });
+
+
+
+
