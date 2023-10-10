@@ -1,6 +1,6 @@
 import { login, setToken, token } from "./api.js";
 
-export const renderLogin = () => {
+export const renderLogin = ({fetchAndRenderComments}) => {
     const appElement = document.getElementById("app");
     const loginHtml = `
     <h1>Страница входа</h1>
@@ -34,6 +34,9 @@ buttonElement.addEventListener("click", () => {
         console.log(token);
         setToken(responseData.user.token);
         console.log(token);
-    });
+    })
+    .then(() => {
+      fetchAndRenderComments();
+    })
 });
 };

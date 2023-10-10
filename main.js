@@ -29,9 +29,8 @@ const fetchAndRenderComments = () => {
   });
 };
 
-renderLogin();
-fetchAndRenderComments();
-renderComments(comments);
+renderLogin({fetchAndRenderComments});
+//renderComments(comments);
 
 /* код для проверки, что комментарий не пустой и отправки комментария 
     скопировали код nameInput чтобы не писать его дважды, тк одно действие и те же проверки

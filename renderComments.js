@@ -54,6 +54,9 @@ export const renderComments = (comments) => {
       </div>`
   
     appElement.innerHTML = appHtml;
+    
+      
+
     answerText();
     initEventlikes();
     initDeliteButtonsListeners(comments);
