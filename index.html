@@ -33,24 +33,30 @@
 
 
 
-  const comments = [
-    {
-      name: 'Глеб Фокин',
-      text: ' Это будет первый комментарий на этой странице',
-      date: '12.02.22 12:18',
-      likesCounter: 3,
-      isLiked: false,
-      isEdited: false,
-    },
-    {
-      name: 'Варвара Н.',
-      text: ' Мне нравится как оформлена эта страница! ❤',
-      date: '13.02.22 19:22',
-      likesCounter: 75,
-      isLiked: true,
-      isEdited: false,
-    },
-  ];
+  let comments = [];
+
+  const getCommentsFetch = () => { 
+    return fetch("https://wedev-api.sky.pro/api/v1/tanya-zakharova/comments", {
+    method: "GET"
+  }).then((response) => {
+    const jsonPromise = response.json().then((responseDate) => {
+      const appComments = responseDate.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          text: comment.text,
+          date: currentDate(comment.date),
+          likesCounter: comment.likes,
+          isLiked: false,
+          isEdited: false,
+        };
+      });
+
+      comments = appComments;
+      renderComments();
+
+    })
+  })
+  }
 
   document.addEventListener("input", () => {
 
@@ -203,9 +209,9 @@
 
   renderComments();
 
-  function currentDate() {
+  function currentDate(commentDate) {
 
-    let date = new Date();
+    let date = new Date(commentDate);
     const addZeroBefore = (time) => time < 10 ? time = "0" + time : time;
 
     let day = addZeroBefore(date.getDate());
@@ -222,19 +228,19 @@
 
   function addComment() {
 
-    comments.push({
-      name: sanitizeHtml(nameInputElement.value),
-      text: sanitizeHtml(textInputElement.value),
-      date: currentDate(),
-      likesCounter: 0,
-      isLiked: false,
-      isEdited: false,
-    });
-
-    textInputElement.value = '';
-    nameInputElement.value = '';
-
-    renderComments();
+    const addCommentsFetch = fetch("https://wedev-api.sky.pro/api/v1/tanya-zakharova/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        text: textInputElement.value,
+        name: nameInputElement.value,
+      })
+    }).then((response) => {
+      const jsonPromise = response.json().then((responseDate) => {
+        
+        getCommentsFetch();
+       
+      })
+    })
   }
 
   document.addEventListener("keyup", (event) => {
@@ -254,7 +260,7 @@
     renderComments();
 
   })
-
+  getCommentsFetch();
 </script>
 
 </html>
