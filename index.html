@@ -49,44 +49,34 @@
       <input type="text" class="add-form-name" id="comment-name-input" placeholder="Введите ваше имя" />
       <textarea type="textarea" class="add-form-text" id="comment-text-input" placeholder="Введите ваш коментарий"
         rows="4"></textarea>
-      <div class="add-form-row">
-        <button class="add-form-button" id="comment-button">Написать</button>
+      <div id="button-box" class="add-form-row">
+        <button class="add-form-button-active" id="comment-button">Написать</button>
       </div>
     </div>
   </div>
 </body>
 
 <script>
-  "use strict"; 
+  "use strict";
   // Код писать здесь
 
   const listElement = document.getElementById("comments");
   const nameInputElement = document.getElementById("comment-name-input");
   const textInputElement = document.getElementById("comment-text-input");
   const buttonElement = document.getElementById("comment-button");
+  const buttonBox = document.getElementById("button-box");
 
-  let nowDate = new Date();
-  let fullDate = nowDate.getDate() + '.' + (nowDate.getMonth() + 1) + '.' + 23/*nowDate.getFullYear()*/;
-  let hours = nowDate.getHours();
-  let minutes = nowDate.getMinutes();
-  if (hours < 10) {
-    hours = "0" + minutes;
+  const getCurrentDate = () => {
+    let date = new Date().toLocaleDateString();
+    let time = new Date().toLocaleTimeString().slice(0, -3);
+    return `${date} ${time}`;
   }
-  if (minutes < 10) {
-    minutes = "0" + minutes;
-  }
-  //  console.log(fullDate);
-  //  console.log(`${hours}:${minutes}`);
-
+  //console.log(getCurrentDate());
+  
   buttonElement.addEventListener("click", () => {
     nameInputElement.classList.remove("error");
 
-    if (nameInputElement.value === "") {
-      nameInputElement.classList.add("error");
-      return;
-    }
-    if (textInputElement.value === "") {
-      nameInputElement.classList.add("error");
+    if (nameInputElement.value === "" || textInputElement.value === "") {
       return;
     }
 
@@ -97,7 +87,7 @@
       `<li class="comment">
         <div class="comment-header">
           <div>${nameInputElement.value}</div>
-          <div>${fullDate} ${hours}:${minutes}</div>
+          <div>${getCurrentDate()}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
@@ -113,6 +103,7 @@
       </li>`;
 
     nameInputElement.value = "";
+    textInputElement.value = "";
   });
 
   //console.log("It works!");
