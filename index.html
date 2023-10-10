@@ -74,21 +74,51 @@
 			return dateOne + dateTwo;
 		}
 
+		const setActiveButtonInput = () => {
+			nameInputElement.addEventListener(('input'), () => { //привожу кнопку в порядок:
+			buttonElement.classList.remove('disabled-hover');//Делаю кнопку активной после ввода данных в инпут
+			buttonElement.removeAttribute('disabled', '');//Делаю кнопку активной после ввода данных в инпут
+			nameInputElement.classList.remove('err');
+		});	
+		}
+
+		const setActiveButtonMessage = () => {
+			message.addEventListener(('input'), () => { //привожу кнопку в порядок:
+			buttonElement.classList.remove('disabled-hover');//Делаю кнопку активной после ввода данных в инпут
+			buttonElement.removeAttribute('disabled', '');//Делаю кнопку активной после ввода данных в инпут
+			message.classList.remove('err');
+		});	
+		}
+
+		const disabledButton = () => {
+			buttonElement.setAttribute('disabled', '');
+			buttonElement.classList.add('disabled-hover');
+		}
+
     let buttonElement = document.getElementById("add-button");
 		let listElement = document.getElementById("list");
 		let nameInputElement = document.getElementById("name-input");
 		let message = document.getElementById("msg-text-input");
+		setActiveButtonInput();//Делаем кнопку активной после ввода поля
+		setActiveButtonMessage();//Делаем кнопку активной после ввода поля
+
 
 		buttonElement.addEventListener(('click'),  () => {
 				nameInputElement.classList.remove('err');
 				message.classList.remove('err');
+
 			if (nameInputElement.value === '') {
 				nameInputElement.classList.add('err');
+				disabledButton();
 				return;
+
 			} else if (message.value === '') {
 				message.classList.add('err');
+				disabledButton();
 				return;
+
 			} else {
+				
 				listElement.innerHTML = listElement.innerHTML +
 				`
 				<li class="comment" id="list">
