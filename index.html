@@ -159,15 +159,7 @@
         isLiked: false,
       }),
     }).then((response) => {
-        response.json().then((responseData) => {
-          return {
-            name: comment.author.name,
-            date: new Date(comment.date).toLocaleDateString() + " " + (new Date(comment.date).getHours() < 10 ? '0' + new Date(comment.date).getHours() : new Date(comment.date).getHours()) + ":" + (new Date(comment.date).getMinutes() < 10 ? '0' + new Date(comment.date).getMinutes() : new Date(comment.date).getMinutes()) + ":" + (new Date(comment.date).getSeconds() < 10 ? '0' + new Date(comment.date).getSeconds() : new Date(comment.date).getSeconds()),
-            text: comment.text,
-            likes: comment.likes,
-            isLiked: false,
-          };
-        });
+        getRenderComments();
         renderComments();
       });
     
