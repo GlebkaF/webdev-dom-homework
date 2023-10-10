@@ -75,7 +75,7 @@
 		}
 
 		const setActiveButtonInput = () => {
-			nameInputElement.addEventListener(('input'), () => { //привожу кнопку в порядок:
+			nameInputElement.addEventListener(('input'), () => { //привожу кнопку в порядок после инпута:
 			buttonElement.classList.remove('disabled-hover');//Делаю кнопку активной после ввода данных в инпут
 			buttonElement.removeAttribute('disabled', '');//Делаю кнопку активной после ввода данных в инпут
 			nameInputElement.classList.remove('err');
@@ -83,16 +83,22 @@
 		}
 
 		const setActiveButtonMessage = () => {
-			message.addEventListener(('input'), () => { //привожу кнопку в порядок:
-			buttonElement.classList.remove('disabled-hover');//Делаю кнопку активной после ввода данных в инпут
-			buttonElement.removeAttribute('disabled', '');//Делаю кнопку активной после ввода данных в инпут
+			message.addEventListener(('input'), () => { //привожу кнопку в порядок после текстареа:
+			buttonElement.classList.remove('disabled-hover');//Делаю кнопку активной после ввода данных в текстареа
+			buttonElement.removeAttribute('disabled', '');//Делаю кнопку активной после ввода данных в текстареа
 			message.classList.remove('err');
 		});	
 		}
 
-		const disabledButton = () => {
+		const disabledButton = () => { // Делаю кнопку неактивной
 			buttonElement.setAttribute('disabled', '');
 			buttonElement.classList.add('disabled-hover');
+		}
+
+		const submitEnter = (event) => { // отправка сообщения по Enter
+			if (event.keyCode === 13) {
+            document.getElementById("add-button").click();
+        }
 		}
 
     let buttonElement = document.getElementById("add-button");
@@ -101,7 +107,6 @@
 		let message = document.getElementById("msg-text-input");
 		setActiveButtonInput();//Делаем кнопку активной после ввода поля
 		setActiveButtonMessage();//Делаем кнопку активной после ввода поля
-
 
 		buttonElement.addEventListener(('click'),  () => {
 				nameInputElement.classList.remove('err');
@@ -141,6 +146,8 @@
 				`;
 			}
 				});
+
+				document.addEventListener("keyup", submitEnter);
 
   </script>
 </html>
