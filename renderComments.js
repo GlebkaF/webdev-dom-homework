@@ -4,6 +4,8 @@ import { answerText } from "./answer.js";
 const commentsElement = document.getElementById("comments");
 
 export const renderComments = (comments) => {
+  const appElement = document.getElementById("app");
+
     const commentsHtml = comments
       .map((comment, index) => {
         return ` <li class="comment">
@@ -26,9 +28,34 @@ export const renderComments = (comments) => {
           </li> `;
       })
       .join("");
+
+      const appHtml = `
+      <div class="container">
+      <ul class="comments" id="comments">${commentsHtml}
+       <!-- Список рендерится из JS-->
+      </ul>
+      <button class="delete-button">Удалить последний элемент</button>
+      <div class="add-form">
+        <input
+          type="text" id="name-input"
+          class="add-form-name"
+          placeholder="Введите ваше имя"
+        />
+        <textarea
+          type="textarea" id="textarea-input"
+          class="add-form-text"
+          placeholder="Введите ваш коментарий"
+          rows="4"
+        ></textarea>
+        <div class="add-form-row">
+          <button id="add-button" class="add-form-button">Написать</button>
+        </div>
+       </div>
+      </div>`
   
-    commentsElement.innerHTML = commentsHtml;
+    appElement.innerHTML = appHtml;
     answerText();
     initEventlikes();
     initDeliteButtonsListeners(comments);
+    
   };

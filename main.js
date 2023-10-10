@@ -2,6 +2,7 @@
 
 import { getComments } from "./api.js";
 import { postComment } from "./api.js";
+import { renderLogin } from "./loginPage.js";
 import { renderComments } from "./renderComments.js";
 
 const buttonElement = document.getElementById("add-button");
@@ -28,6 +29,7 @@ const fetchAndRenderComments = () => {
   });
 };
 
+renderLogin();
 fetchAndRenderComments();
 renderComments(comments);
 
