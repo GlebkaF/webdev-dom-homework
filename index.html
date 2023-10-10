@@ -8,8 +8,7 @@
 
   <body>
     <div class="container">
-      <ul id="list" class="comments">
-      </ul>
+      <ul id="list" class="comments"></ul>
       <div class="add-form">
         <input id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
         <textarea id="text-input" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
@@ -42,23 +41,27 @@
     // let likesCounter = document.getElementById("likes-counter");
     // likesCounter = 0; // наверное это не нужно 
 
-    const comments = [
-      {
-        name: "Глеб Фокмн",
-        date: "12.02.22 12:18",
-        text: "Это будет первый комментарий на этой странице",
-        isLike: "3",
-        isLiked: false,
-      },
-      {
-        name: "Варвара",
-        date: "13.02.22 19:22",
-        text: "Мне нравится как оформлена эта страница! ❤",
-        isLike: "75",
-        isLiked: false,
-      },
-    ];
+    let comments = [];
 
+    const getRenderComments = () => {
+    fetch("https://wedev-api.sky.pro/api/v1/dmitriy-panfilov/comments", {
+      method: "GET",
+    }).then((response) => {
+        response.json().then((responseData) => {
+        comments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: new Date(comment.date).toLocaleDateString() + " " + (new Date(comment.date).getHours() < 10 ? '0' + new Date(comment.date).getHours() : new Date(comment.date).getHours()) + ":" + (new Date(comment.date).getMinutes() < 10 ? '0' + new Date(comment.date).getMinutes() : new Date(comment.date).getMinutes()) + ":" + (new Date(comment.date).getSeconds() < 10 ? '0' + new Date(comment.date).getSeconds() : new Date(comment.date).getSeconds()),
+            text: comment.text,
+            likes: comment.likes,
+            isLiked: false,
+          }
+        });
+        // получили данные и рендерим их в приложении
+        renderComments();
+      });
+    });
+  }
     const renderComments = () => {
       const commentsHtml = comments
       .map((comment, index) => {
@@ -75,7 +78,7 @@
           <div class="comment-footer">
             <div class="likes">
               <button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index="${index}"></button>
-              <span class="likes-counter">${comment.isLike}</span>
+              <span class="likes-counter">${comment.Likes}</span>
             </div>
           </div>
         </li>`;
@@ -100,16 +103,17 @@
     // Добавляем обработчик событий для кнопок лайка
     const likeButtons = document.querySelectorAll(".like-button");
     for (const likeButton of likeButtons) {
-      likeButton.addEventListener("click", () =>{
+      likeButton.addEventListener("click", (event) =>{
+        event.stopPropagation();
         const index = likeButton.dataset.index;
       if (index !== null) {
         const comment = comments[index];
         if (!comment.isLiked) {
           comment.isLiked = true;
-          comment.isLike++;
+          comment.Likes++;
         } else {
           comment.isLiked = false;
-          comment.isLike--;
+          comment.Likes--;
         }
         
       renderComments(); // После обновления лайков перерисовываем комментарии
@@ -118,6 +122,7 @@
       });  
     }
     };
+    getRenderComments();
 
     renderComments();
     
@@ -135,18 +140,55 @@
         textInput.classList.add("error");
         return;
       }
-        comments.push({
-        name: nameInput.value
+
+      fetch("https://wedev-api.sky.pro/api/v1/dmitriy-panfilov/comments", {
+      method: "POST",
+      body: JSON.stringify({
+         name: nameInput.value
+        .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;"),
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
         date: formatedDate,
         text: textInput.value
+        .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;"),
-        isLike: 0,
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
+        Likes: 0,
         isLiked: false,
+      }),
+    }).then((response) => {
+        response.json().then((responseData) => {
+          return {
+            name: comment.author.name,
+            date: new Date(comment.date).toLocaleDateString() + " " + (new Date(comment.date).getHours() < 10 ? '0' + new Date(comment.date).getHours() : new Date(comment.date).getHours()) + ":" + (new Date(comment.date).getMinutes() < 10 ? '0' + new Date(comment.date).getMinutes() : new Date(comment.date).getMinutes()) + ":" + (new Date(comment.date).getSeconds() < 10 ? '0' + new Date(comment.date).getSeconds() : new Date(comment.date).getSeconds()),
+            text: comment.text,
+            likes: comment.likes,
+            isLiked: false,
+          };
+        });
+        renderComments();
       });
+    
+
+      //   comments.push({
+      //   name: nameInput.value
+      //   .replaceAll("&", "&amp;")
+      //   .replaceAll("<", "&lt;")
+      //   .replaceAll(">", "&gt;")
+      //   .replaceAll('"', "&quot;"),
+      //   date: formatedDate,
+      //   text: textInput.value
+      //   .replaceAll("&", "&amp;")
+      //   .replaceAll("<", "&lt;")
+      //   .replaceAll(">", "&gt;")
+      //   .replaceAll('"', "&quot;"),
+      //   isLike: 0,
+      //   isLiked: false,
+      // });
       
+      getRenderComments();
       
       renderComments();
 
