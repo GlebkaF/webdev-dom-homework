@@ -10,40 +10,6 @@
     <div class="container">
       <ul id="comments-list" class="comments">
         <!-- Comments рендерится из JS -->
-        <!-- <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button data-index="likes" class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li> -->
       </ul>
       <div class="add-form">
         <input
@@ -109,9 +75,7 @@
         {
           method: "GET",
         }
-      );
-
-      fetchPromise.then((response) => {
+      ).then((response) => {
         response.json().then((responseData) => {
           const appComments = responseData.comments.map((comment) => {
             return {
@@ -129,7 +93,7 @@
       });
     }
 
-    fetchArrPromise();
+    // fetchArrPromise();
 
     // получение и обработка событий для кнопок like
     function getLikeButton() {
@@ -161,6 +125,7 @@
     // рендер функция для преобразования массива в html разметку
     const renderComments = () => {
       const commentsHtml = comments
+        // const commentsHtml = appComments
         .map((comment, index) => {
           return `<li class="comment">
       <div class="comment-header">
@@ -188,6 +153,7 @@
       getLikeButton();
     };
 
+    fetchArrPromise();
     renderComments();
 
     buttonElement.addEventListener("click", () => {
@@ -215,35 +181,52 @@
 
       getLikeButton();
 
-      const fetchPromise = fetch(
-        "https://wedev-api.sky.pro/api/v1/dmitrii-the-best-sass/comments",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            name: nameInputElement.value
-              .replaceAll("&", "&amp;")
-              .replaceAll("<", "&lt;")
-              .replaceAll(">", "&gt;")
-              .replaceAll('"', "&quot;"),
-            date: getCurrentDate(new Date()),
-            text: textareaInputElement.value
-              .replaceAll("&", "&amp;")
-              .replaceAll("<", "&lt;")
-              .replaceAll(">", "&gt;")
-              .replaceAll('"', "&quot;")
-              .replaceAll("QUOTE_BEGIN", "<div class='comment-quote'><b>")
-              .replaceAll("QUOTE_END", "</b></div>"),
-            currentLike: false,
-            likes: 0,
-          }),
-        }
-      );
+      const startAt = Date.now();
+      console.log("Начинаем делать запрос");
 
-      fetchPromise.then((response) => {
-        response.json().then((responseData) => {
+      buttonElement.disabled = true;
+      buttonElement.textContent = "Request is being processed";
+
+      fetch("https://wedev-api.sky.pro/api/v1/dmitrii-the-best-sass/comments", {
+        method: "POST",
+        body: JSON.stringify({
+          name: nameInputElement.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;"),
+          date: getCurrentDate(new Date()),
+          text: textareaInputElement.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("QUOTE_BEGIN", "<div class='comment-quote'><b>")
+            .replaceAll("QUOTE_END", "</b></div>"),
+          currentLike: false,
+          likes: 0,
+        }),
+      })
+        .then((response) => {
+          console.log("Время: " + (Date.now() - startAt));
+          return response;
+        })
+        .then((response) => {
+          return response.json();
+        })
+        .then((response) => {
+          console.log("Время: " + (Date.now() - startAt));
+          return response;
+        })
+        .then(() => {
           fetchArrPromise();
+        })
+        .then((data) => {
+          buttonElement.disabled = false;
+          buttonElement.textContent = "Добавить";
         });
-      });
+
+      renderComments();
 
       nameInputElement.value = "";
       textareaInputElement.value = "";
