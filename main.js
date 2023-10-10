@@ -10,13 +10,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-    document.getElementById("commentInput", "nameInput")
+    document.getElementById("commentInput")
         .addEventListener("keyup", function (event) {
             event.preventDefault();
             if (event.keyCode === 13) {
                 document.getElementById("addCommentButton").click();
             }
         });
+    document.getElementById("nameInput")
+        .addEventListener("keyup", function (event) {
+            event.preventDefault();
+            if (event.keyCode === 13) {
+                document.getElementById("addCommentButton").click();
+            }
+        });
+
 
 
 
@@ -44,13 +52,32 @@ document.addEventListener("DOMContentLoaded", function () {
         const dateString = `${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString()}`;
 
         const newComment = document.createElement("li");
-        newComment.innerHTML = `<strong>${name}</strong> (${dateString}): ${comment} <span class="likes">0</span>`;
+        // newComment.innerHTML = `<strong>${name}</strong> (${dateString}): ${comment} <span class="likes">0</span>`;
+        newComment.innerHTML = `
+        
+        <div class="comment-header">
+        <div>${name}</div>
+        <div>${dateString}</div>
+        </div>
+        <div class="comment-body">
+        <div class="comment-text">
+            ${comment}
+        </div>
+        </div>
+        <div class="comment-footer">
+        <div class="likes">
+            <span class="likes-counter">3</span>
+            <button class="like-button"></button>
+        </div>
+        </div>
+    `;
 
         commentList.appendChild(newComment);
 
-        newComment.classList.add('comment', `comments`, `comment-header`, 'comment-body', 'comment-text', 'comment-footer' );
-    
-    
+
+        newComment.classList.add('comment', `comments`);
+
+
 
         nameInput.value = "";
         commentInput.value = "";
