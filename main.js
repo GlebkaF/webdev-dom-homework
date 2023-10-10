@@ -10,22 +10,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
+
+    function fieldSubmit(event) {
+        event.preventDefault();
+        if (event.keyCode === 13) {
+            document.getElementById("addCommentButton").click();
+        }
+    }
+
+
     document.getElementById("commentInput")
-        .addEventListener("keyup", function (event) {
-            event.preventDefault();
-            if (event.keyCode === 13) {
-                document.getElementById("addCommentButton").click();
-            }
-        });
-    document.getElementById("nameInput")
-        .addEventListener("keyup", function (event) {
-            event.preventDefault();
-            if (event.keyCode === 13) {
-                document.getElementById("addCommentButton").click();
-            }
-        });
-
-
+    document.addEventListener("keyup", fieldSubmit);
 
 
 
@@ -54,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const newComment = document.createElement("li");
         // newComment.innerHTML = `<strong>${name}</strong> (${dateString}): ${comment} <span class="likes">0</span>`;
         newComment.innerHTML = `
-        
+        <li class="comment">
         <div class="comment-header">
         <div>${name}</div>
         <div>${dateString}</div>
@@ -70,17 +65,21 @@ document.addEventListener("DOMContentLoaded", function () {
             <button class="like-button"></button>
         </div>
         </div>
+        </li>
     `;
 
         commentList.appendChild(newComment);
 
 
-        newComment.classList.add('comment', `comments`);
+
 
 
 
         nameInput.value = "";
         commentInput.value = "";
+
+
+
 
     });
 });
