@@ -18,16 +18,16 @@
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
       <div class="add-form-row">
         <button class="add-form-button" disabled>Написать</button>
+
       </div>
     </div>
     <button class="delete-form-button">Удалить последний комментарий</button>
+
   </div>
 </body>
 
 <script>
   "use strict";
-
-
 
   let nameInput = document.querySelector(".add-form-name");
   let commentInput = document.querySelector(".add-form-text");
@@ -38,13 +38,58 @@
   const current = new Date().toLocaleString();
   const likeNumber = document.querySelector(".likes-counter");
 
-  const comments = [
+
+  fetch("https://wedev-api.sky.pro/api/v1/sveta-kosuhina/comments", {
+    method: "GET"
+  }).then((response) => {
+    response.json().then((responseData) => {
+      comments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: comment.date,
+          text: comment.text,
+          likesCount: comment.likes,
+          isLiked: false,
+          isEdited: false
+        };
+      });
+      console.log(comments);
+      renderComments();
+    });
+  });
+
+
+
+  addButton.addEventListener("click", (event) => {
+    errorSolving();
+
+    event.stopPropagation();
+    fetch("https://wedev-api.sky.pro/api/v1/sveta-kosuhina/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        name: nameInput.value,
+        text: commentInput.value
+      })
+    }).then((response) => {
+      response.json().then((responseData) => {
+        nameInput.value,
+          commentInput.value
+      })
+    });
+
+    renderComments();
+  });
+
+
+
+  let comments = [
     {
       name: "Глеб Фокин",
       date: "12.02.22 12:18",
       text: "Это будет первый комментарий на этой странице",
       likesCount: 3,
       isLiked: false,
+      isEdited: false
     },
     {
       name: "Варвара Н.",
@@ -52,6 +97,7 @@
       text: "Мне нравится как оформлена эта страница! ❤",
       likesCount: 75,
       isLiked: false,
+      isEdited: false
     }
   ]
 
@@ -64,11 +110,10 @@
             <div>${comment.date}</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
-              ${comment.text}
-            </div>
+            ${comment.isEdited ? `<textarea id="textarea-${index}">${comment.text}</textarea>` : `<div class="comment-text">${comment.text}</div>`}
           </div>
           <div class="comment-footer">
+            <button class="edit-button">${comment.isEdited ? 'Сохранить' : 'Редактировать'}</button>
             <div class="likes">
               <span class="likes-counter">${comment.likesCount}</span>
               <button class="like-button ${comment.isLiked ? '-active-like' : ''}"></button>
@@ -90,22 +135,33 @@
         renderComments();
       });
     });
-   
-  
-const answerCommentListener = () => {
-    const commentsElement = document.querySelectorAll(".comment");
-    for (const commentElement of commentsElement) {
-      commentElement.addEventListener("click", () => {
-        const index = commentElement.dataset.index;
-        let commentInput = document.querySelector(".add-form-text");
-        commentInput.value =`QUOTE_BEGIN ${comments[index].name}: \n ${comments[index].text} QUOTE_END`;
-        renderComments();
-      })
-    }
 
-  };
-  answerCommentListener();
- 
+
+    const answerCommentListener = () => {
+      const commentsElement = document.querySelectorAll(".comment");
+      for (const commentElement of commentsElement) {
+        commentElement.addEventListener("click", () => {
+          const index = commentElement.dataset.index;
+          if (comments[index].isEdited) return; // запрещаем ответ на комментарий, то что ниже отключается 
+          let commentInput = document.querySelector(".add-form-text");
+          commentInput.value = `QUOTE_BEGIN ${comments[index].name}: \n ${comments[index].text} QUOTE_END`;
+          renderComments();
+        })
+      }
+
+    };
+    answerCommentListener();
+
+
+    const editButtonList = document.querySelectorAll('.edit-button');
+
+    editButtonList.forEach((editButton, index) => {
+      editButton.addEventListener('click', (event) => {
+        event.stopPropagation();
+        editComment(index);
+        renderComments();
+      });
+    });
 
   }
 
@@ -121,6 +177,21 @@ const answerCommentListener = () => {
       comment.isLiked = true;
     }
   }
+
+  const editComment = (index) => {
+
+    const comment = comments[index];
+
+    if (comment.isEdited) {
+      const newText = document.getElementById(`textarea-${index}`).value;
+      comment.text = newText;
+      comment.isEdited = false;
+    } else {
+
+      comment.isEdited = true;
+    }
+  }
+
 
   // вызов рендер функции
 
@@ -170,15 +241,16 @@ const answerCommentListener = () => {
 
 
 
-  const DeleteButtonsListeners = () => {
-      deleteButton.addEventListener("click", () => {
-          const index = deleteButton.dataset.index;
-          comments.splice(index, 1);
-          renderStudents();
-        });
-      }
+  const deleteButtonsListeners = () => {
+    deleteButton.addEventListener("click", () => {
+      const lastCommentIndex = comments.length - 1;
+      console.log(lastCommentIndex);
+  comments.splice(lastCommentIndex, 1);
+      renderStudents();
+    });
+  }
 
-
+  deleteButtonsListeners();
   // отключение кнопки
 
   nameInput.addEventListener('input', () => {
@@ -201,4 +273,5 @@ const answerCommentListener = () => {
   }
   console.log("It works!");
 </script>
+
 </html>

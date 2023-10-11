@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Урок "Асинхронность"</title>
+</head>
+
+<body id="body">
+    <h1 id="title">Список задач</h1>
+    <ul class="tasks" id="list">
+        <!-- Список рендерится из JS -->
+    </ul>
+    <br />
+    <div class="form">
+        <h3 class="form-title">Форма добавления</h3>
+        <div class="form-row">
+            Что нужно сделать:
+            <input type="text" id="text-input" class="input" placeholder="Выпить кофе" />
+        </div>
+        <br />
+        <button class="button" id="add-button">Добавить</button>
+        <div class="form-fam">
+            Введите вашу фамилию:
+            <input type="text" id="text-input" class="input" placeholder="Иванова" />
+        </div>
+        <br />
+        <button class="button" id="fam-button">Сохранить фамилию</button>
+    </div>
+</body>
+
+<script>
+
+    const buttonElement = document.getElementById("add-button");
+    const listElement = document.getElementById("list");
+    const textInputElement = document.getElementById("text-input");
+
+    // Запросы в API - асинхронные, мы не знаем как долго будет выполняться запрос
+    // Запрос может выполняться секунды и даже минуты
+    // fetch - запускает выполнение запроса к api
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/todos", {
+        method: "GET"
+    });
+
+    // подписываемся на успешное завершение запроса с помощью then
+    fetchPromise.then((response) => {
+        // Запускаем преобразовываем "сырые" данные от API в json формат
+        const jsonPromise = response.json();
+
+        // Подписываемся на результат преобразования
+        jsonPromise.then((responseData) => {
+            // получили данные и рендерим их в приложении
+            tasks = responseData.todos;
+            renderTasks();
+        });
+    });
+
+    const fetchColor = fetch("https://wedev-api.sky.pro/api/tasks/random-red", {
+        method: "GET"
+    });
+
+    fetchColor.then((res) => {
+        const jsonColor = res.json();
+        jsonColor.then((resData) => {
+
+            const body = document.getElementById("body");
+            body.style.backgroundColor = resData.color;
+
+        })
+    });
+
+
+
+    const buttonSurname = document.getElementById("fam-button");
+
+    fetch("https://webdev-hw-api.vercel.app/api/tasks/string", {
+        method: "GET"
+    });
+
+    fetchColor.then((res) => {
+        const jsonColor = res.json();
+        jsonColor.then((resData) => {
+
+            const body = document.getElementById("body");
+            body.style.backgroundColor = resData.color;
+
+        })
+    });
+
+    buttonSurname.addEventListener("click", (event) => {
+        if (textInputElement.value === "") {
+            return;
+        }
+        event.stopPropagation();
+        fetch("https://webdev-hw-api.vercel.app/api/tasks/string", {
+            method: "POST",
+            body: JSON.stringify({
+                text: textInputElement.value
+        })
+        }).then((response) => {
+            response.json().then((responseData) => {
+                textInputElement.value
+            })
+        })
+
+        renderTasks();
+
+        textInputElement.value = "";
+    });
+
+
+
+    // При клике на кнопку сделайте POST-запрос к указанному API, в строке передайте в API введенную фамилию.
+    // Откройте GET API в браузере и убедитесь, что выводится введенная фамилия.
+    // Поэкспериментируйте с POST API, попробуйте передать в поле string не строку, 
+    // а, например, число. Посмотрите, что ответит на такой запрос сервер.
+
+
+    // TODO: Получать из хранилища данных
+    let tasks = [
+        {
+            text: "Купить чай"
+        },
+        {
+            text: "Заварить чай"
+        },
+        {
+            text: "Выпить чай"
+        }
+    ];
+
+    const renderTasks = () => {
+        const tasksHtml = tasks
+            .map((task, index) => {
+                return `
+          <li class="task">
+            <p class="task-text">
+              ${task.text}
+              <button data-index="${index}" class="button delete-button">Удалить</button>
+            </p>
+          </li>`;
+            })
+            .join("");
+
+        listElement.innerHTML = tasksHtml;
+        const deleteButtons = document.querySelectorAll(".delete-button");
+
+        for (const deleteButton of deleteButtons) {
+            deleteButton.addEventListener("click", (event) => {
+                event.stopPropagation();
+
+                deleteButton.innerHTML = 'Задача удаляется...'
+                // присваеваем 'задача удаляется' кнопке!!! потом задаем отсрочку в 1 секунду и не забываем обновить рендер функцию 
+                const index = deleteButton.dataset.index;
+                // TODO: Удалять из хранилища данных
+                const deleteAction = tasks.splice(index, 1)
+
+                setTimeout(() => {
+                    deleteAction;
+                    renderTasks();
+                }, 1000)
+
+            });
+        }
+
+        const titleElement = document.getElementById("title");
+
+        titleElement.addEventListener("click", () => {
+            const title = document.getElementById('title');
+            title.innerText = '3';
+            setTimeout(() => {
+                title.innerText = '2';
+                setTimeout(() => {
+                    title.innerText = '1';
+                    setTimeout(() => {
+                        title.innerText = 'Список дел';
+                    }, 1000);
+                }, 1000);
+            }, 1000);
+        });
+    }
+
+    renderTasks();
+
+    buttonElement.addEventListener("click", () => {
+        if (textInputElement.value === "") {
+            return;
+        }
+
+        // TODO: Добавлять задачу в хранилище данных
+        tasks.push({
+            text: textInputElement.value
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+        });
+
+        renderTasks();
+
+        textInputElement.value = "";
+    });
+
+
+</script>
+
+</html>
