@@ -57,7 +57,7 @@
           };
         });
         comments = fromApp;
-
+        
         renderComments();
       });
     });
@@ -107,10 +107,11 @@
     const commentsElements = document.querySelectorAll(".comment");
     for (const comment of commentsElements) {
       comment.addEventListener('click', () => {
+        event.stopPropagation();//Отключение дочерних событий
         const dataComment = comment.dataset.text;
         const dataName = comment.dataset.name;
 
-        event.stopPropagation();//Отключение дочерних событий
+
 
         commentInputElement.value = `> ${dataComment}\n\n${dataName}`;
         console.log(`> ${dataComment}\n\n${dataName}`);
@@ -213,7 +214,7 @@
     }).then((response) => {
 
       const jsonPromise = response.json().then((responseData) => {
-
+        
         renderComments();
       });
     });
@@ -222,7 +223,7 @@
 
     apiGet();
     renderComments();
-    likeButtons();
+    
 
   });
 
