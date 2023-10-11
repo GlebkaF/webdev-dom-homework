@@ -51,7 +51,8 @@
             checkLike: comment.isLiked,
             textComment: comment.text,
             countLikes: comment.likes,
-            fullDate: new Date(comment.date),
+            // длинная строка ниже- это преобразование даты, полученной с сервера для нормального отображения
+            fullDate: new Date(comment.date).toLocaleDateString() + " " + (new Date(comment.date).getHours() < 10 ? '0' + new Date(comment.date).getHours() : new Date(comment.date).getHours()) + ":" + (new Date(comment.date).getMinutes() < 10 ? '0' + new Date(comment.date).getMinutes() : new Date(comment.date).getMinutes()) + ":" + (new Date(comment.date).getSeconds() < 10 ? '0' + new Date(comment.date).getSeconds() : new Date(comment.date).getSeconds()),
 
           };
         });
@@ -194,19 +195,6 @@
         .replaceAll('"', "&quot;");// меняются; на их коды, а браузер всёравно выводит эти символы
     };
 
-    //  comments.push({
-    //   userName: sanitizeHtml(nameInputElement.value),//Вызывается функция проверки
-
-
-    //   checkLike: false,
-    //   textComment: sanitizeHtml(commentInputElement.value),
-
-    //    countLikes: 0,
-    //    fullDate: fullDate(),//Функция с текущей датой и временем
-    //  });
-
-
-
     const postCommentsPromise = fetch("https://wedev-api.sky.pro/api/v1/stepan-titov/comments", {
       method: "POST",
       body: JSON.stringify({
@@ -225,20 +213,6 @@
     }).then((response) => {
 
       const jsonPromise = response.json().then((responseData) => {
-        //const fromApp = responseData.comments.map((comment) => {
-
-        //       return {
-
-        //         userName: comment.author.name,
-        //        checkLike: comment.isLiked,
-        //        textComment: comment.text,
-        //        countLikes: comment.likes,
-        //        fullDate: new Date(comment.date),
-
-        //      };
-        //  });
-        console.log(responseData)
-        //comments = responseData.comments;
 
         renderComments();
       });
