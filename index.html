@@ -11,6 +11,7 @@
   <div class="container">
     <ul class="comments">
     </ul>
+    <div class="add-form loading-comment">Комментарий добавляется...</div>
     <div class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
@@ -29,39 +30,44 @@
   const nameInputElement = document.querySelector(".add-form-name");
   const textInputElement = document.querySelector(".add-form-text");
   const btnDelCommentElement = document.querySelector(".delete-form-button");
+  const addFormElement = document.querySelector(".add-form");
+  const loadingCommentElement = document.querySelector(".loading-comment");
 
-
-
+  
 
   let comments = [];
 
-  const getCommentsFetch = () => { 
+  const getCommentsFetch = () => {
     return fetch("https://wedev-api.sky.pro/api/v1/tanya-zakharova/comments", {
-    method: "GET"
-  }).then((response) => {
-    const jsonPromise = response.json().then((responseDate) => {
-      const appComments = responseDate.comments.map((comment) => {
-        return {
-          name: comment.author.name,
-          text: comment.text,
-          date: currentDate(comment.date),
-          likesCounter: comment.likes,
-          isLiked: false,
-          isEdited: false,
-        };
-      });
+      method: "GET"
+    }).then((response) => {
+      const jsonPromise = response.json().then((responseDate) => {
+        const appComments = responseDate.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            text: comment.text,
+            date: currentDate(comment.date),
+            likesCounter: comment.likes,
+            isLiked: false,
+            isEdited: false,
+          };
+        });
 
-      comments = appComments;
-      renderComments();
+        comments = appComments;
 
+        addFormElement.classList.remove("displayHidden");
+        loadingCommentElement.classList.add("displayHidden");
+
+        renderComments();
+
+      })
     })
-  })
   }
 
   document.addEventListener("input", () => {
 
     if (nameInputElement.value.trim() !== '' && textInputElement.value.trim() !== '') {
-      
+
       btnAddCommentElement.disabled = false;
 
     } else {
@@ -79,7 +85,7 @@
 
         const btnEditElements = document.querySelectorAll(".edit-button")
         const index = textareaElement.dataset.index;
-    
+
         if (textareaElement.value.trim() === "") {
 
           return btnEditElements[index].disabled = true;
@@ -198,6 +204,9 @@
 
     listElement.innerHTML = commentsHtml;
 
+    nameInputElement.value = '';
+    textInputElement.value = '';
+
     btnAddCommentElement.disabled = true;
 
     initAddLikes();
@@ -236,9 +245,12 @@
       })
     }).then((response) => {
       const jsonPromise = response.json().then((responseDate) => {
-        
+
+        addFormElement.classList.add("displayHidden");
+        loadingCommentElement.classList.remove("displayHidden");
+
         getCommentsFetch();
-       
+
       })
     })
   }
