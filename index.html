@@ -103,13 +103,8 @@
     nameInputElement.classList.remove("error");
     textInputElement.classList.remove("error");
 
-    if (nameInputElement.value === "") {
+    if (nameInputElement.value === "" || textInputElement.value === "") {
       nameInputElement.classList.add('error');
-      buttonDisabled();
-      return;
-
-    } else if (textInputElement.value === "") {
-      textInputElement.classList.add('error');
       buttonDisabled();
       return;
 
