@@ -70,21 +70,55 @@
     let date = new Date().toLocaleDateString();
     let time = new Date().toLocaleTimeString().slice(0, -3);
     return `${date} ${time}`;
-  }
+  };
   //console.log(getCurrentDate());
-  
+
+  const buttonValidatorName = () => {
+    nameInputElement.addEventListener(
+      ("input"), () => {
+        buttonElement.classList.remove("add-form-button-inactive-hover");
+        buttonElement.removeAttribute("disabled", "");
+        nameInputElement.classList.remove("error");
+      });
+  };
+
+  const buttonValidatorText = () => {
+    textInputElement.addEventListener(
+      ("input"), () => {
+        buttonElement.classList.remove("add-form-button-inactive-hover");
+        buttonElement.removeAttribute("disabled", "");
+        textInputElement.classList.remove("error");
+      });
+  };
+
+  const buttonDisabled = () => {
+    buttonElement.setAttribute("disabled", "");
+    buttonElement.classList.add("add-form-button-inactive-hover");
+  };
+
+  buttonValidatorName();
+  buttonValidatorText();
+
   buttonElement.addEventListener("click", () => {
     nameInputElement.classList.remove("error");
+    textInputElement.classList.remove("error");
 
-    if (nameInputElement.value === "" || textInputElement.value === "") {
+    if (nameInputElement.value === "") {
+      nameInputElement.classList.add('error');
+      buttonDisabled();
       return;
-    }
 
-    const oldListHtml = listElement.innerHTML;
-    listElement.innerHTML =
-      oldListHtml +
+    } else if (textInputElement.value === "") {
+      textInputElement.classList.add('error');
+      buttonDisabled();
+      return;
 
-      `<li class="comment">
+    } else {
+      const oldListHtml = listElement.innerHTML;
+      listElement.innerHTML =
+        oldListHtml +
+
+        `<li class="comment">
         <div class="comment-header">
           <div>${nameInputElement.value}</div>
           <div>${getCurrentDate()}</div>
@@ -102,11 +136,16 @@
         </div>
       </li>`;
 
-    nameInputElement.value = "";
-    textInputElement.value = "";
+      nameInputElement.value = "";
+      textInputElement.value = "";
+    };
   });
-
   //console.log("It works!");
 </script>
 
 </html>
+
+
+
+<!--
+  -->
