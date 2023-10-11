@@ -77,22 +77,24 @@
     const likeButtons = document.querySelectorAll(".like-button");
     const likeCounts = document.querySelectorAll(".likes-counter");
 
-    const comments = [
-      {
-        name: 'Глеб Фокин',
-        text: 'Это будет первый комментарий на этой странице',
-        date: '12.02.22 12:18',
-        likes: 3,
-        isLike: false
-      },
-      {
-        name: 'Варвара Н.',
-        text: 'Мне нравится как оформлена эта страница! ❤',
-        date: '13.02.22 19:22',
-        likes: 75,
-        isLike: true
-      }
-    ]
+    // Получать из хранилища данных
+
+    let comments = [
+      // {
+      //   name: 'Глеб Фокин',
+      //   text: 'Это будет первый комментарий на этой странице',
+      //   date: '12.02.22 12:18',
+      //   likes: 3,
+      //   isLike: false
+      // },
+      // {
+      //   name: 'Варвара Н.',
+      //   text: 'Мне нравится как оформлена эта страница! ❤',
+      //   date: '13.02.22 19:22',
+      //   likes: 75,
+      //   isLike: true
+      // }
+    ];
 
     const renderComments = () => {
       const commentsHtml = comments.map((comment, index) => {
@@ -124,6 +126,37 @@
 
       addLikes();
     };
+
+    // fetch - запускает запрос в api
+    const fetchComments = () => {
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/elena-vakulenko/comments", {
+      method: "GET"
+    });
+
+    // подписываемся на успешное завершение запроса с помощью then
+    fetchPromise.then((response) => {
+      // Запускаем преобразовываем "сырые" данные от API в json формат
+      const jsonPromise = response.json();
+
+      // Подписываемся на результат преобразования
+      jsonPromise.then((responseData) => {
+        // получили данные и рендерим их в приложении
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: new Date(comment.date).toLocaleString(),
+            text: comment.text,
+            likes: comment.likes,
+            isLike: false,
+          }
+        });
+        comments = appComments;
+        renderComments();
+      });
+    });
+  };
+
+  fetchComments();
 
     // Добавляет обработчики кликов ко всем элементам с классом
     const addLikes = () => {
@@ -209,19 +242,30 @@
         isLike: false
       });
 
+      const postCommentPromise = fetch("https://wedev-api.sky.pro/api/v1/elena-vakulenko/comments", {
+    method: "POST",
+    body: JSON.stringify({
+      text: commentInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
+      name: nameInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
+    }),
+  });
+    postCommentPromise.then((response) => {
+        const jsonGetCommentsPromise = response.json();
+        jsonGetCommentsPromise.then((responseData) => {
+          // console.log(responseData);
+          commentArray = responseData.comments;
+        });
+      });
+
       renderComments();
-    });
-
-    buttonElement.addEventListener("input", (event) => {
-      if(nameInputElement.value === '') {
-      buttonElement.disabled = this.value;
-      return;
-      }
-
-      if(commentInputElement.value === '') {
-      buttonElement.disabled = this.value;
-      return;
-      }
     });
 
 console.log('It works!');
