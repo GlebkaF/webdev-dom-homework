@@ -19,7 +19,7 @@ export const renderComments = (comments) => {
               ${comment.text}
               </div>
             </div>  
-            </div>
+            
             <div class="comment-footer">
               <div class="likes">
                 <span class="likes-counter">${comment.likes}</span>
@@ -56,7 +56,7 @@ export const renderComments = (comments) => {
   
     appElement.innerHTML = appHtml;
 
-    const buttonElement = document.getElementById("add-button");
+const buttonElement = document.getElementById("add-button");
 const nameInputElement = document.getElementById("name-input");
 const textInputElement = document.querySelector(".add-form-text");
 const textareaInputElement = document.getElementById("textarea-input");
