@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="list-comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -57,7 +57,7 @@
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="add-button">Написать</button>
         </div>
       </div>
     </div>
@@ -66,7 +66,13 @@
   <script>
     "use strict";
     // Код писать здесь
-    
+    const buttonElement = document.getElementById('add-button');
+    const listElement = document.getElementById('list-comments');
+    buttonElement.addEventListener('click', () => {
+    const oldListHtml = listElement.innerHTML;
+    listElement.innerHTML = oldListHtml + ``
+
+    })
     console.log("It works!");
   </script>
 </html>
