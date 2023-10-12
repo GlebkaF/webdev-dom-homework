@@ -14,10 +14,11 @@ addButtonElement.classList.add('btnNoActive');
 
 //Колбэк функция для активации кнопки
 function isActive() {
-    addButtonElement.disabled = false;
-    addButtonElement.classList.remove('btnNoActive');
+    if (nameInputValue.value !== '' && textareaValue.value !== '') {
+        addButtonElement.disabled = false;
+        addButtonElement.classList.remove('btnNoActive');
+    }
 }
-
 //Отслеживает инпуты
 nameInputValue.addEventListener('input', isActive);
 textareaValue.addEventListener('input', isActive);
@@ -70,6 +71,8 @@ function addComments() {
     //Очищение полей после добавления комментария
     textareaValue.value = '';
     nameInputValue.value = '';
+    addButtonElement.disabled = true;
+    addButtonElement.classList.add('btnNoActive');
 }
 //Добавление комментарий по клику
 addButtonElement.addEventListener('click', addComments)
@@ -82,9 +85,9 @@ formElement.addEventListener('keyup', (e) => {
 
 //Удаление
 removeButtonElement.addEventListener('click', () => {
-    let lastEl;
-    commentElement.forEach(element => {
-        lastEl = element;
-    });
-    lastEl.remove();
+    let lastIndex = commentsElement.innerHTML.lastIndexOf(`<li class="comment">`);
+    console.dir(lastIndex)
+    // commentsElement.innerHTML = 
+    // let a = lastIndex.slice(0, lastIndex);
+    // lastEl.remove();
 })
