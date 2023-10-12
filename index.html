@@ -65,6 +65,7 @@
 
   <script>
     "use strict";
+    console.log("It works!");
     // Код писать здесь
     const buttonElement = document.getElementById('add-button');
     const listElement = document.getElementById('list-comments');
@@ -92,9 +93,13 @@
       }
       return `${day}.${month}.${year} ${hour}:${minute}`
     }
+
     buttonElement.addEventListener('click', () => {
-    const oldListHtml = listElement.innerHTML;
-    listElement.innerHTML = oldListHtml + `<li class="comment">
+      if (nameInput.value === '' || textareaInput.value === '') {
+        return
+      } else {
+    const oldListCom = listElement.innerHTML;
+    listElement.innerHTML = oldLisCom + `<li class="comment">
           <div class="comment-header">
             <div>${nameInput.value}</div>
             <div>${getDateNow()}</div>
@@ -117,6 +122,6 @@
     textareaInput.value = ''
   }
     )
-    console.log("It works!");
+   
   </script>
 </html>
