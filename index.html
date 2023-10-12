@@ -58,6 +58,7 @@
         ></textarea>
         <div class="add-form-row">
           <button class="add-form-button" id="add-button">Написать</button>
+          <button class="add-form-button" id="delete-button">Удалить коментарий</button>
         </div>
       </div>
     </div>
@@ -67,10 +68,49 @@
     "use strict";
     console.log("It works!");
     // Код писать здесь
+
+		const setActiveButtonInput = () => {
+			nameInputElement.addEventListener(('input'), () => { //привожу кнопку в порядок после инпута:
+			buttonElement.classList.remove('disabled-hover');//Делаю кнопку активной после ввода данных в инпут
+			buttonElement.removeAttribute('disabled', '');//Делаю кнопку активной после ввода данных в инпут
+			nameInputElement.classList.remove('err');
+		});	
+		}
+
+		const setActiveButtonMessage = () => {
+			textareaInputElement.addEventListener(('input'), () => { //привожу кнопку в порядок после текстареа:
+			buttonElement.classList.remove('disabled-hover');//Делаю кнопку активной после ввода данных в текстареа
+			buttonElement.removeAttribute('disabled', '');//Делаю кнопку активной после ввода данных в текстареа
+			textareaInputElement.classList.remove('err');
+		});	
+		}
+
+		const disabledButton = () => { // Делаю кнопку неактивной
+			buttonElement.setAttribute('disabled', '');
+			buttonElement.classList.add('disabled-hover');
+		}
+
+		const submitEnter = (event) => { // отправка сообщения по Enter
+			if (event.keyCode === 13) {
+            document.getElementById("add-button").click();
+        }
+		}
+
+    
+		
+		
+
+
     const buttonElement = document.getElementById('add-button');
+    const buttonElementDel = document.getElementById("delete-button");
     const listElement = document.getElementById('list-comments');
     const nameInputElement = document.getElementById('name-input');
     const textareaInputElement = document.getElementById('textarea-input');
+    
+    setActiveButtonInput();//Делаем кнопку активной после ввода поля
+		setActiveButtonMessage();//Делаем кнопку активной после ввода поля
+
+    
 
     const getDateNow = () => {
       const dateNow = new Date();
@@ -95,18 +135,31 @@
     }
 
     buttonElement.addEventListener('click', () => {
-      if (nameInput.value === '' || textareaInput.value === '') {
-        return;
-      } else {
-    const oldListCom = listElement.innerHTML;
-    listElement.innerHTML = oldLisCom + `<li class="comment">
+      nameInputElement.classList.remove('err');
+      textareaInputElement.classList.remove('err');
+
+			if (nameInputElement.value === '') {
+				nameInputElement.classList.add('err');
+				disabledButton();
+				return;
+
+			} else if (textareaInputElement.value === '') {
+				textareaInputElement.classList.add('err');
+				disabledButton();
+				return;
+
+			} else {
+     
+      
+    
+    listElement.innerHTML = listElement.innerHTML + `<li class="comment">
           <div class="comment-header">
-            <div>${nameInput.value}</div>
+            <div>${nameInputElement.value}</div>
             <div>${getDateNow()}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${textareaInput.value}
+              ${textareaInputElement.value}
             </div>
           </div>
           <div class="comment-footer">
@@ -115,13 +168,18 @@
               <button class="like-button"></button>
             </div>
           </div>
-        </li>`
+        </li>`;
 
     }
-    nameInput.value = ''
-    textareaInput.value = ''
   }
-    )
+  
+    );
+    document.addEventListener("keyup", submitEnter);
+
+				buttonElementDel.addEventListener(('click'), () => { //Удаляю последний элемент (комментарий);
+					document.getElementById('list-comments').lastElementChild.remove();
+				});
+
    
   </script>
 </html>
