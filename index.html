@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="list">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -29,7 +29,7 @@
         <li class="comment">
           <div class="comment-header">
             <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
+            <div id="getDateElement">13.02.22 19:22</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -38,7 +38,7 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">75</span>
+              <span class="likes-counter" id="likesCounter">75</span>
               <button class="like-button -active-like"></button>
             </div>
           </div>
@@ -49,15 +49,18 @@
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+					id="name-input"
         />
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+					id="msg-text-input"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="add-button">Написать</button>
+					<button class="add-form-button" id="delete-button">Удалить коментарий</button>
         </div>
       </div>
     </div>
@@ -65,7 +68,92 @@
 
   <script>
     "use strict";
-   
-    console.log("It works!");
+
+		const getCurrentDate = () => {
+			let dateOne = new Date().toLocaleString().slice(0, -3).slice(0,10);
+			let dateTwo = new Date().toLocaleString().slice(11).slice(0,-3);
+			return dateOne + dateTwo;
+		}
+
+		const setActiveButtonInput = () => {
+			nameInputElement.addEventListener(('input'), () => { //привожу кнопку в порядок после инпута:
+			buttonElement.classList.remove('disabled-hover');//Делаю кнопку активной после ввода данных в инпут
+			buttonElement.removeAttribute('disabled', '');//Делаю кнопку активной после ввода данных в инпут
+			nameInputElement.classList.remove('err');
+		});	
+		}
+
+		const setActiveButtonMessage = () => {
+			message.addEventListener(('input'), () => { //привожу кнопку в порядок после текстареа:
+			buttonElement.classList.remove('disabled-hover');//Делаю кнопку активной после ввода данных в текстареа
+			buttonElement.removeAttribute('disabled', '');//Делаю кнопку активной после ввода данных в текстареа
+			message.classList.remove('err');
+		});	
+		}
+
+		const disabledButton = () => { // Делаю кнопку неактивной
+			buttonElement.setAttribute('disabled', '');
+			buttonElement.classList.add('disabled-hover');
+		}
+
+		const submitEnter = (event) => { // отправка сообщения по Enter
+			if (event.keyCode === 13) {
+            document.getElementById("add-button").click();
+        }
+		}
+
+    let buttonElement = document.getElementById("add-button");
+    let buttonElementDel = document.getElementById("delete-button");
+		let listElement = document.getElementById("list");
+		let nameInputElement = document.getElementById("name-input");
+		let message = document.getElementById("msg-text-input");
+		setActiveButtonInput();//Делаем кнопку активной после ввода поля
+		setActiveButtonMessage();//Делаем кнопку активной после ввода поля
+
+		buttonElement.addEventListener(('click'),  () => {
+				nameInputElement.classList.remove('err');
+				message.classList.remove('err');
+
+			if (nameInputElement.value === '') {
+				nameInputElement.classList.add('err');
+				disabledButton();
+				return;
+
+			} else if (message.value === '') {
+				message.classList.add('err');
+				disabledButton();
+				return;
+
+			} else {
+				
+				listElement.innerHTML = listElement.innerHTML +
+				`
+				<li class="comment" id="list">
+							<div class="comment-header">
+								<div>${nameInputElement.value}</div>
+								<div>${getCurrentDate()}</div>
+							</div>
+							<div class="comment-body">
+								<div class="comment-text">
+									${message.value}
+								</div>
+							</div>
+							<div class="comment-footer">
+								<div class="likes">
+									<span class="likes-counter">0</span>
+									<button class="like-button"></button>
+								</div>
+							</div>
+						</li>
+				`;
+			}
+				});
+
+				document.addEventListener("keyup", submitEnter);
+
+				buttonElementDel.addEventListener(('click'), () => { //Удаляю последний элемент (комментарий);
+					document.getElementById('list').lastElementChild.remove();
+				});
+
   </script>
 </html>

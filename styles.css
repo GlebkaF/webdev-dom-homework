@@ -2,6 +2,10 @@ body {
     margin: 0;
   }
 
+	.err {
+		background-color: red;
+	}
+
   .container {
     font-family: Helvetica;
     color: #ffffff;
@@ -120,6 +124,7 @@ body {
   .add-form-row {
     display: flex;
     justify-content: flex-end;
+		gap: 20px;
   }
 
   .add-form-button {
@@ -135,3 +140,7 @@ body {
   .add-form-button:hover {
     opacity: 0.9;
   }
+
+	.disabled-hover {
+		pointer-events: none;
+	}
