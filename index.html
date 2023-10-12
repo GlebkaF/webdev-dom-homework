@@ -31,7 +31,7 @@
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
 
-  // Функция apiGet получает данные с сервера
+  // Функция apiGet получает данные с сервера по API
   const apiGet = () => {
 
     const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/stepan-titov/comments", {
@@ -57,31 +57,33 @@
           };
         });
         comments = fromApp;
-        
-        renderComments();
+
+        renderComments();// Вызываем функцию рендеринга страницы
+        likeButtons();//Вызываем функцию обработки клика по лайкам
       });
     });
 
   }
-  apiGet();
-  let comments = [
-    {
-      userName: "Глеб Фокин",
-      checkLike: false,
-      textComment: "Это будет первый комментарий на этой странице",
-      countLikes: 3,
-      fullDate: "12.02.22 12:18",
-    },
-    {
-      userName: "Варвара Н.",
-      checkLike: false,
-      textComment: "Мне нравится как оформлена эта страница! ❤",
-      countLikes: 75,
-      fullDate: "13.02.22 19:22",
-    },
-  ];
+  apiGet();// Вызываем функцию получения данных с сервера по API
+  
+  let comments = []; //= [
+    //{
+    //  userName: "Глеб Фокин",
+    //  checkLike: false,
+    //  textComment: "Это будет первый комментарий на этой странице",
+    //  countLikes: 3,
+    //  fullDate: "12.02.22 12:18",
+   // },
+   // {
+   //   userName: "Варвара Н.",
+   //   checkLike: false,
+   //   textComment: "Мне нравится как оформлена эта страница! ❤",
+   //   countLikes: 75,
+  //    fullDate: "13.02.22 19:22",
+  //  },
+  //];
 
-  const renderComments = () => {
+  const renderComments = () => { // Функция рендеринга страницы
     const commensHtml = comments.map((comment, index) => {
       return `<li class="comment" data-text="${comment.textComment}" data-name="${comment.userName}">
         <div class="comment-header">
@@ -120,9 +122,9 @@
 
 
   };
-  renderComments();
+  renderComments(); // Вызываем функцию рендеринга страницы
 
-  const likeButtons = () => {
+  const likeButtons = () => { //Функция обработки клика по лайкам
     const buttonLikes = document.querySelectorAll(".like-button");
     for (const buttonLike of buttonLikes) {
       buttonLike.addEventListener("click", () => {
@@ -135,16 +137,16 @@
           comments[buttonLike.dataset.index].countLikes++;
         }
 
-        renderComments();
-        likeButtons();
+        renderComments(); // Вызываем функцию рендеринга страницы
+        likeButtons(); //Вызываем функцию обработки клика по лайкам
       });
     }
   };
 
 
 
-  renderComments();
-  likeButtons();
+  renderComments(); // Вызываем функцию рендеринга страницы
+  likeButtons(); //Вызываем функцию обработки клика по лайкам
 
 
 
@@ -163,7 +165,7 @@
       commentInputElement.classList.add('error');// И подсветить флорму красным цветом
       return;
     }
-
+// Функция получения текущей даты и времени
     const fullDate = () => {
 
       let newDate = new Date();
@@ -221,14 +223,13 @@
     nameInputElement.value = '';// Очиска формы имени после ввода данных
     commentInputElement.value = '';// Очиска формы коментария после ввода данных
 
-    apiGet();
-    renderComments();
-    
+    apiGet();// Вызываем функцию получения данных с сервера по API
+    renderComments();// Вызываем функцию рендеринга страницы
+    likeButtons();//Вызываем функцию обработки клика по лайкам
 
   });
 
-
-
+  
 
   console.log("It works!");
 
