@@ -31,7 +31,7 @@
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
 
-  // Функция apiGet получает данные с сервера
+  // Функция apiGet получает данные с сервера по API
   const apiGet = () => {
 
     const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/stepan-titov/comments", {
@@ -58,12 +58,13 @@
         });
         comments = fromApp;
 
-        renderComments();
+        renderComments();// Вызываем функцию рендеринга страницы
+        likeButtons();//Вызываем функцию обработки клика по лайкам
       });
     });
 
   }
-  apiGet();
+  apiGet();// Вызываем функцию получения данных с сервера по API
   
   let comments = []; //= [
     //{
@@ -164,7 +165,7 @@
       commentInputElement.classList.add('error');// И подсветить флорму красным цветом
       return;
     }
-
+// Функция получения текущей даты и времени
     const fullDate = () => {
 
       let newDate = new Date();
@@ -222,9 +223,9 @@
     nameInputElement.value = '';// Очиска формы имени после ввода данных
     commentInputElement.value = '';// Очиска формы коментария после ввода данных
 
-    apiGet();
-    renderComments();
-    likeButtons();
+    apiGet();// Вызываем функцию получения данных с сервера по API
+    renderComments();// Вызываем функцию рендеринга страницы
+    likeButtons();//Вызываем функцию обработки клика по лайкам
 
   });
 
