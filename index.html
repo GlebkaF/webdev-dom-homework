@@ -81,8 +81,7 @@
       alert("Пожалуйста, заполните все поля.");
       return;
     }
-
-    // Создайте новый элемент комментария
+    
     const commentItem = document.createElement("li");
     commentItem.className = "comment";
 
@@ -108,10 +107,7 @@
     commentItem.appendChild(commentBody);
     commentItem.appendChild(commentFooter);
 
-    // Добавьте новый комментарий к списку комментариев
     commentList.appendChild(commentItem);
-
-    // Очистите поля ввода
     nameInput.value = "";
     commentInput.value = "";
   });
