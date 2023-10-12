@@ -125,6 +125,7 @@
       commentInputElement.value = "";
 
       addLikes();
+      addQuote();
     };
 
     // fetch - запускает запрос в api
@@ -182,19 +183,24 @@
 
     renderComments();
 
-    const commentElements = document.querySelectorAll(".comment");
-    for (const commentElement of commentElements) {
-      commentElement.addEventListener('click', () => {
-        const index = commentElement.dataset.index;
-        if (index !== null) {
-          const comment = comments[index];
-          commentInputElement.value = `>>${comment.text} \nto: ${comment.name},`;
+    const addQuote = () => {
+      const commentElements = document.querySelectorAll(".comment");
+      for (const commentElement of commentElements) {
+        commentElement.addEventListener('click', () => {
+          const index = commentElement.dataset.index;
+          if (index !== null) {
+            const comment = comments[index];
+            commentInputElement.value = `>>${comment.text} \nto: ${comment.name},`;
 
-          comment.text.replace("<div class='quote'</div>");
-          const styleQuote = document.querySelectorAll(".quote");
-        }
-      })
+            comment.text.replace("<div class='quote'</div>");
+            const styleQuote = document.querySelectorAll(".quote");
+          }
+          renderComments();
+        })
+      }
     }
+
+    renderComments();
 
     function addZero(z) {
       return (z < 10) ? '0' + z : z;
@@ -226,21 +232,21 @@
         return;
       }
 
-      comments.push({
-        name: nameInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-        text: commentInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-        date: currentDate(),
-        likes: 0,
-        isLike: false
-      });
+      // comments.push({
+      //   name: nameInputElement.value
+      //   .replaceAll("&", "&amp;")
+      //   .replaceAll("<", "&lt;")
+      //   .replaceAll(">", "&gt;")
+      //   .replaceAll('"', "&quot;"),
+      //   text: commentInputElement.value
+      //   .replaceAll("&", "&amp;")
+      //   .replaceAll("<", "&lt;")
+      //   .replaceAll(">", "&gt;")
+      //   .replaceAll('"', "&quot;"),
+      //   date: currentDate(),
+      //   likes: 0,
+      //   isLike: false
+      // });
 
       const postCommentPromise = fetch("https://wedev-api.sky.pro/api/v1/elena-vakulenko/comments", {
     method: "POST",
@@ -260,7 +266,7 @@
     postCommentPromise.then((response) => {
         const jsonGetCommentsPromise = response.json();
         jsonGetCommentsPromise.then((responseData) => {
-          // console.log(responseData);
+          fetchComments();
           commentArray = responseData.comments;
         });
       });
