@@ -45,12 +45,12 @@
         </li>
       </ul>
       <div class="add-form">
-        <input
-          type="text"
+        <input id="name-input"
+          type="text" 
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
-        <textarea
+        <textarea id="textarea-input"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
@@ -68,9 +68,11 @@
     // Код писать здесь
     const buttonElement = document.getElementById('add-button');
     const listElement = document.getElementById('list-comments');
+    const nameInputElement = document.getElementById('name-input');
+    const textareaInputElement = document.getElementById('textarea-input');
     buttonElement.addEventListener('click', () => {
     const oldListHtml = listElement.innerHTML;
-    listElement.innerHTML = oldListHtml + ``
+    listElement.innerHTML = oldListHtml + `${nameInputElement.value} ${textareaInputElement.value}`
 
     })
     console.log("It works!");
