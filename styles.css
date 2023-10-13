@@ -22,7 +22,8 @@ body {
   }
 
   .comment,
-  .add-form {
+  .add-form,
+  .loading-comment {
     width: 596px;
     box-sizing: border-box;
     background: radial-gradient(
@@ -98,7 +99,19 @@ body {
     display: flex;
     flex-direction: column;
   }
-
+  .loading-comment {
+    padding: 20px;
+    margin-top: 48px;
+    display: flex;
+    justify-content: space-between;
+  }
+.loading-comment::after {
+  content: '';
+  background-image: url("loading.gif");
+  width: 25px;
+  height: 25px;
+  background-size: cover;
+}
   .add-form-name,
   .add-form-text,
   .edit-form-text {
@@ -173,4 +186,23 @@ body {
 
   .displayHidden {
     display: none;
+  }
+
+  @keyframes rotating {
+    from {
+      transform: rotate(0deg);
+    }
+    25% {
+      transform: rotate(30deg);;
+    }
+    75% {
+      transform: rotate(-30deg);;
+    }
+    to {
+      transform: rotate(0deg);
+    }
+  }
+
+  .-loading-like {
+    animation: rotating 2s linear infinite;
   }

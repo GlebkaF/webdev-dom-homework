@@ -11,7 +11,7 @@
   <div class="container">
     <ul class="comments">
     </ul>
-    <div class="add-form loading-comment">Комментарий добавляется...</div>
+    <div class="loading-comment">Комментарий добавляется...</div>
     <div class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
@@ -33,11 +33,11 @@
   const addFormElement = document.querySelector(".add-form");
   const loadingCommentElement = document.querySelector(".loading-comment");
 
-
-
   let comments = [];
 
   const getCommentsFetch = () => {
+
+    loadingCommentElement.textContent = "Загрузка комментариев"
 
     return fetch("https://wedev-api.sky.pro/api/v1/tanya-zakharova/comments", {
       method: "GET"
@@ -53,6 +53,7 @@
             date: currentDate(comment.date),
             likesCounter: comment.likes,
             isLiked: false,
+            isLikeLoading: false,
             isEdited: false,
           };
         });
@@ -101,19 +102,32 @@
       })
     }
   }
+
+  function delay(interval = 300) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, interval);
+    });
+  }
+
   const initAddLikes = () => {
     const likesButtonElements = document.querySelectorAll(".like-button");
 
     for (const likesButtonElement of likesButtonElements) {
       likesButtonElement.addEventListener('click', () => {
         const index = likesButtonElement.dataset.index;
-        if (comments[index].isLiked) {
-          comments[index].likesCounter -= 1;
-          comments[index].isLiked = false;
-        } else {
-          comments[index].likesCounter += 1;
-          comments[index].isLiked = true;
-        }
+        comments[index].isLikeLoading = true;
+
+        delay(2000).then(() => {
+
+          comments[index].likesCounter = comments[index].isLiked
+            ? comments[index].likesCounter - 1
+            : comments[index].likesCounter + 1;
+          comments[index].isLiked = !comments[index].isLiked;
+          comments[index].isLikeLoading = false;
+          renderComments();
+        });
         event.stopPropagation();
         renderComments();
       })
@@ -199,7 +213,7 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${comment.likesCounter}</span>
-              <button class="like-button ${comment.isLiked ? `-active-like` : ``}" data-index="${index}"></button>
+              <button class="like-button ${comment.isLiked ? `-active-like` : ``} ${comment.isLikeLoading ? `-loading-like` : ``}" data-index="${index}"></button>
             </div>
           </div>
         </li>`
@@ -240,6 +254,8 @@
   }
 
   function addComment() {
+    addFormElement.classList.add("displayHidden");
+    loadingCommentElement.classList.remove("displayHidden");
 
     const addCommentsFetch = fetch("https://wedev-api.sky.pro/api/v1/tanya-zakharova/comments", {
       method: "POST",
@@ -249,12 +265,12 @@
       })
     })
       .then((response) => {
+
         return response.json();
       })
       .then((responseDate) => {
 
-        addFormElement.classList.add("displayHidden");
-        loadingCommentElement.classList.remove("displayHidden");
+
 
         getCommentsFetch();
 
