@@ -31,18 +31,24 @@
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
 
+
+  buttonElement.disabled = true;// Выключаем кнопку добавления коментария 
+  //пока коментарии добавляются на страницу
+  buttonElement.textContent = 'Данные загружаются...';// Меняем название кнопки
+
   // Функция apiGet получает данные с сервера по API
   const apiGet = () => {
 
-    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/stepan-titov/comments", {
+    return fetch("https://wedev-api.sky.pro/api/v1/stepan-titov/comments", {
       method: "GET"
-    });
+    })
 
 
-    fetchPromise.then((response) => {
+      .then((response) => {
 
-      const jsonPromise = response.json();
-      jsonPromise.then((responseData) => {
+        return response.json();
+      })
+      .then((responseData) => {
         const fromApp = responseData.comments.map((comment) => {
 
           return {
@@ -60,10 +66,13 @@
 
         renderComments();// Вызываем функцию рендеринга страницы
         likeButtons();//Вызываем функцию обработки клика по лайкам
-      });
-    });
 
-  }
+        buttonElement.disabled = false;// Включаем кнопку добавления комментария
+        buttonElement.textContent = 'Написать';// Меняем название кнопки добавления коментария
+      });
+
+  };
+
   apiGet();// Вызываем функцию получения данных с сервера по API
 
   let comments = []; //= [
@@ -84,6 +93,7 @@
   //];
 
   const renderComments = () => { // Функция рендеринга страницы
+
     const commensHtml = comments.map((comment, index) => {
       return `<li class="comment" data-text="${comment.textComment}" data-name="${comment.userName}">
         <div class="comment-header">
@@ -105,6 +115,7 @@
       .join('');
     listElement.innerHTML = commensHtml;
 
+
     //Обработчик событий при нажатии на текст коментария
     const commentsElements = document.querySelectorAll(".comment");
     for (const comment of commentsElements) {
@@ -123,6 +134,8 @@
 
   };
   renderComments(); // Вызываем функцию рендеринга страницы
+
+
 
   const likeButtons = () => { //Функция обработки клика по лайкам
     const buttonLikes = document.querySelectorAll(".like-button");
@@ -221,22 +234,34 @@
 
     }).then((response) => {
       console.log("Время:" + (Date.now() - startAt));
-      const jsonPromise = response.json().then((responseData) => {
+      return response;
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then(() => {
+        return apiGet();// Вызываем функцию получения данных с сервера по API
+      })
+      .then(() => {
         buttonElement.disabled = false;// Включаем кнопку добавления комментария
         buttonElement.textContent = 'Написать';// И меняем надпись обратно
-        renderComments();
-      });
-    });
+      })
+
+
     nameInputElement.value = '';// Очиска формы имени после ввода данных
     commentInputElement.value = '';// Очиска формы коментария после ввода данных
-
-    apiGet();// Вызываем функцию получения данных с сервера по API
-
-    console.log("Время:" + (Date.now() - startAt));
-    renderComments();// Вызываем функцию рендеринга страницы
-    likeButtons();//Вызываем функцию обработки клика по лайкам
-
+    renderComments();
   });
+
+
+
+
+
+  console.log("Время:" + (Date.now() - startAt));
+  renderComments();// Вызываем функцию рендеринга страницы
+  likeButtons();//Вызываем функцию обработки клика по лайкам
+
+
 
 
 
