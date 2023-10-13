@@ -31,27 +31,61 @@
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
 
-  const comments = [
-    {
-      userName: "Глеб Фокин",
-      checkLike: false,
-      textComment: "Это будет первый комментарий на этой странице",
-      countLikes: 3,
-      fullDate: "12.02.22 12:18",
-    },
-    {
-      userName: "Варвара Н.",
-      checkLike: false,
-      textComment: "Мне нравится как оформлена эта страница! ❤",
-      countLikes: 75,
-      fullDate: "13.02.22 19:22",
-    },
-  ];
+  // Функция apiGet получает данные с сервера по API
+  const apiGet = () => {
 
-  const renderComments = () => {
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/stepan-titov/comments", {
+      method: "GET"
+    });
+
+
+    fetchPromise.then((response) => {
+
+      const jsonPromise = response.json();
+      jsonPromise.then((responseData) => {
+        const fromApp = responseData.comments.map((comment) => {
+
+          return {
+
+            userName: comment.author.name,
+            checkLike: comment.isLiked,
+            textComment: comment.text,
+            countLikes: comment.likes,
+            // длинная строка ниже- это преобразование даты, полученной с сервера для нормального отображения
+            fullDate: new Date(comment.date).toLocaleDateString() + " " + (new Date(comment.date).getHours() < 10 ? '0' + new Date(comment.date).getHours() : new Date(comment.date).getHours()) + ":" + (new Date(comment.date).getMinutes() < 10 ? '0' + new Date(comment.date).getMinutes() : new Date(comment.date).getMinutes()) + ":" + (new Date(comment.date).getSeconds() < 10 ? '0' + new Date(comment.date).getSeconds() : new Date(comment.date).getSeconds()),
+
+          };
+        });
+        comments = fromApp;
+
+        renderComments();// Вызываем функцию рендеринга страницы
+        likeButtons();//Вызываем функцию обработки клика по лайкам
+      });
+    });
+
+  }
+  apiGet();// Вызываем функцию получения данных с сервера по API
+  
+  let comments = []; //= [
+    //{
+    //  userName: "Глеб Фокин",
+    //  checkLike: false,
+    //  textComment: "Это будет первый комментарий на этой странице",
+    //  countLikes: 3,
+    //  fullDate: "12.02.22 12:18",
+   // },
+   // {
+   //   userName: "Варвара Н.",
+   //   checkLike: false,
+   //   textComment: "Мне нравится как оформлена эта страница! ❤",
+   //   countLikes: 75,
+  //    fullDate: "13.02.22 19:22",
+  //  },
+  //];
+
+  const renderComments = () => { // Функция рендеринга страницы
     const commensHtml = comments.map((comment, index) => {
-      return (comment.checkLike === true) ?
-        `<li class="comment">
+      return `<li class="comment" data-text="${comment.textComment}" data-name="${comment.userName}">
         <div class="comment-header">
           <div>${comment.userName}</div>
           <div>${comment.fullDate}</div>
@@ -62,35 +96,39 @@
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${comment.countLikes}</span>
-            <button data-index ="${index}" class="like-button"></button>
+            <button data-index ="${index}" class="like-button ${comment.checkLike ? '-active-like' : ''}"></button>
           </div>
         </div>
       </li>`
-        :
-        `<li class="comment">
-        <div class="comment-header">
-          <div>${comment.userName}</div>
-          <div>${comment.fullDate}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">${comment.textComment}</div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">${comment.countLikes}</span>
-            <button data-index ="${index}" class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>`
+
     })
       .join('');
     listElement.innerHTML = commensHtml;
-  };
 
-  const likeButtons = () => {
+    //Обработчик событий при нажатии на текст коментария
+    const commentsElements = document.querySelectorAll(".comment");
+    for (const comment of commentsElements) {
+      comment.addEventListener('click', () => {
+        event.stopPropagation();//Отключение дочерних событий
+        const dataComment = comment.dataset.text;
+        const dataName = comment.dataset.name;
+
+
+
+        commentInputElement.value = `> ${dataComment}\n\n${dataName}`;
+        console.log(`> ${dataComment}\n\n${dataName}`);
+      });
+    };
+
+
+  };
+  renderComments(); // Вызываем функцию рендеринга страницы
+
+  const likeButtons = () => { //Функция обработки клика по лайкам
     const buttonLikes = document.querySelectorAll(".like-button");
     for (const buttonLike of buttonLikes) {
       buttonLike.addEventListener("click", () => {
+        event.stopPropagation();//Отключение дочерних событий
         if (comments[buttonLike.dataset.index].checkLike === true) {
           comments[buttonLike.dataset.index].checkLike = false;
           comments[buttonLike.dataset.index].countLikes--;
@@ -99,14 +137,20 @@
           comments[buttonLike.dataset.index].countLikes++;
         }
 
-        renderComments();
-        likeButtons();
+        renderComments(); // Вызываем функцию рендеринга страницы
+        likeButtons(); //Вызываем функцию обработки клика по лайкам
       });
     }
   };
 
-  renderComments();
-  likeButtons();
+
+
+  renderComments(); // Вызываем функцию рендеринга страницы
+  likeButtons(); //Вызываем функцию обработки клика по лайкам
+
+
+
+
 
   buttonElement.addEventListener('click', () => {
 
@@ -121,46 +165,71 @@
       commentInputElement.classList.add('error');// И подсветить флорму красным цветом
       return;
     }
+// Функция получения текущей даты и времени
+    const fullDate = () => {
 
-    let newDate = new Date();
-    let date = newDate.getDate();
-    let month = newDate.getMonth() + 1;
-    let year = newDate.getFullYear() - 2000;
-    let hour = newDate.getHours(); // получаем час из нашей даты
-    let minute = newDate.getMinutes(); // получаем минуты
+      let newDate = new Date();
+      let date = newDate.getDate();
+      let month = newDate.getMonth() + 1;// +1 т.к. нумерация месяцев начинается с нуля
+      let year = newDate.getFullYear() - 2000;
+      let hour = newDate.getHours(); // получаем час из нашей даты
+      let minute = newDate.getMinutes(); // получаем минуты
 
+      if (date < 10) {// если количество дней будет меньше 10,
+        date = "0" + date;// то перед ними поставим 0
+      }
+      if (month < 10) {// если количество месяцев будет меньше 10,
+        month = "0" + month;// то перед ними поставим 0
+      }
+      if (hour < 10) { // если количество часов будет меньше 10,
+        hour = "0" + hour; // то перед ними поставим 0
+      }
+      if (minute < 10) { // если минут будет меньше 10,
+        minute = "0" + minute; // то перед ними поставим 0
+      }
+      //Функция fullDate возвращает текущую дату и время: 
+      return date + "." + month + "." + year + " " + hour + ":" + minute;
+    };
 
+    const sanitizeHtml = (htmlString) => {
+      return htmlString.replaceAll("<", "&lt;")// элементарная обработка пользовательского ввода на предмет
+        .replaceAll(">", "&gt;") // всяких нехороших вещей в HTML-коде, в данном случае управляющие символы разметки "<" и ">"
+        .replaceAll("&", "&amp;")
+        .replaceAll('"', "&quot;");// меняются; на их коды, а браузер всёравно выводит эти символы
+    };
 
-    if (date < 10) {
-      date = "0" + date;
-    }
-    if (month < 10) {
-      month = "0" + month;
-    }
-    if (hour < 10) { // если будет меньше 10,
-      hour = "0" + hour; // то перед ними поставим 0
-    }
-    if (minute < 10) { // если минут будет меньше 10,
-      minute = "0" + minute; // то перед ними поставим 0
-    }
-    let fullDate = date + "." + month + "." + year + " " + hour + ":" + minute;
+    const postCommentsPromise = fetch("https://wedev-api.sky.pro/api/v1/stepan-titov/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        text: commentInputElement.value
+          .replaceAll("<", "&lt;")// элементарная обработка пользовательского ввода на предмет
+          .replaceAll(">", "&gt;") // всяких нехороших вещей в HTML-коде, в данном случае управляющие символы разметки "<" и ">"
+          .replaceAll("&", "&amp;")
+          .replaceAll('"', "&quot;"),
+        name: nameInputElement.value
+          .replaceAll("<", "&lt;")// элементарная обработка пользовательского ввода на предмет
+          .replaceAll(">", "&gt;") // всяких нехороших вещей в HTML-коде, в данном случае управляющие символы разметки "<" и ">"
+          .replaceAll("&", "&amp;")
+          .replaceAll('"', "&quot;"),
+      }),
 
+    }).then((response) => {
 
-    comments.push({
-      userName: nameInputElement.value,
-      checkLike: false,
-      textComment: commentInputElement.value,
-      countLikes: 0,
-      fullDate: fullDate,
+      const jsonPromise = response.json().then((responseData) => {
+        
+        renderComments();
+      });
     });
-
     nameInputElement.value = '';// Очиска формы имени после ввода данных
     commentInputElement.value = '';// Очиска формы коментария после ввода данных
 
-    renderComments();
-    likeButtons();
+    apiGet();// Вызываем функцию получения данных с сервера по API
+    renderComments();// Вызываем функцию рендеринга страницы
+    likeButtons();//Вызываем функцию обработки клика по лайкам
 
   });
+
+  
 
   console.log("It works!");
 
