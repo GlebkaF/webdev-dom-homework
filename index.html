@@ -198,6 +198,12 @@
         .replaceAll('"', "&quot;");// меняются; на их коды, а браузер всёравно выводит эти символы
     };
 
+    const startAt = Date.now();
+    console.log("Начинаю делать запрос");
+
+    buttonElement.disabled = true;// Выключаем кнопку добавления комментария
+    buttonElement.textContent = 'Коментарий добавляется...';// Меняем надпись кнопки
+
     const postCommentsPromise = fetch("https://wedev-api.sky.pro/api/v1/stepan-titov/comments", {
       method: "POST",
       body: JSON.stringify({
@@ -214,9 +220,10 @@
       }),
 
     }).then((response) => {
-
+      console.log("Время:" + (Date.now() - startAt));
       const jsonPromise = response.json().then((responseData) => {
-
+        buttonElement.disabled = false;// Включаем кнопку добавления комментария
+        buttonElement.textContent = 'Написать';// И меняем надпись обратно
         renderComments();
       });
     });
@@ -224,6 +231,8 @@
     commentInputElement.value = '';// Очиска формы коментария после ввода данных
 
     apiGet();// Вызываем функцию получения данных с сервера по API
+
+    console.log("Время:" + (Date.now() - startAt));
     renderComments();// Вызываем функцию рендеринга страницы
     likeButtons();//Вызываем функцию обработки клика по лайкам
 
