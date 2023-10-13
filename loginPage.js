@@ -1,6 +1,7 @@
 import { login, setToken, token } from "./api.js";
+import {fetchAndRenderComments} from "./main.js";
 
-export const renderLogin = ({fetchAndRenderComments, commentsHtml}) => {
+export const renderLogin = () => {
     const appElement = document.getElementById("app");
     const loginHtml = `
     <div class="container">
@@ -39,8 +40,11 @@ buttonElement.addEventListener("click", () => {
         console.log(token);
     })
     .then(() => {
-      fetchAndRenderComments(commentsHtml);
+      fetchAndRenderComments();
     })
+
+  
+    
 });
 };
 

@@ -1,18 +1,21 @@
 "use strict";
 
 import { getComments } from "./api.js";
-
+import { postComment } from "./api.js";
 import { renderLogin } from "./loginPage.js";
 import { renderComments } from "./renderComments.js";
 
 
 
-
 // Массив данных из хранилища
-let comments = [];
+export let comments = [];
+
+export const setComments = (newComments) => {
+  comments = newComments;
+}
 
 // GET
-const fetchAndRenderComments = () => {
+export const fetchAndRenderComments = () => {
   getComments().then((responseData) => {
     comments = responseData.comments.map((comment) => {
       return {
@@ -22,8 +25,15 @@ const fetchAndRenderComments = () => {
         likes: comment.likes,
       };
     });
-    renderComments(comments);
+    renderComments();
   });
 };
 
-renderLogin({fetchAndRenderComments});
+fetchAndRenderComments();
+//renderLogin({fetchAndRenderComments});
+
+
+
+
+
+

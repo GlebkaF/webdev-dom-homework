@@ -1,4 +1,4 @@
-// Ответ на комментарий
+
 const textInputElement = document.querySelector(".add-form-text");
 
 export const answerText = () => {
@@ -7,7 +7,7 @@ export const answerText = () => {
     for (const text of textTextElement) {
       text.addEventListener("click", () => {
         const index = text.dataset.index;
-        textInputElement.value = `>${textTextElement[index].innerHTML} ${textNameElement[index].innerHTML}`;
+        textInputElement.value = `${textTextElement[index].innerHTML} ${textNameElement[index].innerHTML}`;
       });
     }
   };

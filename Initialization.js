@@ -1,4 +1,5 @@
 import { renderComments } from "./renderComments.js";
+import {comments, setComments} from "./main.js";
 
 export const initEventlikes = () => {
   const likeButtons = Array.from(document.querySelectorAll(".like-button"));
@@ -13,10 +14,12 @@ export const initEventlikes = () => {
   });
 };
 
-export const initDeliteButtonsListeners = (comments) => {
+export const initDeliteButtonsListeners = () => {
   const deleteButtonElement = document.querySelector(".delete-button");
   deleteButtonElement.addEventListener("click", () => {
-    comments.pop();
-    renderComments(comments);
+    const deleteComment = comments;
+    deleteComment.pop();
+    setComments(deleteComment);
+    renderComments();
   });
 };
