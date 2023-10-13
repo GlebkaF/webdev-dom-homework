@@ -38,10 +38,14 @@
   let comments = [];
 
   const getCommentsFetch = () => {
+
     return fetch("https://wedev-api.sky.pro/api/v1/tanya-zakharova/comments", {
       method: "GET"
-    }).then((response) => {
-      const jsonPromise = response.json().then((responseDate) => {
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseDate) => {
         const appComments = responseDate.comments.map((comment) => {
           return {
             name: comment.author.name,
@@ -61,8 +65,8 @@
         renderComments();
 
       })
-    })
   }
+
 
   document.addEventListener("input", () => {
 
@@ -224,7 +228,7 @@
     const addZeroBefore = (time) => time < 10 ? time = "0" + time : time;
 
     let day = addZeroBefore(date.getDate());
-    let month = addZeroBefore(date.getMonth());
+    let month = addZeroBefore(date.getMonth() + 1);
     let yaer = date.getFullYear().toString().slice(2);
     let hour = addZeroBefore(date.getHours());
     let minute = addZeroBefore(date.getMinutes());
@@ -243,8 +247,11 @@
         text: sanitizeHtml(textInputElement.value),
         name: sanitizeHtml(nameInputElement.value),
       })
-    }).then((response) => {
-      const jsonPromise = response.json().then((responseDate) => {
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseDate) => {
 
         addFormElement.classList.add("displayHidden");
         loadingCommentElement.classList.remove("displayHidden");
@@ -252,7 +259,6 @@
         getCommentsFetch();
 
       })
-    })
   }
 
   document.addEventListener("keyup", (event) => {
