@@ -65,20 +65,20 @@
 
   }
   apiGet();// Вызываем функцию получения данных с сервера по API
-  
+
   let comments = []; //= [
-    //{
-    //  userName: "Глеб Фокин",
-    //  checkLike: false,
-    //  textComment: "Это будет первый комментарий на этой странице",
-    //  countLikes: 3,
-    //  fullDate: "12.02.22 12:18",
-   // },
-   // {
-   //   userName: "Варвара Н.",
-   //   checkLike: false,
-   //   textComment: "Мне нравится как оформлена эта страница! ❤",
-   //   countLikes: 75,
+  //{
+  //  userName: "Глеб Фокин",
+  //  checkLike: false,
+  //  textComment: "Это будет первый комментарий на этой странице",
+  //  countLikes: 3,
+  //  fullDate: "12.02.22 12:18",
+  // },
+  // {
+  //   userName: "Варвара Н.",
+  //   checkLike: false,
+  //   textComment: "Мне нравится как оформлена эта страница! ❤",
+  //   countLikes: 75,
   //    fullDate: "13.02.22 19:22",
   //  },
   //];
@@ -132,7 +132,7 @@
         if (comments[buttonLike.dataset.index].checkLike === true) {
           comments[buttonLike.dataset.index].checkLike = false;
           comments[buttonLike.dataset.index].countLikes--;
-        } else if (comments[buttonLike.dataset.index].checkLike === false) {
+        } else {
           comments[buttonLike.dataset.index].checkLike = true;
           comments[buttonLike.dataset.index].countLikes++;
         }
@@ -165,7 +165,7 @@
       commentInputElement.classList.add('error');// И подсветить флорму красным цветом
       return;
     }
-// Функция получения текущей даты и времени
+    // Функция получения текущей даты и времени
     const fullDate = () => {
 
       let newDate = new Date();
@@ -216,7 +216,7 @@
     }).then((response) => {
 
       const jsonPromise = response.json().then((responseData) => {
-        
+
         renderComments();
       });
     });
@@ -229,7 +229,7 @@
 
   });
 
-  
+
 
   console.log("It works!");
 
