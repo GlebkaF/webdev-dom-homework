@@ -1,11 +1,7 @@
-"use strict";
-
 import { getComments } from "./api.js";
 import { postComment } from "./api.js";
 import { renderLogin } from "./loginPage.js";
 import { renderComments } from "./renderComments.js";
-
-
 
 // Массив данных из хранилища
 export let comments = [];
@@ -30,7 +26,7 @@ export const fetchAndRenderComments = () => {
 };
 
 fetchAndRenderComments();
-//renderLogin({fetchAndRenderComments});
+
 
 
 

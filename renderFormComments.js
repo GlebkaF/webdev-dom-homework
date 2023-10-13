@@ -1,5 +1,4 @@
 import {initDeliteButtonsListeners} from "./Initialization.js";
-import { renderComments } from "./renderComments.js";
 import {postComment} from "./api.js";
 import { fetchAndRenderComments } from "./main.js";
 

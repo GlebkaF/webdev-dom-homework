@@ -42,9 +42,6 @@ buttonElement.addEventListener("click", () => {
     .then(() => {
       fetchAndRenderComments();
     })
-
-  
-    
-});
+  });
 };
 
