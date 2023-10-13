@@ -96,6 +96,22 @@
       // }
     ];
 
+    const addQuote = () => {
+      const commentElements = document.querySelectorAll(".comment");
+      for (const commentElement of commentElements) {
+        commentElement.addEventListener('click', () => {
+          const index = commentElement.dataset.index;
+          if (index !== null) {
+            const comment = comments[index];
+            commentInputElement.value = `>>${comment.text} \nto: ${comment.name},`;
+
+            comment.text.replace("<div class='quote'</div>");
+            const styleQuote = document.querySelectorAll(".quote");
+          }
+        })
+      }
+    }
+
     const renderComments = () => {
       const commentsHtml = comments.map((comment, index) => {
         let liked = comment.isLike ? `-active-like` : ``;
@@ -180,25 +196,6 @@
             });
           }
         };
-
-    renderComments();
-
-    const addQuote = () => {
-      const commentElements = document.querySelectorAll(".comment");
-      for (const commentElement of commentElements) {
-        commentElement.addEventListener('click', () => {
-          const index = commentElement.dataset.index;
-          if (index !== null) {
-            const comment = comments[index];
-            commentInputElement.value = `>>${comment.text} \nto: ${comment.name},`;
-
-            comment.text.replace("<div class='quote'</div>");
-            const styleQuote = document.querySelectorAll(".quote");
-          }
-          renderComments();
-        })
-      }
-    }
 
     renderComments();
 
