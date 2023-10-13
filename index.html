@@ -68,7 +68,18 @@
   let nameInputElement = document.getElementById("name-input");
   let message = document.getElementById("msg-text-input");
 
-  buttonElement.addEventListener(('click'), () => {
+  buttonElement.addEventListener(('click'),  () => {
+				nameInputElement.classList.remove('err');
+				message.classList.remove('err');
+			if (nameInputElement.value === '') {
+				nameInputElement.classList.add('err');
+				disabledButton();
+				return;
+			} else if (message.value === '') {
+				message.classList.add('err');
+				disabledButton();
+				return;
+			} else {
     listElement.innerHTML = listElement.innerHTML +
       `<li class="comment" id="list">
         <div class="comment-header">
@@ -87,7 +98,7 @@
           </div>
         </div>
       </li>`;
-  });
+}}) ;
   nameInputElement.classList.remove('err');
   message.classList.remove('err');
   if (nameInputElement.value === '') {
