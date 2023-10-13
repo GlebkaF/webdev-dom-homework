@@ -9,6 +9,9 @@
 
 <body>
   <div class="container">
+    <div class="api-loader hidden">
+      <span>Данные загружаются, нужно немного подождать...</span>
+    </div>
     <ul class="comments" id="list">
       <!-- Список рендерится из JS ------------------------------------>
       <!-- <li class="comment">
@@ -53,6 +56,10 @@
       <div class="add-form-row">
         <button class="add-form-button" id="add-button">Написать</button>
       </div>
+      
+    </div>
+    <div class="comment-add hidden">
+      <span>Комментарий добавляется...</span>
     </div>
   </div>
 </body>
@@ -88,10 +95,48 @@ todayDay = todayDay < 10 ? "0" + todayDay : todayDay;
     let formattedDate = `${todayDay}.${todayMonth}.${todayYear} ${todayHours}:${todayMinutes} `;
     return formattedDate;
   }
+//13 Домашка
 
+function apiFormHide(){//Порячу форму добавления коментария 
+  console.log("apiFormHide");
+  const apiFormHide = document.querySelector(".add-form");
+  apiFormHide.classList.add("hidden");
+}
+
+function apiFormShow(){//Показываю форму добавления коментария
+  //console.log("apiCommentShow");
+  const apiFormShow = document.querySelector(".add-form");
+  apiFormShow.classList.remove("hidden");
+}
+
+function showCommentLoading() {//Показываю (удаляю в стилях блок) временный текст до загрузки комментариев
+  console.log("showCommentLoading");
+    const showCommentLoading = document.querySelector(".api-loader");
+    showCommentLoading.classList.remove("hidden");
+}
+
+function hideCommentLoading() {//Удаляю (возвращаю блок) временный текст до загрузки комментариев
+    const hideCommentLoading = document.querySelector(".api-loader");
+    hideCommentLoading.classList.add("hidden");
+}
+
+function showCommentAdd() {
+  const showCommentAdd = document.querySelector(".comment-add")
+  showCommentAdd.classList.remove("hidden")
+}
+
+function hideCommentAdd() {
+  const hideCommentAdd = document.querySelector(".comment-add")
+  hideCommentAdd.classList.add("hidden")
+}
 
 //12 Домашка 
-    function apiGet() {const fetchPromise = fetch(
+    function apiGet() {
+      showCommentLoading();
+      //apiFormHide();
+
+      
+      const fetchPromise = fetch(
         "https://wedev-api.sky.pro/api/v1/artem-katkov/comments",
         {
         metod: "GET",
@@ -112,6 +157,8 @@ todayDay = todayDay < 10 ? "0" + todayDay : todayDay;
         });
         comments = apiComment;
         renderComment();
+        hideCommentLoading();
+       //apiFormShow();
     });
 
 }
@@ -144,6 +191,7 @@ apiGet();
 
   //рендер-функция
   const renderComment = () => {
+
     //поиск элемента списка в стр.79
     //формирование HTML строки
     const commentsHTML = comments.map((comment, index) => {
@@ -178,6 +226,8 @@ apiGet();
 
 
   const addComment = buttonElement.addEventListener('click', () => {
+
+//apiCommentShow();//Скрываю окно добавления комментария и показываю временную запись
 
     let data = new Date();
 
@@ -260,7 +310,9 @@ apiGet();
 
     const textInApi = commentInputElement.value;
     const nameInApi = nameInputElemnt.value;
-    console.log(nameInputElemnt);
+    //console.log(nameInputElemnt);
+    apiFormHide();
+    showCommentAdd();
     
 
     fetch("https://wedev-api.sky.pro/api/v1/artem-katkov/comments", {
@@ -282,18 +334,26 @@ apiGet();
 
       )
       .then(() => {
+        hideCommentAdd();
+        apiFormShow();
+      
         nameInputElemnt.value = "";
         commentInputElement.value = "";
         apiGet();
-        
+        //showCommentLoading();
+        hideCommentLoading();
            
       })
 
     // nameInputElemnt.value = "";
     // commentInputElement.value = "";
     // renderComment();
+
+    //apiCommentShow();//после загрузки комментария, показыва. окно добавления комментария
   })
-  
+
+
+//addComment();
 
   // Функция счета лайков
   function addLike(index) {
