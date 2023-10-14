@@ -164,4 +164,3 @@ buttonElement.addEventListener("click", () => {
         return;
     }
 });
-//console.log("It works!");
