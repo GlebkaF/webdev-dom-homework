@@ -30,6 +30,7 @@
   const listElement = document.getElementById("list");
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
+  const startAt = Date.now();
 
 
   buttonElement.disabled = true;// Выключаем кнопку добавления коментария 
@@ -205,9 +206,9 @@
     };
 
     const sanitizeHtml = (htmlString) => {
-      return htmlString.replaceAll("<", "&lt;")// элементарная обработка пользовательского ввода на предмет
+      return htmlString.replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")// элементарная обработка пользовательского ввода на предмет
         .replaceAll(">", "&gt;") // всяких нехороших вещей в HTML-коде, в данном случае управляющие символы разметки "<" и ">"
-        .replaceAll("&", "&amp;")
         .replaceAll('"', "&quot;");// меняются; на их коды, а браузер всёравно выводит эти символы
     };
 
@@ -220,16 +221,9 @@
     const postCommentsPromise = fetch("https://wedev-api.sky.pro/api/v1/stepan-titov/comments", {
       method: "POST",
       body: JSON.stringify({
-        text: commentInputElement.value
-          .replaceAll("<", "&lt;")// элементарная обработка пользовательского ввода на предмет
-          .replaceAll(">", "&gt;") // всяких нехороших вещей в HTML-коде, в данном случае управляющие символы разметки "<" и ">"
-          .replaceAll("&", "&amp;")
-          .replaceAll('"', "&quot;"),
-        name: nameInputElement.value
-          .replaceAll("<", "&lt;")// элементарная обработка пользовательского ввода на предмет
-          .replaceAll(">", "&gt;") // всяких нехороших вещей в HTML-коде, в данном случае управляющие символы разметки "<" и ">"
-          .replaceAll("&", "&amp;")
-          .replaceAll('"', "&quot;"),
+        text: sanitizeHtml(commentInputElement.value),
+
+        name: sanitizeHtml(nameInputElement.value),
       }),
 
     }).then((response) => {
