@@ -111,7 +111,15 @@ nameElement.addEventListener('input', () =>{
   } else{
     buttonElement.disabled = false;
   }
-})
+});
+textElement.addEventListener('input', () =>{
+  if ((nameElement.value === '') || (textElement.value ==='')) {
+    buttonElement.disabled = true;
+    return;
+  } else{
+    buttonElement.disabled = false;
+  }
+});
 buttonElement.addEventListener('click', () => {
     nameElement.classList.remove('error');
     textElement.classList.remove('error');
@@ -144,28 +152,17 @@ buttonElement.addEventListener('click', () => {
       let newformatDate = day + "." + month + "." + year + " " + hours + ":" + minutes;
    
       commentsArray.push({  
-      name: nameElement.value
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;"),
+      name: nameElement.value, 
       date: newformatDate,
-      comment: textElement.value
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;"),
+      comment: textElement.value,
       like: 0,
       userLike: false,
       paint: '',
   });
     renderComments();
-
     nameElement.value = '';
     textElement.value = '';
     buttonElement.disabled = true;
 });
-
-
   </script>
 </html>
