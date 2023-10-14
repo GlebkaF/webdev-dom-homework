@@ -1,8 +1,9 @@
 import { initEventlikes } from "./Initialization.js";
-import { token } from "./api.js";
+import { reg, token } from "./api.js";
 import {renderLogin} from "./loginPage.js";
 import { renderFormComments } from "./renderFormComments.js";
 import {comments} from "./main.js";
+//import { renderRegistration } from "./registrationPage.js";
 
 export const renderComments = () => {
   const appElement = document.getElementById("app");
@@ -19,7 +20,6 @@ export const renderComments = () => {
               ${comment.text}
               </div>
             </div>  
-            
             <div class="comment-footer">
               <div class="likes">
                 <span class="likes-counter">${comment.likes}</span>
@@ -37,8 +37,20 @@ export const renderComments = () => {
       <div class="formComments">
   </div>
 </div>`
-    
+
     appElement.innerHTML = appHtml;
+
+    /*const formElement = document.getElementById("form");
+    const formHtml = `
+    <div class="container">
+      <ul class="comments" id="comments">${commentsHtml}
+      </ul>
+      <div class="form">
+  </div>
+</div>`
+    
+formElement.innerHTML = appHtml;*/
+  
 
     token ? renderFormComments(): renderLoginButton();
     function renderLoginButton () {
@@ -50,7 +62,17 @@ export const renderComments = () => {
       })
   }
 
-    
+  reg ? renderRegistration(): renderLoginButton();
+  function renderLoginButton () {
+    const formComments = document.querySelector(".formComments");
+    formComments.innerHTML = `<p id="login">Авторизоваться</p>`
+    const login = document.getElementById("login");
+    login.addEventListener("click", () => {
+      renderLogin();
+    })
+}
+
+
 
   const textInputElement = document.querySelector(".add-form-text");
   const answerText = () => {
@@ -63,7 +85,8 @@ export const renderComments = () => {
         });
       }
     };
-    
+
+
 answerText();
 initEventlikes();
 

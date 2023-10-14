@@ -20,15 +20,17 @@ export const renderLogin = () => {
     />
       <br/>
       <button class="button" id="login-button">Войти</button>
-      <a class="login" href="init.html" id="link-to-login">Регистрация</a>
-    </div>
+      <p id="login">Регистрация</p>
     </div>`;
-  
-appElement.innerHTML = loginHtml;
+    
+
+  appElement.innerHTML = loginHtml;
+
 
 const buttonElement = document.getElementById("login-button");
 const loginInputElement = document.getElementById("login-input");
 const passwordInputElement = document.getElementById("password-input");
+
 
 buttonElement.addEventListener("click", () => {
     login({
@@ -44,4 +46,8 @@ buttonElement.addEventListener("click", () => {
     })
   });
 };
+
+
+  
+
 

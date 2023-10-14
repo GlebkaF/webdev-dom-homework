@@ -5,11 +5,14 @@ const host = "https://wedev-api.sky.pro/api/v2/evgeniya-ko/comments";
 const userHost = "https://wedev-api.sky.pro/api/user/login";
 
 export let token;
-
 export const setToken = (newToken) => {
   token = newToken;
 }
 
+export let reg;
+export const setReg = (newReg) => {
+  reg = newReg;
+}
 
 export function getComments() {
   return fetch(host, {
@@ -58,6 +61,20 @@ export function login({login, password}) {
   return fetch(userHost, {
     method: "POST",
     body: JSON.stringify({
+      login,
+      password,
+    }),
+  })
+    .then((response) => {
+      return response.json();
+    });
+}
+
+export function registration({name, login, password}) {
+  return fetch(userHost, {
+    method: "POST",
+    body: JSON.stringify({
+      name,
       login,
       password,
     }),
