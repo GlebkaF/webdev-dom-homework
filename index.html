@@ -25,7 +25,7 @@
 </body>
 
 
-//СТИЛИ
+<!-- СТИЛИ -->
 <style>
   .error {
     outline: 3px solid rgb(228, 67, 67);
@@ -39,6 +39,32 @@
 <script>
   "use strict"; //СТР РЕЖИМ *
 
+  //2.12 функция для получения данных по API
+  const getComments = () => {
+    return fetch('https://wedev-api.sky.pro/api/v1/egor-gorohow/comments',
+      {
+        method: 'GET'
+      }
+    ).then((response) =>
+      response.json()).then((responseData) => {
+        let appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: new Date(comment.date).toLocaleString('ru-RU', { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).replace(',', ''),
+            text: comment.text,
+            likeCount: comment.likes,
+            isLike: comment.isLiked
+          };
+        });
+        comments = appComments;
+        console.log(appComments);
+        renderComments()
+
+      });
+  };
+
+  getComments(); //вызываем функцию котороя получит данные и вызовет render функцию
+
   //ПЕРЕМЕННЫЕ
   const nameElement = document.getElementById('form-name');
   const textElement = document.getElementById('form-text');
@@ -47,50 +73,54 @@
   const formCommentElement = document.getElementById('add-comment');
 
   // ШАБЛОН ВЫВОДА ДАТЫ СОЗДАНИЯ КОММЕНТАРИЯ
-  // const currentDate = new Date().toLocaleString('ru-RU', { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).replace(',', '');
+  // function normalDate(date){
+  // const currentDate = new Date(date).toLocaleString('ru-RU', { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).replace(',', '');
+  // return currentDate;}
 
   //РЕНДЕР ДАННЫХ ИЗ МАССИВА ОБЪЕКТОВ
-  const comments = [
-    {
-      name: 'Глеб Фокин',
-      date: "12.02.22 12:18",
-      text: 'Это будет первый комментарий на этой странице',
-      likeCount: 3,
-      isEdit: false,
-      isLike: false,
-    },
-    {
-      name: 'Варвара',
-      date: "13.02.22 19:22",
-      text: 'Мне нравится как оформлена эта страница! ❤',
-      likeCount: 78,
-      isEdit: false,
-      isLike: false,
-    }
+  //upd API - данные постятся и получаются из API
+  let comments = [
+    // {
+    //   name: 'Глеб Фокин',
+    //   date: "12.02.22 12:18",
+    //   text: 'Это будет первый комментарий на этой странице',
+    //   likeCount: 3,
+    //   isEdit: false,
+    //   isLike: false,
+    // },
+    // {
+    //   name: 'Варвара',
+    //   date: "13.02.22 19:22",
+    //   text: 'Мне нравится как оформлена эта страница! ❤',
+    //   likeCount: 78,
+    //   isEdit: false,
+    //   isLike: false,
+    // }
   ];
 
-//защитная функция от кода в input (для того что бы тэги введенные в input не влияли на код)
-  const sanitizeHtml = (htmlString) => {return htmlString.replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;");
-      };
+  //защитная функция от кода в input (для того что бы тэги введенные в input не влияли на код)
+  const sanitizeHtml = (htmlString) => {
+    return htmlString.replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;");
+  };
 
-//Функция редактирования комментария по клику на TEXT комментария
+  //Функция редактирования комментария по клику на TEXT комментария
   const editingComment = () => {
-    const commentElements = document.querySelectorAll('.comment');
+    const commentElements = document.querySelectorAll('.comment-text');
 
     for (const commentElement of commentElements) {
       commentElement.addEventListener('click', () => {
         const index = commentElement.dataset.index;
         const text = `>${comments[index].text} \n ${comments[index].name}:`;
         textElement.value = text;
-        
+
       })
     }
   }
 
-//Функция "переключателя" count лайков
+  //Функция "переключателя" count лайков
   function addLike() {
     const likeElements = document.querySelectorAll('.like-button');
     for (let likeElement of likeElements) {
@@ -139,9 +169,9 @@
 
   //Функция добавления комментария (ЛОГИКА) + PUSH новых комментариев
   function addComment() {
-  //ВАЛИДАЦИЯ
-  //remove для удаления классов
-  //trim() для избежания добавления комментариев состоящих из пустых симовлов (пробелов)
+    //ВАЛИДАЦИЯ
+    //remove для удаления классов
+    //trim() для избежания добавления комментариев состоящих из пустых симовлов (пробелов)
     nameElement.classList.remove('error');
     textElement.classList.remove('error');
     if (nameElement.value.trim() === '' || textElement.value.trim() === '') { // если хоть одна ошибка есть
@@ -170,52 +200,60 @@
       });
       return;
     };
-    comments.push({
-      name: nameElement.value,
-      date: new Date().toLocaleString('ru-RU', { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).replace(',', ''),
-      text: textElement.value,
-      likeCount: 0,
-      isLike: false
-    });
 
-    renderComments();
+    //Добавляем в функцию AddComment API с методом POST для сохранения данных в массиве
+
+    const postComments = fetch('https://wedev-api.sky.pro/api/v1/egor-gorohow/comments',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          name: nameElement.value,
+          text: textElement.value
+        }),
+      });
+    postComments.then((response) => {
+      const jsonGetComments = response.json();
+      jsonGetComments.then((responseData) => {
+        getComments();
+      })
+    })
 
     nameElement.value = ''; //очищаем форму (имя);
     textElement.value = ''; //очищаем форму (текст);
     nameElement.setAttribute('placeholder', 'Введите ваше имя'); //возвращаем placeholder к стандарту после добаваления комментария
     textElement.setAttribute('placeholder', 'Введите ваш коментарий',);//возвращаем placeholder к стандарту после добаваления комментария
   };
-  
+
   //ВЫВОД
-const renderComments = () => {
-  formCommentElement.innerHTML = comments.map((comment, index) => {
-    return `<li class="comment" data-index="${index}">
+  const renderComments = () => {
+    formCommentElement.innerHTML = comments.map((comment, index) => {
+      return `<li class="comment" data-index="${index}">
       <div class="comment-header">
         <div>${sanitizeHtml(comment.name)}</div>
         <div>${sanitizeHtml(comment.date)}</div>
       </div>
       <div class="comment-body">
         ${comment.isEdit
-        ? `<textarea type="textarea"  class="add-form-text" placeholder="Введите ваш коментарий" rows="4">${sanitizeHtml(comment.text)}</textarea>`
-        : `<div class="comment-text"> ${sanitizeHtml(comment.text)} </div>`}
+          ? `<textarea type="textarea"  class="add-form-text" placeholder="Введите ваш коментарий" rows="4">${sanitizeHtml(comment.text)}</textarea>`
+          : `<div class="comment-text" data-index="${index}"> ${sanitizeHtml(comment.text)} </div>`}
       </div>
       <div class="comment-footer">
         ${comment.isEdit
-        ? `<button  class="save-form-button" data-index="${index}">Сохранить</button>`
-        : `<button  class="edit-form-button" data-index="${index}">Редактировать</button>`
-      }
+          ? `<button  class="save-form-button" data-index="${index}">Сохранить</button>`
+          : `<button  class="edit-form-button" data-index="${index}">Редактировать</button>`
+        }
         <div class="likes">
           <span class="likes-counter">${comment.likeCount}</span>
           <button class="like-button ${comment.isLike ? '-active-like' : ''}" data-index="${index}"></button>
         </div>
       </div>
     </li>`
-  }).join('');
-  addLike();
-  initEditElements();
-  initSaveButtons();
-  editingComment();
-};
+    }).join('');
+    addLike();
+    initEditElements();
+    initSaveButtons();
+    editingComment();
+  };
 
   renderComments();
 
@@ -230,8 +268,8 @@ const renderComments = () => {
 
   //УДАЛИТЬ ПОСЛЕДНИЙ КОММЕНТАРИЙ
   buttonDeleteElement.addEventListener('click', () => {
-      comments.pop();
-      renderComments();
+    comments.pop();
+    renderComments();
   });
 </script>
 
