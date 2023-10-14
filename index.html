@@ -107,10 +107,8 @@ const initEventListeners = () => {
 const userElements = document.querySelectorAll(".like-button");
 for (const item of userElements) {
 	item.addEventListener("click", () => {
-		let likeStatus = document.getElementById("like-button");
-		likeStatus.classList.add('-active-like');
-		const button = document.querySelector('button');
-		const checkLike = button.classList.contains('-active-like');
+		const element = document.getElementById("like-button");
+    element.classList.toggle("-active-like");
 		});
 	}
 }
