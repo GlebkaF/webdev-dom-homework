@@ -80,53 +80,29 @@
 				disabledButton();
 				return;
 			} else {
-    listElement.innerHTML = listElement.innerHTML +
-      `<li class="comment" id="list">
-        <div class="comment-header">
-          <div>${nameInputElement.value}</div>
-          <div>${getCurrentDate()}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>`;
-}}) ;
-  nameInputElement.classList.remove('err');
-  message.classList.remove('err');
-  if (nameInputElement.value === '') {
-    nameInputElement.classList.add('err');
-    return;
-  } else if (message.value === '') {
-    message.classList.add('err');
-    return;
-  } else {
-    listElement.innerHTML = listElement.innerHTML +
-        `<li class="comment" id="list">
-					<div class="comment-header">
-						<div>${nameInputElement.value}</div>
-						<div>${getCurrentDate()}</div>
-					</div>
-					<div class="comment-body">
-						<div class="comment-text">
-								${message.value}
-						</div>
-					</div>
-					<div class="comment-footer">
-						<div class="likes">
-							<span class="likes-counter">0</span>
-							<button class="like-button"></button>
-						</div>
-					</div>
-			  </li>`;
-  };
+				
+				listElement.innerHTML = listElement.innerHTML +
+				`
+				<li class="comment" id="list">
+							<div class="comment-header">
+								<div>${nameInputElement.value}</div>
+								<div>${getCurrentDate()}</div>
+							</div>
+							<div class="comment-body">
+								<div class="comment-text">
+									${message.value}
+								</div>
+							</div>
+							<div class="comment-footer">
+								<div class="likes">
+									<span class="likes-counter">0</span>
+									<button class="like-button"></button>
+								</div>
+							</div>
+						</li>
+				`;
+			}
+				});
 
 </script>
 
