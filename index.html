@@ -59,13 +59,103 @@
         <div class="add-form-row">
           <button class="add-form-button">Написать</button>
         </div>
+
+        <button class="deletelastcomment">Удалить последний комментарий</button>
       </div>
     </div>
   </body>
 
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const comments_containerElement = document.querySelectorAll('.comments');
+    const massage_sendButton = document.querySelectorAll('.add-form-button');
+    const nameinputElement = document.querySelectorAll('.add-form-name');
+    const massageinputElement = document.querySelectorAll('.add-form-text');
+    const lastcommentDeletebutton = document.querySelectorAll('.deletelastcomment');
+    massage_sendButton[0].disabled = true;
+
+
+    function addComment() {
+       
+      if( Number((new Date()).getMonth()) === 10 || Number((new Date()).getMonth()) === 11 || Number((new Date()).getMonth()) === 12 ) {
+        mounthdate = (new Date()).getMonth();
+    }else {
+        mounthdate = '0' + (new Date()).getMonth();
+    }
+
+    let massageDate = (new Date()).getDate() + "." + mounthdate + "." + ((new Date()).getFullYear() - 2000 ) + " " + ((new Date()).getHours()) + ":" + ((new Date()).getMinutes());
+
+
+
+
+      if ( nameinputElement[0].value === "" &&  massageinputElement[0].value === "" ){
+        nameinputElement[0].classList.add("errorinput");
+        massageinputElement[0].classList.add("errorinput");
+        return
+      }else if ( nameinputElement[0].value === "" ) {
+        nameinputElement[0].classList.add("errorinput");
+        return
+      }else if ( massageinputElement[0].value === "" ) {
+        massageinputElement[0].classList.add("errorinput");
+        return
+      }
+
+
+
+        let oldinnerHtml = comments_containerElement[0].innerHTML;
+        comments_containerElement[0].innerHTML = comments_containerElement[0].innerHTML + `
+        <li class="comment">
+          <div class="comment-header">
+            <div>${nameinputElement[0].value}</div>
+            <div>${massageDate}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${massageinputElement[0].value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button -active-like"></button>
+            </div>
+          </div>
+        </li>`
+        nameinputElement[0].value = "";
+        massageinputElement[0].value = "";
+        nameinputElement[0].classList.remove("errorinput");
+        massageinputElement[0].classList.remove("errorinput");
+
+
+    }
+
+    massage_sendButton[0].addEventListener("click" , addComment);
+
+    nameinputElement[0].addEventListener ("input" , () => {
+      massage_sendButton[0].disabled = false;
+    })
+
+    massageinputElement[0].addEventListener ("input" , () => {
+      massage_sendButton[0].disabled = false;
+    })
+
+    lastcommentDeletebutton[0].addEventListener ("click", () => {
+      comments_containerElement[0].removeChild(comments_containerElement[0].lastChild);
+    })
+
+
+ 
+    
+
+
+
+
+
+    
+    
+    
+
+
+
+
   </script>
 </html>
