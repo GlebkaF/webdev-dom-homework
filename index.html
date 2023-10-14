@@ -22,8 +22,9 @@
         </div>
         <div class="comment-footer">
           <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
+            <span class="likes-counter">0</span>
+            <button class="like-button" data-likes="0" onclick="toggleLike(this)">0</button>
+            <button class="delete-button">Удалить</button>
           </div>
         </div>
       </li>
@@ -39,8 +40,8 @@
         </div>
         <div class="comment-footer">
           <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
+            <button class="like-button" data-likes="0" onclick="toggleLike('comment1')">❤️ <span class="like-count">0</span></button>
+            <button class="delete-button">Удалить</button>
           </div>
         </div>
       </li>
@@ -51,9 +52,11 @@
         id="commentInput"></textarea>
       <div class="add-form-row">
         <button class="add-form-button" id="addCommentButton">Написать</button>
+        
       </div>
     </div>
   </div> 
+ 
 </body>
 
 <style> 
