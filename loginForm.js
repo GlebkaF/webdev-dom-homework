@@ -1,5 +1,9 @@
 import { container, getFetchPromise, setAuth } from "./main.js";
+import { token } from "./main.js";
+import { getRegistration } from "./getRegistration.js";
 let isMode = true;
+
+
 
 export function renderFormLogin() {
 
@@ -21,6 +25,13 @@ export function renderFormLogin() {
   const buttonLogin = document.getElementById("button-login");
   buttonLogin.addEventListener("click", () => {
     container.textContent = "Подождите, идет загрузка приложения";
+    getRegistration({
+      login: "admin",
+      password: "admin"
+    })
+    .then((response) => {
+      // console.log(response.user.token);
+    })
     setAuth();
     getFetchPromise();
   });
