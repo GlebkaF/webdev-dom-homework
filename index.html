@@ -77,7 +77,9 @@ let dateString = (string) => {
 let commentsArray = [];
 
 // Запрос в API
-const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/vladimir-rychkov/comments", {
+const apiGet = () => {
+
+const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/evgen-kupriianov/comments", {
     method: "GET"
   });
 
@@ -88,11 +90,15 @@ fetchPromise.then((response) => {
     // Подписываемся на результат преобразования
     jsonPromise.then((responseData) => {
           // Получили данные и рендерим
-          commentsArray = responseData.comments
+          commentsArray = responseData.comments;
           console.log(commentsArray); 
           renderList();
         });
     });
+};
+
+apiGet();
+
 
 // Функция лайка
 const likeListener = () => {
@@ -159,7 +165,7 @@ const renderList = () => {
       </div>
     </li>`
   }).join('');
-
+  
   commentsElement.innerHTML = commentsHtml; 
   likeListener();
   answerComment();
@@ -184,7 +190,7 @@ const buttonListener = buttonInputElement.addEventListener("click", () => {
   };
 
   // Отправили новый объект на сервер
-    fetch("https://wedev-api.sky.pro/api/v1/vladimir-rychkov/comments", {
+  fetch("https://wedev-api.sky.pro/api/v1/evgen-kupriianov/comments", {
         method: "POST",
         body: JSON.stringify({
             text: commentInputElement.value,
@@ -192,15 +198,17 @@ const buttonListener = buttonInputElement.addEventListener("click", () => {
             })
     }).then((response) => {
         response.json().then((responseData) => {
-          commentsArray = responseData.comments;
+          apiGet();
           renderList();
         });
-    })
+    });
+
 
   // Очищаем форму от последнего комментария
   nameInputElement.value = '';
   commentInputElement.value = '';
 });
+
 
 // Функция кнопки "Удалить последний комментарий"
 document.querySelector('.delete-comment-button').addEventListener("click", () => {
@@ -252,7 +260,7 @@ const editComment = () => {
     });
   };
 };
-
+apiGet();
 renderList();
 console.log("It works!");
   </script>
