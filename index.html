@@ -9,40 +9,6 @@
   <body>
     <div class="container">
       <ul class="comments" id="commentList">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
       </ul>
       <div class="add-form">
         <input
@@ -55,7 +21,7 @@
           type="textarea"
           class="add-form-text"
           id="commentInput"
-          placeholder="Введите ваш коментарий"
+          placeholder="Введите ваш комментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
@@ -68,50 +34,102 @@
   <script>
     "use strict";
     document.addEventListener("DOMContentLoaded", function () {
-  const nameInput = document.getElementById("nameInput");
-  const commentInput = document.getElementById("commentInput");
-  const submitButton = document.getElementById("submitButton");
-  const commentList = document.getElementById("commentList");
+      const nameInput = document.getElementById("nameInput");
+      const commentInput = document.getElementById("commentInput");
+      const submitButton = document.getElementById("submitButton");
+      const commentList = document.getElementById("commentList");
 
-  submitButton.addEventListener("click", function () {
-    const name = nameInput.value;
-    const commentText = commentInput.value;
+      const commentsData = [
+        {
+          name: "Глеб Фокин",
+          date: new Date(2022, 1, 12, 12, 18),
+          text: "Это будет первый комментарий на этой странице",
+          likes: 3,
+          isLiked: false,
+        },
+        {
+          name: "Варвара Н.",
+          date: new Date(2022, 1, 13, 19, 22),
+          text: "Мне нравится как оформлена эта страница! ❤",
+          likes: 75,
+          isLiked: true,
+        },
+      ];
 
-    if (name.trim() === "" || commentText.trim() === "") {
-      alert("Пожалуйста, заполните все поля.");
-      return;
-    }
-    
-    const commentItem = document.createElement("li");
-    commentItem.className = "comment";
+      submitButton.addEventListener("click", function () {
+        const name = nameInput.value;
+        const commentText = commentInput.value;
 
-    const commentHeader = document.createElement("div");
-    commentHeader.className = "comment-header";
-    commentHeader.innerHTML = `<div>${name}</div><div>${new Date().toLocaleString()}</div>`;
+        if (name.trim() === "" || commentText.trim() === "") {
+          alert("Пожалуйста, заполните все поля.");
+          return;
+        }
 
-    const commentBody = document.createElement("div");
-    commentBody.className = "comment-body";
-    const commentTextDiv = document.createElement("div");
-    commentTextDiv.className = "comment-text";
-    commentTextDiv.innerText = commentText;
-    commentBody.appendChild(commentTextDiv);
+        const newComment = {
+          name: name,
+          date: new Date(),
+          text: commentText,
+          likes: 0,
+          isLiked: false,
+        };
 
-    const commentFooter = document.createElement("div");
-    commentFooter.className = "comment-footer";
-    const likes = document.createElement("div");
-    likes.className = "likes";
-    likes.innerHTML = '<span class="likes-counter">0</span><button class="like-button"></button>';
-    commentFooter.appendChild(likes);
+        commentsData.push(newComment);
 
-    commentItem.appendChild(commentHeader);
-    commentItem.appendChild(commentBody);
-    commentItem.appendChild(commentFooter);
+        renderComments();
 
-    commentList.appendChild(commentItem);
-    nameInput.value = "";
-    commentInput.value = "";
-  });
-}); 
-    console.log("It works!");
+        nameInput.value = "";
+        commentInput.value = "";
+      });
+
+      function renderComments() {
+        commentList.innerHTML = "";
+
+        commentsData.forEach((comment, index) => {
+          const commentItem = document.createElement("li");
+          commentItem.className = "comment";
+
+          const commentHeader = document.createElement("div");
+          commentHeader.className = "comment-header";
+          commentHeader.innerHTML = `<div>${comment.name}</div><div>${comment.date.toLocaleString()}</div>`;
+
+          const commentBody = document.createElement("div");
+          commentBody.className = "comment-body";
+          const commentTextDiv = document.createElement("div");
+          commentTextDiv.className = "comment-text";
+          commentTextDiv.innerText = comment.text;
+          commentBody.appendChild(commentTextDiv);
+
+          const commentFooter = document.createElement("div");
+          commentFooter.className = "comment-footer";
+          const likes = document.createElement("div");
+          likes.className = "likes";
+          const likeButton = document.createElement("button");
+          likeButton.className = "like-button" + (comment.isLiked ? " -active-like" : "");
+          likeButton.addEventListener("click", () => toggleLike(index));
+          likes.innerHTML = `<span class="likes-counter">${comment.likes}</span>`;
+          likes.appendChild(likeButton);
+          commentFooter.appendChild(likes);
+
+          commentItem.appendChild(commentHeader);
+          commentItem.appendChild(commentBody);
+          commentItem.appendChild(commentFooter);
+
+          commentList.appendChild(commentItem);
+        });
+      }
+
+      function toggleLike(index) {
+        commentsData[index].isLiked = !commentsData[index].isLiked;
+        if (commentsData[index].isLiked) {
+          commentsData[index].likes++;
+        } else {
+          commentsData[index].likes--;
+        }
+
+        renderComments();
+      }
+
+      renderComments();
+    });
   </script>
 </html>
