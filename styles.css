@@ -22,7 +22,9 @@ body {
   }
 
   .comment,
-  .add-form {
+  .add-form,
+  .enter-form,
+  .register-form {
     width: 596px;
     box-sizing: border-box;
     background: radial-gradient(
@@ -113,7 +115,9 @@ body {
   }
 
 
-  .add-form {
+  .add-form,
+  .enter-form,
+  .register-form {
     padding: 20px;
     margin-top: 48px;
     display: flex;
@@ -148,7 +152,10 @@ body {
     justify-content: flex-end;
   }
 
-  .add-form-button {
+  .add-form-button,
+  .enter-button,
+  .register-button,
+  .logout {
     margin-top: 24px;
     font-size: 24px;
     padding: 10px 20px;
@@ -158,11 +165,48 @@ body {
     cursor: pointer;
   }
 
+  .logout {
+    margin-bottom: 10px;
+  }
+
   .add-form-button:hover {
     opacity: 0.9;
   }
 
+  .enter-login,
+  .enter-password {
+    margin-top: 12px;
+    padding: 22px;
+    font-size: 16px;
+    font-family: Helvetica;
+    border-radius: 8px;
+    border: none;
+  }
+
+  .enter-register-button,
+  .register-enter-button {
+    margin-top: 24px;
+    font-size: 24px;
+    padding: 10px 20px;
+    background-color: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+  }
+
+  .register-login,
+  .register-password,
+  .register-name {
+    margin-top: 12px;
+    padding: 22px;
+    font-size: 16px;
+    font-family: Helvetica;
+    border-radius: 8px;
+    border: none;
+  }
+
   .remove-form-button {
+    width: 100%;
     margin-top: 24px;
     font-size: 24px;
     padding: 10px 20px;
@@ -182,4 +226,12 @@ body {
 
   .wait {
     margin-top: 30px;
+  }
+
+  .auth-waiter {
+    margin-top: 20px;
+  }
+
+  .auth {
+    text-decoration: underline;
   }
