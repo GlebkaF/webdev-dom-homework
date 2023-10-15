@@ -111,7 +111,7 @@ export const loadComments = () => {
     renderComments();
   })
     .catch(() => {
-      // alert('Сервер сломался, попробуй позже');
+      alert('Сервер сломался, попробуй позже');
       return;
     })
 }

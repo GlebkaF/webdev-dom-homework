@@ -65,16 +65,16 @@ export const AddComment = () => {
         if (addFormText.value === '' || addFormText.value.length < 3) {
           addFormText.classList.add('error');
         }
-        //alert('Имя и комментарий должны быть не короче 3 символов');
+        alert('Имя и комментарий должны быть не короче 3 символов');
         return;
       }
 
       if (error.message === 'Сервер упал') {
-        //alert('Сервер сломался, попробуй позже');
+        alert('Сервер сломался, попробуй позже');
         return;
       }
 
-      //alert('Ошибка соединения, попробуй позже');
+      alert('Ошибка соединения, попробуй позже');
       return;
 
     })
