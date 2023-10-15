@@ -8,10 +8,16 @@
 </head>
 
 <body>
+  <div class="mask">
+    <div class="mask-text">Подождите, пожалуйста, комментарии загружаются</div>
+  </div>
   <div class="container">
     <ul class="comments" id="add-comment">
       <!-- рендер из JS -->
     </ul>
+    <div class="mask-comment">
+      <div class="loader-comment">Комментарий загружается...</div>
+    </div>
     <div class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="form-name" />
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
@@ -39,14 +45,29 @@
 <script>
   "use strict"; //СТР РЕЖИМ *
 
+  //ПЕРЕМЕННЫЕ
+  const nameElement = document.getElementById('form-name');
+  const textElement = document.getElementById('form-text');
+  const buttonElement = document.getElementById('add-button');
+  const buttonDeleteElement = document.getElementById('add-button-delete');
+  const formCommentElement = document.getElementById('add-comment');
+  const addLoader = document.querySelector(".mask");
+
+  const formLoader = document.querySelector('.add-form');
+  const addLoaderComment = document.querySelector(".mask-comment");
+
+  addLoaderComment.style.display = 'none';
+
   //2.12 функция для получения данных по API
   const getComments = () => {
     return fetch('https://wedev-api.sky.pro/api/v1/egor-gorohow/comments',
       {
         method: 'GET'
-      }
-    ).then((response) =>
-      response.json()).then((responseData) => {
+      })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
         let appComments = responseData.comments.map((comment) => {
           return {
             name: comment.author.name,
@@ -58,19 +79,16 @@
         });
         comments = appComments;
         console.log(appComments);
-        renderComments()
-
+        renderComments();
+        //скрытие лоадера
+        addLoader.style.display = 'none';
+        addLoaderComment.style.display = 'none';
+        formLoader.style.visibility = 'visible';
+        buttonDeleteElement.style.visibility = 'visible'
       });
   };
 
   getComments(); //вызываем функцию котороя получит данные и вызовет render функцию
-
-  //ПЕРЕМЕННЫЕ
-  const nameElement = document.getElementById('form-name');
-  const textElement = document.getElementById('form-text');
-  const buttonElement = document.getElementById('add-button');
-  const buttonDeleteElement = document.getElementById('add-button-delete');
-  const formCommentElement = document.getElementById('add-comment');
 
   // ШАБЛОН ВЫВОДА ДАТЫ СОЗДАНИЯ КОММЕНТАРИЯ
   // function normalDate(date){
@@ -121,21 +139,31 @@
   }
 
   //Функция "переключателя" count лайков
+  function delay(interval = 300) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, interval);
+    });
+  }
+
   function addLike() {
     const likeElements = document.querySelectorAll('.like-button');
     for (let likeElement of likeElements) {
       likeElement.addEventListener('click', (event) => {
         event.stopPropagation(); //Против "ВСПЛЫТИЯ"
+        likeElement.style.animation = 'rotating 2s linear infinite';
         let index = likeElement.dataset.index;
-
-        if (comments[index].isLike) {
-          comments[index].likeCount--;
-          comments[index].isLike = false
-        } else {
-          comments[index].likeCount++;
-          comments[index].isLike = true
-        }
-        renderComments();
+        delay(1600).then(() => {
+          if (comments[index].isLike) {
+            comments[index].likeCount--;
+            comments[index].isLike = false
+          } else {
+            comments[index].likeCount++;
+            comments[index].isLike = true
+          }
+          renderComments();
+        })
       });
     };
   };
@@ -166,6 +194,32 @@
       });
     }
   };
+
+
+  const postComments = () => {
+
+    fetch('https://wedev-api.sky.pro/api/v1/egor-gorohow/comments',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          name: nameElement.value,
+          text: textElement.value
+        }),
+      })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
+        return getComments();
+      })
+      .then(() => {
+        buttonElement.disabled = false;
+        buttonElement.textContent = "Написать";
+      })
+    addLoaderComment.style.display = 'block';
+    formLoader.style.visibility = 'hidden';
+    buttonDeleteElement.style.visibility = 'hidden'
+  }
 
   //Функция добавления комментария (ЛОГИКА) + PUSH новых комментариев
   function addComment() {
@@ -201,22 +255,11 @@
       return;
     };
 
-    //Добавляем в функцию AddComment API с методом POST для сохранения данных в массиве
-
-    const postComments = fetch('https://wedev-api.sky.pro/api/v1/egor-gorohow/comments',
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          name: nameElement.value,
-          text: textElement.value
-        }),
-      });
-    postComments.then((response) => {
-      const jsonGetComments = response.json();
-      jsonGetComments.then((responseData) => {
-        getComments();
-      })
-    })
+    //предупреждаем пользователя при нажатии кнопки что данные добавляются и деактивируем кнопку
+    buttonElement.disabled = true;
+    buttonElement.textContent = "Комментарий добавляется...";
+    //Добавляем в функцию postComments API с методом POST для сохранения данных в массиве, она вынесена в отедбную функцию
+    postComments()
 
     nameElement.value = ''; //очищаем форму (имя);
     textElement.value = ''; //очищаем форму (текст);
@@ -230,7 +273,7 @@
       return `<li class="comment" data-index="${index}">
       <div class="comment-header">
         <div>${sanitizeHtml(comment.name)}</div>
-        <div>${sanitizeHtml(comment.date)}</div>
+        <div class="comment-date">${sanitizeHtml(comment.date)}</div>
       </div>
       <div class="comment-body">
         ${comment.isEdit

@@ -2,6 +2,54 @@ body {
   margin: 0;
 }
 
+.mask {
+  height: 10%;
+  width: 100%;
+  background: #202020;
+  z-index: 100;
+  transition: 0.3s;
+  padding-top: 100px;
+}
+
+.mask::after{
+  content: url('./qwe.gif');
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+}
+.mask-text {
+  color: white;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.mask-comment {
+  width: 100%;
+  background: #202020;
+  z-index: 100;
+  transition: 0.3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.mask-comment::after{
+  content: url('./lap.gif');
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+}
+.loader-comment {
+  color: white;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 100px;
+}
+
 .container {
   font-family: Helvetica;
   color: #ffffff;
@@ -38,10 +86,12 @@ body {
   flex-direction: column;
   gap: 24px;
 }
-
+.comment-date{
+  min-width: 110px;
+}
 .comment {
   padding: 48px;
-  white-space: pre-line;
+  word-break:break-all;
 }
 
 .comment-header {
@@ -63,7 +113,23 @@ body {
 .comment-text {
   font-size: 32px;
 }
-
+@keyframes rotating {
+  from {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(30deg);;
+  }
+  75% {
+    transform: rotate(-30deg);;
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+-loading-like {
+  animation: rotating 2s linear infinite;
+}
 .likes {
   display: flex;
   align-items: center;
