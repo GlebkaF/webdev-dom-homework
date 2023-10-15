@@ -1,18 +1,21 @@
-import { getComments, postComment } from "./api.js";
+import { getComments, postComment, deleteComments } from "./api.js";
 import { sanitazeHtml } from "./sanitazeHtml.js";
 import { renderListOfComments } from "./renderElements.js";
 
-const list = document.querySelector(".comments");
-const button = document.querySelector(".add-form-button");
-const addName = document.querySelector(".add-form-name");
-const addText = document.querySelector(".add-form-text");
-const textForLoading = document.getElementById("text-for-loader");
-const addForm = document.querySelector(".add-form");
+export const token = "Bearer bgc0b8awbwas6g5g5k5o5s5w606g37w3cc3bo3b83k39s3co3c83c03ck";
+export const container = document.querySelector(".container");
+
 let isLoader = true; // влияет на отрисовку лоадера или списка комментариев //
+export let loadingText = true;
+export let user = true;
 
 // Создание масиива с обьектами пользователей который будет рендерится через функцию renderElements() //
 
 let listOfObject = [];
+
+export function setAuth() {
+  user = !user;
+}
 
 //Сама функция renderElements которая отрисовывет массив обьетов listOfObject  в разметку HTML //
 
@@ -20,19 +23,22 @@ function renderElements() {
   if (!listOfObject) {
     return;
   }
-  renderListOfComments(listOfObject, list);
+  renderListOfComments(listOfObject);
 
   likeButtons();
   changeComments();
   answerOnCommnets();
+  deleteComments();
 }
 renderElements();
 
-// Создание fetch запроса к API //
-
-if (isLoader) {
-  list.innerHTML = `<p>Список комментариев загружается</p>`;
+function showLoader() {
+  if (isLoader) {
+    container.innerHTML = `<p>Список комментариев загружается</p>`;
+  }
 }
+
+showLoader();
 
 export function getFetchPromise() {
   getComments()
@@ -61,32 +67,17 @@ export function getFetchPromise() {
 }
 getFetchPromise();
 
-// Валидация формы на предмет пустых значений в полях имени и текста //
-
-function validation() {
-  if (!addName.value || !addText.value) {
-    button.disabled = true;
-  } else {
-    button.disabled = false;
-  }
-}
-addName.addEventListener("input", validation);
-addText.addEventListener("input", validation);
-
-validation();
-
 // Добавляем новый комментарий используя метод POST //
-function addComment() {
+
+export function addComment(button, addName, addText) {
   button.addEventListener("click", () => {
+    button.disabled = true;
+    button.textContent = "Добавляю"
     addText.classList.remove("error");
     addName.classList.remove("error");
-
-    textForLoading.classList.remove("hidden");
-    addForm.classList.add("hidden");
-    postComment(addText, addName, addForm, textForLoading);
+    postComment(addText, addName, button);
   });
 }
-addComment();
 
 //Функция для проставки лайка //
 
