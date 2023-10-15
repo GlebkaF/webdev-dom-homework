@@ -72,53 +72,32 @@ const isActive = () => {
 nameInputElement.addEventListener('input', isActive);
 commentInputElement.addEventListener('input', isActive);
 
-// const initSaveButtonsListener = () => {
-//   const saveButton = document.querySelector('.save-btn');
-//   const updateElements = document.querySelector('.update-form-text');
-//   saveButton.addEventListener('click', () => {
-//     const index = saveButton.dataset.index;
-//     comments[index].textComment = updateElements.value;
-//     console.log(comments[index]);
+//Изменение комментария
+const initUpdateButtonsListener = () => {
+  const updateButtons = document.querySelectorAll('.update-btn');
+  for (const updateButton of updateButtons) {
+    updateButton.addEventListener('click', () => {
+      const index = updateButton.dataset.index;
+      comments[index].isEdit = true;
+      renderComments();
+    })
+  }
+}
 
-//   })
-//   console.log(saveButton);
-// }
+//Сохранение измененного комментария
+const initSaveButtonsListeners = () => {
+  const saveButtons = document.querySelectorAll('.save-btn');
+  const updateInputValue = document.querySelector('.update-input');
+  for (const saveButton of saveButtons) {
+    saveButton.addEventListener('click', () => {
+      const index = saveButton.dataset.index;
+      comments[index].textComment = updateInputValue.value;
+      comments[index].isEdit = false;
+      renderComments();
+    })
+  }
 
-// const initUpdateButtonsListener = () => {
-//   const commentElements = document.querySelectorAll('.comment');
-//   const updateButtons = document.querySelectorAll('.update-btn');
-//   for (const updateButton of updateButtons) {
-//     const index = updateButton.dataset.index;
-//     updateButton.addEventListener('click', () => {
-//       commentElements[index].innerHTML = `
-//       <div class="comment-header">
-//           <div></div>
-//           <div>13.02.22 19:22</div>
-//         </div>
-//         <div class="comment-body">
-//         <textarea
-//         type="textarea"
-//         class="update-form-text"
-//         placeholder="Введите ваш коментарий"
-//         rows="4"
-//       >
-//       Мне нравится как оформлена эта страница! ❤
-//       </textarea>   
-//         </div>
-//         <div class="comment-footer">
-//           <div class="likes">
-//             <span class="likes-counter">75</span>
-//             <button data-index="1" class="like-button"></button>
-//             <button data-index="1" type="button" class="save-btn">Сохранить</button>
-//             </div>
-//         </div>
-//       `
-//       console.log(commentElements[index].innerHTML);
-//       save();
-//     })
-
-//   }
-// }
+}
 
 //Рендерит комментарии
 const renderComments = () => {
@@ -130,24 +109,23 @@ const renderComments = () => {
           <div>${comment.date}</div>
         </div>
         <div class="comment-body">
-          <div class="comment-text">
-          ${comment.textComment}
-          </div>
+        ${comment.isEdit ? `<textarea class="update-input">${comment.textComment}</textarea>` : `<div>${comment.textComment}</div>`}
         </div>
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${comment.countLike}</span>
-            <button data-index='${index}' class="${comment.isLike ? 'like-button -active-like' : 'like-button'}"></button>
-            <button data-index='${index}' type="button" class="update-btn">Редактировать</button>
-            </div>
+            <button data-index='${index}' class="${comment.isLike ? 'like-button -active-like' : 'like-button'}"></button> 
+          </div>
         </div>
+        <button data-index='${index}' type="button" class= ${comment.isEdit ? '"save-btn"> Сохранить </button>' : '"update-btn">Редактировать</button>'}
       </li>
         `
   }).join('');
 
 
   initLikeButtonsListener();
-  // initUpdateButtonsListener();
+  initUpdateButtonsListener();
+  initSaveButtonsListeners();
 }
 renderComments();
 
@@ -183,6 +161,7 @@ const addComments = () => {
     name: nameInputElement.value,
     textComment: commentInputElement.value,
     date: newFormatDatePublish,
+    isEdit: false,
     isLike: false,
     countLike: 0,
   });
@@ -206,7 +185,6 @@ formAddComm.addEventListener('keyup', (elem) => {
 
 // //Удаление последнего комментария
 deleteButton.addEventListener('click', () => {
-  const lastCom = comments.at(-1);
-  comments.splice(lastCom, 1);
+  comments.splice(-1);
   renderComments();
 })

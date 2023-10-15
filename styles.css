@@ -97,7 +97,8 @@ body {
 }
 
 .add-form-name,
-.add-form-text {
+.add-form-text,
+.update-input {
   font-size: 16px;
   font-family: Helvetica;
   border-radius: 8px;
@@ -120,7 +121,7 @@ body {
   justify-content: flex-end;
 }
 
-.add-form-button,.remove-button {
+.add-form-button, .remove-button, .update-btn, .save-btn {
   margin-top: 24px;
   font-size: 24px;
   padding: 10px 20px;
@@ -137,9 +138,23 @@ body {
 .error {
   background-color: red;
 }
+
 .btnNoActive {
   background-color: grey;
 }
+
 .del {
   display: none;
+}
+
+.update-btn, .save-btn {
+  margin: 0 auto;
+  display: flex;
+}
+
+.update-input {
+  min-height: 100px;
+  padding: 10px;
+  width: 100%;
+  box-sizing: border-box;
 }
