@@ -1,6 +1,6 @@
 export function getFetch() {
 
-  return fetch('https://wedev-api.sky.pro/api/v1/alexandr-trankov5/comments', {
+  return fetch('https://wedev-api.sky.pro/api/v1/alexandr-trankov6/comments', {
     method: "GET"
   })
     .then((response) => {
@@ -34,7 +34,7 @@ export function getFetch() {
   }
   
   export function postFetchApi({textInComment, nameInComment}){
-   return fetch('https://wedev-api.sky.pro/api/v1/alexandr-trankov5/comments', {
+   return fetch('https://wedev-api.sky.pro/api/v1/alexandr-trankov6/comments', {
       method: "POST",
       body: JSON.stringify({
         text: textInComment
