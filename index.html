@@ -115,9 +115,6 @@
 }
 
 
-// document.querySelectorAll('.comment').forEach(attachCommentClickHandler);
-
-
 
 buttonElement.addEventListener("click", () => {
     commInputElement.style.backgroundColor = "";
@@ -130,49 +127,6 @@ buttonElement.addEventListener("click", () => {
     }
     sendCommentToServer()
 })
-
-// const newComment = createComment(
-//             nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-//             commInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;")
-//         listElement.appendChild(newComment);
-//         attachCommentClickHandler(newComment);
-//         commInputElement.value = "";
-//         nameInputElement.value = "";
-//     );
-
-
-//     function createComment(name, text) {
-//         const comment = document.createElement('li');
-//         comment.className = 'comment';
-
-//         const header = document.createElement('div');
-//         header.className = 'comment-header';
-//         header.innerHTML = `<div>${name}</div><div>${formatDate(new Date())}</div>`;
-
-//         const body = document.createElement('div');
-//         body.className = 'comment-body';
-//         body.innerHTML = `<div class="comment-text">${text}</div>`;
-
-//         const footer = document.createElement('div');
-//         footer.className = 'comment-footer';
-//         footer.innerHTML = `
-//         <div class="likes">
-//             <span class="likes-counter">0</span>
-//             <button class="like-button"></button>
-//         </div>`;
-
-//         comment.appendChild(header);
-//         comment.appendChild(body);
-//         comment.appendChild(footer);
-
-      
-//         const likeButton = footer.querySelector('.like-button');
-//         const likeCount = footer.querySelector('.likes-counter');
-//         attachLikeHandler(likeButton, likeCount);
-
-//         return comment;
-
-
 
 
     function renderComments() {
@@ -208,43 +162,37 @@ buttonElement.addEventListener("click", () => {
     let commentsData = [];
    
 
-    // const likeButtons = document.querySelectorAll(".like-button");
-    // const likeCounts = document.querySelectorAll(".likes-counter");
-    // likeButtons.forEach((button, index) => {
-    //     attachLikeHandler(button, likeCounts[index]);
-    // });
 
+    // function sendCommentToServer(comment) {
+    //     const postData = {
+    //         name: nameInputElement.value,
+    //         text: commInputElement.value,
+    //     };
 
-
-
-    function sendCommentToServer(comment) {
-        const postData = {
-            name: nameInputElement.value,
-            text: commInputElement.value,
-        };
-
-        fetch("https://wedev-api.sky.pro/api/v1/yana-orlova/comments", {
-            method: "POST",
-            // headers: {
-            //     "Content-Type": "application/json",
-            // },
-            body: JSON.stringify(postData),
-        }).then((response) => {
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
+    //     fetch("https://wedev-api.sky.pro/api/v1/yana-orlova/comments", {
+    //         method: "POST",
+    //         // headers: {
+    //         //     "Content-Type": "application/json",
+    //         // },
+    //         body: JSON.stringify(postData),
+    //     }).then((response) => {
+    //         if (!response.ok) {
+    //             throw new Error("Network response was not ok");
+    //         }
             
-        }).then(() => {
-            // Обработка успешной отправки комментария 
-            // Очищаем поля ввода
-            commInputElement.value = "";
-            nameInputElement.value = "";
-            getCommentsFromServer()
-            console.log("Comment sent successfully:");
-        }).catch((error) => {
-            console.error("Fetch error:", error);
-        });
-    }
+    //     }).then(() => {
+    //         // Обработка успешной отправки комментария 
+    //         // Очищаем поля ввода
+    //         commInputElement.value = "";
+    //         nameInputElement.value = "";
+    //         getCommentsFromServer()
+    //         console.log("Comment sent successfully:");
+    //     }).catch((error) => {
+    //         console.error("Fetch error:", error);
+    //     });
+    // }
+
+    listElement.textContent = "Пожалуйста подождите, комментариии загружаются";
 
     function getCommentsFromServer() {
     fetch("https://wedev-api.sky.pro/api/v1/yana-orlova/comments", {
@@ -278,8 +226,36 @@ buttonElement.addEventListener("click", () => {
 // Вызываем getCommentsFromServer для загрузки комментариев при загрузке страницы
 getCommentsFromServer();
 
+commInputElement.textContent = "Добавляем комментарий...";
 
-    
+function sendCommentToServer(comment) {
+        const postData = {
+            name: nameInputElement.value,
+            text: commInputElement.value,
+        };
+
+        fetch("https://wedev-api.sky.pro/api/v1/yana-orlova/comments", {
+            method: "POST",
+            // headers: {
+            //     "Content-Type": "application/json",
+            // },
+            body: JSON.stringify(postData),
+        }).then((response) => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            
+        }).then(() => {
+            // Обработка успешной отправки комментария 
+            // Очищаем поля ввода
+            commInputElement.value = "";
+            nameInputElement.value = "";
+            getCommentsFromServer()
+            console.log("Comment sent successfully:");
+        }).catch((error) => {
+            console.error("Fetch error:", error);
+        });
+    }
 
     console.log("It works!");
 
