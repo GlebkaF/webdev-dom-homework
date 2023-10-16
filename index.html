@@ -294,7 +294,34 @@
     })
 
 
+    function putLike({ userComments, isLoading, commentInputElement, likeButtonElements, token }) {
+    // const likeButtonElements = document.querySelectorAll('.like-button');
+    for (const likeButtonElement of likeButtonElements) {
+        likeButtonElement.addEventListener('click', (event) => {
+            console.log('like');
+            isLoading = 'likeСhange';
+            const likeID = likeButtonElement.dataset.index;
 
+            getLikes({ renderComments, isLoading, likeID, token });
+            // renderComments({ isLoading, userComments, commentInputElement });
+            event.stopPropagation();
+        })
+    }
+}
+const sanitizeHTML = (htmlString) => {
+    return htmlString
+        .replaceAll('>', '&gt')
+        .replaceAll('<', '&lt')
+        .replaceAll('/Начало цитаты/', "<div class='quote'>")
+        .replaceAll('/конец цитаты/', "</div>");
+
+}
+
+users.push ({
+    // добавлен вызов санитайзера
+    name: sanitizeHTML (inputNameElement.value),
+    text: sanitizeHTML (commentsElement.value),
+})
 </script>
 
 </html>
