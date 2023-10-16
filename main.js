@@ -14,10 +14,12 @@ const initEdit = () => {
 
         edit[i].addEventListener('click', () => {
             if (editMode) {
-                this.edit = "Редактировать";
+                commentsArray[i].comment = textComment[i].textContent
+                edit[i].textContent = "Редактировать";
                 textComment[i].removeAttribute('contentEditable');
+                renderComments();
             } else {
-                this.edit = 'Сохранить';
+                edit[i].textContent = 'Сохранить';
                 textComment[i].setAttribute('contentEditable', true);
                 textComment[i].focus();
             }
