@@ -1,3 +1,5 @@
+import { setToken } from "./api.js";
+
 export function getAuthorization({login, password}) {
   return fetch("https://wedev-api.sky.pro/api/user/login", {
     method: "POST",
@@ -18,6 +20,7 @@ export function getAuthorization({login, password}) {
   .then((response) => {
     window.localStorage.setItem("user",  JSON.stringify(
       response.user))
+      setToken(response.user.token);
   })
   .catch((error) =>{
     if(error.message === "Такой логин и пароль  не существует"){

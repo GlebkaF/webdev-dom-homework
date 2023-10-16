@@ -10,6 +10,12 @@ let isLoader = true; // влияет на отрисовку лоадера ил
 export let loadingText = true;
 export let user;
 
+try {
+  user =  JSON.parse(localStorage.getItem("user"));
+} catch  {
+   user =  undefined;
+}
+
 // Создание масиива с обьектами пользователей который будет рендерится через функцию renderElements() //
 
  let listOfObject = [];
@@ -17,11 +23,6 @@ export let user;
 export function setAuth() {
   
   
-  try {
-    user =  JSON.parse(localStorage.getItem("user"));
-  } catch  {
-     user =  undefined;
-  }
 }
 setAuth();
 //Сама функция renderElements которая отрисовывет массив обьетов listOfObject  в разметку HTML //
