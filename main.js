@@ -7,16 +7,22 @@ export const container = document.querySelector(".container");
 
 let isLoader = true; // влияет на отрисовку лоадера или списка комментариев //
 export let loadingText = true;
-export let user = true;
+export let user;
 
 // Создание масиива с обьектами пользователей который будет рендерится через функцию renderElements() //
 
-let listOfObject = [];
+  let listOfObject = [];
 
 export function setAuth() {
-  user = !user;
+  
+  
+  try {
+    user =  JSON.parse(localStorage.getItem("user"));
+  } catch  {
+     user =  undefined;
+  }
 }
-
+setAuth();
 //Сама функция renderElements которая отрисовывет массив обьетов listOfObject  в разметку HTML //
 
 function renderElements() {
@@ -27,7 +33,7 @@ function renderElements() {
 
   likeButtons();
   changeComments();
-  answerOnCommnets();
+  answerOnCommnets()
   deleteComments();
 }
 renderElements();
@@ -123,15 +129,15 @@ function changeComments() {
 }
 
 // Функция ответа на комментарий //
-
-function answerOnCommnets() {
+ export function answerOnCommnets(addText) {
   let commentElements = document.querySelectorAll(".comment-text");
   for (let commentElement of commentElements) {
     commentElement.addEventListener("click", () => {
       let index = commentElement.closest(".comment").dataset.index;
       let comment = listOfObject[index];
       addText.value = `${comment.comment} ${comment.name}`;
-      renderElements();
     });
   }
 }
+
+ 

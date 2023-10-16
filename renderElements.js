@@ -29,7 +29,7 @@ export function renderListOfComments(array){
         .join("");
       container.innerHTML = `<ul class="comments">${listOfElements}</ul>`;
 
-      if(user){
+      if(!user){
         const textLoader = `<span>Пройдите<a class="loading" href="#"> авторизацию</a></span>`
         container.innerHTML += textLoader
         const loading = document.querySelector(".loading")
@@ -37,6 +37,13 @@ export function renderListOfComments(array){
             renderFormLogin()
         })
       }else{
+        // const exitButton = `<button class="exit-button">Выйти</button>`
+        // container.innerHTML += exitButton;
+        // const exitBtn = document.querySelector(".exit-button")
+        // exitBtn.addEventListener("click", () => {
+        //   console.log(1);
+        //   window.localStorage.clear()
+        // })
         formForComments()
       }
 }

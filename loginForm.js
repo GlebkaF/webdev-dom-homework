@@ -1,6 +1,7 @@
 import { container, getFetchPromise, setAuth } from "./main.js";
 import { token } from "./main.js";
-import { getRegistration } from "./getRegistration.js";
+import { getAuthorization } from "./getAuthorization.js";
+import { getRegistr } from "./getRegistr.js";
 let isMode = true;
 
 
@@ -23,23 +24,46 @@ export function renderFormLogin() {
   container.innerHTML = loginForm;
 
   const buttonLogin = document.getElementById("button-login");
-  buttonLogin.addEventListener("click", () => {
-    container.textContent = "Подождите, идет загрузка приложения";
-    getRegistration({
-      login: "admin",
-      password: "admin"
-    })
-    .then((response) => {
-      // console.log(response.user.token);
-    })
-    setAuth();
-    getFetchPromise();
-  });
+ 
 
   let buttonToggle = document.getElementById("button-reg");
   buttonToggle.addEventListener("click", () => {
     isMode = !isMode;
     renderFormLogin() 
   })
+
+
+  if(isMode){
+    buttonLogin.addEventListener("click", () => {
+      const loginValue = document.getElementById("login").value;
+      const passwordValue = document.getElementById("password").value;
+      container.textContent = "Подождите, идет загрузка приложения";
+      getAuthorization({
+        login: loginValue,
+        password: passwordValue,
+      })
+      .then((response) => {
+        setAuth();
+        getFetchPromise();
+      })
+    });
+  }else{
+
+    buttonLogin.addEventListener("click", () =>{
+      const reg = document.getElementById("nameUser").value;
+      const loginValue = document.getElementById("login").value;
+      const passwordValue = document.getElementById("password").value;
+      getRegistr({
+        login: loginValue,
+        name: reg,
+        password: passwordValue,
+      })
+      .then((response) =>{
+        setAuth();
+        getFetchPromise();
+      })
+    })
+  }
+  
 
 }

@@ -1,10 +1,11 @@
-import { container } from "./main.js";
+import { container, answerOnCommnets} from "./main.js";
 import { addComment } from "./main.js";
+import {  user} from "./main.js";
 
 export function formForComments() {
   const appForm = `<div class="add-form" id="formUser">
   <div class="input-block">
-  <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
+  <input ${user ? "disabled" : ""} value="${user ? user.name : ""}" type="text" class="add-form-name" placeholder="Введите ваше имя" />
   <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea></div>
     <div class="add-form-row">
     <button class="add-form-button">Написать</button>
@@ -26,5 +27,8 @@ export function formForComments() {
   addName.addEventListener("input", validation);
   addText.addEventListener("input", validation);
 
+  
+
   addComment(button, addName, addText);
+  answerOnCommnets(addText);
 }
