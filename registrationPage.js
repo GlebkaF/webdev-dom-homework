@@ -1,8 +1,9 @@
-/*import { reg, registration, setReg } from "./api";
-import { fetchAndRenderComments } from "./main";
+import { registration } from "./api.js";
+import { renderLogin } from "./loginPage.js";
+
 
 export const renderRegistration = () => {
-    const formElement = document.getElementById("form");
+    const formElement = document.getElementById("app");
     const registrationHtml =` 
     <div class="container">
     <div class="add-form">
@@ -25,26 +26,29 @@ export const renderRegistration = () => {
       placeholder="Введите пароль"
     />
       <br/>
-      <p id="login">Регистрация</p>
-      <button class="button" id="login-button">Войти</button>
+      <button class="button" id="registration-action">Зарегистрироваться</button>
+      <p class="reg" id="return-login-form">Войти</p>
     </div>`;
     
      formElement.innerHTML = registrationHtml;
-
+     const buttonElement = document.getElementById("registration-action");
      buttonElement.addEventListener("click", () => {
         registration({
             name: nameInputElement.value,
             login: loginInputElement.value,
             password: passwordInputElement.value,
-        }).then((responseData) => {
-            console.log(reg);
-            setReg(responseData.user.reg);
-            console.log(reg);
+        
         })
         .then(() => {
-            fetchAndRenderComments();
+            renderLogin();
         })
      });
-};*/
+
+     const returnLoginForm = document.getElementById("return-login-form");
+     returnLoginForm.addEventListener("click", () => {
+      renderLogin();
+     })
+
+};
 
  

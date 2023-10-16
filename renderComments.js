@@ -1,8 +1,10 @@
 import { initEventlikes } from "./Initialization.js";
-import { reg, token } from "./api.js";
-import {renderLogin} from "./loginPage.js";
+import { token } from "./api.js";
+
 import { renderFormComments } from "./renderFormComments.js";
 import {comments} from "./main.js";
+
+import { renderLogin } from "./loginPage.js";
 //import { renderRegistration } from "./registrationPage.js";
 
 export const renderComments = () => {
@@ -40,16 +42,6 @@ export const renderComments = () => {
 
     appElement.innerHTML = appHtml;
 
-    /*const formElement = document.getElementById("form");
-    const formHtml = `
-    <div class="container">
-      <ul class="comments" id="comments">${commentsHtml}
-      </ul>
-      <div class="form">
-  </div>
-</div>`
-    
-formElement.innerHTML = appHtml;*/
   
 
     token ? renderFormComments(): renderLoginButton();
@@ -62,15 +54,6 @@ formElement.innerHTML = appHtml;*/
       })
   }
 
-  reg ? renderRegistration(): renderLoginButton();
-  function renderLoginButton () {
-    const formComments = document.querySelector(".formComments");
-    formComments.innerHTML = `<p id="login">Авторизоваться</p>`
-    const login = document.getElementById("login");
-    login.addEventListener("click", () => {
-      renderLogin();
-    })
-}
 
 
 

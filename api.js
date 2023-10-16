@@ -9,11 +9,6 @@ export const setToken = (newToken) => {
   token = newToken;
 }
 
-export let reg;
-export const setReg = (newReg) => {
-  reg = newReg;
-}
-
 export function getComments() {
   return fetch(host, {
     method: "GET",

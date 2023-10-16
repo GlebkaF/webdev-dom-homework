@@ -1,5 +1,6 @@
 import { login, setToken, token } from "./api.js";
 import {fetchAndRenderComments} from "./main.js";
+import { renderRegistration } from "./registrationPage.js";
 
 export const renderLogin = () => {
     const appElement = document.getElementById("app");
@@ -20,7 +21,7 @@ export const renderLogin = () => {
     />
       <br/>
       <button class="button" id="login-button">Войти</button>
-      <p id="login">Регистрация</p>
+      <p class="reg" id="registration">Зарегистрироваться</p>
     </div>`;
     
 
@@ -30,7 +31,11 @@ export const renderLogin = () => {
 const buttonElement = document.getElementById("login-button");
 const loginInputElement = document.getElementById("login-input");
 const passwordInputElement = document.getElementById("password-input");
+const registrationButton = document.getElementById("registration");
 
+registrationButton.addEventListener("click", () => {
+  renderRegistration();
+})
 
 buttonElement.addEventListener("click", () => {
     login({
