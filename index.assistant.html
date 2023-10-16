@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Проект "Комменты"</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <ul class="comments" id="comments"></ul>
+      <div class="add-form">
+        <input
+          type="text"
+          class="add-form-name"
+          placeholder="Введите ваше имя"
+          id="name-input"
+        />
+        <textarea
+          type="textarea"
+          class="add-form-text"
+          placeholder="Введите ваш коментарий"
+          rows="4"
+          id="text-input"
+        ></textarea>
+        <div class="add-form-row">
+          <button id="add-button" class="add-form-button">Написать</button>
+        </div>
+      </div>
+    </div>
+  </body>
+
+  <script>
+    const name = document.getElementById("name-input");
+    const text = document.getElementById("text-input");
+    const editElements = document.querySelectorAll(".comment");
+    const likeButtonClass = "like-button";
+
+    for (const editElement of editElements) {
+      console.log(editElement);
+    }
+
+    const comments = [
+      {
+        name: "Глебка Фокин",
+        date: new Date("2023-02-01T12:20:52.308Z"),
+        text: "Это будет первый комментарий на этой странице",
+        likes: 3,
+        isLiked: false,
+        isEdited: false,
+      },
+      {
+        name: "Варвара Н.",
+        date: new Date("2023-02-15T19:45:56.308Z"),
+        text: "Мне нравится как оформлена эта страница! ❤ ",
+        likes: 75,
+        isLiked: true,
+        isEdited: false,
+      },
+    ];
+
+    // Добавлено в 3 домашке
+    const sanitizeHtml = (htmlString) => {
+      return htmlString.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+    };
+
+    const initLikeListeners = () => {
+      for (const likeButton of document.querySelectorAll(
+        `.${likeButtonClass}`
+      )) {
+        likeButton.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const comment = comments[likeButton.dataset.index];
+          comment.likes = comment.isLiked
+            ? comment.likes - 1
+            : comment.likes + 1;
+          comment.isLiked = !comment.isLiked;
+
+          renderComments();
+        });
+      }
+    };
+
+    //  при помощи render функции приобразуем массив комментов в разметку html
+    const renderComments = () => {
+      document.getElementById("comments").innerHTML = comments
+        // используя метод map, мы обрабытываем массив и преобразуем в другой элемент на основе callback
+        .map((comment, index) => {
+          return `
+           <li class="comment" data-index="${index}">
+             <div class="comment-header">
+               <div>${comment.name}</div>
+               <div>${comment.date.toLocaleDateString()} ${comment.date.toLocaleTimeString()}</div>
+             </div>
+             <div class="comment-body">
+               <div class="comment-text">
+                <a class="comment__link" href="#" id="text-button-${
+                  comment.text
+                }">${comment.text}</a>
+               </div>
+             </div>
+             <div class="comment-footer">
+                <button id="edit-button" class="edit-form-button">${
+                  comment.isEdit ? "Сохранить" : "Редактировать"
+                }</button>
+               <div class="likes">
+                 <span class="likes-counter">${comment.likes}</span>лайка
+                 <button data-index="${index}" class="${likeButtonClass} ${
+            comment.isLiked ? "-active-like" : ""
+          }"></button>
+               </div>
+             </div>
+           </li>
+         `;
+        })
+        // получаем на выходе массив с элементами, далее при помощи Join объединяем эдементы в одну строчку
+        .join("");
+
+      initLikeListeners();
+
+      for (const comment of document.querySelectorAll(".comment")) {
+        comment.addEventListener("click", () => {
+          text.value = `${comments[comment.dataset.index].name}:
+             ${comments[comment.dataset.index].text}
+
+    `;
+        });
+      }
+      for (const comment of document.querySelectorAll(".comment")) {
+        comment.addEventListener("click", () => {
+          if (!comments[comment.dataset.index].isEdited) {
+            text.value = comments[comment.dataset.index].text;
+            comments[comment.dataset.index].isEdited = true;
+            renderComments();
+          }
+        });
+      }
+    };
+
+    renderComments();
+
+    const initEditButtonListener = () => {
+      const editButtonElements = document.querySelectorAll(".edit-button");
+      for (const editButtonElement of editButtonElements) {
+        editButtonElements.addEventListener("click", () => {
+          const index = editButtonElement.closest(".comment").dataset.index;
+          if (comments[index].isEdited) {
+            comments[index].text = sanitizeHtml(text.value);
+          }
+          comments[index].isEditing = !comments[index].isEdited;
+          renderComments();
+        });
+      }
+    };
+    initEditButtonListener();
+
+    const addButton = document.getElementById("add-button");
+    addButton.addEventListener("click", () => {
+      if (!name.value || !text.value) {
+        console.error("Заполните форму");
+        return;
+      }
+      // используем метод push для добавления новых элементов в список
+      comments.push({
+        // Добавлен вызов санитайзера
+        name: sanitizeHtml(name.value),
+        text: sanitizeHtml(text.value),
+        date: new Date(),
+        likes: 0,
+        isLiked: false,
+        isEdited: false,
+      });
+
+      renderComments();
+
+      name.value = "";
+      text.value = "";
+    });
+  </script>
+</html>
+
+const attachLikesButtonListener = (likesButtonClass) => { for (const likesButton
+of document.querySelectorAll( `.${likesButtonClass}` )) {
+likesButton.addEventListener("click", (event) => { event.stopPropagation();
+const comment = comments[likesButton.dataset.index]; comment.likes =
+comment.isLiked ? comment.likes - 1 : comment.likes + 1; comment.isLiked =
+!comment.isLiked; renderComments(); }); } };
+
+<button id="edit-button" class="edit-form-button">
+  ${ comment.isEdit ? "Сохранить" : "Редактировать" }
+</button>
