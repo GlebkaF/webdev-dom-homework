@@ -6,7 +6,8 @@ export const login = (user, password) => {
     method: 'POST',
     body: JSON.stringify({
       "login": user,
-      "password": password
+      "password": password,
+      forceError: true,
     })
   }).then((response) => {
     if (response.status === 500) {
@@ -28,7 +29,8 @@ export const register = (user, name, password) => {
     body: JSON.stringify({
       "login": user,
       "name": name,
-      "password": password
+      "password": password,
+      forceError: true,
     })
   }).then((response) => {
     if (response.status === 500) {

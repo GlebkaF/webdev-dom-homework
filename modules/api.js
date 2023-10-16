@@ -23,9 +23,8 @@ export function getApiComments() {
     });
 }
 
-export function postApiComment({ text, date, forceError }) {
+export function postApiComment({ text }) {
   const token = getToken();
-  console.log(token);
   return fetch(commentsUrl, {
     method: 'POST',
     headers: {
@@ -33,6 +32,7 @@ export function postApiComment({ text, date, forceError }) {
     },
     body: JSON.stringify({
       text: text,
+      forceError: true,
     })
   })
     .then((response) => {

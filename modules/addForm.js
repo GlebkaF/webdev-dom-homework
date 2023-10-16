@@ -48,7 +48,6 @@ export const AddComment = () => {
   postApiComment({
     text: getSafeString(addFormText.value),
     date: new Date(),
-    forceError: false,
   }).then(() => {
     addForm.classList.remove('add-form_disabled');
     addFormText.value = '';
