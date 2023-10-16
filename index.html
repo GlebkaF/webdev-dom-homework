@@ -121,14 +121,6 @@
       }
     });
 
-    function delay(interval = 300) {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve();
-        }, interval);
-      });
-    }
-
     const addQuote = () => {
       const commentElements = document.querySelectorAll(".comment");
       for (const commentElement of commentElements) {
@@ -161,7 +153,7 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${comment.likes}</span>
-              <button class="like-button ${liked}" data-index="${index}"></button>
+              <button class="like-button ${comment.isLike ? `-active-like` : ``} ${comment.isLikeLoading ? `-loading-like` : ``}" data-index="${index}"></button>
             </div>
           </div>
         </li>`;
@@ -192,6 +184,7 @@
             date: new Date(comment.date).toLocaleString(),
             text: comment.text,
             likes: comment.likes,
+            isLikeLoading: false,
             isLike: false,
           }
         });
@@ -205,6 +198,14 @@
 
     fetchComments();
 
+    function delay(interval = 300) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, interval);
+      });
+    }
+
     // Добавляет обработчики кликов ко всем элементам с классом
     const addLikes = () => {
         // Находит все элементы с классом в разметке
@@ -214,13 +215,24 @@
           // Добавляет обработчик клика на конкретный элемент в списке
           likeButton.addEventListener("click", () => {
             const index = likeButton.dataset.index;
-            if (comments[index].isLike) {
-              comments[index].likes -= 1;
-              comments[index].isLike = false;
-            } else {
-              comments[index].likes += 1;
-              comments[index].isLike = true;
-            }
+            comments[index].isLikeLoading = true;
+
+            delay(2000).then(() => {
+              comments[index].likes = comments[index].isLike
+                ? comments[index].likes - 1
+                : comments[index].likes + 1;
+              comments[index].isLike = !comments[index].isLike;
+              comments[index].isLikeLoading = false;
+              renderComments();
+            });
+
+            // if (comments[index].isLike) {
+            //   comments[index].likes -= 1;
+            //   comments[index].isLike = false;
+            // } else {
+            //   comments[index].likes += 1;
+            //   comments[index].isLike = true;
+            // }
             event.stopPropagation();
             renderComments();
           });
