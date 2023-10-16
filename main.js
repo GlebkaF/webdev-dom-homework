@@ -5,7 +5,8 @@ import {
   showLoadingIndicatorComments,
   deleteLoadingIndicatorComments,
   showLoadingIndicator,
-  deleteLoadingIndicator
+  deleteLoadingIndicator,
+  postFetchApi
 } from "./api.js";
 import {
   renderElementsApi
@@ -110,31 +111,10 @@ function addComment() {
     const textInComment = textElement.value
     showLoadingIndicatorComments();
     hideAddForm();
-    fetch('https://wedev-api.sky.pro/api/v1/alexandr-trankov5/comments', {
-        method: "POST",
-        body: JSON.stringify({
-          text: textInComment
-            .replaceAll("<", "&lt")
-            .replaceAll(">", "&gt")
-            .replaceAll("&", "&amp;")
-            .replaceAll('"', "&quot;"),
-          name: nameInComment
-            .replaceAll("<", "&lt")
-            .replaceAll(">", "&gt")
-            .replaceAll("&", "&amp;")
-            .replaceAll('"', "&quot;"),
-        })
-      })
-      .then((response) => {
-        if (response.status === 500) {
-          throw new Error("Сервер упал, попробуй позже");
-        } else if (response.status === 400) {
-          throw new Error("Введите данные заново");
-        } else {
-          return response.json();
-        };
-      })
-      .then(() => {
+    postFetchApi({
+        textInComment,
+        nameInComment
+      }).then(() => {
         deleteLoadingIndicatorComments();
         showAddForm();
         nameElement.value = "";
