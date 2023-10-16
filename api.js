@@ -1,9 +1,9 @@
 import {getFetchPromise} from "./main.js";
 import { token } from "./main.js";
 
-export const setToken = (newToken) => {
-  token = newToken
-};
+// export const setToken = (newToken) => {
+//   token = newToken
+// };
 
 export function getComments() {
   return fetch("https://wedev-api.sky.pro/api/v2/alexander-potapov/comments", {
