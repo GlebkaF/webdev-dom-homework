@@ -156,14 +156,17 @@
 
     //Функция добавления объекта комментария в массив
     function addComment() {
-        userComments.push({
-            name: nameInputElement.value,
-            time: getDate(),
-            comment: commentInputElement.value,
-            numberOfLike: 0,
-            like: false,
-            isEdit: false
-        });
+        if (nameInputElement.value && commentInputElement.value) {
+            userComments.push({
+                name: nameInputElement.value,
+                time: getDate(),
+                comment: commentInputElement.value,
+                numberOfLike: 0,
+                like: false,
+                isEdit: false
+            })
+        };
+
 
         renderComments()
     }
@@ -304,10 +307,12 @@
 
             getLikes({ renderComments, isLoading, likeID, token });
             // renderComments({ isLoading, userComments, commentInputElement });
+             //Отмена всплытия
             event.stopPropagation();
         })
     }
 }
+//Добавление санитайзера
 const sanitizeHTML = (htmlString) => {
     return htmlString
         .replaceAll('>', '&gt')
