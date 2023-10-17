@@ -8,8 +8,10 @@
 
   <body>
     <div class="container">
+      <div id="loader-comment">Комментарий загружаются...</div>
       <ul id="list" class="comments"></ul>
-      <div class="add-form">
+      <div id="add-loader-comment">Комментарий добавляется...</div>
+      <div class="add-form" id="add-form">
         <input id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
         <textarea id="text-input" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
         ></textarea>
@@ -37,14 +39,21 @@
     const addComment = document.getElementById("list");
     const nameInput = document.getElementById("name-input");
     const textInput = document.getElementById("text-input");
-    
+    const addForm = document.querySelector('.add-form');
+    const addLoaderComment = document.getElementById('add-loader-comment');
+    const addFormId = document.getElementById("add-form");
+    const loaderComment = document.getElementById("loader-comment");
+
+    document.getElementById("add-loader-comment").style.display = 'none';
+
     // let likesCounter = document.getElementById("likes-counter");
     // likesCounter = 0; // наверное это не нужно 
 
     let comments = [];
 
     const getRenderComments = () => {
-    fetch("https://wedev-api.sky.pro/api/v1/dmitriy-panfilov/comments", {
+
+    return fetch("https://wedev-api.sky.pro/api/v1/dmitriy-panfilov/comments", {
       method: "GET",
     }).then((response) => {
         response.json().then((responseData) => {
@@ -57,11 +66,14 @@
             isLiked: false,
           }
         });
+        loaderComment.style.display = 'none';
         // получили данные и рендерим их в приложении
         renderComments();
       });
     });
-  }
+  };
+
+
     const renderComments = () => {
       const commentsHtml = comments
       .map((comment, index) => {
@@ -122,7 +134,6 @@
       });  
     }
     };
-    getRenderComments();
 
     renderComments();
     
@@ -130,6 +141,13 @@
     const formatedDate = `${newDate.getDate()}.${newDate.getMonth() + 1}.${newDate.getFullYear()} ${newDate.getHours()}:${newDate.getMinutes()}`;
 
     addCommentButton.addEventListener("click", () => {
+
+    //Убираем форму ввода при клике кнопку Написать
+    document.getElementById("add-form").style.display = 'none';
+    addLoaderComment.style.display = true;
+    document.getElementById("add-loader-comment").style.display = 'block';
+
+      
       nameInput.classList.remove("error");
       textInput.classList.remove("error");
       if (nameInput.value === "") {
@@ -159,9 +177,17 @@
         isLiked: false,
       }),
     }).then((response) => {
-        getRenderComments();
-        renderComments();
+      return response.json();
+      })
+      .then((responseData) => {
+        return getRenderComments();
+      })
+      .then((responseData) => {
+        document.getElementById("add-form").style.display = 'flex';
+        document.getElementById("add-loader-comment").style.display = 'none';
       });
+
+      renderComments();
     
 
       //   comments.push({
@@ -180,13 +206,15 @@
       //   isLiked: false,
       // });
       
-      getRenderComments();
       
       renderComments();
 
         nameInput.value = ""
         textInput.value = ""
     });
+
+    getRenderComments();
+
 
     console.log("It works!");
   </script>
