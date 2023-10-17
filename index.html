@@ -43,7 +43,11 @@
       method: "GET"
     })
       .then((response) => {
-        return response.json();
+        if (response.status === 200) {
+          return response.json();
+        } else {
+          throw new Error(`Кажется, что-то пошло не так, попробуйте позже`);
+        }
       })
       .then((responseDate) => {
         const appComments = responseDate.comments.map((comment) => {
@@ -65,6 +69,10 @@
 
         renderComments();
 
+      })
+      .catch((error) => {
+        alert(error.message);
+        console.warn(error);
       })
   }
 
@@ -256,19 +264,17 @@
       body: JSON.stringify({
         text: sanitizeHtml(textInputElement.value),
         name: sanitizeHtml(nameInputElement.value),
-        // forceError: true,
+        forceError: true,
       })
     })
       .then((response) => {
-        if (response.status === 201) {
-
-          return response.json();
-
+        if (response.status === 500) {
+          throw new Error(`Ошибка сервера`);
+        } else if (response.status === 400) {
+          throw new Error(`Имя и комментарий должны быть не короче 3х символов`);
         } else {
-
-          throw new Error(`Упс, ошибочка: ${response.status}`);
+          return response.json();
         }
-
       })
       .then((responseDate) => {
 
@@ -282,9 +288,24 @@
         btnAddCommentElement.disabled = true;
       })
       .catch((error) => {
-        // btnAddCommentElement.disabled = true;
-        console.log(error);
-        getCommentsFetch();
+        addFormElement.classList.remove("displayHidden");
+        loadingCommentElement.classList.add("displayHidden");
+
+        console.warn(error);
+
+        if (error.message === "Ошибка сервера") {
+
+          addComment();
+
+        } else if (error.message === "Имя и комментарий должны быть не короче 3х символов") {
+
+          alert(error.message);
+
+        } else {
+
+          alert(`Кажется что-то пошло не так, попробуй позже`);
+
+        }
       })
 
   }
@@ -306,7 +327,7 @@
     renderComments();
 
   })
-  
+
   getCommentsFetch();
 </script>
 
