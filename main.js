@@ -6,6 +6,7 @@ import { currentDate } from "./utils.js";
 import { renderUsers } from "./render.js";
 import { attachTextButtonListener } from "./render.js";
 import { attachLikeButtonListener } from "./render.js";
+import { toggleButton } from "./utils.js";
 
 const buttonElement = document.getElementById("add-button");
 const listElement = document.getElementById("list");
@@ -31,23 +32,14 @@ const fetchAndRender = () => {
 
     users = appUsers;
     renderUsers(users, listElement);
-    attachTextButtonListener(users);
-    attachLikeButtonListener(users, listElement);
+    users.forEach((user) => {
+      attachTextButtonListener(user, users, listElement);
+      attachLikeButtonListener(user, listElement);
+    });
   });
 };
 
-const toggleButton = () => {
-  if (
-    inputNameElement.value.trim().length >= 3 &&
-    inputTextElement.value.trim().length >= 3
-  ) {
-    buttonElement.disabled = false;
-    buttonElement.classList.remove("disabled");
-  } else {
-    buttonElement.disabled = true;
-    buttonElement.classList.add("disabled");
-  }
-};
+toggleButton(buttonElement,inputNameElement, inputTextElement);
 
 inputNameElement.addEventListener("input", toggleButton);
 inputTextElement.addEventListener("input", toggleButton);
