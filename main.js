@@ -51,7 +51,7 @@ getFetch().then((responseData) => {
   deleteLoadingIndicator();
   showAddForm();
 })
-getFetch();
+
 
 function renderElements() {
   renderElementsApi(comments);
@@ -119,7 +119,6 @@ function addComment() {
         showAddForm();
         nameElement.value = "";
         textElement.value = "";
-        getFetch();
         deleteLoadingIndicator();
       })
       .catch((error) => {
