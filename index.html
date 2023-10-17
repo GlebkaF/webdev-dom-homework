@@ -9,7 +9,7 @@
   <body>
     <div class="container">
       <ul id="ul" class="comments">
-       <!-- Список рендерится из Js -->
+        <!-- Список рендерится из Js -->
       </ul>
       <div class="add-form">
         <input
@@ -26,6 +26,7 @@
           rows="4"
         ></textarea>
         <div class="add-form-row">
+          <button class="remove-button">Удалить</button>
           <button id="buttonPush" class="add-form-button">Написать</button>
         </div>
       </div>
@@ -40,103 +41,136 @@
     const ulElement = document.getElementById("ul");
 
     const commentsArray = [
-  {
-    name: 'Глеб Фокин',
-    date: '12.02.22 12:18',
-    comment: 'Это будет первый комментарий на этой странице',
-    like: 3,
-    userLike: false,
-    paint: ''
-  },
-  {
-    name: 'Варвара Н.',
-    date: '13.02.22 19:22',
-    comment: 'Мне нравится как оформлена эта страница! ❤',
-    like: 75,
-    userLike: true,
-    paint: '-active-like'
-  }
-];
-const likes = () => {
-  const likeButtons = document.querySelectorAll('.like-button');
-  for (const likeButton of likeButtons) {
-    likeButton.addEventListener('click', () => {
-      const index = likeButton.dataset.index;
-      if (commentsArray[index].userLike === false ) {
-        commentsArray[index].paint = '-active-like';
-        commentsArray[index].like += 1;
-        commentsArray[index].userLike = true;
-      } else {
-        commentsArray[index].paint = '';
-        commentsArray[index].like -= 1;
-        commentsArray[index].userLike = false;
+      {
+        name: "Глеб Фокин",
+        date: "12.02.22 12:18",
+        comment: "Это будет первый комментарий на этой странице",
+        like: 3,
+        userLike: false,
+        paint: "",
+        isEdit: false,
+      },
+      {
+        name: "Варвара Н.",
+        date: "13.02.22 19:22",
+        comment: "Мне нравится как оформлена эта страница! ❤",
+        like: 75,
+        userLike: true,
+        paint: "-active-like",
+        isEdit: false,
+      },
+    ];
+    const likes = () => {
+      const likeButtons = document.querySelectorAll(".like-button");
+      for (const likeButton of likeButtons) {
+        likeButton.addEventListener("click", () => {
+          const index = likeButton.dataset.index;
+          if (commentsArray[index].userLike === false) {
+            commentsArray[index].paint = "-active-like";
+            commentsArray[index].like += 1;
+            commentsArray[index].userLike = true;
+          } else {
+            commentsArray[index].paint = "";
+            commentsArray[index].like -= 1;
+            commentsArray[index].userLike = false;
+          }
+          renderComments();
+        });
       }
+    };
+
+    const deleteButton = document.querySelector(".remove-button");
+    deleteButton.addEventListener("click", () => {
+      commentsArray.splice(-1);
       renderComments();
     });
-  };
-};
 
-const renderComments = () => {
-  const commentsHtml = commentsArray.map((item, index) =>{
-    return `
+    const editButtonComment = () => {
+      const editButtonComments = document.querySelectorAll(".update-btn");
+      for (const editButton of editButtonComments) {
+        editButton.addEventListener("click", () => {
+          const index = editButton.dataset.index;
+          commentsArray[index].isEdit = true;
+          renderComments();
+        });
+      }
+    };
+
+    const saveButtonComment = () => {
+      const SaveButtonComments = document.querySelectorAll(".save-btn");
+      const inputValue = document.querySelector(".update-input");
+      for (const saveButton of SaveButtonComments) {
+        saveButton.addEventListener("click", () => {
+          const index = saveButton.dataset.index;
+          commentsArray[index].comment = inputValue.value;
+          commentsArray[index].isEdit = false;
+          renderComments();
+        });
+      }
+    };
+
+    const renderComments = () => {
+      const commentsHtml = commentsArray
+        .map((item, index) => {
+          return `
     <li class="comment">
           <div class="comment-header">
             <div>${item.name}</div>
             <div>${item.date}</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
-              ${item.comment}
-            </div>
+            ${
+              item.isEdit
+                ? `<textarea class="update-input">${item.comment}</textarea>`
+                : `<div>${item.comment}</div>`
+            }
           </div>
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${item.like}</span>
-              <button data-index='${index}' class="like-button ${item.paint}"</button>
+              <button data-index='${index}' class="like-button ${
+            item.paint
+          }"</button>
             </div>
           </div>
+          <button data-index='${index}' type="button" class= ${
+            item.isEdit
+              ? '"save-btn"> Сохранить </button>'
+              : '"update-btn">Редактировать</button>'
+          }
         </li>
-    `})
-    .join('');
-    ulElement.innerHTML = commentsHtml;
-    likes();
-};
-renderComments();
+    `;
+        })
+        .join("");
 
-buttonElement.disabled = true;
-nameElement.addEventListener('input', () =>{
-  if ((nameElement.value === '') || (textElement.value ==='')) {
-    buttonElement.disabled = true;
-    return;
-  } else{
-    buttonElement.disabled = false;
-  }
-});
-textElement.addEventListener('input', () =>{
-  if ((nameElement.value === '') || (textElement.value ==='')) {
-    buttonElement.disabled = true;
-    return;
-  } else{
-    buttonElement.disabled = false;
-  }
-});
-buttonElement.addEventListener('click', () => {
-    nameElement.classList.remove('error');
-    textElement.classList.remove('error');
-    
-    if ((nameElement.value || textElement.value) === '') {
-      nameElement.classList.add('error');
-      textElement.classList.add('error');
-      return;
+      ulElement.innerHTML = commentsHtml;
+      likes();
+      editButtonComment();
+      saveButtonComment();
+    };
+    renderComments();
+
+    function validationInput() {
+      if (nameElement.value === "" || textElement.value === "") {
+        buttonElement.disabled = true;
+        return;
+      } else {
+        buttonElement.disabled = false;
+      }
     }
 
-    let currentDate = new Date();
+    buttonElement.disabled = true;
+    nameElement.addEventListener("input", validationInput);
+    textElement.addEventListener("input", validationInput);
+
+    buttonElement.addEventListener("click", () => {
+      let currentDate = new Date();
       let day = currentDate.getDate();
       let month = currentDate.getMonth() + 1;
       let year = currentDate.getFullYear();
       let hours = currentDate.getHours();
       let minutes = currentDate.getMinutes();
-      
+
       if (day < 10) {
         day = "0" + day;
       }
@@ -149,20 +183,33 @@ buttonElement.addEventListener('click', () => {
       if (minutes < 10) {
         minutes = "0" + minutes;
       }
-      let newformatDate = day + "." + month + "." + year + " " + hours + ":" + minutes;
-   
-      commentsArray.push({  
-      name: nameElement.value, 
-      date: newformatDate,
-      comment: textElement.value,
-      like: 0,
-      userLike: false,
-      paint: '',
-  });
-    renderComments();
-    nameElement.value = '';
-    textElement.value = '';
-    buttonElement.disabled = true;
-});
+      let newformatDate =
+        day + "." + month + "." + year + " " + hours + ":" + minutes;
+
+      commentsArray.push({
+        name: nameElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
+
+        date: newformatDate,
+        comment: textElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
+        like: 0,
+        userLike: false,
+        paint: "",
+        isEdit: false,
+      });
+      renderComments();
+      nameElement.value = "";
+      textElement.value = "";
+      buttonElement.disabled = true;
+    });
   </script>
 </html>
+
+1.
