@@ -1,3 +1,6 @@
+import { setToken } from "./api.js";
+
+
 export function getRegistr({login, name, password}){
     return fetch("https://wedev-api.sky.pro/api/user", {
     method: "POST",
@@ -19,6 +22,7 @@ export function getRegistr({login, name, password}){
   .then((response) =>{
     window.localStorage.setItem("user",  JSON.stringify(
         response.user))
+        setToken(response.user.token)
   })
   .catch((error) =>{
     if(error.message === "Такой пользователь уже есть"){

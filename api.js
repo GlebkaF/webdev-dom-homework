@@ -1,7 +1,7 @@
 import {getFetchPromise, user} from "./main.js";
 
 
-let token = "";
+ let token = "";
 
 export const setToken = (newToken) => {
   token = newToken

@@ -48,15 +48,16 @@ export function renderFormLogin() {
     });
   }else{
     buttonLogin.addEventListener("click", () =>{
-      const reg = document.getElementById("nameUser").value;
-      const loginValue = document.getElementById("login").value;
-      const passwordValue = document.getElementById("password").value;
+      const reg = document.getElementById("nameUser");
+      const loginValue = document.getElementById("login");
+      const passwordValue = document.getElementById("password");
+      container.textContent = "Подождите, идет загрузка приложения";
       getRegistr({
-        login: loginValue,
-        name: reg,
-        password: passwordValue,
+        login: loginValue.value,
+        name: reg.value,
+        password: passwordValue.value,
       })
-      .then((response) =>{
+      .then(() =>{
         setAuth();
         getFetchPromise();
       })
