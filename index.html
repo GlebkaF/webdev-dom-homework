@@ -334,10 +334,19 @@
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;"),
+      forceError: true,
       }),
     })
     .then((response) => {
+      console.log(response);
+      if (response.status === 500) {
+        throw new Error('Сервер сломался, попробуй позже');
+        // return Promise.reject('Сервер упал');
+      } if (response.status === 400) {
+        throw new Error('Имя и комментарий должны быть не короче 3 символов');
+      } else {
       return response.json();
+      }
     })
     .then(() => {
       return fetchComments();
@@ -345,8 +354,30 @@
     .then(() => {
       buttonElement.disabled = false;
       buttonElement.textContent = "Написать";
+      nameInputElement.value = "";
+      commentInputElement.value = "";
+      // throw new Error('Some error');
       renderComments();
-    });
+    })
+    .catch((error) => {
+      if (error.message === 'Сервер сломался, попробуй позже') {
+        alert('Сервер сломался, попробуй позже');
+        buttonElement.disabled = false;
+        buttonElement.textContent = "Написать";
+        return;
+      }
+      if (error.message === 'Имя и комментарий должны быть не короче 3 символов') {
+        alert('Имя и комментарий должны быть не короче 3 символов');
+        buttonElement.disabled = true;
+        buttonElement.textContent = "Написать";
+        return;
+      }
+      // console.log(error);
+      buttonElement.disabled = false;
+      buttonElement.textContent = "Написать";
+      alert('Кажется, у вас сломался интернет, попробуйте позже');
+      console.warn(error);
+    })
     };
     postPromise();
     });
