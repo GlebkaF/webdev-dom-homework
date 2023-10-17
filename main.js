@@ -2,7 +2,7 @@ import { getComments, postComment, deleteComments } from "./api.js";
 import { sanitazeHtml } from "./sanitazeHtml.js";
 import { renderListOfComments } from "./renderElements.js";
 
-export let token = "Bearer bgbkcccscw6c5g6g5g5k5o5s5w606gbgbkcccscw6c5g";
+export let token = "";
 
 export const container = document.querySelector(".container");
 
@@ -16,14 +16,17 @@ export let user;
 
  let listOfObject = [];
 
+
+
 export function setAuth() {
+  
   try {
     user =  JSON.parse(localStorage.getItem("user"));
   } catch  {
      user =  undefined;
   }
-  
 }
+setAuth()
 //Сама функция renderElements которая отрисовывет массив обьетов listOfObject  в разметку HTML //
 
 function renderElements() {

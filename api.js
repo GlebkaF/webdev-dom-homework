@@ -1,16 +1,13 @@
 import {getFetchPromise} from "./main.js";
 import { token } from "./main.js";
 
-// export const setToken = (newToken) => {
-//   token = newToken
-// };
+export const setToken = (newToken) => {
+  token = newToken
+};
 
 export function getComments() {
   return fetch("https://wedev-api.sky.pro/api/v2/alexander-potapov/comments", {
     method: "GET",
-    headers: {
-      Authorization: token
-    }
   })
   .then((response) => {
     if (response.status === 500) {
@@ -32,7 +29,7 @@ export function getComments() {
           forceError: true,
         }),
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       }
     )
@@ -86,7 +83,7 @@ export function deleteComments() {
       {
         method: "DELETE",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       }
     )

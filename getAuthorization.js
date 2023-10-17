@@ -1,4 +1,4 @@
-// import { setToken } from "./api.js";
+import { setToken } from "./api.js";
 
 
 export function getAuthorization({login, password}) {
@@ -22,7 +22,7 @@ export function getAuthorization({login, password}) {
     window.localStorage.setItem("user",  JSON.stringify(
       response.user))
       console.log(response);
-      // setToken(response.user.token);
+      setToken(response.user.token);
   })
   .catch((error) =>{
     if(error.message === "Такой логин и пароль  не существует"){
