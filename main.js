@@ -2,7 +2,7 @@ import { getComments, postComment, deleteComments } from "./api.js";
 import { sanitazeHtml } from "./sanitazeHtml.js";
 import { renderListOfComments } from "./renderElements.js";
 
-export let token = "";
+
 
 export const container = document.querySelector(".container");
 
@@ -18,6 +18,7 @@ export let user;
 
 
 
+
 export function setAuth() {
   
   try {
@@ -27,9 +28,18 @@ export function setAuth() {
   }
 }
 setAuth()
+
+
+
+export function logOut() {
+  localStorage.removeItem("user");
+  user = null;
+}
+
+
 //Сама функция renderElements которая отрисовывет массив обьетов listOfObject  в разметку HTML //
 
-function renderElements() {
+ function renderElements() {
   if (!listOfObject) {
     return;
   }
@@ -97,6 +107,10 @@ function likeButtons() {
     let index = likeButton.closest(".comment").dataset.index;
     let comment = listOfObject[index];
     likeButton.addEventListener("click", (event) => {
+      if(!user){
+        alert("Нужно зарегистрироваться");
+       return;
+      }
       event.stopPropagation();
       if (comment.isLiked) {
         comment.isLiked = false;
@@ -117,6 +131,10 @@ function changeComments() {
   const addText = document.querySelector(".add-form-text");
   for (let changeButton of changeButtons) {
     changeButton.addEventListener("click", (event) => {
+      if(!user){
+        alert("Нужно зарегистрироваться");
+       return;
+      }
       event.stopPropagation();
       let index = changeButton.closest(".comment").dataset.index;
       let comment = listOfObject[index];
@@ -133,10 +151,14 @@ function changeComments() {
 }
 
 // Функция ответа на комментарий //
- export function answerOnCommnets(addText) {
+  export function answerOnCommnets(addText) {
   let commentElements = document.querySelectorAll(".comment-text");
   for (let commentElement of commentElements) {
     commentElement.addEventListener("click", () => {
+      if(!user){
+        alert("Нужно зарегистрироваться");
+       return;
+      }
       let index = commentElement.closest(".comment").dataset.index;
       let comment = listOfObject[index];
       addText.value = `${comment.comment} ${comment.name}`;

@@ -1,4 +1,5 @@
 import { setToken } from "./api.js";
+import { renderFormLogin } from "./loginForm.js";
 
 
 export function getAuthorization({login, password}) {
@@ -9,7 +10,6 @@ export function getAuthorization({login, password}) {
       password,
     }),
   }).then((response) => {
-    console.log(response);
     if(response.status === 400){
       throw new Error("Такой логин и пароль  не существует")
     }
@@ -21,7 +21,6 @@ export function getAuthorization({login, password}) {
   .then((response) => {
     window.localStorage.setItem("user",  JSON.stringify(
       response.user))
-      console.log(response);
       setToken(response.user.token);
   })
   .catch((error) =>{

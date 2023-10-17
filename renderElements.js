@@ -1,6 +1,6 @@
 import { formForComments } from "./commentsForm.js";
 import { renderFormLogin } from "./loginForm.js";
-import { user } from "./main.js";
+import { user, logOut } from "./main.js";
 import { container } from "./main.js";
 
 export function renderListOfComments(array){
@@ -37,13 +37,13 @@ export function renderListOfComments(array){
             renderFormLogin()
         })
       }else{
-        // const exitButton = `<button class="exit-button">Выйти</button>`
-        // container.innerHTML += exitButton;
-        // const exitBtn = document.querySelector(".exit-button")
-        // exitBtn.addEventListener("click", () => {
-        //   console.log(1);
-        //   window.localStorage.clear()
-        // })
+        const exitButton = `<button class="exit-button">Выйти</button>`
+        container.innerHTML += exitButton;
         formForComments()
+        const exitBtn = document.querySelector(".exit-button")
+        exitBtn.addEventListener("click", () => {
+          logOut()
+          renderFormLogin()
+        })
       }
 }

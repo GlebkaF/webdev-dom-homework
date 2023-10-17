@@ -1,4 +1,3 @@
-import { postComment } from "./api.js";
 import { container, answerOnCommnets} from "./main.js";
 import { addComment } from "./main.js";
 import {  user} from "./main.js";
@@ -31,7 +30,6 @@ export function formForComments() {
   
 
   addComment(button, addName, addText);
-
 
   answerOnCommnets(addText);
 }

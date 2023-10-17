@@ -1,5 +1,7 @@
-import {getFetchPromise} from "./main.js";
-import { token } from "./main.js";
+import {getFetchPromise, user} from "./main.js";
+
+
+let token = "";
 
 export const setToken = (newToken) => {
   token = newToken
@@ -77,6 +79,10 @@ export function deleteComments() {
   const deleteButtons = document.querySelectorAll(".delete-comment-button");
   for (let deleteButton of deleteButtons) {
    deleteButton.addEventListener("click", (event) => {
+    if(!user){
+      alert("Нужно зарегистрироваться");
+     return;
+    }
     event.stopPropagation();
     let id = deleteButton.dataset.id;
     return fetch("https://wedev-api.sky.pro/api/v2/alexander-potapov/comments/" + id,
