@@ -203,7 +203,7 @@
       return `<li class="comment" data-index="${index}">
           <div class="comment-header">
             <div>${comment.name}</div>
-            <div>${comment.date}</div>
+            <div class="comment-date">${comment.date}</div>
           </div>
           <div class="comment-body">
             ${comment.isEdited ? `<textarea type="textarea" class="edit-form-text" data-index="${index}" value="" id="editTextArea">${comment.text}</textarea>` :
@@ -221,11 +221,6 @@
     }).join('');
 
     listElement.innerHTML = commentsHtml;
-
-    nameInputElement.value = '';
-    textInputElement.value = '';
-
-    btnAddCommentElement.disabled = true;
 
     initAddLikes();
     initEdit();
@@ -275,6 +270,10 @@
         getCommentsFetch();
 
       })
+    nameInputElement.value = '';
+    textInputElement.value = '';
+
+    btnAddCommentElement.disabled = true;
   }
 
   document.addEventListener("keyup", (event) => {
