@@ -76,22 +76,10 @@
 
   apiGet();// Вызываем функцию получения данных с сервера по API
 
-  let comments = []; //= [
-  //{
-  //  userName: "Глеб Фокин",
-  //  checkLike: false,
-  //  textComment: "Это будет первый комментарий на этой странице",
-  //  countLikes: 3,
-  //  fullDate: "12.02.22 12:18",
-  // },
-  // {
-  //   userName: "Варвара Н.",
-  //   checkLike: false,
-  //   textComment: "Мне нравится как оформлена эта страница! ❤",
-  //   countLikes: 75,
-  //    fullDate: "13.02.22 19:22",
-  //  },
-  //];
+  let comments = []; // Массив где будут хранится данные коментариев
+
+
+
 
   const renderComments = () => { // Функция рендеринга страницы
 
@@ -136,7 +124,25 @@
   };
   renderComments(); // Вызываем функцию рендеринга страницы
 
+  const errorName = () => {// Функция обработки ошибок запрса
+    alert("Имя должно содержать хотя бы три символа");
+    buttonElement.disabled = false;// Включаем кнопку добавления комментария
+    buttonElement.textContent = 'Написать';// И меняем надпись обратно
 
+    commentInputElement.value = `${textComment}`;
+    renderComments(); // Вызываем функцию рендеринга страницы
+    likeButtons(); //Вызываем функцию обработки клика по лайкам
+  };
+  const errorServer = () => {// Функция обработки ошибок запрса
+    alert("Что-то пошло не так, попробуйте отправить коментарий позже");
+    buttonElement.disabled = false;// Включаем кнопку добавления комментария
+    buttonElement.textContent = 'Написать';// И меняем надпись обратно
+
+    nameInputElement.value = `${userName}`;
+    commentInputElement.value = `${textComment}`;
+    renderComments(); // Вызываем функцию рендеринга страницы
+    likeButtons(); //Вызываем функцию обработки клика по лайкам
+  };
 
   const likeButtons = () => { //Функция обработки клика по лайкам
     const buttonLikes = document.querySelectorAll(".like-button");
@@ -222,8 +228,9 @@
       method: "POST",
       body: JSON.stringify({
         text: sanitizeHtml(commentInputElement.value),
-
         name: sanitizeHtml(nameInputElement.value),
+        forceError: true //Согласно документации POST-запрос будет в половине случаев отвечать 500-й ошибкой
+        //добавлено для домашки 2.14
       }),
 
     }).then((response) => {
@@ -231,7 +238,19 @@
       return response;
     })
       .then((response) => {
-        return response.json();
+        console.log(response);
+        // Код который обрабатывает ошибку
+        //throw new Error("Сервер упал");- был в уроке
+        if (response.status === 201) {
+          return response.json();
+        } else if (response.status === 400) {
+          return Promise.reject("Короткое имя");
+        } else {
+          // Код который обрабатывает ошибку
+          //throw new Error("Сервер упал");
+          return Promise.reject("Сервер упал");
+
+        }
       })
       .then(() => {
         return apiGet();// Вызываем функцию получения данных с сервера по API
@@ -239,6 +258,11 @@
       .then(() => {
         buttonElement.disabled = false;// Включаем кнопку добавления комментария
         buttonElement.textContent = 'Написать';// И меняем надпись обратно
+      })
+      .catch((error) => {// Обработчик ошибок
+        console.warn(error);
+        error === "Короткое имя" ? errorName() : errorServer();
+
       })
 
 
