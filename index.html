@@ -31,6 +31,7 @@
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
   const startAt = Date.now();
+  const commentContainer = {};
 
 
   buttonElement.disabled = true;// Выключаем кнопку добавления коментария 
@@ -124,25 +125,25 @@
   };
   renderComments(); // Вызываем функцию рендеринга страницы
 
-  const errorName = () => {// Функция обработки ошибок запрса
-    alert("Имя должно содержать хотя бы три символа");
+  const renderError = () => {// Функция обработки ошибок запрса
+    //alert("Имя должно содержать хотя бы три символа");
     buttonElement.disabled = false;// Включаем кнопку добавления комментария
     buttonElement.textContent = 'Написать';// И меняем надпись обратно
-
-    commentInputElement.value = `${textComment}`;
+    nameInputElement.value = `${commentContainer.name}`;
+    commentInputElement.value = `${commentContainer.text}`;
     renderComments(); // Вызываем функцию рендеринга страницы
     likeButtons(); //Вызываем функцию обработки клика по лайкам
   };
-  const errorServer = () => {// Функция обработки ошибок запрса
-    alert("Что-то пошло не так, попробуйте отправить коментарий позже");
-    buttonElement.disabled = false;// Включаем кнопку добавления комментария
-    buttonElement.textContent = 'Написать';// И меняем надпись обратно
+  //const errorServer = () => {// Функция обработки ошибок запрса
+  //alert("Что-то пошло не так, попробуйте отправить коментарий позже");
+  //buttonElement.disabled = false;// Включаем кнопку добавления комментария
+  //buttonElement.textContent = 'Написать';// И меняем надпись обратно
 
-    nameInputElement.value = `${userName}`;
-    commentInputElement.value = `${textComment}`;
-    renderComments(); // Вызываем функцию рендеринга страницы
-    likeButtons(); //Вызываем функцию обработки клика по лайкам
-  };
+  //nameInputElement.value = `${commentContainer.name}`;
+  //commentInputElement.value = `${commentContainer.text}`;
+  //renderComments(); // Вызываем функцию рендеринга страницы
+  //likeButtons(); //Вызываем функцию обработки клика по лайкам
+  //};
 
   const likeButtons = () => { //Функция обработки клика по лайкам
     const buttonLikes = document.querySelectorAll(".like-button");
@@ -212,7 +213,7 @@
     };
 
     const sanitizeHtml = (htmlString) => {
-      return htmlString.replaceAll("&", "&amp;")
+      return htmlString.replaceAll("&", "&amp;")// обязательно начинать обработку с "&", "&amp;"! иначе  при символе "<" будет выводиться "&lt;" и т.д.
         .replaceAll("<", "&lt;")// элементарная обработка пользовательского ввода на предмет
         .replaceAll(">", "&gt;") // всяких нехороших вещей в HTML-коде, в данном случае управляющие символы разметки "<" и ">"
         .replaceAll('"', "&quot;");// меняются; на их коды, а браузер всёравно выводит эти символы
@@ -223,6 +224,11 @@
 
     buttonElement.disabled = true;// Выключаем кнопку добавления комментария
     buttonElement.textContent = 'Коментарий добавляется...';// Меняем надпись кнопки
+
+    commentContainer.name = nameInputElement.value;//сохраняем имя коментатора на случай ошибки 
+    commentContainer.text = commentInputElement.value;//сохраняем коментарий на случай ошибки
+
+
 
     const postCommentsPromise = fetch("https://wedev-api.sky.pro/api/v1/stepan-titov/comments", {
       method: "POST",
@@ -261,8 +267,8 @@
       })
       .catch((error) => {// Обработчик ошибок
         console.warn(error);
-        error === "Короткое имя" ? errorName() : errorServer();
-
+        error === "Короткое имя" ? alert("Имя должно содержать хотя бы три символа") : alert("Что-то пошло не так, попробуйте отправить коментарий позже");
+        return renderError();// вызываем функцию обработки ошибок связанных с работой API
       })
 
 
