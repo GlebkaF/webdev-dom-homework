@@ -69,7 +69,7 @@
             .innerText;
           commentElement.value = `> ${commentBodyText} \n ${commentNameText},`;
           commentElement.focus();
-          renderComments();
+          
         };
         userComment.addEventListener("click", addTextInTextArea);
       }
@@ -171,9 +171,11 @@
         like: 0,
         itLike: false
       });
+      nameElement.value = "";
+      commentElement.value = "";
 
       renderComments();
-      commentClick();
+      
     });
   </script>
 </html>
