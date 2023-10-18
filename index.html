@@ -9,7 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments" id="list">
-      <!--список js-->
+        <!--список js-->
       </ul>
       <div class="add-form">
         <input
@@ -31,19 +31,19 @@
       </div>
     </div>
   </body>
-<style>
-  .error{
-    background-color: darksalmon;
-  }
-</style>
+  <style>
+    .error {
+      background-color: darksalmon;
+    }
+  </style>
   <script>
     "use strict";
-   const buttonElement = document.getElementById("add-button");
-   const listElement = document.getElementById("list");
-   const nameElement = document.getElementById("add-name");
-   const commentElement = document.getElementById("add-comment");
+    const buttonElement = document.getElementById("add-button");
+    const listElement = document.getElementById("list");
+    const nameElement = document.getElementById("add-name");
+    const commentElement = document.getElementById("add-comment");
 
-   const commentsArray = [
+    const commentsArray = [
       {
         name: "Глеб Фокин",
         date: "12.02.22 12:18",
@@ -59,10 +59,27 @@
         itLike: true
       }
     ];
+    const commentClick = () => {
+      const userComments = document.querySelectorAll(".comment");
+      for (const userComment of userComments) {
+        const addTextInTextArea = () => {
+          const commentBodyText = userComment.querySelector(".comment-body")
+            .innerText;
+          const commentNameText = userComment.querySelector(".comment-name")
+            .innerText;
+          commentElement.value = `> ${commentBodyText} \n ${commentNameText},`;
+          commentElement.focus();
+          renderComments();
+        };
+        userComment.addEventListener("click", addTextInTextArea);
+      }
+    };
+
     const likeButtonClick = () => {
       const userLikes = document.querySelectorAll(".like-button");
       for (const userLike of userLikes) {
-        userLike.addEventListener("click", () => {
+        userLike.addEventListener("click", (event) => {
+          event.stopPropagation();
           const index = userLike.dataset.index;
           if (commentsArray[index].itLike === false) {
             commentsArray[index].like++;
@@ -71,17 +88,18 @@
             commentsArray[index].like--;
             commentsArray[index].itLike = false;
           }
-          console.log(commentsArray[index].itLike);
+
           renderComments();
         });
       }
     };
+
     const renderComments = () => {
       const commentsHtml = commentsArray
         .map((user, index) => {
           return `<li class="comment" >
           <div class="comment-header">
-            <div>${user.name}</div>
+            <div class="comment-name">${user.name}</div>
             <div>${user.date}</div>
           </div>
           <div class="comment-body">
@@ -103,49 +121,59 @@
 
       listElement.innerHTML = commentsHtml;
       likeButtonClick();
+      commentClick();
     };
     renderComments();
 
-   let date = new Date();
-   let m = date.getMonth()+1;
-   if(m<10){
-    m = '0'+m;
-   }
-   let y = date.getFullYear()%100;
-   if(y<10){
-    y='0'+y;
-   }
-   let minu = date.getMinutes();
-   if(minu<10){
-    minu = '0'+minu;
-   }
-   let myDate = date.getDate() + '.' + m + '.' + y + ' ' + date.getHours() + ':' + minu;
-
-   buttonElement.addEventListener('click', () => {
-
-    nameElement.classList.remove("error");
-
-    if(nameElement.value === ""){
-      nameElement.classList.add("error");
-      return;
+    let date = new Date();
+    let m = date.getMonth() + 1;
+    if (m < 10) {
+      m = "0" + m;
     }
-
-    commentElement.classList.remove("error");
-
-    if(commentElement.value === ""){
-      commentElement.classList.add("error");
-      return;
+    let y = date.getFullYear() % 100;
+    if (y < 10) {
+      y = "0" + y;
     }
+    let minu = date.getMinutes();
+    if (minu < 10) {
+      minu = "0" + minu;
+    }
+    let myDate =
+      date.getDate() + "." + m + "." + y + " " + date.getHours() + ":" + minu;
 
-    commentsArray.push({
-        name: nameElement.value,
+    buttonElement.addEventListener("click", () => {
+      nameElement.classList.remove("error");
+
+      if (nameElement.value === "") {
+        nameElement.classList.add("error");
+        return;
+      }
+
+      commentElement.classList.remove("error");
+
+      if (commentElement.value === "") {
+        commentElement.classList.add("error");
+        return;
+      }
+
+      commentsArray.push({
+        name: nameElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
         date: myDate,
-        comment: commentElement.value,
+        comment: commentElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
         like: 0,
         itLike: false
       });
 
       renderComments();
-   })
+      commentClick();
+    });
   </script>
 </html>
