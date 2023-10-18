@@ -19,7 +19,7 @@ export const init = () => {
   addFormName = document.querySelector('.add-form-name');
   addFormText = document.querySelector('.add-form-text');
   wait = document.querySelector('.wait');
-  // addFormButton.setAttribute('disabled', true);
+  addFormButton.setAttribute('disabled', true);
 
   document.addEventListener('keydown', (e) => {
     if (e.keyCode === 13) {
@@ -32,8 +32,8 @@ export const init = () => {
     AddComment();
   })
 
-  addFormName.addEventListener('input', (e) => {
-    if (addFormName.value === '') {
+  addFormText.addEventListener('input', (e) => {
+    if (addFormText.value === '') {
       addFormButton.setAttribute('disabled', true);
     } else {
       addFormButton.removeAttribute('disabled')
