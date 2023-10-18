@@ -125,14 +125,7 @@
   };
   renderComments(); // Вызываем функцию рендеринга страницы
 
-  const renderError = () => {// Функция обработки ошибок запрса
-    buttonElement.disabled = false;// Включаем кнопку добавления комментария
-    buttonElement.textContent = 'Написать';// И меняем надпись обратно
-    nameInputElement.value = `${commentContainer.name}`;
-    commentInputElement.value = `${commentContainer.text}`;
-    renderComments(); // Вызываем функцию рендеринга страницы
-    likeButtons(); //Вызываем функцию обработки клика по лайкам
-  };
+
 
   const likeButtons = () => { //Функция обработки клика по лайкам
     const buttonLikes = document.querySelectorAll(".like-button");
@@ -153,7 +146,14 @@
     }
   };
 
-
+  const renderError = () => {// Функция обработки ошибок запрса
+    buttonElement.disabled = false;// Включаем кнопку добавления комментария
+    buttonElement.textContent = 'Написать';// И меняем надпись обратно
+    nameInputElement.value = `${commentContainer.name}`;
+    commentInputElement.value = `${commentContainer.text}`;
+    renderComments(); // Вызываем функцию рендеринга страницы
+    likeButtons(); //Вызываем функцию обработки клика по лайкам
+  };
 
   renderComments(); // Вызываем функцию рендеринга страницы
   likeButtons(); //Вызываем функцию обработки клика по лайкам
@@ -211,11 +211,13 @@
     const startAt = Date.now();
     console.log("Начинаю делать запрос");
 
+    commentContainer.name = nameInputElement.value;//сохраняем имя коментатора на случай ошибки 
+    commentContainer.text = commentInputElement.value;//сохраняем коментарий на случай ошибки
+
     buttonElement.disabled = true;// Выключаем кнопку добавления комментария
     buttonElement.textContent = 'Коментарий добавляется...';// Меняем надпись кнопки
 
-    commentContainer.name = nameInputElement.value;//сохраняем имя коментатора на случай ошибки 
-    commentContainer.text = commentInputElement.value;//сохраняем коментарий на случай ошибки
+
 
 
 
@@ -258,6 +260,7 @@
         console.warn(error);
         error === "Короткое имя" ? alert("Имя должно содержать хотя бы три символа") : alert("Что-то пошло не так, попробуйте отправить коментарий позже");
         return renderError();// вызываем функцию обработки ошибок связанных с работой API
+
       })
 
 
