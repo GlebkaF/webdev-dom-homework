@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Проект "Комменты2"</title>
+    <title>Проект "Комменты 3"</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -48,7 +48,7 @@
         date : "12.02.22 12:18",
         massage : "Это будет первый комментарий на этой странице",
         isLike : false,
-        Likecounter : 3,
+        likeCounter : 3,
         isEdit : true
       },
       {
@@ -56,7 +56,7 @@
         date : "13.02.22 19:22",
         massage : " Мне нравится как оформлена эта страница! ❤",
         isLike : true,
-        Likecounter : 75,
+        likeCounter : 75,
         isEdit : true,
       }
     ]
@@ -65,17 +65,14 @@
     const likebuttonListners = () => {
       const likebuttonElements = document.querySelectorAll('.like-button');
       for(const likebuttonElement of likebuttonElements) {
-        likebuttonElement.addEventListener("click" , () => {
+        likebuttonElement.addEventListener("click" , (event) => {
+          event.stopPropagation();
           if ( comments[likebuttonElement.dataset.index].isLike === false ) {
-            comments[likebuttonElement.dataset.index].Likecounter = comments[likebuttonElement.dataset.index].Likecounter + 1;
+            comments[likebuttonElement.dataset.index].likeCounter = comments[likebuttonElement.dataset.index].likeCounter + 1;
             comments[likebuttonElement.dataset.index].isLike = true;
-            likebuttonElement.classList.add("active-like");
-
           } else if ( comments[likebuttonElement.dataset.index].isLike === true ) {
             comments[likebuttonElement.dataset.index].isLike = false;
-            comments[likebuttonElement.dataset.index].Likecounter = comments[likebuttonElement.dataset.index].Likecounter - 1;
-            likebuttonElement.classList.remove("active-like");
-
+            comments[likebuttonElement.dataset.index].likeCounter = comments[likebuttonElement.dataset.index].likeCounter - 1;
           }
           renderComments();
           
@@ -87,7 +84,8 @@
     const editbuttonListners = () => {
       const editbuttonElements = document.querySelectorAll(".editimg");
       for (const editbuttonElement of editbuttonElements) {
-        editbuttonElement.addEventListener("click" , () => {
+        editbuttonElement.addEventListener("click" , (event) => {
+          event.stopPropagation();
             comments[editbuttonElement.dataset.index].isEdit = false;
             renderComments();
         })
@@ -98,7 +96,8 @@
     const doneImgButtonListnes = () => {
       const donebuttonElements = document.querySelectorAll(".doneimg");
       for ( const donebuttonElement of donebuttonElements ){
-        donebuttonElement.addEventListener("click" , () => {
+        donebuttonElement.addEventListener("click" , (event) => {
+          event.stopPropagation();
           const addformTextEdit = document.querySelectorAll(".addformedit");
             comments[donebuttonElement.dataset.index].massage = addformTextEdit[donebuttonElement.dataset.index].value; 
             comments[donebuttonElement.dataset.index].isEdit = true;
@@ -109,16 +108,24 @@
     }
 
 
+    const quoteElementsListners = () => {
+         const quoteElements = document.querySelectorAll(".comment-text");
+         for ( const quoteElement of quoteElements ) {
+          quoteElement.addEventListener("click" , () => {
+            massageinputElement.value = "*quoteBegin*" + comments[quoteElement.dataset.index].massage + "\n"+ comments[quoteElement.dataset.index].name + "*quoteEnd*" + "\n" ;
+            renderComments();
+          })
+         }
+    }
+
+
+
+
+
 
 
     const renderComments = () => {
       const commentshtml = comments.map((comment , index) => {
-        let activelikeclass;
-        if (comments[index].isLike === true) {
-          activelikeclass = "active-like"
-        }else {
-          activelikeclass = ""
-        }
 
         let isEditClass;
         let massageHideClass;
@@ -136,7 +143,7 @@
 
 
         return `
-        <li class="comment">
+        <li class="comment" data-index="${index}">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.date}</div>
@@ -149,25 +156,25 @@
                   rows="4"
               >${comments[index].massage}</textarea>
               <img class ="doneimg ${doneHideClass}" src="img/done.png" data-index="${index}">
-            <div class="comment-text ${massageHideClass}">
+            <div class="comment-text ${massageHideClass}" data-index="${index}">
               ${comment.massage}
               <img class ="editimg" src="img/edit.png" data-index="${index}">
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">${comment.Likecounter}</span>
-              <button class="like-button ${activelikeclass}" data-index="${index}" data-like="${comment.isLike}"></button>
+              <span class="likes-counter">${comment.likeCounter}</span>
+              <button class="like-button ${(comments[index].isLike)? "active-like" :"" }" data-index="${index}" data-like="${comment.isLike}"></button>
               </div>
           </div>
         </li>`  
-      }).join(",")
+      }).join("")
       comments_containerElement.innerHTML = commentshtml;
 
       likebuttonListners();
       editbuttonListners();
       doneImgButtonListnes();
-
+      quoteElementsListners();
     }
 
       
@@ -207,11 +214,11 @@
       }
 
         comments.push({
-          name : nameinputElement.value,
+          name : nameinputElement.value.replaceAll('<', '&lt;').replaceAll('>','&gt;'),
           date : massageDate,
-          massage : massageinputElement.value,
+          massage : massageinputElement.value.replaceAll('<', '&lt;').replaceAll('>','&gt;').replaceAll('*quoteBegin*','<div class="quote_container"> ' ).replaceAll('*quoteEnd*','</div><br />' ),
           isLike : false,
-          Likecounter : 0,
+          likeCounter : 0,
           isEdit : true
         })
         
@@ -240,6 +247,8 @@
     })
 
 
+
+
  
     
 
@@ -249,7 +258,7 @@
     
     
     
-
+324342234
 
 
 
