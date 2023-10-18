@@ -283,17 +283,17 @@ const renderComments = () => {
 };
 renderComments();
 commentsArray.push({  
-      name: nameElement.value,
+      name: nameInputElement.value,
       date: newformatDate,
-      comment: textElement.value,
+      comment: textareaInputElement.value,
       like: 0,
       userLike: false,
       paint: '',
   });
     renderComments();
 
-    nameElement.value = '';
-    textElement.value = '';
+    nameInputElement.value = '';
+    textareaInputElement.value = '';
     buttonElement.disabled = true;
 
 
