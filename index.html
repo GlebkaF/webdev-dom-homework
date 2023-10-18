@@ -100,6 +100,7 @@
           event.stopPropagation();
           const addformTextEdit = document.querySelectorAll(".addformedit");
             comments[donebuttonElement.dataset.index].massage = addformTextEdit[donebuttonElement.dataset.index].value; 
+            console.log(addformTextEdit[donebuttonElement.dataset.index].value)
             comments[donebuttonElement.dataset.index].isEdit = true;
             renderComments();
         })
@@ -112,7 +113,7 @@
          const quoteElements = document.querySelectorAll(".comment-text");
          for ( const quoteElement of quoteElements ) {
           quoteElement.addEventListener("click" , () => {
-            massageinputElement.value = "*quoteBegin*" + comments[quoteElement.dataset.index].massage + "\n"+ comments[quoteElement.dataset.index].name + "*quoteEnd*" + "\n" ;
+            massageinputElement.value ="*quoteBegin*" + comments[quoteElement.dataset.index].massage + "\n"+ comments[quoteElement.dataset.index].name + "*quoteEnd*" + "\n" ;
             renderComments();
           })
          }
@@ -216,7 +217,7 @@
         comments.push({
           name : nameinputElement.value.replaceAll('<', '&lt;').replaceAll('>','&gt;'),
           date : massageDate,
-          massage : massageinputElement.value.replaceAll('<', '&lt;').replaceAll('>','&gt;').replaceAll('*quoteBegin*','<div class="quote_container"> ' ).replaceAll('*quoteEnd*','</div><br />' ),
+          massage : massageinputElement.value.replaceAll('<', '&lt;').replaceAll('>','&gt;').replaceAll('*quoteBegin*','<div class="quote_container"> ' ).replaceAll('*quoteEnd*','</div>' ),
           isLike : false,
           likeCounter : 0,
           isEdit : true
