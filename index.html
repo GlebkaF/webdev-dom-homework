@@ -70,29 +70,52 @@
     // Код писать здесь
 
 		const setActiveButtonInput = () => {
-			nameInputElement.addEventListener(('input'), () => { //привожу кнопку в порядок после инпута:
+      
+      
+			nameInputElement.addEventListener(('input'),
+      
+       () => { //привожу кнопку в порядок после инпута:
 			buttonElement.classList.remove('disabled-hover');//Делаю кнопку активной после ввода данных в инпут
 			buttonElement.removeAttribute('disabled', '');//Делаю кнопку активной после ввода данных в инпут
 			nameInputElement.classList.remove('err');
+      
 		});	
 		}
 
 		const setActiveButtonMessage = () => {
-			textareaInputElement.addEventListener(('input'), () => { //привожу кнопку в порядок после текстареа:
-			buttonElement.classList.remove('disabled-hover');//Делаю кнопку активной после ввода данных в текстареа
-			buttonElement.removeAttribute('disabled', '');//Делаю кнопку активной после ввода данных в текстареа
+      
+			textareaInputElement.addEventListener(('input'), () => { 
+      //привожу кнопку в порядок после текстареа:
+			buttonElement.classList.remove('disabled-hover');
+      //Делаю кнопку активной после ввода данных в текстареа
+      
+			buttonElement.removeAttribute('disabled', '');
+      
+      //Делаю кнопку активной после ввода данных в текстареа
 			textareaInputElement.classList.remove('err');
+      
+     
+     
+      
 		});	
+    
+
 		}
 
-		const disabledButton = () => { // Делаю кнопку неактивной
+		const disabledButton = () => {
+     // Делаю кнопку неактивной
+      
 			buttonElement.setAttribute('disabled', '');
 			buttonElement.classList.add('disabled-hover');
+      
+     
 		}
 
 		const submitEnter = (event) => { // отправка сообщения по Enter
 			if (event.keyCode === 13) {
             document.getElementById("add-button").click();
+            nameInputElement.value = "";
+            textareaInputElement.value = "";
         }
 		}
 
@@ -108,6 +131,7 @@
     const textareaInputElement = document.getElementById('textarea-input');
     
     setActiveButtonInput();//Делаем кнопку активной после ввода поля
+   
 		setActiveButtonMessage();//Делаем кнопку активной после ввода поля
 
     
@@ -134,21 +158,28 @@
       return `${day}.${month}.${year} ${hour}:${minute}`
     }
 
-    buttonElement.addEventListener('click', () => {
-      nameInputElement.classList.remove('err');
-      textareaInputElement.classList.remove('err');
+        buttonElement.addEventListener('click', () => {
+        nameInputElement.classList.remove('err');
+        textareaInputElement.classList.remove('err');
+      if (nameInputElement.value === '') {
+         nameInputElement.classList.add('err');
+        disabledButton();
+        return;
+        
+			} else if (textareaInputElement.value === '') 
 
-			if (nameInputElement.value === '') {
-				nameInputElement.classList.add('err');
+       {
+        
+        textareaInputElement.classList.add('err');
 				disabledButton();
-				return;
-
-			} else if (textareaInputElement.value === '') {
-				textareaInputElement.classList.add('err');
-				disabledButton();
-				return;
-
-			} else {
+       return;
+        } else {
+      
+    
+    
+      
+       
+        
      
       
     
@@ -172,7 +203,7 @@
 
     }
   }
-  
+
     );
     document.addEventListener("keyup", submitEnter);
 
