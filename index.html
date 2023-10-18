@@ -126,7 +126,6 @@
   renderComments(); // Вызываем функцию рендеринга страницы
 
   const renderError = () => {// Функция обработки ошибок запрса
-    //alert("Имя должно содержать хотя бы три символа");
     buttonElement.disabled = false;// Включаем кнопку добавления комментария
     buttonElement.textContent = 'Написать';// И меняем надпись обратно
     nameInputElement.value = `${commentContainer.name}`;
@@ -134,16 +133,6 @@
     renderComments(); // Вызываем функцию рендеринга страницы
     likeButtons(); //Вызываем функцию обработки клика по лайкам
   };
-  //const errorServer = () => {// Функция обработки ошибок запрса
-  //alert("Что-то пошло не так, попробуйте отправить коментарий позже");
-  //buttonElement.disabled = false;// Включаем кнопку добавления комментария
-  //buttonElement.textContent = 'Написать';// И меняем надпись обратно
-
-  //nameInputElement.value = `${commentContainer.name}`;
-  //commentInputElement.value = `${commentContainer.text}`;
-  //renderComments(); // Вызываем функцию рендеринга страницы
-  //likeButtons(); //Вызываем функцию обработки клика по лайкам
-  //};
 
   const likeButtons = () => { //Функция обработки клика по лайкам
     const buttonLikes = document.querySelectorAll(".like-button");
