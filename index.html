@@ -218,7 +218,7 @@
 
 
         
-        const commentsArray = [
+  const commentsArray = [
   {
     name: 'Глеб Фокин',
     date: '12.02.22 12:18',
@@ -282,6 +282,20 @@ const renderComments = () => {
     likes();
 };
 renderComments();
+commentsArray.push({  
+      name: nameElement.value,
+      date: newformatDate,
+      comment: textElement.value,
+      like: 0,
+      userLike: false,
+      paint: '',
+  });
+    renderComments();
+
+    nameElement.value = '';
+    textElement.value = '';
+    buttonElement.disabled = true;
+
 
    
   </script>
