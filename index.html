@@ -171,6 +171,8 @@
             </div>
           </div>
         </li>`;
+            nameInputElement.value = "";
+            textareaInputElement.value = "";
 
     }
   }
@@ -249,7 +251,44 @@ const renderComments = () => {
     listElement.innerHTML = commentsHtml;
     likes();
 };
+
 renderComments();
+
+
+buttonElement.disabled = true;
+nameInputElement.addEventListener('input', () =>{
+  if ((nameInputElement.value === '')||(textareaInputElement.value==='')){
+    buttonElement.disabled = true;
+   return;
+  }
+   else{
+    buttonElement.disabled = false;
+    return;
+  }
+});
+
+textareaInputElement.addEventListener('input', () =>{
+  if ((textareaInputElement.value==='')||(nameInputElement.value==='')){
+    buttonElement.disabled = true;
+   return;
+  }
+   else{
+    buttonElement.disabled = false;
+
+    return;
+  }
+})
+
+
+buttonElement.addEventListener('click', () => {
+  nameInputElement.classList.remove('error');
+  textareaInputElement.classList.remove('error');
+
+    if ((nameInputElement.value ||textareaInputElement.value) === '') {
+      nameInputElement.classList.add('error');
+      textareaInputElement.classList.add('error');
+      return;
+    }
 commentsArray.push({  
       name: nameInputElement.value,
       date: DateNow,
@@ -260,11 +299,14 @@ commentsArray.push({
   });
     renderComments();
 
+
+
+
     nameInputElement.value = '';
     textareaInputElement.value = '';
     buttonElement.disabled = true;
 
-
+  });
    
   </script>
 </html>
