@@ -270,7 +270,7 @@ buttonElement.addEventListener('click', () => {
     commentsArray.push({
         name: nameElement.value,
         date: dateString,
-        comment: textElement.value
+        comment: textElement.value 
             .replaceAll("<", "&lt;")
             .replaceAll(">", "&gt;"),
         like: 0,
