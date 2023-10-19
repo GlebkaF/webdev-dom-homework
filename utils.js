@@ -1,3 +1,4 @@
+
 import { inputTextElement, inputNameElement } from "./api.js";
 export function currentDate(date) {
   return date.toLocaleString("ru-RU", {

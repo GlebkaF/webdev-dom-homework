@@ -7,9 +7,9 @@ import { renderUsers } from "./render.js";
 import { attachTextButtonListener } from "./render.js";
 import { attachLikeButtonListener } from "./render.js";
 import { toggleButton } from "./utils.js";
+import { listElement, buttonElement } from "./render.js";
 
-const buttonElement = document.getElementById("add-button");
-const listElement = document.getElementById("list");
+
 
 let users = [];
 // 1.вынести все запросы в отдельный модуль
@@ -39,10 +39,14 @@ const fetchAndRender = () => {
   });
 };
 
-toggleButton(buttonElement,inputNameElement, inputTextElement);
+toggleButton(buttonElement, inputNameElement, inputTextElement);
 
-inputNameElement.addEventListener("input", toggleButton);
-inputTextElement.addEventListener("input", toggleButton);
+  inputNameElement.addEventListener("input", () =>
+    toggleButton(buttonElement, inputNameElement, inputTextElement)
+);
+inputTextElement.addEventListener("input", () =>
+  toggleButton(buttonElement, inputNameElement, inputTextElement)
+);
 
 buttonElement.addEventListener("click", () => {
   inputNameElement.classList.remove("error");

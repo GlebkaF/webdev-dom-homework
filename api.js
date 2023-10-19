@@ -1,4 +1,5 @@
 import { currentDate } from "./utils.js";
+
 // import { renderUsers } from "./render.js";
 export function getComments() {
   return fetch("https://wedev-api.sky.pro/api/v1/dima-nosov/comments", {
