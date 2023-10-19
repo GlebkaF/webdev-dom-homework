@@ -65,6 +65,9 @@
         method: 'GET'
       })
       .then((response) => {
+        if (response.status === 500) {
+          throw new Error('Сервер упал');
+        }
         return response.json();
       })
       .then((responseData) => {
@@ -85,6 +88,11 @@
         addLoaderComment.style.display = 'none';
         formLoader.style.visibility = 'visible';
         buttonDeleteElement.style.visibility = 'visible'
+      })
+      .catch((error) => {
+        if (error.message === "Сервер упал") {
+          alert('сервер сломался, попробуй позже');
+        };
       });
   };
 
@@ -203,10 +211,18 @@
         method: 'POST',
         body: JSON.stringify({
           name: nameElement.value,
-          text: textElement.value
+          text: textElement.value,
+          forceError: true
+          // вышел флаг 500 ошибок
         }),
       })
       .then((response) => {
+        if (response.status === 500) {
+          throw new Error('Сервер упал');
+        }
+        if (response.status === 400) {
+          throw new Error('Ошибка ввода');
+        }
         return response.json();
       })
       .then((responseData) => {
@@ -215,6 +231,26 @@
       .then(() => {
         buttonElement.disabled = false;
         buttonElement.textContent = "Написать";
+        nameElement.value = ''; //очищаем форму (имя);
+        textElement.value = ''; //очищаем форму (текст);
+      })
+      .catch((error) => {
+
+        if (error.message === "Сервер упал") {
+          alert('сервер сломался, попробуй позже');
+
+        }
+        else if (error.message === 'Ошибка ввода') {
+          alert('Имя и комментарий должны быть не короче 3х символов');
+
+        } else
+          alert('кажется что то пошло не так, попробуйте позже');
+      })
+      .finally((response) => {
+        addLoaderComment.style.display = 'none';
+        formLoader.style.visibility = 'visible';
+        buttonDeleteElement.style.visibility = 'visible'
+
       })
     addLoaderComment.style.display = 'block';
     formLoader.style.visibility = 'hidden';
@@ -255,14 +291,10 @@
       return;
     };
 
-    //предупреждаем пользователя при нажатии кнопки что данные добавляются и деактивируем кнопку
-    buttonElement.disabled = true;
-    buttonElement.textContent = "Комментарий добавляется...";
     //Добавляем в функцию postComments API с методом POST для сохранения данных в массиве, она вынесена в отедбную функцию
     postComments()
 
-    nameElement.value = ''; //очищаем форму (имя);
-    textElement.value = ''; //очищаем форму (текст);
+
     nameElement.setAttribute('placeholder', 'Введите ваше имя'); //возвращаем placeholder к стандарту после добаваления комментария
     textElement.setAttribute('placeholder', 'Введите ваш коментарий',);//возвращаем placeholder к стандарту после добаваления комментария
   };
