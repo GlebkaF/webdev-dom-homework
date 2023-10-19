@@ -1,6 +1,7 @@
 import { addCommentText } from "./addForm.js";
 import { getApiComments } from "./api.js";
 import { getComments, setComments } from "./store.js";
+import { format } from "date-fns";
 
 let waiter;
 let listComments;
@@ -30,10 +31,11 @@ export const renderComments = () => {
   if (!comments) return;
 
   const commentsHTML = comments.map((comment) => {
+    const createDate = format(new Date(comment.created_at), 'yyyy-MM-dd hh.mm.ss');
     return `<li class="comment" data-id="${comment.id}" data-name="${comment.author.name}">
             <div class="comment-header">
             <div>${comment.author.name}</div>
-            <div>${new Date(comment.date).toLocaleDateString('ru-RU', options).replace(',', '')}</div>
+            <div>${createDate}</div>
             </div>
             <div class="comment-body">
             <div class="comment-text">
