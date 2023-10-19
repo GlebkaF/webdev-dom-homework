@@ -29,6 +29,7 @@ export function postComment({ name, text }) {
     body: JSON.stringify({
       name: name,
       text: text,
+      date: `${format(new Date(now), 'yyyy-MM-dd hh.mm.ss')}`,
       forceError: false,
     }),
     headers: {
@@ -78,3 +79,5 @@ export function registration({name, login, password}) {
       return response.json();
     });
 }
+
+

@@ -1,21 +1,22 @@
 import { initEventlikes } from "./Initialization.js";
 import { token } from "./api.js";
-
+//import { formatDateToRu, formatDateToUs } from "./lib/formatDate/formatDate.js"
+import { format } from "date-fns";
 import { renderFormComments } from "./renderFormComments.js";
 import {comments} from "./main.js";
-
 import { renderLogin } from "./loginPage.js";
-//import { renderRegistration } from "./registrationPage.js";
 
 export const renderComments = () => {
   const appElement = document.getElementById("app");
     console.log(comments);
+    //const country = "ru";
     const commentsHtml = comments
       .map((comment, index) => {
+        const createDate = format(new Date(comment.date), 'yyyy-MM-dd hh.mm.ss');
         return ` <li class="comment">
             <div class="comment-header">
               <div class="comment-name" data-index="${index}">${comment.name}</div>
-              <div>${comment.date}</div>
+              <div>${createDate}</div>
             </div>
             <div class="comment-body">
             <div class="comment-text" data-index="${index}">
@@ -28,6 +29,7 @@ export const renderComments = () => {
                 <button class="like-button"></button>
               </div>
             </div>
+           
           </li> `;
       })
       .join("");
@@ -42,8 +44,6 @@ export const renderComments = () => {
 
     appElement.innerHTML = appHtml;
 
-  
-
     token ? renderFormComments(): renderLoginButton();
     function renderLoginButton () {
       const formComments = document.querySelector(".formComments");
@@ -55,9 +55,7 @@ export const renderComments = () => {
   }
 
 
-
-
-  const textInputElement = document.querySelector(".add-form-text");
+const textInputElement = document.querySelector(".add-form-text");
   const answerText = () => {
       const textTextElement = document.querySelectorAll(".comment-text");
       const textNameElement = document.querySelectorAll(".comment-name");
@@ -68,6 +66,17 @@ export const renderComments = () => {
         });
       }
     };
+
+    const now = new Date();
+    format(now, "dd/MM/yyyy hh:mm"); // 26/03/2023 10:33
+    format(now, "MM-dd-yyyy hh:mm"); // 03-26-2023 10:33
+    format(now, "dd.MM.yyyy hh:mm:ss"); // 26.03.2023 10:33:41*/
+
+
+
+    
+
+
 
 
 answerText();

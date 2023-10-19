@@ -29,6 +29,7 @@ export const renderFormComments = () => {
     const textInputElement = document.querySelector(".add-form-text");
     const textareaInputElement = document.getElementById("textarea-input");
 
+
      initDeliteButtonsListeners();
 
      const onSubmit = () => {
@@ -56,7 +57,7 @@ export const renderFormComments = () => {
         };
       
         // Добавляем изменение кнопки на Элемент добавляется
-        const startAt = Date.now();
+       const startAt = Date.now();
       
         buttonElement.disabled = true;
         buttonElement.textContent = "Элемент добавляется...";
