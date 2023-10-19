@@ -31,7 +31,7 @@ export const renderComments = () => {
   if (!comments) return;
 
   const commentsHTML = comments.map((comment) => {
-    const createDate = format(new Date(comment.created_at), 'yyyy-MM-dd hh.mm.ss');
+    const createDate = format(new Date(comment.date), 'yyyy-MM-dd hh.mm.ss');
     return `<li class="comment" data-id="${comment.id}" data-name="${comment.author.name}">
             <div class="comment-header">
             <div>${comment.author.name}</div>
