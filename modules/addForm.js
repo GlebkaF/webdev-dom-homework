@@ -1,6 +1,5 @@
 import { postApiComment } from "./api.js";
 import { loadComments } from "./comments.js";
-import { format } from "date-fns";
 
 let addForm;
 let addFormButton;
@@ -87,4 +86,5 @@ export const AddComment = () => {
 
 export const addCommentText = (text) => {
   addFormText.value = `${'>'}` + text;
+  addFormButton.removeAttribute('disabled');
 }
