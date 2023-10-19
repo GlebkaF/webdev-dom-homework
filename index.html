@@ -203,7 +203,7 @@
         document.getElementById("add-form").style.display = 'flex';
         document.getElementById("add-loader-comment").style.display = 'none';
           if (error.message === "Сервер сломался") {
-            postTask();
+            alert('Кажется, у вас сломался интернет, попробуйте позже');
           }
           if (error.message === "Плохой запрос") {
             alert('Имя и комментарий должны быть не короче 3х символов');
