@@ -9,28 +9,45 @@ const editButton = document.getElementById("edit-button");
 
 const initEdit = () => {
     let edit = document.querySelectorAll('.edit-button');
-    let textComment = document.querySelectorAll('.comment-text');
 
-    for (let i = 0; i < edit.length; i++) {
-        let editMode = false;
 
-        edit[i].addEventListener('click', (event) => {
-            event.stopPropagation();
-            if (editMode) {
-                commentsArray[i].comment = textComment[i].textContent
-                edit[i].textContent = "Редактировать";
-                textComment[i].removeAttribute('contentEditable');
+    for (const editButoon of edit) {
+        const index = editButoon.dataset.edit;
+        const isEditValue = commentsArray[index].isEdit;
+        if (!isEditValue) {
+
+
+
+            editButoon.addEventListener('click', () => {
+
+                const index = editButoon.dataset.edit;
+
+                const commentEdit = commentsArray[index];
+
+                commentsArray[index].isEdit = true;
+
+
+
+
                 renderComments();
-            } else {
+            })
+        } else {
+            editButoon.addEventListener('click', () => {
+                let textComment = document.querySelectorAll('.comment-text');
+                console.log(textComment)
 
-                edit[i].textContent = 'Сохранить';
-                textComment[i].setAttribute('contentEditable', true);
-                textComment[i].focus();
-            }
-            editMode = !editMode;
-        });
+                const index = editButoon.dataset.textComment;
+                const indexArr = commentsArray[index];
+                console.log(indexArr)
 
+
+                textComment.value = commentsArray[index].comment;
+                renderComments();
+            })
+        }
     }
+
+
 };
 
 
@@ -83,7 +100,8 @@ initDeleteButtonsListeners();
 const likes = () => {
     const likeButtons = document.querySelectorAll('.like-button');
     for (const likeButton of likeButtons) {
-        likeButton.addEventListener('click', () => {
+        likeButton.addEventListener('click', (event) => {
+            event.stopPropagation();
             const index = likeButton.dataset.index;
             if (commentsArray[index].userLike === false) {
                 commentsArray[index].paint = '-active-like';
@@ -101,7 +119,7 @@ const likes = () => {
 
 
 const answer = () => {
-    const answerElement = document.querySelectorAll(".comment");
+    const answerElement = document.querySelectorAll(".answer-button");
     for (const answerElements of answerElement) {
         answerElements.addEventListener('click', () => {
 
@@ -129,6 +147,7 @@ answer();
 
 const renderComments = () => {
     const commentsHtml = commentsArray.map((item, index) => {
+
         return `
           <li class="comment" data-answer="${index}">
                 <div class="comment-header">
@@ -136,18 +155,18 @@ const renderComments = () => {
                   <div>${item.date}</div>
                 </div>
                 <div class="comment-body">
-                ${!item.isEdit ? `<div class="comment-text" >
+                ${!item.isEdit ? `<div data-comment='${index}' class="comment-text" >
                 ${item.comment}
                 
                 
-              </div > ` : "<input value>"}
+              </div > ` : `<input value='${item.comment}'>`}
 
     
                   
                 </div >
     <div class="comment-footer">
-    
-        <button class="edit-button">${!item.isEdit ? "Редактировать" : "Сохранить"}</button>
+    <button data-answer="${index}" class="answer-button">Ответить</button>
+        <button data-edit="${index}" class="edit-button">${!item.isEdit ? "Редактировать" : "Сохранить"}</button>
         <button data-index='${index}' class="delete-button">Удалить</button>
         
 
@@ -251,11 +270,14 @@ buttonElement.addEventListener('click', () => {
     commentsArray.push({
         name: nameElement.value,
         date: dateString,
-        comment: textElement.value,
+        comment: textElement.value
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;"),
         like: 0,
         userLike: false,
         paint: '',
         isEdit: false
+
     });
     renderComments();
 
