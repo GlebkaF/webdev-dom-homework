@@ -45,7 +45,8 @@ const initLikeButtonsListener = () => {
   const likeButtons = document.querySelectorAll('.like-button');
   //Перебираю все кнопки 
   for (const likeButton of likeButtons) {
-    likeButton.addEventListener('click', () => {
+    likeButton.addEventListener('click', (event) => {
+      event.stopPropagation();
       //Присвоила индексу весь элемент массива
       const index = likeButton.dataset.index;
       if (comments[index].isLike) {
@@ -76,7 +77,8 @@ commentInputElement.addEventListener('input', isActive);
 const initUpdateButtonsListener = () => {
   const updateButtons = document.querySelectorAll('.update-btn');
   for (const updateButton of updateButtons) {
-    updateButton.addEventListener('click', () => {
+    updateButton.addEventListener('click', (event) => {
+      event.stopPropagation();
       const index = updateButton.dataset.index;
       comments[index].isEdit = true;
       renderComments();
@@ -89,7 +91,8 @@ const initSaveButtonsListeners = () => {
   const saveButtons = document.querySelectorAll('.save-btn');
   const updateInputValue = document.querySelector('.update-input');
   for (const saveButton of saveButtons) {
-    saveButton.addEventListener('click', () => {
+    saveButton.addEventListener('click', (event) => {
+      event.stopPropagation();
       const index = saveButton.dataset.index;
       comments[index].textComment = updateInputValue.value;
       comments[index].isEdit = false;
@@ -99,11 +102,25 @@ const initSaveButtonsListeners = () => {
 
 }
 
+//ответ на комментарий
+const initUpdateCommentListener = () => {
+  const formComments = document.querySelectorAll('.comment');
+  for (const formComment of formComments) {
+    formComment.addEventListener('click', () => {
+      const index = formComment.dataset.index;
+      nameInputElement.value = '';
+      commentInputElement.value = `%BEGIN_QUOTE ${comments[index].name}: 
+      ${comments[index].textComment}END_QUOTE%`;
+    })
+  }
+}
+
+
 //Рендерит комментарии
 const renderComments = () => {
   blockComments.innerHTML = comments.map((comment, index) => {
     return `
-        <li class="comment">
+        <li class="comment" data-index='${index}'>
         <div class="comment-header">
           <div>${comment.name}</div>
           <div>${comment.date}</div>
@@ -126,6 +143,7 @@ const renderComments = () => {
   initLikeButtonsListener();
   initUpdateButtonsListener();
   initSaveButtonsListeners();
+  initUpdateCommentListener();
 }
 renderComments();
 
@@ -155,11 +173,15 @@ const addComments = () => {
   }
   //Передача всех параметров в одну переменную
   const newFormatDatePublish = `${dayPublish}.${monthPublish}.${yearPublish} ${hoursPublish}:${minutesPublish}`;
-
-  //Добавление в массив новые комменатрии
+  //Добавление в массив новые комменатарии
   comments.push({
-    name: nameInputElement.value,
-    textComment: commentInputElement.value,
+    name: nameInputElement.value
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;'),
+    textComment: commentInputElement.value
+    .replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+    .replaceAll("%BEGIN_QUOTE", "<div class='quote'>")
+    .replaceAll("END_QUOTE%", "</div>"),
     date: newFormatDatePublish,
     isEdit: false,
     isLike: false,
