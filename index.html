@@ -168,7 +168,7 @@
               </div>
           </div>
         </li>`  
-      }).join("")
+      }).join("").replaceAll('*quoteBegin*','<div class="quote_container"> ' ).replaceAll('*quoteEnd*','</div>' );
       comments_containerElement.innerHTML = commentshtml;
 
       likebuttonListners();
@@ -216,7 +216,7 @@
         comments.push({
           name : nameinputElement.value.replaceAll('<', '&lt;').replaceAll('>','&gt;'),
           date : massageDate,
-          massage : massageinputElement.value.replaceAll('<', '&lt;').replaceAll('>','&gt;').replaceAll('*quoteBegin*','<div class="quote_container"> ' ).replaceAll('*quoteEnd*','</div>' ),
+          massage : massageinputElement.value.replaceAll('<', '&lt;').replaceAll('>','&gt;'),
           isLike : false,
           likeCounter : 0,
           isEdit : true
