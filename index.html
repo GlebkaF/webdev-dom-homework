@@ -82,10 +82,12 @@
   const commentInputElement = document.getElementById("comment-input");
 
   buttonElement.addEventListener("click", () => {
+    commentInputElement.classList.remove("error");
     nameInputElement.classList.remove("error");
 
-    if (nameInputElement.value === "") {
+    if (nameInputElement.value === "" || commentInputElement.value === "") {
       nameInputElement.classList.add("error");
+      commentInputElement.classList.add("error");
       return;
     }
 
@@ -109,20 +111,9 @@
           </div>
         </div>
       </li>`;
-
-    nameInputElement.value = "";
+    nameInputElement.value === "";
+    commentInputElement.value === "";
   });
-
-  buttonElement.addEventListener("click", () => {
-    commentInputElement.classList.remove("error");
-
-    if (commentInputElement.value === "") {
-      commentInputElement.classList.add("error");
-      return;
-    }
-    commentInputElement.value = "";
-  });
-
   console.log("It works!");
 </script>
 
