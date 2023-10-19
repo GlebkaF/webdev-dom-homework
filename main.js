@@ -5,6 +5,8 @@ const ulElement = document.getElementById("ul");
 const text = document.getElementById("comment-text");
 const editButton = document.getElementById("edit-button");
 
+
+
 const initEdit = () => {
     let edit = document.querySelectorAll('.edit-button');
     let textComment = document.querySelectorAll('.comment-text');
@@ -12,13 +14,15 @@ const initEdit = () => {
     for (let i = 0; i < edit.length; i++) {
         let editMode = false;
 
-        edit[i].addEventListener('click', () => {
+        edit[i].addEventListener('click', (event) => {
+            event.stopPropagation();
             if (editMode) {
                 commentsArray[i].comment = textComment[i].textContent
                 edit[i].textContent = "Редактировать";
                 textComment[i].removeAttribute('contentEditable');
                 renderComments();
             } else {
+
                 edit[i].textContent = 'Сохранить';
                 textComment[i].setAttribute('contentEditable', true);
                 textComment[i].focus();
@@ -34,7 +38,8 @@ const initEdit = () => {
 const initDeleteButtonsListeners = () => {
     const deleteButtonsElements = document.querySelectorAll(".delete-button");
     for (const deleteButtonsElement of deleteButtonsElements) {
-        deleteButtonsElement.addEventListener('click', () => {
+        deleteButtonsElement.addEventListener('click', (event) => {
+            event.stopPropagation();
             console.log("Удаляю элемент...");
             const index = deleteButtonsElement.dataset.index;
             console.log(index);
@@ -45,7 +50,11 @@ const initDeleteButtonsListeners = () => {
 
         });
     };
+
 };
+
+
+
 
 const commentsArray = [
     {
@@ -54,7 +63,8 @@ const commentsArray = [
         comment: 'Это будет первый комментарий на этой странице',
         like: 3,
         userLike: false,
-        paint: ''
+        paint: '',
+        isEdit: false
     },
     {
         name: 'Варвара Н.',
@@ -62,7 +72,8 @@ const commentsArray = [
         comment: 'Мне нравится как оформлена эта страница! ❤',
         like: 75,
         userLike: true,
-        paint: '-active-like'
+        paint: '-active-like',
+        isEdit: false
     }
 ];
 
@@ -89,43 +100,72 @@ const likes = () => {
 };
 
 
+const answer = () => {
+    const answerElement = document.querySelectorAll(".comment");
+    for (const answerElements of answerElement) {
+        answerElements.addEventListener('click', () => {
 
+            const answerIndex = answerElements.dataset.answer;
+            const addFormText = document.querySelector(".add-form-text");
+
+            addFormText.value = `${commentsArray[answerIndex].name} \n ${commentsArray[answerIndex].comment}`
+
+
+            renderComments();
+
+
+
+
+
+
+        });
+
+    };
+};
+
+answer();
 
 
 
 const renderComments = () => {
     const commentsHtml = commentsArray.map((item, index) => {
         return `
-          <li class="comment">
+          <li class="comment" data-answer="${index}">
                 <div class="comment-header">
                   <div>${item.name}</div>
                   <div>${item.date}</div>
                 </div>
                 <div class="comment-body">
-                  <div class="comment-text">
-                    ${item.comment}
-                    
-                  </div>
-                  
-                </div>
-                <div class="comment-footer">
-                <button class="edit-button">Редактировать</button>
-                <button data-index='${index}' class="delete-button">Удалить</button>
+                ${!item.isEdit ? `<div class="comment-text" >
+                ${item.comment}
                 
-                  <div class="likes">
-                    <span class="likes-counter">${item.like}</span>
-                    <button data-index='${index}' class="like-button ${item.paint}"</button>
-                  
-                  </div>
-                </div>
                 
-              </li>
-          `})
+              </div > ` : "<input value>"}
+
+    
+                  
+                </div >
+    <div class="comment-footer">
+    
+        <button class="edit-button">${!item.isEdit ? "Редактировать" : "Сохранить"}</button>
+        <button data-index='${index}' class="delete-button">Удалить</button>
+        
+
+        <div class="likes">
+            <span class="likes-counter">${item.like}</span>
+            <button data-index='${index}' class="like-button ${item.paint}"</button>
+
+    </div>
+                </div >
+                
+              </li >
+    `})
         .join('');
     ulElement.innerHTML = commentsHtml;
     likes();
     initDeleteButtonsListeners();
     initEdit();
+    answer();
 
 
 
@@ -206,7 +246,7 @@ buttonElement.addEventListener('click', () => {
 
 
     const currentDate = new Date();
-    const dateString = `${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString()}`;
+    const dateString = `${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString()} `;
 
     commentsArray.push({
         name: nameElement.value,
@@ -215,6 +255,7 @@ buttonElement.addEventListener('click', () => {
         like: 0,
         userLike: false,
         paint: '',
+        isEdit: false
     });
     renderComments();
 
