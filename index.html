@@ -61,7 +61,7 @@
     ];
 
     const answerComment = () => {
-      const commentAnswers = document.querySelectorAll(".comment-text");
+      const commentAnswers = document.querySelectorAll(".comment");
       console.log(commentAnswers);
       for (const commentAnswer of commentAnswers) {
         commentAnswer.addEventListener("click", () => {
@@ -96,7 +96,8 @@
     const deleteButtons = document.querySelectorAll(".remove-button");
       console.log(deleteButtons);
       for (const deleteButton of deleteButtons) {
-        deleteButton.addEventListener("click", () => {
+        deleteButton.addEventListener("click", (event) => {
+          event.stopImmediatePropagation();
           const index = deleteButton.dataset.index;
           commentsArray.splice(index, 1);
           renderComments();
@@ -107,13 +108,13 @@
       const commentsHtml = commentsArray
         .map((item, index) => {
           return `
-          <li class="comment">
+          <li class="comment" data-user-name="${item.name}" data-text="${item.comment}">
           <div class="comment-header">
             <div>${item.name}</div>
             <div>${item.date}</div>
           </div>
           <div class="comment-body">   
-                <div class = "comment-text" data-user-name="${item.name}" data-text="${item.comment}">${item.comment}</div>
+                <div class = "comment-text">${item.comment}</div>
           </div>
           <div class="comment-footer">
             <button data-index="${index}" class="remove-button">Удалить</button>
