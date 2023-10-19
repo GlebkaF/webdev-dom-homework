@@ -1,42 +1,61 @@
 import { renderComments } from "./comments.js";
+import { getUser } from "./userStore.js";
 
-const commentsUrl = 'https://wedev-api.sky.pro/api/v1/lyubov-khusnullina/comments';
+const commentsUrl = 'https://wedev-api.sky.pro/api/v2/lyubov-khusnullina/comments';
 
 export function getApiComments() {
-    return fetch(commentsUrl, {
-        method: 'GET'
-    })
-        .then((response) => {
-            if (response.status === 500) {
-                throw new Error('Сервер упал');
-            }
-            const res = response.json();
-            return res;
-        })
+  const token = getToken();
+  return fetch(commentsUrl, {
+    method: 'GET',
+    headers: {
+      Authorization: token,
+    }
+  })
+    .then((response) => {
+      if (response.status === 500) {
+        throw new Error('Сервер упал');
+      }
+      if (response.status === 401) {
+        throw new Error('auth');
+      }
+      const res = response.json();
+      return res;
+    });
 }
 
-export function postApiComment({ name, text, date, forceError }) {
-    return fetch(commentsUrl, {
-        method: 'POST',
-        body: JSON.stringify({
-            name: name,
-            text: text,
-            date: date,
-            forceError: forceError,
-        }),
+export function postApiComment({ text }) {
+  const token = getToken();
+  return fetch(commentsUrl, {
+    method: 'POST',
+    headers: {
+      Authorization: token,
+    },
+    body: JSON.stringify({
+      text: text,
+      forceError: true,
     })
-        .then((response) => {
-            if (response.status === 500) {
-                throw new Error('Сервер упал');
-            }
-            if (response.status === 400) {
-                throw new Error('Bad Request');
-            }
-            return response.json();
-        })
-        .then(() => {
-            renderComments();
-        })
+  })
+    .then((response) => {
+      if (response.status === 500) {
+        throw new Error('Сервер упал');
+      }
+      if (response.status === 400) {
+        throw new Error('Bad Request');
+      }
+      if (response.status === 401) {
+        throw new Error('auth');
+      }
+      return response.json();
+    })
+    .then(() => {
+      renderComments();
+    })
+}
+
+const getToken = () => {
+  const user = getUser();
+  const token = user ? `Bearer ${user.token}` : null;
+  return token;
 }
 
 
