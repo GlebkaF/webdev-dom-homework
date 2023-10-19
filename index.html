@@ -26,7 +26,6 @@
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="remove-button">Удалить</button>
           <button id="buttonPush" class="add-form-button">Написать</button>
         </div>
       </div>
@@ -60,10 +59,24 @@
         isEdit: false,
       },
     ];
+
+    const answerComment = () => {
+      const commentAnswers = document.querySelectorAll(".comment-text");
+      console.log(commentAnswers);
+      for (const commentAnswer of commentAnswers) {
+        commentAnswer.addEventListener("click", () => {
+          textElement.value = `${commentAnswer.dataset.text}${commentAnswer.dataset.userName},
+          Ответ:`;
+        });
+      }
+    };
+
     const likes = () => {
       const likeButtons = document.querySelectorAll(".like-button");
       for (const likeButton of likeButtons) {
-        likeButton.addEventListener("click", () => {
+        likeButton.addEventListener("click", (event) => {
+          event.stopPropagation();
+
           const index = likeButton.dataset.index;
           if (commentsArray[index].userLike === false) {
             commentsArray[index].paint = "-active-like";
@@ -75,81 +88,51 @@
             commentsArray[index].userLike = false;
           }
           renderComments();
+          answerToComment();
         });
       }
     };
-
-    const deleteButton = document.querySelector(".remove-button");
-    deleteButton.addEventListener("click", () => {
-      commentsArray.splice(-1);
-      renderComments();
-    });
-
-    const editButtonComment = () => {
-      const editButtonComments = document.querySelectorAll(".update-btn");
-      for (const editButton of editButtonComments) {
-        editButton.addEventListener("click", () => {
-          const index = editButton.dataset.index;
-          commentsArray[index].isEdit = true;
+    const deleteButtonsUser =() =>{
+    const deleteButtons = document.querySelectorAll(".remove-button");
+      console.log(deleteButtons);
+      for (const deleteButton of deleteButtons) {
+        deleteButton.addEventListener("click", () => {
+          const index = deleteButton.dataset.index;
+          commentsArray.splice(index, 1);
           renderComments();
         });
       }
-    };
-
-    const saveButtonComment = () => {
-      const SaveButtonComments = document.querySelectorAll(".save-btn");
-      const inputValue = document.querySelector(".update-input");
-      for (const saveButton of SaveButtonComments) {
-        saveButton.addEventListener("click", () => {
-          const index = saveButton.dataset.index;
-          commentsArray[index].comment = inputValue.value;
-          commentsArray[index].isEdit = false;
-          renderComments();
-        });
-      }
-    };
-
+    }
     const renderComments = () => {
       const commentsHtml = commentsArray
         .map((item, index) => {
           return `
-    <li class="comment">
+          <li class="comment">
           <div class="comment-header">
-            <div class="newName">${item.name}</div>
-            <div class="newDate">${item.date}</div>
+            <div>${item.name}</div>
+            <div>${item.date}</div>
           </div>
-          <div class="comment-body">
-            ${
-              item.isEdit
-                ? `<textarea class="update-input">${item.comment}</textarea>`
-                : `<div>${item.comment}</div>`
-            }
+          <div class="comment-body">   
+                <div class = "comment-text" data-user-name="${item.name}" data-text="${item.comment}">${item.comment}</div>
           </div>
           <div class="comment-footer">
+            <button data-index="${index}" class="remove-button">Удалить</button>
             <div class="likes">
               <span class="likes-counter">${item.like}</span>
-              <button data-index='${index}' class="like-button ${
-            item.paint
-          }"</button>
+              <button data-index='${index}' class="like-button ${item.paint}"</button>
             </div>
           </div>
-          <button data-index='${index}' type="button" class= ${
-            item.isEdit
-              ? '"save-btn"> Сохранить </button>'
-              : '"update-btn">Редактировать</button>'
-          }
         </li>
     `;
         })
         .join("");
-
       ulElement.innerHTML = commentsHtml;
+      deleteButtonsUser()
+      answerComment();
       likes();
-      editButtonComment();
-      saveButtonComment();
     };
     renderComments();
-
+   
     function validationInput() {
       if (nameElement.value === "" || textElement.value === "") {
         buttonElement.disabled = true;
@@ -199,6 +182,7 @@
           .replaceAll("<", "&lt;")
           .replaceAll(">", "&gt;")
           .replaceAll('"', "&quot;"),
+          
         like: 0,
         userLike: false,
         paint: "",
@@ -211,5 +195,3 @@
     });
   </script>
 </html>
-
-1.
