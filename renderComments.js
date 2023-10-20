@@ -1,4 +1,5 @@
 const addComment = document.getElementById("list");
+const textInput = document.getElementById("text-input");
 
 
 export const renderComments = ({ comments }) => {
@@ -32,9 +33,8 @@ export const renderComments = ({ comments }) => {
       if (index !== null) {
         const comment = comments[index];
         textInput.value = `> ${comment.text} \n ${comment.name}.,`;
-      renderComments();
+      renderComments({ comments });
       comment.text.replace("<div class='quote'</div>");
-      const styleQuote = document.querySelectorAll(".quote");
       }
     });
   }
