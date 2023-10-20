@@ -6,42 +6,34 @@ const text = document.getElementById("comment-text");
 const editButton = document.getElementById("edit-button");
 
 
- 
+
 const initEdit = () => {
     let edit = document.querySelectorAll('.edit-button');
-
 
     for (const editButoon of edit) {
         const index = editButoon.dataset.edit;
         const isEditValue = commentsArray[index].isEdit;
+        console.log(isEditValue);
         if (!isEditValue) {
 
-
-
-            editButoon.addEventListener('click', () => {
-
+            editButoon.addEventListener('click', (event) => {
+                event.stopPropagation();
                 const index = editButoon.dataset.edit;
-
-                const commentEdit = commentsArray[index];
-
                 commentsArray[index].isEdit = true;
-
-
-
 
                 renderComments();
             })
         } else {
-            editButoon.addEventListener('click', () => {
-                let textComment = document.querySelectorAll('.comment-text');
-                console.log(textComment)
+            editButoon.addEventListener('click', (event) => {
+                let textComment = document.querySelector('.text-comment');
+                event.stopPropagation();
 
-                const index = editButoon.dataset.textComment;
-                const indexArr = commentsArray[index];
-                console.log(indexArr)
+                const index = editButoon.dataset.edit;
+                const comment = commentsArray[index].comment;
 
-
-                textComment.value = commentsArray[index].comment;
+                const value = document.querySelector('input').value;
+                commentsArray[index].comment = value;
+                commentsArray[index].isEdit = false;
                 renderComments();
             })
         }
@@ -119,9 +111,10 @@ const likes = () => {
 
 
 const answer = () => {
-    const answerElement = document.querySelectorAll(".answer-button");
+    const answerElement = document.querySelectorAll(".comment");
     for (const answerElements of answerElement) {
-        answerElements.addEventListener('click', () => {
+        answerElements.addEventListener('click', (event) => {
+            event.stopPropagation();
 
             const answerIndex = answerElements.dataset.answer;
             const addFormText = document.querySelector(".add-form-text");
@@ -270,7 +263,7 @@ buttonElement.addEventListener('click', () => {
     commentsArray.push({
         name: nameElement.value,
         date: dateString,
-        comment: textElement.value 
+        comment: textElement.value
             .replaceAll("<", "&lt;")
             .replaceAll(">", "&gt;"),
         like: 0,
