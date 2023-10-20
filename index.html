@@ -58,10 +58,20 @@
   }
 ];
 
+const answerToComment = () => {
+      const commentsToAnswer = document.querySelectorAll('.comment');
+      for (const commentToAnswer of commentsToAnswer) {
+        commentToAnswer.addEventListener("click", () => {
+          textElement.value = `${commentToAnswer.dataset.text}\n${commentToAnswer.dataset.username},\n`
+        });
+      }
+    }
+
 const likes = () => {
   const likeButtons = document.querySelectorAll('.like-button');
   for (const likeButton of likeButtons) {
-    likeButton.addEventListener('click', () => {
+    likeButton.addEventListener('click', (event) => {
+			event.stopPropagation();
       const index = likeButton.dataset.index;
       if (commentsArray[index].userLike === false ) {
         commentsArray[index].paint = '-active-like';
@@ -73,6 +83,7 @@ const likes = () => {
         commentsArray[index].userLike = false;
       }
       renderComments();
+      answerToComment();
     });
   };
 };
@@ -80,7 +91,7 @@ const likes = () => {
 const renderComments = () => {
   const commentsHtml = commentsArray.map((item, index) =>{
     return `
-    <li class="comment">
+    <li class="comment" data-username="${item.name}" data-text="${item.comment}">
           <div class="comment-header">
             <div>${item.name}</div>
             <div>${item.date}</div>
@@ -100,6 +111,7 @@ const renderComments = () => {
     `})
     .join('');
     ulElement.innerHTML = commentsHtml;
+    answerToComment();
     likes();
 };
 renderComments();
@@ -161,9 +173,13 @@ buttonElement.addEventListener('click', () => {
       let newformatDate = day + "." + month + "." + year + " " + hours + ":" + minutes;
    
       commentsArray.push({  
-      name: nameElement.value,
+      name: nameElement.value
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;"),
       date: newformatDate,
-      comment: textElement.value,
+      comment: textElement.value
+			.replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;"),
       like: 0,
       userLike: false,
       paint: '',
