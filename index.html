@@ -21,7 +21,7 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">3</span>
+              <span class="likes-counter" data-counter="3">3</span>
               <button class="like-button"></button>
             </div>
           </div>
@@ -38,7 +38,7 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">75</span>
+              <span class="likes-counter" data-counter="75">75</span>
               <button class="like-button -active-like"></button>
             </div>
           </div>
@@ -71,13 +71,13 @@
     const addFormText = document.querySelector('.add-form-text');
     const list = document.querySelector('.comments');
     const currentDate = new Date();
-    // const normalDate = Date.parse(currentDate);
     const day = currentDate.getDate()
-    const month = currentDate.getMonth();
+    const month = currentDate.getMonth() + 1 < 10 ? '0' + (currentDate.getMonth() + 1) : (currentDate.getMonth() + 1);
     const year = currentDate.getFullYear();
     const hours = currentDate.getHours();
     const minutes = currentDate.getMinutes();
 
+   const clickAddButton = () => {
     addFormBtn.addEventListener('click', () => {
       addFormName.classList.remove('form-error');
       addFormText.classList.remove('form-error');
@@ -105,13 +105,41 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button -active-like"></button>
+              <span class="likes-counter" data-counter="0">0</span>
+              <button class="like-button"></button>
             </div>
           </div>
         </li>`;
-    
+        addFormName.value = "";
+        addFormText.value = "";   
     });
+   } 
+
+
+    const likerFunction = () => {
+      const likesButtonElements = document.querySelectorAll('.like-button'); 
+      const likesCounter =  document.querySelectorAll('.likes-counter');
+      const counter = likesCounter.dataset.counter;
+
+      for (const  likeButtonElement of likesButtonElements){
+
+      likeButtonElement.addEventListener('click', () => {
+
+      if (likeButtonElement.classList.contains('-active-like')) {
+        likeButtonElement.classList.remove('-active-like');
+        counter-=1;
+      } else {
+        likeButtonElement.classList.add('-active-like');
+        counter+=1;
+      }
+      });
+      
+      };
+    }
+   
+    clickAddButton();
+
+    likerFunction();
     console.log("It works!");
   </script>
 </html>
