@@ -8,6 +8,8 @@ import { renderComments } from "./renderComments.js";
     const loaderComment = document.getElementById("loader-comment");
     const newDate = new Date;
     const formatedDate = `${newDate.getDate()}.${newDate.getMonth() + 1}.${newDate.getFullYear()} ${newDate.getHours()}:${newDate.getMinutes()}`;
+    const addFormId = document.getElementById("add-form");
+    const addForm = document.querySelector('.add-form');
 
     document.getElementById("add-loader-comment").style.display = 'none';
 
@@ -50,11 +52,11 @@ import { renderComments } from "./renderComments.js";
         textInput.classList.add("error");
         return;
       }
+
       function postTask(text) {
-        
       postApi({ 
         text: textInput.value,
-        nameInput,
+        name: nameInput.value,
         date: formatedDate
        }).then((responseData) => {
         return getRenderComments();

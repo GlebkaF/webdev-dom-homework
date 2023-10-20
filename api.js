@@ -6,11 +6,11 @@ export function getComments() {
 });
 }
 //передаем текст, дату в качестве аргумента
-export function postApi({ text, nameInput, date }) {
+export function postApi({ text, name, date }) {
    return fetch("https://wedev-api.sky.pro/api/v1/dmitriy-panfilov/comments", {
       method: "POST",
       body: JSON.stringify({
-         name: nameInput.value
+         name: name
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
@@ -36,5 +36,5 @@ export function postApi({ text, nameInput, date }) {
           else {
           return response.json();
           }
-        })
+        });
 }

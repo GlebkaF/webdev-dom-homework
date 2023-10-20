@@ -27,7 +27,7 @@ export const renderComments = ({ comments }) => {
     }).join('');
     
     addComment.innerHTML = commentsHtml;
-
+    const styleQuote = document.querySelector(".quote");
   const commentsElements = document.querySelectorAll(".comment-text");
   for (const commentElement of commentsElements) {
     commentElement.addEventListener("click", () => {
@@ -42,25 +42,4 @@ export const renderComments = ({ comments }) => {
   }
 
   likeEventButton({ comments });
-  // Добавляем обработчик событий для кнопок лайка
-//   const likeButtons = document.querySelectorAll(".like-button");
-//   for (const likeButton of likeButtons) {
-//     likeButton.addEventListener("click", (event) =>{
-//       event.stopPropagation();
-//       const index = likeButton.dataset.index;
-//     if (index !== null) {
-//       const comment = comments[index];
-//       if (!comment.isLiked) {
-//         comment.isLiked = true;
-//         comment.likes++;
-//       } else {
-//         comment.isLiked = false;
-//         comment.likes--;
-//       }
-      
-//     renderComments({ comments }); // После обновления лайков перерисовываем комментарии
-
-//       }
-//     });  
-//   }
   };
