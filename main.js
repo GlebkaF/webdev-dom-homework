@@ -1,4 +1,4 @@
-import { getComments, postComment, deleteComments } from "./api.js";
+import { getComments, postComment, deleteComments, toggleLike } from "./api.js";
 import { sanitazeHtml } from "./sanitazeHtml.js";
 import { renderListOfComments } from "./renderElements.js";
 
@@ -39,7 +39,7 @@ export function logOut() {
 
 //Сама функция renderElements которая отрисовывет массив обьетов listOfObject  в разметку HTML //
 
- function renderElements() {
+  export function renderElements() {
   if (!listOfObject) {
     return;
   }
@@ -70,11 +70,12 @@ export function getFetchPromise() {
           data: new Date(element.date).toLocaleString().replace(",", ""),
           comment: sanitazeHtml(element.text),
           like: element.likes,
-          isLiked: false,
+          isLiked: element.isLiked,
           id: element.id,
         };
       });
       listOfObject = newList;
+      console.log(listOfObject);
       renderElements();
       isLoader = false;
     })
@@ -104,22 +105,14 @@ export function addComment(button, addName, addText) {
 function likeButtons() {
   let likeButtons = document.querySelectorAll(".like-button");
   for (let likeButton of likeButtons) {
-    let index = likeButton.closest(".comment").dataset.index;
-    let comment = listOfObject[index];
     likeButton.addEventListener("click", (event) => {
       if(!user){
         alert("Нужно зарегистрироваться");
        return;
       }
+      let id = likeButton.dataset.id;
       event.stopPropagation();
-      if (comment.isLiked) {
-        comment.isLiked = false;
-        comment.like--;
-      } else {
-        comment.isLiked = true;
-        comment.like++;
-      }
-      renderElements();
+      toggleLike(id)
     });
   }
 }

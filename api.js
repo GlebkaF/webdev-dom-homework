@@ -2,6 +2,9 @@ import {getFetchPromise, user} from "./main.js";
 
 
  let token = "";
+ if(localStorage.getItem("user")){
+  token = JSON.parse(localStorage.getItem("user")).token
+ }
 
 export const setToken = (newToken) => {
   token = newToken
@@ -105,4 +108,28 @@ export function deleteComments() {
       });
    })
   }
+}
+
+
+export function toggleLike( id) {
+  return fetch(
+    `https://wedev-api.sky.pro/api/v2/alexander-potapov/comments/${id}/toggle-like`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  )
+    // .then((response) => {
+    //     return response.json();
+    // })
+    .then((dataResponse) => {
+      console.log(dataResponse);
+      getFetchPromise();
+    })
+    .catch((error) => {
+      
+      console.log(error);
+    });
 }

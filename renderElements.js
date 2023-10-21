@@ -1,11 +1,12 @@
 import { formForComments } from "./commentsForm.js";
 import { renderFormLogin } from "./loginForm.js";
-import { user, logOut } from "./main.js";
+import { user, logOut, renderElements } from "./main.js";
 import { container } from "./main.js";
 
 export function renderListOfComments(array){
 
     let listOfElements = array.map((element, index) => {
+      console.log(element.isLiked);
         return `<li data-index="${index}" class="comment">
           <div class="comment-header">
             <div>${element.name}</div>
@@ -17,7 +18,7 @@ export function renderListOfComments(array){
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${element.like}</span>
-              <button class="like-button ${element.isLiked ? "-active-like" : ""}"></button> 
+              <button data-id="${element.id}" class="like-button ${element.isLiked ? "-active-like" : ""}"></button> 
             </div>
           </div>
           <div class="block-btn">
@@ -42,8 +43,8 @@ export function renderListOfComments(array){
         formForComments()
         const exitBtn = document.querySelector(".exit-button")
         exitBtn.addEventListener("click", () => {
-          logOut()
-          renderFormLogin()
+          logOut();
+          renderElements();
         })
       }
 }
