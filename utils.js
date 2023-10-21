@@ -1,5 +1,5 @@
-
 import { inputTextElement, inputNameElement } from "./api.js";
+import { buttonElement } from "./render.js";
 export function currentDate(date) {
   return date.toLocaleString("ru-RU", {
     hour12: false,
@@ -22,4 +22,18 @@ export const toggleButton = (buttonElement) => {
     buttonElement.disabled = true;
     buttonElement.classList.add("disabled");
   }
+};
+
+export const handleEnterKey = () => {
+  inputTextElement.addEventListener("keyup", (event) => {
+    if (event.keyCode === 13) {
+      event.preventDefault();
+      if (
+        inputNameElement.value.trim() !== "" &&
+        inputTextElement.value.trim() !== ""
+      ) {
+        buttonElement.click();
+      }
+    }
+  });
 };

@@ -8,8 +8,7 @@ import { attachTextButtonListener } from "./render.js";
 import { attachLikeButtonListener } from "./render.js";
 import { toggleButton } from "./utils.js";
 import { listElement, buttonElement } from "./render.js";
-
-
+import { handleEnterKey } from "./utils.js";
 
 let users = [];
 // 1.вынести все запросы в отдельный модуль
@@ -34,15 +33,15 @@ const fetchAndRender = () => {
     renderUsers(users, listElement);
     users.forEach((user) => {
       attachTextButtonListener(user, users, listElement);
-      attachLikeButtonListener(user, listElement);
+      attachLikeButtonListener(user, users, listElement);
     });
   });
 };
 
 toggleButton(buttonElement, inputNameElement, inputTextElement);
 
-  inputNameElement.addEventListener("input", () =>
-    toggleButton(buttonElement, inputNameElement, inputTextElement)
+inputNameElement.addEventListener("input", () =>
+  toggleButton(buttonElement, inputNameElement, inputTextElement)
 );
 inputTextElement.addEventListener("input", () =>
   toggleButton(buttonElement, inputNameElement, inputTextElement)
@@ -98,14 +97,16 @@ buttonElement.addEventListener("click", () => {
 });
 fetchAndRender();
 
-inputTextElement.addEventListener("keyup", (event) => {
-  if (event.keyCode === 13) {
-    event.preventDefault();
-    if (
-      inputNameElement.value.trim() !== "" &&
-      inputTextElement.value.trim() !== ""
-    ) {
-      buttonElement.click();
-    }
-  }
-});
+handleEnterKey();
+
+// inputTextElement.addEventListener("keyup", (event) => {
+//   if (event.keyCode === 13) {
+//     event.preventDefault();
+//     if (
+//       inputNameElement.value.trim() !== "" &&
+//       inputTextElement.value.trim() !== ""
+//     ) {
+//       buttonElement.click();
+//     }
+//   }
+// });

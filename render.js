@@ -5,7 +5,6 @@ export const listElement = document.getElementById("list");
 
 export const renderUsers = (users, listElement) => {
   listElement.innerHTML = "";
-  console.log("listElement:", listElement);
   users.forEach((user) => {
     const listItem = document.createElement("li");
     listItem.innerHTML = `<div class="comment" id="comment-${user.id}">
@@ -33,9 +32,9 @@ export const renderUsers = (users, listElement) => {
           </div>
         </div> `;
     listElement.appendChild(listItem);
-    console.log("listElement:", listElement);
+
     attachLikeButtonListener(user, users, listElement);
-    attachTextButtonListener(user);
+    attachTextButtonListener(user, users, listElement);
   });
 };
 
