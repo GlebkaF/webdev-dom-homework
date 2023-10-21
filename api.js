@@ -1,5 +1,7 @@
+const baseURL = "https://wedev-api.sky.pro/api/v1/dmitriy-panfilov/comments";
+
 export function getComments() {
-    return fetch("https://wedev-api.sky.pro/api/v1/dmitriy-panfilov/comments", {
+    return fetch(baseURL, {
       method: "GET",
     }).then((response) => {
        return response.json()
@@ -7,7 +9,7 @@ export function getComments() {
 }
 //передаем текст, дату в качестве аргумента
 export function postApi({ text, name, date }) {
-   return fetch("https://wedev-api.sky.pro/api/v1/dmitriy-panfilov/comments", {
+   return fetch(baseURL, {
       method: "POST",
       body: JSON.stringify({
          name: name

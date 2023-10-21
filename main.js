@@ -37,11 +37,6 @@ import { renderComments } from "./renderComments.js";
     
     addCommentButton.addEventListener("click", () => {
 
-    //Убираем форму ввода при клике кнопку Написать
-    document.getElementById("add-form").style.display = 'none';
-    addLoaderComment.style.display = true;
-    document.getElementById("add-loader-comment").style.display = 'block';
-      
       nameInput.classList.remove("error");
       textInput.classList.remove("error");
       if (nameInput.value === "") {
@@ -53,6 +48,11 @@ import { renderComments } from "./renderComments.js";
         return;
       }
 
+      //Убираем форму ввода при клике кнопку Написать
+      document.getElementById("add-form").style.display = 'none';
+      addLoaderComment.style.display = true;
+      document.getElementById("add-loader-comment").style.display = 'block';
+      
       function postTask(text) {
       postApi({ 
         text: textInput.value,
@@ -71,10 +71,13 @@ import { renderComments } from "./renderComments.js";
         document.getElementById("add-form").style.display = 'flex';
         document.getElementById("add-loader-comment").style.display = 'none';
           if (error.message === "Сервер сломался") {
-            alert('Кажется, у вас сломался интернет, попробуйте позже');
+            alert('Сервер сломался, попробуйте позже');
           }
           if (error.message === "Плохой запрос") {
             alert('Имя и комментарий должны быть не короче 3х символов');
+          }
+          else {
+            alert("Кажется у вас сломался интернет, попробуйте позже")
           }
           // TODO: Отправлять в систему сбора ошибок
           console.log(error);
