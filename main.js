@@ -1,38 +1,64 @@
-import { getComments, postComment } from "./api.js";
+import { getComments, postComment, deleteComments } from "./api.js";
 import { sanitazeHtml } from "./sanitazeHtml.js";
 import { renderListOfComments } from "./renderElements.js";
 
-const list = document.querySelector(".comments");
-const button = document.querySelector(".add-form-button");
-const addName = document.querySelector(".add-form-name");
-const addText = document.querySelector(".add-form-text");
-const textForLoading = document.getElementById("text-for-loader");
-const addForm = document.querySelector(".add-form");
+
+
+export const container = document.querySelector(".container");
+
 let isLoader = true; // влияет на отрисовку лоадера или списка комментариев //
+export let loadingText = true;
+export let user;
+
+
 
 // Создание масиива с обьектами пользователей который будет рендерится через функцию renderElements() //
 
-let listOfObject = [];
+ let listOfObject = [];
+
+
+
+
+export function setAuth() {
+  
+  try {
+    user =  JSON.parse(localStorage.getItem("user"));
+  } catch  {
+     user =  undefined;
+  }
+}
+setAuth()
+
+
+
+export function logOut() {
+  localStorage.removeItem("user");
+  user = null;
+}
+
 
 //Сама функция renderElements которая отрисовывет массив обьетов listOfObject  в разметку HTML //
 
-function renderElements() {
+ function renderElements() {
   if (!listOfObject) {
     return;
   }
-  renderListOfComments(listOfObject, list);
+  renderListOfComments(listOfObject);
 
   likeButtons();
   changeComments();
-  answerOnCommnets();
+  answerOnCommnets()
+  deleteComments();
 }
 renderElements();
 
-// Создание fetch запроса к API //
-
-if (isLoader) {
-  list.innerHTML = `<p>Список комментариев загружается</p>`;
+function showLoader() {
+  if (isLoader) {
+    container.innerHTML = `<p>Список комментариев загружается</p>`;
+  }
 }
+
+showLoader();
 
 export function getFetchPromise() {
   getComments()
@@ -61,32 +87,17 @@ export function getFetchPromise() {
 }
 getFetchPromise();
 
-// Валидация формы на предмет пустых значений в полях имени и текста //
-
-function validation() {
-  if (!addName.value || !addText.value) {
-    button.disabled = true;
-  } else {
-    button.disabled = false;
-  }
-}
-addName.addEventListener("input", validation);
-addText.addEventListener("input", validation);
-
-validation();
-
 // Добавляем новый комментарий используя метод POST //
-function addComment() {
+
+export function addComment(button, addName, addText) {
   button.addEventListener("click", () => {
+    button.disabled = true;
+    button.textContent = "Добавляю"
     addText.classList.remove("error");
     addName.classList.remove("error");
-
-    textForLoading.classList.remove("hidden");
-    addForm.classList.add("hidden");
-    postComment(addText, addName, addForm, textForLoading);
+    postComment(addText, addName, button);
   });
 }
-addComment();
 
 //Функция для проставки лайка //
 
@@ -96,6 +107,10 @@ function likeButtons() {
     let index = likeButton.closest(".comment").dataset.index;
     let comment = listOfObject[index];
     likeButton.addEventListener("click", (event) => {
+      if(!user){
+        alert("Нужно зарегистрироваться");
+       return;
+      }
       event.stopPropagation();
       if (comment.isLiked) {
         comment.isLiked = false;
@@ -116,6 +131,10 @@ function changeComments() {
   const addText = document.querySelector(".add-form-text");
   for (let changeButton of changeButtons) {
     changeButton.addEventListener("click", (event) => {
+      if(!user){
+        alert("Нужно зарегистрироваться");
+       return;
+      }
       event.stopPropagation();
       let index = changeButton.closest(".comment").dataset.index;
       let comment = listOfObject[index];
@@ -132,15 +151,19 @@ function changeComments() {
 }
 
 // Функция ответа на комментарий //
-
-function answerOnCommnets() {
+  export function answerOnCommnets(addText) {
   let commentElements = document.querySelectorAll(".comment-text");
   for (let commentElement of commentElements) {
     commentElement.addEventListener("click", () => {
+      if(!user){
+        alert("Нужно зарегистрироваться");
+       return;
+      }
       let index = commentElement.closest(".comment").dataset.index;
       let comment = listOfObject[index];
       addText.value = `${comment.comment} ${comment.name}`;
-      renderElements();
     });
   }
 }
+
+ 

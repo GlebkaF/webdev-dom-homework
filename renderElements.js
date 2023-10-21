@@ -1,4 +1,10 @@
-export function renderListOfComments(array, commentsList){
+import { formForComments } from "./commentsForm.js";
+import { renderFormLogin } from "./loginForm.js";
+import { user, logOut } from "./main.js";
+import { container } from "./main.js";
+
+export function renderListOfComments(array){
+
     let listOfElements = array.map((element, index) => {
         return `<li data-index="${index}" class="comment">
           <div class="comment-header">
@@ -16,10 +22,28 @@ export function renderListOfComments(array, commentsList){
           </div>
           <div class="block-btn">
             <button class="change-comment-button">${element.isEdit ? "Сохранить" : "Редактировать"}</button>
+            <button data-id="${element.id}" class="delete-comment-button">Удалить</button>
             </div>
         </li>`;
       })
         .join("");
-      commentsList.innerHTML = listOfElements;
-}
+      container.innerHTML = `<ul class="comments">${listOfElements}</ul>`;
 
+      if(!user){
+        const textLoader = `<span>Пройдите<a class="loading" href="#"> авторизацию</a></span>`
+        container.innerHTML += textLoader
+        const loading = document.querySelector(".loading")
+        loading.addEventListener("click", () => {
+            renderFormLogin()
+        })
+      }else{
+        const exitButton = `<button class="exit-button">Выйти</button>`
+        container.innerHTML += exitButton;
+        formForComments()
+        const exitBtn = document.querySelector(".exit-button")
+        exitBtn.addEventListener("click", () => {
+          logOut()
+          renderFormLogin()
+        })
+      }
+}
