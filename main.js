@@ -261,7 +261,9 @@ buttonElement.addEventListener('click', () => {
     const dateString = `${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString()} `;
 
     commentsArray.push({
-        name: nameElement.value,
+        name: nameElement.value
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;"),
         date: dateString,
         comment: textElement.value
             .replaceAll("<", "&lt;")
