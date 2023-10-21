@@ -8,8 +8,13 @@ import { renderComments } from "./renderComments.js";
     const loaderComment = document.getElementById("loader-comment");
     const newDate = new Date;
     const formatedDate = `${newDate.getDate()}.${newDate.getMonth() + 1}.${newDate.getFullYear()} ${newDate.getHours()}:${newDate.getMinutes()}`;
-    const addFormId = document.getElementById("add-form");
-    const addForm = document.querySelector('.add-form');
+
+    const date = ({ apiDate }) => {
+      return new Date(apiDate).toLocaleDateString() + " "
+          + (new Date(apiDate).getHours() < 10 ? '0' + new Date(apiDate).getHours() : new Date(apiDate).getHours()) + ":"
+          + (new Date(apiDate).getMinutes() < 10 ? '0' + new Date(apiDate).getMinutes() : new Date(apiDate).getMinutes()) + ":"
+          + (new Date(apiDate).getSeconds() < 10 ? '0' + new Date(apiDate).getSeconds() : new Date(apiDate).getSeconds())
+  }
 
     document.getElementById("add-loader-comment").style.display = 'none';
 
@@ -19,9 +24,10 @@ import { renderComments } from "./renderComments.js";
 
     getComments().then((responseData) => {
         comments = responseData.comments.map((comment) => {
+          const apiDate = comment.date;
           return {
             name: comment.author.name,
-            date: new Date(comment.date).toLocaleDateString() + " " + (new Date(comment.date).getHours() < 10 ? '0' + new Date(comment.date).getHours() : new Date(comment.date).getHours()) + ":" + (new Date(comment.date).getMinutes() < 10 ? '0' + new Date(comment.date).getMinutes() : new Date(comment.date).getMinutes()) + ":" + (new Date(comment.date).getSeconds() < 10 ? '0' + new Date(comment.date).getSeconds() : new Date(comment.date).getSeconds()),
+            date: date({ apiDate }),
             text: comment.text,
             likes: comment.likes,
             isLiked: false,
@@ -53,15 +59,15 @@ import { renderComments } from "./renderComments.js";
       addLoaderComment.style.display = true;
       document.getElementById("add-loader-comment").style.display = 'block';
       
-      function postTask(text) {
+      function postTask() {
       postApi({ 
         text: textInput.value,
         name: nameInput.value,
         date: formatedDate
-       }).then((responseData) => {
+       }).then(() => {
         return getRenderComments();
       })
-      .then((responseData) => {
+      .then(() => {
         document.getElementById("add-form").style.display = 'flex';
         document.getElementById("add-loader-comment").style.display = 'none';
         nameInput.value = ""
