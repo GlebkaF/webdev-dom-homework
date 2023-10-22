@@ -9,7 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments">
-        <li class="comment">
+        <!-- <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -42,7 +42,7 @@
               <button class="like-button -active-like"></button>
             </div>
           </div>
-        </li>
+        </li> -->
       </ul>
       <div class="add-form">
         <input
@@ -77,6 +77,47 @@
     const hours = currentDate.getHours();
     const minutes = currentDate.getMinutes();
 
+    const commentList = [
+      {
+        user: 'Глеб Фокинhgfhgfhfg',
+        userComment: 'Это будет первый комментарий на этой странице',
+        userDate: '12.02.22 12:18',
+
+      },
+      {
+        user: 'Варвара',
+        userComment: 'Мне нравится как оформлена эта страница! ❤',
+        userDate: '13.02.22 19:22',
+      },
+    ];
+
+    const renderCommentList = () => {
+
+      const commentListHTML = commentList.map((comment) => {
+        return `<li class="comment">
+          <div class="comment-header">
+            <div>${comment.user}</div>
+            <div>${comment.userDate}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.userComment}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter" data-counter="0">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+      }).join('');
+      // console.log(commentListHTML);
+      list.innerHTML = commentListHTML;
+    };
+
+    renderCommentList();
+
    const clickAddButton = () => {
     addFormBtn.addEventListener('click', () => {
       addFormName.classList.remove('form-error');
@@ -92,34 +133,23 @@
         return;
       }
 
-      const listContent = list.innerHTML;
-      list.innerHTML = listContent + `<li class="comment">
-          <div class="comment-header">
-            <div>${addFormName.value}</div>
-            <div>${day}.${month}.${year} ${hours}:${minutes}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${addFormText.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter" data-counter="0">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
+      commentList.push({
+        user: addFormName.value,
+        userComment: addFormText.value,
+        userDate: `${day}.${month}.${year} ${hours}:${minutes}`,
+    })
+    renderCommentList();
         addFormName.value = "";
         addFormText.value = "";   
     });
    } 
 
+   
 
     const likerFunction = () => {
       const likesButtonElements = document.querySelectorAll('.like-button'); 
       const likesCounter =  document.querySelectorAll('.likes-counter');
-      const counter = likesCounter.dataset.counter;
+      
 
       for (const  likeButtonElement of likesButtonElements){
 
@@ -127,10 +157,10 @@
 
       if (likeButtonElement.classList.contains('-active-like')) {
         likeButtonElement.classList.remove('-active-like');
-        counter-=1;
+        
       } else {
         likeButtonElement.classList.add('-active-like');
-        counter+=1;
+       
       }
       });
       
