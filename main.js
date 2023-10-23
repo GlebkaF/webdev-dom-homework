@@ -1,7 +1,7 @@
 "use strict";
 
 import { getComments, postComment } from "./api.js";
-import { sanitizeHtml } from "./helper.js";
+import { delay, sanitizeHtml } from "./helper.js";
 
 const btnAddCommentElement = document.querySelector(".add-form-button");
 const listElement = document.querySelector(".comments");
@@ -83,19 +83,12 @@ const stopEmptyInput = () => {
     }
 }
 
-function delay(interval = 300) {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve();
-        }, interval);
-    });
-}
 
 const initAddLikes = () => {
     const likesButtonElements = document.querySelectorAll(".like-button");
 
     for (const likesButtonElement of likesButtonElements) {
-        likesButtonElement.addEventListener('click', () => {
+        likesButtonElement.addEventListener('click', event => {
             const index = likesButtonElement.dataset.index;
             comments[index].isLikeLoading = true;
 
