@@ -167,6 +167,9 @@ buttonElement.addEventListener("click", () => {
     });
 
     }
+   
+
+
 
     let commentsData = [];
 
@@ -212,7 +215,8 @@ buttonElement.addEventListener("click", () => {
         }
         return response.json();
     })
-    .then((responseData) => {
+   .then((responseData) => {
+        console.log(responseData)
         let appComments = responseData.comments.map((comment) => {
             return {
                 name: comment.author.name,
@@ -221,12 +225,14 @@ buttonElement.addEventListener("click", () => {
                 likes: comment.likes,
                 isLike: comment.isLike,
             };
-        });
+        }); 
 
+console.log(appComments)
         commentsData = appComments;
         renderComments();
     })
-        .then(() => {
+        .then((dataResponse) => {
+            console.log("data",dataResponse);
             loaderComment.style.display = "none";
         })
     .catch((error) => {
@@ -260,7 +266,7 @@ function sendCommentToServer(comment) {
             // Очищаем поля ввода
             commInputElement.value = "";
             nameInputElement.value = "";
-            getCommentsFromServer()
+           getCommentsFromServer()
             console.log("Comment sent successfully:");
         }).then(() => {
             addLoaderComment.style.display = "none";
