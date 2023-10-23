@@ -59,8 +59,6 @@
 
     const commentsLoader = document.querySelector(".comments-loading");
 
-    // const formCommentElement = document.querySelector(".add-form");
-
     const commentsLoading = document.querySelector(".comment-loader");
 
     const currentDate =
@@ -88,8 +86,6 @@
     let comments = [];
 
     commentsLoading.style.display = "none";
-    // commentsLoader.style.display = "block";
-    // document.body.style.overflow = "hidden";
 
     function fetchArrPromise() {
       return fetch(
@@ -180,7 +176,6 @@
     renderComments();
 
     buttonElement.addEventListener("click", () => {
-      // commentsLoading.style.display = "visible"
       // добавление обработчика клика на кнопку добавления комментариев и установка даты
       const currentDate =
         new Date().toLocaleDateString("default", {
@@ -230,41 +225,52 @@
             .replaceAll("QUOTE_END", "</b></div>"),
           currentLike: false,
           likes: 0,
+          forceError: true,
         }),
       })
+        // .then((response) => {
+        //   console.log("Время: " + (Date.now() - startAt));
+        //   return response;
+        // })
         .then((response) => {
-          console.log("Время: " + (Date.now() - startAt));
-          return response;
+          if (response.status === 500) {
+            // код обработки ошибки
+            throw Error("Internet server error");
+          } else if (response.status === 400) {
+            throw Error("Wrong request");
+          } else {
+            return response.json();
+          }
+          // return response.json();
         })
         .then((response) => {
-          return response.json();
-        })
-        .then((response) => {
-          console.log("Время: " + (Date.now() - startAt));
-          return response;
-        })
-        .then((response) => {
-          // commentsLoading.style.display = "none";
-          return response;
-        })
-        .then((response) => {
-          console.log("Время: " + (Date.now() - startAt));
-          // commentsLoading.style.display = "none";
           return response;
         })
         .then(() => {
           commentsLoading.style.display = "none";
           return fetchArrPromise();
         })
-        .then((data) => {
+        .then(() => {
           buttonElement.disabled = false;
           buttonElement.textContent = "Добавить";
+          nameInputElement.value = "";
+          textareaInputElement.value = "";
+        })
+        .catch((error) => {
+          buttonElement.disabled = false;
+          buttonElement.textContent = "Добавить";
+          if (error.message === "Internet server error") {
+            alert("Ooops, the Internet has just gone. Try a little later");
+          } else if (error.message === "Wrong request") {
+            alert(
+              "The name and/or the comment are too short, minimum length is 3 symbols. Try again"
+            );
+          } else {
+            return response.json();
+          }
         });
 
       renderComments();
-
-      nameInputElement.value = "";
-      textareaInputElement.value = "";
     });
 
     console.log("It works!");
