@@ -1,7 +1,7 @@
 "use strict";
 
 import { getComments, postComment } from "./api.js";
-import { delay, sanitizeHtml } from "./helper.js";
+import { delay, dateFormat, sanitizeHtml } from "./helper.js";
 
 const btnAddCommentElement = document.querySelector(".add-form-button");
 const listElement = document.querySelector(".comments");
@@ -13,7 +13,7 @@ const loadingCommentElement = document.querySelector(".loading-comment");
 
 let comments = [];
 
-const getCommentsFetch = () => {
+function fetchAndRenderComments() {
 
     loadingCommentElement.textContent = "Загрузка комментариев"
 
@@ -23,7 +23,7 @@ const getCommentsFetch = () => {
                 return {
                     name: comment.author.name,
                     text: comment.text,
-                    date: currentDate(comment.date),
+                    date: dateFormat(comment.date),
                     likesCounter: comment.likes,
                     isLiked: false,
                     isLikeLoading: false,
@@ -111,7 +111,7 @@ const initEdit = () => {
     const editButtonElements = document.querySelectorAll(".edit-button");
 
     for (const editButtonElement of editButtonElements) {
-        editButtonElement.addEventListener("click", event  => {
+        editButtonElement.addEventListener("click", event => {
 
             const index = editButtonElement.dataset.index;
             const textEditElement = document.querySelector(".edit-form-text");
@@ -158,13 +158,6 @@ const stopPropagationForEditInput = () => {
     }
 };
 
-// const sanitizeHtml = (htmlString) => {
-//     return htmlString.replaceAll("&", "&amp;")
-//         .replaceAll("<", "&lt;")
-//         .replaceAll(">", "&gt;")
-//         .replaceAll('"', "&quot;");
-// };
-
 const quoteReplace = (quoteText) => {
     return quoteText.replaceAll("QUOTE_BEGIN", "<div class='quote'>")
         .replaceAll("QUOTE_END", "</div>");
@@ -204,22 +197,7 @@ const renderComments = () => {
 };
 
 
-function currentDate(commentDate) {
 
-    let date = new Date(commentDate);
-    const addZeroBefore = (time) => time < 10 ? time = "0" + time : time;
-
-    let day = addZeroBefore(date.getDate());
-    let month = addZeroBefore(date.getMonth() + 1);
-    let yaer = date.getFullYear().toString().slice(2);
-    let hour = addZeroBefore(date.getHours());
-    let minute = addZeroBefore(date.getMinutes());
-
-    let dateComment = `${day}.${month}.${yaer} ${hour}:${minute}`;
-
-    return dateComment;
-
-}
 
 function addComment() {
     addFormElement.classList.add("displayHidden");
@@ -245,7 +223,7 @@ function addComment() {
     postComment({ text: textInputElement.value, name: nameInputElement.value })
         .then((responseDate) => {
 
-            getCommentsFetch();
+            fetchAndRenderComments();
 
         })
         .then(() => {
@@ -298,4 +276,4 @@ btnDelCommentElement.addEventListener("click", () => {
 
 })
 
-getCommentsFetch();
+fetchAndRenderComments();
