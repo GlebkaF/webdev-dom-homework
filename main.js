@@ -257,6 +257,5 @@ const editComment = () => {
     });
   };
 };
-
 renderList();
 console.log("It works!");
