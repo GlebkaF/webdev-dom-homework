@@ -1,6 +1,7 @@
 "use strict";
 
-import { postComment } from "./api.js";
+import { getComments, postComment } from "./api.js";
+import { sanitizeHtml } from "./helper.js";
 
 const btnAddCommentElement = document.querySelector(".add-form-button");
 const listElement = document.querySelector(".comments");
@@ -16,16 +17,7 @@ const getCommentsFetch = () => {
 
     loadingCommentElement.textContent = "Загрузка комментариев"
 
-    return fetch("https://wedev-api.sky.pro/api/v1/tanya-zakharova/comments", {
-        method: "GET"
-    })
-        .then((response) => {
-            if (response.status === 200) {
-                return response.json();
-            } else {
-                throw new Error(`Кажется, что-то пошло не так, попробуйте позже`);
-            }
-        })
+    getComments()
         .then((responseDate) => {
             const appComments = responseDate.comments.map((comment) => {
                 return {

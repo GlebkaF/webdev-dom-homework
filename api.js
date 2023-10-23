@@ -1,5 +1,19 @@
 import { sanitizeHtml } from "./helper.js";
-export const postComment = ({ text, name }) => {
+
+export function getComments() {
+    return fetch("https://wedev-api.sky.pro/api/v1/tanya-zakharova/comments", {
+        method: "GET"
+    })
+        .then((response) => {
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                throw new Error(`Кажется, что-то пошло не так, попробуйте позже`);
+            }
+        })
+}
+
+export function postComment({ text, name }) {
     return fetch("https://wedev-api.sky.pro/api/v1/tanya-zakharova/comments", {
         method: "POST",
         body: JSON.stringify({
