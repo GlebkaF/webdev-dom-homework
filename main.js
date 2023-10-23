@@ -173,12 +173,12 @@ const stopPropagationForEditInput = () => {
     }
 };
 
-const sanitizeHtml = (htmlString) => {
-    return htmlString.replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;");
-};
+// const sanitizeHtml = (htmlString) => {
+//     return htmlString.replaceAll("&", "&amp;")
+//         .replaceAll("<", "&lt;")
+//         .replaceAll(">", "&gt;")
+//         .replaceAll('"', "&quot;");
+// };
 
 const quoteReplace = (quoteText) => {
     return quoteText.replaceAll("QUOTE_BEGIN", "<div class='quote'>")

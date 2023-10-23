@@ -1,3 +1,4 @@
+import { sanitizeHtml } from "./helper.js";
 export const postComment = ({ text, name }) => {
     return fetch("https://wedev-api.sky.pro/api/v1/tanya-zakharova/comments", {
         method: "POST",
