@@ -10,40 +10,6 @@
 <body>
   <div class="container">
     <ul id="comments-list" class="comments">
-      <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>
     </ul>
     <div class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id='add-form-name' />
@@ -61,51 +27,6 @@
   }
 </style>
 
-<script>
-  "use strict";
-  const addFormButton = document.getElementById("add-form-button");
-  const nameInputElement = document.getElementById('add-form-name');
-  const textInputElement = document.getElementById('add-form-text');
-  const listCommentsElement = document.getElementById('comments-list');
-  addFormButton.addEventListener("click", () => {
-    nameInputElement.classList.remove("error");
-    textInputElement.classList.remove("error");
-    
-    if (nameInputElement.value === "") {
-      nameInputElement.classList.add("error");
-      return;
-    }
-
-    if (textInputElement.value === "") {
-      textInputElement.classList.add("error");
-      return;
-    }
-
-    const oldListComents = listCommentsElement.innerHTML;
-    listCommentsElement.innerHTML =
-      oldListComents +
-      `<li class="comment">
-          <div class="comment-header">
-            <div>${nameInputElement.value}</div>
-            <div>${new Date().toLocaleString()}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${textInputElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>`;
-
-    nameInputElement.value = "";
-  });
-
-  console.log("It works!");
-</script>
+<script src="index.js"></script>
 
 </html>
