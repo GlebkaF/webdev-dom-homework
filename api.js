@@ -1,9 +1,10 @@
 import { getFetch } from "./main.js";
-import { addComment } from "./rernder.js";
-import { renderComments } from "./rernder.js";
+import { renderComments } from "./renderComments.js";
+
+
 
 //  let token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k"
-let token = null
+export let token = null
 export const getToken = () => {
 return token;
 }
@@ -25,8 +26,8 @@ export function showAddForm() {
   
 };
 export function hideAddForm() {
-  const form = document.querySelector(".add-form");
-  form.classList.add("hidden");
+  // const form = document.querySelector(".add-form");
+  // form.classList.add("hidden");
 };
 export function showLoadingIndicatorComments() {
   const loader = document.querySelector(".comment-loader");
@@ -38,8 +39,8 @@ export function deleteLoadingIndicatorComments() {
 
 };
 export function showLoadingIndicator() {
-  const loader = document.querySelector(".list-loader");
-  loader.classList.remove("hidden");
+  // const loader = document.querySelector(".list-loader");
+  // loader.classList.remove("hidden");
 
 };
 
@@ -74,7 +75,10 @@ const listElement = document.getElementById("list");
 
 
 
-export function postElements(text, name) {
+export function postElements({text, name}) {
+
+const nameInputElement = document.getElementById("name-input");
+const commentInputElement = document.getElementById("comment-input");
   return fetch('https://wedev-api.sky.pro/api/v2/liza-moguchaya/comments', {
 
     method: "POST",
@@ -82,8 +86,8 @@ export function postElements(text, name) {
       Authorization: token,
     },
     body: JSON.stringify({
-      text: textElement.value,
-      name: nameElement.value
+      text: text,
+      name: name
     })
 
 
@@ -100,18 +104,18 @@ export function postElements(text, name) {
     })
     .then((responseData) => {
 
-      deleteLoadingIndicatorComments();
+      //deleteLoadingIndicatorComments();
       showAddForm();
-      nameElement.value = "";
-      textElement.value = "";
+      nameInputElement.value = "";
+      commentInputElement.value = "";
       getFetch();
       deleteLoadingIndicator();
-    })
+     })
     .catch((error) => {
-      showAddForm();
-      deleteLoadingIndicatorComments();
-      buttonElement.disabled = false;
-      alert(error.message);
+      //showAddForm();
+      //deleteLoadingIndicatorComments();
+      // buttonElement.disabled = false;
+      console.error(error.message);
     });
 
 

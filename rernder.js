@@ -48,102 +48,102 @@ export function renderComments(comments) {
 
   
   list.innerHTML = commentsHTML;
-  commentOnComment(comments);
-  deleteComment(comments);
-  addLike(comments);
-  getComments();
+  // commentOnComment(comments);
+  // deleteComment(comments);
+  // addLike(comments);
+  // getComments();
 };
 
 
 
 
-export function showAuthForm() {
-  const form = document.querySelector(".autorization");
-  form.classList.remove("hidden");
+// export function showAuthForm() {
+//   const form = document.querySelector(".autorization");
+//   form.classList.remove("hidden");
   
-};
-export function hideAuthForm() {
-  const form = document.querySelector(".autorization");
-  form.classList.add("hidden");
-};
+// };
+// export function hideAuthForm() {
+//   const form = document.querySelector(".autorization");
+//   form.classList.add("hidden");
+// };
 
-function commentOnComment(comments) {
-  const commentInputElement = document.getElementById("comment-input");
-  const commentElements = document.querySelectorAll('.comment');
-  for (let comment of commentElements) {
-    comment.addEventListener('click', () => {
-      let index = comment.dataset.index
-      let object = comments[index];
-      commentInputElement.value = `${object.text}  ${object.name}`
-      renderComments(getComments());
-    })
+// function commentOnComment(comments) {
+//   const commentInputElement = document.getElementById("comment-input");
+//   const commentElements = document.querySelectorAll('.comment');
+//   for (let comment of commentElements) {
+//     comment.addEventListener('click', () => {
+//       let index = comment.dataset.index
+//       let object = comments[index];
+//       commentInputElement.value = `${object.text}  ${object.name}`
+//       renderComments(getComments());
+//     })
 
-  }
-}
+//   }
+// }
 
-function deleteComment(comments) {
-  const buttonDelete = document.querySelectorAll('.delete-button');
-  for (let button of buttonDelete) {
-    button.addEventListener('click', (event) => {
-      let index = button.dataset.index
-      comments.splice(index, 1);
-      event.stopPropagation();
-      renderComments(getComments());
-    })
-  }
+// function deleteComment(comments) {
+//   const buttonDelete = document.querySelectorAll('.delete-button');
+//   for (let button of buttonDelete) {
+//     button.addEventListener('click', (event) => {
+//       let index = button.dataset.index
+//       comments.splice(index, 1);
+//       event.stopPropagation();
+//       renderComments(getComments());
+//     })
+//   }
 
-};
+// };
 
 
-export function addComment(comments) {
-  const buttonElement = document.getElementById("add-button");
-  console.log(buttonElement);
-  const nameInputElement = document.getElementById("name-input");
-  const commentInputElement = document.getElementById("comment-input");
-  buttonElement.addEventListener('click', () => {
-    console.log(buttonElement);
+// export function addComment(comments) {
+//   const buttonElement = document.getElementById("add-button");
+//   console.log(buttonElement);
+//   const nameInputElement = document.getElementById("name-input");
+//   const commentInputElement = document.getElementById("comment-input");
+//   buttonElement.addEventListener('click', () => {
+//     console.log(buttonElement);
    
-    nameInputElement.classList.remove("error");
-    commentInputElement.classList.remove("error");
-    if (nameInputElement.value === '' || commentInputElement.value === '') {
-      nameInputElement.classList.add("error");
-      commentInputElement.classList.add("error");
-      return;
-    }
-    const nameInComment = nameElement.value
-    const textInComment = textElement.value
-    showLoadingIndicatorComments();
-    hideAddForm();
+//     nameInputElement.classList.remove("error");
+//     commentInputElement.classList.remove("error");
+//     if (nameInputElement.value === '' || commentInputElement.value === '') {
+//       nameInputElement.classList.add("error");
+//       commentInputElement.classList.add("error");
+//       return;
+//     }
+//     const nameInComment = nameElement.value
+//     const textInComment = textElement.value
+//     showLoadingIndicatorComments();
+//     hideAddForm();
 
-    postElements({
-      text: textInComment.value,
-      name: nameInComment.value
-    })
+//     postElements({
+//       text: textInComment.value,
+//       name: nameInComment.value
+//     })
 
-  });
+//   });
 
-}
+// }
 
 
-function addLike(comments) {
+// function addLike(comments) {
 
-  const likeElements = document.querySelectorAll('.like-button');
-  for (let like of likeElements) {
-    like.addEventListener('click', (event) => {
-      event.stopPropagation();
-      let index = like.dataset.index
-      console.log(index);
-      let object = comments[index];
-      console.log(object);
-      if (object.islike) {
-        object.islike = false;
-        object.likes--;
-      } else {
-        object.islike = true;
-        object.likes++;
-      }
-      renderComments(getComments());
-    })
-  }
+//   const likeElements = document.querySelectorAll('.like-button');
+//   for (let like of likeElements) {
+//     like.addEventListener('click', (event) => {
+//       event.stopPropagation();
+//       let index = like.dataset.index
+//       console.log(index);
+//       let object = comments[index];
+//       console.log(object);
+//       if (object.islike) {
+//         object.islike = false;
+//         object.likes--;
+//       } else {
+//         object.islike = true;
+//         object.likes++;
+//       }
+//       renderComments(getComments());
+//     })
+//   }
 
-}
+// }

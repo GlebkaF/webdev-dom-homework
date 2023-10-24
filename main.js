@@ -1,6 +1,7 @@
 import { getElements, postElements, showAddForm, hideAddForm, deleteLoadingIndicatorComments, showLoadingIndicator, deleteLoadingIndicator, correctDate, getToken } from "./api.js";
-import { renderComments, addComment, hideAuthForm, showAuthForm } from "./rernder.js"
+
 import { userAutorisation } from "./login.js"
+import { renderComments } from "./renderComments.js"
 "use strict";
 
 userAutorisation();
@@ -42,20 +43,21 @@ export function getFetch() {
     });
     comments = appComment
     //renderElements();
+    console.log(1);
     renderComments(comments);
     deleteLoadingIndicator();
-    if(getToken()){
-    hideAuthForm();
-    showAddForm();
+    // if(getToken()){
+    // hideAuthForm();
+    // showAddForm();
     
-    }else{
-      showAuthForm();
-    }
+    // }else{
+    //   showAuthForm();
+    // }
 
   })
     .catch((error) => {
       console.log(error);
-      alert('Что-то пошло не так, попробуйте позже');
+      console.error('Что-то пошло не так, попробуйте позже');
     });
 
 
@@ -70,7 +72,7 @@ const commentInputElement = document.getElementById("comment-input");
 
 
 
-addComment();
+// addComment();
 
 
 
