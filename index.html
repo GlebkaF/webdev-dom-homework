@@ -39,7 +39,37 @@
     const buttonElement = document.getElementById("buttonPush");
     const ulElement = document.getElementById("ul");
 
-    const commentsArray = [
+    const apiGet = () => {
+const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/viktor-pirogov/comments", {
+  method: "GET"
+});
+fetchPromise.then((response) => {
+
+  const jsonPromise = response.json();
+  jsonPromise.then((responseData) => {
+    // console.log(responseData);
+    const fromApp = responseData.comments.map((comment) => {
+
+      return {
+
+        name: comment.author.name,
+        userLike: comment.isLiked,
+        comment: comment.text,
+        like: comment.likes,
+        date: new Date(comment.date).toLocaleString(),
+
+      };
+    });
+    commentsArray = fromApp;
+
+    renderComments();
+  });
+});
+
+}
+apiGet();
+
+    let commentsArray = [
       {
         name: "Глеб Фокин",
         date: "12.02.22 12:18",
@@ -90,6 +120,8 @@
         });
       }
     };
+   
+
     const deleteButtonsUser = () => {
       const deleteButtons = document.querySelectorAll(".remove-button");
       for (const deleteButton of deleteButtons) {
@@ -124,6 +156,7 @@
         })
         .join("");
       ulElement.innerHTML = commentsHtml;
+      
       deleteButtonsUser();
       answerComment();
       likes();
@@ -186,9 +219,29 @@
         isEdit: false,
       });
       renderComments();
+      
+      buttonElement.disabled = true;
+
+      const postCommentsPromise = fetch("https://wedev-api.sky.pro/api/v1/viktor-pirogov/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        text: textElement.value,  
+        name: nameElement.value   
+      }),
+    });
+    postCommentsPromise.then((res) => {
+      const jsonPromise = res.json().then((resData) => {
+        console.log(jsonPromise);
+        commentsArray = resData.comments;
+      });
+    });
+    renderComments()
+    
+    });
       nameElement.value = "";
       textElement.value = "";
-      buttonElement.disabled = true;
-    });
   </script>
 </html>
+
+
+ 
