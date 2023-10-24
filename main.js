@@ -141,6 +141,7 @@ const responsToComment = () => {
 
             const text = `QUOTE_BEGIN${comments[index].name}:
       ${comments[index].text}QUOTE_END`;
+
             textInputElement.value = text;
         })
     }
@@ -151,17 +152,17 @@ const stopPropagationForEditInput = () => {
 
     for (const inputEditElement of inputEditElements) {
 
-        inputEditElement.addEventListener("click", () => {
+        inputEditElement.addEventListener("click", event => {
+
+            event.stopPropagation();
+        })
+        inputEditElement.addEventListener("input", event => {
 
             event.stopPropagation();
         })
     }
 };
 
-const quoteReplace = (quoteText) => {
-    return quoteText.replaceAll("QUOTE_BEGIN", "<div class='quote'>")
-        .replaceAll("QUOTE_END", "</div>");
-};
 
 const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
@@ -174,7 +175,10 @@ const renderComments = () => {
         <div class="comment-body">
           ${comment.isEdited ?
                 `<textarea type="textarea" class="edit-form-text" data-index="${index}" value="">${comment.text}</textarea>` :
-                `<div class="comment-text">${quoteReplace(comment.text)}</div>`}
+                `<div class="comment-text">
+                ${comment.text.replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+                    .replaceAll("QUOTE_END", "</div>")}
+                </div>`}
         </div>
           <button class="edit-button" data-index="${index}">${comment.isEdited ? `Coхранить` : `Редактировать`}</button>
         <div class="comment-footer">
@@ -203,25 +207,8 @@ function addComment() {
     addFormElement.classList.add("displayHidden");
     loadingCommentElement.classList.remove("displayHidden");
 
-    // const postComment = fetch("https://wedev-api.sky.pro/api/v1/tanya-zakharova/comments", {
-    //     method: "POST",
-    //     body: JSON.stringify({
-    //         text: sanitizeHtml(textInputElement.value),
-    //         name: sanitizeHtml(nameInputElement.value),
-    //         forceError: true,
-    //     })
-    // })
-    //     .then((response) => {
-    //         if (response.status === 500) {
-    //             throw new Error(`Ошибка сервера`);
-    //         } else if (response.status === 400) {
-    //             throw new Error(`Имя и комментарий должны быть не короче 3х символов`);
-    //         } else {
-    //             return response.json();
-    //         }
-    //     })
     postComment({ text: textInputElement.value, name: nameInputElement.value })
-        .then((responseDate) => {
+        .then(() => {
 
             fetchAndRenderComments();
 
