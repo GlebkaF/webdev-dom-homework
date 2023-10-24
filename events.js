@@ -46,7 +46,7 @@ export function initEdit(comments) {
     }
 }
 
-export function responsToComment(comments) {
+export function initQuotingComment(comments) {
     const commentElements = document.querySelectorAll(".comment");
     const textInputElement = document.querySelector(".add-form-text");
 

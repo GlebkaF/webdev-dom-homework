@@ -1,4 +1,4 @@
-import {initAddLikes, initEdit, responsToComment, stopEmptyInput, stopPropagationForEditInput} from "./events.js";
+import { initAddLikes, initEdit, initQuotingComment, stopEmptyInput, stopPropagationForEditInput } from "./events.js";
 
 export function renderComments(comments) {
     const listElement = document.querySelector(".comments");
@@ -32,7 +32,7 @@ export function renderComments(comments) {
 
     initAddLikes(comments);
     initEdit(comments);
-    responsToComment(comments);
+    initQuotingComment(comments);
     stopPropagationForEditInput();
     stopEmptyInput();
 }

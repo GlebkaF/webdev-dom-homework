@@ -1,12 +1,10 @@
-"use strict";
-
 import { getComments, postComment } from "./api.js";
-import { dateFormat } from "./helper.js";
 import { renderComments } from "./render.js";
+import { dateFormat } from "./helper.js";
 
-const btnAddCommentElement = document.querySelector(".add-form-button");
 const nameInputElement = document.querySelector(".add-form-name");
 const textInputElement = document.querySelector(".add-form-text");
+const btnAddCommentElement = document.querySelector(".add-form-button");
 const btnDelCommentElement = document.querySelector(".delete-form-button");
 const addFormElement = document.querySelector(".add-form");
 const loadingCommentElement = document.querySelector(".loading-comment");
@@ -44,21 +42,6 @@ function fetchAndRenderComments() {
             console.warn(error);
         })
 }
-
-document.addEventListener("input", () => {
-
-    if (
-        nameInputElement.value.trim() !== '' &&
-        textInputElement.value.trim() !== ''
-    ) {
-
-        btnAddCommentElement.disabled = false;
-
-    } else {
-
-        btnAddCommentElement.disabled = true;
-    }
-})
 
 function addComment() {
     addFormElement.classList.add("displayHidden");
@@ -107,6 +90,21 @@ document.addEventListener("keyup", (event) => {
         textInputElement.value.trim() !== '') {
 
         addComment();
+    }
+})
+
+document.addEventListener("input", () => {
+
+    if (
+        nameInputElement.value.trim() !== '' &&
+        textInputElement.value.trim() !== ''
+    ) {
+
+        btnAddCommentElement.disabled = false;
+
+    } else {
+
+        btnAddCommentElement.disabled = true;
     }
 })
 
