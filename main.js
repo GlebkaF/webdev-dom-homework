@@ -51,7 +51,7 @@ fetchArray();
 
 const arrayPost = () => {
     document.getElementById("form-add").style.display = 'none';
-    document.getElementById("loadingMessage").style.display = 'block';
+    document.getElementById("loadingMessage").style.display = 'block'; 
 
 
 
