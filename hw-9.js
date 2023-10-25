@@ -21,24 +21,7 @@ const deleteButton = document.querySelector('.remove-button');
 
 
 //массив с комментариями
-const comments = [
-  {
-    name: 'Глеб Фокин',
-    textComment: 'Это будет первый комментарий на этой странице',
-    isEdit: false,
-    date: '12.02.22 12:18',
-    isLike: true,
-    countLike: 3,
-  },
-  {
-    name: 'Варварва Н.',
-    textComment: 'Мне нравится как оформлена эта страница! ❤',
-    isEdit: false,
-    date: '13.02.22 19:22',
-    isLike: false,
-    countLike: 75,
-  },
-];
+let comments = [];
 //Отслеживает лайки
 const initLikeButtonsListener = () => {
   //Нашла кнопку лайка
@@ -51,10 +34,10 @@ const initLikeButtonsListener = () => {
       const index = likeButton.dataset.index;
       if (comments[index].isLike) {
         comments[index].isLike = false;
-        comments[index].countLike -= 1;
+        comments[index].likes -= 1;
       } else {
         comments[index].isLike = true;
-        comments[index].countLike += 1;
+        comments[index].likes += 1;
       }
       renderComments();
     });
@@ -122,15 +105,15 @@ const renderComments = () => {
     return `
         <li class="comment" data-index='${index}'>
         <div class="comment-header">
-          <div>${comment.name}</div>
+          <div>${comment.author.name}</div>
           <div>${comment.date}</div>
         </div>
         <div class="comment-body">
-        ${comment.isEdit ? `<textarea class="update-input">${comment.textComment}</textarea>` : `<div>${comment.textComment}</div>`}
+        ${comment.isEdit ? `<textarea class="update-input">${comment.text}</textarea>` : `<div>${comment.text}</div>`}
         </div>
         <div class="comment-footer">
           <div class="likes">
-            <span class="likes-counter">${comment.countLike}</span>
+            <span class="likes-counter">${comment.likes}</span>
             <button data-index='${index}' class="${comment.isLike ? 'like-button -active-like' : 'like-button'}"></button> 
           </div>
         </div>
@@ -147,9 +130,18 @@ const renderComments = () => {
 }
 renderComments();
 
-
-
-
+//Получение комментариев из Апи
+const getComments = () => {
+  fetch('https://wedev-api.sky.pro/api/v1/ulyana-lazutina/comments', {
+    method: 'GET',
+  }).then((response) => {
+    response.json().then((responseData) => {
+      comments = responseData.comments;
+      renderComments();
+    })
+  });
+}
+getComments();
 
 //Функция добавления комментария
 const addComments = () => {
@@ -173,22 +165,26 @@ const addComments = () => {
   }
   //Передача всех параметров в одну переменную
   const newFormatDatePublish = `${dayPublish}.${monthPublish}.${yearPublish} ${hoursPublish}:${minutesPublish}`;
+  
   //Добавление в массив новые комменатарии
-  comments.push({
-    name: nameInputElement.value
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;'),
-    textComment: commentInputElement.value
-    .replaceAll('<', '&lt;').replaceAll('>', '&gt;')
-    .replaceAll("%BEGIN_QUOTE", "<div class='quote'>")
-    .replaceAll("END_QUOTE%", "</div>"),
-    date: newFormatDatePublish,
-    isEdit: false,
-    isLike: false,
-    countLike: 0,
-  });
-
+  fetch('https://wedev-api.sky.pro/api/v1/ulyana-lazutina/comments', {
+    method: 'POST',
+    body: JSON.stringify({
+      "text": commentInputElement.value
+        .replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+        .replaceAll("%BEGIN_QUOTE", "<div class='quote'>")
+        .replaceAll("END_QUOTE%", "</div>"),
+      "name": nameInputElement.value
+    }),
+  }).then((response) => {
+    response.json().then((responseData) => {
+      comments = responseData.comments;
+      getComments();
+    })
+  })
   renderComments();
+  getComments();
+
   nameInputElement.value = '';
   commentInputElement.value = '';
   writeButton.disabled = true;
