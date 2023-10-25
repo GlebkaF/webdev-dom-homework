@@ -11,15 +11,15 @@
     rel="stylesheet">
 </head>
 
- 
+
 
 
 <body>
   <div class="container">
-    <ul id="ul" class="comments"> 
+    <ul id="ul" class="comments">
       <!-- Список рендерится из Js -->
     </ul>
-    <div class="add-form">
+    <div class="add-form" id="form-add">
       <input id="inputName" type="text" class="add-form-name" placeholder="Введите ваше имя" />
       <textarea id="inputText" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
         rows="4"></textarea>
@@ -27,6 +27,7 @@
         <button id="buttonPush" class="add-form-button">Написать</button>
       </div>
     </div>
+    <p id="loadingMessage" class="hidden" style="display: none;">Комментарий добавляется...</p>
   </div>
 </body>
 

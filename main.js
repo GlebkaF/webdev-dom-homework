@@ -4,7 +4,82 @@ const buttonElement = document.getElementById("buttonPush");
 const ulElement = document.getElementById("ul");
 const text = document.getElementById("comment-text");
 const editButton = document.getElementById("edit-button");
+const formHide = document.getElementById("form-add");
 
+
+
+
+
+
+let commentsArray = [
+
+];
+
+const fetchArray = () => {
+
+
+    fetch("https://wedev-api.sky.pro/api/v1/fomin_denis/comments", {
+        method: "GET",
+
+    }
+    ).then((response) => {
+        return response.json();
+    }).then((responseData) => {
+        commentsArray = [];
+        responseData.comments.map((element) => {
+            const newDate = new Date(element.date);
+            const elementObj = {
+                comment: element.text,
+                name: element.author.name,
+                like: element.likes,
+                userLike: element.isLiked,
+                date: newDate.toLocaleString()
+
+            }
+            commentsArray.push(elementObj);
+
+        }
+
+
+        )
+
+        renderComments();
+    })
+};
+fetchArray();
+
+
+const arrayPost = () => {
+    document.getElementById("form-add").style.display = 'none';
+    document.getElementById("loadingMessage").style.display = 'block';
+
+
+
+
+    fetch("https://wedev-api.sky.pro/api/v1/fomin_denis/comments", {
+        method: "POST",
+        body: JSON.stringify({
+            text: textElement.value
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;"),
+            name: nameElement.value
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;"),
+        })
+
+
+
+    }).then(() => {
+        fetchArray();
+        setTimeout(function () {
+            document.getElementById("form-add").style.display = 'block';
+            document.getElementById("loadingMessage").style.display = 'none';
+
+        }, 2000);
+
+    });
+
+};
 
 
 const initEdit = () => {
@@ -31,8 +106,9 @@ const initEdit = () => {
                 const index = editButoon.dataset.edit;
                 const comment = commentsArray[index].comment;
 
-                const value = document.querySelector('input').value;
-                commentsArray[index].comment = value;
+                const value = document.querySelector('input');
+
+                commentsArray[index].comment = value.value;
                 commentsArray[index].isEdit = false;
                 renderComments();
             })
@@ -65,26 +141,6 @@ const initDeleteButtonsListeners = () => {
 
 
 
-const commentsArray = [
-    {
-        name: 'Глеб Фокин',
-        date: '12.02.22 12:18',
-        comment: 'Это будет первый комментарий на этой странице',
-        like: 3,
-        userLike: false,
-        paint: '',
-        isEdit: false
-    },
-    {
-        name: 'Варвара Н.',
-        date: '13.02.22 19:22',
-        comment: 'Мне нравится как оформлена эта страница! ❤',
-        like: 75,
-        userLike: true,
-        paint: '-active-like',
-        isEdit: false
-    }
-];
 
 initDeleteButtonsListeners();
 
@@ -246,6 +302,7 @@ textElement.addEventListener("input", buttonHide);
 
 
 buttonElement.addEventListener('click', () => {
+
     nameElement.classList.remove('error');
     textElement.classList.remove('error');
 
@@ -260,21 +317,23 @@ buttonElement.addEventListener('click', () => {
     const currentDate = new Date();
     const dateString = `${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString()} `;
 
-    commentsArray.push({
-        name: nameElement.value
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;"),
-        date: dateString,
-        comment: textElement.value
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;"),
-        like: 0,
-        userLike: false,
-        paint: '',
-        isEdit: false
+    // commentsArray.push({
+    //     name: nameElement.value
+    //         .replaceAll("<", "&lt;")
+    //         .replaceAll(">", "&gt;"),
+    //     date: dateString,
+    //     comment: textElement.value
+    //         .replaceAll("<", "&lt;")
+    //         .replaceAll(">", "&gt;"),
+    //     like: 0,
+    //     userLike: false,
+    //     paint: '',
+    //     isEdit: false
 
-    });
+    // });
+    arrayPost();
     renderComments();
+
 
     nameElement.value = '';
     textElement.value = '';
