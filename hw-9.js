@@ -1,4 +1,15 @@
 // "use strict";
+let isLoading = false;
+//Нашла форму добавления комментариев
+const formAddComm = document.querySelector('.add-form');
+const renderForm = () => {
+  if (isLoading === true) {
+    console.log('isLoading = true. Комментарий добавляется');
+  } else {
+    console.log('isLoading = false. Комментарий не добавляется');
+  }
+}
+renderForm();
 //Нашла два инпута
 const nameInputElement = document.querySelector('.add-form-name');
 const commentInputElement = document.querySelector('.add-form-text');
@@ -12,8 +23,7 @@ const writeButton = document.querySelector('.add-form-button');
 writeButton.disabled = true;
 writeButton.style.backgroundColor = 'grey';
 
-//Нашла форму добавления комментариев
-const formAddComm = document.querySelector('.add-form');
+
 
 //Нашла кнопку удаления
 const deleteButton = document.querySelector('.remove-button');
@@ -165,7 +175,7 @@ const addComments = () => {
   }
   //Передача всех параметров в одну переменную
   const newFormatDatePublish = `${dayPublish}.${monthPublish}.${yearPublish} ${hoursPublish}:${minutesPublish}`;
-  
+
   //Добавление в массив новые комменатарии
   fetch('https://wedev-api.sky.pro/api/v1/ulyana-lazutina/comments', {
     method: 'POST',
@@ -178,10 +188,13 @@ const addComments = () => {
     }),
   }).then((response) => {
     response.json().then((responseData) => {
+      isLoading = false;
+      renderForm();
       comments = responseData.comments;
       getComments();
     })
   })
+  isLoading = true;
   renderComments();
   getComments();
 
