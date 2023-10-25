@@ -41,25 +41,63 @@
     const likebuttonElements = document.querySelectorAll('.like-button');
     massage_sendButton.disabled = true;
 
+    let isLoading = true;
 
-    const comments = [
-      {
-        name : "Глеб Фокин",
-        date : "12.02.22 12:18",
-        massage : "Это будет первый комментарий на этой странице",
-        isLike : false,
-        likeCounter : 3,
-        isEdit : true
-      },
-      {
-        name : "Варвара Н.",
-        date : "13.02.22 19:22",
-        massage : " Мне нравится как оформлена эта страница! ❤",
-        isLike : true,
-        likeCounter : 75,
-        isEdit : true,
-      }
-    ]
+
+    // const comments = [
+    //   {
+    //     name : "Глеб Фокин",
+    //     date : "12.02.22 12:18",
+    //     massage : "Это будет первый комментарий на этой странице",
+    //     isLike : false,
+    //     likeCounter : 3,
+    //     isEdit : true
+    //   },
+    //   {
+    //     name : "Варвара Н.",
+    //     date : "13.02.22 19:22",
+    //     massage : " Мне нравится как оформлена эта страница! ❤",
+    //     isLike : true,
+    //     likeCounter : 75,
+    //     isEdit : true,
+    //   }
+    // ]
+    function functionDateConverter(date){
+    return date.getDate()+ "." + date.getMonth() + "." + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes()
+    }
+
+
+    let comments = [];
+
+
+      function fetchGET() {
+        fetch("https://wedev-api.sky.pro/api/v1/artemiy-babichev/comments" , {
+        method : "GET"
+      }).then((response) => {
+          response.json().then((responseData) => {
+              appComments = responseData.comments.map((comment) => {
+                return {
+                  name: comment.author.name,
+                  date: functionDateConverter(new Date(comment.date)),
+                  massage : comment.text,
+                  isLike : comment.isLiked,
+                  likeCounter : comment.likes,
+                  isEdit: true
+                }
+              })
+
+              comments = appComments;
+              renderComments();
+          })
+      })
+    }
+
+    fetchGET();
+
+
+
+
+
     
 
     const likebuttonListners = () => {
@@ -213,14 +251,16 @@
         return
       }
 
-        comments.push({
-          name : nameinputElement.value.replaceAll('<', '&lt;').replaceAll('>','&gt;'),
-          date : massageDate,
-          massage : massageinputElement.value.replaceAll('<', '&lt;').replaceAll('>','&gt;'),
-          isLike : false,
-          likeCounter : 0,
-          isEdit : true
-        })
+       fetch("https://wedev-api.sky.pro/api/v1/artemiy-babichev/comments" , {
+          method : "POST",
+          body : JSON.stringify({
+            text : massageinputElement.value,
+            name : nameinputElement.value,
+          })
+       })
+       
+
+       fetchGET();
         
         nameinputElement.value = "";
         massageinputElement.value = "";
@@ -257,8 +297,6 @@
 
     
     
-    
-324342234
 
 
 
