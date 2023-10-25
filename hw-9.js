@@ -4,9 +4,25 @@ let isLoading = false;
 const formAddComm = document.querySelector('.add-form');
 const renderForm = () => {
   if (isLoading === true) {
-    console.log('isLoading = true. Комментарий добавляется');
+    formAddComm.innerHTML =
+      ` <div>Комменатрий добавляется </div>
+    `
   } else {
-    console.log('isLoading = false. Комментарий не добавляется');
+    formAddComm.innerHTML = ` <input
+    type="text"
+    class="add-form-name"
+    placeholder="Введите ваше имя"
+  />
+  <textarea
+    type="textarea"
+    class="add-form-text"
+    placeholder="Введите ваш коментарий"
+    rows="4"
+  ></textarea>
+  <div class="add-form-row">
+    <button class="add-form-button">Написать</button>
+  </div>
+</div>`
   }
 }
 renderForm();
@@ -188,13 +204,13 @@ const addComments = () => {
     }),
   }).then((response) => {
     response.json().then((responseData) => {
-      isLoading = false;
+      isLoading = true;
       renderForm();
       comments = responseData.comments;
       getComments();
     })
   })
-  isLoading = true;
+  isLoading = false;
   renderComments();
   getComments();
 
