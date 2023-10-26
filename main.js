@@ -1,14 +1,20 @@
 "use strict";
+import { trimValue, setError, resetButtonState } from "./modules/validation.js";
+import {
+  getComments,
+  postComments,
+  inputTextElement,
+  inputNameElement,
+} from "./modules/api.js";
 
-import { getComments, postComments } from "./api.js";
-import { inputTextElement, inputNameElement } from "./api.js";
-import { currentDate } from "./utils.js";
-import { renderUsers } from "./render.js";
-import { attachTextButtonListener } from "./render.js";
-import { attachLikeButtonListener } from "./render.js";
-import { toggleButton } from "./utils.js";
-import { listElement, buttonElement } from "./render.js";
-import { handleEnterKey } from "./utils.js";
+import { currentDate, handleEnterKey, toggleButton } from "./modules/utils.js";
+import {
+  listElement,
+  buttonElement,
+  attachTextButtonListener,
+  attachLikeButtonListener,
+  renderUsers,
+} from "./modules/render.js";
 
 let users = [];
 // 1.вынести все запросы в отдельный модуль
@@ -31,15 +37,24 @@ const fetchAndRender = () => {
 
     users = appUsers;
     renderUsers(users, listElement);
-    users.forEach((user) => {
-      attachTextButtonListener(user, users, listElement);
-      attachLikeButtonListener(user, users, listElement);
-    });
   });
 };
 
 toggleButton(buttonElement, inputNameElement, inputTextElement);
 
+// const setError = (element, message) => {}
+// const resetButtonState = (buttonElement, value) => {}
+
+//   if (trimValue(inputNameElement).length < 3) {
+//     return setError(inputNameElement, "Введенное имя слишком короткое");
+//   }
+
+//   if (trimValue(inputTextElement).length < 3) {
+//     return setError(inputTextElement, "Ваш комментарий слишком короткий");
+//   }
+
+buttonElement.disabled = false;
+buttonElement.textContent = "Написать";
 inputNameElement.addEventListener("input", () =>
   toggleButton(buttonElement, inputNameElement, inputTextElement)
 );
@@ -51,29 +66,27 @@ buttonElement.addEventListener("click", () => {
   inputNameElement.classList.remove("error");
   inputTextElement.classList.remove("error");
 
-  if (inputNameElement.value.trim() === "") {
+  if (!trimValue(inputNameElement)) {
     inputNameElement.classList.add("error");
     return;
   }
 
-  if (inputTextElement.value.trim() === "") {
+  if (!trimValue(inputTextElement)) {
     inputTextElement.classList.add("error");
     return;
   }
-  if (inputNameElement.value.trim().length < 3) {
-    inputNameElement.classList.add("error");
-    return alert("Введенное имя слишком короткое");
+  console.log(trimValue);
+
+  if (trimValue(inputNameElement).trim().length < 3) {
+    return setError(inputNameElement, "Введенное имя слишком короткое");
   }
 
-  if (inputTextElement.value.trim().length < 3) {
-    inputTextElement.classList.add("error");
-    return alert("Ваш комментарий слишком короткий");
+  if (trimValue(inputTextElement).trim().length < 3) {
+    return setError(inputTextElement, "Ваш комментарий слишком короткий");
   }
 
-  const startAt = Date.now();
   console.log("Начинаем делать запрос");
-  buttonElement.disabled = true;
-  buttonElement.textContent = "Ваш комментарий добавляется...";
+  resetButtonState(buttonElement, "Ваш комментарий добавляется");
 
   postComments(currentDate)
     .then(() => {
@@ -98,15 +111,3 @@ buttonElement.addEventListener("click", () => {
 fetchAndRender();
 
 handleEnterKey();
-
-// inputTextElement.addEventListener("keyup", (event) => {
-//   if (event.keyCode === 13) {
-//     event.preventDefault();
-//     if (
-//       inputNameElement.value.trim() !== "" &&
-//       inputTextElement.value.trim() !== ""
-//     ) {
-//       buttonElement.click();
-//     }
-//   }
-// });

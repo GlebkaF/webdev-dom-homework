@@ -2,7 +2,6 @@ import { inputTextElement } from "./api.js";
 
 export const buttonElement = document.getElementById("add-button");
 export const listElement = document.getElementById("list");
-
 export const renderUsers = (users, listElement) => {
   listElement.innerHTML = "";
   users.forEach((user) => {
@@ -50,6 +49,7 @@ export const attachTextButtonListener = (user) => {
 export const attachLikeButtonListener = (user, users, listElement) => {
   const likesButton = document.getElementById(`like-button-${user.id}`);
   likesButton.addEventListener("click", (event) => {
+    console.log("12344");
     event.stopPropagation();
     if (user.isLiked) {
       user.likes -= 1;
