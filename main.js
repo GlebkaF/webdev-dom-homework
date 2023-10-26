@@ -1,143 +1,71 @@
-import {
-  getFetch,
-  showAddForm,
-  hideAddForm,
-  showLoadingIndicatorComments,
-  deleteLoadingIndicatorComments,
-  showLoadingIndicator,
-  deleteLoadingIndicator,
-  postFetchApi
-} from "./api.js";
-import {
-  renderElementsApi
-} from "./render.js";
+import { getElements, postElements, showAddForm, hideAddForm, deleteLoadingIndicatorComments, showLoadingIndicator, deleteLoadingIndicator, correctDate, getToken } from "./api.js";
+import { renderComments, addComment, hideAuthForm, showAuthForm } from "./render.js"
+import { userAutorisation } from "./login.js"
 "use strict";
+
+userAutorisation();
+
+
+let isAutorizated = false;
+
 const listElements = document.getElementById("list");
 const nameElement = document.querySelector('.add-form-name');
 const textElement = document.querySelector('.add-form-text');
 const buttonElements = document.querySelector('.add-form-button');
 const deleteButtonElement = document.querySelector('.delete-button');
-let comments = [];
+export let comments = [];
 
-function correctDate(date) {
-  let currentDate = new Date(date);
-  let todayDay = currentDate.getDate();
-  let todayMonth = currentDate.getMonth() + 1;
-  let todayYear = String(currentDate.getFullYear()).slice(-2);
-  let todayHours = currentDate.getHours();
-  let todayMinutes = currentDate.getMinutes();
-  todayDay = todayDay < 10 ? "0" + todayDay : todayDay;
-  todayMonth = todayMonth < 10 ? "0" + todayMonth : todayMonth;
-  todayHours = todayHours < 10 ? "0" + todayHours : todayHours;
-  todayMinutes = todayMinutes < 10 ? "0" + todayMinutes : todayMinutes;
-  let formattedDate = `${todayDay}.${todayMonth}.${todayYear} ${todayHours}:${todayMinutes} `;
-  return formattedDate;
+export function getComments() {
+  return comments
 }
 
-showLoadingIndicator();
-hideAddForm();
-getFetch().then((responseData) => {
-  const appComment = responseData.comments.map((comment) => {
-    return {
-      name: comment.author.name,
-      date: correctDate(comment.date),
-      text: comment.text,
-      likes: comment.likes,
-      islike: false,
-    }
-  });
-  comments = appComment
-  renderElements();
-  deleteLoadingIndicator();
-  showAddForm();
-})
-
-
-function renderElements() {
-  renderElementsApi(comments);
-  commentOnComment();
-  deleteComment();
-  addLike();
-  addComment();
+export const сomments = (newComments) => {
+  comments = newComments;
 }
 
-function addLike() {
-  const likeElements = document.querySelectorAll('.like-button');
-  for (let like of likeElements) {
-    like.addEventListener('click', (event) => {
-      event.stopPropagation();
-      let index = like.dataset.index
-      let object = comments[index];
-      if (object.islike) {
-        object.islike = false;
-        object.likes--;
-      } else {
-        object.islike = true;
-        object.likes++;
+export function getFetch() {
+
+  showLoadingIndicator();
+  hideAddForm();
+
+
+  getElements().then((responseData) => {
+    const appComment = responseData.comments.map((comment) => {
+
+      return {
+        name: comment.author.name,
+        date: correctDate(comment.date),
+        text: comment.text,
+        likes: comment.likes,
+        islike: false,
       }
-      renderElements();
-    })
-  }
-}
+    });
+    comments = appComment
+    renderComments(comments);
+    deleteLoadingIndicator();
+    if (getToken()) {
+      hideAuthForm();
+      showAddForm();
 
-function commentOnComment() {
-  const commentOnComment = document.querySelectorAll('.comment');
-  for (let comment of commentOnComment) {
-    comment.addEventListener('click', () => {
-      let index = comment.dataset.index
-      let object = comments[index];
-      commentInputElement.value = `${object.text}  ${object.name}`
-      renderElements();
-    })
-  }
+    } else {
+      showAuthForm();
+    }
+
+  })
+    .catch((error) => {
+      console.log(error);
+      alert('Что-то пошло не так, попробуйте позже');
+    });
+
+
 }
-const buttonElement = document.getElementById("add-button");
+getFetch();
+
+
 const listElement = document.getElementById("list");
 const nameInputElement = document.getElementById("name-input");
 const commentInputElement = document.getElementById("comment-input");
-const currentDate = new Date().toLocaleString().slice(0, -3);
 
 
-function addComment() {
-  buttonElement.addEventListener('click', () => {
-    nameInputElement.classList.remove("error");
-    commentInputElement.classList.remove("error");
-    if (nameInputElement.value === '' || commentInputElement.value === '') {
-      nameInputElement.classList.add("error");
-      commentInputElement.classList.add("error");
-      return;
-    }
-    const nameInComment = nameElement.value
-    const textInComment = textElement.value
-    showLoadingIndicatorComments();
-    hideAddForm();
-    postFetchApi({
-        textInComment,
-        nameInComment
-      }).then(() => {
-        deleteLoadingIndicatorComments();
-        showAddForm();
-        nameElement.value = "";
-        textElement.value = "";
-        deleteLoadingIndicator();
-      })
-      .catch((error) => {
-        showAddForm();
-        deleteLoadingIndicatorComments();
-        buttonElement.disabled = false;
-        alert(error.message);
-      });
-  });
-}
 
-function deleteComment() {
-  const buttonDelete = document.querySelectorAll('.delete-button');
-  for (let button of buttonDelete) {
-    button.addEventListener('click', (event) => {
-      let index = button.dataset.index
-      comments.splice(index, 1);
-      event.stopPropagation();
-      renderElements();
-    })
-  }
-};
+addComment();

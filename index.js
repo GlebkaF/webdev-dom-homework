@@ -34,7 +34,7 @@
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button id="add-button" class="add-form-button ">Написать</button>
+          <button id="add-button" class="add-form-button " onclick="new Audio('./ok.mp3').play(); return false;" >Написать</button>
         </div>
       </div>
       <div class="comment-loader hidden">
