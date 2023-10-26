@@ -18,7 +18,7 @@ export function postComment() {
         body: JSON.stringify({
           text: sanitizeHtml(commentInputElement.value),
           name: sanitizeHtml(nameInputElement.value),
-          forceError: false,
+          forceError: true,
           }),
         })
         .then((response) => {
