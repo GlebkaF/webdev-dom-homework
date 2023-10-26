@@ -1,13 +1,16 @@
 // "use strict";
 let isLoading = false;
+
 //Нашла форму добавления комментариев
 const formAddComm = document.querySelector('.add-form');
 const renderForm = () => {
   if (isLoading === true) {
+    console.log(isLoading);
     formAddComm.innerHTML =
       ` <div>Комменатрий добавляется </div>
     `
   } else {
+    console.log(isLoading);
     formAddComm.innerHTML = ` <input
     type="text"
     class="add-form-name"
@@ -26,6 +29,7 @@ const renderForm = () => {
   }
 }
 renderForm();
+
 //Нашла два инпута
 const nameInputElement = document.querySelector('.add-form-name');
 const commentInputElement = document.querySelector('.add-form-text');
@@ -124,6 +128,29 @@ const initUpdateCommentListener = () => {
   }
 }
 
+//функция для работы со временем
+const formatDate = (dateString) => {
+  //Работа со временем
+  const datePublish = new Date(); //создание времени
+  const months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']; //Правильная расстановка месяцей
+  let dayPublish = datePublish.getDate(); //Получение дня
+  let monthPublish = months[datePublish.getMonth()]; //Получение месяца
+  let yearPublish = datePublish.getFullYear().toString().slice(-2); //Получение года
+  let hoursPublish = datePublish.getHours(); //Получение часов
+  let minutesPublish = datePublish.getMinutes(); //Получение минус
+  //Проверки на нули для красоты
+  if (dayPublish < 10) {
+    dayPublish = '0' + dayPublish;
+  }
+  if (hoursPublish < 10) {
+    hoursPublish = '0' + hoursPublish;
+  }
+  if (minutesPublish < 10) {
+    minutesPublish = '0' + minutesPublish;
+  }
+  //Передача всех параметров в одну переменную
+  return `${dayPublish}.${monthPublish}.${yearPublish} ${hoursPublish}:${minutesPublish}`;
+}
 
 //Рендерит комментарии
 const renderComments = () => {
@@ -132,7 +159,7 @@ const renderComments = () => {
         <li class="comment" data-index='${index}'>
         <div class="comment-header">
           <div>${comment.author.name}</div>
-          <div>${comment.date}</div>
+          <div>${formatDate(comment.date)}</div>
         </div>
         <div class="comment-body">
         ${comment.isEdit ? `<textarea class="update-input">${comment.text}</textarea>` : `<div>${comment.text}</div>`}
@@ -171,27 +198,8 @@ getComments();
 
 //Функция добавления комментария
 const addComments = () => {
-  //Работа со временем
-  const datePublish = new Date(); //создание времени
-  const months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']; //Правильная расстановка месяцей
-  let dayPublish = datePublish.getDate(); //Получение дня
-  let monthPublish = months[datePublish.getMonth()]; //Получение месяца
-  let yearPublish = datePublish.getFullYear().toString().slice(-2); //Получение года
-  let hoursPublish = datePublish.getHours(); //Получение часов
-  let minutesPublish = datePublish.getMinutes(); //Получение минус
-  //Проверки на нули для красоты
-  if (dayPublish < 10) {
-    dayPublish = '0' + dayPublish;
-  }
-  if (hoursPublish < 10) {
-    hoursPublish = '0' + hoursPublish;
-  }
-  if (minutesPublish < 10) {
-    minutesPublish = '0' + minutesPublish;
-  }
-  //Передача всех параметров в одну переменную
-  const newFormatDatePublish = `${dayPublish}.${monthPublish}.${yearPublish} ${hoursPublish}:${minutesPublish}`;
-
+  isLoading = true;
+  renderForm();
   //Добавление в массив новые комменатарии
   fetch('https://wedev-api.sky.pro/api/v1/ulyana-lazutina/comments', {
     method: 'POST',
@@ -204,21 +212,19 @@ const addComments = () => {
     }),
   }).then((response) => {
     response.json().then((responseData) => {
-      isLoading = true;
-      renderForm();
       comments = responseData.comments;
       getComments();
     })
   })
-  isLoading = false;
-  renderComments();
-  getComments();
 
   nameInputElement.value = '';
   commentInputElement.value = '';
   writeButton.disabled = true;
   writeButton.style.backgroundColor = 'grey';
+  isLoading = false;
+  renderForm();
 }
+
 
 //При нажатии на кнопку "Написать" добавляется новый комментрий
 writeButton.addEventListener('click', addComments)
@@ -230,7 +236,7 @@ formAddComm.addEventListener('keyup', (elem) => {
   }
 })
 
-// //Удаление последнего комментария
+//Удаление последнего комментария
 deleteButton.addEventListener('click', () => {
   comments.splice(-1);
   renderComments();
