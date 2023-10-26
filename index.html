@@ -49,12 +49,26 @@
     },
   ];
 
+  function commentOnComment() {
+    const commentOnComment = document.querySelectorAll('.comment');
+     for(let comment of commentOnComment) {
+     comment.addEventListener('click', () => {
+       let index = comment.dataset.index
+       let object = listComents[index];
+       formComment.value = `${object.comentUser}  ${object.nameUser}`
+     renderElements();
+     })
+
+    }
+ }
+
 
   const addLike = () => {
     const quantityLikesElement = document.querySelectorAll('.likes-counter');
     const likesElement = document.querySelectorAll('.like-button');
     for (const like of likesElement) {
-      like.addEventListener('click', () => {
+      like.addEventListener('click', (event) => {
+        event.stopPropagation();
         let index = like.dataset.index
         let object = listComents[index];
         if (object.isLike) {
@@ -72,7 +86,7 @@
 
   const rendLists = () => {
     const listHtml = listComents.map((coment, index) => {
-      return `<li class="comment"> <div class="comment-header"><div> ${coment.nameUser}</div>
+      return `<li class="comment" data-index="${index}" > <div class="comment-header"><div> ${coment.nameUser}</div>
   <div>${coment.dataTimeComents}</div></div><div class="comment-body"><div class="comment-text">${coment.comentUser}</div></div>
   <div class="comment-footer"><div class="likes"><span class="likes-counter">${coment.like}</span>
     <button data-index="${index}" class="like-button ${coment.isLike ? "-active-like" : ""}" ></button></div></div></li>`
@@ -80,9 +94,11 @@
       .join('');
     ulList.innerHTML = listHtml;
     addLike();
+    commentOnComment();
   }
 
   rendLists();
+  
 
 
 
@@ -100,9 +116,17 @@
 
     } else {
       listComents.push({
-        nameUser: formName.value,
+        nameUser: formName.value
+        .replaceAll("<", "&lt")
+        .replaceAll(">", "&gt")
+        .replaceAll("&", "&amp;")
+        .replaceAll('"', "&quot;"),
         dataTimeComents: myDate,
-        comentUser: formComment.value,
+        comentUser: formComment.value
+        .replaceAll("<", "&lt")
+        .replaceAll(">", "&gt")
+        .replaceAll("&", "&amp;")
+        .replaceAll('"', "&quot;"),
         like: 0,
         isLike: false,
       })
