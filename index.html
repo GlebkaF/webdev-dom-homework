@@ -130,6 +130,24 @@
         }
     })
 
+    fetch("https://wedev-api.sky.pro/api/v1/dmitriev-denis/comments", {
+      method: "GET",
+    }).then((response) => {
+      response.json().then((responseData) => {
+        const getApiComments = responseData.comments.map((comment) => {
+          return {
+            author: comment.author.name,
+            date: getCorrectDate(comment.date),
+            likes: comment.likes,
+            isLiked: false,
+            text: comment.text,
+          };
+        });
+        commentsArray = getApiComments;
+				renderComments();
+				});
+			});
+
     buttonElement.addEventListener('click', () => {
         nameElement.classList.remove('error');
         textElement.classList.remove('error');
@@ -154,24 +172,7 @@
 				}),
 			}).then((response) => {
 				response.json().then((responseData) => {
-					fetch("https://wedev-api.sky.pro/api/v1/dmitriev-denis/comments", {
-      method: "GET",
-    }).then((response) => {
-      response.json().then((responseData) => {
-        const getApiComments = responseData.comments.map((comment) => {
-          return {
-            author: comment.author.name,
-            date: getCorrectDate(comment.date),
-            likes: comment.likes,
-            isLiked: false,
-            text: comment.text,
-          };
-        });
-        commentsArray = getApiComments;
-				renderComments();
-				});
-			});
-		});
+                })		
     })
 
         nameElement.value = '';
