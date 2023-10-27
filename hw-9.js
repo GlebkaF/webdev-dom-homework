@@ -1,17 +1,17 @@
 // "use strict";
 let isLoading = false;
-
+document.querySelector('.container').style.display = "none";
 //Нашла форму добавления комментариев
 const formAddComm = document.querySelector('.add-form');
 //рендер формы для написания комментария
 const renderForm = () => {
   if (isLoading === true) {
-    console.log(isLoading);
+    // console.log(isLoading);
     formAddComm.innerHTML =
       ` <div>Комментарий добавляется </div>
     `
   } else {
-    console.log(isLoading);
+    // console.log(isLoading);
     formAddComm.innerHTML = ` <input
     type="text"
     class="add-form-name"
@@ -147,27 +147,27 @@ const formatDate = (dateString) => {
 
 //Рендерит комментарии
 const renderComments = () => {
+
   blockComments.innerHTML = comments.map((comment, index) => {
     return `
-        <li class="comment" data-index='${index}'>
-        <div class="comment-header">
-          <div>${comment.author.name}</div>
-          <div>${formatDate(comment.date)}</div>
-        </div>
-        <div class="comment-body">
-        ${comment.isEdit ? `<textarea class="update-input">${comment.text}</textarea>` : `<div>${comment.text}</div>`}
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">${comment.likes}</span>
-            <button data-index='${index}' class="${comment.isLike ? 'like-button -active-like' : 'like-button'}"></button> 
+          <li class="comment" data-index='${index}'>
+          <div class="comment-header">
+            <div>${comment.author.name}</div>
+            <div>${formatDate(comment.date)}</div>
           </div>
-        </div>
-        <button data-index='${index}' type="button" class= ${comment.isEdit ? '"save-btn"> Сохранить </button>' : '"update-btn">Редактировать</button>'}
-      </li>
-        `
+          <div class="comment-body">
+          ${comment.isEdit ? `<textarea class="update-input">${comment.text}</textarea>` : `<div>${comment.text}</div>`}
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.likes}</span>
+              <button data-index='${index}' class="${comment.isLike ? 'like-button -active-like' : 'like-button'}"></button> 
+            </div>
+          </div>
+          <button data-index='${index}' type="button" class= ${comment.isEdit ? '"save-btn"> Сохранить </button>' : '"update-btn">Редактировать</button>'}
+        </li>
+          `
   }).join('');
-
 
   initLikeButtonsListener();
   initUpdateButtonsListener();
@@ -178,15 +178,20 @@ renderComments();
 
 //Получение комментариев из Апи
 const getComments = () => {
-  fetch('https://wedev-api.sky.pro/api/v1/ulyana-lazutina/comments', {
+  return fetch('https://wedev-api.sky.pro/api/v1/ulyana-lazutina/comments', {
     method: 'GET',
-  }).then((response) => {
-    response.json().then((responseData) => {
+  })
+    .then((response) => {
+      document.querySelector('.loader').style.display = "none";
+      document.querySelector('.container').style.display = "flex";
+      return response.json()
+    })
+    .then((responseData) => {
       comments = responseData.comments;
       renderComments();
     })
-  });
 }
+
 getComments();
 
 //Добавляет обработчик на кнопку Написать
@@ -202,6 +207,7 @@ function addComments() {
   const commentInputElement = document.querySelector('.add-form-text');
   isLoading = true;
   renderForm();
+  getComments();
   //Добавление в массив новые комменатарии
   fetch('https://wedev-api.sky.pro/api/v1/ulyana-lazutina/comments', {
     method: 'POST',
@@ -212,14 +218,18 @@ function addComments() {
         .replaceAll("END_QUOTE%", "</div>"),
       "name": nameInputElement.value
     }),
-  }).then((response) => {
-    response.json().then((responseData) => {
+  }).
+    then((response) => {
+      return response.json()
+    })
+    .then((responseData) => {
       comments = responseData.comments;
-      getComments();
+      return getComments();
+    })
+    .then((data) => {
       isLoading = false;
       renderForm();
     })
-  })
 
   nameInputElement.value = '';
   commentInputElement.value = '';
