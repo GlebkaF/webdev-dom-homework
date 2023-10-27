@@ -97,9 +97,13 @@
 
       for (const  likeButtonElement of likesButtonElements){
 
-      likeButtonElement.addEventListener('click', () => {
+      likeButtonElement.addEventListener('click', (event) => {
+        event.stopPropagation();
         const index = likeButtonElement.dataset.index;
+       
+
         console.log(index); 
+
       if (commentList[index].isActiveLike === false) { 
         commentList[index].isActiveLike = true; 
         commentList[index].likesCounter++; 
@@ -107,36 +111,44 @@
         commentList[index].isActiveLike = false; 
         commentList[index].likesCounter--; 
       }
+      
       renderCommentList();
+      
       });
       }
       }
 
 
     const renderCommentList = () => {
+     
+      const commentListHTML = commentList.map((comment,index) => {
 
-      const commentListHTML = commentList.map((comment) => {
+        const quoteText = comment.userComment.replace( /&gt; /g, "<div class='quote'>" ).replace(/,/g, '</div><br>');
         return `<li class="comment">
           <div class="comment-header">
             <div>${comment.user}</div>
             <div>${comment.userDate}</div>
           </div>
+
           <div class="comment-body">
             <div class="comment-text">
-              ${comment.userComment}
+              ${quoteText}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button" data-index="0"></button>
+              <span class="likes-counter">${comment.likesCounter ? comment.likesCounter : 0}</span>
+              <button class="like-button ${comment.isActiveLike ? '-active-like' : ''}"
+               data-index="${index}"></button>
             </div>
           </div>
         </li>`;
       }).join('');
-      // console.log(commentListHTML);
+      console.log(commentListHTML);
       list.innerHTML = commentListHTML;
-    likerFunction();
+
+      clickAddButton();
+      likerFunction();
       
     };
 
