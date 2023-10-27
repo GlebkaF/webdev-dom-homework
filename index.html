@@ -13,6 +13,7 @@
       <div class="add-form">
         <input
           type="text"
+          maxlength="50"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
@@ -44,6 +45,7 @@
     const minutes = currentDate.getMinutes();
 
 
+
     const clickAddButton = () => {
     addFormBtn.addEventListener('click', () => {
       addFormName.classList.remove('form-error');
@@ -60,9 +62,19 @@
       }
 
       commentList.push({
-        user: addFormName.value,
-        userComment: addFormText.value,
+        user: addFormName.value
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;"),
+
+        userComment: addFormText.value
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;"),
         userDate: `${day}.${month}.${year} ${hours}:${minutes}`,
+
     })
     renderCommentList();
         addFormName.value = "";
@@ -124,6 +136,26 @@
 
     }
       
+    const replyCommentFunction = () => {
+      const commentsReplyEl = document.querySelectorAll('.comment-text');
+
+
+    for (const replyComment of commentsReplyEl) {
+      const userNamesEl =  document.querySelectorAll('.userName');
+      for(const userName of userNamesEl){
+        replyComment.addEventListener('click', (event) => {
+
+        event.stopPropagation();
+
+
+        addFormText.textContent = `> ${replyComment.textContent} ${userName.textContent},`;
+          console.log(replyComment.value);
+})  
+      }
+   
+}
+}
+replyCommentFunction();
 
 
     const renderCommentList = () => {
@@ -133,7 +165,7 @@
         const quoteText = comment.userComment.replace( /&gt; /g, "<div class='quote'>" ).replace(/,/g, '</div><br>');
         return `<li class="comment">
           <div class="comment-header">
-            <div>${comment.user}</div>
+            <div class = "userName">${comment.user}</div>
             <div>${comment.userDate}</div>
           </div>
 
@@ -155,13 +187,12 @@
       list.innerHTML = commentListHTML;
 
       clickAddButton();
+      replyCommentFunction(); 
       likerFunction();
       
     };
 
   renderCommentList();
-
-   
 
     console.log("It works!");
   </script>
