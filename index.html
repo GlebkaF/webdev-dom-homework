@@ -100,23 +100,30 @@
       likeButtonElement.addEventListener('click', (event) => {
         event.stopPropagation();
         const index = likeButtonElement.dataset.index;
-       
-
         console.log(index); 
 
-      if (commentList[index].isActiveLike === false) { 
+      if (commentList[index].isActiveLike === false) {
         commentList[index].isActiveLike = true; 
         commentList[index].likesCounter++; 
-      } else { 
+      }
+        
+    
+       else if (commentList[index].likesCounter === 0) {
+        commentList[index].isActiveLike = true; 
+        commentList[index].likesCounter++; 
+       }
+
+      else  {
         commentList[index].isActiveLike = false; 
         commentList[index].likesCounter--; 
       }
-      
       renderCommentList();
-      
+        
       });
       }
-      }
+
+    }
+      
 
 
     const renderCommentList = () => {
