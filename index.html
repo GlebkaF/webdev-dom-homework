@@ -120,7 +120,7 @@
 
 
 
-buttonElement.addEventListener("click", () => {
+    buttonElement.addEventListener("click", () => {
     commInputElement.style.backgroundColor = "";
     nameInputElement.style.backgroundColor = "";
     if (commInputElement.value === "" || nameInputElement.value === "") {
@@ -169,40 +169,7 @@ buttonElement.addEventListener("click", () => {
     }
    
 
-
-
     let commentsData = [];
-
-
-
-    // function sendCommentToServer(comment) {
-    //     const postData = {
-    //         name: nameInputElement.value,
-    //         text: commInputElement.value,
-    //     };
-
-    //     fetch("https://wedev-api.sky.pro/api/v1/yana-orlova/comments", {
-    //         method: "POST",
-    //         // headers: {
-    //         //     "Content-Type": "application/json",
-    //         // },
-    //         body: JSON.stringify(postData),
-    //     }).then((response) => {
-    //         if (!response.ok) {
-    //             throw new Error("Network response was not ok");
-    //         }
-
-    //     }).then(() => {
-    //         // Обработка успешной отправки комментария
-    //         // Очищаем поля ввода
-    //         commInputElement.value = "";
-    //         nameInputElement.value = "";
-    //         getCommentsFromServer()
-    //         console.log("Comment sent successfully:");
-    //     }).catch((error) => {
-    //         console.error("Fetch error:", error);
-    //     });
-    // }
 
 
     function getCommentsFromServer() {
@@ -227,7 +194,7 @@ buttonElement.addEventListener("click", () => {
             };
         }); 
 
-console.log(appComments)
+    console.log(appComments)
         commentsData = appComments;
         renderComments();
     })
@@ -252,16 +219,30 @@ function sendCommentToServer(comment) {
 
         fetch("https://wedev-api.sky.pro/api/v1/yana-orlova/comments", {
             method: "POST",
-            // headers: {
-            //     "Content-Type": "application/json",
-            // },
-            body: JSON.stringify(postData),
-        }).then((response) => {
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
+            body: JSON.stringify(
+                postData, {forceError: true}
+                ),
+        })
+        .then((response) => {
+            if (response.status === 500) {
+                //код который обработает ошибку
+                throw new Error('Сервер упал');
+            } else {
+                return response.json();
+            }
+            if (response.status === 400) {
+                //код который обработает ошибку
+                throw new Error('Сервер упал');
+            } else {
+                return response.json();
             }
 
-        }).then(() => {
+            // if (!response.ok) {
+            //     throw new Error("Network response was not ok");
+            //}
+
+        }).
+        then(() => {
             // Обработка успешной отправки комментария
             // Очищаем поля ввода
             commInputElement.value = "";
@@ -274,7 +255,9 @@ function sendCommentToServer(comment) {
 
         })
             .catch((error) => {
+            alert("Кажется что-то пошло не так, попробуй позже");
             console.error("Fetch error:", error);
+            
         });
     }
 
