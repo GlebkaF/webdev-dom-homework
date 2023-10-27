@@ -3,11 +3,12 @@ let isLoading = false;
 
 //Нашла форму добавления комментариев
 const formAddComm = document.querySelector('.add-form');
+//рендер формы для написания комментария
 const renderForm = () => {
   if (isLoading === true) {
     console.log(isLoading);
     formAddComm.innerHTML =
-      ` <div>Комменатрий добавляется </div>
+      ` <div>Комментарий добавляется </div>
     `
   } else {
     console.log(isLoading);
@@ -25,14 +26,11 @@ const renderForm = () => {
   <div class="add-form-row">
     <button class="add-form-button">Написать</button>
   </div>
-</div>`
+</div>`;
+    addCommentsListener();
   }
 }
 renderForm();
-
-//Нашла два инпута
-const nameInputElement = document.querySelector('.add-form-name');
-const commentInputElement = document.querySelector('.add-form-text');
 
 //Нашла блок с комментариями и сами комментарии
 const blockComments = document.querySelector('.comments');
@@ -43,12 +41,8 @@ const writeButton = document.querySelector('.add-form-button');
 writeButton.disabled = true;
 writeButton.style.backgroundColor = 'grey';
 
-
-
 //Нашла кнопку удаления
 const deleteButton = document.querySelector('.remove-button');
-
-
 
 //массив с комментариями
 let comments = [];
@@ -74,17 +68,16 @@ const initLikeButtonsListener = () => {
   }
 }
 
-
 //Отслеживает инпуты
 const isActive = () => {
-  if (nameInputElement.value !== '' && commentInputElement.value !== '') {
+  if (document.querySelector('.add-form-name').value !== '' && document.querySelector('.add-form-text').value !== '') {
     writeButton.disabled = false;
     writeButton.style.backgroundColor = '#bcec30';
   }
 }
 
-nameInputElement.addEventListener('input', isActive);
-commentInputElement.addEventListener('input', isActive);
+document.querySelector('.add-form-name').addEventListener('input', isActive);
+document.querySelector('.add-form-text').addEventListener('input', isActive);
 
 //Изменение комментария
 const initUpdateButtonsListener = () => {
@@ -196,8 +189,17 @@ const getComments = () => {
 }
 getComments();
 
+//Добавляет обработчик на кнопку Написать
+function addCommentsListener() {
+  document.querySelector('.add-form-button')
+    .addEventListener('click', addComments)
+}
+
 //Функция добавления комментария
-const addComments = () => {
+function addComments() {
+  //Нашла два инпута
+  const nameInputElement = document.querySelector('.add-form-name');
+  const commentInputElement = document.querySelector('.add-form-text');
   isLoading = true;
   renderForm();
   //Добавление в массив новые комменатарии
@@ -214,6 +216,8 @@ const addComments = () => {
     response.json().then((responseData) => {
       comments = responseData.comments;
       getComments();
+      isLoading = false;
+      renderForm();
     })
   })
 
@@ -221,13 +225,8 @@ const addComments = () => {
   commentInputElement.value = '';
   writeButton.disabled = true;
   writeButton.style.backgroundColor = 'grey';
-  isLoading = false;
-  renderForm();
+
 }
-
-
-//При нажатии на кнопку "Написать" добавляется новый комментрий
-writeButton.addEventListener('click', addComments)
 
 //При нажатии на энтер добавляется новый комментарий
 formAddComm.addEventListener('keyup', (elem) => {
