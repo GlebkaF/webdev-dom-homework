@@ -43,6 +43,7 @@
     const hours = currentDate.getHours();
     const minutes = currentDate.getMinutes();
 
+
     const clickAddButton = () => {
     addFormBtn.addEventListener('click', () => {
       addFormName.classList.remove('form-error');
@@ -89,6 +90,29 @@
       },
     ];
 
+    const likerFunction = () => {
+
+      const likesButtonElements = document.querySelectorAll('.like-button'); 
+
+
+      for (const  likeButtonElement of likesButtonElements){
+
+      likeButtonElement.addEventListener('click', () => {
+        const index = likeButtonElement.dataset.index;
+        console.log(index); 
+      if (commentList[index].isActiveLike === false) { 
+        commentList[index].isActiveLike = true; 
+        commentList[index].likesCounter++; 
+      } else { 
+        commentList[index].isActiveLike = false; 
+        commentList[index].likesCounter--; 
+      }
+      renderCommentList();
+      });
+      }
+      }
+
+
     const renderCommentList = () => {
 
       const commentListHTML = commentList.map((comment) => {
@@ -112,33 +136,13 @@
       }).join('');
       // console.log(commentListHTML);
       list.innerHTML = commentListHTML;
+    likerFunction();
       
     };
 
   renderCommentList();
 
-    const likerFunction = () => {
-
-      const likesButtonElements = document.querySelectorAll('.like-button'); 
-      
-      
-      for (const  likeButtonElement of likesButtonElements){
-
-      likeButtonElement.addEventListener('click', () => {
-        const index = likeButtonElement.dataset.index;
-        console.log(index); 
-      if (commentList[index].isActiveLike === false) { 
-        commentList[index].isActiveLike = true; 
-        commentList[index].likesCounter++; 
-      } else { 
-        commentList[index].isActiveLike = false; 
-        commentList[index].likesCounter--; 
-      }
-      renderCommentList();
-      });
-    }
-  }
-    likerFunction();
+   
 
     console.log("It works!");
   </script>
