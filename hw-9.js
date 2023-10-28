@@ -1,8 +1,11 @@
 // "use strict";
 let isLoading = false;
+
 document.querySelector('.container').style.display = "none";
+
 //Нашла форму добавления комментариев
 const formAddComm = document.querySelector('.add-form');
+
 //рендер формы для написания комментария
 const renderForm = () => {
   if (isLoading === true) {
@@ -32,6 +35,16 @@ const renderForm = () => {
 }
 renderForm();
 
+// Функция для имитации запросов в API
+// Не смотрите особо на внутренности, мы разберемся с этим позже
+function delay(interval = 300) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, interval);
+  });
+}
+
 //Нашла блок с комментариями и сами комментарии
 const blockComments = document.querySelector('.comments');
 
@@ -54,16 +67,36 @@ const initLikeButtonsListener = () => {
   for (const likeButton of likeButtons) {
     likeButton.addEventListener('click', (event) => {
       event.stopPropagation();
+      //функция для проверки на состояние загрузки и присваивание класса с анимацией
+      const loadingLike = () => {
+        if (isLikeLoading) {
+          return likeButton.classList.add('-loading-like');
+        } else {
+          return likeButton.classList.remove('-loading-like');
+        }
+      }
+      //состояние загрузки
+      let isLikeLoading = true;
+      loadingLike();
       //Присвоила индексу весь элемент массива
       const index = likeButton.dataset.index;
-      if (comments[index].isLike) {
-        comments[index].isLike = false;
-        comments[index].likes -= 1;
-      } else {
-        comments[index].isLike = true;
-        comments[index].likes += 1;
-      }
-      renderComments();
+      delay(2000).then(() => {
+        if (comments[index].isLike) {
+          comments[index].isLike = false;
+          comments[index].likes -= 1;
+        } else {
+          comments[index].isLike = true;
+          comments[index].likes += 1;
+        }
+
+      })
+        .then(() => {
+          isLikeLoading = false;
+          return loadingLike();
+        })
+        .then(() => {
+          return renderComments();
+        });
     });
   }
 }
@@ -187,8 +220,8 @@ const getComments = () => {
     })
     .then((responseData) => {
       comments = responseData.comments;
-      renderComments();
-    })
+      return renderComments();
+    });
 }
 
 getComments();
@@ -227,7 +260,7 @@ function addComments() {
     })
     .then((data) => {
       isLoading = false;
-      renderForm();
+      return renderForm();
     })
 
   nameInputElement.value = '';
