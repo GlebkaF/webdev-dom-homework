@@ -124,7 +124,7 @@ const initUpdateCommentListener = () => {
 //функция для работы со временем
 const formatDate = (dateString) => {
   //Работа со временем
-  const datePublish = new Date(); //создание времени
+  const datePublish = new Date(dateString); //создание времени
   const months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']; //Правильная расстановка месяцей
   let dayPublish = datePublish.getDate(); //Получение дня
   let monthPublish = months[datePublish.getMonth()]; //Получение месяца
@@ -146,8 +146,7 @@ const formatDate = (dateString) => {
 }
 
 //Рендерит комментарии
-const renderComments = () => {
-
+function renderComments() {
   blockComments.innerHTML = comments.map((comment, index) => {
     return `
           <li class="comment" data-index='${index}'>
