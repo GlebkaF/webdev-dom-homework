@@ -11,28 +11,32 @@
       <ul class="comments">
       
       </ul>
+      <h2 class="add-comment-text">Комментарий добавляется...</h2>
       <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
-        </div>
+  
+            <input
+              type="text"
+              class="add-form-name"
+              placeholder="Введите ваше имя"
+            />
+            <textarea
+              type="textarea"
+              class="add-form-text"
+              placeholder="Введите ваш коментарий"
+              rows="4"
+            ></textarea>
+            <div class="add-form-row">
+              <button class="add-form-button">Написать</button>
+            </div>
 
-        <button class="deletelastcomment">Удалить последний комментарий</button>
+            <button class="deletelastcomment">Удалить последний комментарий</button>
       </div>
     </div>
   </body>
 
   <script>
+    const addcommentText  = document.querySelector('.add-comment-text')
+    const containerElement = document.querySelector('.add-form')
     const comments_containerElement = document.querySelector('.comments');
     const massage_sendButton = document.querySelector('.add-form-button');
     const nameinputElement = document.querySelector('.add-form-name');
@@ -43,6 +47,7 @@
 
     let isLoading = true;
 
+    addcommentText.classList.add("display-none");
 
     // const comments = [
     //   {
@@ -67,15 +72,35 @@
     }
 
 
+    function delay(interval = 300) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, interval);
+      });
+    }
+
+
+
+
+
     let comments = [];
 
 
       function fetchGET() {
-        fetch("https://wedev-api.sky.pro/api/v1/artemiy-babichev/comments" , {
+        return fetch("https://wedev-api.sky.pro/api/v1/artemiy-babichev/comments" , {
         method : "GET"
-      }).then((response) => {
-          response.json().then((responseData) => {
-              appComments = responseData.comments.map((comment) => {
+      })
+      .then((response) => {
+          return response.json()
+      })
+      .then((response) => {
+        addcommentText.classList.add("display-none");
+        containerElement.classList.remove("display-none");
+        return response;
+      })
+      .then((responseData) => {
+               appComments = responseData.comments.map((comment) => {
                 return {
                   name: comment.author.name,
                   date: functionDateConverter(new Date(comment.date)),
@@ -89,8 +114,21 @@
               comments = appComments;
               renderComments();
           })
-      })
+         
+      
     }
+
+      function fetchPOST() {
+          return   fetch("https://wedev-api.sky.pro/api/v1/artemiy-babichev/comments" , {
+          method : "POST",
+          body : JSON.stringify({
+            text : massageinputElement.value,
+            name : nameinputElement.value,
+          })
+       })
+      } 
+
+    
 
     fetchGET();
 
@@ -104,16 +142,22 @@
       const likebuttonElements = document.querySelectorAll('.like-button');
       for(const likebuttonElement of likebuttonElements) {
         likebuttonElement.addEventListener("click" , (event) => {
-          event.stopPropagation();
-          if ( comments[likebuttonElement.dataset.index].isLike === false ) {
-            comments[likebuttonElement.dataset.index].likeCounter = comments[likebuttonElement.dataset.index].likeCounter + 1;
-            comments[likebuttonElement.dataset.index].isLike = true;
-          } else if ( comments[likebuttonElement.dataset.index].isLike === true ) {
-            comments[likebuttonElement.dataset.index].isLike = false;
-            comments[likebuttonElement.dataset.index].likeCounter = comments[likebuttonElement.dataset.index].likeCounter - 1;
-          }
-          renderComments();
-          
+          likebuttonElement.classList.add("-loading-like");
+          delay(3000).
+          then(() => {
+            likebuttonElement.classList.remove("-loading-like");
+            event.stopPropagation();
+            if ( comments[likebuttonElement.dataset.index].isLike === false ) {
+              comments[likebuttonElement.dataset.index].likeCounter = comments[likebuttonElement.dataset.index].likeCounter + 1;
+              comments[likebuttonElement.dataset.index].isLike = true;
+            } else if ( comments[likebuttonElement.dataset.index].isLike === true ) {
+              comments[likebuttonElement.dataset.index].isLike = false;
+              comments[likebuttonElement.dataset.index].likeCounter = comments[likebuttonElement.dataset.index].likeCounter - 1;
+            }
+            renderComments();
+            return response
+          })      
+                  
         })
       }
     }
@@ -179,6 +223,7 @@
    
         }
 
+      
 
         return `
         <li class="comment" data-index="${index}">
@@ -227,7 +272,10 @@
 
 
     function addComment() {
-       
+      addcommentText.classList.remove("display-none");
+      containerElement.classList.add("display-none");
+
+
       if( Number((new Date()).getMonth()) === 10 || Number((new Date()).getMonth()) === 11 || Number((new Date()).getMonth()) === 12 ) {
         mounthdate = (new Date()).getMonth();
     }else {
@@ -251,15 +299,8 @@
         return
       }
 
-       fetch("https://wedev-api.sky.pro/api/v1/artemiy-babichev/comments" , {
-          method : "POST",
-          body : JSON.stringify({
-            text : massageinputElement.value,
-            name : nameinputElement.value,
-          })
-       })
-       
-
+      
+       fetchPOST();
        fetchGET();
         
         nameinputElement.value = "";
@@ -286,15 +327,7 @@
       comments_containerElement.removeChild(comments_containerElement.lastChild);
     })
 
-
-
-
- 
     
-
-
-
-
     
     
 
