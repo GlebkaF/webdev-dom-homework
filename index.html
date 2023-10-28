@@ -74,6 +74,8 @@
         .replaceAll(">","&gt;")
         .replaceAll('"',"&quot;"),
         userDate: `${day}.${month}.${year} ${hours}:${minutes}`,
+        isActiveLike: false,
+        likesCounter: 0,
 
     })
     renderCommentList();
@@ -112,20 +114,12 @@
       likeButtonElement.addEventListener('click', (event) => {
         event.stopPropagation();
         const index = likeButtonElement.dataset.index;
-        console.log(index); 
+        // console.log(index); 
 
       if (commentList[index].isActiveLike === false) {
         commentList[index].isActiveLike = true; 
         commentList[index].likesCounter++; 
-      }
-        
-    
-       else if (commentList[index].likesCounter === 0) {
-        commentList[index].isActiveLike = true; 
-        commentList[index].likesCounter++; 
-       }
-
-      else  {
+      } else  {
         commentList[index].isActiveLike = false; 
         commentList[index].likesCounter--; 
       }
@@ -136,26 +130,29 @@
 
     }
       
-    const replyCommentFunction = () => {
-      const commentsReplyEl = document.querySelectorAll('.comment-text');
+
+const replyCommentFunction = () => {
+
+  const addFormText = document.querySelector('.add-form-text');
+  const commentsReplyEl = document.querySelectorAll('.comment-text');
 
 
-    for (const replyComment of commentsReplyEl) {
-      const userNamesEl =  document.querySelectorAll('.userName');
-      for(const userName of userNamesEl){
-        replyComment.addEventListener('click', (event) => {
 
-        event.stopPropagation();
+for (const  commentReplyEl of commentsReplyEl){
 
+  commentReplyEl.addEventListener('click', (event) => {
+  event.stopPropagation();
+  const index = commentReplyEl.dataset.index;
+  console.log(index); 
+  addFormText.value = `>${commentList[index].user} ${commentReplyEl.textContent}`
 
-        addFormText.textContent = `> ${replyComment.textContent} ${userName.textContent},`;
-          console.log(replyComment.value);
-})  
-      }
-   
+renderCommentList();
+  
+});
 }
 }
-replyCommentFunction();
+
+
 
 
     const renderCommentList = () => {
@@ -170,7 +167,7 @@ replyCommentFunction();
           </div>
 
           <div class="comment-body">
-            <div class="comment-text">
+            <div class="comment-text" data-index="${index}">
               ${quoteText}
             </div>
           </div>
