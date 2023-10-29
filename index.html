@@ -45,6 +45,35 @@
     const minutes = currentDate.getMinutes();
 
 
+    const getCommentFetch = fetch("https://wedev-api.sky.pro/api/v1/unicorni/comments", {
+      method: "GET",
+    });
+    console.log(getCommentFetch);
+
+    getCommentFetch.then((response)=> {
+
+      const jsonPromise = response.json();
+
+      
+      jsonPromise.then((responseData)=> {
+        console.log(responseData);
+
+        let appComments = responseData.comments.map((comment)=> {
+          return {
+            user: comment.author.name,
+            userDate: new Date(comment.date),
+            userComment: comment.text,
+            isActiveLike: false,
+            likesCounter: comment.likes,
+          };
+        });
+        // console.log(appComments);
+        commentList = appComments;
+        renderCommentList();    
+
+      });
+    });
+    
 
     const clickAddButton = () => {
     addFormBtn.addEventListener('click', () => {
@@ -86,7 +115,7 @@
    clickAddButton();
 
 
-    const commentList = [
+    let commentList = [
       {
         user: 'Глеб Фокин',
         userComment: 'Это будет первый комментарий на этой странице',
@@ -157,9 +186,9 @@ renderCommentList();
 
     const renderCommentList = () => {
      
-      const commentListHTML = commentList.map((comment,index) => {
+      let commentListHTML = commentList.map((comment,index) => {
 
-        const quoteText = comment.userComment.replace( /&gt; /g, "<div class='quote'>" ).replace(/,/g, '</div><br>');
+        
         return `<li class="comment">
           <div class="comment-header">
             <div class = "userName">${comment.user}</div>
@@ -168,7 +197,7 @@ renderCommentList();
 
           <div class="comment-body">
             <div class="comment-text" data-index="${index}">
-              ${quoteText}
+              ${comment.userComment}
             </div>
           </div>
           <div class="comment-footer">
@@ -180,7 +209,7 @@ renderCommentList();
           </div>
         </li>`;
       }).join('');
-      console.log(commentListHTML);
+      // console.log(commentListHTML);
       list.innerHTML = commentListHTML;
 
       clickAddButton();
