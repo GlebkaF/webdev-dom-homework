@@ -33,7 +33,7 @@ export function renderComments(comments) {
              
            </div>
          </div>
-         <button data-index="${index}" class="add-form-button delete-button">Удалить</button>
+        
        </li>`
 
   }).join("");
