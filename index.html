@@ -44,6 +44,23 @@
     const hours = currentDate.getHours();
     const minutes = currentDate.getMinutes();
 
+    let commentList = [
+      // {
+      //   user: 'Глеб Фокин',
+      //   userComment: 'Это будет первый комментарий на этой странице',
+      //   userDate: '12.02.22 12:18',
+      //   likesCounter: 75,
+      //   isActiveLike: true,
+
+      // },
+      // {
+      //   user: 'Варвара',
+      //   userComment: 'Мне нравится как оформлена эта страница! ❤',
+      //   userDate: '13.02.22 19:22',
+      //   likesCounter: 3,
+      //   isActiveLike: false,
+      // },
+    ];
 
     const getCommentFetch = fetch("https://wedev-api.sky.pro/api/v1/unicorni/comments", {
       method: "GET",
@@ -75,6 +92,9 @@
     });
     
 
+
+   
+
     const clickAddButton = () => {
     addFormBtn.addEventListener('click', () => {
       addFormName.classList.remove('form-error');
@@ -90,23 +110,59 @@
         return;
       }
 
-      commentList.push({
-        user: addFormName.value
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;"),
+    //   commentList.push({
+    //     user: addFormName.value
+    //     .replaceAll("&","&amp;")
+    //     .replaceAll("<","&lt;")
+    //     .replaceAll(">","&gt;")
+    //     .replaceAll('"',"&quot;"),
 
-        userComment: addFormText.value
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;"),
-        userDate: `${day}.${month}.${year} ${hours}:${minutes}`,
-        isActiveLike: false,
-        likesCounter: 0,
+    //     userComment: addFormText.value
+    //     .replaceAll("&","&amp;")
+    //     .replaceAll("<","&lt;")
+    //     .replaceAll(">","&gt;")
+    //     .replaceAll('"',"&quot;"),
+    //     userDate: `${day}.${month}.${year} ${hours}:${minutes}`,
+    //     isActiveLike: false,
+    //     likesCounter: 0,
 
-    })
+    // })
+
+    const addCommentFetch = fetch("https://wedev-api.sky.pro/api/v1/unicorni/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        text: addFormText.value,
+        name: addFormName.value,
+        })
+    });
+    console.log(addCommentFetch);
+
+    getCommentFetch.then((response)=> {
+
+      const jsonPromise = response;
+      // .json();
+
+      
+      jsonPromise.then((responseData)=> {
+        console.log(responseData);
+
+        let appComments = responseData.comments.map((comment)=> {
+          return {
+            user: comment.author.name,
+            userDate: new Date(comment.date),
+            userComment: comment.text,
+            isActiveLike: false,
+            likesCounter: comment.likes,
+          };
+        });
+        // console.log(appComments);
+        commentList = appComments;
+        renderCommentList();    
+        getCommentFetch();
+      });
+    });
+    
+
     renderCommentList();
         addFormName.value = "";
         addFormText.value = "";   
@@ -115,23 +171,7 @@
    clickAddButton();
 
 
-    let commentList = [
-      {
-        user: 'Глеб Фокин',
-        userComment: 'Это будет первый комментарий на этой странице',
-        userDate: '12.02.22 12:18',
-        likesCounter: 75,
-        isActiveLike: true,
-
-      },
-      {
-        user: 'Варвара',
-        userComment: 'Мне нравится как оформлена эта страница! ❤',
-        userDate: '13.02.22 19:22',
-        likesCounter: 3,
-        isActiveLike: false,
-      },
-    ];
+    
 
     const likerFunction = () => {
 
