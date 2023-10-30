@@ -3,8 +3,8 @@
 
 <head>
     <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="styles.css"/>
 </head>
 
 <body>
@@ -12,6 +12,7 @@
         <ul id="ul" class="comments">
             <!-- Список рендерится из Js -->
         </ul>
+            <div class="pre-loader" id="pre-loader"></div>
         <div class="add-form">
             <input id="inputName" type="text" class="add-form-name" placeholder="Введите ваше имя" />
             <textarea id="inputText" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
@@ -24,6 +25,7 @@
 </body>
 <script>
     "use strict";
+    const preLoaderText = document.getElementById("pre-loader");
     const nameElement = document.getElementById("inputName");
     const textElement = document.getElementById("inputText");
     const buttonElement = document.getElementById("buttonPush");
@@ -104,8 +106,6 @@
     };
     renderComments();
 
-
-
     buttonElement.disabled = true;
     nameElement.addEventListener('input', () => {
         if ((nameElement.value === '') || (textElement.value === '')) {
@@ -130,24 +130,56 @@
         }
     })
 
-    fetch("https://wedev-api.sky.pro/api/v1/dmitriev-denis/comments", {
-      method: "GET",
-    }).then((response) => {
-      response.json().then((responseData) => {
-        const getApiComments = responseData.comments.map((comment) => {
-          return {
-            author: comment.author.name,
-            date: getCorrectDate(comment.date),
-            likes: comment.likes,
-            isLiked: false,
-            text: comment.text,
-          };
-        });
-        commentsArray = getApiComments;
-				renderComments();
-				});
-			});
+    // fetch("https://wedev-api.sky.pro/api/v1/dmitriev-denis/comments", {
+    //   method: "GET",
+    // }).then((response) => {
+    //   response.json().then((responseData) => {
+    //     const getApiComments = responseData.comments.map((comment) => {
+    //       return {
+    //         author: comment.author.name,
+    //         date: getCorrectDate(comment.date),
+    //         likes: comment.likes,
+    //         isLiked: false,
+    //         text: comment.text,
+    //       };
+    //     });
+    //     commentsArray = getApiComments;
+	// 			renderComments();
+	// 			});
+	// 		});
 
+    preLoaderText.textContent = "Загрузка комментариев ...";
+	const getFetchApi = () => {
+		return fetch(
+			"https://wedev-api.sky.pro/api/v1/dmitriev-denis/comments",
+			{
+				method: "GET",
+			}
+		)
+			.then((response) => {
+				return response.json();
+			})
+			.then((response) => {
+				const getApiComments = response.comments.map((comment) => {
+					return {
+						author: comment.author.name,
+						date: getCorrectDate(comment.date),
+						likes: comment.likes,
+						isLiked: false,
+						text: comment.text,
+					};
+				});
+				commentsArray = getApiComments;
+				renderComments();
+			})
+			.then((response) => {
+				preLoaderText.textContent = "";
+				preLoaderText.classList.remove("margin");
+            });
+        };
+
+    getFetchApi();
+            
     buttonElement.addEventListener('click', () => {
         nameElement.classList.remove('error');
         textElement.classList.remove('error');
@@ -159,6 +191,7 @@
         }
         getCorrectDate();
 
+        preLoaderText.textContent = "Комментарий публикуется...";
         fetch("https://wedev-api.sky.pro/api/v1/dmitriev-denis/comments", {
 				method: "POST",
 				body: JSON.stringify({
@@ -176,21 +209,9 @@
                 fetch("https://wedev-api.sky.pro/api/v1/dmitriev-denis/comments", {
       method: "GET",
     }).then((response) => {
-      response.json().then((responseData) => {
-        const getApiComments = responseData.comments.map((comment) => {
-          return {
-            author: comment.author.name,
-            date: getCorrectDate(comment.date),
-            likes: comment.likes,
-            isLiked: false,
-            text: comment.text,
-          };
-        });
-        commentsArray = getApiComments;
-				renderComments();
-				});
+        return getFetchApi();
 			});		
-    })
+    });
 
         nameElement.value = '';
         textElement.value = '';
