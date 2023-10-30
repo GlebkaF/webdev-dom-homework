@@ -41,7 +41,9 @@ const fetchArray = () => {
         }
 
 
+
         )
+        document.getElementById("loadingFeed").style.display = 'none';
 
         renderComments();
     })
@@ -51,7 +53,7 @@ fetchArray();
 
 const arrayPost = () => {
     document.getElementById("form-add").style.display = 'none';
-    document.getElementById("loadingMessage").style.display = 'block'; 
+    document.getElementById("loadingMessage").style.display = 'block';
 
 
 
@@ -65,19 +67,24 @@ const arrayPost = () => {
             name: nameElement.value
                 .replaceAll("<", "&lt;")
                 .replaceAll(">", "&gt;"),
+
         })
 
 
 
     }).then(() => {
         fetchArray();
-        setTimeout(function () {
-            document.getElementById("form-add").style.display = 'block';
-            document.getElementById("loadingMessage").style.display = 'none';
+    })
+        .finally(() => {
 
-        }, 2000);
 
-    });
+            setTimeout(function () {
+                document.getElementById("form-add").style.display = 'flex';
+                document.getElementById("loadingMessage").style.display = 'none';
+
+            }, 1000);
+
+        });
 
 };
 
