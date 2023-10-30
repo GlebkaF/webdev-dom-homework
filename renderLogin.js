@@ -72,7 +72,7 @@ export const renderReg = ({ fetchComments }) => {
   />
   <input id="login-input"
         type="text"
-        class="add-form-name add-form-name-login"
+        class="add-form-text add-form-text-login"
         placeholder="Введите логин"
       />
       <textarea id="password-input"
@@ -82,10 +82,9 @@ export const renderReg = ({ fetchComments }) => {
         rows="4"
         ></textarea>
       <div class="add-form-row add-form-row-login">
-        <button id="login-button" class="add-form-button add-form-button-login">Войти</button>
+        <button id="login-button" class="add-form-button add-form-button-login">Зарегистрироваться</button>
       </div>
       <div class="login-link">
-        <div id="registration">Зарегистрироваться</div>
         <a class="login-link" href="index.html">Главная</a>
       </div>
     </div>
