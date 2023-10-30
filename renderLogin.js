@@ -1,14 +1,13 @@
 import { login, token, setToken, setName } from "./api.js";
 import { apiCommentsGet, comments } from "./main.js";
-import { renderFunction } from "./renderFunction.js";
+// import { renderFunction } from "./renderFunction.js";
 
 // export function setName(newName) {
 //   window.userName = newName;
 // }
 
-
 export const renderLogin = () => {
-  const appElement = document.getElementById('app');
+  const appElement = document.getElementById("app");
 
   const loginHtml = `
   <div class="container">
@@ -22,36 +21,32 @@ export const renderLogin = () => {
         <button id="login-button" class="login-button">Войти</button>
   </div>
 </div>
-   ` 
-
+   `;
 
   appElement.innerHTML = loginHtml;
 
-
-// apiCommentsGet({ comments })
   const buttonLoginElement = document.getElementById("login-button");
   const loginInputElement = document.getElementById("login-input");
   const passwordInputElement = document.getElementById("password-input");
 
-token? '' : buttonLoginElement.addEventListener('click', () => {
-  login({
-    login: loginInputElement.value,
-    password: passwordInputElement.value,
-    })
-    .then((responseData) => {
-    setName(responseData.user.name);
-    setToken(responseData.user.token);
-    return responseData;
-    }).then(() => {
-       apiCommentsGet({ comments });
-    }).catch((error) => {
-      console.error(error)
-      console.warn('Проблемы с паролем');
-    })
-}) 
-}
-
-
-
-
-
+  token
+    ? ""
+    : buttonLoginElement.addEventListener("click", () => {
+        login({
+          login: loginInputElement.value,
+          password: passwordInputElement.value,
+        })
+          .then((responseData) => {
+            setName(responseData.user.name);
+            setToken(responseData.user.token);
+            return responseData;
+          })
+          .then(() => {
+            apiCommentsGet({ comments });
+          })
+          .catch((error) => {
+            console.error(error);
+            console.warn("Проблемы с паролем");
+          });
+      });
+};
