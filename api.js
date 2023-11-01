@@ -12,11 +12,17 @@ export const setToken = (newtoken) => {
   token = newtoken;
 }
 
+export let user;
+console.log(user);
+export const setUser = (newUser) => {
+  user = newUser;
+}
+
 export function getComments() {
   return fetch("https://wedev-api.sky.pro/api/v2/elena-vakulenko/comments", {
     method: "GET",
     headers: {
-      Autorization: `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
   })
     .then((response) => {
@@ -40,7 +46,7 @@ export function postComment({ comm }) {
       // forceError: true,
     }),
     headers: {
-      Autorization: `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
   })
     .then((response) => {
