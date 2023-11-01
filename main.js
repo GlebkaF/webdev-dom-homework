@@ -23,6 +23,9 @@ const fetchArray = () => {
 
     }
     ).then((response) => {
+        if (response.status === 500) {
+            throw new Error("Ошибка сервера")
+        };
         return response.json();
     }).then((responseData) => {
         commentsArray = [];
@@ -46,6 +49,12 @@ const fetchArray = () => {
         document.getElementById("loadingFeed").style.display = 'none';
 
         renderComments();
+    }).catch((Error) => {
+        if (Error.message === 'Failed to fetch') {
+            alert("Проблемы с интернетом");
+        } else {
+            alert(Error.message)
+        }
     })
 };
 fetchArray();
@@ -67,13 +76,31 @@ const arrayPost = () => {
             name: nameElement.value
                 .replaceAll("<", "&lt;")
                 .replaceAll(">", "&gt;"),
+            forceError: true,
 
         })
 
 
 
-    }).then(() => {
+    }).then((thenresponse) => {
+        if (thenresponse.status === 500) {
+            arrayPost();
+            // throw new Error("Ошибка сервера");
+        } else if (thenresponse.status === 400) {
+            throw new Error("Имя или текст комментария должны иметь 3 и более символов");
+        }
+        nameElement.value = '';
+        textElement.value = '';
+        buttonElement.disabled = true;
         fetchArray();
+    }).catch((cathError) => {
+        if (cathError.message === 'Failed to fetch') {
+            alert("Проблемы с интернетом");
+        } else {
+
+
+            alert(`${cathError.message}`)
+        }
     })
         .finally(() => {
 
@@ -342,9 +369,8 @@ buttonElement.addEventListener('click', () => {
     renderComments();
 
 
-    nameElement.value = '';
-    textElement.value = '';
-    buttonElement.disabled = true;
+
+
 });
 
 buttonElement.disabled = true;
