@@ -177,9 +177,10 @@
         method: "GET",
     })
     .then((response) => {
-        if (!response.ok) {
-            throw new Error("Network response was not ok");
-        }
+        if (response.status === 500) {
+                //код который обработает ошибку
+                throw new Error('Сервер упал');
+            } 
         return response.json();
     })
    .then((responseData) => {
@@ -203,6 +204,12 @@
             loaderComment.style.display = "none";
         })
     .catch((error) => {
+        if (error.message === 'Failed to fetch') {
+                    alert ('У вас неполадки с интернетом');
+                }
+                else {
+                    alert(error.message);
+                }
         console.error("Fetch error:", error);
     });
 }
@@ -215,27 +222,27 @@ function sendCommentToServer(comment) {
         const postData = {
             name: nameInputElement.value,
             text: commInputElement.value,
+            forceError: true,
+
         };
 
         fetch("https://wedev-api.sky.pro/api/v1/yana-orlova/comments", {
             method: "POST",
             body: JSON.stringify(
-                postData, {forceError: true}
+                postData
                 ),
         })
         .then((response) => {
             if (response.status === 500) {
                 //код который обработает ошибку
                 throw new Error('Сервер упал');
-            } else {
-                return response.json();
-            }
+            } 
             if (response.status === 400) {
                 //код который обработает ошибку
-                throw new Error('Сервер упал');
-            } else {
+                throw new Error('Неверные данные ввода');
+            } 
                 return response.json();
-            }
+        
 
             // if (!response.ok) {
             //     throw new Error("Network response was not ok");
@@ -249,17 +256,26 @@ function sendCommentToServer(comment) {
             nameInputElement.value = "";
            getCommentsFromServer()
             console.log("Comment sent successfully:");
-        }).then(() => {
-            addLoaderComment.style.display = "none";
-            addForm.style.display = "block";
-
         })
+            
+
             .catch((error) => {
-            alert("Кажется что-то пошло не так, попробуй позже");
+                if (error.message === 'Failed to fetch') {
+                    alert ('У вас неполадки с интернетом');
+                }
+                else {
+                    alert(error.message);
+                }
+            
             console.error("Fetch error:", error);
             
-        });
-    }
+        }).finally(() => {
+            addLoaderComment.style.display = "none";
+            addForm.style.display = "flex";
+
+
+        })
+}
 
     console.log("It works!");
 
