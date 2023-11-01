@@ -1,6 +1,6 @@
 import { addLikes } from "./addLikes.js";
 import { addQuote } from "./addQuote.js";
-import { postComment, token } from "./api.js";
+import { postComment, setUser, token } from "./api.js";
 import { renderLogin, renderReg } from "./renderLogin.js";
 import { fetchComments } from "./fetchComments.js";
 
@@ -41,7 +41,7 @@ export const renderComments = ({ comments, user }) => {
     <input id="name-input"
       type="text"
       class="add-form-name add-gray" readonly
-      placeholder="${user.user}"
+      placeholder="${user}"
     />
     <textarea id="comment-input"
       type="textarea"

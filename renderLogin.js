@@ -1,4 +1,4 @@
-import { login, setToken, token } from "./api.js";
+import { login, setToken, token, setUser } from "./api.js";
 import { fetchComments } from "./fetchComments.js";
 import { renderComments } from "./renderComments.js";
 import { comments } from "./fetchComments.js";
