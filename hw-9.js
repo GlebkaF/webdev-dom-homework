@@ -1,7 +1,8 @@
 // "use strict";
 let isLoading = false;
-
-document.querySelector('.container').style.display = "none";
+let commentElementError = '';
+let nameElementError = '';
+document.querySelector('.add-form').style.display = "none";
 
 //Нашла форму добавления комментариев
 const formAddComm = document.querySelector('.add-form');
@@ -18,19 +19,20 @@ const renderForm = () => {
     formAddComm.innerHTML = ` <input
     type="text"
     class="add-form-name"
-    placeholder="Введите ваше имя"
+    placeholder="Введите ваше имя" value = '${nameElementError}'
   />
   <textarea
     type="textarea"
     class="add-form-text"
     placeholder="Введите ваш коментарий"
     rows="4"
-  ></textarea>
+  >${commentElementError}</textarea>
   <div class="add-form-row">
     <button class="add-form-button">Написать</button>
   </div>
 </div>`;
     addCommentsListener();
+
   }
 }
 renderForm();
@@ -102,16 +104,16 @@ const initLikeButtonsListener = () => {
 }
 
 //Отслеживает инпуты
-const isActive = () => {
-  if (document.querySelector('.add-form-name').value !== '' && document.querySelector('.add-form-text').value !== '') {
+function isActive  ()  {
+  if (document.querySelector('.add-form-name').value.trim() !== '' && document.querySelector('.add-form-text').value.trim() !== '') {
     writeButton.disabled = false;
     writeButton.style.backgroundColor = '#bcec30';
   }
 }
 
+
 document.querySelector('.add-form-name').addEventListener('input', isActive);
 document.querySelector('.add-form-text').addEventListener('input', isActive);
-
 //Изменение комментария
 const initUpdateButtonsListener = () => {
   const updateButtons = document.querySelectorAll('.update-btn');
@@ -214,17 +216,21 @@ const getComments = () => {
     method: 'GET',
   })
     .then((response) => {
+      if (response.status === 500) {
+        throw new Error('Сервер сломался')
+      }
       document.querySelector('.loader').style.display = "none";
-      document.querySelector('.container').style.display = "flex";
+      document.querySelector('.add-form').style.display = "flex";
       return response.json()
     })
     .then((responseData) => {
       comments = responseData.comments;
       return renderComments();
-    });
+    })
 }
 
 getComments();
+
 
 //Добавляет обработчик на кнопку Написать
 function addCommentsListener() {
@@ -248,25 +254,58 @@ function addComments() {
         .replaceAll('<', '&lt;').replaceAll('>', '&gt;')
         .replaceAll("%BEGIN_QUOTE", "<div class='quote'>")
         .replaceAll("END_QUOTE%", "</div>"),
-      "name": nameInputElement.value
+      "name": nameInputElement.value,
+      forceError: false
     }),
-  }).
-    then((response) => {
-      return response.json()
+  })
+    .then((response) => {
+      if (response.status === 500) {
+        throw new Error('Сервер сломался')
+      };
+      if (response.status === 400) {
+        throw new Error('Плохой запрос');
+      };
+      return response.json();
     })
     .then((responseData) => {
       comments = responseData.comments;
       return getComments();
     })
     .then((data) => {
+      nameInputElement.value = '';
+      commentInputElement.value = '';
+      nameElementError = nameInputElement.value;
+      commentElementError = commentInputElement.value;
+      isLoading = false;
+      renderForm();
+      writeButton.disabled = true;
+      writeButton.style.backgroundColor = 'grey';
+    })
+    .catch((error) => {
+      if (error.message === "Сервер сломался") {
+        console.log(error.message);
+        nameElementError = nameInputElement.value;
+        commentElementError = commentInputElement.value;
+        // alert("Сервер сломался. Повторите позже.");
+        isLoading = false;
+        renderForm();
+
+        addComments();
+        return;
+      }
+      if (error.message === "Плохой запрос") {
+        console.log(error.message);
+        nameElementError = nameInputElement.value;
+        commentElementError = commentInputElement.value;
+        alert('Имя и комментарий должны быть не короче 3 символов')
+        isLoading = false;
+        renderForm();
+        return;
+      }
+      alert('Кажется, у вас сломался интернет, попробуйте позже');
       isLoading = false;
       return renderForm();
     })
-
-  nameInputElement.value = '';
-  commentInputElement.value = '';
-  writeButton.disabled = true;
-  writeButton.style.backgroundColor = 'grey';
 
 }
 
