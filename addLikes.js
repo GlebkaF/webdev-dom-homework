@@ -13,6 +13,7 @@ export const addLikes = ({ comments }) => {
     for (const likeButton of likeButtons) {
       likeButton.addEventListener("click", (event) => {
         event.stopPropagation();
+        
         const index = likeButton.dataset.index;
         comments[index].isLikeLoading = true;
 

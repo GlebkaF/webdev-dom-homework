@@ -32,7 +32,6 @@ export function getComments() {
 // fetchComments();
 
 export function postComment({ comm }) {
-  renderComments({ comments, fetchComments });
     return fetch("https://wedev-api.sky.pro/api/v2/elena-vakulenko/comments", {
     method: "POST",
     body: JSON.stringify({
@@ -47,12 +46,11 @@ export function postComment({ comm }) {
     .then((response) => {
       console.log(response);
       if (response.status === 500) {
-        throw new Error('Сервер сломался, попробуй позже');
+        throw new Error('Сервер сломался, попробуйте позже');
       } if (response.status === 400) {
-        throw new Error('Имя и комментарий должны быть не короче 3 символов');
-      } else {
+        throw new Error('Введены неверные логин или пароль');
+      } 
         return response.json();
-      }
     })
 }
 
@@ -64,13 +62,10 @@ export function login({ login, password }) {
       password,
     }),
   }).then((response) => {
-    console.log(response);
     if (response.status === 500) {
-      throw new Error('Сервер сломался, попробуй позже');
+      throw new Error('Сервер сломался, попробуйте позже');
     } if (response.status === 400) {
-      throw new Error('Логин и пароль должны быть не короче 3 символов');
-    } else {
-      return response.json();
+      throw new Error('Введены неверные логин или пароль');
     }
     return response.json();
   })

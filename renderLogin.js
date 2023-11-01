@@ -47,9 +47,9 @@ export const renderLogin = ({ fetchComments }) => {
       setToken(responseData.user.token);
       console.log(token);
       return responseData;
-    }).then(() => {
-      renderComments({ comments, fetchComments });
-    });
+    }).then((responseData) => {
+      renderComments({ comments, fetchComments, user:responseData });
+    })
   })
 
   const reg = document.getElementById("registration");
