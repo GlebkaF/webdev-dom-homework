@@ -44,28 +44,12 @@
     const hours = currentDate.getHours();
     const minutes = currentDate.getMinutes();
 
-    let commentList = [
-      // {
-      //   user: 'Глеб Фокин',
-      //   userComment: 'Это будет первый комментарий на этой странице',
-      //   userDate: '12.02.22 12:18',
-      //   likesCounter: 75,
-      //   isActiveLike: true,
-
-      // },
-      // {
-      //   user: 'Варвара',
-      //   userComment: 'Мне нравится как оформлена эта страница! ❤',
-      //   userDate: '13.02.22 19:22',
-      //   likesCounter: 3,
-      //   isActiveLike: false,
-      // },
-    ];
+    let commentList = [];
 
     const getCommentFetch = fetch("https://wedev-api.sky.pro/api/v1/unicorni/comments", {
       method: "GET",
     });
-    console.log(getCommentFetch);
+    // console.log(getCommentFetch);
 
     getCommentFetch.then((response)=> {
 
@@ -128,21 +112,17 @@
 
     // })
 
-    const addCommentFetch = fetch("https://wedev-api.sky.pro/api/v1/unicorni/comments", {
+    fetch("https://wedev-api.sky.pro/api/v1/unicorni/comments", {
       method: "POST",
       body: JSON.stringify({
         text: addFormText.value,
         name: addFormName.value,
         })
-    });
-    console.log(addCommentFetch);
+    })
 
-    getCommentFetch.then((response)=> {
+    .then((response)=> {
 
-      const jsonPromise = response;
-      // .json();
-
-      
+      const jsonPromise = response.json();
       jsonPromise.then((responseData)=> {
         console.log(responseData);
 
@@ -158,7 +138,7 @@
         // console.log(appComments);
         commentList = appComments;
         renderCommentList();    
-        getCommentFetch();
+
       });
     });
     
@@ -168,6 +148,7 @@
         addFormText.value = "";   
     });
    } 
+
    clickAddButton();
 
 
@@ -221,9 +202,6 @@ renderCommentList();
 }
 }
 
-
-
-
     const renderCommentList = () => {
      
       let commentListHTML = commentList.map((comment,index) => {
@@ -232,7 +210,7 @@ renderCommentList();
         return `<li class="comment">
           <div class="comment-header">
             <div class = "userName">${comment.user}</div>
-            <div>${comment.userDate}</div>
+            <div>${comment.userDate.toLocaleString()}</div>
           </div>
 
           <div class="comment-body">
