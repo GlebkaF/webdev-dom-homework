@@ -103,7 +103,7 @@ export const renderReg = ({ fetchComments }) => {
     }).then((responseData) => {
       console.log(token);
       setToken(responseData.user.token);
-      // setUser(responseData.user.user);
+      setUser(responseData.user.user);
       console.log(token);
     }).then(() => {
       fetchComments();
