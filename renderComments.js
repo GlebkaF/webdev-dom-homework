@@ -41,7 +41,7 @@ export const renderComments = ({ comments, user }) => {
     <input id="name-input"
       type="text"
       class="add-form-name add-gray" readonly
-      placeholder="${user}"
+      placeholder="${setUser.name}"
     />
     <textarea id="comment-input"
       type="textarea"

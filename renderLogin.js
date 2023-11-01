@@ -1,4 +1,4 @@
-import { login, setToken, token, setUser } from "./api.js";
+import { login, setToken, token } from "./api.js";
 import { fetchComments } from "./fetchComments.js";
 import { renderComments } from "./renderComments.js";
 import { comments } from "./fetchComments.js";
@@ -103,7 +103,7 @@ export const renderReg = ({ fetchComments }) => {
     }).then((responseData) => {
       console.log(token);
       setToken(responseData.user.token);
-      setUser(responseData.user.user);
+      setUser(responseData.user.name);
       console.log(token);
     }).then(() => {
       fetchComments();
