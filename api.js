@@ -13,7 +13,7 @@ export const setToken = (newtoken) => {
 }
 
 export let user;
-console.log(user);
+// console.log(user);
 export const setUser = (newUser) => {
   user = newUser;
 }
