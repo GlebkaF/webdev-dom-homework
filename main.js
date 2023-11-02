@@ -89,9 +89,13 @@ const arrayPost = () => {
         } else if (thenresponse.status === 400) {
             throw new Error("Имя или текст комментария должны иметь 3 и более символов");
         }
-        nameElement.value = '';
-        textElement.value = '';
-        buttonElement.disabled = true;
+        if (thenresponse.ok) {
+
+
+            nameElement.value = '';
+            textElement.value = '';
+            buttonElement.disabled = true;
+        }
         fetchArray();
     }).catch((cathError) => {
         if (cathError.message === 'Failed to fetch') {
