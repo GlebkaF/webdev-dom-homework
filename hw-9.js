@@ -32,7 +32,7 @@ const renderForm = () => {
   </div>
 </div>`;
     addCommentsListener();
-
+    isActive();
   }
 }
 renderForm();
@@ -49,12 +49,6 @@ function delay(interval = 300) {
 
 //Нашла блок с комментариями и сами комментарии
 const blockComments = document.querySelector('.comments');
-
-
-//Нашла кнопку написать и отключила ее
-const writeButton = document.querySelector('.add-form-button');
-writeButton.disabled = true;
-writeButton.style.backgroundColor = 'grey';
 
 //Нашла кнопку удаления
 const deleteButton = document.querySelector('.remove-button');
@@ -103,12 +97,24 @@ const initLikeButtonsListener = () => {
   }
 }
 
-//Отслеживает инпуты
-function isActive  ()  {
-  if (document.querySelector('.add-form-name').value.trim() !== '' && document.querySelector('.add-form-text').value.trim() !== '') {
-    writeButton.disabled = false;
-    writeButton.style.backgroundColor = '#bcec30';
-  }
+// Отслеживает инпуты
+function isActive() {
+  const writeButton = document.querySelector('.add-form-button');
+  writeButton.disabled = true;
+  writeButton.style.backgroundColor = 'grey';
+
+  document.querySelector('.add-form-name').addEventListener('input', () => {
+    if (document.querySelector('.add-form-name').value.trim() !== '' && document.querySelector('.add-form-text').value.trim() !== '') {
+      writeButton.disabled = false;
+      writeButton.style.backgroundColor = '#bcec30';
+    }
+  });
+  document.querySelector('.add-form-text').addEventListener('input', () => {
+    if (document.querySelector('.add-form-name').value.trim() !== '' && document.querySelector('.add-form-text').value.trim() !== '') {
+      writeButton.disabled = false;
+      writeButton.style.backgroundColor = '#bcec30';
+    }
+  });
 }
 
 
@@ -278,8 +284,6 @@ function addComments() {
       commentElementError = commentInputElement.value;
       isLoading = false;
       renderForm();
-      writeButton.disabled = true;
-      writeButton.style.backgroundColor = 'grey';
     })
     .catch((error) => {
       if (error.message === "Сервер сломался") {
