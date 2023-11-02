@@ -114,12 +114,13 @@
             <div class="comment-footer">
               <div class="likes">
                 <span class="likes-counter">${usersComment.likesCounter}</span>
-                <button class="like-button ${usersComment.isLiked ? '-active-like' : ''}" data-index="${index}" ${usersComment.isLiked ? 'disabled' : ''}></button>
+                <button class="like-button ${usersComment.isLiked ? '-active-like' : ''}" data-index="${index}"></button>
               </div>
             </div>
           </li>`;
       }).join("");
       listElement.innerHTML = usersHTML;
+      initLikesButtonListeners();
     }
 
     const initLikesButtonListeners = () => {
@@ -128,23 +129,19 @@
       for (const likeButton of likeButtons) {
         likeButton.addEventListener("click", () => {
           const index = parseInt(likeButton.getAttribute('data-index'));
-          const listItem = likeButton.closest('.comment');
-          const counterElement = listItem.querySelector('.likes-counter');
+          usersComments[index].isLiked = !usersComments[index].isLiked;
 
-          if (index >= 0 && index < usersComments.length && !usersComments[index].isLiked) {
+          if (usersComments[index].isLiked) {
             usersComments[index].likesCounter += 1;
-            usersComments[index].isLiked = true;
-            counterElement.textContent = usersComments[index].likesCounter;
-            likeButton.className = 'like-button -active-like';
           } else {
             usersComments[index].likesCounter -= 1;
-            usersComments[index].isLiked = false;
-            counterElement.textContent = usersComments[index].likesCounter;
-            likeButton.className = 'like-button';
           }
+
+          renderComments();
         });
       }
-    }
+    };
+
 
     buttonElement.addEventListener("click", () => {
       nameInputElement.classList.remove('error');
@@ -192,7 +189,6 @@
       nameInputElement.value = '';
       commentInput.value = '';     
       renderComments();
-      initLikesButtonListeners(); 
     })    
     renderComments();
     initLikesButtonListeners();
