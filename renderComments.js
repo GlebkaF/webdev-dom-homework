@@ -37,11 +37,11 @@ export const renderComments = ({ comments, user }) => {
     <div class="loading-comment">Комментарии загружаются...</div>
 
 
-    ${user ? `<div class="add-form" id="add">
+    ${token ? `<div class="add-form" id="add">
     <input id="name-input"
       type="text"
       class="add-form-name add-gray" readonly
-      placeholder="${setUser.name}"
+      placeholder="Админ"
     />
     <textarea id="comment-input"
       type="textarea"
@@ -60,14 +60,14 @@ export const renderComments = ({ comments, user }) => {
   
   // addForm.style.display = "none";
 
-  if (!user) {
+  if (!token) {
     const autoriz = document.getElementById("autorization");
     autoriz.addEventListener("click", () => {
       renderLogin({ fetchComments });
     });
   };
 
-  if (user) {
+  if (token) {
     const buttonElement = document.getElementById("add-button");
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
