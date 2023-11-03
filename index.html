@@ -192,9 +192,9 @@
             // console.log(response.status);
 
             if (response.status === 500) {
-              alert("Неполадки с сервером");
+              throw new Error("Неполадки с сервером");
             } else if (response.status === 400) {
-              alert("Недопустимое количество символов");
+              throw new Error("Недопустимое количество символов");
             } else {
               nameElement.value = "";
               textElement.value = "";
@@ -203,7 +203,8 @@
             apiGet();
           })
           .catch((error) => {
-            if ((error = "Failed to fetch")) {
+            alert(error.message);
+            if (error ="Failed to fetch") {
               alert("Нет соединения с интернетом");
             }
           })
