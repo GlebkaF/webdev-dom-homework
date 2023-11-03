@@ -206,6 +206,7 @@
         return getApi();
         nameElement.value = "";
         commentElement.value = "";
+
       })
       .catch((error) => {
         console.log(error.message);
@@ -217,6 +218,8 @@
         buttonElement.disabled = false;
         buttonElement.textContent = "Написать";
       });
+    buttonElement.disabled = false;
+    buttonElement.textContent = "Написать";
   });
 </script>
 
