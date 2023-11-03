@@ -1,8 +1,6 @@
 import { getComments } from "./api.js";
 import { renderComments } from "./renderComments.js";
 
-// const loadingComment = document.querySelector(".loading-comment");
-
 export let comments = [];
 
 export const fetchComments = () => {
@@ -23,8 +21,5 @@ export const fetchComments = () => {
   .then(() => {
     const loadingComment = document.querySelector(".loading-comment");
     loadingComment.classList.add("hidden");
-  }).then(() => {
-    // const addForm = document.getElementById("add")
-    // addForm.classList.add("hidden")
   })
   };

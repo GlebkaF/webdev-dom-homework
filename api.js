@@ -54,7 +54,7 @@ export function postComment({ comm }) {
       if (response.status === 500) {
         throw new Error('Сервер сломался, попробуйте позже');
       } if (response.status === 400) {
-        throw new Error('Введены неверные логин или пароль');
+        throw new Error('Введено менее трех символов');
       } 
         return response.json();
     })
@@ -71,6 +71,7 @@ export function login({ login, password }) {
     if (response.status === 500) {
       throw new Error('Сервер сломался, попробуйте позже');
     } if (response.status === 400) {
+      alert('Введены неверные логин или пароль')
       throw new Error('Введены неверные логин или пароль');
     }
     return response.json();

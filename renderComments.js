@@ -31,11 +31,10 @@ export const renderComments = ({ comments, user }) => {
     })
     .join("");
     const appHtml = `
+    <div class="loading-comment">Комментарии загружаются...</div>
     <div class="container">
     <ul id="comment-list" class="comments">${commentsHtml}
     </ul>
-    <div class="loading-comment">Комментарии загружаются...</div>
-
 
     ${token ? `<div class="add-form" id="add">
     <input id="name-input"
@@ -126,15 +125,4 @@ export const renderComments = ({ comments, user }) => {
     addLikes({ comments });
     addQuote({ comments });
   }
-
-  // const addForm = document.getElementById("add");
-  // const ifAutoriz = document.getElementById("autoriz-ask");
-  
-  // if (token) {
-  //   ifAutoriz.classList.add('hidden');
-  //   addForm.classList.remove('hidden');
-  // } else {
-  //   ifAutoriz.classList.remove('hidden');
-  //   addForm.classList.add('hidden');
-  // }
   };

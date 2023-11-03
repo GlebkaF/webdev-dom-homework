@@ -5,6 +5,7 @@ import { comments } from "./fetchComments.js";
 
 const loadingComment = document.querySelector(".loading-comment");
 
+// loadingComment.style.display = "none";
 // loadingComment.classList.add("hidden");
 
 export const renderLogin = ({ fetchComments }) => {
@@ -95,6 +96,7 @@ export const renderReg = ({ fetchComments }) => {
   const buttonElementLogin = document.getElementById("login-button");
   const loginInputElement = document.getElementById("login-input");
   const passwordInputElement = document.getElementById("password-input");
+  const loadingComment = document.querySelector(".loading-comment");
 
   buttonElementLogin.addEventListener("click", () => {
     login({
@@ -107,6 +109,9 @@ export const renderReg = ({ fetchComments }) => {
       console.log(token);
     }).then(() => {
       fetchComments();
+    }).then(() => {
+      const loadingComment = document.querySelector(".loading-comment");
+      loadingComment.classList.add("hidden");
     })
   })
 };
