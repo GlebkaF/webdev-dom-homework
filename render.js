@@ -1,4 +1,6 @@
-export  const commentsHtml = commentsArray
+import { commentsArray } from "./main.js";
+
+export function renderComments(){  const commentsHtml = commentsArray
 .map((item, index) => {
   return `
       <li class="comment" data-user-name="${item.name}" data-text="${item.comment}">
@@ -17,3 +19,4 @@ export  const commentsHtml = commentsArray
         </div>
       </div>
     </li>`;})
+}

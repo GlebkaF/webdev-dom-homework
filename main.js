@@ -1,5 +1,6 @@
 import { getTodos, postTodo } from "./API.js";
 import {commentsHtml} from "./render.js";
+import { renderComments } from "./render.js";
 const nameElement = document.getElementById("inputName");
 const textElement = document.getElementById("inputText");
 const buttonElement = document.getElementById("buttonPush");
@@ -28,7 +29,7 @@ const apiGet = () => {
 };
 apiGet();
 
-let commentsArray = [];
+  export let commentsArray = [];
 
 const answerComment = () => {
   const commentAnswers = document.querySelectorAll(".comment");
@@ -87,9 +88,8 @@ const deleteButtonsUser = () => {
   }
 };
 const renderComments = () => {
- 
-  commentsHtml
-    .join("");
+  renderComments()
+  .join("");
   ulElement.innerHTML = commentsHtml;
   deleteButtonsUser();
   answerComment();
