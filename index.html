@@ -1,100 +1,92 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
-      <ul class="comments">
-      </ul>
-      <div class="add-form">
-        <input
-          type="text"
-          maxlength="50"
-          class="add-form-name"
-          placeholder="Введите ваше имя" />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
-        </div>
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <ul class="comments">
+    </ul>
+    <div class="add-form">
+      <input type="text" maxlength="50" class="add-form-name" placeholder="Введите ваше имя" />
+      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
+      <div class="add-form-row">
+        <button class="add-form-button">Написать</button>
       </div>
     </div>
-  </body>
+  </div>
+</body>
 
-  <script>
-    "use strict";
+<script>
+  "use strict";
 
-    const addFormBtn = document.querySelector('.add-form-button');
-    const addFormName = document.querySelector('.add-form-name');
-    const addFormText = document.querySelector('.add-form-text');
-    const list = document.querySelector('.comments');
-    const currentDate = new Date();
-    const day = currentDate.getDate()
-    const month = currentDate.getMonth() + 1 < 10 ? '0' + (currentDate.getMonth() + 1) : (currentDate.getMonth() + 1);
-    const year = currentDate.getFullYear();
-    const hours = currentDate.getHours();
-    const minutes = currentDate.getMinutes();
+  const addFormBtn = document.querySelector('.add-form-button');
+  const addFormName = document.querySelector('.add-form-name');
+  const addFormText = document.querySelector('.add-form-text');
+  const list = document.querySelector('.comments');
+  const currentDate = new Date();
+  const day = currentDate.getDate()
+  const month = currentDate.getMonth() + 1 < 10 ? '0' + (currentDate.getMonth() + 1) : (currentDate.getMonth() + 1);
+  const year = currentDate.getFullYear();
+  const hours = currentDate.getHours();
+  const minutes = currentDate.getMinutes();
 
-    let commentList = [];
+  let commentList = [];
 
-    const getCommentFetch = () => {
+  const getCommentFetch = () => {
 
-      fetch("https://wedev-api.sky.pro/api/v1/unicorni/comments", {
+    fetch("https://wedev-api.sky.pro/api/v1/unicorni/comments", {
       method: "GET",
     })
-    
-    .then((response)=> {
 
-      const jsonPromise = response.json();
+      .then((response) => {
 
-      
-      jsonPromise.then((responseData)=> {
-        console.log(responseData);
+        const jsonPromise = response.json();
 
-        let appComments = responseData.comments.map((comment)=> {
-          return {
-            user: comment.author.name,
-            userDate: new Date(comment.date),
-            userComment: comment.text,
-            isActiveLike: false,
-            likesCounter: comment.likes,
-          };
+
+        jsonPromise.then((responseData) => {
+          console.log(responseData);
+
+          let appComments = responseData.comments.map((comment) => {
+            return {
+              user: comment.author.name,
+              userDate: new Date(comment.date),
+              userComment: comment.text,
+              isActiveLike: false,
+              likesCounter: comment.likes,
+            };
+          });
+          // console.log(appComments);
+          commentList = appComments;
+          renderCommentList();
+
         });
-        // console.log(appComments);
-        commentList = appComments;
-        renderCommentList();    
-
       });
-    });
-    } 
-    
-    getCommentFetch();
+  }
 
-   
+  getCommentFetch();
 
-    const clickAddButton = () => {
-    addFormBtn.addEventListener('click', () => {
-      addFormName.classList.remove('form-error');
-      addFormText.classList.remove('form-error');
 
-      if (addFormName.value ==='') {
+  addFormBtn.addEventListener('click', clickAddButton)
+  function clickAddButton() {
+    addFormName.classList.remove('form-error');
+    addFormText.classList.remove('form-error');
+
+    if (addFormName.value === '') {
       addFormName.classList.add('form-error');
       return;
-      }
+    }
 
-      else if (addFormText.value ==='') {
-        addFormText.classList.add('form-error');
-        return;
-      }
+    else if (addFormText.value === '') {
+      addFormText.classList.add('form-error');
+      return;
+    }
 
-  
+
 
     fetch("https://wedev-api.sky.pro/api/v1/unicorni/comments", {
 
@@ -102,87 +94,79 @@
       body: JSON.stringify({
         text: addFormText.value,
         name: addFormName.value,
-        })
+      })
     })
 
-    .then((response)=> {
+      .then((response) => response.json()
 
-      const jsonPromise = response.json();
-      jsonPromise.then((responseData)=> {
+      ).then((responseData) => {
         console.log(responseData);
         getCommentFetch();
-
-      });
-    });
-    
         addFormName.value = "";
-        addFormText.value = ""; 
-    
+        addFormText.value = "";
 
-    renderCommentList();
-          
-    });
-   } 
+      });;
+  }
 
-   clickAddButton();
+  // clickAddButton();
 
 
-    
-
-    const likerFunction = () => {
-
-      const likesButtonElements = document.querySelectorAll('.like-button'); 
 
 
-      for (const  likeButtonElement of likesButtonElements){
+  function likerFunction() {
+
+    const likesButtonElements = document.querySelectorAll('.like-button');
+
+
+    for (const likeButtonElement of likesButtonElements) {
 
       likeButtonElement.addEventListener('click', (event) => {
         event.stopPropagation();
         const index = likeButtonElement.dataset.index;
         // console.log(index); 
 
-      if (commentList[index].isActiveLike === false) {
-        commentList[index].isActiveLike = true; 
-        commentList[index].likesCounter++; 
-      } else  {
-        commentList[index].isActiveLike = false; 
-        commentList[index].likesCounter--; 
-      }
-      renderCommentList();
-        
+        if (commentList[index].isActiveLike === false) {
+          commentList[index].isActiveLike = true;
+          commentList[index].likesCounter++;
+        } else {
+          commentList[index].isActiveLike = false;
+          commentList[index].likesCounter--;
+        }
+        renderCommentList();
+
       });
-      }
-
     }
-      
 
-    const replyCommentFunction = () => {
-
-  const addFormText = document.querySelector('.add-form-text');
-  const commentsReplyEl = document.querySelectorAll('.comment-text');
+  }
 
 
+  function replyCommentFunction() {
 
-  for (const  commentReplyEl of commentsReplyEl){
+    const addFormText = document.querySelector('.add-form-text');
+    const commentsReplyEl = document.querySelectorAll('.comment-text');
 
-    commentReplyEl.addEventListener('click', (event) => {
-    event.stopPropagation();
-    const index = commentReplyEl.dataset.index;
-    console.log(index); 
-    addFormText.value = `>${commentList[index].user} ${commentReplyEl.textContent}`
 
-    renderCommentList();
-  
-  });
-}
-}
 
-    const renderCommentList = () => {
-     
-      let commentListHTML = commentList.map((comment,index) => {
+    for (const commentReplyEl of commentsReplyEl) {
 
-        
-        return `<li class="comment">
+      commentReplyEl.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const index = commentReplyEl.dataset.index;
+        console.log(index);
+        addFormText.value = `>${commentList[index].user} ${commentReplyEl.textContent}`
+
+        renderCommentList();
+
+      });
+    }
+  }
+
+  function renderCommentList() {
+
+    let commentListHTML = commentList.map((comment, index) => {
+
+
+      return `<li class="comment">
           <div class="comment-header">
             <div class = "userName">${comment.user}</div>
             <div>${comment.userDate.toLocaleString()}</div>
@@ -201,18 +185,19 @@
             </div>
           </div>
         </li>`;
-      }).join('');
-      // console.log(commentListHTML);
-      list.innerHTML = commentListHTML;
+    }).join('');
+    // console.log(commentListHTML);
+    list.innerHTML = commentListHTML;
 
-      clickAddButton();
-      replyCommentFunction(); 
-      likerFunction();
-      
-    };
+    // clickAddButton();
+    replyCommentFunction();
+    likerFunction();
+
+  };
 
   renderCommentList();
 
-    console.log("It works!");
-  </script>
+  console.log("It works!");
+</script>
+
 </html>
