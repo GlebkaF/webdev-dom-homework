@@ -7,27 +7,10 @@
   </head>
 
   <body>
-    <div class="container">
-      <ul id="list" class="comments"></ul>
-      <div class="add-form">
-        <input
-          type="text"
-          id="name-input"
-          value=""
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          id="comment-input"
-          class="add-form-text"
-          placeholder="Введите ваш комментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button id="add-button" class="add-form-button">Написать</button>
-        </div>
-      </div>
+    <div class="list-loader">
+      <span>Comments are loading...</span>
     </div>
+    <div class="container" id="app"></div>
     <script type="module" src="main.js"></script>
   </body>
 </html>

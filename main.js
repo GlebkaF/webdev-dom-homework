@@ -8,21 +8,26 @@ import {
 } from "./modules/api.js";
 
 import { currentDate, handleEnterKey, toggleButton } from "./modules/utils.js";
-import {
-  listElement,
-  buttonElement,
-  attachTextButtonListener,
-  attachLikeButtonListener,
-  renderUsers,
-} from "./modules/render.js";
+import { listElement, buttonElement, renderUsers } from "./modules/render.js";
+import { userAuthorization } from "./modules/login.js";
+import { renderLogin } from "./modules/renderLogin.js";
 
-let users = [];
-// 1.вынести все запросы в отдельный модуль
-// 2. вынести рендер функцию (+обрабочики внутри)
-// 3.
-//
+userAuthorization();
 
-const fetchAndRender = () => {
+export let users = [];
+
+export function getUsers() {
+  return users;
+}
+
+// export const users = (newUsers) => {
+//   users = newUsers;
+// };
+
+export function getFetch() {
+  showLoadingIndicator();
+  hideAddForm();
+
   getComments().then((responseData) => {
     const appUsers = responseData.comments.map((comment, index) => {
       return {
@@ -38,20 +43,11 @@ const fetchAndRender = () => {
     users = appUsers;
     renderUsers(users, listElement);
   });
-};
+}
+
+getFetch();
 
 toggleButton(buttonElement, inputNameElement, inputTextElement);
-
-// const setError = (element, message) => {}
-// const resetButtonState = (buttonElement, value) => {}
-
-//   if (trimValue(inputNameElement).length < 3) {
-//     return setError(inputNameElement, "Введенное имя слишком короткое");
-//   }
-
-//   if (trimValue(inputTextElement).length < 3) {
-//     return setError(inputTextElement, "Ваш комментарий слишком короткий");
-//   }
 
 buttonElement.disabled = false;
 buttonElement.textContent = "Написать";
