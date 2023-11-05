@@ -49,7 +49,16 @@
         const appComments = responseData.comments.map((comment) => {
           return {
             name: comment.author.name,
-            date: addComment.currentDate,
+            date: new Date()
+              .toLocaleString("ru-RU", {
+                year: "2-digit",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+              })
+              .replace(",", ""),
             text: comment.text,
             likes: comment.likes,
             isLiked: false,
@@ -198,7 +207,7 @@
     input.addEventListener("keydown", function (event) {
       if (event.keyCode === 13) {
         // Enter key code
-        // addComment();
+        addComment();
         // setupLikeButton();
         // addButtonLike();
         renderComments();
@@ -210,27 +219,27 @@
       // addComment();
       // setupLikeButton();
       // addButtonLike();
-      if (input.value === "" && textArea.value === "") {
-        return;
-      }
+
+      // if (input.value === "" && textArea.value === "") {
+      //   return;
+      // }
       fetch("https://wedev-api.sky.pro/api/v1/yaroslav-olshanskiy/comments", {
         method: "POST",
         body: JSON.stringify({
           name: input.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-          date: addComment.currentDate,
+          date: addComment.formattedDate,
           text: textArea.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
           likes: "0",
           isLike: false,
         }),
       }).then((response) => {
         response.json().then((responseData) => {
-          
           renderComments();
         });
       });
       renderComments();
-      input.value = "";
-      textArea.value = "";
+      // input.value = "";
+      // textArea.value = "";
     });
 
     // Это кнопка будет Удалить
