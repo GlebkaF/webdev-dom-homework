@@ -98,23 +98,16 @@
       commentButton.forEach((comBut, index) => {
         comBut.addEventListener("click", (event) => {
           event.stopPropagation();
-          // buttonCom(comment);
           butCom(index);
           renderComments();
         });
       });
     };
-
-    // const buttonCom = (comment) => {
-    //   let commentInput = document.getElementById("commintInput");
-    //   commentInput.value = comment;
-    // };
-
+    //Функция для комменатрия
     const butCom = (index) => {
       let commentInput = document.getElementById("commintInput");
       const comment = comments[index];
       commentInput.value = `${comment.text},${comment.name}`;
-      // commentInput.value = `${comment.name}`;
     };
 
     //DoneThis
