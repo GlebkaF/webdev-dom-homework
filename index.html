@@ -9,8 +9,11 @@
 
 <body>
   <div class="container">
+    <div class="load hidden">загрузка...</div>
     <ul class="comments">
     </ul>
+    <div class="load-comment hidden">Отправка коментария...</div> 
+    <!-- вернуть хиден -->
     <div class="add-form">
       <input type="text" maxlength="50" class="add-form-name" placeholder="Введите ваше имя" />
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
@@ -23,7 +26,7 @@
 
 <script>
   "use strict";
-
+  const addForm = document.querySelector('.add-form');
   const addFormBtn = document.querySelector('.add-form-button');
   const addFormName = document.querySelector('.add-form-name');
   const addFormText = document.querySelector('.add-form-text');
@@ -34,24 +37,23 @@
   const year = currentDate.getFullYear();
   const hours = currentDate.getHours();
   const minutes = currentDate.getMinutes();
+  const loadEl = document.querySelector('.load');
+  const commentLoad = document.querySelector('.load-comment');
 
   let commentList = [];
 
   const getCommentFetch = () => {
 
-    fetch("https://wedev-api.sky.pro/api/v1/unicorni/comments", {
+    return fetch("https://wedev-api.sky.pro/api/v1/unicorni/comments", {
       method: "GET",
     })
 
       .then((response) => {
 
-        const jsonPromise = response.json();
-
-
-        jsonPromise.then((responseData) => {
-          console.log(responseData);
-
-          let appComments = responseData.comments.map((comment) => {
+        return response.json();
+      })
+      .then((responseData)=> {
+        let appComments = responseData.comments.map((comment) => {
             return {
               user: comment.author.name,
               userDate: new Date(comment.date),
@@ -59,20 +61,19 @@
               isActiveLike: false,
               likesCounter: comment.likes,
             };
-          });
-          // console.log(appComments);
-          commentList = appComments;
-          renderCommentList();
-
-        });
       });
-  }
-
+      commentList = appComments;
+      renderCommentList();
+      loadEl.classList.add('hidden');
+      });
+  };                     
   getCommentFetch();
 
 
-  addFormBtn.addEventListener('click', clickAddButton)
+  addFormBtn.addEventListener('click', clickAddButton);
+
   function clickAddButton() {
+
     addFormName.classList.remove('form-error');
     addFormText.classList.remove('form-error');
 
@@ -85,32 +86,41 @@
       addFormText.classList.add('form-error');
       return;
     }
+    addFormBtn.disabled = true;
+    
+    addForm.classList.add('hidden');
+    commentLoad.classList.remove('hidden');
 
 
+    const addCommentFetch = () => {
 
-    fetch("https://wedev-api.sky.pro/api/v1/unicorni/comments", {
+      fetch("https://wedev-api.sky.pro/api/v1/unicorni/comments", {
 
-      method: "POST",
-      body: JSON.stringify({
-        text: addFormText.value,
-        name: addFormName.value,
-      })
-    })
+        method: "POST",
+        body: JSON.stringify({
+          text: addFormText.value,
+          name: addFormName.value,
+        }),
+        })
+        .then((response) => {
+          console.log(getCommentFetch);
+         return getCommentFetch();
+        
+        })
+        .then(() => {
+          addForm.classList.remove('hidden');
+          addFormBtn.disabled = false;
+          commentLoad.classList.add('hidden');
+          console.log('возвращение формы');
+        });
+          
+          addFormName.value = "";
+          addFormText.value = "";
 
-      .then((response) => response.json()
-
-      ).then((responseData) => {
-        console.log(responseData);
-        getCommentFetch();
-        addFormName.value = "";
-        addFormText.value = "";
-
-      });;
-  }
-
-  // clickAddButton();
-
-
+         
+        }
+        addCommentFetch(); 
+     }
 
 
   function likerFunction() {
