@@ -31,7 +31,9 @@ export const renderData = (ulElement, commentsArray) => {
         const index = deleteButton.dataset.index;
         commentsArray.splice(index, 1);
         renderComments();
+        likes();
         deleteButtonsUser();
+        answerComment();
       });
     }
   };
@@ -45,8 +47,7 @@ export const renderData = (ulElement, commentsArray) => {
                     ${commentAnswer.dataset.text}${commentAnswer.dataset.userName} 
                     QUOTE_END 
                     Ответ:  `;
-        renderComments();
-        answerComment();
+                    answerComment(textElement)
       });
     }
   };
@@ -79,12 +80,15 @@ export const renderData = (ulElement, commentsArray) => {
           }
           renderComments();
           likes();
+          deleteButtonsUser();
+          answerComment()
         });
       });
     }
   };
   renderComments();
-  deleteButtonsUser();
-  answerComment();
   likes();
+  answerComment();
+  deleteButtonsUser();
+  
 };
