@@ -1,6 +1,6 @@
 import { getTodos, postTodo } from "./API.js";
-import {commentsHtml} from "./render.js";
-import { renderComments } from "./render.js";
+import { renderData } from "./render.js";
+
 const nameElement = document.getElementById("inputName");
 const textElement = document.getElementById("inputText");
 const buttonElement = document.getElementById("buttonPush");
@@ -23,79 +23,15 @@ const apiGet = () => {
     });
     commentsArray = fromApp;
 
-    renderComments();
+    renderData(ulElement, commentsArray);
     loadingElement.classList.add("hidden");
   });
 };
 apiGet();
 
-  export let commentsArray = [];
+let commentsArray = [];
 
-const answerComment = () => {
-  const commentAnswers = document.querySelectorAll(".comment");
-  for (const commentAnswer of commentAnswers) {
-    commentAnswer.addEventListener("click", () => {
-      textElement.value = `QUOTE_BEGIN 
-          ${commentAnswer.dataset.text}${commentAnswer.dataset.userName} 
-          QUOTE_END 
-          Ответ:  `;
-    });
-  }
-};
-
-function delay(interval = 300) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, interval);
-  });
-}
-
-const likes = () => {
-  const likeButtons = document.querySelectorAll(".like-button");
-  for (const likeButton of likeButtons) {
-    likeButton.addEventListener("click", (event) => {
-      event.stopPropagation();
-      likeButton.classList.add("loadingLike");
-      delay(2000).then(() => {
-        likeButton.classList.remove("loadingLike");
-        const index = likeButton.dataset.index;
-        if (commentsArray[index].userLike === false) {
-          commentsArray[index].paint = "-active-like";
-          commentsArray[index].like += 1;
-          commentsArray[index].userLike = true;
-        } else {
-          commentsArray[index].paint = "";
-          commentsArray[index].like -= 1;
-          commentsArray[index].userLike = false;
-        }
-
-        renderComments();
-      });
-    });
-  }
-};
-
-const deleteButtonsUser = () => {
-  const deleteButtons = document.querySelectorAll(".remove-button");
-  for (const deleteButton of deleteButtons) {
-    deleteButton.addEventListener("click", (event) => {
-      event.stopImmediatePropagation();
-      const index = deleteButton.dataset.index;
-      commentsArray.splice(index, 1);
-      renderComments();
-    });
-  }
-};
-const renderComments = () => {
-  renderComments()
-  .join("");
-  ulElement.innerHTML = commentsHtml;
-  deleteButtonsUser();
-  answerComment();
-  likes();
-};
-renderComments();
+renderData(ulElement, commentsArray);
 
 function validationInput() {
   if (nameElement.value === "" || textElement.value === "") {
@@ -115,11 +51,8 @@ buttonElement.addEventListener("click", () => {
   commentLoadingElement.classList.add("commentLoadingInvisible");
   formElement.classList.add("add-formInvisible");
   const postCommentsPromise = () => {
-    postTodo({text: textElement.value,
-             name: nameElement.value})
-              
+    postTodo(textElement, nameElement)
       .then((response) => {
-        
         if (response.status === 500) {
           throw new Error("Неполадки с сервером");
         } else if (response.status === 400) {
@@ -132,9 +65,10 @@ buttonElement.addEventListener("click", () => {
         apiGet();
       })
       .catch((error) => {
-        alert(error.message);
-        if ((error = "Failed to fetch")) {
+        if (error === "Failed to fetch") {
           alert("Нет соединения с интернетом");
+        } else {
+          alert(error.message);
         }
       })
       .finally(() => {
@@ -145,3 +79,4 @@ buttonElement.addEventListener("click", () => {
   };
   postCommentsPromise();
 });
+

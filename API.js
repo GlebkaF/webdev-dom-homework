@@ -4,16 +4,16 @@ export function getTodos(){
       })
         .then((response) => {
           return response.json();
-        }) 
-}
+        });
+};
 
-export function postTodo(text,name){
+export function postTodo(textElement,nameElement){
  return   fetch("https://wedev-api.sky.pro/api/v1/viktor-pirogov/comments", {
       method: "POST",
       body: JSON.stringify({
-        text: text,  
-        name: name,
+        text: textElement.value,  
+        name: nameElement.value,
         forceError: true,
       }),
-    })
-}
+    });
+};
