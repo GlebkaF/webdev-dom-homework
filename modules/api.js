@@ -14,10 +14,10 @@ export function getComments() {
   }).then((response) => response.json());
 }
 
-export function showLoadingIndicatorComments() {
-  const loader = document.querySelector(".comment-loader");
-  loader.classList.remove("hidden");
-}
+// export function showLoadingIndicatorComments() {
+//   const loader = document.querySelector(".comment-loader");
+//   loader.classList.remove("hidden");
+// }
 
 export const inputTextElement = document.getElementById("comment-input");
 export const inputNameElement = document.getElementById("name-input");

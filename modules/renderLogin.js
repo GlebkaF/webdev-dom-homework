@@ -1,5 +1,5 @@
 import { authorizedUser, loginUser, setToken } from "./api.js";
-import { getFetch } from "./main.js";
+import { getFetch } from "../main.js";
 
 let isLoginMode = true;
 export function renderLogin() {

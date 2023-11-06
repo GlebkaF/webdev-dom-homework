@@ -11,6 +11,7 @@ import { currentDate, handleEnterKey, toggleButton } from "./modules/utils.js";
 import { listElement, buttonElement, renderUsers } from "./modules/render.js";
 import { userAuthorization } from "./modules/login.js";
 import { renderLogin } from "./modules/renderLogin.js";
+import { showLoadingIndicatorComments } from "./modules/renderOptional.js";
 
 userAuthorization();
 
@@ -25,7 +26,7 @@ export function getUsers() {
 // };
 
 export function getFetch() {
-  showLoadingIndicator();
+  showLoadingIndicatorComments();
   hideAddForm();
 
   getComments().then((responseData) => {
@@ -80,30 +81,30 @@ buttonElement.addEventListener("click", () => {
   if (trimValue(inputTextElement).trim().length < 3) {
     return setError(inputTextElement, "Ваш комментарий слишком короткий");
   }
-
-  console.log("Начинаем делать запрос");
-  resetButtonState(buttonElement, "Ваш комментарий добавляется");
-
-  postComments(currentDate)
-    .then(() => {
-      return fetchAndRender();
-    })
-    .then(() => {
-      buttonElement.disabled = false;
-      buttonElement.textContent = "Написать";
-      inputNameElement.value = "";
-      inputTextElement.value = "";
-    })
-    .catch((error) => {
-      buttonElement.disabled = false;
-      buttonElement.textContent = "Написать";
-      alert("Произошла ошибка, повторите попытку позже");
-      console.warn(error);
-    });
-
-  buttonElement.disabled = true;
-  buttonElement.classList.add("disabled");
 });
-fetchAndRender();
-
 handleEnterKey();
+//   console.log("Начинаем делать запрос");
+//   resetButtonState(buttonElement, "Ваш комментарий добавляется");
+//   postComments(currentDate)
+//     .then(() => {
+//       return fetchAndRender();
+//     })
+//     .then(() => {
+//       buttonElement.disabled = false;
+//       buttonElement.textContent = "Написать";
+//       inputNameElement.value = "";
+//       inputTextElement.value = "";
+//     })
+//     .catch((error) => {
+//       buttonElement.disabled = false;
+//       buttonElement.textContent = "Написать";
+//       alert("Произошла ошибка, повторите попытку позже");
+//       console.warn(error);
+//     });
+
+//   buttonElement.disabled = true;
+//   buttonElement.classList.add("disabled");
+// });
+// fetchAndRender();
+
+// handleEnterKey();

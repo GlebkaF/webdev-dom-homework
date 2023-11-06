@@ -1,8 +1,13 @@
-import { getUsers } from "./main";
-import { attachLikeButtonListener } from "./render";
+import { getUsers } from "./main.js";
+import { attachLikeButtonListener } from "./render.js";
 
-import { postComments } from "./api";
-import { buttonElement } from "./render";
+import { postComments } from "./api.js";
+import { buttonElement } from "./render.js";
+// import { showLoadingIndicatorComments } from "./api.js";
+export function showLoadingIndicatorComments() {
+  const loader = document.querySelector(".comment-loader");
+  loader.classList.remove("hidden");
+}
 export function renderUsers(users, listElement) {
   // listElement remove if not working
 

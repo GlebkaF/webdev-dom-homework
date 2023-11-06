@@ -1,11 +1,8 @@
 import { loginUser, authorizedUser, setToken } from "./api.js";
-import {
-  fetchAndRender,
-  handleEnterKey,
-  getUsers,
-  getComments,
-} from "./main.js";
+import { getUsers } from "../main.js";
 import { renderUsers } from "./render.js";
+import { getComments } from "./api.js";
+import { handleEnterKey } from "./utils.js";
 
 let isSignedUp = false;
 export function userAuthorization() {
