@@ -3,12 +3,12 @@
   <head>
     <title>Проект "Комменты"</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css" />    
   </head>
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="list-comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -44,11 +44,12 @@
           </div>
         </li>
       </ul>
+      <button class="remove-comment-button" id="button-remove-comment">Удалить последний коментарий</button>
       <div class="add-form">
         <input
           type="text"
           class="add-form-name"
-          placeholder="Введите ваше имя"
+          placeholder="Введите ваше имя"          
         />
         <textarea
           type="textarea"
@@ -57,15 +58,151 @@
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="button-add-comment">Написать</button>
         </div>
       </div>
     </div>
+
+    <script type="text/html" id="template-comment">
+      <li class="comment">
+        <div class="comment-header">
+          <div>{name}</div>
+          <div>{date}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            <pre>{comment}</pre>
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">0</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>
+    </script>
+
   </body>
 
   <script>
     "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const formAddComment = document.getElementsByClassName('add-form')[0];
+    const inputName = formAddComment.getElementsByClassName('add-form-name')[0];
+    const inputComment = formAddComment.getElementsByClassName('add-form-text')[0];
+    const inputs = [inputName, inputComment];
+
+    const listComments = document.getElementById('list-comments');
+    const buttonAddComment = document.getElementById('button-add-comment');
+    const templateComment = document.getElementById('template-comment');
+
+    const buttonRemoveComment = document.getElementById('button-remove-comment');
+
+    const validationState = {
+      isNameValid: false,
+      setIsNameValid(state) { this.isNameValid = state; if(this.onchange) this.onchange(); },
+      isCommentValid: false,
+      setIsCommentValid(state) { this.isCommentValid = state; if(this.onchange) this.onchange(); },
+      isValid(){
+        return this.isNameValid && this.isCommentValid;
+      }
+    };
+
+    const formatDateTime = (date) => {
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth()).padStart(2, '0');
+      const year = String(date.getFullYear() - 2000);
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      return `${day}.${month}.${year} ${hours}:${minutes}`;
+    };
+
+    const addComment = (name, comment) => {
+      let template = templateComment.innerHTML;
+      
+      template = template
+        .replaceAll('{name}', name)
+        .replaceAll('{date}', formatDateTime(new Date()))
+        .replaceAll('{comment}', comment);
+
+      listComments.innerHTML = listComments.innerHTML + template;
+    };
+
+    const inputIsNotEmpty = (input) => input.value.trim() !== '';
+
+    const validateName = () => { 
+      validationState.setIsNameValid(inputIsNotEmpty(inputName)); 
+      return validationState.isNameValid;
+    };
+    const validateComment = () => {
+      validationState.setIsCommentValid(inputIsNotEmpty(inputComment)); 
+      return validationState.isCommentValid;
+    };
+
+    const setAddCommentButtonEnabled = () => {
+      buttonAddComment.disabled = !validationState.isValid();
+    };
+
+    const setInputValidityStatus = (input, status) =>{
+      if(status){
+        input.classList.remove('error');
+      } else {
+        input.classList.add('error');
+      }
+    };
+
+
+    const setbuttonRemoveCommentEnabled = () => buttonRemoveComment.disabled = listComments.children.length == 0;
+
+    const validate = () => {      
+      setInputValidityStatus(inputName, validateName());
+      setInputValidityStatus(inputComment, validateComment());
+      return validationState.isValid();
+    }
+
+    const validateAndSend = () => {      
+      if(!validate()){
+        return;
+      }
+      
+      addComment(inputName.value, inputComment.value);
+      
+      inputComment.value = '';
+      validateComment();
+
+      setbuttonRemoveCommentEnabled();
+    };
+
+    
+
+    const removeComment = () =>{
+      if(listComments.children.length == 0){
+        return;
+      }
+      const lastElement = listComments.children[listComments.children.length - 1];
+      listComments.removeChild(lastElement);
+
+      setbuttonRemoveCommentEnabled();
+    }
+    
+    inputName.addEventListener('input', validateName);
+    
+    inputComment.addEventListener('input', validateComment);
+
+    inputComment.addEventListener('keydown', (e) =>{
+      if(e.code == 'Enter'){
+        validateAndSend();
+        e.preventDefault();
+      }
+    });
+
+    buttonAddComment.addEventListener('click', validateAndSend);
+
+    validationState.onchange = () => setAddCommentButtonEnabled();
+
+    buttonRemoveComment.addEventListener('click', removeComment);
+
+    validateName();
+    validateComment();
   </script>
 </html>
