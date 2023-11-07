@@ -30,6 +30,7 @@ export const renderComments = ({ comments, user }) => {
       </li>`;
     })
     .join("");
+
     const appHtml = `
     <div class="loading-comment">Комментарии загружаются...</div>
     <div class="container">
