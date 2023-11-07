@@ -1,4 +1,4 @@
-
+import { getTodos, postTodo } from "./api.js";
 
 const nameInputElement = document.getElementById("name-input");
 const commInputElement = document.getElementById("comm-input");

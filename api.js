@@ -1,5 +1,5 @@
 
-export getTodos() {
+export function getTodos() {
 
 fetch("https://wedev-api.sky.pro/api/v1/yana-orlova/comments", {
     method: "GET",
@@ -13,7 +13,7 @@ fetch("https://wedev-api.sky.pro/api/v1/yana-orlova/comments", {
 });
 }
 
- export postTodo() {
+ export function postTodo() {
 fetch("https://wedev-api.sky.pro/api/v1/yana-orlova/comments", {
         method: "POST",
         body: JSON.stringify(
