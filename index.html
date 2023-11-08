@@ -30,37 +30,59 @@
   const formName = document.getElementById('form-name');
   const formComment = document.getElementById('form-comment');
 
-  const listComents = [
-    {
-      nameUser: "Глеб Фокин",
-      dataTimeComents: "12.02.22 12:18",
-      comentUser: "Это будет первый комментарий на этой странице",
-      like: 12,
-      isLike: false,
+  let comments = [];
 
-    },
-    {
-      nameUser: "Варвара Н.",
-      dataTimeComents: "13.02.22 19:22",
-      comentUser: "Мне нравится как оформлена эта страница! ❤",
-      like: 77,
-      isLike: true,
+  function correctDate(date) {
+    let currentDate = new Date(date);
+    let todayDay = currentDate.getDate();
+    let todayMonth = currentDate.getMonth() + 1;
+    let todayYear = String(currentDate.getFullYear()).slice(-2);
+    let todayHours = currentDate.getHours();
+    let todayMinutes = currentDate.getMinutes();
+    todayDay = todayDay < 10 ? "0" + todayDay : todayDay;
+    todayMonth = todayMonth < 10 ? "0" + todayMonth : todayMonth;
+    todayHours = todayHours < 10 ? "0" + todayHours : todayHours;
+    todayMinutes = todayMinutes < 10 ? "0" + todayMinutes : todayMinutes;
 
-    },
-  ];
+    let formattedDate = `${todayDay}.${todayMonth}.${todayYear} ${todayHours}:${todayMinutes} `;
+    return formattedDate;
+  }
+  function getFetch() {
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/anton-ganin/comments",
+      {
+        method: "GET",
+      });
+    fetchPromise.then((response) => {
+      let jsonPromise = response.json();
+      jsonPromise.then((responseData) => {
+        let appComments = responseData.comments.map((coment) => {
+          return {
+            name: coment.author.name,
+            date: correctDate(coment.date),
+            text: coment.text,
+            like: coment.likes,
+            islike: false,
+          }
+        });
+        comments = appComments;
+        rendLists();
+      })
+    })
+  }
+  getFetch();
 
   function commentOnComment() {
     const commentOnComment = document.querySelectorAll('.comment');
-     for(let comment of commentOnComment) {
-     comment.addEventListener('click', () => {
-       let index = comment.dataset.index
-       let object = listComents[index];
-       formComment.value = `${object.comentUser}  ${object.nameUser}`
-     renderElements();
-     })
+    for (let comment of commentOnComment) {
+      comment.addEventListener('click', () => {
+        let index = comment.dataset.index
+        let object = comments[index];
+        formComment.value = `${object.text}  ${object.name}`
+        rendLists();
+      })
 
     }
- }
+  }
 
 
   const addLike = () => {
@@ -70,7 +92,7 @@
       like.addEventListener('click', (event) => {
         event.stopPropagation();
         let index = like.dataset.index
-        let object = listComents[index];
+        let object = comments[index];
         if (object.isLike) {
           object.isLike = false;
           object.like--;
@@ -85,9 +107,9 @@
   };
 
   const rendLists = () => {
-    const listHtml = listComents.map((coment, index) => {
-      return `<li class="comment" data-index="${index}" > <div class="comment-header"><div> ${coment.nameUser}</div>
-  <div>${coment.dataTimeComents}</div></div><div class="comment-body"><div class="comment-text">${coment.comentUser}</div></div>
+    const listHtml = comments.map((coment, index) => {
+      return `<li class="comment" data-index="${index}" > <div class="comment-header"><div> ${coment.name}</div>
+  <div>${coment.date}</div></div><div class="comment-body"><div class="comment-text">${coment.text}</div></div>
   <div class="comment-footer"><div class="likes"><span class="likes-counter">${coment.like}</span>
     <button data-index="${index}" class="like-button ${coment.isLike ? "-active-like" : ""}" ></button></div></div></li>`
     })
@@ -98,16 +120,13 @@
   }
 
   rendLists();
-  
+
 
 
 
   buttonEl.addEventListener('click', () => {
-    const myDate = new Date().toLocaleString().slice(0, -3);
-    const oldList = ulList.innerHTML;
     formName.classList.remove("error");
     formComment.classList.remove("error");
-
     if (formName.value === "") {
       formName.classList.add("error");
 
@@ -115,27 +134,30 @@
       formComment.classList.add("error");
 
     } else {
-      listComents.push({
-        nameUser: formName.value
-        .replaceAll("<", "&lt")
-        .replaceAll(">", "&gt")
-        .replaceAll("&", "&amp;")
-        .replaceAll('"', "&quot;"),
-        dataTimeComents: myDate,
-        comentUser: formComment.value
-        .replaceAll("<", "&lt")
-        .replaceAll(">", "&gt")
-        .replaceAll("&", "&amp;")
-        .replaceAll('"', "&quot;"),
-        like: 0,
-        isLike: false,
-      })
-      formName.value = "";
-      formComment.value = "";
-      rendLists();
-    }
-
-  })
+      const formInComment = formComment.value;
+      const formInName = formName.value;
+      fetch("https://wedev-api.sky.pro/api/v1/anton-ganin/comments",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            text: formInComment
+              .replaceAll("<", "&lt")
+              .replaceAll(">", "&gt")
+              .replaceAll("&", "&amp;")
+              .replaceAll('"', "&quot;"),
+            name: formInName
+              .replaceAll("<", "&lt")
+              .replaceAll(">", "&gt")
+              .replaceAll("&", "&amp;")
+              .replaceAll('"', "&quot;"),
+          }),
+        }).then(() => {
+          formName.value === "";
+          formComment.value === "";
+          getFetch();
+        })
+      }
+    })
 </script>
 
 </html>
