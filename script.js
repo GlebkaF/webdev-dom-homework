@@ -1,6 +1,9 @@
 const ButtonElement = document.getElementById('add-form-button');
+
 const ListElement = document.getElementById('comments');
+
 const UserName = document.getElementById('add-form-name');
+
 const UserComment = document.getElementById('add-form-text');
 
 const currentDate = new Date();
