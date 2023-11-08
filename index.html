@@ -8,6 +8,7 @@
 
   <body id="body">
     <div class="container">
+      <div id="loaderID">Нужно подождать чуть чуть....</div>
       <ul id="ul" class="comments"></ul>
       <div id="form" class="add-form">
         <input
@@ -26,13 +27,12 @@
         <div class="add-form-row">
           <button id="button" class="add-form-button">Написать</button>
         </div>
-        <button id="deleteButton" class="add-form-button">
+        <!-- <button id="deleteButton" class="add-form-button">
           Удалить последний комментарий
-        </button>
+        </button> -->
       </div>
     </div>
   </body>
-
   <script>
     "use strict";
 
@@ -50,21 +50,17 @@
         .then((responseData) => {
           const appComments = responseData.comments.map((comment) => {
             const date = new Date(comment.date);
-            const formattedDate = `${date.getDate()}.${
-              date.getMonth() + 1
-            }.${date.getFullYear()} ${date.getHours()}:${date
-              .getMinutes()
-              .toString()
-              .padStart(2, "0")}`;
             return {
               name: comment.author.name,
-              date: formattedDate,
+              date: date.toLocaleString(),
               text: comment.text,
               likes: comment.likes,
               isLiked: false,
             };
           });
           comments = appComments;
+          const loaderID = document.getElementById("loaderID");
+          loaderID.style.display = "none";
           renderComments();
         });
     };
@@ -274,11 +270,11 @@
           .then((response) => {
             return response.json();
           })
-          .then((data) => {
+          .then(() => {
             button.disabled = true;
             button.textContent = "Загружаю список…";
           })
-          .then((responseData) => {
+          .then(() => {
             return fetchAndRenderComments();
           })
           .then((data) => {
@@ -292,16 +288,16 @@
       addEventClick();
     });
 
-    // Это кнопка будет Удалить
-    const delCom = document.getElementById("deleteButton");
-    function deleteCommit() {
-      const ul = document.getElementById("ul");
-      let latComm = ul.getElementsByTagName("li").length - 1;
-      ul.getElementsByTagName("li")[latComm].remove();
-    }
-    delCom.addEventListener("click", function () {
-      deleteCommit();
-    });
+    // // Это кнопка будет Удалить
+    // const delCom = document.getElementById("deleteButton");
+    // function deleteCommit() {
+    //   const ul = document.getElementById("ul");
+    //   let latComm = ul.getElementsByTagName("li").length - 1;
+    //   ul.getElementsByTagName("li")[latComm].remove();
+    // }
+    // delCom.addEventListener("click", function () {
+    //   deleteCommit();
+    // });
   </script>
 </html>
 
