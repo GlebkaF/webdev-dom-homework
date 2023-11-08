@@ -10,7 +10,7 @@
 <body>
   <div class="container">
     <ul class="comments" id="list-comment">
-      <li class="comment">
+      <!-- <li class="comment">
         <div class="comment-header">
           <div>Глеб Фокин</div>
           <div>12.02.22 12:18</div>
@@ -43,7 +43,7 @@
             <button class="like-button -active-like"></button>
           </div>
         </div>
-      </li>
+      </li> -->
     </ul>
     <div class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input" />
@@ -72,7 +72,7 @@
   let myDate = new Date(); // здесь мы получаем текущую дату
   let fullDate = myDate.getDate() + // getDate возвращает число
     "." + months[myDate.getMonth()] + // getMonth возвращает номер месяца, который мы можем использовать в качестве индекса для массива months
-    "." + myDate.getFullYear() + " " + myDate.getHours() + ":" + myDate.getMinutes(); // getDay возвращает номер дня недели, который мы используем в качестве индекса для массива days
+    "." + myDate.getFullYear().toString().padStart(2, '0') + " " + myDate.getHours() + ":" + myDate.getMinutes(); // getDay возвращает номер дня недели, который мы используем в качестве индекса для массива days
   new Date().toLocaleDateString('en', { year: '2-digit' });
   console.log(fullDate); // Сегодня: 1 Февраль 2023, Среда
 
@@ -80,6 +80,64 @@
   const listElement = document.getElementById("list-comment");
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
+
+
+
+  const comments = [
+    {
+      name: "Глеб Фокин",
+      date: "12.02.2022 12:18",
+      text: "Это будет первый комментарий на этой странице",
+      likes: "3",
+    },
+    {
+      name: "Варвара Н.",
+      date: "13.02.22 19:22",
+      text: "Мне нравится как оформлена эта страница! ❤",
+      likes: "75",
+    },
+  ];
+
+  const renderComments = () => {
+    const commentsHtml = comments.map((comment, index) => {
+      return `<li class="comment">
+        <div class="comment-header">
+          <div>${comment.name}</div>
+          <div>${comment.date}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${comment.text}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${comment.likes}</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>`;
+    })
+      .join("");
+
+    listElement.innerHTML = commentsHtml;
+
+
+  };
+
+  renderComments();
+
+  // Изменение внешнего вида и счетчик лайков
+const likesElement = querySelectorAll('.like-button');
+
+for (const like of likesElement) {
+  like.addEventListener("click", () => {
+
+  });
+}
+
+
+
 
   buttonElement.addEventListener("click", () => {
     commentInputElement.classList.remove("error");
@@ -91,26 +149,14 @@
       return;
     }
 
-    const oldListHtml = listElement.innerHTML;
-    listElement.innerHTML =
-      oldListHtml +
-      `<li class="comment">
-        <div class="comment-header">
-          <div>${nameInputElement.value}</div>
-          <div>${fullDate}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${commentInputElement.value}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>`;
+    comments.push({
+      name: nameInputElement.value,
+      text: commentInputElement.value,
+      date: fullDate,
+      likes: 0,
+    });
+
+    renderComments();
     nameInputElement.value = "";
     commentInputElement.value = "";
 
