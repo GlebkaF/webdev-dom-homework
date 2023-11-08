@@ -73,12 +73,18 @@ export function loginUser({ login, password }) {
       login,
       password,
     }),
-  }).then((response) => {
-    if (response.status === 400) {
-      throw new Error("Wrong login or password");
-    }
-    return response.json();
-  });
+  })
+    .then((response) => {
+      if (response.status === 400) {
+        throw new Error("Wrong login or password");
+      }
+      return response.json();
+    })
+    .catch((error) => {
+      // Обработка ошибки здесь
+      console.error(error.message);
+      throw error; // Повторно бросаем ошибку для обработки в вызывающем коде
+    });
 }
 
 export function authorizedUser({ login, password, name }) {

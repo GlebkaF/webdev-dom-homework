@@ -1,5 +1,8 @@
-import { getUsers } from "./main.js";
-import { attachLikeButtonListener } from "./render.js";
+import { getUsers } from "../main.js";
+import {
+  attachLikeButtonListener,
+  attachTextButtonListener,
+} from "./render.js";
 
 import { postComments } from "./api.js";
 import { buttonElement } from "./render.js";
@@ -82,6 +85,7 @@ export function renderUsers(users, listElement) {
     renderLogin();
   });
   getUsers();
-  attachLikeButtonListener();
+  attachLikeButtonListener(user, users, listElement);
+  attachTextButtonListener(user);
 }
 postComments(commentInfo);

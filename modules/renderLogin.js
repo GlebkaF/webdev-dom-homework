@@ -32,7 +32,7 @@ export function renderLogin() {
               <button id="enter-button" class="enter-button " >${
                 isLoginMode ? "Войти" : "Зарегистрироваться"
               }</button>
-              <button id="sugnUp-button" class="enter-button " >Перейти ${
+              <button id="signUp-button" class="enter-button " >Перейти ${
                 isLoginMode ? "К регистрации" : "Ко входу"
               }</button></button>
             </div> 
@@ -46,8 +46,8 @@ export function renderLogin() {
 
   document.getElementById("enter-button").addEventListener("click", () => {
     if (isLoginMode) {
-      const login = document.getElementById("login-input").value;
-      const password = document.getElementById("password-input").value;
+      const login = document.querySelectorAll("login-input").value;
+      const password = document.querySelectorAll("password-input").value;
 
       if (!login) {
         alert("Введите логин");
@@ -72,8 +72,8 @@ export function renderLogin() {
           console.error(error.message);
         });
     } else {
-      const login = document.getElementById("login-input").value;
-      const password = document.getElementById("password-input").value;
+      const login = document.querySelectorAll("login-input").value;
+      const password = document.querySelectorAll("password-input").value;
       const name = document.getElementById("name-input-authorization").value;
       if (!login) {
         alert("Введите логин");
@@ -105,7 +105,7 @@ export function renderLogin() {
     }
   });
 
-  document.getElementById("sugnUp-button").addEventListener("click", () => {
+  document.getElementById("signUp-button").addEventListener("click", () => {
     isLoginMode = !isLoginMode;
     renderLogin();
   });

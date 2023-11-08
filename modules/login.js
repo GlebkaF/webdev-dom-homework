@@ -8,7 +8,7 @@ let isSignedUp = false;
 export function userAuthorization() {
   let isLogged = true;
   function renderForm() {
-    const loginElement = document.querySelector(".autorization");
+    const loginElement = document.querySelector(".authorization");
   }
 }
 
