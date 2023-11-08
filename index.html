@@ -89,12 +89,14 @@
       date: "12.02.2022 12:18",
       text: "Это будет первый комментарий на этой странице",
       likes: "3",
+      isLiked: false,
     },
     {
       name: "Варвара Н.",
       date: "13.02.22 19:22",
       text: "Мне нравится как оформлена эта страница! ❤",
       likes: "75",
+      isLiked: true,
     },
   ];
 
@@ -122,19 +124,27 @@
 
     listElement.innerHTML = commentsHtml;
 
-
+    // Изменение внешнего вида и счетчик лайков
+    const likesElement = document.querySelectorAll('.like-button');
+    const likeCount = document.querySelector('.likes-counter');
+    let i = 0;
+    for (const like of likesElement) {
+      like.addEventListener("click", () => {
+        i = i + 1;
+        if (i % 2 === 1) {
+          like.classList.add('-active-like');
+        } else {
+          like.classList.remove('-active-like');
+        }
+        const currentCount = parseInt(likeCount.textContent, 10);
+        likeCount.textContent = currentCount + 1;
+      });
+    }
   };
 
   renderComments();
 
-  // Изменение внешнего вида и счетчик лайков
-const likesElement = querySelectorAll('.like-button');
 
-for (const like of likesElement) {
-  like.addEventListener("click", () => {
-
-  });
-}
 
 
 
@@ -153,6 +163,7 @@ for (const like of likesElement) {
       name: nameInputElement.value,
       text: commentInputElement.value,
       date: fullDate,
+      isLiked: false,
       likes: 0,
     });
 
