@@ -41,7 +41,7 @@
     },
     {
       userName: "Варвара Н.",
-      checkLike: true,
+      checkLike: false,
       textComment: "Мне нравится как оформлена эта страница! ❤",
       countLikes: 75,
       fullDate: "13.02.22 19:22",
@@ -49,8 +49,9 @@
   ];
 
   const renderComments = () => {
-    const commensHtml = comments.map((comment) => {
-      return `<li class="comment">
+    const commensHtml = comments.map((comment, index) => {
+      if (comment.checkLike === false) {
+        return `<li class="comment">
         <div class="comment-header">
           <div>${comment.userName}</div>
           <div>${comment.fullDate}</div>
@@ -61,16 +62,49 @@
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${comment.countLikes}</span>
-            <button class="like-button"></button>
+            <button data-index ="${index}" class="like-button"></button>
           </div>
         </div>
-      </li>`;
+      </li>`} else {
+        return `<li class="comment">
+        <div class="comment-header">
+          <div>${comment.userName}</div>
+          <div>${comment.fullDate}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">${comment.textComment}</div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${comment.countLikes}</span>
+            <button data-index ="${index}" class="like-button -active-like"></button>
+          </div>
+        </div>
+      </li>`}
     })
       .join('');
     listElement.innerHTML = commensHtml;
   };
 
+  const likeButtons = () => {
+    const buttonLikes = document.querySelectorAll(".like-button");
+    for (const buttonLike of buttonLikes) {
+      buttonLike.addEventListener("click", () => {
+        if (comments[buttonLike.dataset.index].checkLike === true) {
+          comments[buttonLike.dataset.index].checkLike = false;
+          comments[buttonLike.dataset.index].countLikes--;
+        } else if (comments[buttonLike.dataset.index].checkLike === false) {
+          comments[buttonLike.dataset.index].checkLike = true;
+          comments[buttonLike.dataset.index].countLikes++;
+        }
+        renderComments();
+        likeButtons();
+      });
+    }
+  };
+
   renderComments();
+  likeButtons();
 
   buttonElement.addEventListener('click', () => {
 
@@ -93,6 +127,8 @@
     let hour = newDate.getHours(); // получаем час из нашей даты
     let minute = newDate.getMinutes(); // получаем минуты
 
+    console.log(newDate);
+
     if (date < 10) {
       date = "0" + date;
     }
@@ -106,29 +142,23 @@
       minute = "0" + minute; // то перед ними поставим 0
     }
     let fullDate = date + "." + month + "." + year + " " + hour + ":" + minute;
+    console.log(fullDate);
+    
+    comments.push({
+      userName: nameInputElement.value,
+      checkLike: false,
+      textComment: commentInputElement.value,
+      countLikes: 0,
+      fullDate: fullDate,
+    });
 
-    const oldListHtml = listElement.innerHTML;
-    listElement.innerHTML = oldListHtml + `<li class="comment">
-        <div class="comment-header">
-          <div>${nameInputElement.value}</div>
-          <div>${fullDate}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">${commentInputElement.value}</div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>`;
     nameInputElement.value = '';// Очиска формы имени после ввода данных
     commentInputElement.value = '';// Очиска формы коментария после ввода данных
 
+    renderComments();
+    likeButtons();
 
-
-  })
+  });
 
   console.log("It works!");
 
