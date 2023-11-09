@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="list" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -48,24 +48,88 @@
         <input
           type="text"
           class="add-form-name"
+          id="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
           type="textarea"
           class="add-form-text"
+          id="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="add-form-button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
+    <style>
+      .error {
+        background-color: rgb(134, 26, 26);
+      }
+    </style>
   </body>
 
   <script>
     "use strict";
     // Код писать здесь
-    console.log("It works!");
+    const buttonElement = document.getElementById('add-form-button');
+    const listElement = document.getElementById('list');
+    const addFormName = document.getElementById('add-form-name');
+    const addFormText = document.getElementById('add-form-text');
+    const currentDate = new Date();
+    const showDate = currentDate.getDate().toString().split(' ').map(el => el<10 ? '0'+el : el).join("") + "." + 
+    currentDate.getMonth().toString().split(' ').map(el => el<10 ? '0'+el : el).join("") + "." + 
+    currentDate.getFullYear().toString().slice(2) + " " 
+    + currentDate.getHours() + ":" + currentDate.getMinutes();
+
+    buttonElement.disabled = true;
+    
+    addFormName.addEventListener("input", () => {
+      if (addFormName.value !== "" && addFormText.value !== "") {
+      buttonElement.disabled = false;
+    }
+  });
+  addFormText.addEventListener("input", () => {
+      if (addFormName.value !== "" && addFormText.value !== "") {
+      buttonElement.disabled = false;
+    }
+  });
+    
+function inputHandler() {
+  addFormName.classList.remove("error");
+      addFormText.classList.remove("error");
+      if(addFormName.value === "") {
+        addFormName.classList.add("error");
+        buttonElement.setAttribute('disabled', "");
+        return;
+      }
+      if(addFormText.value === "") {
+        addFormText.classList.add("error");
+        buttonElement.setAttribute('disabled', "");
+        return;
+      }
+      const oldListHTML = listElement.innerHTML;
+      listElement.innerHTML = oldListHTML + 
+      `<li class="comment">
+          <div class="comment-header">
+            <div>${addFormName.value}</div>
+            <div>${showDate}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${addFormText.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button -active-like"></button>
+            </div>
+          </div>
+        </li>`;
+}
+    buttonElement.addEventListener("click", () => {inputHandler()});
+   
   </script>
 </html>
