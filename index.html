@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="comList">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -48,16 +48,18 @@
         <input
           type="text"
           class="add-form-name"
+          id = "name-input"
           placeholder="Введите ваше имя"
         />
         <textarea
           type="textarea"
           class="add-form-text"
+          id = "comment-input"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="buttonElement">Написать</button>
         </div>
       </div>
     </div>
@@ -65,7 +67,76 @@
 
   <script>
     "use strict";
-    // Код писать здесь
+    const nameInputElement = document.getElementById ('name-input');
+    const commentInputElement = document.getElementById ('comment-input');
+    const buttonElement = document.getElementById ('buttonElement');
+    const listElement = document.getElementById ('comList');
+
+    function formatDate(date) {
+
+    let dd = date.getDate();
+    if (dd < 10) dd = '0' + dd;
+
+    let mm = date.getMonth() + 1;
+    if (mm < 10) mm = '0' + mm;
+
+    let yy = date.getFullYear() % 100;
+    if (yy < 10) yy = '0' + yy;
+
+    let hh = date.getHours();
+    let min = date.getMinutes();
+
+    return dd + '.' + mm + '.' + yy + ' ' + hh + ':' + min;
+
+    }
+
+    let commentDate = formatDate (new Date);
+
+    buttonElement.addEventListener("click", ()=>{
+      nameInputElement.style.backgroundColor = "";
+      commentInputElement.style.backgroundColor = "";
+
+      if (nameInputElement.value === '' && commentInputElement.value === ''){
+        nameInputElement.style.backgroundColor = "red";
+        commentInputElement.style.backgroundColor = "red";
+        return;
+      } else
+
+
+      if (nameInputElement.value === '') {
+           nameInputElement.style.backgroundColor = "red";
+           return;
+        
+       } else  
+        if (commentInputElement.value === ''){
+         commentInputElement.style.backgroundColor = "red";
+          return;
+        }
+
+        const oldComList = listElement.innerHTML;
+        listElement.innerHTML = 
+        oldComList +
+        `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${commentDate}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${commentInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button -active-like"></button>
+            </div>
+          </div>
+        </li>`
+        nameInputElement.value = '';
+        commentInputElement.value = '';
+    });
+
     console.log("It works!");
   </script>
 </html>
