@@ -251,6 +251,15 @@
       // addButtonLike();
       const addEventClick = () => {
         if (input.value === "" && textArea.value === "") {
+          button.style.backgroundColor = "grey";
+          input.style.backgroundColor = "#FFB6C1";
+          textArea.style.backgroundColor = "#FFB6C1";
+          return;
+        } else if (input.value === "") {
+          input.style.backgroundColor = "#FFB6C1";
+          return;
+        } else if (textArea.value === "") {
+          textArea.style.backgroundColor = "#FFB6C1";
           return;
         }
         button.disabled = true;
@@ -265,10 +274,19 @@
               .replaceAll(">", "&gt;"),
             likes: "0",
             isLike: false,
+            // forceError: true,
           }),
         })
           .then((response) => {
-            return response.json();
+            if (response.status <= 201) {
+              return response.json();
+            } else if (response.status === 400) {
+              throw new Error(
+                "Имя и комментарий должны быть не короче 3 символов"
+              );
+            } else if (response.status === 500) {
+              throw new Error("Сервер сломался, попробуй позже");
+            }
           })
           .then(() => {
             button.disabled = true;
@@ -280,10 +298,19 @@
           .then((data) => {
             button.disabled = false;
             button.textContent = "Добавить";
+            input.style.backgroundColor = "";
+            textArea.style.backgroundColor = "";
+            input.value = "";
+            textArea.value = "";
+          })
+          .catch((error) => {
+            button.disabled = false;
+            button.textContent = "Добавить";
+            input.style.backgroundColor = "#FFB6C1";
+            textArea.style.backgroundColor = "#FFB6C1";
+            alert(error);
           });
         renderComments();
-        input.value = "";
-        textArea.value = "";
       };
       addEventClick();
     });
