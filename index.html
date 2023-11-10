@@ -49,7 +49,12 @@
     commentInputElement.addEventListener("input", checkInput)
 
     const checkLike = (index) => {
-      console.log (index)
+      const likeButtons = document.querySelectorAll('.like-button')
+      if (!comments[index].isLiked) {
+      comments[index].likes++        
+      } else {
+        comments[index].likes--
+      }
     }
 
     const comments = [
