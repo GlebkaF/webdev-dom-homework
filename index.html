@@ -274,7 +274,7 @@
               .replaceAll(">", "&gt;"),
             likes: "0",
             isLike: false,
-            // forceError: true,
+            forceError: true,
           }),
         })
           .then((response) => {
@@ -308,7 +308,19 @@
             button.textContent = "Добавить";
             input.style.backgroundColor = "#FFB6C1";
             textArea.style.backgroundColor = "#FFB6C1";
-            alert(error);
+            if (
+              error.message ===
+              "Имя и комментарий должны быть не короче 3 символов"
+            ) {
+              alert("Имя и комментарий должны быть не короче 3 символов");
+            }
+
+            if (error.message === "Сервер сломался, попробуй позже") {
+              alert("Сервер сломался, попробуй позже");
+            }
+             if (error.message === "Сервер сломался, попробуй позже") {
+              alert("Сервер сломался, попробуй позже");
+            }
           });
         renderComments();
       };
