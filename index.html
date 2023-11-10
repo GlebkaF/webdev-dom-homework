@@ -12,8 +12,8 @@
       <ul class="comments">
         <li class="comment">
           <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
+            <div>Богдан П.</div>
+            <div>12.02.23 12:18</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -29,8 +29,8 @@
         </li>
         <li class="comment">
           <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
+            <div>Ангелина К.</div>
+            <div>13.02.23 19:22</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -63,10 +63,68 @@
       </div>
     </div>
   </body>
-
+  <style>
+    .error {
+      background-color: red;
+    }
+  </style>
   <script>
     "use strict";
-    // Код писать здесь
+    const nameElement = document.querySelector(".add-form-name");
+    const textElement = document.querySelector(".add-form-text");
+    const buttonElement = document.querySelector(".add-form-button");
+
+    buttonElement.addEventListener("click", addNewComment);
+    function addNewComment() { 
+      let commentList = document.querySelector(".comments")
+      commentList.innerHTML += `
+      <li class="comment">
+          <div class="comment-header">
+            <div>${nameElement.value}</div>
+            <div>${(new Date()).toLocaleString() }</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+      </li>
+      `
+
+      function input() {
+        if (nameElement.value == "" || textElement.value == ""){
+          buttonElement.setAttribute("disabled", true);
+        } else {
+          buttonElement.removeAttribute("disabled");
+        }
+      }
+      nameElement.addEventListener("input", input);
+      textElement.addEventListener("input", input);
+    
+
+      buttonElement.addEventListener('click', () => {
+        nameElement.classList.remove("error");
+        textElement.classList.remove("error");
+        if (nameElement.value === "") {
+        nameElement.classList.add("error");
+        return;
+      } else if (textElement.value === ""){
+        textElement.classList.add("error")
+        return;
+      }
+      })
+      textElement.value = ""
+  
+      //console.log(commentList)
+      //console.log(nameElement.value)
+      //console.log(textElement.value)
+    }
     console.log("It works!");
   </script>
 </html>
