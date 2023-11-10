@@ -1,17 +1,18 @@
 "use strict";
 import { trimValue, setError, resetButtonState } from "./modules/validation.js";
-import {
-  getComments,
-  postComments,
-  inputTextElement,
-  inputNameElement,
-} from "./modules/api.js";
+import { getComments, postComments } from "./modules/api.js";
 
 import { currentDate, handleEnterKey, toggleButton } from "./modules/utils.js";
 import { listElement, buttonElement, renderUsers } from "./modules/render.js";
 import { userAuthorization } from "./modules/login.js";
 import { renderLogin } from "./modules/renderLogin.js";
-import { showLoadingIndicatorComments } from "./modules/renderOptional.js";
+import {
+  inputNameElement,
+  inputTextElement,
+} from "./modules/renderOptional.js";
+
+// 3
+// import { showLoadingIndicatorComments } from "./modules/renderOptional.js";
 
 userAuthorization();
 
@@ -20,14 +21,18 @@ export let users = [];
 export function getUsers() {
   return users;
 }
+// 6
+renderUsers(users);
 
 // export const users = (newUsers) => {
 //   users = newUsers;
 // };
 
 export function getFetch() {
-  showLoadingIndicatorComments();
-  hideAddForm();
+  // 4
+  // showLoadingIndicatorComments();
+  // 5
+  // hideAddForm();
 
   getComments().then((responseData) => {
     const appUsers = responseData.comments.map((comment, index) => {
@@ -42,7 +47,7 @@ export function getFetch() {
     });
 
     users = appUsers;
-    renderUsers(users, listElement);
+    renderUsers(users);
   });
 }
 

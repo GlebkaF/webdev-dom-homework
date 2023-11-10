@@ -2,7 +2,7 @@ import { currentDate } from "./utils.js";
 
 export let token = null;
 export const getToken = () => {
-  return token;
+  return `Bearer ${token}`;
 };
 export const setToken = (newToken) => {
   token = newToken;
@@ -19,28 +19,24 @@ export function getComments() {
 //   loader.classList.remove("hidden");
 // }
 
-export const inputTextElement = document.getElementById("comment-input");
-export const inputNameElement = document.getElementById("name-input");
+// export const inputTextElement = document.getElementById("comment-input");
+// export const inputNameElement = document.getElementById("name-input");
 
-export function postComments(date) {
+
+export function postComments(userText) {
   const commentInfo = {
     text: inputTextElement.value.replace(/</g, "&lt;").replace(/>/g, "&gt;"),
-    nick: inputNameElement.value.replace(/</g, "&lt;").replace(/>/g, "&gt;"),
-    date: currentDate(date),
+    // nick: inputNameElement.value.replace(/</g, "&lt;").replace(/>/g, "&gt;"),
+    // date: currentDate(date),
   };
 
   return fetch("https://wedev-api.sky.pro/api/v2/dima-nosov/comments", {
     method: "POST",
     headers: {
-      Authorization: token,
+      Authorization: getToken(),
     },
     body: JSON.stringify({
-      name: commentInfo.nick,
-      date: commentInfo.date,
-      likes: 0,
-      text: commentInfo.text,
-      isLiked: false,
-      forceError: true,
+      text: userText,
     }),
   })
     .then((response) => {

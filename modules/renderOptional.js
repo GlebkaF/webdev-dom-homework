@@ -6,14 +6,22 @@ import {
 
 import { postComments } from "./api.js";
 import { buttonElement } from "./render.js";
-// import { showLoadingIndicatorComments } from "./api.js";
-export function showLoadingIndicatorComments() {
-  const loader = document.querySelector(".comment-loader");
-  loader.classList.remove("hidden");
-}
-export function renderUsers(users, listElement) {
-  // listElement remove if not working
 
+export const inputTextElement = document.getElementById("comment-input");
+export const inputNameElement = document.getElementById("name-input");
+
+// import { showLoadingIndicatorComments } from "./api.js";
+
+// 2
+// export function showLoadingIndicatorComments() {
+//   const loader = document.querySelector(".comment-loader");
+//   loader.classList.remove("hidden");
+// }
+
+export function renderUsers(users) {
+  // listElement remove if not working
+  const inputNameElement = document.getElementById("name-input");
+  console.log(inputNameElement);
   const appElement = document.getElementById("app");
   const usersHTML = users
     .map((user, index) => {
@@ -88,4 +96,5 @@ export function renderUsers(users, listElement) {
   attachLikeButtonListener(user, users, listElement);
   attachTextButtonListener(user);
 }
-postComments(commentInfo);
+// 1.
+// postComments(commentInfo);

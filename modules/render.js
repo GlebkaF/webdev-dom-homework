@@ -1,12 +1,13 @@
-import { inputTextElement } from "./api.js";
+import { inputTextElement, inputNameElement } from "./renderOptional.js";
+
 
 export const buttonElement = document.getElementById("add-button");
 export const listElement = document.getElementById("list");
 
-export const renderUsers = (users, listElement) => {
+export const renderUsers = (users) => {
   // listElement remove if not working
   const appHtml = document.getElementById("app");
-  const list = document.getElementById("list");
+  // const list = document.getElementById("list");
   const usersHTML = users
     .map((user, index) => {
       return `<li class="comment" data-index="${index}" >
@@ -32,13 +33,16 @@ export const renderUsers = (users, listElement) => {
         </li> `;
     })
     .join("");
+
+  appHtml.innerHTML = usersHTML;
+
   // listElement.appendChild(listItem);
 
   // attachLikeButtonListener(user, users, listElement);
   // attachTextButtonListener(user, users, listElement);
   // Possibly needed
   //   });
-  list.innerHTML = usersHTML;
+  // list.innerHTML = usersHTML;
 };
 
 export const attachTextButtonListener = (user) => {
