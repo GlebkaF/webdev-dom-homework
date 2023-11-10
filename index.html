@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="coment">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -36,10 +36,10 @@
               Мне нравится как оформлена эта страница! ❤
             </div>
           </div>
-          <div class="comment-footer">
+          <div class="comment-footer" >
             <div class="likes">
               <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
+              <button class="like-button -active-like" ></button>
             </div>
           </div>
         </li>
@@ -48,24 +48,80 @@
         <input
           type="text"
           class="add-form-name"
+          id="name-input"
           placeholder="Введите ваше имя"
         />
         <textarea
           type="textarea"
           class="add-form-text"
+          id="user-input"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="add-button">Написать</button>
         </div>
       </div>
+
+
+    
     </div>
   </body>
-
+  <style>
+    .error {
+      background-color: #e8b3aa;
+    }
+  </style>
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const commentElement = document.getElementById("coment");
+    const buttonElement = document.getElementById("add-button");
+    const userInputElement = document.getElementById("user-input");
+    const nameInputElement = document.getElementById("name-input");
+   
+  
+
+
+
+
+
+
+   
+
+    function formDataComment(date) {
+      const formatDate =
+        dateComment.getDate().toString().padStart(2, "0") +
+        "." +
+        (dateComment.getMonth() + 1).toString().padStart(2, "0") +
+        "." +
+        dateComment.getFullYear().toString().slice(-2) +
+        " " +
+        dateComment.getHours().toString().padStart(2, "0") +
+        ":" +
+        dateComment.getMinutes().toString().padStart(2, "0");
+      return formatDate;
+    }
+    const dateComment = new Date();
+
+    buttonElement.addEventListener("click", () => {
+      nameInputElement.classList.remove("error");
+      userInputElement.classList.remove("error");
+      if (nameInputElement.value === "" || userInputElement.value === "") {
+        nameInputElement.classList.add("error");
+        userInputElement.classList.add("error");
+        return;
+      }
+
+      const oldComment = commentElement.innerHTML;
+      commentElement.innerHTML =
+        oldComment +
+        ` ${nameInputElement.value} <br> ${
+          userInputElement.value
+        } <br> ${formDataComment(dateComment)}`;
+      commentElement.value = "";
+
+  
+    });
+  
   </script>
+
 </html>
