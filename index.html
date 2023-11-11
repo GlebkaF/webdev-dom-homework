@@ -48,14 +48,6 @@
     nameInputElement.addEventListener("input", checkInput)
     commentInputElement.addEventListener("input", checkInput)
 
-    const checkLike = (index) => {
-      const likeButtons = document.querySelectorAll('.like-button')
-      if (!comments[index].isLiked) {
-      comments[index].likes++        
-      } else {
-        comments[index].likes--
-      }
-    }
 
     const comments = [
       {
@@ -74,6 +66,15 @@
       }
     ]
 
+      function getLike(index) {
+        if (!comments[index].isLiked) {
+          comments[index].likes++
+        } else {
+          comments[index].likes--
+        }
+        comments[index].isLiked = !comments[index].isLiked;
+        renderComments();
+      }
     const renderComments = () => {
       const commentsHtml = comments.map((comment, index)=> {
         return `<li class="comment">
@@ -89,7 +90,7 @@
           <div class="comment-footer">
             <div class="likes">
               ${comment.likes}
-              <button onclick="checkLike(${index})" class="like-button"></button>
+              <button onclick="getLike(${index})" class="${comment.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
             </div>
           </div>
         </li>`;
