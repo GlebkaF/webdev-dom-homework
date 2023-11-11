@@ -21,29 +21,40 @@ const comments = [
     }
 ]
 
+const responseСomment = () => {
+    const formComments = document.querySelectorAll(".comment");
+    for (const formComment of formComments) {
+        formComment.addEventListener("click", () => {
+            const index = formComment.dataset.index;
+            nameInputElement.value = '';
+            textInputElement.value = `> ${comments[index].name} : ${comments[index].text}`;
+        });
+    }
+};
+
 const likeButtonListeners = () => {
     const likeElements = document.querySelectorAll(".like-button");
     for (const likeElement of likeElements) {
         likeElement.addEventListener("click", () => {
-            if (comments[likeElement.dataset.index].isLiked === true){
+            if (comments[likeElement.dataset.index].isLiked === true) {
                 console.log('gpgpggp');
                 comments[likeElement.dataset.index].likesCount -= 1;
                 comments[likeElement.dataset.index].isLiked = false;
             }
-            else if (comments[likeElement.dataset.index].isLiked === false){
+            else if (comments[likeElement.dataset.index].isLiked === false) {
                 comments[likeElement.dataset.index].likesCount += 1;
                 comments[likeElement.dataset.index].isLiked = true;
             }
             renderComents();
-            
+
         });
     }
 };
 
 const renderComents = () => {
     const commentsHtml = comments
-        .map((comment,index) => {
-            return `<li class="comment">
+        .map((comment, index) => {
+            return `<li data-index="${index}" class="comment">
         <div class="comment-header}">
           <div>${comment.name}</div>
           <div>${comment.date}</div>
@@ -65,6 +76,7 @@ const renderComents = () => {
 
     listCommentsElement.innerHTML = commentsHtml;
     likeButtonListeners();
+    responseСomment();
 };
 
 renderComents();
@@ -84,9 +96,12 @@ addFormButton.addEventListener("click", () => {
     }
 
     comments.push({
-        name: nameInputElement.value,
+        name: String(nameInputElement.value)
+            .replaceAll('<', `&lt;`)
+            .replaceAll('>', `&gt;`),
         date: new Date().toLocaleString(),
-        text: textInputElement.value,
+        text: String(textInputElement.value)
+            .replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
         likesCount: 0,
         isLiked: false
     });
