@@ -75,6 +75,10 @@
         comments[index].isLiked = !comments[index].isLiked;
         renderComments();
       }
+
+    function answerComment(index) {
+      commentInputElement.value = `> ${comments[index].comment} \n ${comments[index].name},`;
+    } 
     const renderComments = () => {
       const commentsHtml = comments.map((comment, index)=> {
         return `<li class="comment">
@@ -82,7 +86,7 @@
             <div>${comment.name}</div>
             <div>${comment.date}</div>
           </div>
-          <div class="comment-body">
+          <div class="comment-body" onclick="answerComment(${index})">
             <div class="comment-text">
               ${comment.comment}
             </div>
@@ -106,7 +110,11 @@
       
       const currentDate = new Date();
       const oldListHtml = listElement.innerHTML;
-   
+      let newVal = nameInputElement.value.replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+      nameInputElement.value = newVal;
 
       comments.push ({
         name: nameInputElement.value,
@@ -121,8 +129,6 @@
       
       console.log (comments);
     });
-
-
 
     console.log("It works!");
   </script>
