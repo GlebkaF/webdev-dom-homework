@@ -1,13 +1,20 @@
-import { getCommentsApi, postCommentsApi } from "./api.js";
+import { getCommentsApi, postCommentsApi, token } from "./api.js";
+import { renderLogin } from "./loginAuth.js";
+import { renderAddForm } from "./renderAddForm.js";
 import { renderComments } from "./renderComments.js";
+import { renderReg } from "./renderReg.js";
+import { renderText } from "./renderText.js";
 
-const buttonElement = document.getElementById("add-button");
+
+
+
+
 const listElement = document.getElementById("list");
-const nameElement = document.getElementById("add-name");
 const commentElement = document.getElementById("add-comment");
 const loaderElement = document.getElementById("loader");
 let commentsArray = [];
-const getApi = () => {
+
+export const getApi = () => {
     listElement.classList.add("hidden");
     loaderElement.classList.remove("hidden");
     getCommentsApi()
@@ -21,7 +28,7 @@ const getApi = () => {
                     isLike: false
                 };
             });
-            renderComments({ commentsArray, listElement, likeButtonClick, commentClick });
+            renderAll();
         })
         .then(() => {
             listElement.classList.remove("hidden");
@@ -72,8 +79,25 @@ const likeButtonClick = () => {
         });
     }
 };
+export const renderAll = (state) => {
+    if (token) {
+        renderComments({commentsArray, listElement, likeButtonClick, commentClick})
+        renderAddForm()
+    } else {
+        if (!state) {
+        renderComments({commentsArray, listElement, likeButtonClick, commentClick})
+        renderText();
+    } else if (state === 'auth') {
+        renderLogin();
+        renderComments({commentsArray, listElement, likeButtonClick, commentClick, state:'auth'})
+    } else if (state === 'reg') {
+        renderReg();
+        renderComments({commentsArray, listElement, likeButtonClick, commentClick, state:'reg'})
+    }
+}
+}
+renderAll();
 
-renderComments({ commentsArray, listElement, likeButtonClick, commentClick });
 
 let date = new Date();
 let m = date.getMonth() + 1;
@@ -91,41 +115,3 @@ if (minu < 10) {
 let myDate =
     date.getDate() + "." + m + "." + y + " " + date.getHours() + ":" + minu;
 
-buttonElement.addEventListener("click", () => {
-    nameElement.classList.remove("error");
-
-    if (nameElement.value === "") {
-        nameElement.classList.add("error");
-        return;
-    }
-
-    commentElement.classList.remove("error");
-
-    if (commentElement.value === "") {
-        commentElement.classList.add("error");
-        return;
-    }
-    buttonElement.disabled = true;
-    buttonElement.textContent = "Элемент добавляется...";
-
-    postCommentsApi({ nameElement, commentElement })
-        .then((responseData) => {
-            nameElement.value = "";
-            commentElement.value = "";
-            return getApi();
-
-
-        })
-        .catch((error) => {
-            console.log(error.message);
-            if (error.message === "Failed to fetch") {
-                alert("Нет подключения к сети,попробуйте позже");
-            } else {
-                alert(error.message);
-            }
-            buttonElement.disabled = false;
-            buttonElement.textContent = "Написать";
-        });
-    buttonElement.disabled = false;
-    buttonElement.textContent = "Написать";
-});

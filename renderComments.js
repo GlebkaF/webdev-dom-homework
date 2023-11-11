@@ -1,4 +1,4 @@
-export const renderComments = ({ commentsArray, listElement, likeButtonClick, commentClick }) => {
+export const renderComments = ({ commentsArray, listElement, likeButtonClick, commentClick , state}) => {
     const commentsHtml = commentsArray
         .map((user, index) => {
             return `<li class="comment" >
@@ -22,7 +22,8 @@ export const renderComments = ({ commentsArray, listElement, likeButtonClick, co
         })
         .join("");
 
-    listElement.innerHTML = commentsHtml;
+     
+    listElement.innerHTML = state?"":commentsHtml;
     likeButtonClick();
     commentClick();
 };
