@@ -7,7 +7,7 @@ export const getToken = () => {
 export const setToken = (newToken) => {
   token = newToken;
 };
-
+console.log(token);
 export function getComments() {
   return fetch("https://wedev-api.sky.pro/api/v2/dima-nosov/comments", {
     method: "GET",
@@ -21,7 +21,6 @@ export function getComments() {
 
 // export const inputTextElement = document.getElementById("comment-input");
 // export const inputNameElement = document.getElementById("name-input");
-
 
 export function postComments(userText) {
   const commentInfo = {

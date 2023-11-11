@@ -1,8 +1,7 @@
 import { inputTextElement, inputNameElement } from "./renderOptional.js";
 
-
-export const buttonElement = document.getElementById("add-button");
-export const listElement = document.getElementById("list");
+// export const buttonElement = document.getElementById("add-button");
+// export const listElement = document.getElementById("list");
 
 export const renderUsers = (users) => {
   // listElement remove if not working

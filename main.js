@@ -3,7 +3,8 @@ import { trimValue, setError, resetButtonState } from "./modules/validation.js";
 import { getComments, postComments } from "./modules/api.js";
 
 import { currentDate, handleEnterKey, toggleButton } from "./modules/utils.js";
-import { listElement, buttonElement, renderUsers } from "./modules/render.js";
+import { renderUsers } from "./modules/render.js";
+// import { listElement, buttonElement, renderUsers } from "./modules/render.js";
 import { userAuthorization } from "./modules/login.js";
 import { renderLogin } from "./modules/renderLogin.js";
 import {
@@ -53,7 +54,9 @@ export function getFetch() {
 
 getFetch();
 
-toggleButton(buttonElement, inputNameElement, inputTextElement);
+// toggleButton(buttonElement, inputNameElement, inputTextElement);
+export const buttonElement = document.getElementById("add-button");
+export const listElement = document.getElementById("list");
 
 buttonElement.disabled = false;
 buttonElement.textContent = "Написать";

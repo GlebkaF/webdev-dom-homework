@@ -5,7 +5,7 @@ import {
 } from "./render.js";
 
 import { postComments } from "./api.js";
-import { buttonElement } from "./render.js";
+import { buttonElement } from "../main.js";
 
 export const inputTextElement = document.getElementById("comment-input");
 export const inputNameElement = document.getElementById("name-input");
@@ -84,8 +84,8 @@ export function renderUsers(users) {
   appElement.innerHTML = usersPageHTML;
 
   // listElement ->clarify
-  const list = document.getElementById("list");
-  const buttonElement = document.getElementById("add-button");
+  // const list = document.getElementById("list");
+  // const buttonElement = document.getElementById("add-button");
 
   list.innerHTML = usersHTML;
   const linkToLogin = document.getElementById("login-link");
