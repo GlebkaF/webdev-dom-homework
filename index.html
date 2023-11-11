@@ -61,7 +61,7 @@
         const comms = responceData.comments.map((comment) => {
           return {
             name: comment.author.name,
-            date:new Date(comment.date),
+            date: new Date(comment.date).toLocaleString(),
             comment: comment.text,
             likes: comment.likes,
             isLiked: false,
@@ -140,7 +140,7 @@
         const comms = responceData.comments.map((comment) => {
           return {
             name: comment.author.name,
-            date:new Date(comment.date),
+            date: new Date(comment.date).toLocaleString(),
             comment: comment.text,
             likes: comment.likes,
             isLiked: false,
