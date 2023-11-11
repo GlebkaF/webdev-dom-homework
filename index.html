@@ -304,6 +304,7 @@
             textArea.value = "";
           })
           .catch((error) => {
+            // console.log(error.message);
             button.disabled = false;
             button.textContent = "Добавить";
             input.style.backgroundColor = "#FFB6C1";
@@ -318,8 +319,11 @@
             if (error.message === "Сервер сломался, попробуй позже") {
               alert("Сервер сломался, попробуй позже");
             }
-             if (error.message === "Сервер сломался, попробуй позже") {
+            if (error.message === "Сервер сломался, попробуй позже") {
               alert("Сервер сломался, попробуй позже");
+            }
+            if ((error.message = "Failed to fetch")) {
+              alert("Кажется, у вас сломался интернет, попробуйте позже");
             }
           });
         renderComments();
