@@ -49,22 +49,30 @@
     commentInputElement.addEventListener("input", checkInput)
 
 
-    const comments = [
-      {
-        name: "Глеб Фокин",
-        date: "12.02.22 12:18",
-        comment: "Это будет первый комментарий на этой странице",
-        likes: 3,
-        isLiked: false
-      },
-      {
-        name: "Варвара Н.",
-        date: "13.02.22 19:22",
-        comment: "Мне нравится как оформлена эта страница! ❤",
-        likes: 75,
-        isLiked: true
-      }
-    ]
+    let comments = []
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/daria-alekseeva/comments", {
+      method: "GET"
+    });
+
+    fetchPromise.then((responce) => {
+      const jsonPromise = responce.json();
+      jsonPromise.then((responceData) => {
+        console.log(responceData)
+        const comms = responceData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date:new Date(comment.date),
+            comment: comment.text,
+            likes: comment.likes,
+            isLiked: false,
+          }
+        })
+        comments = comms;
+        renderComments();
+      })
+    })
+
+
 
       function getLike(index) {
         if (!comments[index].isLiked) {
@@ -101,7 +109,6 @@
       }).join('');
       listElement.innerHTML = commentsHtml;
     }
-    renderComments();
 
     buttonElement.addEventListener("click", () => {
       if (!nameInputElement.value || !commentInputElement.value) {
@@ -116,18 +123,38 @@
         .replaceAll('"', "&quot;");
       nameInputElement.value = newVal;
 
-      comments.push ({
-        name: nameInputElement.value,
-        date: currentDate.toLocaleString(),
-        comment: commentInputElement.value,
-        likes: 0,
-        isLiked: false
+      const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/daria-alekseeva/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        "text": commentInputElement.value,
+        "name": nameInputElement.value
       })
-      renderComments();
+    });
+
+    fetchPromise.then(() => {
+      const fetchPromiseAnswer = fetch("https://wedev-api.sky.pro/api/v1/daria-alekseeva/comments", {
+        method: 'GET'})
+        fetchPromiseAnswer.then((responce) => {
+        const jsonPromise = responce.json();
+        jsonPromise.then((responceData) => {
+        const comms = responceData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date:new Date(comment.date),
+            comment: comment.text,
+            likes: comment.likes,
+            isLiked: false,
+          }
+        })
+        comments = comms;
+        renderComments();
+      })
+    })
+      })
+
+    renderComments();
       nameInputElement.value = '';
-        commentInputElement.value = '';
-      
-      console.log (comments);
+      commentInputElement.value = '';
     });
 
     console.log("It works!");
