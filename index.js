@@ -4,22 +4,27 @@ const nameInputElement = document.getElementById('add-form-name');
 const textInputElement = document.getElementById('add-form-text');
 const listCommentsElement = document.getElementById('comments-list');
 
-const comments = [
-    {
-        name: 'Глеб Фокин',
-        date: '12.02.22 12:18',
-        text: 'Это будет первый комментарий на этой странице',
-        likesCount: 3,
-        isLiked: false
-    },
-    {
-        name: 'Варвара Н.',
-        date: '13.02.22 19:22',
-        text: 'Мне нравится как оформлена эта страница! ❤',
-        likesCount: 75,
-        isLiked: true
-    }
-]
+let comments = [];
+
+const getComments = () => {
+    fetch('https://wedev-api.sky.pro/api/v1/olga-okulova/comments', {
+        method: 'GET',
+    }).then((response) => {
+        response.json().then((responseData) => {
+            comments = responseData.comments.map((comment) => {
+                return {
+                    name: comment.author.name,
+                    date: new Date(comment.date).toLocaleString(),
+                    likesCount: comment.likes,
+                    isLiked: comment.isLiked,
+                    text: comment.text,
+                };
+            });
+            renderComents();
+        });
+    });
+};
+getComments();
 
 const responseСomment = () => {
     const formComments = document.querySelectorAll(".comment");
@@ -38,16 +43,13 @@ const likeButtonListeners = () => {
         likeElement.addEventListener("click", (event) => {
             event.stopPropagation();
             if (comments[likeElement.dataset.index].isLiked === true) {
-                console.log('gpgpggp');
                 comments[likeElement.dataset.index].likesCount -= 1;
                 comments[likeElement.dataset.index].isLiked = false;
-            }
-            else if (comments[likeElement.dataset.index].isLiked === false) {
+            } else if (comments[likeElement.dataset.index].isLiked === false) {
                 comments[likeElement.dataset.index].likesCount += 1;
                 comments[likeElement.dataset.index].isLiked = true;
             }
             renderComents();
-
         });
     }
 };
@@ -79,7 +81,6 @@ const renderComents = () => {
     likeButtonListeners();
     responseСomment();
 };
-
 renderComents();
 
 addFormButton.addEventListener("click", () => {
@@ -96,15 +97,18 @@ addFormButton.addEventListener("click", () => {
         return;
     }
 
-    comments.push({
-        name: String(nameInputElement.value)
-            .replaceAll('<', `&lt;`)
-            .replaceAll('>', `&gt;`),
-        date: new Date().toLocaleString(),
-        text: String(textInputElement.value)
-            .replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
-        likesCount: 0,
-        isLiked: false
+    fetch("https://wedev-api.sky.pro/api/v1/olga-okulova/comments", {
+        method: "POST",
+        body: JSON.stringify({
+            text: String(textInputElement.value)
+                .replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
+            name: String(nameInputElement.value)
+                .replaceAll('<', `&lt;`)
+                .replaceAll('>', `&gt;`)
+        })
+    }).then(() => {
+        getComments(); 
+        
     });
     renderComents();
     nameInputElement.value = "";
