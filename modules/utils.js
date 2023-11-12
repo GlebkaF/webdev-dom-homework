@@ -1,7 +1,10 @@
 // import { inputTextElement } from "./api.js";
-import { buttonElement } from "../main.js";
 import { trimValue, setError, resetButtonState } from "./validation.js";
-import { inputNameElement, inputTextElement } from "./renderOptional.js";
+import {
+  inputNameElement,
+  inputTextElement,
+  buttonElement,
+} from "./renderOptional.js";
 
 export function currentDate(date) {
   return date.toLocaleString("ru-RU", {
@@ -16,7 +19,8 @@ export function currentDate(date) {
 }
 
 export const toggleButton = (buttonElement) => {
-  const inputNameElement = document.getElementById("name-input");
+  const inputNameElement = document.querySelector(".add-form-name");
+  console.log(inputNameElement);
   if (
     inputNameElement.value.trim().length >= 3 &&
     inputTextElement.value.trim().length >= 3

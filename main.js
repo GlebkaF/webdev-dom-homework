@@ -55,41 +55,41 @@ export function getFetch() {
 getFetch();
 
 // toggleButton(buttonElement, inputNameElement, inputTextElement);
-export const buttonElement = document.getElementById("add-button");
-export const listElement = document.getElementById("list");
+// export const buttonElement = document.getElementById("add-button");
+// export const listElement = document.getElementById("list");
 
-buttonElement.disabled = false;
-buttonElement.textContent = "Написать";
-inputNameElement.addEventListener("input", () =>
-  toggleButton(buttonElement, inputNameElement, inputTextElement)
-);
-inputTextElement.addEventListener("input", () =>
-  toggleButton(buttonElement, inputNameElement, inputTextElement)
-);
+// buttonElement.disabled = false;
+// buttonElement.textContent = "Написать";
+// inputNameElement.addEventListener("input", () =>
+//   toggleButton(buttonElement, inputNameElement, inputTextElement)
+// );
+// inputTextElement.addEventListener("input", () =>
+//   toggleButton(buttonElement, inputNameElement, inputTextElement)
+// );
 
-buttonElement.addEventListener("click", () => {
-  inputNameElement.classList.remove("error");
-  inputTextElement.classList.remove("error");
+// buttonElement.addEventListener("click", () => {
+//   inputNameElement.classList.remove("error");
+//   inputTextElement.classList.remove("error");
 
-  if (!trimValue(inputNameElement)) {
-    inputNameElement.classList.add("error");
-    return;
-  }
+//   if (!trimValue(inputNameElement)) {
+//     inputNameElement.classList.add("error");
+//     return;
+//   }
 
-  if (!trimValue(inputTextElement)) {
-    inputTextElement.classList.add("error");
-    return;
-  }
-  console.log(trimValue);
+//   if (!trimValue(inputTextElement)) {
+//     inputTextElement.classList.add("error");
+//     return;
+//   }
+//   console.log(trimValue);
 
-  if (trimValue(inputNameElement).trim().length < 3) {
-    return setError(inputNameElement, "Введенное имя слишком короткое");
-  }
+//   if (trimValue(inputNameElement).trim().length < 3) {
+//     return setError(inputNameElement, "Введенное имя слишком короткое");
+//   }
 
-  if (trimValue(inputTextElement).trim().length < 3) {
-    return setError(inputTextElement, "Ваш комментарий слишком короткий");
-  }
-});
+//   if (trimValue(inputTextElement).trim().length < 3) {
+//     return setError(inputTextElement, "Ваш комментарий слишком короткий");
+//   }
+// });
 handleEnterKey();
 //   console.log("Начинаем делать запрос");
 //   resetButtonState(buttonElement, "Ваш комментарий добавляется");

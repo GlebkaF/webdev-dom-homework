@@ -5,10 +5,9 @@ import {
 } from "./render.js";
 
 import { postComments } from "./api.js";
-import { buttonElement } from "../main.js";
-
-export const inputTextElement = document.getElementById("comment-input");
-export const inputNameElement = document.getElementById("name-input");
+// import { buttonElement } from "../main.js";
+import { toggleButton } from "./utils.js";
+import { trimValue, setError } from "./validation.js";
 
 // import { showLoadingIndicatorComments } from "./api.js";
 
@@ -20,8 +19,6 @@ export const inputNameElement = document.getElementById("name-input");
 
 export function renderUsers(users) {
   // listElement remove if not working
-  const inputNameElement = document.getElementById("name-input");
-  console.log(inputNameElement);
   const appElement = document.getElementById("app");
   const usersHTML = users
     .map((user, index) => {
@@ -96,5 +93,44 @@ export function renderUsers(users) {
   attachLikeButtonListener(user, users, listElement);
   attachTextButtonListener(user);
 }
+export const buttonElement = document.querySelectorAll("add-form-button");
+export const listElement = document.getElementById("list");
+export const inputTextElement = document.getElementById("comment-input");
+export const inputNameElement = document.querySelectorAll("add-form-name");
+console.log(inputNameElement);
+toggleButton(buttonElement, inputNameElement, inputTextElement);
+console.log(buttonElement);
+buttonElement.disabled = false;
+buttonElement.textContent = "Написать";
+inputNameElement.addEventListener("input", () =>
+  toggleButton(buttonElement, inputNameElement, inputTextElement)
+);
+inputTextElement.addEventListener("input", () =>
+  toggleButton(buttonElement, inputNameElement, inputTextElement)
+);
+
+buttonElement.addEventListener("click", () => {
+  inputNameElement.classList.remove("error");
+  inputTextElement.classList.remove("error");
+
+  if (!trimValue(inputNameElement)) {
+    inputNameElement.classList.add("error");
+    return;
+  }
+
+  if (!trimValue(inputTextElement)) {
+    inputTextElement.classList.add("error");
+    return;
+  }
+  console.log(trimValue);
+
+  if (trimValue(inputNameElement).trim().length < 3) {
+    return setError(inputNameElement, "Введенное имя слишком короткое");
+  }
+
+  if (trimValue(inputTextElement).trim().length < 3) {
+    return setError(inputTextElement, "Ваш комментарий слишком короткий");
+  }
+});
 // 1.
 // postComments(commentInfo);
