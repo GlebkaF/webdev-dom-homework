@@ -10,7 +10,7 @@
       <ul id="list" class="comments">
 
       </ul>
-      <div class="add-form">
+      <div class="add-form" id="add-form">
         <input
           id="name-input"
           type="text"
@@ -34,6 +34,7 @@
   <script>
     "use strict";
     const buttonElement = document.getElementById("add-button");
+    const addForm = document.getElementById("add-form");
     const listElement = document.getElementById("list");
     const nameInputElement = document.getElementById("name-input");
     const commentInputElement = document.getElementById("comment-input");
@@ -48,31 +49,29 @@
     nameInputElement.addEventListener("input", checkInput)
     commentInputElement.addEventListener("input", checkInput)
 
-
     let comments = []
-    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/daria-alekseeva/comments", {
+
+    function fetchPromise() {
+      return fetch("https://wedev-api.sky.pro/api/v1/daria-alekseeva/comments", {
       method: "GET"
-    });
-
-    fetchPromise.then((responce) => {
-      const jsonPromise = responce.json();
-      jsonPromise.then((responceData) => {
-        console.log(responceData)
-        const comms = responceData.comments.map((comment) => {
-          return {
-            name: comment.author.name,
-            date: new Date(comment.date).toLocaleString(),
-            comment: comment.text,
-            likes: comment.likes,
-            isLiked: false,
-          }
-        })
-        comments = comms;
-        renderComments();
       })
-    })
-
-
+      .then((responce) => {
+        return responce.json()
+      })
+      .then((responceData) => {
+        const comms = responceData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: new Date(comment.date).toLocaleString(),
+              comment: comment.text,
+              likes: comment.likes,
+              isLiked: false,
+            }
+          })
+          comments = comms;
+          addForm.style.display = "flex"
+          renderComments();
+      })
 
       function getLike(index) {
         if (!comments[index].isLiked) {
@@ -84,9 +83,35 @@
         renderComments();
       }
 
+    }
+    const pageLoaded = () => {
+      const loadInfo = "<span>Пожалуйста, подождите, загружаю комментарии...</span>"
+      listElement.innerHTML = loadInfo
+    } 
+
+    const commentSend = () => {
+      const loadInfo = "<span>Комментарий добавляется...</span>"
+      listElement.innerHTML += loadInfo;
+      addForm.style.display = "none"
+    } 
+
+    pageLoaded()
+    fetchPromise()
+
+    function getLike(index) {
+      if (!comments[index].isLiked) {
+        comments[index].likes++
+      } else {
+        comments[index].likes--
+      }
+      comments[index].isLiked = !comments[index].isLiked;
+      renderComments();
+    }
+
     function answerComment(index) {
       commentInputElement.value = `> ${comments[index].comment} \n ${comments[index].name},`;
     } 
+
     const renderComments = () => {
       const commentsHtml = comments.map((comment, index)=> {
         return `<li class="comment" onclick="answerComment(${index})">
@@ -125,39 +150,19 @@
       
       const currentDate = new Date();
       const oldListHtml = listElement.innerHTML;
-
-      const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/daria-alekseeva/comments", {
+      commentSend();
+      const fetchPromisePost = fetch("https://wedev-api.sky.pro/api/v1/daria-alekseeva/comments", {
       method: "POST",
       body: JSON.stringify({
         "text": sanitizeHtml(commentInputElement.value),
         "name": sanitizeHtml(nameInputElement.value)
-      })
-    });
-
-    fetchPromise.then(() => {
-      const fetchPromiseAnswer = fetch("https://wedev-api.sky.pro/api/v1/daria-alekseeva/comments", {
-        method: 'GET'})
-        fetchPromiseAnswer.then((responce) => {
-        const jsonPromise = responce.json();
-        jsonPromise.then((responceData) => {
-        const comms = responceData.comments.map((comment) => {
-          return {
-            name: comment.author.name,
-            date: new Date(comment.date).toLocaleString(),
-            comment: comment.text,
-            likes: comment.likes,
-            isLiked: false,
-          }
         })
-        comments = comms;
-        renderComments();
       })
-    })
+      .then(() => {
+        fetchPromise();
+        nameInputElement.value = '';
+        commentInputElement.value = '';
       })
-
-    renderComments();
-      nameInputElement.value = '';
-      commentInputElement.value = '';
     });
 
     console.log("It works!");
