@@ -8,41 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments" id="list-comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+      <ul class="comments" id="list-comments">        
       </ul>
       <button class="remove-comment-button" id="button-remove-comment">Удалить последний коментарий</button>
       <div class="add-form">
@@ -66,7 +32,7 @@
     <script type="text/html" id="template-comment">
       <li class="comment">
         <div class="comment-header">
-          <div>{name}</div>
+          <div>{author}</div>
           <div>{date}</div>
         </div>
         <div class="comment-body">
@@ -87,6 +53,28 @@
 
   <script>
     "use strict";
+   
+
+    const commentsData = [
+      {
+        author: "Глеб Фокин",
+        date: "12.02.22 12:18",
+        text: "Это будет первый комментарий на этой странице",
+        likesCount: 3,
+        liked: false,
+        isEdited: false
+      },
+      {
+        author: "Варвара Н.",
+        date: "13.02.22 19:22",
+        text: "Мне нравится как оформлена эта страница! ❤",
+        likesCount: 75,
+        liked: true,
+        isEdited: false
+      }
+    ];
+
+
     const formAddComment = document.getElementsByClassName('add-form')[0];
     const inputName = formAddComment.getElementsByClassName('add-form-name')[0];
     const inputComment = formAddComment.getElementsByClassName('add-form-text')[0];
@@ -97,6 +85,86 @@
     const templateComment = document.getElementById('template-comment');
 
     const buttonRemoveComment = document.getElementById('button-remove-comment');
+
+
+    const setbuttonRemoveCommentEnabled = () => buttonRemoveComment.disabled = commentsData.length == 0;
+
+    const initCommentsEventHandlers = () => {
+      const likeButtons = document.querySelectorAll('.comment .like-button');
+      for (const button of likeButtons) {
+        button.addEventListener('click', (event) => {
+          const item = commentsData[event.target.dataset.index];
+          item.likesCount += item.liked ? -1 : +1;
+          item.liked = !item.liked;
+          renderComments();
+        });
+      }
+
+      const editButtons = document.querySelectorAll('.comment .comment-edit-button');
+      for (const button of editButtons) {
+        button.addEventListener('click', (event) => {
+          const item = commentsData[event.target.dataset.index];
+          item.isEdited = true;
+          renderComments();
+        });
+      }
+      
+    }
+
+    const renderComments = () => {
+      const renderCommentText = (comment, index) => {        
+        if(comment.isEdited){
+          return `<textarea class="comment-text-edit">${comment.text}</textarea>
+          <button data-index="${index}" class="add-form-button comment-edit-save-button">Сохранить</button>
+          <button data-index="${index}" class="add-form-button comment-edit-cancel-button">Отмена</button>
+          `;
+        } 
+        return `<div class="comment-text">${comment.text}</div>
+        <button data-index="${index}" class="add-form-button comment-edit-button">Редактировать</button>`;
+      };      
+
+      const commentsHTML = commentsData.map((comment, index) =>
+          `<li class="comment">
+            <div class="comment-header">
+              <div>${comment.author}</div>
+              <div>${comment.date}</div>
+            </div>
+            <div class="comment-body"> 
+             ${renderCommentText(comment, index)}
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">${comment.likesCount}</span>
+                <button data-index="${index}" class="like-button ${comment.liked ? 'active-like' : ''}"></button>
+              </div>
+            </div>
+          </li>`
+        ).join('');
+
+      listComments.innerHTML = commentsHTML;
+
+      initCommentsEventHandlers();
+
+      setbuttonRemoveCommentEnabled();
+    };
+
+
+
+    renderComments();
+
+
+    const addComment = (author, comment) => {
+      commentsData.push({
+        author: author,
+        date: formatDateTime(new Date()),
+        text: comment,
+        likesCount: 0,
+        liked: false,
+        isEdited: false     
+      });
+      renderComments();
+    };
+
 
     const validationState = {
       isNameValid: false,
@@ -117,16 +185,7 @@
       return `${day}.${month}.${year} ${hours}:${minutes}`;
     };
 
-    const addComment = (name, comment) => {
-      let template = templateComment.innerHTML;
-      
-      template = template
-        .replaceAll('{name}', name)
-        .replaceAll('{date}', formatDateTime(new Date()))
-        .replaceAll('{comment}', comment);
-
-      listComments.innerHTML = listComments.innerHTML + template;
-    };
+    
 
     const inputIsNotEmpty = (input) => input.value.trim() !== '';
 
@@ -151,8 +210,6 @@
       }
     };
 
-    const setbuttonRemoveCommentEnabled = () => buttonRemoveComment.disabled = listComments.children.length == 0;
-
     const validate = () => {      
       setInputValidityStatus(inputName, validateName());
       setInputValidityStatus(inputComment, validateComment());
@@ -168,18 +225,14 @@
       
       inputComment.value = '';
       validateComment();
-
-      setbuttonRemoveCommentEnabled();
     };
 
-    const removeComment = () => {
-      if(listComments.children.length == 0){
+    const removeLastComment = () => {
+      if(commentsData.length == 0){
         return;
       }
-      const lastElement = listComments.children[listComments.children.length - 1];
-      listComments.removeChild(lastElement);
-
-      setbuttonRemoveCommentEnabled();
+      commentsData.splice(commentsData.length - 1, 1);
+      renderComments();
     }
     
     inputName.addEventListener('input', validateName);
@@ -197,7 +250,7 @@
 
     validationState.onchange = () => setAddCommentButtonEnabled();
 
-    buttonRemoveComment.addEventListener('click', removeComment);
+    buttonRemoveComment.addEventListener('click', removeLastComment);
 
     validateName();
     validateComment();
