@@ -56,7 +56,11 @@
       method: "GET"
       })
       .then((responce) => {
-        return responce.json()
+        if (responce.status == 500) {
+          throw new Error('Сервер сломался');
+        } else {
+          return responce.json()
+        }
       })
       .then((responceData) => {
         const comms = responceData.comments.map((comment) => {
@@ -69,10 +73,18 @@
             }
           })
           comments = comms;
-          addForm.style.display = "flex"
           renderComments();
       })
-
+      .catch((error) => {
+        if (error.message == 'Сервер сломался') {
+          console.log('Сервер сломался')
+        } else {
+          console.log('ошибка')
+        }
+      })
+      .finally(() => {
+        addForm.style.display = "flex"
+      })
       function getLike(index) {
         if (!comments[index].isLiked) {
           comments[index].likes++
@@ -142,7 +154,41 @@
               .replaceAll(">", "&gt;")
               .replaceAll('"', "&quot;");
     };
-
+    function fetchPromisePost() {
+        return fetch("https://wedev-api.sky.pro/api/v1/daria-alekseeva/comments", {
+        method: "POST",
+        body: JSON.stringify({
+          "text": sanitizeHtml(commentInputElement.value),
+          "name": sanitizeHtml(nameInputElement.value)
+          })
+        })
+        .then((responce) => {
+          if (responce.status == 500) {
+            throw new Error('Сервер сломался');
+          } else if (responce.status == 400) {
+            throw new Error('Вы ввели слишком мало символов в имя или текст');
+          }
+           else {
+            fetchPromise();
+            nameInputElement.value = '';
+            commentInputElement.value = '';
+          }
+        })
+        .catch((error) => {
+          if (error.message == 'Сервер сломался') {
+            console.log('Сервер сломался')
+          } else if (error.message == 'Вы ввели слишком мало символов в имя или текст') {
+            alert('Вы ввели слишком мало символов в имя или текст')
+          } 
+          else {
+            console.log('ошибка')
+          }
+          renderComments()
+        })
+        .finally(() => {
+          addForm.style.display = "flex"
+        })
+      }
     buttonElement.addEventListener("click", () => {
       if (!nameInputElement.value || !commentInputElement.value) {
         return;
@@ -151,19 +197,9 @@
       const currentDate = new Date();
       const oldListHtml = listElement.innerHTML;
       commentSend();
-      const fetchPromisePost = fetch("https://wedev-api.sky.pro/api/v1/daria-alekseeva/comments", {
-      method: "POST",
-      body: JSON.stringify({
-        "text": sanitizeHtml(commentInputElement.value),
-        "name": sanitizeHtml(nameInputElement.value)
-        })
-      })
-      .then(() => {
-        fetchPromise();
-        nameInputElement.value = '';
-        commentInputElement.value = '';
-      })
+      fetchPromisePost();
     });
+
 
     console.log("It works!");
   </script>
