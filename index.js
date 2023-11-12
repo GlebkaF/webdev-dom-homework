@@ -35,7 +35,8 @@ const responseСomment = () => {
 const likeButtonListeners = () => {
     const likeElements = document.querySelectorAll(".like-button");
     for (const likeElement of likeElements) {
-        likeElement.addEventListener("click", () => {
+        likeElement.addEventListener("click", (event) => {
+            event.stopPropagation();
             if (comments[likeElement.dataset.index].isLiked === true) {
                 console.log('gpgpggp');
                 comments[likeElement.dataset.index].likesCount -= 1;
