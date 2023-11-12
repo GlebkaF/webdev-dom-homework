@@ -108,19 +108,38 @@
           renderComments();
         });
       }
+
+      const editSaveButtons = document.querySelectorAll('.comment .comment-edit-save-button');
+      for (const button of editSaveButtons) {
+        button.addEventListener('click', (event) => {
+          const item = commentsData[event.target.dataset.index];
+          const textArea = event.target.parentElement.querySelectorAll('.comment-text-edit')[0];          
+          item.isEdited = false;
+          item.text = textArea.value;
+          renderComments();
+        });
+      }
+
+      const editCancelButtons = document.querySelectorAll('.comment .comment-edit-cancel-button');
+      for (const button of editCancelButtons) {
+        button.addEventListener('click', (event) => {
+          const item = commentsData[event.target.dataset.index];
+          item.isEdited = false;          
+          renderComments();
+        });
+      }
       
     }
 
     const renderComments = () => {
       const renderCommentText = (comment, index) => {        
         if(comment.isEdited){
-          return `<textarea class="comment-text-edit">${comment.text}</textarea>
+          return `<textarea class="comment-text-edit">${comment.text}</textarea>          
           <button data-index="${index}" class="add-form-button comment-edit-save-button">Сохранить</button>
-          <button data-index="${index}" class="add-form-button comment-edit-cancel-button">Отмена</button>
-          `;
+          <button data-index="${index}" class="add-form-button comment-edit-cancel-button">Отмена</button>`;
         } 
-        return `<div class="comment-text">${comment.text}</div>
-        <button data-index="${index}" class="add-form-button comment-edit-button">Редактировать</button>`;
+        return `<div class="comment-text">${comment.text}</div>        
+          <button data-index="${index}" class="add-form-button comment-edit-button">Редактировать</button>`;
       };      
 
       const commentsHTML = commentsData.map((comment, index) =>
