@@ -81,12 +81,12 @@
     } 
     const renderComments = () => {
       const commentsHtml = comments.map((comment, index)=> {
-        return `<li class="comment">
+        return `<li class="comment" onclick="answerComment(${index})">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.date}</div>
           </div>
-          <div class="comment-body" onclick="answerComment(${index})">
+          <div class="comment-body">
             <div class="comment-text">
               ${comment.comment}
             </div>
@@ -103,6 +103,14 @@
     }
     renderComments();
 
+    const sanitizeHtml = (htmlString) => {
+      return htmlString
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;");
+    };
+
     buttonElement.addEventListener("click", () => {
       if (!nameInputElement.value || !commentInputElement.value) {
         return;
@@ -110,16 +118,11 @@
       
       const currentDate = new Date();
       const oldListHtml = listElement.innerHTML;
-      let newVal = nameInputElement.value.replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;");
-      nameInputElement.value = newVal;
 
       comments.push ({
-        name: nameInputElement.value,
+        name: sanitizeHtml(nameInputElement.value),
         date: currentDate.toLocaleString(),
-        comment: commentInputElement.value,
+        comment: sanitizeHtml(commentInputElement.value),
         likes: 0,
         isLiked: false
       })
