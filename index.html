@@ -35,27 +35,34 @@
     const submitButton = document.getElementById("submitButton");
     const commentList = document.getElementById("commentList");
 
-    const commentsData = [
-      {
-        name: "Глеб Фокин",
-        date: new Date(2022, 1, 12, 12, 18),
-        text: "Это будет первый комментарий на этой странице",
-        likes: 3,
-        isLiked: false,
-      },
-      {
-        name: "Варвара Н.",
-        date: new Date(2022, 1, 13, 19, 22),
-        text: "Мне нравится как оформлена эта страница! ❤",
-        likes: 75,
-        isLiked: true,
-      },
+    let commentsData = [
     ];
+
+
+
+    fetch("https://wedev-api.sky.pro/api/v1/aidar-sultanov/comments", {
+      method: "GET",
+    }).then((response) => {
+      response.json().then((responseData) => {
+        const getApiComments = responseData.comments.map((comment) => {
+          return {
+            author: comment.author.name,
+            date: new Date(comment.date),
+            likes: comment.likes,
+            isLiked: false,
+            text: comment.text,
+          };
+        });
+        commentsData = getApiComments;
+        renderComments();
+      });
+    });
+
 
     function replyToComment(index) {
       const selectedComment = commentsData[index];
       const replyText = `> ${selectedComment.text} 
-      ${selectedComment.name} ,  `;
+          ${selectedComment.name} ,  `;
       commentInput.value = replyText + commentInput.value;
       commentInput.focus();
     }
@@ -143,6 +150,31 @@
     }
 
     renderComments();
+
+    fetch("https://wedev-api.sky.pro/api/v1/aidar-sultanov/comments", {
+      method: "POST",
+    }).then((response) => {
+      response.json().then((responseData) => {
+        fetch("https://wedev-api.sky.pro/api/v1/aidar-sultanov/comments", {
+          method: "GET",
+        }).then((response) => {
+          response.json().then((responseData) => {
+            const getApiComments = responseData.comments.map((comment) => {
+              return {
+                author: comment.author.name,
+                date: new Date(comment.date),
+                likes: comment.likes,
+                isLiked: false,
+                text: comment.text,
+              };
+            });
+            commentsData = getApiComments;
+            renderComments();
+          });
+        });
+      })
+
+    });
   });
 </script>
 
