@@ -1,4 +1,45 @@
-export default function fetchPromise() {
+import { sanitizeHtml } from "./sanitize.js";
+import {addForm, comments, commentInputElement, nameInputElement} from './constants.js'
+import { renderComments } from "./render.js";
+import { commentsHtmlDivs } from "./getCommets.js";
+import { answerComment } from "./answers.js";
+export const fetchPromisePost = () => {
+    return fetch("https://wedev-api.sky.pro/api/v1/daria-alekseeva/comments", {
+    method: "POST",
+    body: JSON.stringify({
+      "text": sanitizeHtml(commentInputElement.value),
+      "name": sanitizeHtml(nameInputElement.value)
+      })
+    })
+    .then((responce) => {
+      if (responce.status == 500) {
+        throw new Error('Сервер сломался');
+      } else if (responce.status == 400) {
+        throw new Error('Вы ввели слишком мало символов в имя или текст');
+      }
+       else {
+        fetchPromise();
+        nameInputElement.value = '';
+        commentInputElement.value = '';
+      }
+    })
+    .catch((error) => {
+      if (error.message == 'Сервер сломался') {
+        console.log('Сервер сломался')
+      } else if (error.message == 'Вы ввели слишком мало символов в имя или текст') {
+        alert('Вы ввели слишком мало символов в имя или текст')
+      } 
+      else {
+        console.log('ошибка')
+      }
+      renderComments()
+    })
+    .finally(() => {
+      addForm.style.display = "flex"
+    })
+}
+
+export const fetchPromise = () => {
     return fetch("https://wedev-api.sky.pro/api/v1/daria-alekseeva/comments", {
     method: "GET"
     })
@@ -19,18 +60,19 @@ export default function fetchPromise() {
             isLiked: false,
           }
         })
-        comments = comms;
-        renderComments();
+        comments.splice(0, comments.length, ...comms);
+
+        renderComments()
     })
+
     .catch((error) => {
       if (error.message == 'Сервер сломался') {
         console.log('Сервер сломался')
       } else {
-        console.log('ошибка')
+        console.log(error.message)
       }
     })
     .finally(() => {
       addForm.style.display = "flex"
     })
-  
-  }
+}
