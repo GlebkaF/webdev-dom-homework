@@ -74,6 +74,8 @@
       }
     ];
 
+    const BEGIN_QUOTE_MARK = '::BEGIN_QUOTE::';
+    const END_QUOTE_MARK = '::END_QUOTE::';
 
     const formAddComment = document.getElementsByClassName('add-form')[0];
     const inputName = formAddComment.getElementsByClassName('add-form-name')[0];
@@ -87,12 +89,13 @@
     const buttonRemoveComment = document.getElementById('button-remove-comment');
 
 
-    const setbuttonRemoveCommentEnabled = () => buttonRemoveComment.disabled = commentsData.length == 0;
+    const setButtonRemoveCommentEnabled = () => buttonRemoveComment.disabled = commentsData.length == 0;
 
     const initCommentsEventHandlers = () => {
       const likeButtons = document.querySelectorAll('.comment .like-button');
       for (const button of likeButtons) {
         button.addEventListener('click', (event) => {
+          event.stopPropagation();
           const item = commentsData[event.target.dataset.index];
           item.likesCount += item.isLiked ? -1 : +1;
           item.isLiked = !item.isLiked;
@@ -103,6 +106,7 @@
       const editButtons = document.querySelectorAll('.comment .comment-edit-button');
       for (const button of editButtons) {
         button.addEventListener('click', (event) => {
+          event.stopPropagation();
           const item = commentsData[event.target.dataset.index];
           item.isEdited = true;
           renderComments();
@@ -112,10 +116,11 @@
       const editSaveButtons = document.querySelectorAll('.comment .comment-edit-save-button');
       for (const button of editSaveButtons) {
         button.addEventListener('click', (event) => {
+          event.stopPropagation();
           const item = commentsData[event.target.dataset.index];
           const textArea = event.target.parentElement.querySelectorAll('.comment-text-edit')[0];          
           item.isEdited = false;
-          item.text = textArea.value;
+          item.text = endcodeSpecialSymbols(textArea.value);
           renderComments();
         });
       }
@@ -123,9 +128,23 @@
       const editCancelButtons = document.querySelectorAll('.comment .comment-edit-cancel-button');
       for (const button of editCancelButtons) {
         button.addEventListener('click', (event) => {
+          event.stopPropagation();
           const item = commentsData[event.target.dataset.index];
           item.isEdited = false;          
           renderComments();
+        });
+      }
+
+      const commentElements = document.querySelectorAll('.comment');
+      for (const commentElement of commentElements) {
+        commentElement.addEventListener('click', (event) => {
+          event.stopPropagation();
+          const item = commentsData[event.currentTarget.dataset.index];
+          if(item.isEdited){
+            return;
+          }
+          inputComment.value = decodeSpecialSymbols(`${BEGIN_QUOTE_MARK} ${item.author}: ${item.text} ${END_QUOTE_MARK}`);
+          validateComment();
         });
       }
       
@@ -138,12 +157,18 @@
           <button data-index="${index}" class="add-form-button comment-edit-save-button">Сохранить</button>
           <button data-index="${index}" class="add-form-button comment-edit-cancel-button">Отмена</button>`;
         } 
-        return `<div class="comment-text">${comment.text}</div>        
+        return `<div class="comment-text">${renderCommentBody(comment.text)}</div>        
           <button data-index="${index}" class="add-form-button comment-edit-button">Редактировать</button>`;
-      };      
+      };
+      
+      const renderCommentBody = (text) => text
+          .replaceAll(BEGIN_QUOTE_MARK, '<div class="quote-block">')
+          .replaceAll(END_QUOTE_MARK, '</div>');
+      
+
 
       const commentsHTML = commentsData.map((comment, index) =>
-          `<li class="comment">
+          `<li class="comment" data-index="${index}">
             <div class="comment-header">
               <div>${comment.author}</div>
               <div>${comment.date}</div>
@@ -164,19 +189,16 @@
 
       initCommentsEventHandlers();
 
-      setbuttonRemoveCommentEnabled();
+      setButtonRemoveCommentEnabled();
     };
 
 
 
-    renderComments();
-
-
     const addComment = (author, comment) => {
       commentsData.push({
-        author: author,
+        author: endcodeSpecialSymbols(author),
         date: formatDateTime(new Date()),
-        text: comment,
+        text: endcodeSpecialSymbols(comment),
         likesCount: 0,
         isLiked: false,
         isEdited: false     
@@ -204,6 +226,17 @@
       return `${day}.${month}.${year} ${hours}:${minutes}`;
     };
 
+    const endcodeSpecialSymbols = s =>
+      s.replaceAll("&", "&amp;")
+       .replaceAll("<", "&lt;")
+       .replaceAll(">", "&gt;")
+       .replaceAll('"', "&quot;");
+    
+    const decodeSpecialSymbols = s =>
+      s.replaceAll("&amp;", "&")
+       .replaceAll("&lt;", "<")
+       .replaceAll("&gt;", ">")
+       .replaceAll("&quot;", '"');
     
 
     const inputIsNotEmpty = (input) => input.value.trim() !== '';
@@ -259,10 +292,10 @@
     inputComment.addEventListener('input', validateComment);
 
     inputComment.addEventListener('keydown', (e) =>{
-      if(e.code == 'Enter'){
-        validateAndSend();
-        e.preventDefault();
-      }
+      // if(e.code == 'Enter'){
+      //   validateAndSend();
+      //   e.preventDefault();
+      // }      
     });
 
     buttonAddComment.addEventListener('click', validateAndSend);
@@ -271,8 +304,10 @@
 
     buttonRemoveComment.addEventListener('click', removeLastComment);
 
+
+    renderComments();
     validateName();
     validateComment();
-    setbuttonRemoveCommentEnabled();
+    setButtonRemoveCommentEnabled();
   </script>
 </html>
