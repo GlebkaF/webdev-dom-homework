@@ -13,7 +13,7 @@ function getLike(index) {
 
 export const renderComments = () => {
     const commentsHtml = comments.map((comment, index)=> {
-      return `<li class="comment" onclick=answerComment(${index})>
+      return `<li class="comment" id=${index}>
         <div class="comment-header">
           <div>${comment.name}</div>
           <div>${comment.date}</div>
@@ -26,7 +26,7 @@ export const renderComments = () => {
         <div class="comment-footer">
           <div class="likes">
             ${comment.likes}
-            <button onclick="getLike(${index}).event.stopPropagation()" class="${comment.isLiked ? 'like-button -active-like' : 'like-button'}" id="like-buttlike-button-${index}"></button>
+            <button onclick="event.stopPropagation()" class="${comment.isLiked ? 'like-button -active-like' : 'like-button'}" id="${index}"></button>
           </div>
         </div>
       </li>`;

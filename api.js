@@ -1,8 +1,8 @@
 import { sanitizeHtml } from "./sanitize.js";
 import {addForm, comments, commentInputElement, nameInputElement} from './constants.js'
 import { renderComments } from "./render.js";
-import { commentsHtmlDivs } from "./getCommets.js";
 import { answerComment } from "./answers.js";
+import { getLike } from "./likes.js";
 export const fetchPromisePost = () => {
     return fetch("https://wedev-api.sky.pro/api/v1/daria-alekseeva/comments", {
     method: "POST",
@@ -34,6 +34,10 @@ export const fetchPromisePost = () => {
       }
       renderComments()
     })
+    .then(() => {
+      answerComment()
+      getLike()
+    })
     .finally(() => {
       addForm.style.display = "flex"
     })
@@ -63,6 +67,10 @@ export const fetchPromise = () => {
         comments.splice(0, comments.length, ...comms);
 
         renderComments()
+    })
+    .then(() => {
+      answerComment()
+      getLike()
     })
 
     .catch((error) => {

@@ -11,6 +11,12 @@ export const commentSend = () => {
     addForm.style.display = "none"
   } 
 
-export const answerComment = (index) => {
-    commentInputElement.value = `> ${comments[index].comment} \n ${comments[index].name},`;
+export const answerComment = () => {
+  let comm = document.querySelectorAll('.comment')
+  console.log(comm)
+  comm.forEach(el => {
+    el.addEventListener("click", () => {
+      commentInputElement.value = `> ${comments[el.id].comment} \n ${comments[el.id].name},`;
+    })
+  })
 } 
