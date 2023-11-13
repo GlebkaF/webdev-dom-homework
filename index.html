@@ -61,7 +61,7 @@
         date: "12.02.22 12:18",
         text: "Это будет первый комментарий на этой странице",
         likesCount: 3,
-        liked: false,
+        isLiked: false,
         isEdited: false
       },
       {
@@ -69,7 +69,7 @@
         date: "13.02.22 19:22",
         text: "Мне нравится как оформлена эта страница! ❤",
         likesCount: 75,
-        liked: true,
+        isLiked: true,
         isEdited: false
       }
     ];
@@ -94,8 +94,8 @@
       for (const button of likeButtons) {
         button.addEventListener('click', (event) => {
           const item = commentsData[event.target.dataset.index];
-          item.likesCount += item.liked ? -1 : +1;
-          item.liked = !item.liked;
+          item.likesCount += item.isLiked ? -1 : +1;
+          item.isLiked = !item.isLiked;
           renderComments();
         });
       }
@@ -154,7 +154,7 @@
             <div class="comment-footer">
               <div class="likes">
                 <span class="likes-counter">${comment.likesCount}</span>
-                <button data-index="${index}" class="like-button ${comment.liked ? 'active-like' : ''}"></button>
+                <button data-index="${index}" class="like-button ${comment.isLiked ? 'active-like' : ''}"></button>
               </div>
             </div>
           </li>`
@@ -178,7 +178,7 @@
         date: formatDateTime(new Date()),
         text: comment,
         likesCount: 0,
-        liked: false,
+        isLiked: false,
         isEdited: false     
       });
       renderComments();
