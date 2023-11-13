@@ -14,6 +14,64 @@ body {
   min-height: 100vh;
 }
 
+.login-form {
+  gap: 12px;
+}
+
+.add-form-row {
+  margin-top: 12px;
+  gap: 12px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.login-button {
+  width: 350px;
+  font-family: 'DM Serif Text', serif;
+  font-family: 'Poppins', sans-serif;
+  color: #ffffff;
+  font-size: 20px;
+
+  line-height: 1.55;
+  font-weight: 400;
+  border-width: 0px;
+  border-radius: 90px;
+  background-image: linear-gradient(0turn, rgba(88, 0, 255, 1) 0%, rgba(115, 52, 234, 1) 35%, rgba(175, 133, 255, 1) 100%);
+  border-color: transparent;
+  border-style: solid;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+  box-shadow: 0px 2px 15px 0px rgba(88, 0, 255, 0.8);
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+  }
+}
+
+.mode-button {
+  width: 350px;
+  font-family: 'DM Serif Text', serif;
+  font-family: 'Poppins', sans-serif;
+  color: #ffffff;
+  font-size: 20px;
+
+  line-height: 1.55;
+  font-weight: 400;
+  border-width: 0px;
+  border-radius: 90px;
+  background-image: linear-gradient(0turn, rgba(88, 0, 255, 1) 0%, rgba(115, 52, 234, 1) 35%, rgba(175, 133, 255, 1) 100%);
+  border-color: transparent;
+  border-style: solid;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+  box-shadow: 0px 2px 15px 0px rgba(88, 0, 255, 0.8);
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+  }
+}
+
 .comments,
 .comment {
   margin: 0;
@@ -22,7 +80,8 @@ body {
 }
 
 .comment,
-.add-form {
+.add-form,
+.login-form {
   width: 596px;
   box-sizing: border-box;
   background: radial-gradient(75.42% 75.42% at 50% 42.37%,
@@ -70,7 +129,7 @@ body {
   border-style: solid;
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
   box-shadow: 0px 2px 15px 0px rgba(88, 0, 255, 0.8);
-  
+
 
 }
 
@@ -111,15 +170,26 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg width='22' height='20' viewBox='0 0 22 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15.95 0C14.036 0 12.199 0.882834 11 2.26703C9.801 0.882834 7.964 0 6.05 0C2.662 0 0 2.6267 0 5.99455C0 10.1035 3.74 13.4714 9.405 18.5613L11 20L12.595 18.5613C18.26 13.4714 22 10.1035 22 5.99455C22 2.6267 19.338 0 15.95 0Z' fill='%23BCEC30'/%3E%3C/svg%3E");
 }
 
-.add-form {
+.add-form,
+.login-form {
   padding: 20px;
   margin-top: 48px;
   display: flex;
   flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.input__style {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
 }
 
 .add-form-name,
 .add-form-text {
+
   font-size: 16px;
   font-family: Helvetica;
   border-radius: 8px;
@@ -132,8 +202,9 @@ body {
 }
 
 .add-form-text {
-  margin-top: 12px;
-  padding: 22px;
+  width: 300px;
+  padding: 11px 22px;
+
   resize: none;
 }
 
@@ -166,16 +237,59 @@ body {
 }
 
 .add-form-button {
-  margin-top: 24px;
+  width: 300px;
+  font-family: 'Poppins', sans-serif;
+  color: #ffffff;
   font-size: 24px;
-  padding: 10px 20px;
-  background-color: #bcec30;
-  border: none;
-  border-radius: 18px;
+  line-height: 1.55;
+  font-weight: 400;
+  border-width: 0px;
+  border-radius: 90px;
+  background-image: linear-gradient(0turn, rgba(88, 0, 255, 1) 0%, rgba(115, 52, 234, 1) 35%, rgba(175, 133, 255, 1) 100%);
+  border-color: transparent;
+  border-style: solid;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+  box-shadow: 0px 2px 15px 0px rgba(88, 0, 255, 0.8);
   cursor: pointer;
 }
 
+.footer {
+  margin-top: 12px;
+  width: 596px;
+  box-sizing: border-box;
 
+  filter: drop-shadow(0px 20px 67px rgba(0, 0, 0, 0.08));
+  border-radius: 20px;
+}
+
+.form {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+
+}
+
+.footer__button {
+  font-family: 'DM Serif Text', serif;
+  font-family: 'Poppins', sans-serif;
+  color: #ffffff;
+  font-size: 20px;
+
+  line-height: 1.55;
+  font-weight: 400;
+  border-width: 0px;
+  border-radius: 90px;
+  background-image: linear-gradient(0turn, rgba(88, 0, 255, 1) 0%, rgba(115, 52, 234, 1) 35%, rgba(175, 133, 255, 1) 100%);
+  border-color: transparent;
+  border-style: solid;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+  box-shadow: 0px 2px 15px 0px rgba(88, 0, 255, 0.8);
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+  }
+}
 
 
 .delete-button {

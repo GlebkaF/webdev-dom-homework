@@ -1,13 +1,21 @@
 import { fetchArray, arrayPost } from "./api.js"
 import { renderComments } from "./render.js";
 
+
 const nameElement = document.getElementById("inputName");
 const textElement = document.getElementById("inputText");
 const buttonElement = document.getElementById("buttonPush");
 
+export function getToken() {
+    const token = `Bearer ${autoInfo.user.token}`;
+    return token;
+}
 
+export let autoInfo = JSON.parse(localStorage.getItem("user"));
+export const userLogin = (dataInfo) => {
+    autoInfo = dataInfo;
 
-
+}
 
 
 
@@ -135,38 +143,8 @@ answer();
 
 
 
-buttonElement.disabled = true;
-nameElement.addEventListener('input', () => {
-    if ((nameElement.value === '') || (textElement.value === '')) {
-        buttonElement.disabled = true;
-        return;
-    }
-    else {
-        buttonElement.disabled = false;
-        return;
-    }
-});
 
-textElement.addEventListener('input', () => {
-    if ((textElement.value === '') || (nameElement.value === '')) {
-        buttonElement.disabled = true;
-        return;
-    }
-    else {
-        buttonElement.disabled = false;
-
-        return;
-    }
-})
-
-
-
-
-
-
-
-
-function fieldSubmit(event) {
+export function fieldSubmit(event) {
     event.preventDefault();
     if (event.keyCode === 13) {
         document.getElementById("buttonPush").click();
@@ -189,35 +167,35 @@ function buttonHide() {
 };
 
 
-nameElement.addEventListener("input", buttonHide);
-textElement.addEventListener("input", buttonHide);
 
 
 
-buttonElement.addEventListener('click', () => {
 
-    nameElement.classList.remove('error');
-    textElement.classList.remove('error');
+export function addPost() {
+    const nameElement = document.getElementById("inputName");
+    const textElement = document.getElementById("inputText");
+    const buttonElement = document.getElementById("buttonPush");
+    buttonElement.addEventListener('click', () => {
 
-    if ((nameElement.value || textElement.value) === '') {
-        nameElement.classList.add('error');
-        textElement.classList.add('error');
-        return;
-    }
+        nameElement.classList.remove('error');
+        textElement.classList.remove('error');
 
-
-
-    const currentDate = new Date();
-    const dateString = `${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString()} `;
-
-
-    arrayPost();
+        if ((nameElement.value || textElement.value) === '') {
+            nameElement.classList.add('error');
+            textElement.classList.add('error');
+            return;
+        }
 
 
 
 
 
+        arrayPost();
 
-});
 
-buttonElement.disabled = true;
+
+
+
+
+    });
+}

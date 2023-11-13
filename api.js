@@ -1,10 +1,11 @@
-import { commentsArray, setComments } from "./main.js";
+import { saveUserInLocalStorage } from "./helpers.js";
+import { autoInfo, commentsArray, getToken, setComments, userLogin } from "./main.js";
 import { renderComments } from "./render.js";
 
 export const fetchArray = () => {
 
 
-    fetch("https://wedev-api.sky.pro/api/v1/fomin_denis/comments", {
+    fetch("https://wedev-api.sky.pro/api/v2/fomin_denis/comments", {
         method: "GET",
 
     }
@@ -35,7 +36,7 @@ export const fetchArray = () => {
 
         )
         setComments(newComments)
-        document.getElementById("loadingFeed").style.display = 'none';
+        
 
         renderComments(commentsArray);
     }).catch((Error) => {
@@ -53,13 +54,12 @@ export const arrayPost = () => {
     const nameElement = document.getElementById("inputName");
     const textElement = document.getElementById("inputText");
     const buttonElement = document.getElementById("buttonPush");
-    document.getElementById("form-add").style.display = 'none';
-    document.getElementById("loadingMessage").style.display = 'block';
+    
 
 
 
 
-    fetch("https://wedev-api.sky.pro/api/v1/fomin_denis/comments", {
+    fetch("https://wedev-api.sky.pro/api/v2/fomin_denis/comments", {
         method: "POST",
         body: JSON.stringify({
             text: textElement.value
@@ -70,14 +70,17 @@ export const arrayPost = () => {
                 .replaceAll(">", "&gt;"),
             forceError: true,
 
-        })
+        }),
+        headers: {
+            Authorization: getToken(),
+        }
 
 
 
     }).then((thenresponse) => {
         if (thenresponse.status === 500) {
             arrayPost();
-            // throw new Error("Ошибка сервера");
+            
         } else if (thenresponse.status === 400) {
             throw new Error("Имя или текст комментария должны иметь 3 и более символов");
         }
@@ -102,11 +105,72 @@ export const arrayPost = () => {
 
 
             setTimeout(function () {
-                document.getElementById("form-add").style.display = 'flex';
-                document.getElementById("loadingMessage").style.display = 'none';
+            
 
             }, 1000);
 
         });
 
 };
+
+
+
+export const fetchLogin = (loginInput, passwordInput) => {
+    return fetch('https://wedev-api.sky.pro/api/user/login', {
+        method: 'POST',
+        body: JSON.stringify({
+            login: loginInput,
+            password: passwordInput,
+        })
+    }).then((response) => {
+        if (response.status === 500) {
+
+            throw new Error("Ошибка сервера");
+        } else if (response.status === 400) {
+            throw new Error("Невыерный логин или пароль");
+        } else {
+            return response.json()
+        }
+    }).then((response) => {
+        userLogin(response);
+        saveUserInLocalStorage(response);
+        console.log(autoInfo)
+    }).catch((catchErorr) => {
+        if (catchErorr.message === 'Failed to fetch') {
+            alert("Проблемы с интернетом");
+        } else {
+            alert(catchErorr.message)
+        }
+    })
+}
+
+
+export const fetchRegistration = (loginInput, passwordInput, name) => {
+    return fetch('https://wedev-api.sky.pro/api/user/', {
+        method: 'POST',
+        body: JSON.stringify({
+            login: loginInput,
+            password: passwordInput,
+            name
+        })
+    }).then((response) => {
+        if (response.status === 500) {
+
+            throw new Error("Ошибка сервера");
+        } else if (response.status === 400) {
+            throw new Error("Пользователь с таким логином уже существует");
+        } else {
+            return response.json()
+        }
+    }).then((response) => {
+        userLogin(response);
+        saveUserInLocalStorage(response);
+        console.log(autoInfo)
+    }).catch((catchErorr) => {
+        if (catchErorr.message === 'Failed to fetch') {
+            alert("Проблемы с интернетом");
+        } else {
+            alert(catchErorr.message)
+        }
+    })
+}
