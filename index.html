@@ -8,17 +8,23 @@
 </head>
 
 <body>
+  <div class="page-loader hidden">
+    <span>Комментарии загружаются...</span>
+  </div>
   <div class="container">
     <ul id="ul-list" class="comments">
 
     </ul>
-    <div class="add-form">
+    <div class="add-form hidden">
       <input id="form-name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
       <textarea id="form-comment" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
         rows="4"></textarea>
       <div class="add-form-row">
         <button id="add-button" class="add-form-button">Написать</button>
       </div>
+    </div>
+    <div class="comments-loader hidden">
+      <span>Комментарий загружается...</span>
     </div>
   </div>
 </body>
@@ -30,7 +36,38 @@
   const formName = document.getElementById('form-name');
   const formComment = document.getElementById('form-comment');
 
+
   let comments = [];
+
+  function hideAddForm() {
+    const form = document.querySelector(".add-form");
+    form.classList.add("hidden");
+  }
+  function showAddForm() {
+    const form = document.querySelector(".add-form");
+    form.classList.remove("hidden");
+  }
+
+  function showLoadingIndicatorComments() {
+    const loader = document.querySelector(".comments-loader");
+    loader.classList.remove("hidden");
+  }
+  function deleteLoadingIndicatorComments() {
+    const loader = document.querySelector(".comments-loader");
+    loader.classList.add("hidden");
+
+  }
+
+  function showLoadingIndicator() {
+    const loader = document.querySelector(".page-loader");
+    loader.classList.remove("hidden");
+
+  }
+
+  function deleteLoadingIndicator() {
+    const loader = document.querySelector(".page-loader");
+    loader.classList.add("hidden");
+  }
 
   function correctDate(date) {
     let currentDate = new Date(date);
@@ -48,13 +85,16 @@
     return formattedDate;
   }
   function getFetch() {
-    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/anton-ganin/comments",
+    showLoadingIndicator();
+    hideAddForm();
+    fetch("https://wedev-api.sky.pro/api/v1/anton-ganin/comments",
       {
         method: "GET",
-      });
-    fetchPromise.then((response) => {
-      let jsonPromise = response.json();
-      jsonPromise.then((responseData) => {
+      })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
         let appComments = responseData.comments.map((coment) => {
           return {
             name: coment.author.name,
@@ -66,8 +106,9 @@
         });
         comments = appComments;
         rendLists();
+        deleteLoadingIndicator();
+        showAddForm();
       })
-    })
   }
   getFetch();
 
@@ -117,6 +158,7 @@
     ulList.innerHTML = listHtml;
     addLike();
     commentOnComment();
+
   }
 
   rendLists();
@@ -134,6 +176,8 @@
       formComment.classList.add("error");
 
     } else {
+      showLoadingIndicatorComments();
+      hideAddForm();
       const formInComment = formComment.value;
       const formInName = formName.value;
       fetch("https://wedev-api.sky.pro/api/v1/anton-ganin/comments",
@@ -152,12 +196,15 @@
               .replaceAll('"', "&quot;"),
           }),
         }).then(() => {
-          formName.value === "";
-          formComment.value === "";
+          deleteLoadingIndicator(); 
+          deleteLoadingIndicatorComments();
+          showAddForm();
           getFetch();
+          formName.value = "";
+          formComment.value = "";
         })
-      }
-    })
+    }
+  })
 </script>
 
 </html>
