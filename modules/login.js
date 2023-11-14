@@ -1,8 +1,8 @@
 import { loginUser, authorizedUser, setToken } from "./api.js";
 import { getUsers } from "../main.js";
-import { renderUsers } from "./render.js";
+import { renderUsersOld } from "./render.js";
 import { getComments } from "./api.js";
-import { handleEnterKey } from "./utils.js";
+// import { handleEnterKey } from "./utils.js";
 
 let isSignedUp = false;
 export function userAuthorization() {
@@ -10,6 +10,7 @@ export function userAuthorization() {
   function renderForm() {
     const loginElement = document.querySelector(".authorization");
   }
+  console.log("123");
 }
 
 // `

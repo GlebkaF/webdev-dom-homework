@@ -1,16 +1,18 @@
 "use strict";
-import { trimValue, setError, resetButtonState } from "./modules/validation.js";
+// import { trimValue, setError, resetButtonState } from "./modules/validation.js";
 import { getComments, postComments } from "./modules/api.js";
+import { handleEnterKey } from "./modules/render.js";
 
-import { currentDate, handleEnterKey, toggleButton } from "./modules/utils.js";
-import { renderUsers } from "./modules/render.js";
+import { currentDate } from "./modules/utils.js";
+import { renderUsersOld } from "./modules/render.js";
 // import { listElement, buttonElement, renderUsers } from "./modules/render.js";
-import { userAuthorization } from "./modules/login.js";
+// import { userAuthorization } from "./modules/login.js";
 import { renderLogin } from "./modules/renderLogin.js";
 import {
   inputNameElement,
   inputTextElement,
 } from "./modules/renderOptional.js";
+import { userAuthorization } from "./modules/login.js";
 
 // 3
 // import { showLoadingIndicatorComments } from "./modules/renderOptional.js";
@@ -20,10 +22,12 @@ userAuthorization();
 export let users = [];
 
 export function getUsers() {
+  
   return users;
 }
+
 // 6
-renderUsers(users);
+renderUsersOld(users);
 
 // export const users = (newUsers) => {
 //   users = newUsers;
@@ -48,7 +52,7 @@ export function getFetch() {
     });
 
     users = appUsers;
-    renderUsers(users);
+    renderUsersOld(users);
   });
 }
 

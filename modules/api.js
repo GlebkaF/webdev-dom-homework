@@ -1,14 +1,19 @@
 import { currentDate } from "./utils.js";
 
-export let token = 'Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k';
-export const getToken = () => {
-  return `Bearer ${token}`;
-};
+export let token = null;
+// export let token = localStorage.getItem("token");
+// export let userName = localStorage.getItem("user");
+// export const getToken = () => {
+//   return `Bearer ${token}`;
+// };
 export const setToken = (newToken) => {
+  console.log(newToken);
   token = newToken;
+  console.log(token);
 };
-console.log(token);
+
 export function getComments() {
+  console.log("12213");
   return fetch("https://wedev-api.sky.pro/api/v2/dima-nosov/comments", {
     method: "GET",
   }).then((response) => response.json());
@@ -32,7 +37,7 @@ export function postComments(userText) {
   return fetch("https://wedev-api.sky.pro/api/v2/dima-nosov/comments", {
     method: "POST",
     headers: {
-      Authorization: getToken(),
+      Authorization: token,
     },
     body: JSON.stringify({
       text: userText,
@@ -70,6 +75,8 @@ export function loginUser({ login, password }) {
     }),
   })
     .then((response) => {
+      // token = user.user.token;
+      console.log(token);
       if (response.status === 400) {
         throw new Error("Wrong login or password");
       }

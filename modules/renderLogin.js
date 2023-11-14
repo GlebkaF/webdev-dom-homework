@@ -4,7 +4,7 @@ import { getFetch } from "../main.js";
 let isLoginMode = true;
 export function renderLogin() {
   const loginHTML = `
-    <div class="container">
+    <div id="list" class="comments1">
     <div class="password">
      <h2 class="title"> Форма ${isLoginMode ? "Входа" : "Регистрации"}</h2>
      ${
@@ -12,7 +12,7 @@ export function renderLogin() {
          ? ""
          : `<input 
      type="text"
-     class="login-input" id="name-input-authorization"
+     class="name-input-authorization" id="name-input-authorization"
      placeholder="Имя"
     />`
      }</button>
@@ -28,15 +28,15 @@ export function renderLogin() {
               placeholder="Пароль"
               rows="4"
             ></textarea>
-            <div class="add-form-row">
-              <button id="enter-button" class="enter-button " >${
+            <div class="add-form-row1">
+              <button id="enter-button" class="enter-button" >${
                 isLoginMode ? "Войти" : "Зарегистрироваться"
               }</button>
-              <button id="signUp-button" class="enter-button " >Перейти ${
+              <button id="signUp-button" class="enter-button" >Перейти ${
                 isLoginMode ? "К регистрации" : "Ко входу"
               }</button></button>
             </div> 
-    
+    </div>
     </div>
     
     `;
@@ -44,10 +44,10 @@ export function renderLogin() {
 
   appElement.innerHTML = loginHTML;
 
-  document.getElementById("enter-button").addEventListener("click", () => {
+  document.querySelector(".enter-button").addEventListener("click", () => {
     if (isLoginMode) {
-      const login = document.querySelectorAll("login-input").value;
-      const password = document.querySelectorAll("password-input").value;
+      const login = document.querySelector("#login-input").value;
+      const password = document.querySelector("#password-input").value;
 
       if (!login) {
         alert("Введите логин");
@@ -72,9 +72,10 @@ export function renderLogin() {
           console.error(error.message);
         });
     } else {
-      const login = document.querySelectorAll("login-input").value;
-      const password = document.querySelectorAll("password-input").value;
-      const name = document.getElementById("name-input-authorization").value;
+      const login = document.querySelector("#login-input").value;
+      console.log(login);
+      const password = document.querySelector("#password-input").value;
+      const name = document.querySelector("#name-input-authorization").value;
       if (!login) {
         alert("Введите логин");
         return;

@@ -18,31 +18,18 @@ export function currentDate(date) {
   });
 }
 
-export const toggleButton = (buttonElement) => {
-  const inputNameElement = document.querySelector(".add-form-name");
-  console.log(inputNameElement);
-  if (
-    inputNameElement.value.trim().length >= 3 &&
-    inputTextElement.value.trim().length >= 3
-  ) {
-    buttonElement.disabled = false;
-    buttonElement.classList.remove("disabled");
-  } else {
-    buttonElement.disabled = true;
-    buttonElement.classList.add("disabled");
-  }
-};
 
-export const handleEnterKey = () => {
-  inputTextElement.addEventListener("keyup", (event) => {
-    if (event.keyCode === 13) {
-      event.preventDefault();
-      if (
-        inputNameElement.value.trim() !== "" &&
-        inputTextElement.value.trim() !== ""
-      ) {
-        buttonElement.click();
-      }
-    }
-  });
-};
+
+// export const handleEnterKey = () => {
+//   inputTextElement.addEventListener("keyup", (event) => {
+//     if (event.keyCode === 13) {
+//       event.preventDefault();
+//       if (
+//         inputNameElement.value.trim() !== "" &&
+//         inputTextElement.value.trim() !== ""
+//       ) {
+//         buttonElement.click();
+//       }
+//     }
+//   });
+// };

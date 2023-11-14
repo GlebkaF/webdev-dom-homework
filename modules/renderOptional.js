@@ -6,8 +6,9 @@ import {
 
 import { postComments } from "./api.js";
 // import { buttonElement } from "../main.js";
-import { toggleButton } from "./utils.js";
+// import { toggleButton } from "./utils.js";
 import { trimValue, setError } from "./validation.js";
+import { token } from "./api.js";
 
 // import { showLoadingIndicatorComments } from "./api.js";
 
@@ -18,6 +19,7 @@ import { trimValue, setError } from "./validation.js";
 // }
 
 export function renderUsers(users) {
+  console.log("123");
   // listElement remove if not working
   const appElement = document.getElementById("app");
   const usersHTML = users
@@ -45,50 +47,48 @@ export function renderUsers(users) {
         </li> `;
     })
     .join("");
-  const usersPageHTML = `
-    <div class="container">
-    <ul id="list" class="comments">
-    ${usersHTML}
-    </ul>
-    ${
-      token
-        ? `<div class="add-form">
-    <input id="name-input"
-      type="text"
-      value=""
-      class="add-form-name"
-      placeholder="Введите ваше имя"
-    />
-    <textarea
-      id="comment-input"
-      class="add-form-text"
-      placeholder="Введите ваш комментарий"
-      rows="4"
-    ></textarea>
-    <div class="add-form-row">
-      <button id="add-button" class="add-form-button">Написать</button>
-    </div>
-    </div>`
-        : `<p>Для добавления комментария, <a id="login-link" class="add-form-link" href='#'>зарегистрируйтесь</а></p>`
-    }
-    <div class="comment-loader hidden">
-            <span>Comment is being posted</span>
-          </div>
-    </div>
-    </div>
+  // const usersPageHTML = `
+  //   <div class="container">
+  //   <ul id="list" class="comments">
+  //   ${usersHTML}
+  //   </ul>
+  //   ${(!token)// <input id="name-input" //     ? `<div class="add-form">
+  //   //   type="text"
+  //   //   value=""
+  //   //   class="add-form-name"
+  //   //   placeholder="Введите ваше имя"
+  //   // />
+  //   // <textarea
+  //   //   id="comment-input"
+  //   //   class="add-form-text"
+  //   //   placeholder="Введите ваш комментарий"
+  //   //   rows="4"
+  //   // ></textarea>
+  //   // <div class="add-form-row">
+  //   //   <button id="add-button" class="add-form-button">Написать</button>
+  //   // </div>
+  //   // </div>`
+  //   //     :
+  //   `<button>Авторизоваться</button>;
+  //   <p>Для добавления комментария, <a id="login-link" class="add-form-link" href='#'>зарегистрируйтесь</а></p>`}
+  //   <div class="comment-loader hidden">
+  //           <span>Comment is being posted</span>
+  //         </div>
+  //   </div>
+  //   </div>
     
-    `;
-  appElement.innerHTML = usersPageHTML;
+  //   `;
+  // appElement.innerHTML = usersPageHTML;
 
   // listElement ->clarify
   // const list = document.getElementById("list");
   // const buttonElement = document.getElementById("add-button");
 
   list.innerHTML = usersHTML;
-  const linkToLogin = document.getElementById("login-link");
-  linkToLogin?.addEventListener("click", () => {
-    renderLogin();
-  });
+  // const linkToLogin = document.getElementById("login-link");
+  // linkToLogin?.addEventListener("click", () => {
+  //   renderLogin();
+  // });
   getUsers();
   attachLikeButtonListener(user, users, listElement);
   attachTextButtonListener(user);
@@ -98,39 +98,40 @@ export const listElement = document.getElementById("list");
 export const inputTextElement = document.getElementById("comment-input");
 export const inputNameElement = document.querySelectorAll("add-form-name");
 console.log(inputNameElement);
-toggleButton(buttonElement, inputNameElement, inputTextElement);
-console.log(buttonElement);
-buttonElement.disabled = false;
-buttonElement.textContent = "Написать";
-inputNameElement.addEventListener("input", () =>
-  toggleButton(buttonElement, inputNameElement, inputTextElement)
-);
-inputTextElement.addEventListener("input", () =>
-  toggleButton(buttonElement, inputNameElement, inputTextElement)
-);
 
-buttonElement.addEventListener("click", () => {
-  inputNameElement.classList.remove("error");
-  inputTextElement.classList.remove("error");
+// toggleButton(buttonElement, inputNameElement, inputTextElement);
+// console.log(buttonElement);
+// buttonElement.disabled = false;
+// buttonElement.textContent = "Написать";
+// inputNameElement.addEventListener("input", () =>
+//   toggleButton(buttonElement, inputNameElement, inputTextElement)
+// );
+// inputTextElement.addEventListener("input", () =>
+//   toggleButton(buttonElement, inputNameElement, inputTextElement)
+// );
 
-  if (!trimValue(inputNameElement)) {
-    inputNameElement.classList.add("error");
-    return;
-  }
+// buttonElement.addEventListener("click", () => {
+//   inputNameElement.classList.remove("error");
+//   inputTextElement.classList.remove("error");
 
-  if (!trimValue(inputTextElement)) {
-    inputTextElement.classList.add("error");
-    return;
-  }
-  console.log(trimValue);
+//   if (!trimValue(inputNameElement)) {
+//     inputNameElement.classList.add("error");
+//     return;
+//   }
 
-  if (trimValue(inputNameElement).trim().length < 3) {
-    return setError(inputNameElement, "Введенное имя слишком короткое");
-  }
+//   if (!trimValue(inputTextElement)) {
+//     inputTextElement.classList.add("error");
+//     return;
+//   }
+//   console.log(trimValue);
 
-  if (trimValue(inputTextElement).trim().length < 3) {
-    return setError(inputTextElement, "Ваш комментарий слишком короткий");
-  }
-});
+//   if (trimValue(inputNameElement).trim().length < 3) {
+//     return setError(inputNameElement, "Введенное имя слишком короткое");
+//   }
+
+//   if (trimValue(inputTextElement).trim().length < 3) {
+//     return setError(inputTextElement, "Ваш комментарий слишком короткий");
+//   }
+// });
 // 1.
 // postComments(commentInfo);
