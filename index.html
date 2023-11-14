@@ -128,15 +128,17 @@
     const likesElement = document.querySelectorAll('.like-button');
     // const likeCount = document.querySelector('.likes-counter');
 
-    likesElement.forEach((el, index) => {
-      if (comments[index].isLiked) {
-        el.classList.add('-active-like');
+    const chekLike = (index) => {
+      if (!comments[index].isLiked) {
+        likesElement.add('-active-like');
         comments[index].likes++
       } else {
-        el.classList.remove('-active-like');
+        likesElement.remove('-active-like');
         comments[index].likes++
       }
-    });
+    };
+
+    chekLike();
 
     // // Изменение внешнего вида и счетчик лайков
     // const likesElement = document.querySelectorAll('.like-button');
@@ -162,11 +164,6 @@
   };
 
   renderComments();
-
-
-
-
-
 
   buttonElement.addEventListener("click", () => {
     commentInputElement.classList.remove("error");
