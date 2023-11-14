@@ -115,7 +115,7 @@
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${comment.likes}</span>
-            <button class="like-button"></button>
+            <button class="like-button ${comment.isLiked ? '-active-like' : ''}"></button>
           </div>
         </div>
       </li>`;
@@ -126,44 +126,30 @@
 
 
     const likesElement = document.querySelectorAll('.like-button');
-    // const likeCount = document.querySelector('.likes-counter');
+    likesElement.forEach((el, index) => {
+
+      el.addEventListener('click', () => {
+        chekLike(index);
+      })
+    })
 
     const chekLike = (index) => {
       if (!comments[index].isLiked) {
-        likesElement.add('-active-like');
+        likesElement[index].classList.add('-active-like');
         comments[index].likes++
+        comments[index].isLiked = true
       } else {
-        likesElement.remove('-active-like');
-        comments[index].likes++
+        likesElement[index].classList.remove('-active-like');
+        comments[index].likes--
+        comments[index].isLiked = false
       }
-    };
-
-    chekLike();
-
-    // // Изменение внешнего вида и счетчик лайков
-    // const likesElement = document.querySelectorAll('.like-button');
-    // const likeCount = document.querySelector('.likes-counter');
-
-    // //let i = 0;
-    // for (const like of likesElement) {
-    //   like.addEventListener("click", () => {
-    //     //i = i + 1;
-    //     // if (i % 2 === 1) {
-    //     if (comment.isLiked === false) {
-    //       like.classList.add('-active-like');
-    //       const currentCount = parseInt(likeCount.textContent, 10);
-    //       likeCount.textContent = currentCount + 1;
-    //     } else {
-    //       like.classList.remove('-active-like');
-    //     }
-
-    //   });
-    // }
-
+      renderComments()
+    }
 
   };
 
   renderComments();
+
 
   buttonElement.addEventListener("click", () => {
     commentInputElement.classList.remove("error");
