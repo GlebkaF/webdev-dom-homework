@@ -78,11 +78,10 @@ export const renderUsersOld = (users) => {
   const buttonElement = document.querySelector(".add-form-button");
 
   buttonElement?.addEventListener("click", () => {
-    console.log(token);
-    console.log(buttonElement);
+    console.log("Button clicked");
+
     const inputTextElement = document.querySelector(".add-form-text");
     const inputNameElement = document.querySelector(".add-form-name");
-    console.log(inputTextElement);
 
     inputNameElement.classList.remove("error");
     inputTextElement.classList.remove("error");
@@ -96,7 +95,6 @@ export const renderUsersOld = (users) => {
       inputTextElement.classList.add("error");
       return;
     }
-    console.log(trimValue);
 
     if (trimValue(inputNameElement).trim().length < 3) {
       return setError(inputNameElement, "Введенное имя слишком короткое");
@@ -106,11 +104,11 @@ export const renderUsersOld = (users) => {
       return setError(inputTextElement, "Ваш комментарий слишком короткий");
     }
   });
+  
 };
 
 export const toggleButton = (buttonElement) => {
   const inputNameElement = document.querySelector(".add-form-name");
-  console.log(inputNameElement);
   if (
     inputNameElement.value.trim().length >= 3 &&
     inputTextElement.value.trim().length >= 3
@@ -124,6 +122,7 @@ export const toggleButton = (buttonElement) => {
 };
 
 export const handleEnterKey = () => {
+  if (!token) return;
   const inputTextElement = document.querySelector(".add-form-text");
   console.log(inputTextElement);
   inputTextElement.addEventListener("keyup", (event) => {

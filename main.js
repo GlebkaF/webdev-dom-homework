@@ -22,7 +22,6 @@ userAuthorization();
 export let users = [];
 
 export function getUsers() {
-  
   return users;
 }
 
@@ -95,28 +94,27 @@ getFetch();
 //   }
 // });
 handleEnterKey();
-//   console.log("Начинаем делать запрос");
-//   resetButtonState(buttonElement, "Ваш комментарий добавляется");
-//   postComments(currentDate)
-//     .then(() => {
-//       return fetchAndRender();
-//     })
-//     .then(() => {
-//       buttonElement.disabled = false;
-//       buttonElement.textContent = "Написать";
-//       inputNameElement.value = "";
-//       inputTextElement.value = "";
-//     })
-//     .catch((error) => {
-//       buttonElement.disabled = false;
-//       buttonElement.textContent = "Написать";
-//       alert("Произошла ошибка, повторите попытку позже");
-//       console.warn(error);
-//     });
+// console.log("Начинаем делать запрос");
+// resetButtonState(buttonElement, "Ваш комментарий добавляется");
+// postComments(currentDate)
+//   .then(() => {
+//     return fetchAndRender();
+//   })
+//   .then(() => {
+//     buttonElement.disabled = false;
+//     buttonElement.textContent = "Написать";
+//     inputNameElement.value = "";
+//     inputTextElement.value = "";
+//   })
+//   .catch((error) => {
+//     buttonElement.disabled = false;
+//     buttonElement.textContent = "Написать";
+//     alert("Произошла ошибка, повторите попытку позже");
+//     console.warn(error);
+//   });
 
-//   buttonElement.disabled = true;
-//   buttonElement.classList.add("disabled");
-// });
+// buttonElement.disabled = true;
+// buttonElement.classList.add("disabled");
 // fetchAndRender();
 
 // handleEnterKey();

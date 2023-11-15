@@ -33,17 +33,20 @@ export function postComments(userText) {
     // nick: inputNameElement.value.replace(/</g, "&lt;").replace(/>/g, "&gt;"),
     // date: currentDate(date),
   };
+  console.log("Comment Info:", commentInfo);
 
   return fetch("https://wedev-api.sky.pro/api/v2/dima-nosov/comments", {
     method: "POST",
     headers: {
       Authorization: token,
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       text: userText,
     }),
   })
     .then((response) => {
+      console.log("Response Status:", response.status);
       if (response.status === 500) {
         throw new Error("The server has failed");
       } else if (response.status === 400) {
@@ -53,6 +56,7 @@ export function postComments(userText) {
       }
     })
     .then((responseData) => {
+      console.log("Response Data:", responseData);
       // showAddForm();
       // inputTextElement.value = ""; скорее не вызывать, так как использованы в начале функции
       // inputNameElement.value = "";
@@ -60,6 +64,7 @@ export function postComments(userText) {
       //deleteLoadingIndicator(); разобраться
     })
     .catch((error) => {
+      console.error("Error:", error.message);
       //showAddForm();
       //deleteLoadingIndicatorComments();
       // buttonElement.disabled = false;

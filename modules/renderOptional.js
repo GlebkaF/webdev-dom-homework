@@ -19,7 +19,7 @@ import { token } from "./api.js";
 // }
 
 export function renderUsers(users) {
-  console.log("123");
+
   // listElement remove if not working
   const appElement = document.getElementById("app");
   const usersHTML = users
@@ -47,40 +47,8 @@ export function renderUsers(users) {
         </li> `;
     })
     .join("");
-  // const usersPageHTML = `
-  //   <div class="container">
-  //   <ul id="list" class="comments">
-  //   ${usersHTML}
-  //   </ul>
-  //   ${(!token)// <input id="name-input" //     ? `<div class="add-form">
-  //   //   type="text"
-  //   //   value=""
-  //   //   class="add-form-name"
-  //   //   placeholder="Введите ваше имя"
-  //   // />
-  //   // <textarea
-  //   //   id="comment-input"
-  //   //   class="add-form-text"
-  //   //   placeholder="Введите ваш комментарий"
-  //   //   rows="4"
-  //   // ></textarea>
-  //   // <div class="add-form-row">
-  //   //   <button id="add-button" class="add-form-button">Написать</button>
-  //   // </div>
-  //   // </div>`
-  //   //     :
-  //   `<button>Авторизоваться</button>;
-  //   <p>Для добавления комментария, <a id="login-link" class="add-form-link" href='#'>зарегистрируйтесь</а></p>`}
-  //   <div class="comment-loader hidden">
-  //           <span>Comment is being posted</span>
-  //         </div>
-  //   </div>
-  //   </div>
+  
     
-  //   `;
-  // appElement.innerHTML = usersPageHTML;
-
-  // listElement ->clarify
   // const list = document.getElementById("list");
   // const buttonElement = document.getElementById("add-button");
 
