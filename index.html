@@ -5,11 +5,10 @@
     <meta charset="utf-8" />
     <link rel="stylesheet" href="styles.css" />
   </head>
-
   <body>
     <div class="container">
       <ul id="list" class="comments">
-        <li class="comment">
+        <!-- <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -22,7 +21,7 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">3</span>
-              <button class="like-button"></button>
+              <button class="like-button" id="like-button"></button>
             </div>
           </div>
         </li>
@@ -42,7 +41,7 @@
               <button class="like-button -active-like"></button>
             </div>
           </div>
-        </li>
+        </li> --> 
       </ul>
       <div class="add-form">
         <input
@@ -67,25 +66,93 @@
       .error {
         background-color: rgb(134, 26, 26);
       }
+      .-active-like{
+        color: chartreuse;
+      }
     </style>
   </body>
 
   <script>
     "use strict";
-    // Код писать здесь
+    
     const buttonElement = document.getElementById('add-form-button');
     const listElement = document.getElementById('list');
     const addFormName = document.getElementById('add-form-name');
     const addFormText = document.getElementById('add-form-text');
     const currentDate = new Date();
     const showDate = currentDate.getDate().toString().split(' ').map(el => el<10 ? '0'+el : el).join("") + "." + 
-    currentDate.getMonth().toString().split(' ').map(el => el<10 ? '0'+el : el).join("") + "." + 
+    (currentDate.getMonth()+1).toString().split(' ').map(el => el<10 ? '0'+el : el).join("") + "." + 
     currentDate.getFullYear().toString().slice(2) + " " 
-    + currentDate.getHours() + ":" + currentDate.getMinutes();
-
-    buttonElement.disabled = true;
+    + currentDate.getHours().toString().split(' ').map(el => el<10 ? '0'+el : el).join("") + ":" + 
+    currentDate.getMinutes().toString().split(' ').map(el => el<10 ? '0'+el : el).join("");
     
-    addFormName.addEventListener("input", () => {
+
+    const comments = [
+      {
+        name: "Глеб Фокин",
+        timestamp: '12.02.22 12:18',
+        text: "Это будет первый комментарий на этой странице",
+        likesCounter: 3,
+        likeIsActive: false
+      },
+      {
+        name: "Варвара Н.",
+        timestamp: '13.02.22 19:22',
+        text: "Мне нравится как оформлена эта страница! ❤",
+        likesCounter: 75,
+        likeIsActive: true
+      }
+    ];
+    const initLikeButtonsListeners = () => {
+      const likeButtonsElements = document.querySelectorAll(".like-button");
+
+      for (const likeButtonElement of likeButtonsElements) {
+        likeButtonElement.addEventListener("click", () => {
+          const index = likeButtonElement.dataset.index;
+          if(comments[index].likeIsActive === false){
+            comments[index].likesCounter += 1;
+            comments[index].likeIsActive = true;
+          } else if(comments[index].likeIsActive === true) {
+            comments[index].likesCounter -= 1;
+            comments[index].likeIsActive = false;
+          }
+          renderComments();
+        });
+      }
+    };
+    const renderComments = () => {
+      const commentsHtml = comments
+        .map((comment, index) => {
+          return `<li class="comment">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.timestamp}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.likesCounter}</span>
+              <button data-index="${index}" class="like-button ${comment.likeIsActive===true?'-active-like':''}"></button>
+            </div>
+          </div>
+        </li>`;
+        })
+        .join("");
+
+      listElement.innerHTML = commentsHtml;
+
+      initLikeButtonsListeners();
+    };
+
+    renderComments();
+
+  buttonElement.disabled = true;
+    
+  addFormName.addEventListener("input", () => {
       if (addFormName.value !== "" && addFormText.value !== "") {
       buttonElement.disabled = false;
     }
@@ -96,9 +163,9 @@
     }
   });
     
-function inputHandler() {
+buttonElement.addEventListener("click", () => {
   addFormName.classList.remove("error");
-      addFormText.classList.remove("error");
+  addFormText.classList.remove("error");
       if(addFormName.value === "") {
         addFormName.classList.add("error");
         buttonElement.setAttribute('disabled', "");
@@ -109,27 +176,18 @@ function inputHandler() {
         buttonElement.setAttribute('disabled', "");
         return;
       }
-      const oldListHTML = listElement.innerHTML;
-      listElement.innerHTML = oldListHTML + 
-      `<li class="comment">
-          <div class="comment-header">
-            <div>${addFormName.value}</div>
-            <div>${showDate}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${addFormText.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>`;
-}
-    buttonElement.addEventListener("click", () => {inputHandler()});
+      comments.push({
+        name: addFormName.value,
+        timestamp: showDate,
+        text: addFormText.value,
+        likesCounter: 0,
+        likeIsActive: false
+      });
+  renderComments();
+  addFormName.value = '';
+  addFormText.value = '';
+});
+    
    
   </script>
 </html>
