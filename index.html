@@ -83,7 +83,8 @@
         const likesButtonElement = document.querySelectorAll (".like-button");
         for (const likeButtonElement of likesButtonElement){
           const index = likeButtonElement.dataset.index;
-          likeButtonElement.addEventListener ("click", ()=> {
+          likeButtonElement.addEventListener ("click", (event)=> {
+            event.stopPropagation();
             if (commentsData[index].isLiked === true) {
               commentsData[index].likes --;
               commentsData[index].isLiked = false;
@@ -99,7 +100,7 @@
 
     const renderComments = () => {
       const commentsHtml = commentsData.map ((comment, index) => {
-        return `<li class="comment">
+        return `<li class="comment" data-index = "${index}">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.date}</div>
@@ -120,10 +121,26 @@
 
       listElement.innerHTML = commentsHtml;
       initEventListener();
+      replyComments();
+      
     };
 
-    renderComments();
+    const replyComments = () => {
+      const quoteElements = document.querySelectorAll(".comment");
+      for (const quoteElement of quoteElements){
+        const index = quoteElement.dataset.index;
+        quoteElement.addEventListener ("click", ()=> {
+          let commentAnswer = document.querySelector('.add-form-text');
+          commentAnswer.value = `${commentsData[index].text}: ${commentsData[index].name}`;
+          renderComments();       
 
+        })
+
+      }
+
+    } 
+    replyComments();
+    renderComments();
 
     buttonElement.addEventListener("click", ()=>{
       nameInputElement.style.backgroundColor = "";
@@ -148,9 +165,17 @@
 
         commentsData.push (
           {
-            name: nameInputElement.value,
+            name: nameInputElement.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;"),
             date: commentDate,
-            text: commentInputElement.value,
+            text: commentInputElement.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;"),
             likes: 0,
 
           }
