@@ -9,7 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments" id="comment-id">
-        <li class="comment">
+         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -39,10 +39,10 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
+              <button class="like-button"></button>
             </div>
           </div>
-        </li>
+        </li> 
       </ul>
       <div class="add-form">
         <input
@@ -70,11 +70,66 @@
   <script>
     
     "use strict";
+    const comments =[
+      {
+      name: `Глеб Фокин`,
+      date:`12.02.22 12:18`,
+      comment: `first comment on page`,
+      like: 3,
+      isLiked: false
+    },
+      {
+      name: `Варвара Н.`,
+      date:`13.02.22 12:18`,
+      comment: `Мне нравится как оформлена страница`,
+      like: 75,
+      isLiked: false
+    }
+  ]; 
+
     const buttonElement = document.getElementById('add-button')
     const commentElement = document.getElementById('comment-id')
     const nameInputElement = document.getElementById('name-input')
     const commentInputElement = document.getElementById('comment-input')
     const newDate = new Date()
+    const likeButtonPush = document.querySelectorAll(`.comment-footer`)
+    
+    const renderLikes = () =>{
+      const likesHtml = comments.map((el)=> {
+        return `<li class="comment">
+          <div class="comment-header">
+            <div>${el.name}</div>
+            <div>${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString()}</div>
+            
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${el.comment}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${el.like}</span>
+              <button class="like-button">${el.isLiked}</button>
+            </div>
+          </div>
+        </li>`})
+        console.log(likesHtml)
+      }
+      renderLikes()
+
+      const initLikeButton = ()=>{
+
+
+const likeButtonPush = document.querySelectorAll(`.comment-footer`)
+
+for (const likeButton of likeButtonPush) {
+console.log(likeButton.innerHTML)
+
+likeButton.addEventListener(`click`, ()=>{console.log(1)
+
+})
+}}
 
     buttonElement.addEventListener("click", () => {
 
@@ -89,6 +144,7 @@
         commentInputElement.classList.add("error");
         return;
       }
+     
 
       const oldCommentHtml = commentElement.innerHTML;
       commentElement.innerHTML = oldCommentHtml + `<li class="comment">
@@ -107,8 +163,12 @@
               <button class="like-button"></button>
             </div>
           </div>
-        </li>`;
+        </li>`
+        renderLikes()
+        initButtonColor()
+        initLikeButton()
     })
     console.log("It works!");
+
   </script>
 </html>
