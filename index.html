@@ -8,42 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments" id="list">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
+      <ul class="comments" id="comments"></ul>
       <div class="add-form">
         <input
           type="text"
@@ -74,10 +39,68 @@
   <script>
     "use strict";
     const buttonElement = document.getElementById("add-button");
-    const listElement = document.getElementById("list");
+    const listElement = document.getElementById("comments");
     const nameInputElement = document.getElementById("name-input");
     const textInputElement = document.getElementById("text-input");
+    const commentElement = document.getElementById("comments");
     document.getElementById("add-button").disabled = true;
+
+    const comments = [
+      {
+        name: "Глеб Фокин",
+        date: "12.02.22 12:18",
+        text: "Это будет первый комментарий на этой странице",
+        likeCount: 3,
+        isLiked: false,
+      },
+      {
+        name: "Варвара Н",
+        date: "13.02.22 19:22",
+        text: "Мне нравится как оформлена эта страница! ❤",
+        likeCount: 75,
+        isLiked: false,
+      },
+    ];
+
+    const renderComment = () => {
+      const commentHTML = comments
+        .map((comment, index) => {
+          return `<li class="comment">
+            <div class="comment-header">
+              <div>${comment.name}</div>
+              <div>${comment.date}</div>
+            </div>
+            <div class="comment-body">
+              <div class="comment-text">${comment.text}</div>
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">${comment.likeCount}</span>
+                <button class="like-button ${
+                  comment.isLiked ? "-active-like" : ""
+                }" data-index="${index}"></button>
+              </div>
+            </div>
+          </li>`;
+        })
+        .join("");
+
+      listElement.innerHTML = commentHTML;
+      initLikeListeners();
+    };
+
+    const initLikeListeners = () => {
+      const likeButtons = document.querySelectorAll(".like-button");
+      for (const likeButton of likeButtons) {
+        likeButton.addEventListener("click", () => {
+          const index = likeButton.dataset.index;
+          comments[index].likeCount += comments[index].isLiked ? -1 : +1;
+          comments[index].isLiked = !comments[index].isLiked;
+
+          renderComment();
+        });
+      }
+    };
 
     const formatDateTime = (date) => {
       const day = String(date.getDate()).padStart(2, "0");
@@ -111,37 +134,23 @@
 
     buttonElement.addEventListener("click", () => {
       const date = new Date();
-      const oldListHtml = listElement.innerHTML;
 
-      listElement.innerHTML =
-        oldListHtml +
-        `<li class = "comment">
-            <div class="comment-header">
-              <div>
-              ${nameInputElement.value}
-              </div>
-              <div>
-              ${formatDateTime(date)}
-              </div>
-            </div>
-          <div class="comment-body">
-            <div class="comment-text">
-            ${textInputElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
+      comments.push({
+        name: nameInputElement.value,
+        date: formatDateTime(date),
+        text: textInputElement.value,
+        likeCount: 0,
+        isLiked: false,
+      });
 
       nameInputElement.value = "";
       textInputElement.value = "";
       document.getElementById("add-button").disabled = true;
+      renderComment();
     });
 
     console.log("It works!");
+
+    renderComment();
   </script>
 </html>
