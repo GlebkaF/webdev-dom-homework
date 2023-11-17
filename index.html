@@ -8,40 +8,7 @@
   <body>
     <div class="container">
       <ul id="list" class="comments">
-        <!-- <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button" id="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li> --> 
+       <--рендерится в js script-->
       </ul>
       <div class="add-form">
         <input
@@ -69,6 +36,9 @@
       .-active-like{
         color: chartreuse;
       }
+      .comment-text{
+        white-space: pre-line;
+      }
     </style>
   </body>
 
@@ -85,6 +55,7 @@
     currentDate.getFullYear().toString().slice(2) + " " 
     + currentDate.getHours().toString().split(' ').map(el => el<10 ? '0'+el : el).join("") + ":" + 
     currentDate.getMinutes().toString().split(' ').map(el => el<10 ? '0'+el : el).join("");
+    
     
 
     const comments = [
@@ -107,7 +78,8 @@
       const likeButtonsElements = document.querySelectorAll(".like-button");
 
       for (const likeButtonElement of likeButtonsElements) {
-        likeButtonElement.addEventListener("click", () => {
+        likeButtonElement.addEventListener("click", (event) => {
+          event.stopPropagation();
           const index = likeButtonElement.dataset.index;
           if(comments[index].likeIsActive === false){
             comments[index].likesCounter += 1;
@@ -120,10 +92,22 @@
         });
       }
     };
+    const initCommentsListeners = () => {
+      const commentsElements = document.querySelectorAll(".comment");
+
+      for (const commentElement of commentsElements) {
+        commentElement.addEventListener("click", () => {
+          
+          const index = commentElement.dataset.index;
+          
+          addFormText.value = ">"+`${comments[index].text} \n ${comments[index].name}`;
+        });
+      }
+    };
     const renderComments = () => {
       const commentsHtml = comments
         .map((comment, index) => {
-          return `<li class="comment">
+          return `<li data-index="${index}" class="comment">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.timestamp}</div>
@@ -145,6 +129,7 @@
 
       listElement.innerHTML = commentsHtml;
 
+      initCommentsListeners();
       initLikeButtonsListeners();
     };
 
@@ -177,9 +162,15 @@ buttonElement.addEventListener("click", () => {
         return;
       }
       comments.push({
-        name: addFormName.value,
+        name: addFormName.value.replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
         timestamp: showDate,
-        text: addFormText.value,
+        text: addFormText.value.replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
         likesCounter: 0,
         likeIsActive: false
       });
