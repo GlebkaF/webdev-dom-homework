@@ -5,12 +5,15 @@ const textInputElement = document.getElementById('add-form-text');
 const listCommentsElement = document.getElementById('comments-list');
 
 let comments = [];
-
+//получение коментариев гет-запрос на сервер
 const getComments = () => {
     fetch('https://wedev-api.sky.pro/api/v1/olga-okulova/comments', {
         method: 'GET',
-    }).then((response) => {
-        response.json().then((responseData) => {
+    })
+        .then((response) => {
+            return response.json()
+        })
+        .then((responseData) => {
             comments = responseData.comments.map((comment) => {
                 return {
                     name: comment.author.name,
@@ -21,11 +24,14 @@ const getComments = () => {
                 };
             });
             renderComents();
+            addFormButton.disabled = false;
+            addFormButton.style.backgroundColor = '#bcec30';
         });
-    });
-};
+}
+
 getComments();
 
+//ответы на комннтарии
 const responseСomment = () => {
     const formComments = document.querySelectorAll(".comment");
     for (const formComment of formComments) {
@@ -37,6 +43,7 @@ const responseСomment = () => {
     }
 };
 
+//кнопка лайка
 const likeButtonListeners = () => {
     const likeElements = document.querySelectorAll(".like-button");
     for (const likeElement of likeElements) {
@@ -54,6 +61,7 @@ const likeButtonListeners = () => {
     }
 };
 
+//отображение коментариев
 const renderComents = () => {
     const commentsHtml = comments
         .map((comment, index) => {
@@ -81,8 +89,10 @@ const renderComents = () => {
     likeButtonListeners();
     responseСomment();
 };
+
 renderComents();
 
+//отправка коментария на сервер
 addFormButton.addEventListener("click", () => {
     nameInputElement.classList.remove("error");
     textInputElement.classList.remove("error");
@@ -96,7 +106,8 @@ addFormButton.addEventListener("click", () => {
         textInputElement.classList.add("error");
         return;
     }
-
+    addFormButton.disabled = true;
+    addFormButton.style.backgroundColor = 'grey';
     fetch("https://wedev-api.sky.pro/api/v1/olga-okulova/comments", {
         method: "POST",
         body: JSON.stringify({
@@ -106,12 +117,12 @@ addFormButton.addEventListener("click", () => {
                 .replaceAll('<', `&lt;`)
                 .replaceAll('>', `&gt;`)
         })
-    }).then(() => {
-        getComments(); 
-        
-    });
+    })
+        .then(() => {
+            getComments();
+        });
+
     renderComents();
     nameInputElement.value = "";
 });
 
-console.log("It works!");
