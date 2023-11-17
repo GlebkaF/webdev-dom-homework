@@ -7,13 +7,10 @@ export let token = null;
 //   return `Bearer ${token}`;
 // };
 export const setToken = (newToken) => {
-  console.log(newToken);
   token = newToken;
-  console.log(token);
 };
 
 export function getComments() {
-  console.log("12213");
   return fetch("https://wedev-api.sky.pro/api/v2/dima-nosov/comments", {
     method: "GET",
   }).then((response) => response.json());
@@ -28,25 +25,17 @@ export function getComments() {
 // export const inputNameElement = document.getElementById("name-input");
 
 export function postComments(userText) {
-  const commentInfo = {
-    text: inputTextElement.value.replace(/</g, "&lt;").replace(/>/g, "&gt;"),
-    // nick: inputNameElement.value.replace(/</g, "&lt;").replace(/>/g, "&gt;"),
-    // date: currentDate(date),
-  };
-  console.log("Comment Info:", commentInfo);
-
+  userText = userText.replace(/</g, "&lt;").replace(/>/g, "&gt;");
   return fetch("https://wedev-api.sky.pro/api/v2/dima-nosov/comments", {
     method: "POST",
     headers: {
       Authorization: token,
-      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       text: userText,
     }),
   })
     .then((response) => {
-      console.log("Response Status:", response.status);
       if (response.status === 500) {
         throw new Error("The server has failed");
       } else if (response.status === 400) {
@@ -56,7 +45,6 @@ export function postComments(userText) {
       }
     })
     .then((responseData) => {
-      console.log("Response Data:", responseData);
       // showAddForm();
       // inputTextElement.value = ""; скорее не вызывать, так как использованы в начале функции
       // inputNameElement.value = "";
@@ -81,7 +69,6 @@ export function loginUser({ login, password }) {
   })
     .then((response) => {
       // token = user.user.token;
-      console.log(token);
       if (response.status === 400) {
         throw new Error("Wrong login or password");
       }

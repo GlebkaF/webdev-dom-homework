@@ -64,7 +64,6 @@ export function renderLogin() {
         password: password,
       })
         .then((user) => {
-          console.log(user);
           setToken(`Bearer ${user.user.token}`);
           getFetch();
         })

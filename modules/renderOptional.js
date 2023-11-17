@@ -65,7 +65,7 @@ export const buttonElement = document.querySelectorAll("add-form-button");
 export const listElement = document.getElementById("list");
 export const inputTextElement = document.getElementById("comment-input");
 export const inputNameElement = document.querySelectorAll("add-form-name");
-console.log(inputNameElement);
+
 
 // toggleButton(buttonElement, inputNameElement, inputTextElement);
 // console.log(buttonElement);
@@ -103,3 +103,6 @@ console.log(inputNameElement);
 // });
 // 1.
 // postComments(commentInfo);
+
+
+

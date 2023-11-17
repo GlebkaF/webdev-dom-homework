@@ -1,11 +1,11 @@
 import { inputTextElement, inputNameElement } from "./renderOptional.js";
-import { token } from "./api.js";
+import { postComments, token } from "./api.js";
 import { renderLogin } from "./renderLogin.js";
 import { trimValue } from "./validation.js";
 import { setError } from "./validation.js";
+import { getFetch } from "../main.js";
 
 export const renderUsersOld = (users) => {
-  console.log("123");
   const appHtml = document.getElementById("app");
   const appElement = document.getElementById("app");
   const usersHTML = users
@@ -103,8 +103,26 @@ export const renderUsersOld = (users) => {
     if (trimValue(inputTextElement).trim().length < 3) {
       return setError(inputTextElement, "Ваш комментарий слишком короткий");
     }
+    postComments(inputTextElement.value).then(() => {
+      getFetch();
+    });
   });
   
+};
+
+export const attachLikeButtonListener = (user, users) => {
+  const likesButton = document.querySelectorAll(`like-button-${index}`);
+  likesButton.addEventListener("click", (event) => {
+    console.log("Button clicked");
+    event.stopPropagation();
+    if (user.isLiked) {
+      user.likes -= 1;
+    } else {
+      user.likes += 1;
+    }
+    user.isLiked = !user.isLiked;
+    renderUsersOld(users);
+  });
 };
 
 export const toggleButton = (buttonElement) => {
@@ -147,16 +165,20 @@ export const attachTextButtonListener = (user) => {
   });
 };
 
-export const attachLikeButtonListener = (user, users, listElement) => {
-  const likesButton = document.querySelectorAll(`like-button-${index}`);
-  likesButton.addEventListener("click", (event) => {
-    event.stopPropagation();
-    if (user.isLiked) {
-      user.likes -= 1;
-    } else {
-      user.likes += 1;
-    }
-    user.isLiked = !user.isLiked;
-    renderUsers(users, listElement);
-  });
-};
+// export const attachLikeButtonListener = (user, users) => {
+//   console.log(user);
+//   console.log(users);
+//   const likesButton = document.querySelectorAll(`like-button-${index}`);
+//   console.log(likesButton);
+//   likesButton.addEventListener("click", (event) => {
+//     console.log(likesButton);
+//     event.stopPropagation();
+//     if (user.isLiked) {
+//       user.likes -= 1;
+//     } else {
+//       user.likes += 1;
+//     }
+//     user.isLiked = !user.isLiked;
+//     renderUsersOld(users);
+//   });
+// };

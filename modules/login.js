@@ -10,7 +10,7 @@ export function userAuthorization() {
   function renderForm() {
     const loginElement = document.querySelector(".authorization");
   }
-  console.log("123");
+
 }
 
 // `
