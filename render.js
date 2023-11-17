@@ -1,16 +1,5 @@
 import {listElement, comments} from './constants.js'
-import { answerComment } from "./answers.js";
-
-function getLike(index) {
-  if (!comments[index].isLiked) {
-    comments[index].likes++
-  } else {
-    comments[index].likes--
-  }
-  comments[index].isLiked = !comments[index].isLiked;
-  renderComments();
-}
-
+import { unauthorizedId } from './constants.js'; 
 export const renderComments = () => {
     const commentsHtml = comments.map((comment, index)=> {
       return `<li class="comment" id=${index}>

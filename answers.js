@@ -1,4 +1,5 @@
-import {listElement, addForm, commentInputElement, comments} from './constants.js'
+import { pageLogin } from './auth.js'
+import {listElement, addForm, commentInputElement, comments, unauthorizedId} from './constants.js'
 
 export const pageLoaded = () => {
     const loadInfo = "<span>Пожалуйста, подождите, загружаю комментарии...</span>"
@@ -9,6 +10,14 @@ export const commentSend = () => {
     const loadInfo = "<span>Комментарий добавляется...</span>"
     listElement.innerHTML += loadInfo;
     addForm.style.display = "none"
+  } 
+
+  export const unauthorized = () => {
+    const loadInfo = "<span id='toAuthForm_wrapp' >Чтобы добавить комментарий, <ins id='toAuthForm'>авторизуйтесь</ins>...</span>"
+    unauthorizedId.innerHTML = loadInfo;
+    addForm.style.display = "none"
+    pageLogin()
+    pageRegistration()
   } 
 
 export const answerComment = () => {

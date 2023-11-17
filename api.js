@@ -1,14 +1,17 @@
 import { sanitizeHtml } from "./sanitize.js";
-import {addForm, comments, commentInputElement, nameInputElement} from './constants.js'
+import {addForm, comments, commentInputElement, nameInputElement, tokenAuth} from './constants.js'
 import { renderComments } from "./render.js";
-import { answerComment } from "./answers.js";
+import { answerComment, unauthorized } from "./answers.js";
 import { getLike } from "./likes.js";
 export const fetchPromisePost = () => {
-    return fetch("https://wedev-api.sky.pro/api/v1/daria-alekseeva/comments", {
+    return fetch("https://wedev-api.sky.pro/api/v2/daria-alekseeva/comments", {
     method: "POST",
+    headers: {
+      Authorization: "Bearer" + " " + tokenAuth[0]
+    },
     body: JSON.stringify({
       "text": sanitizeHtml(commentInputElement.value),
-      "name": sanitizeHtml(nameInputElement.value)
+      "name": sanitizeHtml(nameInputElement.value),
       })
     })
     .then((responce) => {
@@ -19,7 +22,6 @@ export const fetchPromisePost = () => {
       }
        else {
         fetchPromise();
-        nameInputElement.value = '';
         commentInputElement.value = '';
       }
     })
@@ -44,7 +46,7 @@ export const fetchPromisePost = () => {
 }
 
 export const fetchPromise = () => {
-    return fetch("https://wedev-api.sky.pro/api/v1/daria-alekseeva/comments", {
+    return fetch("https://wedev-api.sky.pro/api/v2/daria-alekseeva/comments", {
     method: "GET"
     })
     .then((responce) => {
@@ -80,7 +82,25 @@ export const fetchPromise = () => {
         console.log(error.message)
       }
     })
-    .finally(() => {
-      addForm.style.display = "flex"
-    })
+    // .finally(() => {
+    //   addForm.style.display = "flex"
+    // })
+}
+
+export const fetchLogin = () => {
+  return fetch("https://wedev-api.sky.pro/api/v2/daria-alekseeva/comments", {
+    method: "POST"
+  })
+  .then((response) => {
+    if (response.status == 401) {
+      throw new Error('Unauthorized');
+    }
+  })
+  .catch((error) => {
+    console.log(error)
+    if (error.message == 'Unauthorized') {
+      addForm.style.display = "none"
+      unauthorized()
+    }
+  })
 }
