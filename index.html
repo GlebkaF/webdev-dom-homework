@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="list">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -49,23 +49,82 @@
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          id="name_input"
         />
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+          id="text_input"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="send-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
+  <style>
+    .error{
+      background-color: rgb(250, 57, 57);
+    }
+  </style>
 
   <script>
     "use strict";
-    // Код писать здесь
+    const buttonElement = document.getElementById("send-button");
+    const listElement = document.getElementById("list");
+    const nameInputElement = document.getElementById("name_input");
+    const textInputelement = document.getElementById("text_input");
+    const date = new Date();
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear().toString().slice(-2);
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const formattedDate = `${day}.${month}.${year} ${hours}:${minutes}`;
+
+  
+
+
+    buttonElement.addEventListener('click', () => {
+
+      textInputelement.classList.remove("error");
+      nameInputElement.classList.remove("error");
+
+      if (nameInputElement.value === '' ) {
+        nameInputElement.classList.add("error");
+        return;
+      } else if (textInputelement.value === '') {
+        textInputelement.classList.add("error");
+        return;
+      } else {};
+
+
+      const oldListHtml = listElement.innerHTML;
+      listElement.innerHTML = oldListHtml +
+      `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${formattedDate}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textInputelement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+
+    nameInputElement.value = '';
+    textInputelement.value = '';
+    })
+
     console.log("It works!");
   </script>
 </html>
