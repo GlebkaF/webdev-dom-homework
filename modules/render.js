@@ -1,15 +1,21 @@
-import { inputTextElement, inputNameElement } from "./renderOptional.js";
 import { postComments, token } from "./api.js";
 import { renderLogin } from "./renderLogin.js";
 import { trimValue } from "./validation.js";
 import { setError } from "./validation.js";
-import { getFetch } from "../main.js";
+import { getFetch, users } from "../main.js";
+import { getUsers } from "../main.js";
+
+export const buttonElement = document.querySelectorAll("add-form-button");
+export const listElement = document.getElementById("list");
+export const inputTextElement = document.getElementById("comment-input");
+export const inputNameElement = document.querySelectorAll("add-form-name");
 
 export const renderUsersOld = (users) => {
   const appHtml = document.getElementById("app");
   const appElement = document.getElementById("app");
   const usersHTML = users
     .map((user, index) => {
+      console.log(user);
       return `<li class="comment" data-index="${index}" >
           <div class="comment-header">
             <div>${user.name}</div>
@@ -34,6 +40,7 @@ export const renderUsersOld = (users) => {
         </li> `;
     })
     .join("");
+  console.log(user);
 
   const usersPageHTML = `
     <div class="container">
@@ -107,13 +114,14 @@ export const renderUsersOld = (users) => {
       getFetch();
     });
   });
-  
+  getUsers();
+  attachLikeButtonListener(user, users, listElement);
+  attachTextButtonListener(user);
 };
 
 export const attachLikeButtonListener = (user, users) => {
   const likesButton = document.querySelectorAll(`like-button-${index}`);
   likesButton.addEventListener("click", (event) => {
-    console.log("Button clicked");
     event.stopPropagation();
     if (user.isLiked) {
       user.likes -= 1;
@@ -124,6 +132,7 @@ export const attachLikeButtonListener = (user, users) => {
     renderUsersOld(users);
   });
 };
+// attachLikeButtonListener();
 
 export const toggleButton = (buttonElement) => {
   const inputNameElement = document.querySelector(".add-form-name");

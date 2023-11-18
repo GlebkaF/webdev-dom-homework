@@ -1,14 +1,14 @@
-import { getUsers } from "../main.js";
-import {
-  attachLikeButtonListener,
-  attachTextButtonListener,
-} from "./render.js";
+// import { getUsers } from "../main.js";
+// import {
+//   attachLikeButtonListener,
+//   attachTextButtonListener,
+// } from "./render.js";
 
-import { postComments } from "./api.js";
-// import { buttonElement } from "../main.js";
-// import { toggleButton } from "./utils.js";
-import { trimValue, setError } from "./validation.js";
-import { token } from "./api.js";
+// import { postComments } from "./api.js";
+// // import { buttonElement } from "../main.js";
+// // import { toggleButton } from "./utils.js";
+// import { trimValue, setError } from "./validation.js";
+// import { token } from "./api.js";
 
 // import { showLoadingIndicatorComments } from "./api.js";
 
@@ -18,53 +18,48 @@ import { token } from "./api.js";
 //   loader.classList.remove("hidden");
 // }
 
-export function renderUsers(users) {
-
-  // listElement remove if not working
-  const appElement = document.getElementById("app");
-  const usersHTML = users
-    .map((user, index) => {
-      return `<li class="comment" data-index="${index}" >
-          <div class="comment-header">
-            <div>${user.name}</div>
-            <div>${user.date}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              <a class="comment__link" href="#" id="text-button-${
-                user.text
-              }"></a>
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">${user.likes}</span>
-              <button data-index="${index}" class="like-button ${
-        user.isLiked ? "-active-like" : "-no-active-like"
-      }"></button>
-            </div>
-          </div>
-        </li> `;
-    })
-    .join("");
+// export function renderUsers(users) {
+//   const appElement = document.getElementById("app");
+//   const usersHTML = users
+//     .map((user, index) => {
+//       return `<li class="comment" data-index="${index}" >
+//           <div class="comment-header">
+//             <div>${user.name}</div>
+//             <div>${user.date}</div>
+//           </div>
+//           <div class="comment-body">
+//             <div class="comment-text">
+//               <a class="comment__link" href="#" id="text-button-${
+//                 user.text
+//               }"></a>
+//             </div>
+//           </div>
+//           <div class="comment-footer">
+//             <div class="likes">
+//               <span class="likes-counter">${user.likes}</span>
+//               <button data-index="${index}" class="like-button ${
+//         user.isLiked ? "-active-like" : "-no-active-like"
+//       }"></button>
+//             </div>
+//           </div>
+//         </li> `;
+//     })
+//     .join("");
   
     
-  // const list = document.getElementById("list");
-  // const buttonElement = document.getElementById("add-button");
+//   // const list = document.getElementById("list");
+//   // const buttonElement = document.getElementById("add-button");
 
-  list.innerHTML = usersHTML;
-  // const linkToLogin = document.getElementById("login-link");
-  // linkToLogin?.addEventListener("click", () => {
-  //   renderLogin();
-  // });
-  getUsers();
-  attachLikeButtonListener(user, users, listElement);
-  attachTextButtonListener(user);
-}
-export const buttonElement = document.querySelectorAll("add-form-button");
-export const listElement = document.getElementById("list");
-export const inputTextElement = document.getElementById("comment-input");
-export const inputNameElement = document.querySelectorAll("add-form-name");
+//   list.innerHTML = usersHTML;
+//   // const linkToLogin = document.getElementById("login-link");
+//   // linkToLogin?.addEventListener("click", () => {
+//   //   renderLogin();
+//   // });
+// getUsers();
+// attachLikeButtonListener(user, users, listElement);
+// attachTextButtonListener(user);
+// }
+
 
 
 // toggleButton(buttonElement, inputNameElement, inputTextElement);

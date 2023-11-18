@@ -1,10 +1,6 @@
 // import { inputTextElement } from "./api.js";
 import { trimValue, setError, resetButtonState } from "./validation.js";
-import {
-  inputNameElement,
-  inputTextElement,
-  buttonElement,
-} from "./renderOptional.js";
+import { inputNameElement, inputTextElement, buttonElement } from "./render.js";
 
 export function currentDate(date) {
   return date.toLocaleString("ru-RU", {
@@ -17,8 +13,6 @@ export function currentDate(date) {
     year: "2-digit",
   });
 }
-
-
 
 // export const handleEnterKey = () => {
 //   inputTextElement.addEventListener("keyup", (event) => {

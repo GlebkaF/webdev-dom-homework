@@ -11,7 +11,7 @@ import { renderLogin } from "./modules/renderLogin.js";
 import {
   inputNameElement,
   inputTextElement,
-} from "./modules/renderOptional.js";
+} from "./modules/render.js";
 import { userAuthorization } from "./modules/login.js";
 
 // 3
