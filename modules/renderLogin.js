@@ -1,7 +1,8 @@
 import { authorizedUser, loginUser, setToken } from "./api.js";
 import { getFetch } from "../main.js";
 
-let isLoginMode = true;
+
+export let isLoginMode = true;
 export function renderLogin() {
   const loginHTML = `
     <div id="list" class="comments1">
@@ -16,24 +17,30 @@ export function renderLogin() {
      placeholder="Имя"
     />`
      }</button>
-            
+     <div class="input-form">
+     <br>   
             <input 
               type="text"
               class="login-input" id="login-input"
               placeholder="Логин"
             />
+            <br>
             <input 
               type="text"
               class="password-input" id="password-input"
               placeholder="Пароль"
               rows="4"
             ></textarea>
+            </div>
+
+
+
             <div class="add-form-row1">
               <button id="enter-button" class="enter-button" >${
-                isLoginMode ? "Войти" : "Зарегистрироваться"
+                isLoginMode ? "Авторизоваться" : "Зарегистрироваться"
               }</button>
-              <button id="signUp-button" class="enter-button" >Перейти ${
-                isLoginMode ? "К регистрации" : "Ко входу"
+              <button id="signUp-button" class="enter-button" > ${
+                isLoginMode ? "Зарегистрироваться" : "Назад к авторизации"
               }</button></button>
             </div> 
     </div>
@@ -62,14 +69,13 @@ export function renderLogin() {
       loginUser({
         login: login,
         password: password,
-      })
-        .then((user) => {
-          setToken(`Bearer ${user.user.token}`);
-          getFetch();
-        })
-        .catch((error) => {
-          console.error(error.message);
-        });
+      }).then((user) => {
+        setToken(`Bearer ${user.user.token}`);
+        getFetch();
+        // })
+        // .catch((error) => {
+        //   console.error(error.message);
+      });
     } else {
       const login = document.querySelector("#login-input").value;
       console.log(login);

@@ -3,7 +3,8 @@ import { renderLogin } from "./renderLogin.js";
 import { trimValue } from "./validation.js";
 import { setError } from "./validation.js";
 import { getFetch, users } from "../main.js";
-import { getUsers } from "../main.js";
+import { isLoginMode } from "./renderLogin.js";
+import { userAuthorization } from "./login.js";
 
 export const buttonElement = document.querySelectorAll("add-form-button");
 export const listElement = document.getElementById("list");
@@ -15,7 +16,6 @@ export const renderUsersOld = (users) => {
   const appElement = document.getElementById("app");
   const usersHTML = users
     .map((user, index) => {
-      console.log(user);
       return `<li class="comment" data-index="${index}" >
           <div class="comment-header">
             <div>${user.name}</div>
@@ -40,16 +40,18 @@ export const renderUsersOld = (users) => {
         </li> `;
     })
     .join("");
-  console.log(user);
 
   const usersPageHTML = `
     <div class="container">
+    <div class="api-loader hidden">
+      <span>Комментарии загружаются, пожалуйста, подождите...</span>
+    </div>
       <ul id="list" class="comments">
         ${usersHTML}
       </ul>
       ${
         !token
-          ? `<p>Для добавления комментария, <a id="login-link" class="add-form-link" href='#'>зарегистрируйтесь</а></p>`
+          ? `<p>Для добавления комментария, <a id="login-link" class="add-form-link" href='#'>авторизуйтесь</а></p>`
           : `<div class="add-form">
           <input 
             id="name-input"
@@ -69,9 +71,6 @@ export const renderUsersOld = (users) => {
           </div>
         </div>`
       }
-      <div class="comment-loader hidden">
-        <span>Comment is being posted</span>
-      </div>
     </div>
     </div>
   `;
@@ -85,10 +84,11 @@ export const renderUsersOld = (users) => {
   const buttonElement = document.querySelector(".add-form-button");
 
   buttonElement?.addEventListener("click", () => {
-    console.log("Button clicked");
+    buttonElement.textContent = "Комментарий добавляется";
 
     const inputTextElement = document.querySelector(".add-form-text");
     const inputNameElement = document.querySelector(".add-form-name");
+    console.log(inputNameElement);
 
     inputNameElement.classList.remove("error");
     inputTextElement.classList.remove("error");
@@ -111,28 +111,32 @@ export const renderUsersOld = (users) => {
       return setError(inputTextElement, "Ваш комментарий слишком короткий");
     }
     postComments(inputTextElement.value).then(() => {
+      buttonElement.textContent = "Написать";
       getFetch();
     });
   });
-  getUsers();
-  attachLikeButtonListener(user, users, listElement);
-  attachTextButtonListener(user);
+  // disableUserNameInput();
+  // console.log(disableUserNameInput());
+
+  attachLikeButtonListener(users, listElement);
+  attachTextButtonListener();
 };
 
-export const attachLikeButtonListener = (user, users) => {
-  const likesButton = document.querySelectorAll(`like-button-${index}`);
-  likesButton.addEventListener("click", (event) => {
-    event.stopPropagation();
-    if (user.isLiked) {
-      user.likes -= 1;
-    } else {
-      user.likes += 1;
-    }
-    user.isLiked = !user.isLiked;
-    renderUsersOld(users);
+export const attachLikeButtonListener = () => {
+  const likesButtons = document.querySelectorAll(".like-button");
+  likesButtons.forEach((likeButton, index) => {
+    likeButton.addEventListener("click", (event) => {
+      event.stopPropagation();
+      if (users[index].isLiked) {
+        users[index].likes -= 1;
+      } else {
+        users[index].likes += 1;
+      }
+      users[index].isLiked = !users[index].isLiked;
+      renderUsersOld(users);
+    });
   });
 };
-// attachLikeButtonListener();
 
 export const toggleButton = (buttonElement) => {
   const inputNameElement = document.querySelector(".add-form-name");
@@ -165,29 +169,38 @@ export const handleEnterKey = () => {
   });
 };
 
-export const attachTextButtonListener = (user) => {
-  const commentElement = document.getElementById(`comment-${index}`);
-  commentElement.addEventListener("click", (event) => {
-    event.stopPropagation();
-    inputTextElement.value = user.name + "\n" + user.text;
-    inputTextElement.style.whiteSpace = "pre-line";
-  });
+export const attachTextButtonListener = () => {
+  const commentElement = document.querySelectorAll("comment");
+  const inputTextElement = document.getElementById("comment-input");
+  commentElement.forEach((comment, index) =>
+    comment.addEventListener(
+      ("click",
+      (event) => {
+        event.stopPropagation();
+        inputTextElement.value = users[index].name + "\n" + users[index].text;
+        inputTextElement.style.whiteSpace = "pre-line";
+      })
+    )
+  );
 };
 
-// export const attachLikeButtonListener = (user, users) => {
-//   console.log(user);
-//   console.log(users);
-//   const likesButton = document.querySelectorAll(`like-button-${index}`);
-//   console.log(likesButton);
-//   likesButton.addEventListener("click", (event) => {
-//     console.log(likesButton);
-//     event.stopPropagation();
-//     if (user.isLiked) {
-//       user.likes -= 1;
-//     } else {
-//       user.likes += 1;
-//     }
-//     user.isLiked = !user.isLiked;
-//     renderUsersOld(users);
-//   });
+const disableUserNameInput = () => {
+  const inputNameElement = document.querySelector(".add-form-name");
+  console.log(inputNameElement);
+
+  if (isLoginMode) {
+    inputNameElement.value = userAuthorization();
+    inputNameElement.disabled = true;
+  } else {
+    inputNameElement.disabled = false;
+  }
+};
+
+// export const showLoadingIndicator = () => {
+//   const loaderElement = document.querySelector(".api-loader");
+//   loaderElement.classList.remove("hidden");
+// };
+// export const hideLoadingIndicator = () => {
+//   const loaderElement = document.querySelector(".api-loader");
+//   loaderElement.classList.add("hidden");
 // };

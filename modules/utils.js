@@ -1,4 +1,3 @@
-// import { inputTextElement } from "./api.js";
 import { trimValue, setError, resetButtonState } from "./validation.js";
 import { inputNameElement, inputTextElement, buttonElement } from "./render.js";
 
@@ -14,16 +13,4 @@ export function currentDate(date) {
   });
 }
 
-// export const handleEnterKey = () => {
-//   inputTextElement.addEventListener("keyup", (event) => {
-//     if (event.keyCode === 13) {
-//       event.preventDefault();
-//       if (
-//         inputNameElement.value.trim() !== "" &&
-//         inputTextElement.value.trim() !== ""
-//       ) {
-//         buttonElement.click();
-//       }
-//     }
-//   });
-// };
+

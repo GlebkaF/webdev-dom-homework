@@ -16,14 +16,6 @@ export function getComments() {
   }).then((response) => response.json());
 }
 
-// export function showLoadingIndicatorComments() {
-//   const loader = document.querySelector(".comment-loader");
-//   loader.classList.remove("hidden");
-// }
-
-// export const inputTextElement = document.getElementById("comment-input");
-// export const inputNameElement = document.getElementById("name-input");
-
 export function postComments(userText) {
   userText = userText.replace(/</g, "&lt;").replace(/>/g, "&gt;");
   return fetch("https://wedev-api.sky.pro/api/v2/dima-nosov/comments", {
@@ -44,19 +36,9 @@ export function postComments(userText) {
         return response.json();
       }
     })
-    .then((responseData) => {
-      // showAddForm();
-      // inputTextElement.value = ""; скорее не вызывать, так как использованы в начале функции
-      // inputNameElement.value = "";
-      // getFetch(); разобраться
-      //deleteLoadingIndicator(); разобраться
-    })
+    .then((responseData) => {})
     .catch((error) => {
       console.error("Error:", error.message);
-      //showAddForm();
-      //deleteLoadingIndicatorComments();
-      // buttonElement.disabled = false;
-      // console.error(error.message);
     });
 }
 export function loginUser({ login, password }) {
