@@ -9,7 +9,7 @@
   <body>
     <div class="container">
       <ul id="list" class="comments">
-        <li class="comment">
+        <!-- <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -42,74 +42,150 @@
               <button class="like-button -active-like"></button>
             </div>
           </div>
-        </li>
+        </li> -->
       </ul>
       <div class="add-form">
-        <input id="name-input"
+        <input
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+
+          value=""
         />
-        <textarea id="text-input"
+        <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
-        ></textarea>
+          >
+        </textarea>
         <div class="add-form-row">
-          <button id="add-button" class="add-form-button">Написать</button>
+          <button class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
-
   <style>
     .error {
       background-color: red;
     }
   </style>
-
   <script>
-    "use strict";
-    // Код писать здесь"
-    const buttonElement = document.getElementById("add-button");
-    const listElement = document.getElementById("list");
-    const nameInputElement = document.getElementById("name-input");
-    const textInputElement = document.getElementById("text-input");
+	"use strict";
+	const btnElement = document.querySelector('.add-form-button');
+	const nameInputElement = document.querySelector('.add-form-name');
+	const nameTextAreaElement = document.querySelector('.add-form-text');
+	const myDate = new Date().toLocaleDateString().slice(0, 6) + new Date().toLocaleDateString().slice(-2);
+	const nowDate = myDate + ' ' + new Date().toLocaleTimeString().slice(0, -3);
 
-    buttonElement.addEventListener("click", () => {
+	const listElement = document.getElementById('list');
 
-      nameInputElement.classList.remove("error");
-      if(nameInputElement.value === '') {
-        nameInputElement.classList.add("error");
-        return;
-      }
+	const comments = [
+		{
+			name: 'Глеб Фокин',
+			date: '12.02.22 12:18',
+			comment: 'Это будет первый комментарий на этой странице',
+			like: 3,
+			isLiked: false,
+		},
+		{
+			name: 'Варвара Н.',
+			date: '13.02.22 19:22',
+			comment: 'Мне нравится как оформлена эта страница! ❤',
+			like: 75,
+			isLiked: true,
+		},
+	];
 
-      textInputElement.classList.remove("error");
-      if(textInputElement.value === '') {
-        textInputElement.classList.add("error");
-        return;
-      }
+	const initEventListeners = () => {
+		const buttonElements = document.querySelectorAll('.like-button');
 
-      const oldListHtml = listElement.innerHTML;
-      listElement.innerHTML = oldListHtml + ` <li class="comment">
-          <div class="comment-header">
-            <div>${nameInputElement.value}</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${textInputElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
-    })
-    console.log("It works!");
+		for (const buttonElement of buttonElements) {
+			buttonElement.addEventListener('click', (event) => {
+				event.stopPropagation();
+				const index = buttonElement.dataset.index;
+				if (comments[index].isLiked) {
+					comments[index].isLiked = false;
+					comments[index].like--;
+				} else {
+					comments[index].isLiked = true;
+					comments[index].like++;
+				}
+
+				renderComments();
+			});
+		}
+
+		const answerElements = document.querySelectorAll('.comment');
+
+		for (const answer of answerElements) {
+			answer.addEventListener('click', () => {
+				const index = answer.dataset.index;
+				nameTextAreaElement.value = `QUOTE_BEGIN${comments[index].name}:\n${comments[index].comment}QUOTE_END`;
+			});
+		}
+	};
+
+	const renderComments = () => {
+		const commentsHtml = comments.map((comment, index) => {
+			return `<li class="comment" data-index='${index}'>
+					<div class="comment-header">
+						<div>${comment.name}</div>
+						<div>${comment.date}</div>
+					</div>
+					<div class="comment-body">
+						<div class="comment-text" style="white-space:pre-line">
+							${comment.comment}
+						</div>
+					</div>
+					<div class="comment-footer">
+						<div class="likes">
+							<span class="likes-counter">${comment.like}</span>
+							<button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index='${index}'>
+							</button>
+						</div >
+					</div >
+				</li >`;
+		}).join('');
+
+		listElement.innerHTML = commentsHtml;
+		initEventListeners();
+	}
+
+	renderComments();
+
+	const likesElements = document.querySelectorAll('.likes');
+
+	initEventListeners();
+
+	renderComments();
+
+	btnElement.addEventListener('click', () => {
+		nameInputElement.classList.remove('error');
+		nameTextAreaElement.classList.remove('error');
+		if (nameInputElement.value === '') {
+			nameInputElement.classList.add('error');
+			return;
+		}
+		if (nameTextAreaElement.value === '') {
+			nameTextAreaElement.classList.add('error');
+			return;
+		}
+
+		comments.push({
+			name: nameInputElement.value,
+			date: nowDate,
+			comment: nameTextAreaElement.value.replaceAll("&", "&amp;")
+				.replaceAll("<", "&lt;")
+				.replaceAll(">", "&gt;")
+				.replaceAll('"', "&quot;").replaceAll("QUOTE_BEGIN", "<div class='quote'>").replaceAll("QUOTE_END", "</div>"),
+			like: 0,
+			isLiked: false,
+		});
+		renderComments();
+
+		nameInputElement.value = '';
+		nameTextAreaElement.value = '';
+	});
   </script>
 </html>
