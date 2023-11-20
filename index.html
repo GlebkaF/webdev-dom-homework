@@ -1,125 +1,139 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <title>Проект "Комменты"</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="styles.css" />
-  </head>
+</head>
 
-  <body>
+<body>
     <div class="container">
-      <ul id="list"  class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
+        <ul id="list" class="comments">
+            <!--Список рендерится из JS-->
+        </ul>
+        <div class="add-form">
+            <input id="add-name" value="" type="text" class="add-form-name" placeholder="Введите ваше имя">
+            </input>
+            <textarea id="add-text" value="" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+                rows="4"></textarea>
+            <div class="add-form-row">
+                <button id="button-add" class="add-form-button">Написать</button>
             </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div class="add-form">
-        <input id="add-name"
-          value=""
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea id="add-text"
-          value="1й смс"
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button id="button-add"  class="add-form-button">Написать</button>
         </div>
-      </div>
     </div>
-  </body>
+</body>
 <style>
-  .error{
-    background-color: aqua;
-  }
+    .error {
+        background-color: aqua;
+    }
 </style>
-  <script>
+<script>
     "use strict";
+
     const inputElement = document.getElementById('add-name');
     const textAreaElement = document.getElementById('add-text');
     const buttonElement = document.getElementById('button-add');
     const listElement = document.getElementById('list');
-    
-   
-     
-    buttonElement.addEventListener("click",
-    () =>{
-        const currentDate = new Date();
-        const options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'};
-        console.log(currentDate.toLocaleString('ru-RU', options));
-    
-        inputElement.classList.remove("error");
-        textAreaElement.classList.remove("error");
+    const currentDate = new Date();
 
-      if (inputElement.value === '') {
-        inputElement.classList.add("error");
-        if (textAreaElement.value === '') {
-        textAreaElement.classList.add("error");
-        return;
-      };
-      return;
-      };
-      const oldListHtml = listElement.innerHTML;
-      listElement.innerHTML = oldListHtml + 
-       `<li class="comment">
+
+    let studentsComments = [
+        {
+            name: "Глеб Фокин",
+            date: "12.02.22 12:18",
+            comment: "Это будет первый комментарий на этой странице",
+            likes: 3,
+            isLiked: true,
+        },
+        {
+            name: "Варвара Н.",
+            date: "13.02.22 19:22",
+            comment: "Мне нравится как оформлена эта страница! ❤",
+            likes: 75,
+            isLiked: false,
+        }
+    ];
+
+    // Первый вариант даты
+    // <div>${zero(currentDate.getDate())}
+    //           .${zero(currentDate.getMonth() + 1)}
+    //           .${currentDate.getFullYear() % 100} 
+    //           ${zero(currentDate.getHours())}
+    //           :${zero(currentDate.getMinutes())}</div>
+
+
+    const renderStudentsComments = () => {
+        const studentsHtml = studentsComments.map((student, index) => {
+            return `<li class="comment">
           <div class="comment-header">
-            <div>${inputElement.value}</div>
-            <div>${currentDate.toLocaleString('ru-RU', options)}</div>
+            <div>${student.name}</div>
+            <div>${student.date}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${textAreaElement.value}
+              ${student.comment}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
+              <span class="likes-counter">${student.likes}</span>
+              <button class="like-button ${studentsComments.isLiked ? "-active-like" : ""}" data-index="${index}"></button>
             </div>
           </div>
         </li>`;
-       
-        inputElement.value = '';
-        textAreaElement.value = '';
-    });
+        })
+            .join("");
+        listElement.innerHTML = studentsHtml;
+    };
+    renderStudentsComments();
+
+
+    const initLikeListeners = () => {
+        const likeButtons = document.querySelectorAll(".like-button");
+        for (const likeButton of likeButtons) {
+            likeButton.addEventListener('click', () => {
+                const index = likeButton.dataset.index;
+                studentsComments[index].likes += studentsComments[index].isLiked ? -1 : +1;
+                studentsComments[index].isLiked = !studentsComments[index].isLiked;
+
+                renderStudentsComments();
+            })
+        }
+    }
+
+    const addNewComment = () => {
+        studentsComments.push({
+            name: inputElement.value,
+            date: "12.02.22 12:18",
+            comment: textAreaElement.value,
+            likes: 0,
+            isLiked: false,
+        });
+        renderStudentsComments();
+    }
+
+
+   //  inputElement.classList.remove("error");
+   //  textAreaElement.classList.remove("error");
+
+    // if (inputElement.value === '') {
+    //     inputElement.classList.add("error");
+    //     if (textAreaElement.value === '') {
+    //         textAreaElement.classList.add("error");
+    //         return;
+    //     };
+    //     return;
+
+   //  };
+    
+
+    renderStudentsComments();
+    inputElement.value = '';
+    textAreaElement.value = '';
+
     // Код писать здесь
     console.log("It works!");
-  </script>
+</script>
 
 </html>
