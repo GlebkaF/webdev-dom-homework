@@ -1,8 +1,17 @@
-import { authorizedUser, loginUser, setToken } from "./api.js";
+import {
+  authorizedUser,
+  loginUser,
+  setToken,
+  setUser,
+  user,
+  token,
+} from "./api.js";
 import { getFetch } from "../main.js";
 
-
 export let isLoginMode = true;
+export let userName = localStorage.getItem("user");
+export let userLogin = localStorage.getItem("login");
+
 export function renderLogin() {
   const loginHTML = `
     <div id="list" class="comments1">
@@ -70,7 +79,13 @@ export function renderLogin() {
         login: login,
         password: password,
       }).then((user) => {
+        // token = user.user.token;
+        // userName = user.user.name;
+        // localStorage.setItem("user", "userName");
+        // localStorage.setItem("token", token);
         setToken(`Bearer ${user.user.token}`);
+        setUser(user.user.name);
+
         getFetch();
         // })
         // .catch((error) => {

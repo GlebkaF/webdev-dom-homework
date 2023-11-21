@@ -1,4 +1,4 @@
-import { postComments, token } from "./api.js";
+import { postComments, token, user, setUser, deleteCommentApi } from "./api.js";
 import { renderLogin } from "./renderLogin.js";
 import { trimValue } from "./validation.js";
 import { setError } from "./validation.js";
@@ -43,9 +43,6 @@ export const renderUsersOld = (users) => {
 
   const usersPageHTML = `
     <div class="container">
-    <div class="api-loader hidden">
-      <span>Комментарии загружаются, пожалуйста, подождите...</span>
-    </div>
       <ul id="list" class="comments">
         ${usersHTML}
       </ul>
@@ -54,9 +51,10 @@ export const renderUsersOld = (users) => {
           ? `<p>Для добавления комментария, <a id="login-link" class="add-form-link" href='#'>авторизуйтесь</а></p>`
           : `<div class="add-form">
           <input 
+          disabled
             id="name-input"
             class="add-form-name"
-            value=""
+            value="${user}"
             type="text"
             placeholder="Введите ваше имя"
           />
@@ -68,6 +66,7 @@ export const renderUsersOld = (users) => {
           ></textarea>
           <div class="add-form-row">
             <button id="add-button" class="add-form-button">Написать</button>
+            <button class="add-form-button" id="delete-button">Удалить</button>
           </div>
         </div>`
       }
@@ -115,9 +114,20 @@ export const renderUsersOld = (users) => {
       getFetch();
     });
   });
-  // disableUserNameInput();
-  // console.log(disableUserNameInput());
-
+  function deleteComment() {
+    if (!token) return;
+    const deleteButtonComment = document.getElementById("delete-button");
+    deleteButtonComment.addEventListener("click", () => {
+      console.log(token);
+      deleteCommentApi({ id: users[users.length - 1].id })
+        .then(() => {
+          getFetch({ users });
+        })
+        .catch((error) => {});
+    });
+  }
+  deleteComment();
+  console.log(deleteComment);
   attachLikeButtonListener(users, listElement);
   attachTextButtonListener();
 };
@@ -184,23 +194,12 @@ export const attachTextButtonListener = () => {
   );
 };
 
-const disableUserNameInput = () => {
-  const inputNameElement = document.querySelector(".add-form-name");
-  console.log(inputNameElement);
-
-  if (isLoginMode) {
-    inputNameElement.value = userAuthorization();
-    inputNameElement.disabled = true;
-  } else {
-    inputNameElement.disabled = false;
-  }
+export const showLoadingIndicator = () => {
+  const loaderElement = document.querySelector(".api-loader");
+  console.log(loaderElement);
+  loaderElement.classList.remove("hidden");
 };
-
-// export const showLoadingIndicator = () => {
-//   const loaderElement = document.querySelector(".api-loader");
-//   loaderElement.classList.remove("hidden");
-// };
-// export const hideLoadingIndicator = () => {
-//   const loaderElement = document.querySelector(".api-loader");
-//   loaderElement.classList.add("hidden");
-// };
+export const hideLoadingIndicator = () => {
+  const loaderElement = document.querySelector(".api-loader");
+  loaderElement.classList.add("hidden");
+};

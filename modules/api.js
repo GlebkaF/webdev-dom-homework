@@ -10,6 +10,12 @@ export const setToken = (newToken) => {
   token = newToken;
 };
 
+export let user = "";
+
+export function setUser(newUser) {
+  user = newUser;
+}
+
 export function getComments() {
   return fetch("https://wedev-api.sky.pro/api/v2/dima-nosov/comments", {
     method: "GET",
@@ -76,5 +82,21 @@ export function authorizedUser({ login, password, name }) {
       throw new Error("User is already registered");
     }
     return response.json();
+  });
+}
+
+export function deleteCommentApi({ id }) {
+  return fetch("https://wedev-api.sky.pro/api/v2/dima-nosov/comments/" + id, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }).then((response) => {
+    console.log(response);
+    if (response.status === 500) {
+      throw new Error("Server is not available");
+    } else {
+      return response.json();
+    }
   });
 }
