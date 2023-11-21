@@ -12,34 +12,32 @@
     <ul id="comments" class="comments">
       <li class="comment">
         <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
+          <div></div>
+          <div></div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
-            Это будет первый комментарий на этой странице
+
           </div>
         </div>
         <div class="comment-footer">
           <div class="likes">
-            <span class="likes-counter">3</span>
+            <span class="likes-counter"></span>
             <button class="like-button"></button>
           </div>
         </div>
       </li>
       <li class="comment">
         <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
+          <div></div>
+          <div></div>
         </div>
         <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
+          <div class="comment-text"></div>
         </div>
         <div class="comment-footer">
           <div class="likes">
-            <span class="likes-counter">75</span>
+            <span class="likes-counter"></span>
             <button class="like-button -active-like"></button>
           </div>
         </div>
@@ -58,12 +56,12 @@
 
 <script>
   "use strict";
-  // Код писать здесь
+  // Поиск в именах id 
   const buttonElement = document.getElementById("add-form-button");
   const listElement = document.getElementById("comments");
   const textAreaElement = document.getElementById("add-text");
   const inputElement = document.getElementById("add-name");
-  const outerFormElement = document.getElementById("add-form")
+  const outerFormElement = document.getElementById("add-form");
   const formatDateTime = (date) => {
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth()).padStart(2, '0');
@@ -73,10 +71,64 @@
     return `${day}.${month}.${year} ${hours}:${minutes}`;
   };
 
+  //Сохранение данных форм комментов из html в js
+  const commentList = [
+    {
+      name: 'Глеб Фокин',
+      date: '12.02.22 12:18',
+      text: 'Это будет первый комментарий на этой странице',
+      likeCounter: 3,
+      isLiked: true,
+    },
+    {
+      name: 'Варвара',
+      date: '13.02.22 19:22',
+      text: 'Мне нравится как оформлена эта страница! ❤',
+      likeCounter: 75,
+      isLiked: false,
+    },
+  ];
+
+  //Отрисовка формы существующих комментов
+  const renderComments = () => {
+    const commentsHtml = commentList.map((comment, index) => {
+      return `<li class="comment">
+        <div class="comment-header">
+          <div id="add-name">${comment.name}</div>
+          <div>${comment.date}</div>
+        </div>
+        <div class="comment-body">
+          <div id="add-text" class="comment-text">
+            ${comment.text}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${comment.likeCounter}</span>
+            <button class="like-button ${comment.isLiked ? "-active-like" : ""}" data-index="${index}"></button>
+          </div>
+        </div>
+      </li>`;
+    }).join("");
+    listElement.innerHTML = commentsHtml;
+    initLikeListener();
+  };
+
+  //Активность кнопки лайк
+  const initLikeListener = () => {
+    const buttonLike = document.querySelectorAll(".like-button");
+    for (const iteratorLike of buttonLike) {
+      iteratorLike.addEventListener("click", () => {
+        const index = iteratorLike.dataset.index;
+        commentList[index].likeCounter += commentList[index].isLiked ? -1 : +1;
+        commentList[index].isLiked = !commentList[index].isLiked;
+        renderComments(); //перерисовываем форму для лайков с счетчиком
+      }); 
+    }
+  };
+  //Кнопка с добавлением коммента
   buttonElement.addEventListener("click", () => {
     inputElement.classList.remove("error");
-
-
     if (inputElement.value === "") {
       inputElement.classList.add("error");
     }
@@ -84,27 +136,11 @@
       textAreaElement.classList.add("error");
       return;
     }
-
-    const oldListHtml = listElement.innerHTML;
-    listElement.innerHTML = oldListHtml + `
-    <li class="comment">
-        <div class="comment-header">
-          <div id="add-name">${inputElement.value}</div>
-          <div>${formatDateTime(new Date)}</div>
-        </div>
-        <div class="comment-body">
-          <div id="add-text" class="comment-text">
-            ${textAreaElement.value}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>`;
+    commentList.push(commentList.value);
+    renderComments();
   });
+  
+  renderComments();
 </script>
 
 </html>
