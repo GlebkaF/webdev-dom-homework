@@ -1,7 +1,7 @@
 const listElement = document.getElementById("list");
 const btn = document.getElementById("btn");
-const inputName = document.getElementById("input-name");
-const inputComent = document.getElementById("input-coment");
+const inputNameElement = document.getElementById("input-name");
+const inputComentElement = document.getElementById("input-coment");
 
 const comments = [
   {
@@ -76,13 +76,13 @@ renderComments();
 
 btn.addEventListener("click", () => {
   // валидация имени и комментарий
-  inputName.classList.remove("error");
-  if (inputName.value === "") {
-    inputName.classList.add("error");
+  inputNameElement.classList.remove("error");
+  if (inputNameElement.value === "") {
+    inputNameElement.classList.add("error");
   }
-  inputComent.classList.remove("error");
-  if (inputComent.value === "") {
-    inputComent.classList.add("error");
+  inputComentElement.classList.remove("error");
+  if (inputComentElement.value === "") {
+    inputComentElement.classList.add("error");
     return;
   }
 
@@ -91,7 +91,7 @@ btn.addEventListener("click", () => {
     oldListHtml +
     ` <li class="comment">
 <div class="comment-header">
-  <div>${inputName.value}</div>
+  <div>${inputNameElement.value}</div>
   <div>${
     new Date().toLocaleDateString().slice(0, 6) +
     new Date().toLocaleDateString().slice(8, 10) +
@@ -101,7 +101,7 @@ btn.addEventListener("click", () => {
 </div>
 <div class="comment-body">
   <div class="comment-text">
-    ${inputComent.value}
+    ${inputComentElement.value}
   </div>
 </div>
 <div class="comment-footer">
@@ -112,19 +112,19 @@ btn.addEventListener("click", () => {
 </div>
 </li>`;
 
-  if (inputNameElement.value === "" || inputCommentsElement.value === "") {
+  if (inputNameElement.value === "" || inputComentsElement.value === "") {
     return;
   }
 
   comments.push({
-    name: inputCommentsElement.value,
+    name: inputComentsElement.value,
     data: time,
-    comment: inputCommentsElement.value,
+    comment: inputComentsElement.value,
     isLike: 0,
     isLower: false,
   });
   renderComments();
   // Очистка полей ввода
-  inputName.value = "";
-  inputComent.value = "";
+  inputNameElement.value = "";
+  inputComentElement.value = "";
 });
