@@ -118,16 +118,15 @@ export const renderUsersOld = (users) => {
     if (!token) return;
     const deleteButtonComment = document.getElementById("delete-button");
     deleteButtonComment.addEventListener("click", () => {
-      console.log(token);
       deleteCommentApi({ id: users[users.length - 1].id })
         .then(() => {
           getFetch({ users });
         })
         .catch((error) => {});
+      console.log(token);
     });
   }
   deleteComment();
-  console.log(deleteComment);
   attachLikeButtonListener(users, listElement);
   attachTextButtonListener();
 };
