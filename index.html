@@ -123,7 +123,7 @@
         commentList[index].likeCounter += commentList[index].isLiked ? -1 : +1;
         commentList[index].isLiked = !commentList[index].isLiked;
         renderComments(); //перерисовываем форму для лайков с счетчиком
-      }); 
+      });
     }
   };
   //Кнопка с добавлением коммента
@@ -135,11 +135,21 @@
     if (textAreaElement.value === "") {
       textAreaElement.classList.add("error");
       return;
-    }
-    commentList.push(commentList.value);
+    };
+
+    commentList.push({
+      name: inputElement.value,
+      date: formatDateTime(new Date),
+      text: textAreaElement.value,
+      likeCounter: 0,
+      isLiked: false,
+    });
+    inputElement.value = "";
+    textAreaElement.value = "";
     renderComments();
   });
-  
+
+
   renderComments();
 </script>
 
