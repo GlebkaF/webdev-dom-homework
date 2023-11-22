@@ -79,50 +79,47 @@
     let likeValue = document.getElementById('likesCounter');
     
     
-    const usersComments = [
-      {
-        name: "Глеб Фокин",
-        fullDate: "12.02.22",
-        time: "12:18",
-        commentText: "Это будет первый комментарий на этой странице",
-        likesCounter: 3,
-        isLiked: false,
-      },      
-      {
-        name: "Варвара Н.",
-        fullDate: "13.02.22",
-        time: "19:22",
-        commentText: "Мне нравится как оформлена эта страница! ❤",
-        likesCounter: 75,
-        isLiked: false,
-      },
-    ];
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/bulat-khasanov/comments", {
+      method: "GET"
+    });
 
-    const renderComments = () => {
-      const usersHTML = usersComments.map((usersComment, index) => {
-        return `
-          <li data-index="${index}" class="comment">
-            <div class="comment-header">
-              <div>${usersComment.name}</div>
-              <div>${usersComment.fullDate} ${usersComment.time}</div>
-            </div>
-            <div class="comment-body">
-              <div style="white-space: pre-line" class="comment-text">
-                ${usersComment.commentText}
-              </div>
-            </div>
-            <div class="comment-footer">
-              <div class="likes">
-                <span class="likes-counter">${usersComment.likesCounter}</span>
-                <button class="like-button ${usersComment.isLiked ? '-active-like' : ''}" data-index="${index}"></button>
-              </div>
-            </div>
-          </li>`;
-      }).join("");
-      listElement.innerHTML = usersHTML;
-      initCommentAnswers();
-      initLikesButtonListeners();
-    }
+    fetchPromise.then((response) => {
+      response.json().then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: new Date(comment.date).toLocaleString(),
+            text: comment.text,
+            likes: comment.likes,
+            isLiked: false,
+          }
+        })
+        comments = appComments;
+        renderComments();
+      });
+    });
+
+    // const usersComments = [
+    //   {
+    //     name: "Глеб Фокин",
+    //     fullDate: "12.02.22",
+    //     time: "12:18",
+    //     commentText: "Это будет первый комментарий на этой странице",
+    //     likesCounter: 3,
+    //     isLiked: false,
+    //   },      
+    //   {
+    //     name: "Варвара Н.",
+    //     fullDate: "13.02.22",
+    //     time: "19:22",
+    //     commentText: "Мне нравится как оформлена эта страница! ❤",
+    //     likesCounter: 75,
+    //     isLiked: false,
+    //   },
+    // ];
+
+
+    
 
     const initLikesButtonListeners = () => {
       const likeButtons = document.querySelectorAll('.like-button');
@@ -130,12 +127,12 @@
       for (const likeButton of likeButtons) {
         likeButton.addEventListener("click", (event) => {
           const index = parseInt(likeButton.getAttribute('data-index'));
-          usersComments[index].isLiked = !usersComments[index].isLiked;
+          comments[index].isLiked = !comments[index].isLiked;
 
-          if (usersComments[index].isLiked) {
-            usersComments[index].likesCounter += 1;
+          if (comments[index].isLiked) {
+            comments[index].likes += 1;
           } else {
-            usersComments[index].likesCounter -= 1;
+            comments[index].likes -= 1;
           }
           event.stopPropagation();
           renderComments();
@@ -146,7 +143,7 @@
     // Функция для поиска индекса комментария в массиве
     function findCommentIndex(replyText) {
       const repliedCommentName = replyText.substring(1, replyText.indexOf(',')); // Получаем имя комментатора из строки ответа
-      return usersComments.findIndex(comment => comment.name === repliedCommentName);
+      return comments.findIndex(comment => comment.name === repliedCommentName);
     }
 
     const initCommentAnswers = () => {
@@ -155,9 +152,9 @@
       for (const comment of commentsList) {
           comment.addEventListener("click", (event) => {
             const index = parseInt(comment.getAttribute('data-index'));
-            const selectedComment = usersComments[index];
+            const selectedComment = comments[index];
             commentInput.value =
-            `>${selectedComment.commentText}
+            `>${selectedComment.text}
             
             ${selectedComment.name}`;
 
@@ -206,7 +203,7 @@
       const isReply = commentInput.value.startsWith('@');
       const repliedCommentIndex = isReply ? findCommentIndex(commentInput.value) : -1;
       if (isReply && repliedCommentIndex !== -1) {
-        usersComments[repliedCommentIndex].replies.push({
+        comments[repliedCommentIndex].replies.push({
           name: nameInputElement.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
           fullDate: fullDate,
           time: time,
@@ -215,20 +212,55 @@
           isLiked: false,
         });
       } else {
-        usersComments.push({
-          name: nameInputElement.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
-          fullDate: fullDate,
-          time: time,
-          commentText: commentInput.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
-          likesCounter: 0,
-          isLiked: false,
-          replies: [], 
+        const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/bulat-khasanov/comments", {
+          method: "POST", 
+          body: JSON.stringify({
+            name: nameInputElement.value,
+            date: new Date().toLocaleString(),
+            text: commentInput.value,
+            likes: '',
+            isLiked: false, 
+          }) 
         })
+        fetchPromise.then((response) => {
+          response.json().then((responseData) => {
+            comments.push(responseData); 
+            renderComments();
+          });
+        }).catch((error) => {
+          console.error('Error during fetch:', error);
+        });
       };
       nameInputElement.value = '';
       commentInput.value = '';     
-      renderComments();
+
     })    
+
+    const renderComments = () => {
+      const usersHTML = comments.map((usersComment, index) => {
+        return `
+          <li data-index="${index}" class="comment">
+            <div class="comment-header">
+              <div>${usersComment.name}</div>
+              <div>${usersComment.date}</div>
+            </div>
+            <div class="comment-body">
+              <div style="white-space: pre-line" class="comment-text">
+                ${usersComment.text}
+              </div>
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">${usersComment.likes}</span>
+                <button class="like-button ${usersComment.isLiked ? '-active-like' : ''}" data-index="${index}"></button>
+              </div>
+            </div>
+          </li>`;
+      }).join("");
+      listElement.innerHTML = usersHTML;
+      initCommentAnswers();
+      initLikesButtonListeners();
+    }
 
     renderComments();
     console.log("It works!");
