@@ -112,7 +112,7 @@ btn.addEventListener("click", () => {
 </div>
 </li>`;
 
-  if (inputNameElement.value === "" || inputComentsElement.value === "") {
+  if (inputNameElement.value === "" || inputComentElement.value === "") {
     return;
   }
 
