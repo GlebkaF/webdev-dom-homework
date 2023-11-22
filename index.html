@@ -30,6 +30,7 @@
   const textAreaElement = document.getElementById("add-text");
   const inputElement = document.getElementById("add-name");
   const outerFormElement = document.getElementById("add-form");
+  const buttonDeleteElement = document.getElementById("delete-form-button")
   const formatDateTime = (date) => {
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth()).padStart(2, '0');
@@ -71,7 +72,7 @@
           </div>
         </div>
         <div class="comment-footer">
-          <button id="delete-form-button" class="delete-form-button" data-del="${index}">Удалить</button>
+          <button id="delete-form-button" class="delete-form-button" data-delete="${index}">Удалить</button>
           <div class="likes">
             <span class="likes-counter">${comment.likeCounter}</span>
             <button class="like-button ${comment.isLiked ? "-active-like" : ""}" data-index="${index}"></button>
@@ -81,6 +82,7 @@
     }).join("");
     listElement.innerHTML = commentsHtml;
     initLikeListener();
+    initDeleteButtonsListeners();
   };
 
   //Активность кнопки удаления
@@ -93,7 +95,8 @@
         renderComments();
       })
     }
-  }
+  };
+
 
   //Активность кнопки лайк
   const initLikeListener = () => {
