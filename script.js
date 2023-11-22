@@ -117,9 +117,9 @@ btn.addEventListener("click", () => {
   }
 
   comments.push({
-    name: inputComentsElement.value,
+    name: inputComentElement.value,
     data: time,
-    comment: inputComentsElement.value,
+    comment: inputComentElement.value,
     isLike: 0,
     isLower: false,
   });
