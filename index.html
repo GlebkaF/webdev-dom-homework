@@ -221,14 +221,11 @@
             likes: '',
             isLiked: false, 
           }) 
-        })
-        fetchPromise.then((response) => {
+        }).then((response) => {
           response.json().then((responseData) => {
             comments.push(responseData); 
             renderComments();
           });
-        }).catch((error) => {
-          console.error('Error during fetch:', error);
         });
       };
       nameInputElement.value = '';
