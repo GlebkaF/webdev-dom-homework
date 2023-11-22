@@ -35,7 +35,7 @@ export function renderLogin() {
             />
             <br>
             <input 
-              type="text"
+              type="password"
               class="password-input" id="password-input"
               placeholder="Пароль"
               rows="4"
@@ -81,9 +81,9 @@ export function renderLogin() {
       }).then((user) => {
         // token = user.user.token;
         // userName = user.user.name;
-        // localStorage.setItem("user", "userName");
-        // localStorage.setItem("token", token);
-        setToken(`Bearer ${user.user.token}`);
+        localStorage.setItem("user", user.user.name);
+        localStorage.setItem("token", user.user.token);
+        setToken(user.user.token);
         setUser(user.user.name);
 
         getFetch();

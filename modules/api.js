@@ -1,8 +1,8 @@
 import { currentDate } from "./utils.js";
 
-export let token = null;
-// export let token = localStorage.getItem("token");
-// export let userName = localStorage.getItem("user");
+// export let token = null;
+export let token = localStorage.getItem("token");
+export let userName = localStorage.getItem("user");
 // export const getToken = () => {
 //   return `Bearer ${token}`;
 // };
@@ -10,7 +10,7 @@ export const setToken = (newToken) => {
   token = newToken;
 };
 
-export let user = "";
+export let user = localStorage.getItem("user");
 
 export function setUser(newUser) {
   user = newUser;
@@ -27,7 +27,7 @@ export function postComments(userText) {
   return fetch("https://wedev-api.sky.pro/api/v2/dima-nosov/comments", {
     method: "POST",
     headers: {
-      Authorization: token,
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
       text: userText,
@@ -65,6 +65,7 @@ export function loginUser({ login, password }) {
     .catch((error) => {
       // Обработка ошибки здесь
       console.error(error.message);
+      alert(error.message);
       throw error; // Повторно бросаем ошибку для обработки в вызывающем коде
     });
 }

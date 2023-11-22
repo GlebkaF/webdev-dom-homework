@@ -1,4 +1,11 @@
-import { postComments, token, user, setUser, deleteCommentApi } from "./api.js";
+import {
+  postComments,
+  token,
+  user,
+  setUser,
+  deleteCommentApi,
+  setToken,
+} from "./api.js";
 import { renderLogin } from "./renderLogin.js";
 import { trimValue } from "./validation.js";
 import { setError } from "./validation.js";
@@ -11,7 +18,7 @@ export const listElement = document.getElementById("list");
 export const inputTextElement = document.getElementById("comment-input");
 export const inputNameElement = document.querySelectorAll("add-form-name");
 
-export const renderUsersOld = (users) => {
+export const renderUsersOld = () => {
   const appHtml = document.getElementById("app");
   const appElement = document.getElementById("app");
   const usersHTML = users
@@ -67,6 +74,7 @@ export const renderUsersOld = (users) => {
           <div class="add-form-row">
             <button id="add-button" class="add-form-button">Написать</button>
             <button class="add-form-button" id="delete-button">Удалить</button>
+            <button class="logout-button">Выйти</button>
           </div>
         </div>`
       }
@@ -74,6 +82,7 @@ export const renderUsersOld = (users) => {
     </div>
   `;
   appElement.innerHTML = usersPageHTML;
+  console.log(token);
 
   const linkToLogin = document.getElementById("login-link");
   linkToLogin?.addEventListener("click", () => {
@@ -129,6 +138,7 @@ export const renderUsersOld = (users) => {
   deleteComment();
   attachLikeButtonListener(users, listElement);
   attachTextButtonListener();
+  logout();
 };
 
 export const attachLikeButtonListener = () => {
@@ -178,18 +188,26 @@ export const handleEnterKey = () => {
   });
 };
 
+function logout() {
+  if (!token) return;
+  const logoutElement = document.querySelector(".logout-button");
+  logoutElement.addEventListener("click", () => {
+    localStorage.removeItem("token");
+    setToken("");
+    renderUsersOld();
+  });
+}
+
 export const attachTextButtonListener = () => {
-  const commentElement = document.querySelectorAll("comment");
+  const commentElement = document.querySelectorAll(".comment");
   const inputTextElement = document.getElementById("comment-input");
+  console.log(commentElement);
   commentElement.forEach((comment, index) =>
-    comment.addEventListener(
-      ("click",
-      (event) => {
-        event.stopPropagation();
-        inputTextElement.value = users[index].name + "\n" + users[index].text;
-        inputTextElement.style.whiteSpace = "pre-line";
-      })
-    )
+    comment.addEventListener("click", (event) => {
+      event.stopPropagation();
+      inputTextElement.value = users[index].name + "\n" + users[index].text;
+      inputTextElement.style.whiteSpace = "pre-line";
+    })
   );
 };
 

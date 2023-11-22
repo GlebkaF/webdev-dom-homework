@@ -1,5 +1,5 @@
 "use strict";
-import { getComments, postComments } from "./modules/api.js";
+import { getComments, postComments, token } from "./modules/api.js";
 import {
   handleEnterKey,
   renderUsersOld,
@@ -12,9 +12,10 @@ import { inputNameElement, inputTextElement } from "./modules/render.js";
 import { userAuthorization } from "./modules/login.js";
 
 userAuthorization();
+console.log(token);
 export let users = [];
-showLoadingIndicator();
-renderUsersOld(users);
+// showLoadingIndicator();
+// renderUsersOld();
 export function getFetch() {
   getComments().then((responseData) => {
     const appUsers = responseData.comments.map((comment) => {
@@ -29,8 +30,8 @@ export function getFetch() {
     });
 
     users = appUsers;
-    renderUsersOld(users);
-    hideLoadingIndicator();
+    renderUsersOld();
+    // hideLoadingIndicator();
   });
 }
 getFetch();
