@@ -44,6 +44,7 @@
     const commentInputElement = document.getElementById('comment-input')
     const newDate = new Date()
     const listElement = document.getElementById("comment-id");
+    const CommentsTexts = document.querySelectorAll('.comment');
 
      const comments =[
       {
@@ -52,6 +53,7 @@
       text: 'Это будет первый комментарий на этой странице',
       like: 3,
       isLiked: false
+      
     },
       {
       name: 'Варвара Н.',
@@ -59,6 +61,7 @@
       text: 'Мне нравится как оформлена страница',
       like: 75,
       isLiked: false
+      
     },
     
   ]; 
@@ -80,6 +83,7 @@
 
 listElement.innerHTML = commentHtml;
 initLikeListeners();
+answerComment();
   };
 
   const initLikeListeners = () => {
@@ -133,9 +137,38 @@ renderComment();
       renderComment();
     }
     buttonElement.addEventListener("click", addNewComment)
+
+    const answerComment = () => {
+      const CommentsTexts = document.querySelectorAll('.comment');
+      CommentsTexts.forEach((comment) => {
+        comment.addEventListener('click', (e) => {
+          const author = comment.querySelector('.comment-header div:first-child').textContent;
+          const text = comment.querySelector('.comment-text').textContent;
+          commentInputElement.value = `@${author} \n\n > ${text},`;
+        });
+      });
+    }
+    answerComment();
+
+    const addComment = () => {
+      userComments.push ({
+        name: nameInputElement.value
+        .replaceAll('<', "&lt;")
+        .replaceAll('<', '&gt;'),
+        date: new Date(),
+        text: commentInputElement.value
+         .replaceAll('<', "&lt;")
+          .replaceAll('<', '&gt;'),
+          like: 0,
+          isLiked: false,
+          
+      })
+    }
+
   
    
     renderComment();
+    answerComment();
 
   </script>
 </html>
