@@ -36,11 +36,6 @@ const initLike = () => {
       renderComments();
     });
   }
-  const time =
-    new Date().toLocaleDateString().slice(0, 6) +
-    new Date().toLocaleDateString().slice(8, 10) +
-    " " +
-    new Date().toLocaleTimeString().slice(0, -3);
 };
 
 // Рендер функция
@@ -85,36 +80,42 @@ btn.addEventListener("click", () => {
     inputComentElement.classList.add("error");
     return;
   }
-
-  const oldListHtml = listElement.innerHTML;
-  listElement.innerHTML =
-    oldListHtml +
-    ` <li class="comment">
-<div class="comment-header">
-  <div>${inputNameElement.value}</div>
-  <div>${
-    new Date().toLocaleDateString().slice(0, 6) +
-    new Date().toLocaleDateString().slice(8, 10) +
-    " " +
-    new Date().toLocaleTimeString().slice(0, -3)
-  }</div>
-</div>
-<div class="comment-body">
-  <div class="comment-text">
-    ${inputComentElement.value}
-  </div>
-</div>
-<div class="comment-footer">
-  <div class="likes">
-    <span class="likes-counter">0</span>
-    <button class="like-button"></button>
-  </div>
-</div>
-</li>`;
+// Новый список ренедерится из js
+//   const oldListHtml = listElement.innerHTML;
+//   listElement.innerHTML =
+//     oldListHtml +
+//     ` <li class="comment">
+// <div class="comment-header">
+//   <div>${inputNameElement.value}</div>
+//   <div>${
+//     new Date().toLocaleDateString().slice(0, 6) +
+//     new Date().toLocaleDateString().slice(8, 10) +
+//     " " +
+//     new Date().toLocaleTimeString().slice(0, -3)
+//   }</div>
+// </div>
+// <div class="comment-body">
+//   <div class="comment-text">
+//     ${inputComentElement.value}
+//   </div>
+// </div>
+// <div class="comment-footer">
+//   <div class="likes">
+//     <span class="likes-counter">0</span>
+//     <button class="like-button"></button>
+//   </div>
+// </div>
+// </li>`;
 
   if (inputNameElement.value === "" || inputComentElement.value === "") {
     return;
   }
+  const currentDate = new Date();
+  const time =
+    currentDate.toLocaleDateString().slice(0, 6) +
+    currentDate.toLocaleDateString().slice(8, 10) +
+    " " +
+    currentDate.toLocaleTimeString().slice(0, -3);
 
   comments.push({
     name: inputComentElement.value,
