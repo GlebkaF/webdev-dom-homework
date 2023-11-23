@@ -66,14 +66,14 @@
 
   const renderComment = () => {
     const commentHtml = comments.map((comment, index) => {
-      return `<li class="comment">
+      return `<li class="comment" data-name="${comment.name}" data-text="${comment.text}">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.date}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${comment.text}
+              ${comment.text.replaceAll("BEGIN_QUOTE", "<div class='quote'>").replaceAll("END_QUOTE", "</div>")}
             </div>
           </div>
           <div class="comment-footer">
@@ -86,12 +86,14 @@
     }).join('');
     listElement.innerHTML = commentHtml;
     initLikeListeners();
+    initAnswerCommentListeners();
   };
 
   const initLikeListeners = () => {
     const likeButtons = document.querySelectorAll('.like-button');
     for (const likeButton of likeButtons) {
-      likeButton.addEventListener('click', () => {
+      likeButton.addEventListener('click', (event) => {
+        event.stopPropagation();
         const index = likeButton.dataset.index;
         comments[index].likeCounter += comments[index].isLiked ? -1 : +1;
         comments[index].isLiked = !comments[index].isLiked;
@@ -102,7 +104,18 @@
   }
 
 
+// answer a comment
 
+  const initAnswerCommentListeners = () => {
+  const commentsList = document.querySelectorAll('.comment');
+    for (const theComment of commentsList) {
+      theComment.addEventListener('click', () => {
+        const name=theComment.dataset.name;
+        const text=theComment.dataset.text;
+        textareaInputElement.value=`BEGIN_QUOTE${name}:\n${text}END_QUOTE`
+      });
+    }
+  }
 //new comment
 
 const addNewComment =()=>{
@@ -118,9 +131,9 @@ const addNewComment =()=>{
       return;
     }
 comments.push({
-  name: nameInputElement.value,
+  name: nameInputElement.value.replaceAll("<", "&lt").replaceAll(">","&gt"),
   date: formatDateTime(new Date),
-  text: textareaInputElement.value,
+  text: textareaInputElement.value.replaceAll("<", "&lt").replaceAll(">","&gt"),
   likeCounter:0,
   isLiked: false,
 })
