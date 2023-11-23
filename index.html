@@ -72,7 +72,7 @@
           </div>
         </div>
         <div class="comment-footer">
-          <button id="delete-form-button" class="delete-form-button" data-delete="${index}">Удалить</button>
+          <button id="delete-form-button" class="delete-form-button" data-index="${index}">Удалить</button>
           <div class="likes">
             <span class="likes-counter">${comment.likeCounter}</span>
             <button class="like-button ${comment.isLiked ? "-active-like" : ""}" data-index="${index}"></button>
@@ -80,6 +80,7 @@
         </div>
       </li>`;
     }).join("");
+    
     listElement.innerHTML = commentsHtml;
     initLikeListener();
     initDeleteButtonsListeners();
@@ -87,16 +88,18 @@
 
   //Активность кнопки удаления
   const initDeleteButtonsListeners = () => {
+
     const deleteButtonsElements = document.querySelectorAll(".delete-form-button");
     for (const deleteButtonsElement of deleteButtonsElements) {
       deleteButtonsElement.addEventListener("click", () => {
+        event.stopPropagation();
         const index = deleteButtonsElement.dataset.index;
         commentList.splice(index, 1);
         renderComments();
-      })
-    }
+      }); 
+    } 
   };
-
+  
 
   //Активность кнопки лайк
   const initLikeListener = () => {
@@ -133,7 +136,7 @@
     textAreaElement.value = "";
     renderComments();
   });
-
+  
   renderComments();
 </script>
 
