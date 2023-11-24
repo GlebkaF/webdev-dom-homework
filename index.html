@@ -77,7 +77,9 @@
     const nameInputElement = document.getElementById("add-name");
     const commentInput = document.getElementById("add-text");
     let likeValue = document.getElementById('likesCounter');
-    
+
+    let comments = [];
+    let appComments = [];
     
     const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/bulat-khasanov/comments", {
       method: "GET"
@@ -94,34 +96,40 @@
             isLiked: false,
           }
         })
-        
+
         comments = appComments;
         renderComments();
       });
     });
 
-    // const usersComments = [
-    //   {
-    //     name: "Глеб Фокин",
-    //     fullDate: "12.02.22",
-    //     time: "12:18",
-    //     commentText: "Это будет первый комментарий на этой странице",
-    //     likesCounter: 3,
-    //     isLiked: false,
-    //   },      
-    //   {
-    //     name: "Варвара Н.",
-    //     fullDate: "13.02.22",
-    //     time: "19:22",
-    //     commentText: "Мне нравится как оформлена эта страница! ❤",
-    //     likesCounter: 75,
-    //     isLiked: false,
-    //   },
-    // ];
-
-
+    // Фукнция рендера комментариев
+    const renderComments = () => {
+      const usersHTML = comments.map((comment, index) => {
+        return `
+          <li data-index="${index}" class="comment">
+            <div class="comment-header">
+              <div>${comment.name}</div>
+              <div>${comment.date}</div>
+            </div>
+            <div class="comment-body">
+              <div style="white-space: pre-line" class="comment-text">
+                ${comment.text}
+              </div>
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">${comment.likes}</span>
+                <button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index="${index}"></button>
+              </div>
+            </div>
+          </li>`;
+      }).join("");
+      listElement.innerHTML = usersHTML;
+      initCommentAnswers();
+      initLikesButtonListeners();
+    }
     
-
+    // Функция для проставления лайков
     const initLikesButtonListeners = () => {
       const likeButtons = document.querySelectorAll('.like-button');
 
@@ -146,7 +154,7 @@
       const repliedCommentName = replyText.substring(1, replyText.indexOf(',')); // Получаем имя комментатора из строки ответа
       return comments.findIndex(comment => comment.name === repliedCommentName);
     }
-
+    // Отрисовка для ответов на комментарии
     const initCommentAnswers = () => {
       const commentsList = document.querySelectorAll('.comment');
 
@@ -165,7 +173,7 @@
     }
 
 
-
+    // Код для добавления комментария
     buttonElement.addEventListener("click", () => {
       nameInputElement.classList.remove('error');
       commentInput.classList.remove('error');
@@ -222,9 +230,10 @@
             likes: '',
             isLiked: false, 
           }) 
-        }).then((response) => {
+        })
+        fetchPromise.then((response) => {
           response.json().then((responseData) => {
-            comments.push(responseData); 
+            appComments = comments;
             renderComments();
           });
         });
@@ -233,32 +242,6 @@
       commentInput.value = '';     
 
     })    
-
-    const renderComments = () => {
-      const usersHTML = comments.map((usersComment, index) => {
-        return `
-          <li data-index="${index}" class="comment">
-            <div class="comment-header">
-              <div>${usersComment.name}</div>
-              <div>${usersComment.date}</div>
-            </div>
-            <div class="comment-body">
-              <div style="white-space: pre-line" class="comment-text">
-                ${usersComment.text}
-              </div>
-            </div>
-            <div class="comment-footer">
-              <div class="likes">
-                <span class="likes-counter">${usersComment.likes}</span>
-                <button class="like-button ${usersComment.isLiked ? '-active-like' : ''}" data-index="${index}"></button>
-              </div>
-            </div>
-          </li>`;
-      }).join("");
-      listElement.innerHTML = usersHTML;
-      initCommentAnswers();
-      initLikesButtonListeners();
-    }
 
     renderComments();
     console.log("It works!");
