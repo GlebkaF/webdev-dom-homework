@@ -81,11 +81,11 @@
     let comments = [];
     let appComments = [];
     
-    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/bulat-khasanov/comments", {
-      method: "GET"
-    });
-
-    fetchPromise.then((response) => {
+    function  fetchAndRender() {
+      const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/bulat-khasanov/comments", {
+        method: "GET"
+      });
+      fetchPromise.then((response) => {
       response.json().then((responseData) => {
         const appComments = responseData.comments.map((comment) => {
           return {
@@ -101,7 +101,8 @@
         renderComments();
       });
     });
-
+    }
+    
     // Фукнция рендера комментариев
     const renderComments = () => {
       const usersHTML = comments.map((comment, index) => {
@@ -127,6 +128,7 @@
       listElement.innerHTML = usersHTML;
       initCommentAnswers();
       initLikesButtonListeners();
+      fetchAndRender();
     }
     
     // Функция для проставления лайков
@@ -233,8 +235,7 @@
         })
         fetchPromise.then((response) => {
           response.json().then((responseData) => {
-            appComments = comments;
-            renderComments();
+            fetchAndRender();
           });
         });
       };
