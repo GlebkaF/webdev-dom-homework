@@ -7,17 +7,15 @@
   </head>
 
   <body>
-    <div class="container">
-      <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
+    <div class="container" id="add-container">
+      <ul class="comments" id="comments">
+        <li class="comment" id="comment">
+          <div class="comment-header" >
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
+            <div class="comment-text">Это будет первый комментарий на этой странице</div>
           </div>
           <div class="comment-footer">
             <div class="likes">
@@ -32,32 +30,21 @@
             <div>13.02.22 19:22</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
+            <div class="comment-text">Мне нравится как оформлена эта страница! ❤</div>
           </div>
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
+              <button class="like-button -active-like" id="like-input"></button>
             </div>
           </div>
         </li>
       </ul>
-      <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
+      <div class="add-form" id="add-form">
+        <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input"/>
+        <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4" id="comment-input"></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="add-button">Написать</button>
         </div>
       </div>
     </div>
@@ -65,7 +52,47 @@
 
   <script>
     "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const buttonElement = document.getElementById("add-button");
+    const nameInputElement = document.getElementById("name-input");
+    const commentInputElement = document.getElementById("comment-input");
+    const likeInputElement = document.getElementById("like-input");
+    const commentsElement = document.getElementById("comments");
+    const form = document.getElementById("add-form");
+    const container = document.getElementById("add-container")
+   
+    buttonElement.addEventListener("click", () => {
+      nameInputElement.style.backgroundColor = "white" ;
+      commentInputElement.style.backgroundColor = "white";
+      if (nameInputElement.value === "") {
+        nameInputElement.style.backgroundColor = "red";
+        return;
+      }
+      if (commentInputElement.value === "") {
+        commentInputElement.style.backgroundColor = "red";
+        return;
+      }
+
+      const oldCommentElement = commentsElement.innerHTML;
+      commentsElement.innerHTML = oldCommentElement + 
+      `<li class="comment" id="comment">
+          <div class="comment-header" >
+            <div>${nameInputElement.value}</div>
+            <div>12.02.22 12:18</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">${commentInputElement.value}</div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+      nameInputElement.value = "";
+      commentInputElement.value = "";
+      
+    });
+    //console.log("Работает!");
   </script>
 </html>
