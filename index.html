@@ -62,8 +62,11 @@
     //           ${zero(currentDate.getHours())}
     //           :${zero(currentDate.getMinutes())}</div>
 
+   
+
 
     const renderStudentsComments = () => {
+
         const studentsHtml = studentsComments.map((student, index) => {
             return `<li class="comment">
           <div class="comment-header">
@@ -78,15 +81,14 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${student.likes}</span>
-              <button class="like-button ${studentsComments.isLiked ? "-active-like" : ""}" data-index="${index}"></button>
+              <button class="like-button ${studentsComments[index].isLiked ? "-active-like" : ""}" data-index="${index}"></button>
             </div>
           </div>
         </li>`;
         })
-            .join("");
-        listElement.innerHTML = studentsHtml;
-    };
-    renderStudentsComments();
+        .join("");
+      
+    listElement.innerHTML = studentsHtml;
 
 
     const initLikeListeners = () => {
@@ -96,41 +98,52 @@
                 const index = likeButton.dataset.index;
                 studentsComments[index].likes += studentsComments[index].isLiked ? -1 : +1;
                 studentsComments[index].isLiked = !studentsComments[index].isLiked;
-
-                renderStudentsComments();
-            })
-        }
-    }
+            });
+    };
+    };
+    initLikeListeners();
 
     const addNewComment = () => {
         studentsComments.push({
             name: inputElement.value,
-            date: "12.02.22 12:18",
+            date: currentDate,
             comment: textAreaElement.value,
             likes: 0,
             isLiked: false,
         });
-        renderStudentsComments();
     }
+    addNewComment();
+    };
+    renderStudentsComments();
 
+    const addButton = () => {
+    buttonElement.addEventListener("click", () => {
 
-   //  inputElement.classList.remove("error");
-   //  textAreaElement.classList.remove("error");
+        
+        inputElement.classList.remove("error");
+        textAreaElement.classList.remove("error");
 
-    // if (inputElement.value === '') {
-    //     inputElement.classList.add("error");
-    //     if (textAreaElement.value === '') {
-    //         textAreaElement.classList.add("error");
-    //         return;
-    //     };
-    //     return;
+        if (inputElement.value === '') {
+            inputElement.classList.add("error");
 
-   //  };
-    
+            if (textAreaElement.value === '') {
+                textAreaElement.classList.add("error");
+                return;
+            };
+        };
+        return;
+        
 
     renderStudentsComments();
     inputElement.value = '';
     textAreaElement.value = '';
+
+    });
+
+   
+};
+    addButton(); 
+   
 
     // Код писать здесь
     console.log("It works!");
