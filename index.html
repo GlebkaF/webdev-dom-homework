@@ -10,11 +10,10 @@
 <body>
     <div class="container">
         <ul id="list" class="comments">
-            <!--Список рендерится из JS-->
+            <!-- Список рендерится из JS-->
         </ul>
         <div class="add-form">
-            <input id="add-name" value="" type="text" class="add-form-name" placeholder="Введите ваше имя">
-            </input>
+            <input id="add-name" value="" type="text" class="add-form-name" placeholder="Введите ваше имя" />
             <textarea id="add-text" value="" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
                 rows="4"></textarea>
             <div class="add-form-row">
@@ -25,18 +24,15 @@
 </body>
 <style>
     .error {
-        background-color: aqua;
+        background-color: orangered;
     }
 </style>
 <script>
     "use strict";
-
     const inputElement = document.getElementById('add-name');
     const textAreaElement = document.getElementById('add-text');
     const buttonElement = document.getElementById('button-add');
     const listElement = document.getElementById('list');
-    const currentDate = new Date();
-
 
     let studentsComments = [
         {
@@ -54,53 +50,7 @@
             isLiked: false,
         }
     ];
-
-    // Первый вариант даты
-    // <div>${zero(currentDate.getDate())}
-    //           .${zero(currentDate.getMonth() + 1)}
-    //           .${currentDate.getFullYear() % 100} 
-    //           ${zero(currentDate.getHours())}
-    //           :${zero(currentDate.getMinutes())}</div>
-
-    const renderStudentsComments = () => {
-
-        const studentsHtml = studentsComments.map((student, index) => {
-            return `<li class="comment">
-          <div class="comment-header">
-            <div>${student.name}</div>
-            <div>${student.date}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${student.comment}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">${student.likes}</span>
-              <button class="like-button ${studentsComments[index].isLiked ? "-active-like" : ""}" data-index="${index}"></button>
-            </div>
-          </div>
-        </li>`;
-        })
-            .join("");
-        //console.log(studentsHtml);
-
-        listElement.innerHTML = studentsHtml;
-
-        const addNewComment = () => {
-            studentsComments.push({
-                name: inputElement.value,
-                date: currentDate,
-                comment: textAreaElement.value,
-                likes: 0,
-                isLiked: false,
-            });
-        }
-        addNewComment();
-    };
-    renderStudentsComments();
-
+// Постановка лайков
     const initLikeListeners = () => {
         const likeButtons = document.querySelectorAll(".like-button");
         for (const likeButton of likeButtons) {
@@ -108,48 +58,82 @@
                 const index = likeButton.dataset.index;
                 studentsComments[index].likes += studentsComments[index].isLiked ? -1 : +1;
                 studentsComments[index].isLiked = !studentsComments[index].isLiked;
+               
+                renderStudentsComments();
+
             });
         };
-        renderStudentsComments();
 
     };
-    initLikeListeners();
+   
 
-    const addButton = () => {
-        buttonElement.addEventListener("click", () => {
+   // Рендер-функция отрисовывает новые комменты
+    const renderStudentsComments = () => {
+
+        const studentsHtml = studentsComments.map((student, index) => {
+            return `<li class="comment">
+  <div class="comment-header">
+    <div>${student.name}</div>
+    <div>${student.date}</div>
+  </div>
+  <div class="comment-body">
+    <div class="comment-text" data-index="${index}">
+      ${student.comment}
+    </div>
+  </div>
+  <div class="comment-footer">
+    <div class="likes">
+      <span class="likes-counter">${student.likes}</span>
+      <button class="like-button ${studentsComments[index].isLiked ? "-active-like" : ""}" data-index="${index}"></button>
+    </div>
+  </div>
+</li>`;
+        })
+            .join("");
+        // console.log(studentsHtml);
+        listElement.innerHTML = studentsHtml;
+        initLikeListeners();
+        
+    }
+
+    renderStudentsComments();
 
 
+    // Кнопка добавления комментов
+    buttonElement.addEventListener("click",
+        () => {
+            const currentDate = new Date();
+           const options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+            // console.log(currentDate.toLocaleString('ru-RU', options));
+
+// Подсветка ошибочных комментариев
             inputElement.classList.remove("error");
             textAreaElement.classList.remove("error");
 
             if (inputElement.value === '') {
                 inputElement.classList.add("error");
-
                 if (textAreaElement.value === '') {
                     textAreaElement.classList.add("error");
                     return;
                 };
+                return;
             };
-            return;
             const oldListHtml = listElement.innerHTML;
-            let newListHtml = oldListHtml + studentsHtml;
-            console.log(newListHtml);
+            studentsComments.push({
+                name: inputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+                comment: textAreaElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+                date: currentDate.toLocaleString('ru-RU', options),
+                // date: formatDateTime(currentDate),
+                likes: 0,
+                isLiked: false,
+            });
+            renderStudentsComments();
+
             inputElement.value = '';
             textAreaElement.value = '';
         });
-        renderStudentsComments();
 
-    };
-
-    addButton();
-    //Ответы на комментарии. План:
-    //1. При клике на комментарий в списке в форму подставляется текст комментария и имя автора комментария
-    //2. Я могу ответить на этот текст в форме
-    // Уязвимость «HTML-теги в имени автора и тексте комментария». План:
-    // 1. Написать в поле «Ваше имя» HTML-разметку, например `<strong> Глеб </strong>`.
-    //    2. Написать в поле «Ваше комментарий» HTML-разметку, например `<h1> Коммент </h1>`.
-    //    3. Нажать на кнопку «Написать».
-
+    
     // Код писать здесь
     console.log("It works!");
 </script>
