@@ -62,9 +62,6 @@
     //           ${zero(currentDate.getHours())}
     //           :${zero(currentDate.getMinutes())}</div>
 
-   
-
-
     const renderStudentsComments = () => {
 
         const studentsHtml = studentsComments.map((student, index) => {
@@ -86,10 +83,23 @@
           </div>
         </li>`;
         })
-        .join("");
-      
-    listElement.innerHTML = studentsHtml;
+            .join("");
+        //console.log(studentsHtml);
 
+        listElement.innerHTML = studentsHtml;
+
+        const addNewComment = () => {
+            studentsComments.push({
+                name: inputElement.value,
+                date: currentDate,
+                comment: textAreaElement.value,
+                likes: 0,
+                isLiked: false,
+            });
+        }
+        addNewComment();
+    };
+    renderStudentsComments();
 
     const initLikeListeners = () => {
         const likeButtons = document.querySelectorAll(".like-button");
@@ -99,51 +109,46 @@
                 studentsComments[index].likes += studentsComments[index].isLiked ? -1 : +1;
                 studentsComments[index].isLiked = !studentsComments[index].isLiked;
             });
-    };
+        };
+        renderStudentsComments();
+
     };
     initLikeListeners();
 
-    const addNewComment = () => {
-        studentsComments.push({
-            name: inputElement.value,
-            date: currentDate,
-            comment: textAreaElement.value,
-            likes: 0,
-            isLiked: false,
-        });
-    }
-    addNewComment();
-    };
-    renderStudentsComments();
-
     const addButton = () => {
-    buttonElement.addEventListener("click", () => {
+        buttonElement.addEventListener("click", () => {
 
-        
-        inputElement.classList.remove("error");
-        textAreaElement.classList.remove("error");
 
-        if (inputElement.value === '') {
-            inputElement.classList.add("error");
+            inputElement.classList.remove("error");
+            textAreaElement.classList.remove("error");
 
-            if (textAreaElement.value === '') {
-                textAreaElement.classList.add("error");
-                return;
+            if (inputElement.value === '') {
+                inputElement.classList.add("error");
+
+                if (textAreaElement.value === '') {
+                    textAreaElement.classList.add("error");
+                    return;
+                };
             };
-        };
-        return;
-        
+            return;
+            const oldListHtml = listElement.innerHTML;
+            let newListHtml = oldListHtml + studentsHtml;
+            console.log(newListHtml);
+            inputElement.value = '';
+            textAreaElement.value = '';
+        });
+        renderStudentsComments();
 
-    renderStudentsComments();
-    inputElement.value = '';
-    textAreaElement.value = '';
+    };
 
-    });
-
-   
-};
-    addButton(); 
-   
+    addButton();
+    //Ответы на комментарии. План:
+    //1. При клике на комментарий в списке в форму подставляется текст комментария и имя автора комментария
+    //2. Я могу ответить на этот текст в форме
+    // Уязвимость «HTML-теги в имени автора и тексте комментария». План:
+    // 1. Написать в поле «Ваше имя» HTML-разметку, например `<strong> Глеб </strong>`.
+    //    2. Написать в поле «Ваше комментарий» HTML-разметку, например `<h1> Коммент </h1>`.
+    //    3. Нажать на кнопку «Написать».
 
     // Код писать здесь
     console.log("It works!");
