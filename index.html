@@ -8,21 +8,21 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
+      <ul id="comments" class="comments">
+        <li id="comment" class="comment">
+          <div id="comment-header" class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
           </div>
-          <div class="comment-body">
-            <div class="comment-text">
+          <div id="comment-body" class="comment-body">
+            <div id="comment-text" class="comment-text">
               Это будет первый комментарий на этой странице
             </div>
           </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
+          <div id="comment-footer" class="comment-footer">
+            <div id="likes" class="likes">
+              <span id="likes-counter" class="likes-counter">3</span>
+              <button id="like-button" class="like-button"></button>
             </div>
           </div>
         </li>
@@ -46,26 +46,116 @@
       </ul>
       <div class="add-form">
         <input
+          id="add-form-name" 
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
+          id="add-form-text" 
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="add-form-button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
 
+  <style>
+
+    .error {
+      background-color: grey;
+    };
+
+  </style>
+
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+
+    const letTime = () => {
+
+      let date = new Date();
+
+      let day = date.getDate();
+      let month = date.getMonth() + 1;
+      let year = date.getFullYear() - 2000;
+      let hours = date.getHours();
+      let minutes = date.getMinutes();
+    
+      let formattedDate = day + "." + month + "." + year + " " + hours + ":" + minutes;
+
+      return formattedDate;
+    };
+
+    const buttonEvent = document.getElementById("add-form-button");
+    const boxComments = document.getElementById('comments');
+    const boxComment = document.getElementById('comment');
+
+    const headerBoxComment = document.getElementById('comment-header');
+
+    const bodyBoxComment = document.getElementById('comment-body');
+    const bodyBoxCommentText = document.getElementById('comment-text');
+
+    const footerBoxComment = document.getElementById('comment-footer');
+
+    const footerBoxCommentLikesBox = document.getElementById('likes');
+    const footerBoxCommentLikesBoxCounter = document.getElementById('likes-counter');
+    const footerBoxCommentLikesBoxButton = document.getElementById('like-button');
+
+    const addFormUserName = document.getElementById('add-form-name');
+    const addFormUserText = document.getElementById('add-form-text');
+
+    buttonEvent.addEventListener("click", () => {
+      addFormUserName.classList.remove("error");
+      addFormUserText.classList.remove("error");
+
+      if (addFormUserName.value === "") {
+        addFormUserName.classList.add("error");
+        return;
+      };
+
+      if (addFormUserText.value === "") {
+        addFormUserText.classList.add("error");
+        return;
+      };
+
+      const newheaderBoxComment =
+        `<div class="comment-header">
+          <div>${addFormUserName.value}</div>
+          <div>${letTime()}</div>
+        </div>`;
+
+      const newbodyBoxComment =
+        `<div class="comment-body">
+          <div id="comment-text" class="comment-text">
+            ${addFormUserText.value}
+          </div>
+        </div>`;
+
+      const  newFooterBoxComment = 
+        `<div class="comment-footer">
+          <div id="likes" class="likes">
+            <span id="likes-counter" class="likes-counter">0</span>
+            <button id="like-button" class="like-button"></button>
+          </div>
+        </div>`;
+
+      const newBoxComment = `<li class="comment"> ${newheaderBoxComment}  ${newbodyBoxComment}  ${newFooterBoxComment} </li>`;
+      
+      const oldBoxComments = boxComments.innerHTML;
+      
+      boxComments.innerHTML = oldBoxComments + newBoxComment;
+
+      addFormUserName.value = "";
+      addFormUserText.value = "";
+
+      alert("It works!");
+
+    });
+
   </script>
+
 </html>
