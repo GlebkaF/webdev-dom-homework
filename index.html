@@ -80,7 +80,9 @@
 
     let comments = [];
     let appComments = [];
-    
+    initLikesButtonListeners();
+    fetchAndRender();
+
     function  fetchAndRender() {
       const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/bulat-khasanov/comments", {
         method: "GET"
@@ -128,11 +130,10 @@
       listElement.innerHTML = usersHTML;
       initCommentAnswers();
       initLikesButtonListeners();
-      fetchAndRender();
     }
     
     // Функция для проставления лайков
-    const initLikesButtonListeners = () => {
+    function initLikesButtonListeners() {
       const likeButtons = document.querySelectorAll('.like-button');
 
       for (const likeButton of likeButtons) {
