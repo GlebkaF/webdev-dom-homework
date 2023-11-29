@@ -38,6 +38,7 @@
       }
       .comment-text{
         white-space: pre-line;
+        word-break: break-word;
       }
       .quote {
         color:cornsilk;
@@ -63,6 +64,7 @@
     + date.getHours().toString().split(' ').map(el => el<10 ? '0'+el : el).join("") + ":" + 
     date.getMinutes().toString().split(' ').map(el => el<10 ? '0'+el : el).join("")
     };
+    
 
     const sanitizeHtml = (htmlString) => {
       return htmlString
