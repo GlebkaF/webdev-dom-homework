@@ -39,6 +39,24 @@
     const buttonElement = document.getElementById ('buttonElement');
     const listElement = document.getElementById ('comList');
 
+    const fetchPromise = fetch ("https://wedev-api.sky.pro/api/v1/ekaterina-mikhalko/comments", {
+      metod: "GET"
+    });
+    fetchPromise.then((response) => {
+  response.json().then((responseData) => {
+    let appComments = responseData.comments.map((comment) => {
+      return {
+        name: comment.author.name,
+        date: comment.date,
+        text: comment.text,
+        likes: 0,
+      };
+    });
+     commentsData = appComments;
+     renderComments();
+  });
+});
+
     function formatDate(date) {
 
     let dd = date.getDate();
@@ -59,24 +77,7 @@
 
     let commentDate = formatDate (new Date);
 
-    const commentsData = [
-      {
-        name: "Глеб Фокин",
-        date: "12.02.22 12:18",
-        text: "Это будет первый комментарий на этой странице",
-        likes: 3,
-        isLiked: false,
-      },
-
-      {
-        name: "Варвара Н.",
-        date: "13.02.22 19:22",
-        text: "Мне нравится как оформлена эта страница! ❤",
-        likes: 75,
-        isLiked: false,
-      },
-
-    ]
+    let commentsData = []
 
 
     const initEventListener = () => {
@@ -163,7 +164,7 @@
           return;
         }
 
-        commentsData.push (
+       /* commentsData.push (
           {
             name: nameInputElement.value
             .replaceAll("&", "&amp;")
@@ -181,6 +182,36 @@
           }
         );
         renderComments();
+        */
+
+        fetch ("https://wedev-api.sky.pro/api/v1/ekaterina-mikhalko/comments", {
+          method: "POST",
+          body: JSON.stringify({
+            text: commentInputElement.value,
+            name: nameInputElement.value,
+          }),
+
+        });
+
+        const fetchPromise = fetch ("https://wedev-api.sky.pro/api/v1/ekaterina-mikhalko/comments", {
+      metod: "GET"
+    });
+    fetchPromise.then((response) => {
+  response.json().then((responseData) => {
+    let appComments = responseData.comments.map((comment) => {
+      return {
+        name: comment.author.name,
+        date: comment.date,
+        text: comment.text,
+        likes: 0,
+      };
+    });
+     commentsData = appComments;
+     renderComments();
+  });
+});
+
+
 
         nameInputElement.value = '';
         commentInputElement.value = '';
