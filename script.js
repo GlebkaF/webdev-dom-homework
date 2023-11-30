@@ -19,7 +19,6 @@ const comments = [
     isLower: false,
   },
 ];
-// функция
 
 const initLike = () => {
   const likeButton = document.querySelectorAll(".like-button");
@@ -40,11 +39,27 @@ const initLike = () => {
   }
 };
 
+initLike();
+// Для ответа на комментарий создаем функицю initReply (2.11)
+
+function initReply() {
+  const commentElement = document.querySelectorAll("#comment");
+  for (const commentElements of commentElement) {
+    commentElements.addEventListener("click", (event) => {
+      event.stopPropagation();
+      let index = commentElements.dataset.id;
+      inputComentElement.value = `${
+        comments[index].comment + comments[index].name
+      }`;
+    });
+  }
+}
+
 // Рендер функция
 const renderComments = () => {
   const commentsHTML = comments
     .map((item, index) => {
-      return `<li class="comment">
+      return ` <li class="comment" id="comment" data-id="${index}">
     <div class="comment-header">
       <div>${item.name}</div>
       <div>${item.data}
@@ -68,6 +83,7 @@ const renderComments = () => {
     .join("");
   listElement.innerHTML = commentsHTML;
   initLike();
+  initReply();
 };
 renderComments();
 
@@ -120,9 +136,17 @@ btn.addEventListener("click", () => {
     currentDate.toLocaleTimeString().slice(0, -3);
 
   comments.push({
-    name: inputComentElement.value,
+    name: inputComentElement.value
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;"),
     data: time,
-    comment: inputComentElement.value,
+    comment: inputComentElement.value
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;"),
     isLike: 0,
     isLower: false,
   });
