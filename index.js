@@ -1,12 +1,25 @@
 "use strict";
+
+let isLoading = false;
+const LoadingComm = document.querySelector('.loading-comments');
+const renderForm = (massage, isLoading) => {
+    if (isLoading === true) {
+        LoadingComm.innerHTML = massage;
+    }
+    else {
+        LoadingComm.innerHTML = '';
+    }
+}
+
+let comments = [];
+const listCommentsElement = document.getElementById('comments-list');
 const addFormButton = document.getElementById("add-form-button");
 const nameInputElement = document.getElementById('add-form-name');
 const textInputElement = document.getElementById('add-form-text');
-const listCommentsElement = document.getElementById('comments-list');
 
-let comments = [];
 //получение коментариев гет-запрос на сервер
-const getComments = () => {
+const getComments = (massage) => {
+    renderForm(massage, true);
     fetch('https://wedev-api.sky.pro/api/v1/olga-okulova/comments', {
         method: 'GET',
     })
@@ -26,10 +39,11 @@ const getComments = () => {
             renderComents();
             addFormButton.disabled = false;
             addFormButton.style.backgroundColor = '#bcec30';
+            renderForm('',false);
         });
 }
+getComments('Комментарии грузятся');
 
-getComments();
 
 //ответы на комннтарии
 const responseСomment = () => {
@@ -91,7 +105,6 @@ const renderComents = () => {
 };
 
 renderComents();
-
 //отправка коментария на сервер
 addFormButton.addEventListener("click", () => {
     nameInputElement.classList.remove("error");
@@ -106,6 +119,7 @@ addFormButton.addEventListener("click", () => {
         textInputElement.classList.add("error");
         return;
     }
+    renderForm('Комментарий добавляется',true)
     addFormButton.disabled = true;
     addFormButton.style.backgroundColor = 'grey';
     fetch("https://wedev-api.sky.pro/api/v1/olga-okulova/comments", {
@@ -119,10 +133,11 @@ addFormButton.addEventListener("click", () => {
         })
     })
         .then(() => {
-            getComments();
+            getComments('Комментарий добавляется');
         });
 
     renderComents();
     nameInputElement.value = "";
 });
+
 
