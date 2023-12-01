@@ -61,13 +61,13 @@
   //Отрисовка формы существующих комментов
   const renderComments = () => {
     const commentsHtml = commentList.map((comment, index) => {
-      return `<li class="comment">
+      return `<li class="comment" data-index="${index}">
         <div class="comment-header">
           <div id="add-name">${comment.name}</div>
           <div>${comment.date}</div>
         </div>
         <div class="comment-body">
-          <div id="add-text" class="comment-text">
+          <div id="add-text" class="comment-text" >
             ${comment.text}
           </div>
         </div>
@@ -80,32 +80,34 @@
         </div>
       </li>`;
     }).join("");
-    
+
     listElement.innerHTML = commentsHtml;
     initLikeListener();
     initDeleteButtonsListeners();
+    quoteCommets();
   };
 
   //Активность кнопки удаления
   const initDeleteButtonsListeners = () => {
-
     const deleteButtonsElements = document.querySelectorAll(".delete-form-button");
     for (const deleteButtonsElement of deleteButtonsElements) {
-      deleteButtonsElement.addEventListener("click", () => {
+      deleteButtonsElement.addEventListener("click", (event) => {
         event.stopPropagation();
         const index = deleteButtonsElement.dataset.index;
         commentList.splice(index, 1);
         renderComments();
-      }); 
-    } 
+      });
+    }
+
   };
-  
+
 
   //Активность кнопки лайк
   const initLikeListener = () => {
     const buttonLike = document.querySelectorAll(".like-button");
     for (const iteratorLike of buttonLike) {
-      iteratorLike.addEventListener("click", () => {
+      iteratorLike.addEventListener("click", (event) => {
+        event.stopPropagation();
         const index = iteratorLike.dataset.index;
         commentList[index].likeCounter += commentList[index].isLiked ? -1 : +1;
         commentList[index].isLiked = !commentList[index].isLiked;
@@ -113,6 +115,19 @@
       });
     }
   };
+
+  //Цитата коммента
+  const quoteCommets = () => {
+    const commentElements = document.querySelectorAll(".comment");
+    for (const commentElement of commentElements) {
+      commentElement.addEventListener("click", () => {
+        const index = commentElement.dataset.index;
+        const commentText = commentList[index].text;
+        const commentAuthor = commentList[index].name;
+        textAreaElement.value = `${commentText} > ${commentAuthor}`;
+      })
+    }
+  }
   //Кнопка с добавлением коммента
   buttonElement.addEventListener("click", () => {
     inputElement.classList.remove("error");
@@ -125,18 +140,19 @@
     };
 
     commentList.push({
-      name: inputElement.value,
+      name: inputElement.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
       date: formatDateTime(new Date),
-      text: textAreaElement.value,
+      text: textAreaElement.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
       likeCounter: 0,
       isLiked: false,
       delete: initDeleteButtonsListeners(),
     });
+
     inputElement.value = "";
     textAreaElement.value = "";
     renderComments();
   });
-  
+
   renderComments();
 </script>
 
