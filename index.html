@@ -103,7 +103,10 @@
       controlPannel.classList.add('hidden');
       
       process()
-      .then(() => {
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
         messagePannel.classList.add('hidden');
         controlPannel.classList.remove('hidden');
       });
@@ -260,7 +263,7 @@
           console.log(responseJson.error);
         }
       })
-      .then(loadCommentsData);
+      .finally(loadCommentsData);
     };
 
 
