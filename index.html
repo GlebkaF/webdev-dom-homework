@@ -55,7 +55,7 @@
     "use strict";
    
 
-    const commentsData = [
+    let commentsData = [
       {
         author: "Глеб Фокин",
         date: "12.02.22 12:18",
@@ -74,6 +74,8 @@
       }
     ];
 
+    const API_URL = 'https://wedev-api.sky.pro/api/v1/pogozhiyag/comments';
+
     const BEGIN_QUOTE_MARK = '::BEGIN_QUOTE::';
     const END_QUOTE_MARK = '::END_QUOTE::';
 
@@ -87,6 +89,24 @@
     const templateComment = document.getElementById('template-comment');
 
     const buttonRemoveComment = document.getElementById('button-remove-comment');
+
+
+    const loadCommentsData = () => {
+      fetch(API_URL)
+      .then(response => response.json())
+      .then(result => {
+        commentsData = result.comments.map(item => ({
+            id: item.id,
+            author: item.author.name,
+            date: formatDateTime(new Date(item.date)),
+            text: item.text,
+            isLiked: item.isLiked,
+            likesCount: item.likes
+        }));
+        
+        renderComments();
+      });
+    };
 
 
     const setButtonRemoveCommentEnabled = () => buttonRemoveComment.disabled = commentsData.length == 0;
@@ -194,6 +214,28 @@
 
 
 
+    const postComment = (name, text) => {
+      const payload = {
+        text: endcodeSpecialSymbols(text),
+        name: endcodeSpecialSymbols(name)
+      };
+
+      fetch(API_URL,{
+        method: 'POST',
+        body: JSON.stringify(payload)
+      }).then(async response => {
+        if(response.status == 201){
+          loadCommentsData();
+        }else{
+          const responseJson = await response.json();
+          alert(responseJson.error);
+        }
+      }).catch(error =>{
+        alert(error);        
+      })
+    };
+
+
     const addComment = (author, comment) => {
       commentsData.push({
         author: endcodeSpecialSymbols(author),
@@ -219,7 +261,7 @@
 
     const formatDateTime = (date) => {
       const day = String(date.getDate()).padStart(2, '0');
-      const month = String(date.getMonth()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
       const year = String(date.getFullYear() - 2000);
       const minutes = String(date.getMinutes()).padStart(2, '0');
       const hours = String(date.getHours()).padStart(2, '0');
@@ -273,7 +315,8 @@
         return;
       }
       
-      addComment(inputName.value, inputComment.value);
+      //addComment(inputName.value, inputComment.value);
+      postComment(inputName.value, inputComment.value);
       
       inputComment.value = '';
       validateComment();
@@ -305,7 +348,8 @@
     buttonRemoveComment.addEventListener('click', removeLastComment);
 
 
-    renderComments();
+    //renderComments();
+    loadCommentsData();
     validateName();
     validateComment();
     setButtonRemoveCommentEnabled();
