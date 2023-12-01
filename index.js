@@ -2,12 +2,16 @@
 
 let isLoading = false;
 const LoadingComm = document.querySelector('.loading-comments');
+const addForm = document.querySelector('.add-form');
 const renderForm = (massage, isLoading) => {
     if (isLoading === true) {
         LoadingComm.innerHTML = massage;
+        LoadingComm.style.display = 'block';
+        addForm.style.visibility = 'hidden';
     }
     else {
-        LoadingComm.innerHTML = '';
+        LoadingComm.style.display = 'none';
+        addForm.style.visibility = 'visible';
     }
 }
 
