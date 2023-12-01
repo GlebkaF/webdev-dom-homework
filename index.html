@@ -39,6 +39,8 @@
     const buttonElement = document.getElementById ('buttonElement');
     const listElement = document.getElementById ('comList');
 
+    const getComments = () => {
+
     const fetchPromise = fetch ("https://wedev-api.sky.pro/api/v1/ekaterina-mikhalko/comments", {
       metod: "GET"
     });
@@ -56,6 +58,9 @@
      renderComments();
   });
 });
+};
+
+getComments();
 
     function formatDate(date) {
 
@@ -193,7 +198,9 @@
 
         });
 
-        const fetchPromise = fetch ("https://wedev-api.sky.pro/api/v1/ekaterina-mikhalko/comments", {
+        getComments();
+
+        /*const fetchPromise = fetch ("https://wedev-api.sky.pro/api/v1/ekaterina-mikhalko/comments", {
       metod: "GET"
     });
     fetchPromise.then((response) => {
@@ -210,7 +217,7 @@
      renderComments();
   });
 });
-
+*/
 
 
         nameInputElement.value = '';
