@@ -40,6 +40,34 @@
     return `${day}.${month}.${year} ${hours}:${minutes}`;
   };
 
+
+      //1.commentList необходимо получать из хранилища коммент через API (метод GET). Строки 47-62
+      const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/zenin-dmitry/comments",
+        {
+          method: 'GET',
+        });
+      fetchPromise.then((response) => {
+        const jsonPromise = response.json();
+        jsonPromise.then((responseData) => {
+
+          let commentListApi = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: comment.date,
+              id: comment.id,
+              isLiked: comment.false,
+              likes: comment.likes,
+              text: comment.text,
+            };
+          });
+          console.log(commentListApi);
+          renderComments();
+        });
+      });
+  //2. необходимо удалять из хранилища коммент (method DELETE). удаляем по  id. строка 101
+  //3. необходимо добавлять в хранилище коммент (method POST). строки 146-152
+
+
   //Сохранение данных форм комментов из html в js
   const commentList = [
     {
@@ -56,7 +84,11 @@
       likeCounter: 75,
       isLiked: false,
     },
+    {
+
+    },
   ];
+
 
   //Отрисовка формы существующих комментов
   const renderComments = () => {
