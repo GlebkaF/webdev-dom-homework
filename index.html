@@ -40,10 +40,16 @@
 
 
 
-    fetch("https://wedev-api.sky.pro/api/v1/aidar-sultanov/comments", {
-      method: "GET",
-    }).then((response) => {
-      response.json().then((responseData) => {
+    const fetchComments = () => {
+      return fetch("https://wedev-api.sky.pro/api/v1/aidar-sultanov/comments", {
+        method: "GET",
+      }).then((response) => {
+        return response.json();
+      });
+    };
+
+    const updateComments = () => {
+      fetchComments().then((responseData) => {
         const getApiComments = responseData.comments.map((comment) => {
           return {
             author: comment.author.name,
@@ -56,7 +62,9 @@
         commentsData = getApiComments;
         renderComments();
       });
-    });
+    };
+
+    updateComments();
 
 
     function replyToComment(index) {
@@ -84,38 +92,27 @@
         isLiked: false,
       };
 
+      const postComment = (newComment) => {
+        fetch("https://wedev-api.sky.pro/api/v1/aidar-sultanov/comments", {
+          method: "POST",
+          body: JSON.stringify({
+            name: newComment.name,
+            text: newComment.text,
+          }),
+        }).then((response) => {
+          response.json().then(() => {
+            updateComments();
+          });
+        });
+      };
+
+      postComment(newComment);
+
       renderComments();
 
       nameInput.value = "";
       commentInput.value = "";
 
-      fetch("https://wedev-api.sky.pro/api/v1/aidar-sultanov/comments", {
-        method: "POST",
-        body: JSON.stringify({
-          name: newComment.name,
-          text: newComment.text,
-        }),
-      }).then((response) => {
-        response.json().then((responseData) => {
-          fetch("https://wedev-api.sky.pro/api/v1/aidar-sultanov/comments", {
-            method: "GET",
-          }).then((response) => {
-            response.json().then((responseData) => {
-              const getApiComments = responseData.comments.map((comment) => {
-                return {
-                  author: comment.author.name,
-                  date: new Date(comment.date),
-                  likes: comment.likes,
-                  isLiked: false,
-                  text: comment.text,
-                };
-              });
-              commentsData = getApiComments;
-              renderComments();
-            });
-          });
-        });
-      });
     });
 
     function escapeHtml(text) {
