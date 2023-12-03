@@ -65,10 +65,7 @@
       renderComments();
     });
   });
-  //2. необходимо удалять из хранилища коммент (method DELETE). удаляем по  id. строка 101
-  //3. необходимо добавлять в хранилище коммент (method POST). строки 146-152
-
-
+  
   //Сохранение данных форм комментов из html в js
   let commentList = [
     /*     {
@@ -189,6 +186,7 @@
           likes: 0,
         })
       });
+      //3. необходимо добавлять в хранилище коммент (method POST).
     fetchPromise.then((response) => {
       const jsonPromise = response.json();
       jsonPromise.then((responseData) => {
