@@ -45,22 +45,34 @@
     return `${day}.${month}.${year} ${hours}:${minutes}`;
   };
 
-  let comments = [
-    {
-      name: "Глеб Фокин",
-      date: "12.02.22 12:18",
-      text: "Это будет первый комментарий на этой странице",
-      likeCounter: 3,
-      isLiked: true,
-    },
-    {
-      name: "Варвара Н.",
-      date: "13.02.22 19:22",
-      text: "Мне нравится как оформлена эта страница! ❤",
-      likeCounter: 75,
-      isLiked: false,
-    },
-  ];
+  const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/anna-kozhevnikova/comments", {
+    method: "GET"
+  });
+  // подписываемся на успешное завершение запроса с помощью then
+  fetchPromise.then((responce) => {
+    // Запускаем преобразовываем "сырые" данные от API в json формат
+    const jsonPromise = responce.json()
+    // Подписываемся на результат преобразования
+    jsonPromise.then((responceData) => {
+      //преобразовываем данные из api в формат приложения
+      const appComments = responceData.comments.map((comment) => {
+        return {
+          //достаем имя автора
+          name: comment.author.name,
+          //преобразовываем дату в Date
+          date: formatDateTime(new Date(comment.date)),
+          text: comment.text,
+          likes: comment.likes,
+          isLiked: false,
+        };
+      });
+      comments = appComments;
+      renderComment();
+    });
+  });
+
+
+
 
   //рендер комментария
 
@@ -78,12 +90,13 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">${comment.likeCounter}</span>
+              <span class="likes-counter">${comment.likes}</span>
               <button class="like-button ${comment.isLiked ? "-active-like" : ''}" data-index="${index}"></button>
             </div>
           </div>
           </li>`;
     }).join('');
+
     listElement.innerHTML = commentHtml;
     initLikeListeners();
     initAnswerCommentListeners();
@@ -95,31 +108,31 @@
       likeButton.addEventListener('click', (event) => {
         event.stopPropagation();
         const index = likeButton.dataset.index;
-        comments[index].likeCounter += comments[index].isLiked ? -1 : +1;
+        comments[index].likes += comments[index].isLiked ? -1 : +1;
         comments[index].isLiked = !comments[index].isLiked;
-        
+
         renderComment();
-      })
-    }
-  }
-
-
-// answer a comment
-
-  const initAnswerCommentListeners = () => {
-  const commentsList = document.querySelectorAll('.comment');
-    for (const theComment of commentsList) {
-      theComment.addEventListener('click', () => {
-        const name=theComment.dataset.name;
-        const text=theComment.dataset.text;
-        textareaInputElement.value=`BEGIN_QUOTE${name}:\n${text}END_QUOTE`
       });
     }
-  }
-//new comment
+  };
 
-const addNewComment =()=>{
-  nameInputElement.classList.remove("error");
+
+  // answer a comment
+
+  const initAnswerCommentListeners = () => {
+    const commentsList = document.querySelectorAll('.comment');
+    for (const theComment of commentsList) {
+      theComment.addEventListener('click', () => {
+        const name = theComment.dataset.name;
+        const text = theComment.dataset.text;
+        textareaInputElement.value = `BEGIN_QUOTE${name}:\n${text}END_QUOTE`
+      });
+    }
+  };
+  //new comment
+
+  const addNewComment = () => {
+    nameInputElement.classList.remove("error");
     textareaInputElement.classList.remove("error");
 
     if (nameInputElement.value === "") {
@@ -130,19 +143,64 @@ const addNewComment =()=>{
 
       return;
     }
-comments.push({
-  name: nameInputElement.value.replaceAll("<", "&lt").replaceAll(">","&gt"),
-  date: formatDateTime(new Date),
-  text: textareaInputElement.value.replaceAll("<", "&lt").replaceAll(">","&gt"),
-  likeCounter:0,
-  isLiked: false,
-})
+
+
+    const fetchPromise = fetch(
+      "https://wedev-api.sky.pro/api/v1/anna-kozhevnikova/comments",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          name: nameInputElement.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
+          date: formatDateTime(new Date),
+          text: textareaInputElement.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
+          likes: 0,
+          isLiked: false,
+        }),
+      });
+    //подписываемся на успешное завершение запроса
+    fetchPromise.then((responce) => {
+      //запускаем преобразование данных из api в json 
+      const jsonPromise = responce.json();
+      //подписываемся на результат преобразования
+      jsonPromise.then((responceData) => {
+
+        comments = responceData.comments;
+        renderComment();
+      });
+      const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/anna-kozhevnikova/comments", {
+        method: "GET"
+      });
+      // подписываемся на успешное завершение запроса с помощью then
+      fetchPromise.then((responce) => {
+        // Запускаем преобразовываем "сырые" данные от API в json формат
+        const jsonPromise = responce.json()
+        // Подписываемся на результат преобразования
+        jsonPromise.then((responceData) => {
+          //преобразовываем данные из api в формат приложения
+          const appComments = responceData.comments.map((comment) => {
+            return {
+              //достаем имя автора
+              name: comment.author.name,
+              //преобразовываем дату в Date
+              date: formatDateTime(new Date(comment.date)),
+              text: comment.text,
+              likes: comment.likes,
+              isLiked: false,
+            };
+          });
+          comments = appComments;
+          renderComment();
+        });
+      });
+    });
+
+
     nameInputElement.value = "";
     textareaInputElement.value = '';
     renderComment();
-};
+  };
 
-  buttonElement.addEventListener('click',addNewComment);
+  buttonElement.addEventListener('click', addNewComment);
   renderComment();
 </script>
 
