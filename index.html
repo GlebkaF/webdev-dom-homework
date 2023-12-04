@@ -7,11 +7,15 @@
   </head>
 
   <body>
+    
     <div class="container">
+      <div class="loading" id = "loadingComments">Комментарии загружаются</div>
       <ul class="comments" id="comList">
       
       </ul>
-      <div class="add-form">
+      <div class="loadComment" id = "loadingComment">Комментарий добавляется</div>
+      <div class="add-form"
+      id = "form">
         <input
           type="text"
           class="add-form-name"
@@ -34,18 +38,25 @@
 
   <script>
     "use strict";
+    const loadingCommentElement = document.getElementById ('loadingComment')
+    const loadingCommentsElement = document.getElementById ('loadingComments')
     const nameInputElement = document.getElementById ('name-input');
     const commentInputElement = document.getElementById ('comment-input');
     const buttonElement = document.getElementById ('buttonElement');
     const listElement = document.getElementById ('comList');
+    const formElement = document.getElementById ('form');
+
+    loadingCommentElement.style.display = "none";
 
     const getComments = () => {
 
     const fetchPromise = fetch ("https://wedev-api.sky.pro/api/v1/ekaterina-mikhalko/comments", {
       metod: "GET"
-    });
-    fetchPromise.then((response) => {
-  response.json().then((responseData) => {
+    })
+    .then((response) => {
+      return response.json();
+    })
+    .then((responseData) => {
     let appComments = responseData.comments.map((comment) => {
       return {
         name: comment.author.name,
@@ -53,11 +64,15 @@
         text: comment.text,
         likes: 0,
       };
-    });
+    })
      commentsData = appComments;
      renderComments();
-  });
-});
+  })
+  .then ((data) =>{
+      loadingCommentElement.style.display = "none";
+      formElement.style.display = "flex";
+      loadingCommentsElement.style.display = "none";
+    })
 };
 
 getComments();
@@ -169,56 +184,28 @@ getComments();
           return;
         }
 
-       /* commentsData.push (
-          {
-            name: nameInputElement.value
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;"),
-            date: commentDate,
+        loadingCommentElement.style.display = "block";
+        loadingCommentElement.style.value = 'Комментарий добавляется';
+        formElement.style.display = "none";
+
+        fetch ("https://wedev-api.sky.pro/api/v1/ekaterina-mikhalko/comments", {
+          method: "POST",
+          body: JSON.stringify({
             text: commentInputElement.value
             .replaceAll("&", "&amp;")
             .replaceAll("<", "&lt;")
             .replaceAll(">", "&gt;")
             .replaceAll('"', "&quot;"),
-            likes: 0,
-
-          }
-        );
-        renderComments();
-        */
-
-        fetch ("https://wedev-api.sky.pro/api/v1/ekaterina-mikhalko/comments", {
-          method: "POST",
-          body: JSON.stringify({
-            text: commentInputElement.value,
-            name: nameInputElement.value,
+            name: nameInputElement.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;"),
           }),
 
         });
 
         getComments();
-
-        /*const fetchPromise = fetch ("https://wedev-api.sky.pro/api/v1/ekaterina-mikhalko/comments", {
-      metod: "GET"
-    });
-    fetchPromise.then((response) => {
-  response.json().then((responseData) => {
-    let appComments = responseData.comments.map((comment) => {
-      return {
-        name: comment.author.name,
-        date: comment.date,
-        text: comment.text,
-        likes: 0,
-      };
-    });
-     commentsData = appComments;
-     renderComments();
-  });
-});
-*/
-
 
         nameInputElement.value = '';
         commentInputElement.value = '';
