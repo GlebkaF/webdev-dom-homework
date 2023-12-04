@@ -4,9 +4,5 @@ import { getComments } from "./api.js";
 
 let isSignedUp = false;
 export function userAuthorization() {
-  let isLogged = true;
-  // function renderForm() {
-  //   const loginElement = document.querySelector(".authorization");
-  // }
+    let isLogged = true;
 }
-
