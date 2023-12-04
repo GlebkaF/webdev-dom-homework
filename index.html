@@ -9,7 +9,7 @@
   <body>
     <div class="container">
       <ul id="list" class="comments">
-        <li class="comment">
+      <!--  <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -42,7 +42,7 @@
               <button class="like-button -active-like"></button>
             </div>
           </div>
-        </li>
+        </li>-->
       </ul>
       <div class="add-form">
         <input
@@ -77,10 +77,79 @@
     const listElement = document.getElementById('list');
     const nameInputElement = document.getElementById('name-input');
     const commentInputElement = document.getElementById('comment-input');
+
+    
+    const comments = [
+      {
+        name: 'Глеб Фокин',
+        date: '12.02.22 12:18',
+        comment: 'Это будет первый комментарий на этой странице',
+        like_counter: 3, // количество лайков будет более логичным назвать как like_amount / like_counter или что то подобное. Если ты так же поменяла здесь, на 149 строке нужно поменять тоже. Количесвто лайков, это просто цифра и нам нужно увеличить или убавить количество, поэтому лучше всего хранить в типе Number.
+        likebutton: 'like-button', // здесь нужно сделать свойство которое будет хранить в себе состояние лайка (стиль, который находится на этой кнопке, то есть like-button или like-button -active-like). В данном случае если пользователь впервые зашел на страницу и заранее не ставил лайк, тогда это будет просто like-button. Так же изменил строку 150, потому что мы будем менять стиль на кнопке лайка внутри функции handleLike(). Прочитай и посмотри сначала про renderComment, после вернись к handleLike()
+      },
+      {
+        name: 'Варвара Н.',
+        date: '13.02.22 19:22',
+        comment: ' Мне нравится как оформлена эта страница! ❤',
+        like_counter: 3, // количество лайков будет более логичным назвать как like_amount / like_counter или что то подобное. Если ты так же поменяла здесь, на 149 строке нужно поменять тоже. Количесвто лайков, это просто цифра и нам нужно увеличить или убавить количество, поэтому лучше всего хранить в типе Number.
+        likebutton: 'like-button', // здесь нужно сделать свойство которое будет хранить в себе состояние лайка (стиль, который находится на этой кнопке, то есть like-button или like-button -active-like). В данном случае если пользователь впервые зашел на страницу и заранее не ставил лайк, тогда это будет просто like-button. Так же изменил строку 150, потому что мы будем менять стиль на кнопке лайка внутри функции handleLike(). Прочитай и посмотри сначала про renderComment, после вернись к handleLike()
+      },
+    ];
+    
+    const handleLike = () => {
+      const likeButtons = document.querySelectorAll('.like-button'); 
+      for (const likeButton of likeButtons) {
+        likeButton.addEventListener('click', () => {
+          const index = likeButton.dataset.index;
+          console.log(
+            'Индекс кнопки лайка на которой произошел клик: ' + index
+          );
+          let counter = comments[index]['like_counter'];
+          if (comments[index]['likebutton'] === 'like-button -active-like') {
+            counter -= 1; 
+            comments[index]['likebutton'] = 'like-button';  
+          } else {
+            counter += 1;
+            comments[index]['likebutton'] = 'like-button -active-like';
+          }
+
+         comments[index]['like_counter'] = counter;
+         renderComment();
+        });
+      }
+    };
+    const renderComment = () => {
+      const newComments = comments
+        .map((comment, index) => {
+          return `<li class="comment">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            
+            <div>${comment.date}</div>
+          </div>
+          <div class = "comment-body" data-text = '${comment.comment}' data-name = '${comment.name}'>
+            <div class = "comment-text">
+              ${comment.comment}
+            </div>
+          </div>
+          <div class = "comment-footer">
+            <div class = "likes">
+              <span class = "likes-counter">${comment.like_counter}</span>
+              <button data-index = '${index}' class = "${comment.likebutton}"></button>
+            </div>
+          </div>
+        </li>`;
+        })
+        .join('');
+
+      listElement.innerHTML = newComments;
+      handleLike();
+    };
+
+
     const plusZero = (str) => {
-      if (str < 10)
-      return `0${str}`;
-    }
+      if (str < 10) return `0${str}`;
+    };
     
     const getDateNow = () => { 
     let currentDate = new Date();
@@ -89,12 +158,16 @@
     // let date = plusZero(currentDate.getDate());
     // let month = plusZero(currentDate.getMonth());
    
-    console.log(currentDate.toLocaleDateString(),currentDate.toLocaleTimeString());
-    return `${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString().slice(0,5)}`
-}
-   
+    console.log(
+        currentDate.toLocaleDateString(),
+        currentDate.toLocaleTimeString()
+      );
+      return `${currentDate.toLocaleDateString()} ${currentDate
+        .toLocaleTimeString()
+        .slice(0, 5)}`;
+    };
 
-   nameInputElement.classList.remove("error");
+  // nameInputElement.classList.remove("error");
    buttonElement.addEventListener("click", () => {
       commentInputElement.classList.remove("error");
       if (nameInputElement.value === "") {
@@ -105,30 +178,19 @@
         commentInputElement.classList.add("error");
         return;
       }   
-  
-      const oldListHtml = listElement.innerHTML;
-      listElement.innerHTML = oldListHtml + `<li class="comment">
-          <div class="comment-header">
-            <div>${nameInputElement.value}</div>
-            
-            <div>${getDateNow()}</div>
-          </div>
-          <div class = "comment-body">
-            <div class = "comment-text">
-              ${commentInputElement.value}
-            </div>
-          </div>
-          <div class = "comment-footer">
-            <div class = "likes">
-              <span class = "likes-counter">0</span>
-              <button class = "like-button -active-like"></button>
-            </div>
-          </div>
-        </li>`;
+      comments.push({
+        name: nameInputElement.value,
+        date: getDateNow(),
+        comment: commentInputElement.value,
+        like_counter: 0,
+        likebutton: 'like-button',
+      });
+    
         nameInputElement.value = '';
         commentInputElement.value = '';
+        renderComment();
     });
-
+    renderComment();
     console.log("It works!");
   </script>
 </html>
