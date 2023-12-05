@@ -31,6 +31,7 @@
   const inputElement = document.getElementById("add-name");
   const outerFormElement = document.getElementById("add-form");
   const buttonDeleteElement = document.getElementById("delete-form-button")
+  const addFormElement = document.querySelector(".add-form");
   const formatDateTime = (date) => {
     let dateTime = new Date(date);
     const day = String(dateTime.getDate()).padStart(2, '0');
@@ -42,14 +43,14 @@
   };
   let urlApi = "https://wedev-api.sky.pro/api/v1/zenin-dmitry/comments";
   const getComments = () => {
+    buttonElement.disabled = false;
+    listElement.textContent = "Добавление комментария";
     let fetchPromise = fetch(urlApi,
       {
         method: 'GET',
-      });
-    fetchPromise.then((response) => {
-      const jsonPromise = response.json();
-      jsonPromise.then((responseData) => {
-
+      }).then((response) => {
+        return response.json();
+      }).then((responseData) => {
         commentList = responseData.comments.map((comment) => {
           return {
             name: comment.author.name,
@@ -63,36 +64,33 @@
         console.log(commentList);
         renderComments();
       });
-    });
   };
-  
+
+
   //1.commentList необходимо получать из хранилища коммент через API (метод GET). Строки 47-62
   getComments();
 
   //Сохранение данных форм комментов из html в js
-  let commentList = [
-    /*     {
-          name: 'Глеб Фокин',
-          date: '12.02.22 12:18',
-          text: 'Это будет первый комментарий на этой странице',
-          likeCounter: 3,
-          isLiked: true,
-        },
-        {
-          name: 'Варвара',
-          date: '13.02.22 19:22',
-          text: 'Мне нравится как оформлена эта страница! ❤',
-          likeCounter: 75,
-          isLiked: false,
-        },
-        {
-    
-        }, */
-  ];
+  let commentList = [];
 
 
-  //Отрисовка формы существующих комментов
-  const renderComments = () => {
+  //Активность кнопки удаления
+  const initDeleteButtonsListeners = () => {
+    const deleteButtonsElements = document.querySelectorAll(".delete-form-button");
+    for (const deleteButtonsElement of deleteButtonsElements) {
+      deleteButtonsElement.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const index = deleteButtonsElement.dataset.index;
+        commentList.splice(index, 1);
+        renderComments();
+      });
+    }
+
+  };
+
+    //Отрисовка формы существующих комментов
+    const renderComments = () => {
+    buttonElement.disabled = true;
     const commentsHtml = commentList.map((comment, index) => {
       return `<li class="comment" data-index="${index}">
         <div class="comment-header">
@@ -113,28 +111,11 @@
         </div>
       </li>`;
     }).join("");
-
     listElement.innerHTML = commentsHtml;
     initLikeListener();
     initDeleteButtonsListeners();
     quoteCommets();
   };
-
-  //Активность кнопки удаления
-  const initDeleteButtonsListeners = () => {
-    const deleteButtonsElements = document.querySelectorAll(".delete-form-button");
-    for (const deleteButtonsElement of deleteButtonsElements) {
-      deleteButtonsElement.addEventListener("click", (event) => {
-        event.stopPropagation();
-        const index = deleteButtonsElement.dataset.index;
-        commentList.splice(index, 1);
-        renderComments();
-      });
-    }
-
-  };
-
-
   //Активность кнопки лайк
   const initLikeListener = () => {
     const buttonLike = document.querySelectorAll(".like-button");
@@ -162,7 +143,11 @@
     }
   }
   //Кнопка с добавлением коммента
+
   buttonElement.addEventListener("click", () => {
+   let oldAddFormElement = addFormElement.innerHTML;
+    addFormElement.classList.remove("add-form");
+    addFormElement.textContent = "Добавление комментария";
     inputElement.classList.remove("error");
     if (inputElement.value === "") {
       inputElement.classList.add("error");
@@ -178,7 +163,8 @@
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;");
     };
-    //3. необходимо добавлять в хранилище коммент (method POST).
+    //2.13. надпись о загрузке коммента и блокировка кнопки "добавить".
+
     let fetchPromise = fetch(urlApi,
       {
         method: 'POST',
@@ -189,45 +175,23 @@
           isLiked: false,
           likes: 0,
         })
+      }).then((response) => {
+        return response.json();
+      }).then((responseData) => {
+        return responseData;
+      }).then((response) => {
+        return getComments();
       });
-
-    fetchPromise.then((response) => {
-      const jsonPromise = response.json();
-      jsonPromise.then((responseData) => {
-        /*         let fetchPromise = fetch(urlApi,
-                  {
-                    method: 'GET',
-                  });
-                fetchPromise.then((response) => {
-                  const jsonPromise = response.json();
-                  jsonPromise.then((responseData) => {
-        
-                    commentList = responseData.comments.map((comment) => {
-                      return {
-                        name: comment.author.name,
-                        date: formatDateTime(comment.date),
-                        id: comment.id,
-                        isLiked: comment.isLiked,
-                        likes: comment.likes,
-                        text: comment.text,
-                      };
-                    });
-                    console.log(commentList);
-                    renderComments();
-                  });
-                }); */
-        getComments();
-
-      });
-
-    });
 
     inputElement.value = "";
     textAreaElement.value = "";
     renderComments();
   });
-
+  inputElement.value = "";
+  textAreaElement.value = "";
   renderComments();
+
+
 </script>
 
 </html>
