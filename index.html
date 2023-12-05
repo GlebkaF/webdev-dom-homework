@@ -90,7 +90,6 @@
 
     //Отрисовка формы существующих комментов
     const renderComments = () => {
-    buttonElement.disabled = true;
     const commentsHtml = commentList.map((comment, index) => {
       return `<li class="comment" data-index="${index}">
         <div class="comment-header">
