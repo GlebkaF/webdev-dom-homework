@@ -74,22 +74,38 @@
           .replaceAll('"', "&quot;");
     };
 
-    const comments = [
-      {
-        name: "Глеб Фокин",
-        timestamp: '12.02.22 12:18',
-        text: "Это будет первый комментарий на этой странице",
-        likesCounter: 3,
-        likeIsActive: false
-      },
-      {
-        name: "Варвара Н.",
-        timestamp: '13.02.22 19:22',
-        text: "Мне нравится как оформлена эта страница! ❤",
-        likesCounter: 75,
-        likeIsActive: true
-      }
-    ];
+    let comments = [];
+    const getComments = () => {
+      fetch("https://wedev-api.sky.pro/api/v1/:anastasiya-grebneva/comments", {
+    method: "GET",
+}).then((response) => {
+   response.json().then((responseData) => {
+	    const appComments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+        timestamp: formatDate(new Date(comment.date)),
+        text: comment.text,
+        likesCounter: comment.likes,
+        likeIsActive: comment.isLiked
+        }
+      });
+      comments = appComments;
+      renderComments();
+  });
+})
+};
+getComments();
+const postComment = () => {
+    fetch("https://wedev-api.sky.pro/api/v1/:anastasiya-grebneva/comments", {
+        method: "POST",
+        body: JSON.stringify({
+          name: sanitizeHtml(addFormName.value),
+          text: addFormText.value
+        })
+      });
+  };
+
+
 
     const initLikeButtonsListeners = () => {
       const likeButtonsElements = document.querySelectorAll(".like-button");
@@ -150,7 +166,7 @@
       initLikeButtonsListeners();
     };
 
-    renderComments();
+    
 
   buttonElement.disabled = true;
     
@@ -178,14 +194,10 @@ buttonElement.addEventListener("click", () => {
         buttonElement.setAttribute('disabled', "");
         return;
       }
-      comments.push({
-        name: sanitizeHtml(addFormName.value),
-        timestamp: formatDate(new Date()),
-        text: sanitizeHtml(addFormText.value),
-        likesCounter: 0,
-        likeIsActive: false
-      });
-  renderComments();
+  
+  postComment();
+  getComments();
+      
   addFormName.value = '';
   addFormText.value = '';
 });
