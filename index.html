@@ -72,7 +72,7 @@
     // Рендер функция
     const renderComments = () => {
       const commentHtml = comments.map((comment, index) => {
-        return `<li class="comment">
+        return `<li class="comment" data-index="${index}">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.date}</div>
@@ -93,14 +93,31 @@
 
       listElement.innerHTML = commentHtml;
       initLikeListeners();
+      quoteComments();
+    }
+
+
+    // Цитата коммента
+    const quoteComments = () => {
+      const commentElements = document.querySelectorAll(".comment");
+      for(const commentElement of commentElements) {
+        commentElement.addEventListener("click", () => {
+          const index = commentElement.dataset.index;
+          const commentText = comments[index].text;
+          const commentName = comments[index].name;
+          textInputelement.value = `${commentName} :
+          ${commentText}`;
+        })
+      }
     }
     
     
-
+    // Счетчик лайков
     const initLikeListeners = () => {
       const likeButtons = document.querySelectorAll(".like-button");
       for (const likeButton of likeButtons) {
-        likeButton.addEventListener('click' , () => {
+        likeButton.addEventListener('click' , (event) => {
+          event.stopPropagation();
         const index = likeButton.dataset.index;
         comments[index].likeCounter += comments[index].isLiked ? -1 : +1;
         comments[index].isLiked = !comments[index].isLiked;
@@ -112,7 +129,7 @@
     }
 
 
-
+    // Валидация ввода
     buttonElement.addEventListener('click', () => {
 
       textInputelement.classList.remove("error");
@@ -126,11 +143,15 @@
         return;
       };
     
-
+      // Новый коммент
       comments.push({
-        name: nameInputElement.value,
+        name: nameInputElement.value
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;"),
         date: formattedDate,
-        text: textInputelement.value,
+        text: textInputelement.value
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;"),
         likeCounter: 0,
         isLiked: false,  
       });
