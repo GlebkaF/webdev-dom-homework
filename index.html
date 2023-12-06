@@ -144,9 +144,6 @@
   //Кнопка с добавлением коммента
 
   buttonElement.addEventListener("click", () => {
-   let oldAddFormElement = addFormElement.innerHTML;
-    addFormElement.classList.remove("add-form");
-    addFormElement.textContent = "Добавление комментария";
     inputElement.classList.remove("error");
     if (inputElement.value === "") {
       inputElement.classList.add("error");
