@@ -10,21 +10,24 @@
     <div class="container">
       <ul class="comments" id="list-comments">        
       </ul>
-      <button class="remove-comment-button" id="button-remove-comment">Удалить последний коментарий</button>
-      <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"          
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button" id="button-add-comment">Написать</button>
+      <div id="message-pannel" class="message-pannel hidden"></div>
+      <div id="control-pannel" class="control-pannel">
+        <button class="remove-comment-button" id="button-remove-comment">Удалить последний коментарий</button>
+        <div class="add-form">
+          <input
+            type="text"
+            class="add-form-name"
+            placeholder="Введите ваше имя"          
+          />
+          <textarea
+            type="textarea"
+            class="add-form-text"
+            placeholder="Введите ваш коментарий"
+            rows="4"
+          ></textarea>
+          <div class="add-form-row">
+            <button class="add-form-button" id="button-add-comment">Написать</button>
+          </div>
         </div>
       </div>
     </div>
@@ -87,12 +90,30 @@
     const listComments = document.getElementById('list-comments');
     const buttonAddComment = document.getElementById('button-add-comment');
     const templateComment = document.getElementById('template-comment');
+    const messagePannel = document.getElementById('message-pannel');
+    const controlPannel = document.getElementById('control-pannel');
 
     const buttonRemoveComment = document.getElementById('button-remove-comment');
 
+    
+
+    const startLongProcess = (message, process) => {
+      messagePannel.textContent  = message;
+      messagePannel.classList.remove('hidden');
+      controlPannel.classList.add('hidden');
+      
+      process()
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        messagePannel.classList.add('hidden');
+        controlPannel.classList.remove('hidden');
+      });
+    }
 
     const loadCommentsData = () => {
-      fetch(API_URL)
+      return fetch(API_URL)
       .then(response => response.json())
       .then(result => {
         commentsData = result.comments.map(item => ({
@@ -103,11 +124,17 @@
             isLiked: item.isLiked,
             likesCount: item.likes
         }));
-        
-        renderComments();
-      });
+      })
+      .then(renderComments);
     };
 
+    const delay = (interval = 300) => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, interval);
+      });
+    };
 
     const setButtonRemoveCommentEnabled = () => buttonRemoveComment.disabled = commentsData.length == 0;
 
@@ -116,10 +143,16 @@
       for (const button of likeButtons) {
         button.addEventListener('click', (event) => {
           event.stopPropagation();
-          const item = commentsData[event.target.dataset.index];
-          item.likesCount += item.isLiked ? -1 : +1;
-          item.isLiked = !item.isLiked;
-          renderComments();
+
+          button.classList.add('loading-like');
+
+          delay(1500)
+          .then(() => {
+            const item = commentsData[event.target.dataset.index];
+            item.likesCount += item.isLiked ? -1 : +1;
+            item.isLiked = !item.isLiked;
+          })
+          .then(renderComments);
         });
       }
 
@@ -220,32 +253,17 @@
         name: endcodeSpecialSymbols(name)
       };
 
-      fetch(API_URL,{
+      return fetch(API_URL,{
         method: 'POST',
         body: JSON.stringify(payload)
-      }).then(async response => {
-        if(response.status == 201){
-          loadCommentsData();
-        }else{
-          const responseJson = await response.json();
-          alert(responseJson.error);
-        }
-      }).catch(error =>{
-        alert(error);        
       })
-    };
-
-
-    const addComment = (author, comment) => {
-      commentsData.push({
-        author: endcodeSpecialSymbols(author),
-        date: formatDateTime(new Date()),
-        text: endcodeSpecialSymbols(comment),
-        likesCount: 0,
-        isLiked: false,
-        isEdited: false     
-      });
-      renderComments();
+      .then(async response => {
+        if(response.status !== 201){
+          const responseJson = await response.json();
+          console.log(responseJson.error);
+        }
+      })
+      .finally(loadCommentsData);
     };
 
 
@@ -315,8 +333,7 @@
         return;
       }
       
-      //addComment(inputName.value, inputComment.value);
-      postComment(inputName.value, inputComment.value);
+      startLongProcess('Сообщение отправляется...', () => postComment(inputName.value, inputComment.value));      
       
       inputComment.value = '';
       validateComment();
@@ -329,18 +346,13 @@
       commentsData.splice(commentsData.length - 1, 1);
       renderComments();
     }
+
+    
     
     inputName.addEventListener('input', validateName);
     
     inputComment.addEventListener('input', validateComment);
-
-    inputComment.addEventListener('keydown', (e) =>{
-      // if(e.code == 'Enter'){
-      //   validateAndSend();
-      //   e.preventDefault();
-      // }      
-    });
-
+    
     buttonAddComment.addEventListener('click', validateAndSend);
 
     validationState.onchange = () => setAddCommentButtonEnabled();
@@ -348,8 +360,8 @@
     buttonRemoveComment.addEventListener('click', removeLastComment);
 
 
-    //renderComments();
-    loadCommentsData();
+
+    startLongProcess('Сообщения загружаются...', loadCommentsData);
     validateName();
     validateComment();
     setButtonRemoveCommentEnabled();
