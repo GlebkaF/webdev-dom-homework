@@ -247,6 +247,7 @@
 
 
 
+
     const postComment = (name, text) => {      
       const requestOptions = {
         method: 'POST',
@@ -257,11 +258,11 @@
         })  
       };
 
-      const doFetch = () => {
+      const doPost = () => {
         return fetch(API_URL, requestOptions)
         .then(async response => {
           if(response.status == 500) {            
-            return delay(200).then(doFetch);
+            return delay(200).then(doPost);
           } else if(response.status == 400){
             const responseJson = await response.json();            
             return Promise.reject(new Error(responseJson.error));
@@ -269,7 +270,13 @@
         })       
       };
 
-      return doFetch().then(loadCommentsData);
+      const clearCommentInput = () => {
+        inputComment.value = '';
+      };
+
+      return doPost()
+      .then(clearCommentInput)
+      .then(loadCommentsData);      
     };
 
 
@@ -339,9 +346,8 @@
         return;
       }
       
-      startLongProcess('Сообщение отправляется...', () => postComment(inputName.value, inputComment.value));      
-      
-      inputComment.value = '';
+      startLongProcess('Сообщение отправляется...', () => postComment(inputName.value, inputComment.value));
+            
       validateComment();
     };
 
