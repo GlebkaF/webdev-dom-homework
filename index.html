@@ -97,44 +97,7 @@
 
     
 
-    const startLongProcess = (message, process) => {
-      messagePannel.textContent  = message;
-      messagePannel.classList.remove('hidden');
-      controlPannel.classList.add('hidden');
-      
-      process()
-      .catch(error => {
-        alert(error.message);
-      })
-      .finally(() => {
-        messagePannel.classList.add('hidden');
-        controlPannel.classList.remove('hidden');
-      });
-    };
-
-    const loadCommentsData = () => {
-      return fetch(API_URL)
-      .then(response => response.json())
-      .then(result => {
-        commentsData = result.comments.map(item => ({
-            id: item.id,
-            author: item.author.name,
-            date: formatDateTime(new Date(item.date)),
-            text: item.text,
-            isLiked: item.isLiked,
-            likesCount: item.likes
-        }));
-      })
-      .then(renderComments);
-    };
-
-    const delay = (interval = 300) => {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve();
-        }, interval);
-      });
-    };
+    
 
     const setButtonRemoveCommentEnabled = () => buttonRemoveComment.disabled = commentsData.length == 0;
 
@@ -248,36 +211,7 @@
 
 
 
-    const postComment = (name, text) => {      
-      const requestOptions = {
-        method: 'POST',
-        body: JSON.stringify({
-          text: endcodeSpecialSymbols(text),
-          name: endcodeSpecialSymbols(name),
-          forceError: true
-        })  
-      };
-
-      const doPost = () => {
-        return fetch(API_URL, requestOptions)
-        .then(async response => {
-          if(response.status == 500) {            
-            return delay(200).then(doPost);
-          } else if(response.status == 400){
-            const responseJson = await response.json();            
-            return Promise.reject(new Error(responseJson.error));
-          }
-        })       
-      };
-
-      const clearCommentInput = () => {
-        inputComment.value = '';
-      };
-
-      return doPost()
-      .then(clearCommentInput)
-      .then(loadCommentsData);      
-    };
+    
 
 
     const validationState = {
@@ -359,7 +293,86 @@
       renderComments();
     }
 
+
+
+    const delay = (interval = 300) => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, interval);
+      });
+    };
+
+
+    const startLongProcess = (message, process) => {
+      messagePannel.textContent  = message;
+      messagePannel.classList.remove('hidden');
+      controlPannel.classList.add('hidden');
+      
+      process()
+      .catch(error => {
+        alert(error.message);
+      })
+      .finally(() => {
+        messagePannel.classList.add('hidden');
+        controlPannel.classList.remove('hidden');
+      });
+    };
+
+
+    const loadCommentsData = () => {
+      return fetch(API_URL)
+      .then(response => response.json())
+      .then(result => {
+        commentsData = result.comments.map(item => ({
+            id: item.id,
+            author: item.author.name,
+            date: formatDateTime(new Date(item.date)),
+            text: item.text,
+            isLiked: item.isLiked,
+            likesCount: item.likes
+        }));
+      })
+      .then(renderComments);
+    };
     
+
+    const postComment = (name, text) => {      
+      const requestOptions = {
+        method: 'POST',
+        body: JSON.stringify({
+          text: endcodeSpecialSymbols(text),
+          name: endcodeSpecialSymbols(name),
+          forceError: true
+        })  
+      };
+
+      const doPost = () => {
+        return fetch(API_URL, requestOptions)
+        .then(async response => {
+          if(response.status == 500) {            
+            return delay(200).then(doPost);
+          } else if(response.status == 400){
+            const responseJson = await response.json();            
+            return Promise.reject(new Error(responseJson.error));
+          }
+        })       
+      };
+
+      const clearCommentInput = () => {
+        inputComment.value = '';
+      };
+
+      return doPost()
+      .then(clearCommentInput)
+      .then(loadCommentsData);      
+    };
+
+
+
+
+
+    ////////////////////////////// RUN ////////////////////////////// 
     
     inputName.addEventListener('input', validateName);
     
