@@ -9,7 +9,7 @@
   <body>
     <div class="container">
       <ul id="comments" class="comments">
-        <li id="comment" class="comment">
+        <!-- <li id="comment" class="comment">
           <div id="comment-header" class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -42,7 +42,7 @@
               <button class="like-button -active-like"></button>
             </div>
           </div>
-        </li>
+        </li> -->
       </ul>
       <div class="add-form">
         <input
@@ -108,6 +108,99 @@
     const addFormUserName = document.getElementById('add-form-name');
     const addFormUserText = document.getElementById('add-form-text');
 
+
+
+    const arrComments = [
+      {
+        name: "Глеб Фокин",
+        date: "12.02.22 12:18",
+        commentText: "Это будет первый комментарий на этой странице",
+        numLike: 3,
+        liked: false
+
+      },
+      {
+        name: "Варвара Н.",
+        date: "13.02.22 19:22",
+        commentText: "Мне нравится как оформлена эта страница! ❤",
+        numLike: 75,
+        liked: true
+      },
+    ];
+
+    const initCommentsLiked = () => {
+      const useCommentsLike = document.querySelectorAll(".like-button");
+      for (const useCommentLike of useCommentsLike) {
+
+
+
+        useCommentLike.addEventListener("click", () => {
+          const index = useCommentLike.dataset.index;
+
+          if (arrComments[index].liked === false) {
+
+            arrComments[index].numLike++;
+            arrComments[index].liked = true;
+            renderComments();
+            return;
+
+          } else {
+
+            arrComments[index].numLike--;
+            arrComments[index].liked = false;
+            renderComments();
+            return;
+
+          };
+
+        });
+      };
+    };
+
+    const usedLike = (comm) => {
+
+      if (comm === true) {
+        return `-active-like`;
+      };
+
+    };
+
+    const renderComments = () => {
+
+      const commentsHtml = arrComments
+      .map((comment, index) => {
+        return `<li id="comment" class="comment">
+
+            <div class="comment-header">
+              <div>${comment.name}</div>
+              <div>${comment.date}</div>
+            </div>
+
+            <div class="comment-body">
+              <div id="comment-text" class="comment-text">
+                ${comment.commentText}
+              </div>
+            </div>
+
+            <div id="comment-footer" class="comment-footer">
+              <div id="likes" class="likes">
+                <span id="likes-counter" class="likes-counter">${comment.numLike}</span>
+                <button data-index="${index}" id="like-button" class="like-button ${usedLike(comment.liked)}"></button>
+              </div>
+            </div>
+
+          </li>`;
+      })
+      .join("");
+
+      boxComments.innerHTML = commentsHtml;
+
+      initCommentsLiked();
+
+    };
+
+    renderComments();
+
     buttonEvent.addEventListener("click", () => {
       addFormUserName.classList.remove("error");
       addFormUserText.classList.remove("error");
@@ -122,38 +215,21 @@
         return;
       };
 
-      const newheaderBoxComment =
-        `<div class="comment-header">
-          <div>${addFormUserName.value}</div>
-          <div>${letTime()}</div>
-        </div>`;
+      arrComments.push({
 
-      const newbodyBoxComment =
-        `<div class="comment-body">
-          <div id="comment-text" class="comment-text">
-            ${addFormUserText.value}
-          </div>
-        </div>`;
+        name: addFormUserName.value,
+        date: letTime(),
+        commentText: addFormUserText.value,
+        numLike: 0,
+        liked: false
 
-      const  newFooterBoxComment = 
-        `<div class="comment-footer">
-          <div id="likes" class="likes">
-            <span id="likes-counter" class="likes-counter">0</span>
-            <button id="like-button" class="like-button"></button>
-          </div>
-        </div>`;
+      });
 
-      const newBoxComment = `<li class="comment"> ${newheaderBoxComment}  ${newbodyBoxComment}  ${newFooterBoxComment} </li>`;
-      
-      const oldBoxComments = boxComments.innerHTML;
-      
-      boxComments.innerHTML = oldBoxComments + newBoxComment;
+      renderComments();
 
       addFormUserName.value = "";
       addFormUserText.value = "";
-
-      alert("It works!");
-
+    
     });
 
   </script>
