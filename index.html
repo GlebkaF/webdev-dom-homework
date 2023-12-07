@@ -40,23 +40,36 @@
         const minutes = String(date.getMinutes()).padStart(2, '0');
         const hours = String(date.getHours()).padStart(2, '0');
         return `${day}.${month}.${year} ${hours}:${minutes}`;
-    }
+    };
+
+    const fetchComments = fetch("https://wedev-api.sky.pro/api/v1/elena-bersh/comments", {
+        method: "GET",
+    });
+    fetchComments.then((response) => {
+         console.log(response);
+        const jsonComments = response.json();
+        jsonComments.then((responseData) => {
+            console.log(responseData);
+            const comments = responseData.comments;
+            renderStudentsComments();
+        });
+    });
 
     let studentsComments = [
-        {
-            name: "Глеб Фокин",
-            date: "12.02.22 12:18",
-            comment: "Это будет первый комментарий на этой странице",
-            likes: 3,
-            isLiked: true,
-        },
-        {
-            name: "Варвара Н.",
-            date: "13.02.22 19:22",
-            comment: "Мне нравится как оформлена эта страница! ❤",
-            likes: 75,
-            isLiked: false,
-        },
+        // {
+        //     name: "Глеб Фокин",
+        //     date: "12.02.22 12:18",
+        //     comment: "Это будет первый комментарий на этой странице",
+        //     likes: 3,
+        //     isLiked: true,
+        // },
+        // {
+        //     name: "Варвара Н.",
+        //     date: "13.02.22 19:22",
+        //     comment: "Мне нравится как оформлена эта страница! ❤",
+        //     likes: 75,
+        //     isLiked: false,
+        // },
     ];
 // Постановка лайков
     const initLikeListeners = () => {
@@ -153,12 +166,25 @@
             };
             const oldListHtml = listElement.innerHTML;
             studentsComments.push({
-                name: inputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-                comment: textAreaElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+            const fetchComments = fetch("https://wedev-api.sky.pro/api/v1/elena-bersh/comments", {
+             method: "POST",
+             body: JSON.stringify({ 
+                text: textAreaElement.value }),
+             });
+            fetchComments.then((response) => {
+            const jsonComments = response.json();
+            jsonComments.then((responseData) => {
+            const comments = responseData.comments;
+            renderStudentsComments();
+            });
+            });
+
+             name: inputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+            comment: textAreaElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
                // date: currentDate.toLocaleString('ru-RU', options),
-                date: formatDateTime(new Date()),
-                likes: 0,
-                isLiked: false,
+            date: formatDateTime(new Date()),
+            likes: 0,
+            isLiked: false,
             });
             renderStudentsComments();
 
