@@ -9,40 +9,6 @@
   <body>
     <div class="container">
       <ul id="list" class="comments">
-      <!--  <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>-->
       </ul>
       <div class="add-form">
         <input
@@ -61,136 +27,195 @@
         <div class="add-form-row">
           <button id="add-button" class="add-form-button">Написать</button>
         </div>
-      </div>
+          <button id="delete-button" class="add-form-delete">Удалить</button>
+        </div>
+      
     </div>
   </body>
-  <style>
-    .error{
-      background-color: red;
-    }
-  </style>
+  
   <script>
     "use strict";
-    // Код писать здесь  
-   
+    // Код писать здесь            data-text = '${item.comment}' data-name = '${item.name}'>
     const buttonElement = document.getElementById('add-button');
     const listElement = document.getElementById('list');
     const nameInputElement = document.getElementById('name-input');
     const commentInputElement = document.getElementById('comment-input');
-
+    const deleteButtonElement = document.getElementById('delete-button');
     
-    const comments = [
+    const commentsArray = [
       {
         name: 'Глеб Фокин',
-        date: '12.02.22 12:18',
-        comment: 'Это будет первый комментарий на этой странице',
-        like_counter: 3, // количество лайков будет более логичным назвать как like_amount / like_counter или что то подобное. Если ты так же поменяла здесь, на 149 строке нужно поменять тоже. Количесвто лайков, это просто цифра и нам нужно увеличить или убавить количество, поэтому лучше всего хранить в типе Number.
-        likebutton: 'like-button', // здесь нужно сделать свойство которое будет хранить в себе состояние лайка (стиль, который находится на этой кнопке, то есть like-button или like-button -active-like). В данном случае если пользователь впервые зашел на страницу и заранее не ставил лайк, тогда это будет просто like-button. Так же изменил строку 150, потому что мы будем менять стиль на кнопке лайка внутри функции handleLike(). Прочитай и посмотри сначала про renderComment, после вернись к handleLike()
-      },
+    date: '12.02.22 12:18',
+    comment: 'Это будет первый комментарий на этой странице',
+    like: 3,
+    userLike: false,
+    paint: ''
+  },
+      
       {
         name: 'Варвара Н.',
-        date: '13.02.22 19:22',
-        comment: ' Мне нравится как оформлена эта страница! ❤',
-        like_counter: 3, // количество лайков будет более логичным назвать как like_amount / like_counter или что то подобное. Если ты так же поменяла здесь, на 149 строке нужно поменять тоже. Количесвто лайков, это просто цифра и нам нужно увеличить или убавить количество, поэтому лучше всего хранить в типе Number.
-        likebutton: 'like-button', // здесь нужно сделать свойство которое будет хранить в себе состояние лайка (стиль, который находится на этой кнопке, то есть like-button или like-button -active-like). В данном случае если пользователь впервые зашел на страницу и заранее не ставил лайк, тогда это будет просто like-button. Так же изменил строку 150, потому что мы будем менять стиль на кнопке лайка внутри функции handleLike(). Прочитай и посмотри сначала про renderComment, после вернись к handleLike()
-      },
+    date: '13.02.22 19:22',
+    comment: 'Мне нравится как оформлена эта страница! ❤',
+    like: 75,
+    userLike: true,
+    paint: '-active-like'
+      }
     ];
     
     const handleLike = () => {
       const likeButtons = document.querySelectorAll('.like-button'); 
       for (const likeButton of likeButtons) {
-        likeButton.addEventListener('click', () => {
+        likeButton.addEventListener('click', (event) => { 
+          event.stopPropagation();
           const index = likeButton.dataset.index;
-          console.log(
-            'Индекс кнопки лайка на которой произошел клик: ' + index
-          );
-          let counter = comments[index]['like_counter'];
-          if (comments[index]['likebutton'] === 'like-button -active-like') {
-            counter -= 1; 
-            comments[index]['likebutton'] = 'like-button';  
-          } else {
-            counter += 1;
-            comments[index]['likebutton'] = 'like-button -active-like';
-          }
-
-         comments[index]['like_counter'] = counter;
-         renderComment();
+          //console.log(
+          //  'Индекс кнопки лайка на которой произошел клик: ' + index
+         // );
+         // let counter = comments[index]['like_counter'];
+         //const index = likeButton.dataset.index;
+      if (commentsArray[index].userLike === false) {
+        commentsArray[index].paint = '-active-like'; // добавить класс для закрашивания кнопки
+        commentsArray[index].like += 1;
+        commentsArray[index].userLike = true;
+      } else {
+        commentsArray[index].paint = ''; // удалить класс для закрашивания кнопки
+        commentsArray[index].like -= 1;
+        commentsArray[index].userLike = false;
+      }
+         renderComments();
         });
       }
     };
-    const renderComment = () => {
-      const newComments = comments
-        .map((comment, index) => {
-          return `<li class="comment">
+    const renderComments = () => {
+      const newComments = commentsArray.map((item, index) => {
+          return `<li data-index= "${index}"  class="comment">
           <div class="comment-header">
-            <div>${comment.name}</div>
+            <div>${item.name}</div>
             
-            <div>${comment.date}</div>
+            <div>${item.date}</div>
           </div>
-          <div class = "comment-body" data-text = '${comment.comment}' data-name = '${comment.name}'>
+          <div class = "comment-body"> 
+   
             <div class = "comment-text">
-              ${comment.comment}
+              ${item.comment}
             </div>
           </div>
           <div class = "comment-footer">
             <div class = "likes">
-              <span class = "likes-counter">${comment.like_counter}</span>
-              <button data-index = '${index}' class = "${comment.likebutton}"></button>
+              <span class = "likes-counter">${item.like}</span>
+              <button data-index = '${index}' class = "like-button ${item.paint}"></button>
             </div>
           </div>
-        </li>`;
+        </li>`
         })
         .join('');
 
       listElement.innerHTML = newComments;
       handleLike();
+      answerComment();
     };
+    renderComments();
+    buttonElement.disabled = true;
+nameInputElement.addEventListener('input', () =>{
+  if (nameInputElement.value  === '' ) {
+    buttonElement.disabled = true;
+    return;
+  } else {
+    buttonElement.disabled = false;
+  }
+})
 
-
-    const plusZero = (str) => {
-      if (str < 10) return `0${str}`;
-    };
+buttonElement.addEventListener('click', () => {
+    nameInputElement.classList.remove('error');
+    commentInputElement.classList.remove('error');
     
-    const getDateNow = () => { 
-    let currentDate = new Date();
-    // let minute = plusZero(currentDate.getMinutes());
-    // let hours = plusZero(currentDate.getHours());
-    // let date = plusZero(currentDate.getDate());
-    // let month = plusZero(currentDate.getMonth());
-   
-    console.log(
-        currentDate.toLocaleDateString(),
-        currentDate.toLocaleTimeString()
-      );
-      return `${currentDate.toLocaleDateString()} ${currentDate
-        .toLocaleTimeString()
-        .slice(0, 5)}`;
-    };
+    if ((nameInputElement.value || commentInputElement.value) === '') {
+      nameInputElement.classList.add('error');
+      commentInputElement.classList.add('error');
+      return;
+    }
 
-  // nameInputElement.classList.remove("error");
-   buttonElement.addEventListener("click", () => {
-      commentInputElement.classList.remove("error");
-      if (nameInputElement.value === "") {
-        nameInputElement.classList.add("error");
-        return;
-      }
-      if (commentInputElement.value === "") {
-        commentInputElement.classList.add("error");
-        return;
-      }   
-      comments.push({
-        name: nameInputElement.value,
-        date: getDateNow(),
-        comment: commentInputElement.value,
-        like_counter: 0,
-        likebutton: 'like-button',
+  //  const plusZero = (str) => {
+   //   if (str < 10) return `0${str}`;
+   // };
+    
+   // const getDateNow = () => { 
+   // let currentDate = new Date();
+   // console.log(
+  //      currentDate.toLocaleDateString(),
+   //     currentDate.toLocaleTimeString()
+   //   );
+   //   return `${currentDate.toLocaleDateString()} ${currentDate
+     //   .toLocaleTimeString()
+    //    .slice(0, 5)}`;
+   // };
+
+
+   const date = new Date();
+  const formattedDate =
+  date.getDate().toString().padStart(2, '0') + '.' + 
+  (date.getMonth() + 1).toString().padStart(2, '0') + '.' +
+  date.getFullYear().toString().slice(-2) + ' ' +
+  date.getHours().toString().padStart(2, '0') + ':' +
+  date.getMinutes().toString().padStart(2, '0');
+
+  // nameInputElement.classList.remove("error");  class='quote'
+    
+      commentsArray.push({
+        name: nameInputElement.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;"),
+      date: formattedDate,
+      comment: commentInputElement.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("%BEGIN_QUOTE", "<div >")
+            .replaceAll("END_QUOTE%", "</div>"),
+ 
+        like: 0,
+        userLike:false,
+        paint: '',
       });
-    
+      renderComments();
         nameInputElement.value = '';
         commentInputElement.value = '';
-        renderComment();
+        buttonElement.disabled = true;
+        
     });
-    renderComment();
+
+    function answerComment() {
+  const oldComments = document.querySelectorAll('.comment');
+
+  for (const oldComment of oldComments) {
+    oldComment.addEventListener('click', (event) =>{
+      event.stopPropagation();
+
+      const index = oldComment.dataset.index;
+      const comment = commentsArray[index];
+
+      commentInputElement.value = `%BEGIN_QUOTE${commentsArray[index].name} \n
+      ${comment.comment}END_QUOTE%`
+    })
+  }
+}
+
+deleteButtonElement.addEventListener('click', () =>{
+  const lastCommentIndex = listElement.innerHTML.lastIndexOf( '<li class="comment">' );
+  if (lastCommentIndex !== -1) {
+    listElement.innerHTML = listElement.innerHTML.substring( 0, lastCommentIndex ); 
+  }
+});
+
+
+document.addEventListener('keyup', (event) =>{
+  if (event.key === 'Enter') {
+    buttonElement.click();
+  }
+});
     console.log("It works!");
   </script>
 </html>
