@@ -59,14 +59,14 @@
         // {
         //     name: "Глеб Фокин",
         //     date: "12.02.22 12:18",
-        //     comment: "Это будет первый комментарий на этой странице",
+        //     text: "Это будет первый комментарий на этой странице",
         //     likes: 3,
         //     isLiked: true,
         // },
         // {
         //     name: "Варвара Н.",
         //     date: "13.02.22 19:22",
-        //     comment: "Мне нравится как оформлена эта страница! ❤",
+        //     text: "Мне нравится как оформлена эта страница! ❤",
         //     likes: 75,
         //     isLiked: false,
         // },
@@ -113,7 +113,7 @@
             commentsElement.addEventListener("click", () => {
                 const index = commentsElement.dataset.index;
                 //console.log(index);
-                const commentText = studentsComments[index].comment;
+                const commentText = studentsComments[index].text;
                 const commentAuthor = studentsComments[index].name;
                 //console.log(commentText, commentAuthor);
                 textAreaElement.value = `${commentText} > ${commentAuthor}`;
@@ -127,20 +127,20 @@
     // Рендер-функция отрисовывает новые комменты
     const renderStudentsComments = () => {
 
-        const studentsHtml = studentsComments.map((student, index) => {
+        const studentsHtml = studentsComments.map((comment, index) => {
             return `<li class="comment" data-index="${index}">
   <div class="comment-header">
-    <div>${student.name}</div>
-    <div>${student.date}</div>
+    <div>${comment.name}</div>
+    <div>${comment.date}</div>
   </div>
   <div class="comment-body">
     <div class="comment-text">
-      ${student.comment}
+      ${comment.text}
     </div>
   </div>
   <div class="comment-footer">
     <div class="likes">
-      <span class="likes-counter">${student.likes}</span>
+      <span class="likes-counter">${comment.likes}</span>
       <button class="like-button ${studentsComments[index].isLiked ? "-active-like" : ""}" data-index="${index}"></button>
     </div>
   </div>
@@ -207,7 +207,7 @@
                     })
                     .then((responseData) => {
                         console.log(responseData);
-                        let addComments = responseData.сomments.map((comment) => {
+                        let addComments = responseData.comments.map((comment) => {
                             return {
                                 // Достаём имя автора
                                 name: comment.author.name,
