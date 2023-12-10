@@ -81,7 +81,7 @@
     };
 
     let comments = [];
-  const getComments = () => {
+const getComments = () => {
     return fetch("https://wedev-api.sky.pro/api/v1/:anastasiya-grebneva/comments", {
     method: "GET"
   })
@@ -101,17 +101,64 @@
       comments = appComments;
       renderComments();
   })
+  .catch((error) => {
+    if (error.status === 500) {
+      getComments();
+      return;
+    } else {
+      alert("Похоже, пропал интернет. Попробуй позже");
+    }
+    console.log(error);
+    })
 };
 getComments();
 const postComment = () => {
-    return fetch("https://wedev-api.sky.pro/api/v1/:anastasiya-grebneva/comments", {
+  buttonElement.disabled = true;
+  addForm.classList.add("hidden");
+  loaderText.classList.remove("hidden");
+   return fetch("https://wedev-api.sky.pro/api/v1/:anastasiya-grebneva/comments", {
         method: "POST",
         body: JSON.stringify({
           name: sanitizeHtml(addFormName.value),
-          text: addFormText.value
+          text: addFormText.value,
+          forceError: true
         })
-      });
-  };
+      })
+    .then((response) => {
+      if (response.status === 400) {
+      throw new Error("Плохой запрос");
+      }
+      if (response.status === 500) {
+      throw new Error("Сервер сломался");
+      }
+    })
+  .then(() => {
+  return getComments();
+  })
+  .then(() => {
+  buttonElement.disabled = false;
+  addForm.classList.remove("hidden");
+  loaderText.classList.add("hidden");
+  addFormName.value = '';
+  addFormText.value = '';
+  })
+  .catch((error) => {
+      buttonElement.disabled = false;
+      addForm.classList.remove("hidden");
+      loaderText.classList.add("hidden");
+    if (error.message === "Сервер сломался") {
+      // alert("Похоже сервер не отвечает, попробуй позже");
+      postComment();
+      return;
+    } else if (error.message === "Плохой запрос") {
+      alert("Имя или текст не должны быть короче 3 символов, попробуй снова");
+      return;
+    } else {
+      alert("Что-то пошло не так, проверьте интернет");
+    }
+    console.log(error);
+  });
+};
 
 
 
@@ -203,19 +250,9 @@ buttonElement.addEventListener("click", () => {
         buttonElement.setAttribute('disabled', "");
         return;
       }
-  buttonElement.disabled = true;
-  addForm.classList.add("hidden");
-  loaderText.classList.remove("hidden");
-  postComment().then(() => {
-  return getComments();
-  })
-  .then(() => {
-  buttonElement.disabled = false;
-  addForm.classList.remove("hidden");
-  loaderText.classList.add("hidden");
-  });
-  addFormName.value = '';
-  addFormText.value = '';
+  
+  postComment();
+  
 });
     
    
