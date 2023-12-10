@@ -53,8 +53,14 @@
     const fetchPromise = fetch ("https://wedev-api.sky.pro/api/v1/ekaterina-mikhalko/comments", {
       metod: "GET"
     })
+
     .then((response) => {
-      return response.json();
+      if (response.status === 500) {
+        throw new Error ("Сервер сломался");
+      } else {
+        return response.json();
+      }
+      
     })
     .then((responseData) => {
     let appComments = responseData.comments.map((comment) => {
@@ -72,6 +78,23 @@
       loadingCommentElement.style.display = "none";
       formElement.style.display = "flex";
       loadingCommentsElement.style.display = "none";
+      nameInputElement.value = '';
+      commentInputElement.value = '';
+      return;
+    })
+    
+    .catch ((error) => {
+      loadingCommentElement.style.display = "none";
+      formElement.style.display = "flex";
+      loadingCommentsElement.style.display = "none";
+      if (error.message === "Сервер сломался") {
+        alert ("Кажется, что-то пошло не так, попробуйте позже")
+        return;
+      } else {
+        alert ("Кажется, что-то пошло не так, попробуйте позже")
+      console.warn (error);
+      return;
+    }
     })
 };
 
@@ -201,16 +224,37 @@ getComments();
             .replaceAll("<", "&lt;")
             .replaceAll(">", "&gt;")
             .replaceAll('"', "&quot;"),
+            forceError: true,
           }),
 
+        })
+        .then ((response) =>{
+          if (response.status === 400) {
+            throw new Error ("Плохой запрос");
+          } else if(response.status === 500){
+            throw new Error ("Сервер сломался");
+          } else {
+            return;
+          }
+        })
+        .catch ((error) => {
+          loadingCommentElement.style.display = "none";
+          formElement.style.display = "flex";
+          loadingCommentsElement.style.display = "none";
+          if (error.message === "Сервер сломался") {
+            alert ("Кажется, что-то пошло не так, попробуйте позже")
+            return;
+          } else  if (error.message === "Плохой запрос"){
+            alert ("Вы ввели менее трех символов в имени или комментарии");
+            return;
+          } else {
+          console.warn (error);
+          return;
+          };
         });
+        })
 
         getComments();
 
-        nameInputElement.value = '';
-        commentInputElement.value = '';
-    });
-
-    console.log("It works!");
   </script>
 </html>
