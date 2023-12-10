@@ -44,7 +44,16 @@
     // Задание 2.12 - Асинхронность, API
     // Подключите приложение комментариев к API комментариев, в результате приложение должно 
     // получать список комментариев из API и добавлять новый комментарий через API.
-
+    // Задание 2.13 - Цепочки промисов.
+    // 1) переделайте все вызовы then на цепочки промисов, 
+    // 2) вынесите код получения списка комментариев в отдельную функцию, 
+    // 3) Используйте «замедление интернета» в консоли разработчика 
+    //    на вкладке сеть, чтобы отладить работу лоадеров,
+    // Результат: 1)  Я как пользователь при запуске приложения понимаю, 
+    //                что данные загружаются и мне нужно немного подождать.
+    //             2) Я как пользователь при добавлении комментария понимаю, 
+    //                что мне нужно подождать и не могу случайно отправить коммент
+    //                 повторно во время загрузки предыдущего.
 
     let studentsComments = [
         // {
@@ -62,7 +71,7 @@
         //     isLiked: false,
         // },
     ];
-
+    // 2.13: 1) переделайте все вызовы then на цепочки промисов, 
     fetch("https://wedev-api.sky.pro/api/v1/elena-bersh/comments", {
         method: "GET",
     })
@@ -70,7 +79,7 @@
             return response.json();
         })
         .then((responseData) => {
-            comments = responseData.comments;
+            const allComments = responseData.comments;
             renderStudentsComments();
         });
 
@@ -143,13 +152,11 @@
         initLikeListeners();
         initAnswerComments();
     }
-
     renderStudentsComments();
 
 
     // Кнопка добавления комментов
-    buttonElement.addEventListener("click",
-        () => {
+    buttonElement.addEventListener("click", () => {
             // const currentDate = new Date();
             //const options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' };
             // console.log(currentDate.toLocaleString('ru-RU', options));
@@ -165,7 +172,16 @@
                 };
                 return;
             };
-            const oldListHtml = listElement.innerHTML;
+           // const oldListHtml = listElement.innerHTML;
+
+           //2.13 2) Я как пользователь при добавлении комментария понимаю, 
+    //   что мне нужно подождать и не могу случайно отправить коммент
+    //    повторно во время загрузки предыдущего.
+             buttonElement.disabled = true;
+             buttonElement.textContent = "Комментарий добавляется...";
+
+
+    // 2.13: 1) переделайте все вызовы then на цепочки промисов, 
 
             studentsComments.push(
                 fetch("https://wedev-api.sky.pro/api/v1/elena-bersh/comments", {
@@ -179,6 +195,9 @@
                         return response.json();
                     })
                     .then((responseData) => {
+
+    // 2.13: 2) вынесите код получения списка комментариев в отдельную функцию, 
+                        const fetchAndRenderComments = ()=>{
                         return fetch("https://wedev-api.sky.pro/api/v1/elena-bersh/comments", {
                             method: "GET",
                         })
@@ -188,7 +207,7 @@
                     })
                     .then((responseData) => {
                         console.log(responseData);
-                        let addComments = responseData.comments.map((comment) => {
+                        let addComments = responseData.сomments.map((comment) => {
                             return {
                                 // Достаём имя автора
                                 name: comment.author.name,
@@ -202,13 +221,24 @@
                                 // поэтому пока добавляем заглушку
                                 isLiked: false,
                             };
-                            comments = addComments;
+                            allComments = addComments;
                         renderStudentsComments();
                         });
-                    });
+                        
+                    })
+                    
+                };
+                renderStudentsComments();
+                fetchAndRenderComments();
                  })
+     // 2.13 2) Я как пользователь при добавлении комментария понимаю, 
+    // что мне нужно подождать и не могу случайно отправить коммент
+    // повторно во время загрузки предыдущего. Еле нашла, куда ставить кнопку!
+                 .then((data) => {
+                            buttonElement.disabled = false;
+                            buttonElement.textContent = "Написать";
+                        })
             );
-
             renderStudentsComments();
             inputElement.value = '';
             textAreaElement.value = '';
@@ -223,6 +253,7 @@
     //   + 3. Нажать на кнопку «Написать».
     // Код писать здесь
     console.log("It works!");
+    alert("Подождите, приложение загружается...");
 </script>
 
 </html>
