@@ -72,20 +72,37 @@
         // },
     ];
     // 2.13: 1) переделайте все вызовы then на цепочки промисов, 
-    const fetchAndLogComments = () => {
+
+    const fetchAndRenderComments = () => {
         return fetch("https://wedev-api.sky.pro/api/v1/elena-bersh/comments", {
             method: "GET",
         })
             .then((response) => {
+                console.log(response);
                 return response.json();
             })
             .then((responseData) => {
-                studentsComments = responseData.comments;
-            });
-    renderStudentsComments();
+                console.log(responseData);
+                let addComments = responseData.comments.map((comment) => {
+                    return {
+                        // Достаём имя автора
+                        name: comment.author.name,
+                        // Преобразуем дату-строку в Date
+                        date: new Date(comment.date),
+                        text: comment.text,
+                        // date: currentDate.toLocaleString('ru-RU', options),
+                        // date: formatDateTime(new Date()),
+                        likes: comment.likes,
+                        // в апи пока вообще нет признака лайкнутости
+                        // поэтому пока добавляем заглушку
+                        isLiked: false,
+                    };
+                    studentsComments = addComments;
+                });
 
+            })
+        renderStudentsComments();
     };
-   
 
     // Постановка лайков
     const initLikeListeners = () => {
@@ -155,7 +172,6 @@
         listElement.innerHTML = studentsHtml;
         initLikeListeners();
         initAnswerComments();
-        fetchAndLogComments();
 
     }
     renderStudentsComments();
@@ -200,43 +216,9 @@
                 .then((response) => {
                     return response.json();
                 })
-                .then((responseData) => {
-
+                .then(() => {
+                    return fetchAndRenderComments();
                     // 2.13: 2) вынесите код получения списка комментариев в отдельную функцию, 
-                    const fetchAndRenderComments = () => {
-                        return fetch("https://wedev-api.sky.pro/api/v1/elena-bersh/comments", {
-                            method: "GET",
-                        })
-                            .then((response) => {
-                                console.log(response);
-                                return response.json();
-                            })
-                            .then((responseData) => {
-                                console.log(responseData);
-                                let addComments = responseData.comments.map((comment) => {
-                                    return {
-                                        // Достаём имя автора
-                                        name: comment.author.name,
-                                        // Преобразуем дату-строку в Date
-                                        date: new Date(comment.date),
-                                        text: comment.text,
-                                        // date: currentDate.toLocaleString('ru-RU', options),
-                                        // date: formatDateTime(new Date()),
-                                        likes: comment.likes,
-                                        // в апи пока вообще нет признака лайкнутости
-                                        // поэтому пока добавляем заглушку
-                                        isLiked: false,
-                                    };
-                                    studentsComments = addComments;
-                                    renderStudentsComments();
-                                });
-
-                            })
-
-                    };
-                    renderStudentsComments();
-                    fetchAndLogComments();
-                    fetchAndRenderComments();
                 })
                 // 2.13 2) Я как пользователь при добавлении комментария понимаю, 
                 // что мне нужно подождать и не могу случайно отправить коммент
@@ -246,9 +228,10 @@
                     buttonElement.textContent = "Написать";
                 })
         );
-        renderStudentsComments();
-        inputElement.value = '';
-        textAreaElement.value = '';
+    fetchAndRenderComments();
+    renderStudentsComments();
+    inputElement.value = '';
+    textAreaElement.value = '';
     });
 
     //Ответы на комментарии. План:
