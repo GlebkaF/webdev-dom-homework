@@ -90,11 +90,12 @@
       if (error.message === "Сервер сломался") {
         alert ("Кажется, что-то пошло не так, попробуйте позже")
         return;
-      } else {
-        alert ("Кажется, что-то пошло не так, попробуйте позже")
-      console.warn (error);
+      } else if (error.message === "Failed to fetch") {
+        alert ("Пропал интернет, повторите попытку позже");
       return;
-    }
+    } else {
+      console.warn (error);
+        }
     })
 };
 
@@ -247,8 +248,11 @@ getComments();
           } else  if (error.message === "Плохой запрос"){
             alert ("Вы ввели менее трех символов в имени или комментарии");
             return;
+          } else if (error.message === "Failed to fetch") {
+            alert ("Пропал интернет, повторите попытку позже");
+            return;
           } else {
-          console.warn (error);
+          alert (error.message);
           return;
           };
         });
