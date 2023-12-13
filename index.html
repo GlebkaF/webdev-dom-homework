@@ -6,7 +6,6 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
 
-  
   <body>
     <div class="container">
       <ul class="comments">
@@ -30,7 +29,7 @@
         <li class="comment">
           <div class="comment-header">
             <div>Ангелина К.</div>
-            <div>13.02.23 19:22</div>
+            <div>13.02.23 19:23</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -63,6 +62,7 @@
       </div>
     </div>
   </body>
+
   <style>
     .error {
       background-color: red;
@@ -70,62 +70,67 @@
   </style>
   <script>
     "use strict";
-    const nameElement = document.querySelector(".add-form-name");
-    const textElement = document.querySelector(".add-form-text");
+  // Код писать здесь
+    const nameInputElement = document.querySelector(".add-form-name");
+    const textInputElement = document.querySelector(".add-form-text");
     const buttonElement = document.querySelector(".add-form-button");
 
-    buttonElement.addEventListener("click", addNewComment);
-    function addNewComment() { 
+    const commentList = document.querySelector(".comments")
+
+    function input() {
+      if (nameInputElement == "" || textInputElement == ""){
+        buttonElement.setAttribute("disabled", true);
+      } else {
+        buttonElement.removeAttribute("disabled");
+      }
+    }
+
+    nameInputElement.addEventListener("input", input);
+    textInputElement.addEventListener("input", input);
+
+    buttonElement.addEventListener('click', () => {
+      nameInputElement.classList.remove("error");
+      textInputElement.classList.remove("error");
+      buttonElement.classList.remove("error");
+      if (nameInputElement.value === ""){
+        nameInputElement.classList.add("error");
+        return;
+      } else if (textInputElement.value  ===""){
+        textInputElement.classList.add("error")
+        return;
+      } else if (buttonElement.value ===""){
+        buttonElement.classList.add("error")
+        return;
+      }
+    
+      
+      //const oldListElement = commentList.innerHTML;
+      //commentList.innerHTML = oldListElement +
+      buttonElement.addEventListener("click", addNewComment);
+      function addNewComment() { 
       let commentList = document.querySelector(".comments")
       commentList.innerHTML += `
-      <li class="comment">
+        <li class="comment">
           <div class="comment-header">
-            <div>${nameElement.value}</div>
+            <div>${nameInputElement.value}</div>
             <div>${(new Date()).toLocaleString() }</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${textElement.value}
+              ${textInputElement.value}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">0</span>
+              <span class="likes-counter"></span>
               <button class="like-button"></button>
             </div>
           </div>
-      </li>
-      `
-
-      function input() {
-        if (nameElement.value == "" || textElement.value == ""){
-          buttonElement.setAttribute("disabled", true);
-        } else {
-          buttonElement.removeAttribute("disabled");
-        }
+        </li>`;
       }
-      nameElement.addEventListener("input", input);
-      textElement.addEventListener("input", input);
-    
-
-      buttonElement.addEventListener('click', () => {
-        nameElement.classList.remove("error");
-        textElement.classList.remove("error");
-        if (nameElement.value === "") {
-        nameElement.classList.add("error");
-        return;
-      } else if (textElement.value === ""){
-        textElement.classList.add("error")
-        return;
-      }
+        nameInputElement.value = "";
+        textInputElement.value = "";
       })
-      
-      textElement.value = ""
-  
-      //console.log(commentList)
-      //console.log(nameElement.value)
-      //console.log(textElement.value)
-    }
     console.log("It works!");
   </script>
 </html>
