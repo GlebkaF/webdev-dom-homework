@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="comments-list">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -44,28 +44,132 @@
           </div>
         </li>
       </ul>
+	<div>
+			<button class="add-form-button" id="delete-button">Delete </button>
+		</div>
       <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
-        </div>
-      </div>
-    </div>
-  </body>
+				
+        <input type="text" id="name-input" class="add-form-name" placeholder="Введите ваше имя"/>
+        <textarea type="textarea" id="comment" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
+		  
 
-  <script>
-    "use strict";
-    // Код писать здесь
+		<div class="add-form-row">
+          <button class="add-form-button" id="add-button">Написать</button> 
+        </div>
+		
+		  </div>
+		  
+     
+    </div>
+	
+  </body>
+  <style>
+	.error {
+		background-color: gray;
+	}
+  </style>
+
+<script>
+"use strict";
+const addButton = document.getElementById('add-button');
+
+addButton.addEventListener('click', function() {
+	
+const nameInput = document.getElementById('name-input');
+const commentInput = document.getElementById('comment');
+const currentDate = new Date();
+
+const name = nameInput.value;
+const comment = commentInput.value;
+nameInput.classList.remove("error");
+addButton.classList.remove("error");
+commentInput.classList.remove("error");
+
+if (name === '' || comment === '') {
+	nameInput.classList.add("error");
+	commentInput.classList.add("error");
+	addButton.classList.add("error");
+	return;
+}
+
+
+
+const commentList = document.getElementById('comments-list');
+const newComment = document.createElement('li');
+newComment.setAttribute('class', 'comment');
+
+const commentHeader = document.createElement('div');
+commentHeader.setAttribute('class', 'comment-header');
+
+const nameElement = document.createElement('div');
+nameElement.innerHTML = name;
+
+const dateElement = document.createElement('div');
+dateElement.innerHTML = currentDate.toLocaleString();
+
+const commentBody = document.createElement('div');
+commentBody.setAttribute('class', 'comment-body');
+
+const commentText = document.createElement('div');
+commentText.setAttribute('class', 'comment-text');
+commentText.innerHTML = comment;
+
+const commentFooter = document.createElement('div');
+commentFooter.setAttribute('class', 'comment-footer');
+
+const likes = document.createElement('div');
+likes.setAttribute('class', 'likes');
+
+const likesCounter = document.createElement('span');
+likesCounter.setAttribute('class', 'likes-counter');
+likesCounter.innerHTML = 0;
+
+const likeButton = document.createElement('button');
+likeButton.setAttribute('class', 'like-button');
+
+commentHeader.appendChild(nameElement);
+commentHeader.appendChild(dateElement);
+
+commentBody.appendChild(commentText);
+
+likes.appendChild(likesCounter);
+likes.appendChild(likeButton);
+
+commentFooter.appendChild(likes);
+
+newComment.appendChild(commentHeader);
+newComment.appendChild(commentBody);
+newComment.appendChild(commentFooter);
+
+commentList.appendChild(newComment);
+
+addButton.disabled = true;
+nameInput.disabled = true;
+commentInput.disabled = true;
+nameInput.value = '';
+commentInput.value = '';
+
+const deleteButton = document.getElementById('delete-button');
+document.addEventListener('keyup', function(event) {
+if (event.key === 'Enter') {
+addButton.click();
+}
+
+deleteButton.addEventListener('click', function() {
+	const commentList = document.getElementById('comments-list');
+	const comments = commentList.querySelectorAll('.comment');
+		if (comments.length > 0) {
+			commentList.removeChild(comments[comments.length - 1]);
+	}
+
+deleteButton.disabled = true;
+});
+
+});
+
     console.log("It works!");
-  </script>
+});
+	 
+</script>
 </html>
+
