@@ -1,4 +1,4 @@
-import { endcodeSpecialSymbols, decodeSpecialSymbols } from './utils.format.js';
+import { endcodeSpecialSymbols } from './utils.format.js';
 import { delay } from './utils.promise.js';
 
 
