@@ -44,28 +44,14 @@
           </div>
         </li>
       </ul>
-      <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
-        </div>
+      <form id="comment-form">
+        <input type="text" id="name" required placeholder="Введите ваше имя"/>
+        <textarea id="comment" required placeholder="Введите ваш комментарий" rows="4"></textarea>
+      <div class="add-form-row">
+        <button class="add-form-button" type="submit">Написать</button>
       </div>
-    </div>
-  </body>
-
-  <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
-  </script>
+    </form>
+  </div>
+</body>
+  <script src="js.js"></script>
 </html>
