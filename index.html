@@ -9,7 +9,7 @@
 
 <body>
     <div class="container">
-        <span class="alert">Подождите, идёт загрузка данных!</span>
+        <span class="alert">Подождите, пожалуйста, идёт загрузка данных!</span>
         <ul id="list" class="comments">
             <!-- Список рендерится из JS-->
         </ul>
@@ -101,14 +101,17 @@
                     };
 
                 });
-
+                // добавим таймер при получении данных с сервера
                 setTimeout(() => {
-                    document.querySelector(".alert").style.display = 'none'
+                    // обратимся по дереву к span в начале html-кода через его класс и к его css,
+                    // где выключим отображение фразы, записанной в span
+                    // Через style мы обращаемся к css
+                    document.querySelector(".alert").style.display = 'none';
                     studentsComments = addComments;
                     console.log(addComments);
                     renderStudentsComments();
-                }, 1400)
-            })
+                }, 1000);
+            });
     };
     fetchAndRenderComments();
 
