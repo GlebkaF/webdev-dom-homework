@@ -9,6 +9,7 @@
 
 <body>
     <div class="container">
+        <span class="alert">Подождите, идёт загрузка данных!</span>
         <ul id="list" class="comments">
             <!-- Список рендерится из JS-->
         </ul>
@@ -74,6 +75,7 @@
     // 2.13: 1) переделайте все вызовы then на цепочки промисов, 
 
     const fetchAndRenderComments = () => {
+
         return fetch("https://wedev-api.sky.pro/api/v1/elena-bersh/comments", {
             method: "GET",
         })
@@ -97,12 +99,18 @@
                         // поэтому пока добавляем заглушку
                         isLiked: false,
                     };
-                    studentsComments = addComments;
+
                 });
 
+                setTimeout(() => {
+                    document.querySelector(".alert").style.display = 'none'
+                    studentsComments = addComments;
+                    console.log(addComments);
+                    renderStudentsComments();
+                }, 1400)
             })
-        renderStudentsComments();
     };
+    fetchAndRenderComments();
 
     // Постановка лайков
     const initLikeListeners = () => {
@@ -187,6 +195,9 @@
         textAreaElement.classList.remove("error");
 
         if (inputElement.value === '') {
+            // const newError = new Error("Не вводите пустую строку");
+            // console.log(newError);
+            // если он в переменной, то можно с ним работать в коде, отображать в интерфейсе.
             inputElement.classList.add("error");
             if (textAreaElement.value === '') {
                 textAreaElement.classList.add("error");
@@ -217,22 +228,22 @@
                     return response.json();
                 })
                 .then(() => {
-                    return fetchAndRenderComments();
-                    // 2.13: 2) вынесите код получения списка комментариев в отдельную функцию, 
-                })
-                // 2.13 2) Я как пользователь при добавлении комментария понимаю, 
-                // что мне нужно подождать и не могу случайно отправить коммент
-                // повторно во время загрузки предыдущего. Еле нашла, куда ставить кнопку!
-                .then((data) => {
                     buttonElement.disabled = false;
                     buttonElement.textContent = "Написать";
+                    // 2.13: 2) вынесите код получения списка комментариев в отдельную функцию, 
                 })
+            // 2.13 2) Я как пользователь при добавлении комментария понимаю, 
+            // что мне нужно подождать и не могу случайно отправить коммент
+            // повторно во время загрузки предыдущего. Еле нашла, куда ставить кнопку!
+
         );
-    fetchAndRenderComments();
-    renderStudentsComments();
-    inputElement.value = '';
-    textAreaElement.value = '';
+
+        fetchAndRenderComments();
+        // renderStudentsComments();
+        inputElement.value = '';
+        textAreaElement.value = '';
     });
+
 
     //Ответы на комментарии. План:
     //1. При клике на комментарий в списке в форму подставляется текст комментария и имя автора комментария
@@ -242,14 +253,13 @@
     //  +  2. Написать в поле «Ваше комментарий» HTML-разметку, например `<h1> Коммент </h1>`.
     //   + 3. Нажать на кнопку «Написать».
     // Код писать здесь
-    console.log("It works!");
+    // console.log("It works!");
     // А как добавить лоадер при загрузке приложения?
     // Можно создать переменную, которая будет хранить статус загрузки приложения.
-    //  Можно вызвать рендер, и если переменная равна true, то можно показать этот лоадер. 
-    //  После первой загрузки комментариев нужно изменить значение переменной на противоположное. 
-    //  В функции получения комментариев снова вызывается рендер-функция — переменная уже будет 
+    //  Можно вызвать рендер, и если переменная равна true, то можно показать этот лоадер.
+    //  После первой загрузки комментариев нужно изменить значение переменной на противоположное.
+    //  В функции получения комментариев снова вызывается рендер-функция — переменная уже будет
     //  все время с другим значением и на экране не появится до перезагрузки страницы.
-    alert("Подождите, приложение загружается...");
 </script>
 
 </html>
