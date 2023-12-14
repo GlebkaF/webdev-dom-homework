@@ -46,12 +46,13 @@
       </ul>
       <div class="add-form">
         <input
+        id="add-form-name"
           type="text"
           class="add-form-name"
           id="name-input"
           placeholder="Введите ваше имя"
         />
-        <textare
+        <textarea
           type="textarea"
           class="add-form-text"
           id="comment-input"
@@ -59,7 +60,7 @@
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button" id="add-button">Написать</button>
+          <button class="add-form-button" id="add-form-button">Написать</button>
         </div>
       </div>
     </div>
@@ -67,7 +68,7 @@
 
   <script>
     const buttonElement = document.getElementById("add-button");
-    const commentElement = document.getElementById ("comment-id");
+    const commentElement = document.getElementById("comment-id");
     const nameInputElement = document.getElementById("name-input");
     const commentInputElement = document.getElementById("comment-input");
    const newDate = new Date()
