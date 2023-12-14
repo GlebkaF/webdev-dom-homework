@@ -3,6 +3,8 @@ import {addForm, comments, commentInputElement, nameInputElement, tokenAuth} fro
 import { renderComments } from "./render.js";
 import { answerComment, unauthorized } from "./answers.js";
 import { getLike } from "./likes.js";
+import { format } from 'date-fns'
+
 export const fetchPromisePost = () => {
     return fetch("https://wedev-api.sky.pro/api/v2/daria-alekseeva/comments", {
     method: "POST",
@@ -60,7 +62,7 @@ export const fetchPromise = () => {
       const comms = responceData.comments.map((comment) => {
           return {
             name: comment.author.name,
-            date: new Date(comment.date).toLocaleString(),
+            date: format(new Date(comment.date), 'yyyy-MM-dd hh.mm.ss'),
             comment: comment.text,
             likes: comment.likes,
             isLiked: false,
