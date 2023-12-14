@@ -91,25 +91,21 @@
     buttonElement.addEventListener('click', () => {
       nameInputElement.classList.remove("error");
       textInputElement.classList.remove("error");
-      buttonElement.classList.remove("error");
       if (nameInputElement.value === ""){
         nameInputElement.classList.add("error");
         return;
       } else if (textInputElement.value  ===""){
         textInputElement.classList.add("error")
         return;
-      } else if (buttonElement.value ===""){
-        buttonElement.classList.add("error")
-        return;
       }
-    
+
+      //buttonElement.addEventListener("click", addNewComment);
       
-      //const oldListElement = commentList.innerHTML;
-      //commentList.innerHTML = oldListElement +
-      buttonElement.addEventListener("click", addNewComment);
-      function addNewComment() { 
-      let commentList = document.querySelector(".comments")
-      commentList.innerHTML += `
+      //function addNewComment() { 
+      //let commentList = document.querySelector(".comments")
+      //commentList.innerHTML +=
+      const oldListElement = commentList.innerHTML;
+      commentList.innerHTML = oldListElement +  `
         <li class="comment">
           <div class="comment-header">
             <div>${nameInputElement.value}</div>
@@ -127,7 +123,7 @@
             </div>
           </div>
         </li>`;
-      }
+      
         nameInputElement.value = "";
         textInputElement.value = "";
       })
