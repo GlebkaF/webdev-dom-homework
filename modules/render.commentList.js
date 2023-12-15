@@ -1,5 +1,8 @@
+import { comments } from './commentsState.js';
+import { render } from './renderEngine.js';
 import { endcodeSpecialSymbols } from './utils.format.js';
 import { delay } from './utils.promise.js';
+
 
 
 export const BEGIN_QUOTE_MARK = '::BEGIN_QUOTE::';
@@ -8,7 +11,7 @@ export const END_QUOTE_MARK = '::END_QUOTE::';
 
 
 
-const initCommentsEventHandlers = (options) => {
+const initHandlers = () => {
     const likeButtons = document.querySelectorAll('.comment .like-button');
     for (const button of likeButtons) {
         button.addEventListener('click', (event) => {
@@ -18,11 +21,11 @@ const initCommentsEventHandlers = (options) => {
 
             delay(1500)
             .then(() => {
-                const item = options.commentsData[event.target.dataset.index];
+                const item = comments[event.target.dataset.index];
                 item.likesCount += item.isLiked ? -1 : +1;
                 item.isLiked = !item.isLiked;
-            })
-            .then(() => renderComments(options));
+            })            
+            .then(render)
         });
     }
 
@@ -30,9 +33,9 @@ const initCommentsEventHandlers = (options) => {
     for (const button of editButtons) {
         button.addEventListener('click', (event) => {
             event.stopPropagation();
-            const item = options.commentsData[event.target.dataset.index];
+            const item = comments[event.target.dataset.index];
             item.isEdited = true;
-            renderComments(options);
+            render();
         });
     }
 
@@ -40,11 +43,11 @@ const initCommentsEventHandlers = (options) => {
     for (const button of editSaveButtons) {
         button.addEventListener('click', (event) => {
             event.stopPropagation();
-            const item = options.commentsData[event.target.dataset.index];
+            const item = comments[event.target.dataset.index];
             const textArea = event.target.parentElement.querySelectorAll('.comment-text-edit')[0];          
             item.isEdited = false;
             item.text = endcodeSpecialSymbols(textArea.value);
-            renderComments(options);
+            render();
         });
     }
 
@@ -52,9 +55,9 @@ const initCommentsEventHandlers = (options) => {
     for (const button of editCancelButtons) {
         button.addEventListener('click', (event) => {
             event.stopPropagation();
-            const item = options.commentsData[event.target.dataset.index];
+            const item = comments[event.target.dataset.index];
             item.isEdited = false;          
-            renderComments(options);
+            render();
         });
     }
 
@@ -62,12 +65,10 @@ const initCommentsEventHandlers = (options) => {
     for (const commentElement of commentElements) {
         commentElement.addEventListener('click', (event) => {
             event.stopPropagation();
-            const item = options.commentsData[event.currentTarget.dataset.index];
+            const item = comments[event.currentTarget.dataset.index];
             if(item.isEdited){
                 return;
             }
-            
-            options.handlerCommentClick && options.handlerCommentClick(item);
         });
     }
     
@@ -75,15 +76,17 @@ const initCommentsEventHandlers = (options) => {
 
 
 
-export const renderComments = (options) => {
+export const renderCommentList = (afterRender) => {
+    afterRender.then(initHandlers);
+
     const renderCommentText = (comment, index) => {        
         if(comment.isEdited){
             return `<textarea class="comment-text-edit">${comment.text}</textarea>          
-            <button data-index="${index}" class="add-form-button comment-edit-save-button">Сохранить</button>
-            <button data-index="${index}" class="add-form-button comment-edit-cancel-button">Отмена</button>`;
+            <button data-index="${index}" class="add-form-button comment-edit-save-button form-button">Сохранить</button>
+            <button data-index="${index}" class="add-form-button comment-edit-cancel-button form-button">Отмена</button>`;
         } 
         return `<div class="comment-text">${renderCommentBody(comment.text)}</div>        
-            <button data-index="${index}" class="add-form-button comment-edit-button">Редактировать</button>`;
+            <button data-index="${index}" class="add-form-button comment-edit-button form-button">Редактировать</button>`;
     };
     
     const renderCommentBody = (text) => text
@@ -92,27 +95,23 @@ export const renderComments = (options) => {
     
 
 
-    const commentsHTML = options.commentsData.map((comment, index) =>
-        `<li class="comment" data-index="${index}">
-        <div class="comment-header">
-            <div>${comment.author}</div>
-            <div>${comment.date}</div>
-        </div>
-        <div class="comment-body"> 
-            ${renderCommentText(comment, index)}
-        </div>
-        <div class="comment-footer">
-            <div class="likes">
-            <span class="likes-counter">${comment.likesCount}</span>
-            <button data-index="${index}" class="like-button ${comment.isLiked ? 'active-like' : ''}"></button>
+    return `<ul class="comments" id="list-comments">`
+         + comments.map((comment, index) =>
+            `<li class="comment" data-index="${index}">
+            <div class="comment-header">
+                <div>${comment.author}</div>
+                <div>${comment.date}</div>
             </div>
-        </div>
-        </li>`
-    ).join('');
-
-    options.element.innerHTML = commentsHTML;
-
-    initCommentsEventHandlers(options);
-
-    options.afterRender && options.afterRender();
+            <div class="comment-body"> 
+                ${renderCommentText(comment, index)}
+            </div>
+            <div class="comment-footer">
+                <div class="likes">
+                <span class="likes-counter">${comment.likesCount}</span>
+                <button data-index="${index}" class="like-button ${comment.isLiked ? 'active-like' : ''}"></button>
+                </div>
+            </div>
+            </li>`
+        ).join('')
+    + `</ul>`
 };
