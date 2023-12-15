@@ -71,6 +71,14 @@ export const postComment = (name, text) => {
 };
 
 
+export const deleteComment = id => {
+    return fetch(API_URL + `/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeader()
+    });
+};
+
+
 
 export const login = (login, password) => 
     fetch(API_USER_URL + '/login', {

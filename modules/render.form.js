@@ -1,5 +1,5 @@
-import { loadCommentsData, postComment, user } from "./api.js";
-import { comments, setComments } from "./commentsState.js";
+import { deleteComment, loadCommentsData, postComment, user } from "./api.js";
+import { comments, reloadComments, setComments } from "./commentsState.js";
 import { BEGIN_QUOTE_MARK, END_QUOTE_MARK } from "./render.commentList.js";
 import { render } from "./renderEngine.js";
 import { decodeSpecialSymbols } from "./utils.format.js";
@@ -84,8 +84,7 @@ const initHandlers = () => {
     
     
     const loadAndRenderComments = () => {
-        return loadCommentsData()
-            .then(data => setComments(data))
+        return reloadComments()
             .then(render);
     };
     
@@ -99,12 +98,16 @@ const initHandlers = () => {
             .then(loadAndRenderComments)
     };
         
-    const removeLastComment = () => {
-        if(commentsData.length == 0){
+
+    const removeLastComment = async () => {
+        if(comments.length == 0){
             return;
         }
-        commentsData.splice(commentsData.length - 1, 1);
-        render();
+
+        const lastComment = comments[comments.length - 1];
+    
+        await deleteComment(lastComment.id)
+            .then(loadAndRenderComments);
     }
 
 
