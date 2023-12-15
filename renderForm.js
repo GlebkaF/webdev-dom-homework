@@ -1,3 +1,4 @@
+
 export function renderForm(message, isLoading) {
     const addForm = document.querySelector('.add-form');
     const loadingComm = document.querySelector('.loading-comments');

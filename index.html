@@ -13,12 +13,43 @@
     </ul>
     <div class="loading-comments"></div>
     <div class="add-form">
-      <div class="error-comments"></div>
-      <input type="text" class="add-form-name" placeholder="Введите ваше имя" id='add-form-name' />
-      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
-        id="add-form-text"></textarea>
-      <div class="add-form-row">
-        <button class="add-form-button" id="add-form-button">Написать</button>
+      <div class="register">
+        <h2>Регистрация</h2>
+        <div class="reg_container">
+          <div class="inputs">
+            <input class="input_box" type="text" name="" id="nameReg-input" placeholder="Имя">
+            <input class="input_box" type="text" name="" id="loginReg-input" placeholder="Логин">
+            <input class="input_box" type="password" name="" id="passwordReg-input" placeholder="Пароль">
+          </div>
+          <div class='buttons'>
+            <button class='button' type="button" id="reg-btn">Зарегистрироваться</button>
+            <p>Если у вас есть аккаунт, можете <a class='href' type="button" id="login-href">войти</a></p>
+          </div>
+        </div>
+      </div>
+      <div class="auth">
+        <h1>Авторизация</h1>
+        <div class="auth__container">
+          <div class="inputs">
+            <input class="input_box" type="text" name="" id="login-input" placeholder="Логин">
+            <input class="input_box" type="password" name="" id="password-input" placeholder="Пароль">
+          </div>
+          <div class='buttons'>
+            <button class='button' type="button" id="login-btn">Войти</button>
+            <p>Если у вас нет аккаунта, можете <a class='href' type="button"
+                id="registration-href">зарегистрироваться</a></p>
+          </div>
+
+        </div>
+      </div>
+      <div class="create_comment">
+        <div class="error-comments"></div>
+        <input type="text" class="add-form-name" placeholder="" readonly id="add-form-name" />
+        <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
+          id="add-form-text"></textarea>
+        <div class="add-form-row">
+          <button class="add-form-button" id="add-form-button">Написать</button>
+        </div>
       </div>
     </div>
   </div>
