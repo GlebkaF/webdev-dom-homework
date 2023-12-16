@@ -1,8 +1,8 @@
-import { signOut, user } from "./api.js";
-import { reloadComments } from "./commentsState.js";
+import { signOut, user } from "../api.js";
+import { reloadComments } from "../commentsState.js";
 import { renderCommentList } from "./render.commentList.js";
 import { renderForm } from "./render.form.js"
-import { navigateTo, render } from "./renderEngine.js";
+import { navigateTo, render } from "../renderEngine.js";
 
 
 const initHandlers = () => {
@@ -18,9 +18,11 @@ const initHandlers = () => {
     for(const link of linksToSignout){
         link.addEventListener('click', event => {
             event.preventDefault();
+            
             signOut();
-            reloadComments();
-            render();
+
+            reloadComments()
+            .then(render);            
         });
     }
 }

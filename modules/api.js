@@ -1,5 +1,5 @@
-import { formatDateTime, endcodeSpecialSymbols } from "./utils.format.js";
-import { delay } from './utils.promise.js';
+import { formatDateTime, endcodeSpecialSymbols } from "./utils/utils.format.js";
+import { delay } from './utils/utils.promise.js';
 
 
 const API_URL = 'https://wedev-api.sky.pro/api/v2/pogozhiyag/comments';
@@ -79,6 +79,14 @@ export const deleteComment = id => {
 };
 
 
+export const toggleLikeComment = id => {
+    return fetch(API_URL + `/${id}/toggle-like`, {
+        method: 'POST',
+        headers: getAuthHeader()
+    });
+};
+
+
 
 export const login = (login, password) => 
     fetch(API_USER_URL + '/login', {
@@ -105,6 +113,8 @@ export const register = (name, login, password) =>
         if(r.ok){
             const j = await r.json();
             setUser(j.user);
-        }
+        } else {
+            throw new Error('Видимо, такой пользователь уже есть')
+        }        
     });
 

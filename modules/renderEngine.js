@@ -1,7 +1,7 @@
-import { renderLogin } from "./render.login.js";
-import { renderMain } from "./render.main.js";
-import { renderRegister } from "./render.register.js";
-import { renderStartScreen } from "./render.startScreen.js";
+import { renderLogin } from "./components/render.login.js";
+import { renderMain } from "./components/render.main.js";
+import { renderRegister } from "./components/render.register.js";
+import { renderStartScreen } from "./components/render.startScreen.js";
 
 const renderEngine = (root, content) => {
     let afterPromiseResolve;

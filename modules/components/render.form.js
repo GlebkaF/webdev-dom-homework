@@ -1,9 +1,9 @@
-import { deleteComment, loadCommentsData, postComment, user } from "./api.js";
-import { comments, reloadComments, setComments } from "./commentsState.js";
+import { deleteComment, loadCommentsData, postComment, user } from "../api.js";
+import { comments, reloadComments, setComments } from "../commentsState.js";
 import { BEGIN_QUOTE_MARK, END_QUOTE_MARK } from "./render.commentList.js";
-import { render } from "./renderEngine.js";
-import { decodeSpecialSymbols } from "./utils.format.js";
-import { runLongProcess } from "./utils.promise.js";
+import { render } from "../renderEngine.js";
+import { decodeSpecialSymbols } from "../utils/utils.format.js";
+import { runLongProcess } from "../utils/utils.promise.js";
 
 
 const initHandlers = () => {
@@ -119,7 +119,9 @@ const initHandlers = () => {
             if(item.isEdited){
                 return;
             }
+            
             inputComment.value = decodeSpecialSymbols(`${BEGIN_QUOTE_MARK} ${item.author}: ${item.text} ${END_QUOTE_MARK}`);
+            validateComment();
         });
     }
 
@@ -131,6 +133,7 @@ const initHandlers = () => {
     buttonRemoveComment.addEventListener('click', removeLastComment);
 
 
+    
     setButtonRemoveCommentEnabled();    
     validateComment();
 };

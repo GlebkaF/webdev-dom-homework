@@ -1,5 +1,5 @@
-import { login } from "./api.js";
-import { navigateTo } from "./renderEngine.js";
+import { login } from "../api.js";
+import { navigateTo } from "../renderEngine.js";
 
 const initHandlers = () => {
     const loginInput = document.querySelector('.login-form-login');

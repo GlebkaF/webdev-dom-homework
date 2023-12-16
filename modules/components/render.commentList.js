@@ -1,8 +1,7 @@
-import { comments } from './commentsState.js';
-import { render } from './renderEngine.js';
-import { endcodeSpecialSymbols } from './utils.format.js';
-import { delay } from './utils.promise.js';
-
+import { toggleLikeComment, user } from '../api.js';
+import { comments, reloadComments } from '../commentsState.js';
+import { render } from '../renderEngine.js';
+import { endcodeSpecialSymbols } from '../utils/utils.format.js';
 
 
 export const BEGIN_QUOTE_MARK = '::BEGIN_QUOTE::';
@@ -10,24 +9,25 @@ export const END_QUOTE_MARK = '::END_QUOTE::';
 
 
 
-
 const initHandlers = () => {
-    const likeButtons = document.querySelectorAll('.comment .like-button');
-    for (const button of likeButtons) {
-        button.addEventListener('click', (event) => {
-            event.stopPropagation();
+    
+    if(user){
+        const likeButtons = document.querySelectorAll('.comment .like-button');
+        for (const button of likeButtons) {
+            button.addEventListener('click', async event => {
+                event.stopPropagation();
 
-            button.classList.add('loading-like');
+                button.classList.add('loading-like');
 
-            delay(1500)
-            .then(() => {
                 const item = comments[event.target.dataset.index];
-                item.likesCount += item.isLiked ? -1 : +1;
-                item.isLiked = !item.isLiked;
-            })            
-            .then(render)
-        });
+                
+                toggleLikeComment(item.id)
+                .then(reloadComments)
+                .then(render);
+            });
+        }
     }
+    
 
     const editButtons = document.querySelectorAll('.comment .comment-edit-button');
     for (const button of editButtons) {

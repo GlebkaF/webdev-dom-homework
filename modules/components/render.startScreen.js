@@ -1,6 +1,6 @@
-import { reloadComments } from "./commentsState.js";
-import { navigateTo } from "./renderEngine.js";
-import { delay } from "./utils.promise.js";
+import { reloadComments } from "../commentsState.js";
+import { navigateTo } from "../renderEngine.js";
+import { delay } from "../utils/utils.promise.js";
 
 const postRender = () => {    
     delay(700)

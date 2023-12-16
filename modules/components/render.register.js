@@ -1,5 +1,5 @@
-import { register } from "./api.js";
-import { navigateTo } from "./renderEngine.js";
+import { register } from "../api.js";
+import { navigateTo } from "../renderEngine.js";
 
 const initHandlers = () => {
     const nameInput = document.querySelector('.register-form-name');
