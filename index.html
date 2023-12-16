@@ -41,8 +41,40 @@
     const nameInputElement = document.getElementById('name-input');
     const commentInputElement = document.getElementById('comment-input');
     const deleteButtonElement = document.getElementById('delete-button');
-    
-    const commentsArray = [
+
+// Функция apiGet получает данные с сервера
+const apiGet = () => {
+
+const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/kamila-beketova/comments", {
+  method: "GET"
+});
+
+fetchPromise.then((response) => {
+
+const jsonPromise = response.json();
+jsonPromise.then((responseData) => {
+  const fromApp = responseData.comments.map((comment) => {
+
+    return {
+
+      name: comment.author.name,
+      userLike: comment.isLiked,
+      comment: comment.text,
+      like: comment.like,
+      date: new Date(comment.date).toLocaleDateString() + " " + (new Date(comment.date).getHours() < 10 ? '0' + new Date(comment.date).getHours() : new Date(comment.date).getHours()) + ":" + (new Date(comment.date).getMinutes() < 10 ? '0' + new Date(comment.date).getMinutes() : new Date(comment.date).getMinutes()) + ":" + (new Date(comment.date).getSeconds() < 10 ? '0' + new Date(comment.date).getSeconds() : new Date(comment.date).getSeconds()),
+
+    };
+  });
+  commentsArray = fromApp;
+
+  renderComments();
+});
+});
+
+}
+apiGet();
+  
+let commentsArray = [
       {
         name: 'Глеб Фокин',
     date: '12.02.22 12:18',
@@ -180,6 +212,30 @@ buttonElement.addEventListener('click', () => {
         userLike:false,
         paint: '',
       });
+
+      const postCommentsArrayPromise = fetch("https://wedev-api.sky.pro/api/v1/kamila-beketova/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        text: commentInputElement.value
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;") 
+          .replaceAll("&", "&amp;")
+          .replaceAll('"', "&quot;"),
+        name: nameInputElement.value
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;") 
+          .replaceAll("&", "&amp;")
+          .replaceAll('"', "&quot;"),
+      }),
+
+    }).then((response) => {
+
+      const jsonPromise = response.json().then((responseData) => {
+
+        renderComments();
+      });
+    });
+
       renderComments();
         nameInputElement.value = '';
         commentInputElement.value = '';
@@ -215,7 +271,12 @@ document.addEventListener('keyup', (event) =>{
   if (event.key === 'Enter') {
     buttonElement.click();
   }
+  apiGet();
+    renderComments();
+    likeButtons();
 });
     console.log("It works!");
   </script>
 </html>
+
+
