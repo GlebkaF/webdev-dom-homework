@@ -46,7 +46,7 @@
     let urlApi = "https://wedev-api.sky.pro/api/v1/zenin-dmitry/comments";
     //Прелоадер страницы
 
-    let hidePreload = document.querySelector(".preload").style.display = "none";
+    
     // запрос коммента с api
     const getComments = () => {
 
@@ -80,7 +80,7 @@
 
     //Сохранение данных форм комментов из html в js
     let commentList = [];
-
+   
 
     //Активность кнопки удаления
     const initDeleteButtonsListeners = () => {
@@ -168,7 +168,7 @@
           .replaceAll('"', "&quot;");
       };
       //2.13. надпись о загрузке коммента и блокировка кнопки "добавить".
-
+      let hidePreload = document.querySelector(".preload").style.display = "block";
       let fetchPromise = fetch(urlApi,
         {
           method: 'POST',
@@ -180,6 +180,7 @@
             likes: 0,
           })
         }).then((response) => {
+         hidePreload = document.querySelector(".preload").style.display = "none";
           if (inputElement.value.minlegth < 3) {
             throw new Error("Некорректный запрос error 400");
           }else {
@@ -193,7 +194,7 @@
         }).catch((error) => {
           if (error.message === "Некорректный запрос error 400") {
             alert("Длина имени не может быть меньше 3 символов")
-          }
+          };
 
 
           inputElement.value = "";
