@@ -82,9 +82,14 @@
 	const comment = commentInput.value;
 	
 	nameInput.classList.remove("error");
-	commentInput.classList.remove("error");
-	if (name === '' || comment === '') {
+
+	if (name === '') {
 		nameInput.classList.add("error");
+		return;
+	}
+
+	commentInput.classList.remove("error");
+	if (comment === '') {
 		commentInput.classList.add("error");
 		return;
 	}
