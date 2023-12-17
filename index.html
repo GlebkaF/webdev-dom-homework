@@ -50,8 +50,7 @@
     // запрос коммента с api
     const getComments = () => {
 
-      buttonElement.disabled = false;
-      listElement.textContent = "Добавление комментария";
+      
       let fetchPromise = fetch(urlApi,
         {
           method: 'GET',
@@ -68,12 +67,22 @@
               text: comment.text,
             };
           });
-
+          let hidePreload = document.querySelector(".preload").style.display = "none";
           console.log(commentList);
+          hideSeeAddComment();
           renderComments();
+          
         });
     };
-
+    
+const hideSeeAddComment = () => {
+  buttonElement.addEventListener("click", () => {
+    buttonElement.disabled = true;
+      listElement.textContent = "Добавление комментария";
+  });
+  buttonElement.disabled = false;
+      listElement.textContent = "";
+}
 
     //1.commentList необходимо получать из хранилища коммент через API (метод GET). Строки 47-62
     getComments();
@@ -168,7 +177,7 @@
           .replaceAll('"', "&quot;");
       };
       //2.13. надпись о загрузке коммента и блокировка кнопки "добавить".
-      let hidePreload = document.querySelector(".preload").style.display = "block";
+
       let fetchPromise = fetch(urlApi,
         {
           method: 'POST',
@@ -180,7 +189,7 @@
             likes: 0,
           })
         }).then((response) => {
-         hidePreload = document.querySelector(".preload").style.display = "none";
+        
           if (inputElement.value.minlegth < 3) {
             throw new Error("Некорректный запрос error 400");
           }else {
