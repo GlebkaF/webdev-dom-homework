@@ -54,10 +54,6 @@
     let fetchPromise = fetch(urlApi,
       {
         method: 'GET',
-      }).then((response) => {
-        if (response.status === 500) {
-          throw new Error("Ошибка сервера error 500");
-        }
       })
       .then((response) => {
         return response.json();
@@ -71,10 +67,7 @@
             likes: comment.likes,
             text: comment.text,
           };
-        }).catch((error) => {
-        if (error.message === "Ошибка сервера error 500") {
-          alert("Ошибка сервера");
-        };
+        });
         let hidePreload = document.querySelector(".preload").style.display = "none";
         console.log(commentList);
         hideSeeAddComment();
@@ -186,7 +179,7 @@
     };
     //2.13. надпись о загрузке коммента и блокировка кнопки "добавить".
 
-    let fetchPromise = fetch(urlApi,
+    const fetchPromise = () => { fetch(urlApi,
       {
         method: 'POST',
         body: JSON.stringify({
@@ -197,35 +190,37 @@
           likes: 0,
           forceError: true,
         })
-      }).then((responseData) => {
-        return responseData;
       }).then((response) => {
         if (response.status === 400) {
           throw new Error("Некорректный запрос error 400");
         } else if (response.status === 500) {
           throw new Error("Ошибка сервера error 500");
-        }
+        } return response.json();
+      }).then((responseData) => {
+        return responseData;
       })
       .then((response) => {
         return response.json();
-
-      })
-      .then((responseData) => {
+      }).then((responseData) => {
+        inputElement.value = "";
+    textAreaElement.value = "";
         return getComments();
       })
       .catch((error) => {
+        buttonElement.disabled = true;
         if (error.message === "Некорректный запрос error 400") {
           alert("Длина имени не может быть меньше 3 символов");
         } else if (error.message === "Ошибка сервера error 500") {
           alert("Ошибка сервера");
+        } else if(error.message === "Failed to fetch"){
+          alert("Отуствует соединение к интеренету");
         };
-        inputElement.value = "";
-        textAreaElement.value = "";
+        buttonElement.disabled = false;
         renderComments();
       });
-    inputElement.value = "";
-    textAreaElement.value = "";
-    buttonElement.disabled = false;
+    }
+
+    
     renderComments();
   })
 </script>
