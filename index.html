@@ -10,13 +10,14 @@
     <div class="container">
       <ul id="comments" class="comments">
       </ul>
-      <div class="add-form">
+      <div id="add-form" class="add-form">
         <input
           id="add-form-name" 
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
+        <div  id="reply-box"> </div>
         <textarea
           id="add-form-text" 
           type="textarea"
@@ -58,23 +59,16 @@
 
     const buttonEvent = document.getElementById("add-form-button");
     const boxComments = document.getElementById('comments');
-    const boxComment = document.getElementById('comment');
 
-    const headerBoxComment = document.getElementById('comment-header');
+    const replyBox = document.getElementById('reply-box');
+    const replyComment = document.getElementById('add-form-reply');
 
-    const bodyBoxComment = document.getElementById('comment-body');
-    const bodyBoxCommentText = document.getElementById('comment-text');
-
-    const footerBoxComment = document.getElementById('comment-footer');
-
-    const footerBoxCommentLikesBox = document.getElementById('likes');
-    const footerBoxCommentLikesBoxCounter = document.getElementById('likes-counter');
-    const footerBoxCommentLikesBoxButton = document.getElementById('like-button');
+    const replyBoxUser = document.getElementById('reply-user-box');
 
     const addFormUserName = document.getElementById('add-form-name');
     const addFormUserText = document.getElementById('add-form-text');
 
-
+    let replyUserComment = "";
 
     const arrComments = [
       {
@@ -82,7 +76,8 @@
         date: "12.02.22 12:18",
         commentText: "Это будет первый комментарий на этой странице",
         numLike: 3,
-        liked: false
+        liked: false,
+        replyText: ""
 
       },
       {
@@ -90,17 +85,88 @@
         date: "13.02.22 19:22",
         commentText: "Мне нравится как оформлена эта страница! ❤",
         numLike: 75,
-        liked: true
+        liked: true,
+        replyText: ""
       },
     ];
 
+    const replyCommentCondition = (arrComments) => {
+      if (replyBox.innerHTML == "") {
+
+        return replyUserComment = "";
+
+      } else {
+      
+      return replyUserComment = `<div id="reply-box" class="add-form-reply-comments">
+        <div class="comment-header">
+          <div>${arrComments.name}</div>
+          <div>${arrComments.date}</div>
+        </div>
+          ${arrComments.commentText}
+        </div>`;
+
+      };
+    };
+
+    const initReturnReplyBox = () => {
+      return replyBox.innerHTML = "";
+
+    };
+
+    const initDeleteReplyUserBox = () => {
+      replyBox.addEventListener("click", () => {
+
+        event.stopPropagation()
+
+        initReturnReplyBox();
+        replyCommentCondition();
+
+    });
+  };
+
+    const initReplyClick = () => {
+    
+      const useCommentsClick = document.querySelectorAll(".comment-text");
+    
+      for (const useCommentClick of useCommentsClick) {
+      
+        useCommentClick.addEventListener("click", () => {
+        
+          event.stopPropagation()
+
+          const index = useCommentClick.dataset.index;
+
+          replyBox.innerHTML = 
+          `<div id="reply-user-box" class="add-form-reply-user">
+            <div class="comment-header">
+              <div>${arrComments[index].name}</div>
+              <div>${arrComments[index].date}</div>
+            </div>
+            ${arrComments[index].commentText}
+          </div>`;
+
+          replyCondition = true;
+
+          initDeleteReplyUserBox();
+          replyCommentCondition(arrComments[index]);
+
+        });
+         
+      };
+
+    };
+
     const initCommentsLiked = () => {
+
       const useCommentsLike = document.querySelectorAll(".like-button");
       for (const useCommentLike of useCommentsLike) {
 
 
 
         useCommentLike.addEventListener("click", () => {
+          
+          event.stopPropagation()
+          
           const index = useCommentLike.dataset.index;
 
           if (arrComments[index].liked === false) {
@@ -142,8 +208,12 @@
               <div>${comment.date}</div>
             </div>
 
-            <div class="comment-body">
-              <div id="comment-text" class="comment-text">
+            <div id="reply-box-in-comm">
+              ${comment.replyText}
+            </div>
+
+            <div id="comment-body" class="comment-body">
+              <div data-index="${index}" id="comment-text" class="comment-text">
                 ${comment.commentText}
               </div>
             </div>
@@ -162,12 +232,15 @@
       boxComments.innerHTML = commentsHtml;
 
       initCommentsLiked();
-
+      initReplyClick();
     };
 
     renderComments();
 
     buttonEvent.addEventListener("click", () => {
+
+      event.stopPropagation()
+
       addFormUserName.classList.remove("error");
       addFormUserText.classList.remove("error");
 
@@ -187,16 +260,21 @@
         date: letTime(),
         commentText: addFormUserText.value,
         numLike: 0,
-        liked: false
+        liked: false,
+        replyText: replyUserComment
 
       });
 
       renderComments();
 
+      replyUserComment = ""
       addFormUserName.value = "";
       addFormUserText.value = "";
-    
+
+      initReturnReplyBox();
     });
+    
+
 
   </script>
 
