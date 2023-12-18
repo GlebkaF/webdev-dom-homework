@@ -256,13 +256,18 @@
 
       arrComments.push({
 
-        name: addFormUserName.value,
+        name: addFormUserName.value.replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
         date: letTime(),
-        commentText: addFormUserText.value,
+        commentText: addFormUserText.value.replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
         numLike: 0,
         liked: false,
         replyText: replyUserComment
-
       });
 
       renderComments();
