@@ -67,10 +67,10 @@
   </body>
 
   <script>
-    const buttonElement = document.getElementById("add-button");
-    const commentElement = document.getElementById("comment-id");
-    const nameInputElement = document.getElementById("name-input");
-    const commentInputElement = document.getElementById("comment-input");
+    const buttonElement = document.getElementById(`add-button`);
+    const commentElement = document.getElementById(`comment-id`);
+    const nameInputElement = document.getElementById(`name-input`);
+    const commentInputElement = document.getElementById(`comment-input`);
    const newDate = new Date()
 
     buttonElement.addEventListener("click", () => {
@@ -87,7 +87,7 @@
       }
 
     const oldCommentHtml = commentElement.innerHTML;
-    commentsElement.innerHTML = oldCommentHtml + `<li class = "commet">
+    commentsElement.innerHTML = oldCommentHtml + `<li class = "comment">
       <div class = "comment-header">
         <div>${nameInputElement.vaiue}</div>
         <div>${nevDate}</div>
