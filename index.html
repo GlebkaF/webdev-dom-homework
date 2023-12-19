@@ -68,8 +68,6 @@
     const addFormUserName = document.getElementById('add-form-name');
     const addFormUserText = document.getElementById('add-form-text');
 
-    let replyUserComment = "";
-
     const arrComments = [
       {
         name: "Глеб Фокин",
@@ -126,15 +124,15 @@
 
     const initReplyClick = () => {
     
-      const useCommentsClick = document.querySelectorAll(".comment-text");
+      const useReplyClick = document.querySelectorAll(".-use-reply-comment");
     
-      for (const useCommentClick of useCommentsClick) {
+      for (const replyClick of useReplyClick) {
       
-        useCommentClick.addEventListener("click", () => {
+        replyClick.addEventListener("click", () => {
         
           event.stopPropagation()
 
-          const index = useCommentClick.dataset.index;
+          const index = replyClick.dataset.index;
 
           replyBox.innerHTML = 
           `<div id="reply-user-box" class="add-form-reply-user">
@@ -144,8 +142,6 @@
             </div>
             ${arrComments[index].commentText}
           </div>`;
-
-          replyCondition = true;
 
           initDeleteReplyUserBox();
           replyCommentCondition(arrComments[index]);
@@ -201,24 +197,24 @@
 
       const commentsHtml = arrComments
       .map((comment, index) => {
-        return `<li id="comment" class="comment">
+        return `<li data-index="${index}" id="comment" class="comment -use-reply-comment">
 
-            <div class="comment-header">
+            <div data-index="${index}" id="comment-header" class="comment-header -use-reply-comment">
               <div>${comment.name}</div>
               <div>${comment.date}</div>
             </div>
 
-            <div id="reply-box-in-comm">
+            <div data-index="${index}" id="reply-box-in-comm class="-use-reply-comment"">
               ${comment.replyText}
             </div>
 
-            <div id="comment-body" class="comment-body">
+            <div data-index="${index}" id="comment-body" class="comment-body -use-reply-comment">
               <div data-index="${index}" id="comment-text" class="comment-text">
                 ${comment.commentText}
               </div>
             </div>
 
-            <div id="comment-footer" class="comment-footer">
+            <div data-index="${index}" id="comment-footer" class="comment-footer -use-reply-comment">
               <div id="likes" class="likes">
                 <span id="likes-counter" class="likes-counter">${comment.numLike}</span>
                 <button data-index="${index}" id="like-button" class="like-button ${usedLike(comment.liked)}"></button>
@@ -233,6 +229,7 @@
 
       initCommentsLiked();
       initReplyClick();
+
     };
 
     renderComments();
