@@ -5,11 +5,17 @@
     <meta charset="utf-8" />
     <link rel="stylesheet" href="styles.css" />
   </head>
-<style>
-  .error {
-    background-color: red;
-  }
-</style>
+  <style>
+    .error {
+      background-color: red;
+    }
+    .error__button {
+      background-color: dimgray;
+    }
+    .remove-form-button {
+      background-color: gray;
+    }
+  </style>
   <body>
     <div class="container">
       <ul id="list" class="comments">
@@ -66,6 +72,12 @@
           <button id="add-button" class="add-form-button">Написать</button>
         </div>
       </div>
+      <button
+        id="delete-last-button"
+        class="add-form-button remove-form-button"
+      >
+        Удалить последний комментарий
+      </button>
     </div>
   </body>
 
@@ -84,44 +96,81 @@
       return formattedDate;
     }
 
+    function updateButtonState() {
+      buttonElement.classList.remove("error__button");
+      addButton.disabled =
+        nameInputElement.value.trim() === "" ||
+        commentInputElement.value.trim() === "";
+    }
+
+    function handleKeyPress(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+
+        buttonElement.click();
+      }
+    }
+
+    function deleteLastComment() {
+      const comments = listElement.getElementsByClassName("comment");
+
+      // Проверяем, есть ли комментарии для удаления
+      if (comments.length > 0) {
+        // Удаляем последний комментарий
+        const lastComment = comments[comments.length - 1];
+        listElement.removeChild(lastComment);
+      }
+    }
+
     const buttonElement = document.getElementById("add-button");
     const listElement = document.getElementById("list");
     const nameInputElement = document.getElementById("input-name");
     const commentInputElement = document.getElementById("comment-input");
+    const deleteLastButton = document.getElementById("delete-last-button"); // Новая кнопка
     let date = new Date();
     let today = formatDate(date);
 
     document.getElementsByClassName("add-form-text");
+    nameInputElement.addEventListener("keypress", handleKeyPress);
+    commentInputElement.addEventListener("keypress", handleKeyPress);
+    buttonElement.addEventListener("keypress", handleKeyPress);
+    deleteLastButton.addEventListener("click", deleteLastComment);
+
     buttonElement.addEventListener("click", () => {
       nameInputElement.classList.remove("error");
       commentInputElement.classList.remove("error");
+      buttonElement.classList.remove("error__button");
 
       if (nameInputElement.value === "") {
         nameInputElement.classList.add("error");
+        buttonElement.classList.add("error__button");
+        nameInputElement.addEventListener("input", updateButtonState);
         return;
       } else if (commentInputElement.value === "") {
         commentInputElement.classList.add("error");
+        buttonElement.classList.add("error__button");
+        commentInputElement.addEventListener("input", updateButtonState);
       } else {
         const oldListElement = listElement.innerHTML;
         listElement.innerHTML =
           oldListElement +
           `<li class="comment">
-          <div class="comment-header">
-            <div>${nameInputElement.value}</div>
-            <div>${today}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${commentInputElement.value}
+            <div class="comment-header">
+              <div>${nameInputElement.value}</div>
+              <div>${today}</div>
             </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">${0}</span>
-              <button class="like-button -active-like"></button>
+            <div class="comment-body">
+              <div class="comment-text">
+                ${commentInputElement.value}
+              </div>
             </div>
-          </div>
-        </li>`;
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">${0}</span>
+                <button class="like-button -active-like"></button>
+              </div>
+            </div>
+          </li>`;
       }
     });
     console.log("It works!");
