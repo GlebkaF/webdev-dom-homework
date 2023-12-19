@@ -1,0 +1,115 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Урок "Управление html содержимым из js"</title>
+  </head>
+
+  <body>
+    <div>
+      <h1 class="title" id = "new-title">Любимые цвета студентов</h1>
+      <button id = "change-title"> Изменить название </button>
+      <button id = "change-color"> Изменить цвет заголовка </button>
+    </div>
+    <ul id="list">
+      <li>Глеб, любимый цвет <span style="color: #ff2600;"> #ff2600</span></li>
+      <li>Иван, любимый цвет <span style="color: #00f900;"> #00f900</span></li>
+      <li>Люси, любимый цвет <span style="color: #0432ff;"> #0432ff</span></li>
+    </ul>
+
+    <div>
+      <h3 class="title">Форма добавления</h3>
+      Имя:
+      <input type="text" id="name-input" />
+      <br /><br />
+      Цвет:
+      <input type="color" id="color-input"/>
+      <br /><br />
+      <button id="add-button">Добавить</button>
+    </div>
+    <br />
+    <div>
+      <h3 class="title">Форма удаления</h3>
+      <button>Удалить <span style="color: #ff2600;">#ff2600</span></button>
+    </div>
+  </body>
+  <style>
+    .error {
+      background-color: red;
+    }
+  </style>
+  <script>
+    // const buttonElement = document.getElementById("add-button");
+
+    // buttonElement.addEventListener("click", () => {
+    //   alert("Меня нажали");
+    // });
+
+    // const addAlert = document.getElementById("add-alert");
+
+    // addAlert.addEventListener("click", () => {
+    //     alert("«Не стоило сюда нажимать»");
+    // })
+    
+    const newTitleBtn = document.getElementById("change-title");
+    const newTitle = document.getElementById("new-title");
+
+    const buttonElement = document.getElementById("add-button");
+    const listElement = document.getElementById("list");
+    const nameInputElement = document.getElementById("name-input");
+    const colorInputElement = document.getElementById("color-input");
+    const changeColor = document.getElementById("change-color");
+
+    nameInputElement.placeholder = "Имя студента";
+    
+        
+    newTitleBtn.addEventListener("click", () => {
+      if (newTitle.innerHTML ===  "Любимые цвета студентов") {
+        newTitle.innerHTML = "Самые любимые цвета студентов";
+      } else if (newTitle.innerHTML === "Самые любимые цвета студентов") {
+        newTitle.innerHTML = "Любимые цвета студентов";
+      }
+    });
+
+    changeColor.addEventListener("click", () => {
+      if (changeColor.classList.add("error")) {
+        changeColor.innerHTML = "red";
+      } else if (changeColor.innerHTML === "Самые любимые цвета студентов") {
+        changeColor.innerHTML = "Любимые цвета студентов";
+      }
+    });
+   
+    buttonElement.addEventListener("click", () => {
+      // console.log(nameInputElement.value);
+
+      nameInputElement.classList.remove("error");
+
+      if (nameInputElement.value === "") {
+        nameInputElement.classList.add("error");
+        return;
+      }
+
+      
+      const oldListHtml = listElement.innerHTML;
+      listElement.innerHTML =
+        oldListHtml +
+        `<li>
+          ${nameInputElement.value}, любимый цвет <span style="color: ${colorInputElement.value}"> ${colorInputElement.value}</span>
+        </li>`;
+        nameInputElement.disabled = true;
+        nameInputElement.value = '';
+        colorInputElement.disabled = true;
+        colorInputElement.value = 'black';
+        buttonElement.disabled = true;
+      })
+
+       // Поиск элементов через querySelectorAll
+    // через тег
+
+    const buttons = document.querySelectorAll('button');
+    console.log(buttons);
+
+    //через класс
+    const classes = document.querySelectorAll('.title');
+    console.log(classes);
+  </script>
+</html>
