@@ -53,21 +53,31 @@
 
     // Массив комментариев
     let comments = [
-      {
-        name: "Глеб Фокин",
-        date: "12.02.22 12:18",
-        text: "Это будет первый комментарий на этой странице",
-        likeCounter: 3,
-        isLiked: false,
-      },
-      {
-        name: "Варвара Н.",
-        date: "13.02.22 19:22",
-        text: "Мне нравится как оформлена эта страница! ❤",
-        likeCounter: 75,
-        isLiked: true,
-      },
     ];
+
+    // Используем метод GET для получения комментариев из API
+    let fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/lassovskiy-roman/comments",
+    {
+      method: 'GET',
+    });
+    fetchPromise.then((response) => {
+      const jsonPromise = response.json();
+      jsonPromise.then((resposneData) => {
+
+        comments = resposneData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: comment.date,
+            id: comment.id,
+            isLiked: comment.isLiked,
+            likeCounter: comment.likes,
+            text: comment.text,
+          };
+        });
+        console.log(comments);
+        renderComments();
+      });
+    });
 
     // Рендер функция
     const renderComments = () => {
@@ -143,6 +153,52 @@
         return;
       };
     
+       // Метод POST для добавления комментариев
+       let fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/lassovskiy-roman/comments",
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        name: nameInputElement.value
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;"),
+        date: formattedDate,
+        isLiked: false,
+        likeCounter: 0,
+        text: textInputelement.value
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;"), 
+      })
+    });
+
+    fetchPromise.then((response) => {
+      const jsonPromise = response.json();
+      jsonPromise.then((resposneData) => {
+      
+        let fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/lassovskiy-roman/comments",
+    {
+      method: 'GET',
+    });
+
+    fetchPromise.then((response) => {
+      const jsonPromise = response.json();
+      jsonPromise.then((resposneData) => {
+
+        comments = resposneData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: comment.date,
+            id: comment.id,
+            isLiked: comment.isLiked,
+            likeCounter: comment.likes,
+            text: comment.text,
+          };
+        });
+        console.log(comments);
+        renderComments();
+      });
+    });
+      });
+    });
      
     nameInputElement.value = '';
     textInputelement.value = '';
