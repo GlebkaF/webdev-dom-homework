@@ -87,6 +87,25 @@
       
     }
 
+      
+
+    buttonElement.disabled = true;
+
+      textInputElement.addEventListener("input", () => {
+        buttonElement.disabled = false;
+        if (nameInputElement.value === "" || commentElement.value === "") {
+          buttonElement.disabled = true;
+          return;}
+      }); 
+      nameInputElement.addEventListener("input", () => {
+        buttonElement.disabled = false;
+        if (nameInputElement.value === "" || commentElement.value === "") {
+          buttonElement.disabled = true;
+          return;}
+      }); 
+
+  
+
     buttonElement.addEventListener("click", () => {
 
       nameInputElement.classList.remove("error");
@@ -94,9 +113,7 @@
 
       if (nameInputElement.value === '') {
         nameInputElement.classList.add("error");
-     
-
-        return;
+         return;
       }
       if (textInputElement.value === '') {
         textInputElement.classList.add("error");
@@ -129,6 +146,33 @@
         textInputElement.value = "";
     });
 
+    textInputElement.addEventListener("keyup", (event) => {
+      if (event.code === "Enter") { 
+        const oldConstHTML = commentElement.innerHTML;
+      commentElement.innerHTML =  oldConstHTML + 
+      `<li id = "list-comment" class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div> ${myDate.getDate()+'.'+ month+'.'+ 
+              twoDigitYear + ' ' + myDate.getHours()+ ':' 
+              + minutes }</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+      
+        nameInputElement.value = "";
+        textInputElement.value = "";
+    }});
     console.log("It works!");
   </script>
 </html>
