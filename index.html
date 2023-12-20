@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id = "list-comment" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -26,7 +26,7 @@
             </div>
           </div>
         </li>
-        <li class="comment">
+        <li  class="comment">
           <div class="comment-header">
             <div>Варвара Н.</div>
             <div>13.02.22 19:22</div>
@@ -39,33 +39,96 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
+              <button id = "likeButton"
+              class="like-button -active-like"></button>
             </div>
           </div>
         </li>
       </ul>
       <div class="add-form">
-        <input
+        <input id = "name-input"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
-        <textarea
+        <textarea id = "input-text"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id = "get-button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
-
+  <style>
+    .error {
+      background-color: rgb(236, 149, 149);
+    }
+  </style>
   <script>
     "use strict";
     // Код писать здесь
+    const buttonElement = document.getElementById("get-button");
+    const commentElement = document.getElementById("list-comment");
+    const nameInputElement = document.getElementById("name-input");
+    const textInputElement = document.getElementById("input-text");
+    const likeButton = document.getElementById("likeButton");
+
+    let myDate = new Date();
+    let shortYear = myDate.getFullYear(); 
+    let twoDigitYear = shortYear.toString().substr(-2);
+    let month = myDate.getMonth()+1;
+    let minutes = myDate.getMinutes();
+    if (minutes < 10) {
+      minutes = "0" + minutes;
+      
+    }
+
+    buttonElement.addEventListener("click", () => {
+
+      nameInputElement.classList.remove("error");
+      textInputElement.classList.remove("error");
+
+      if (nameInputElement.value === '') {
+        nameInputElement.classList.add("error");
+     
+
+        return;
+      }
+      if (textInputElement.value === '') {
+        textInputElement.classList.add("error");
+        return;
+      }
+
+      const oldConstHTML = commentElement.innerHTML;
+      commentElement.innerHTML =  oldConstHTML + 
+      `<li id = "list-comment" class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div> ${myDate.getDate()+'.'+ month+'.'+ 
+              twoDigitYear + ' ' + myDate.getHours()+ ':' 
+              + minutes }</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+      
+        nameInputElement.value = "";
+        textInputElement.value = "";
+    });
+
     console.log("It works!");
   </script>
 </html>
