@@ -1,7 +1,9 @@
 let addFormButton = document.querySelector(".add-form-button");
 let addFormButtondelete = document.querySelector(".add-form-buttondelete");
 let commentsList = document.querySelector(".comments");
-
+const nameInput = document.querySelector(".add-form-name");
+const commentInput = document.querySelector(".add-form-text");
+//добавляю текст и если ничего нет мне пишут напиши поле ввода и кнопка становиться серой
 function addComment() {
   const nameInput = document.querySelector(".add-form-name");
   const commentInput = document.querySelector(".add-form-text");
@@ -43,11 +45,10 @@ function addComment() {
   nameInput.value = "";
   commentInput.value = "";
 }
-
+//текст добавляеться при нажатии кнопки Enter
 addFormButton.addEventListener("click", addComment);
 
-const nameInput = document.querySelector(".add-form-name");
-const commentInput = document.querySelector(".add-form-text");
+
 
 nameInput.addEventListener("keyup", (event) => {
   if (event.key === "Enter") {
@@ -60,7 +61,7 @@ commentInput.addEventListener("keyup", (event) => {
     addComment();
   }
 });
-
+// удаление последнего элемента списка
 addFormButtondelete.addEventListener("click", () => {
   const lastComment = commentsList.lastChild;
   commentsList.removeChild(lastComment);
