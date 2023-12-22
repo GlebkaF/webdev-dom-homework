@@ -170,12 +170,8 @@
           } else if (response.status === 500) {
             throw new Error("Ошибка сервера error 500");
           } else { response.json(); }
-        }).then((responseData) => {
-          return responseData;
         })
-        .then((response) => {
-          return response.json();
-        }).then((responseData) => {
+        .then(() => {
           inputElement.value = "";
           textAreaElement.value = "";
           return getComments();
