@@ -2,215 +2,214 @@
 <html>
 
 <head>
-  <title>Проект "Комменты"</title>
-  <meta charset="utf-8" />
-  <link rel="stylesheet" href="styles.css" />
-  <style>
-    .comment-text {
-      white-space: pre-line;
-    }
-
-    #loadingMessage,
-    #addingCommentMessage {
-      background: #202020;
-      padding: 10px;
-      margin-bottom: 10px;
-      text-align: center;
-      font-family: Helvetica;
-      font-size: 24px;
-      color: #ffffff;
-    }
-  </style>
+<title>Проект "Комменты"</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+.comment-text {
+white-space: pre-line;
+}
+#loadingMessage,
+#addingCommentMessage {
+background: #202020;
+padding: 10px;
+margin-bottom: 10px;
+text-align: center;
+font-family: Helvetica;
+font-size: 24px;
+color: #ffffff;
+}
+</style>
 </head>
 
 <body>
-  <div class="container">
-    <div id="loadingMessage">Пожалуйста, подождите, комментарии загружаются...</div>
-    <ul class="comments" id="commentList">
-    </ul>
-    <div id="addingCommentMessage" style="display: none;">Комментарий добавляется...</div>
-    <div class="add-form">
-      <input type="text" class="add-form-name" id="nameInput" placeholder="Введите ваше имя" />
-      <textarea type="textarea" class="add-form-text" id="commentInput" placeholder="Введите ваш комментарий"
-        rows="4"></textarea>
-      <div class="add-form-row">
-        <button class="add-form-button" id="submitButton">Написать</button>
-      </div>
-    </div>
-  </div>
+<div class="container">
+<div id="loadingMessage">Пожалуйста, подождите, комментарии загружаются...</div>
+<ul class="comments" id="commentList">
+</ul>
+<div id="addingCommentMessage" style="display: none;">Комментарий добавляется...</div>
+<div class="add-form">
+<input type="text" class="add-form-name" id="nameInput" placeholder="Введите ваше имя" />
+<textarea type="textarea" class="add-form-text" id="commentInput" placeholder="Введите ваш комментарий"
+rows="4"></textarea>
+<div class="add-form-row">
+<button class="add-form-button" id="submitButton">Написать</button>
+</div>
+</div>
+</div>
 </body>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const nameInput = document.getElementById("nameInput");
-    const commentInput = document.getElementById("commentInput");
-    const submitButton = document.getElementById("submitButton");
-    const commentList = document.getElementById("commentList");
-    const loadingMessage = document.getElementById("loadingMessage");
+document.addEventListener("DOMContentLoaded", function () {
+const nameInput = document.getElementById("nameInput");
+const commentInput = document.getElementById("commentInput");
+const submitButton = document.getElementById("submitButton");
+const commentList = document.getElementById("commentList");
+const loadingMessage = document.getElementById("loadingMessage");
 
-    let commentsData = [];
+let commentsData = [];
 
-    const fetchComments = () => {
-      return fetch("https://wedev-api.sky.pro/api/v1/aidar-sultanov/comments", {
-        method: "GET",
-      })
-        .then((response) => {
-          return response;
-        })
-        .then((response) => {
-          return response.json();
-        })
-        .then((responseData) => {
-          const getApiComments = responseData.comments.map((comment) => {
-            return {
-              author: comment.author.name,
-              date: new Date(comment.date),
-              likes: comment.likes,
-              isLiked: false,
-              text: comment.text,
-            };
-          });
-          commentsData = getApiComments;
-          loadingMessage.innerText = "";
-          renderComments();
-        })
-    };
+const fetchComments = () => {
+return fetch("https://wedev-api.sky.pro/api/v1/aidar-sultanov/comments", {
+method: "GET",
+})
+.then((response) => {
+return response;
+})
+.then((response) => {
+return response.json();
+})
+.then((responseData) => {
+const getApiComments = responseData.comments.map((comment) => {
+return {
+author: comment.author.name,
+date: new Date(comment.date),
+likes: comment.likes,
+isLiked: false,
+text: comment.text,
+};
+});
+commentsData = getApiComments;
+loadingMessage.innerText = "";
+renderComments();
+})
+};
 
-    fetchComments();
+fetchComments();
 
 
-    function replyToComment(index) {
-      const selectedComment = commentsData[index];
-      const replyText = `> ${selectedComment.text}
+function replyToComment(index) {
+const selectedComment = commentsData[index];
+const replyText = `> ${selectedComment.text}
 ${selectedComment.author} , `;
-      commentInput.value = replyText + commentInput.value;
-      commentInput.focus();
-    }
+commentInput.value = replyText + commentInput.value;
+commentInput.focus();
+}
 
-    submitButton.addEventListener("click", function () {
-      const name = escapeHtml(nameInput.value);
-      const commentText = escapeHtml(commentInput.value);
+submitButton.addEventListener("click", function () {
+const name = escapeHtml(nameInput.value);
+const commentText = escapeHtml(commentInput.value);
 
-      if (name.trim() === "" || commentText.trim() === "") {
-        alert("Пожалуйста, заполните все поля.");
-        return;
-      }
+if (name.trim() === "" || commentText.trim() === "") {
+alert("Пожалуйста, заполните все поля.");
+return;
+}
 
-      const newComment = {
-        name: name,
-        date: new Date(),
-        text: commentText,
-        likes: 0,
-        isLiked: false,
-      };
+const newComment = {
+name: name,
+date: new Date(),
+text: commentText,
+likes: 0,
+isLiked: false,
+};
 
-      document.querySelector(".add-form").style.display = "none";
-      document.getElementById("addingCommentMessage").style.display = "block";
+document.querySelector(".add-form").style.display = "none";
+document.getElementById("addingCommentMessage").style.display = "block";
 
-      const postComment = (newComment) => {
-        fetch("https://wedev-api.sky.pro/api/v1/aidar-sultanov/comments", {
-          method: "POST",
-          body: JSON.stringify({
-            name: newComment.name,
-            text: newComment.text,
-          }),
-        })
-          .then((response) => {
-            return response.json();
-          })
-          .then((responseData) => {
-            return fetch("https://wedev-api.sky.pro/api/v1/aidar-sultanov/comments", {
-              method: "GET",
-            })
-          })
-          .then((response) => {
-            return response.json();
-          })
-          .then((responseData) => {
-            const getApiComments = responseData.comments.map((comment) => {
-              return {
-                author: comment.author.name,
-                date: new Date(comment.date),
-                likes: comment.likes,
-                isLiked: false,
-                text: comment.text,
-              };
-            });
-            commentsData = getApiComments;
-            renderComments();
-          })
-          .then(() => {
-            document.getElementById("addingCommentMessage").style.display = "none";
-            document.querySelector(".add-form").style.display = "flex";
-          });
-      };
+const postComment = (newComment) => {
+fetch("https://wedev-api.sky.pro/api/v1/aidar-sultanov/comments", {
+method: "POST",
+body: JSON.stringify({
+name: newComment.name,
+text: newComment.text,
+}),
+})
+.then((response) => {
+return response.json();
+})
+.then((responseData) => {
+return fetch("https://wedev-api.sky.pro/api/v1/aidar-sultanov/comments", {
+method: "GET",
+})
+})
+.then((response) => {
+return response.json();
+})
+.then((responseData) => {
+const getApiComments = responseData.comments.map((comment) => {
+return {
+author: comment.author.name,
+date: new Date(comment.date),
+likes: comment.likes,
+isLiked: false,
+text: comment.text,
+};
+});
+commentsData = getApiComments;
+renderComments();
+})
+.then(() => {
+document.getElementById("addingCommentMessage").style.display = "none";
+document.querySelector(".add-form").style.display = "flex";
+});
+};
 
-      postComment(newComment);
+postComment(newComment);
 
-      nameInput.value = "";
-      commentInput.value = "";
+nameInput.value = "";
+commentInput.value = "";
 
-    });
+});
 
-    function escapeHtml(text) {
-      return text.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-    }
+function escapeHtml(text) {
+return text.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+}
 
-    function renderComments() {
-      commentList.innerHTML = "";
+function renderComments() {
+commentList.innerHTML = "";
 
-      commentsData.forEach((comment, index) => {
-        const commentItem =
-          document.createElement("li");
-        commentItem.className = "comment";
-        commentItem.style.cursor = "pointer";
+commentsData.forEach((comment, index) => {
+const commentItem =
+document.createElement("li");
+commentItem.className = "comment";
+commentItem.style.cursor = "pointer";
 
-        commentItem.addEventListener("click", () => replyToComment(index));
+commentItem.addEventListener("click", () => replyToComment(index));
 
-        const commentHeader = document.createElement("div");
-        commentHeader.className = "comment-header";
-        commentHeader.innerHTML = `<div>${comment.author}</div><div>${comment.date.toLocaleString()}</div>`;
+const commentHeader = document.createElement("div");
+commentHeader.className = "comment-header";
+commentHeader.innerHTML = `<div>${comment.author}</div><div>${comment.date.toLocaleString()}</div>`;
 
-        const commentBody = document.createElement("div");
-        commentBody.className = "comment-body";
-        const commentTextDiv = document.createElement("div");
-        commentTextDiv.className = "comment-text";
-        commentTextDiv.innerHTML = comment.text;
-        commentBody.appendChild(commentTextDiv);
+const commentBody = document.createElement("div");
+commentBody.className = "comment-body";
+const commentTextDiv = document.createElement("div");
+commentTextDiv.className = "comment-text";
+commentTextDiv.innerHTML = comment.text;
+commentBody.appendChild(commentTextDiv);
 
-        const commentFooter = document.createElement("div");
-        commentFooter.className = "comment-footer";
-        const likes = document.createElement("div");
-        likes.className = "likes";
-        const likeButton = document.createElement("button");
-        likeButton.className = "like-button" + (comment.isLiked ? " -active-like" : "");
-        likeButton.addEventListener("click", () => toggleLike(index));
-        likes.innerHTML = `<span class="likes-counter">${comment.likes}</span>`;
-        likes.appendChild(likeButton);
+const commentFooter = document.createElement("div");
+commentFooter.className = "comment-footer";
+const likes = document.createElement("div");
+likes.className = "likes";
+const likeButton = document.createElement("button");
+likeButton.className = "like-button" + (comment.isLiked ? " -active-like" : "");
+likeButton.addEventListener("click", () => toggleLike(index));
+likes.innerHTML = `<span class="likes-counter">${comment.likes}</span>`;
+likes.appendChild(likeButton);
 
-        commentFooter.appendChild(likes);
-        commentItem.appendChild(commentHeader);
-        commentItem.appendChild(commentBody);
-        commentItem.appendChild(commentFooter);
+commentFooter.appendChild(likes);
+commentItem.appendChild(commentHeader);
+commentItem.appendChild(commentBody);
+commentItem.appendChild(commentFooter);
 
-        commentList.appendChild(commentItem);
-      });
-    }
+commentList.appendChild(commentItem);
+});
+}
 
-    function toggleLike(index) {
-      event.stopPropagation()
-      commentsData[index].isLiked = !commentsData[index].isLiked;
-      if (commentsData[index].isLiked) {
-        commentsData[index].likes++;
-      } else {
-        commentsData[index].likes--;
-      }
+function toggleLike(index) {
+event.stopPropagation()
+commentsData[index].isLiked = !commentsData[index].isLiked;
+if (commentsData[index].isLiked) {
+commentsData[index].likes++;
+} else {
+commentsData[index].likes--;
+}
 
-      renderComments();
-    }
+renderComments();
+}
 
-    renderComments();
-  });
+renderComments();
+});
 </script>
 
 </html>
