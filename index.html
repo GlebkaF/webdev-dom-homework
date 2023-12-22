@@ -176,47 +176,6 @@
       return editButton;
     }
 
-    function createSaveButton(index) {
-      const saveButton = document.createElement("button");
-      saveButton.innerText = "Сохранить";
-      saveButton.classList.add("add-form-button", "edit-form-button");
-      saveButton.addEventListener("click", () => {
-        handleSaveClick(index);
-      });
-      return saveButton;
-    }
-
-    function handleEditClick(index) {
-      const comment = comments[index];
-      const commentElement = listElement.childNodes[index];
-      const commentTextElement = commentElement.querySelector(".comment-text");
-
-      // Replace the comment text with a textarea containing the current text
-      const textarea = document.createElement("textarea");
-      textarea.value = comment.comment;
-      commentTextElement.innerHTML = "";
-      commentTextElement.appendChild(textarea);
-
-      // Replace the "Edit" button with the "Save" button
-      const editButton = commentElement.querySelector(".edit-form-button");
-      commentElement.replaceChild(createSaveButton(index), editButton);
-    }
-
-    function handleSaveClick(index) {
-      const commentElement = listElement.childNodes[index];
-      const commentTextElement = commentElement.querySelector(".comment-text");
-
-      // Get the updated comment text from the textarea
-      const textarea = commentTextElement.querySelector("textarea");
-      const updatedComment = textarea.value;
-
-      // Update the comment text in the array
-      comments[index].comment = updatedComment;
-
-      // Render the comments to reflect the changes
-      renderComments();
-    }
-
     let comments = [
       {
         name: "Глеб Фокин",
