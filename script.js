@@ -108,43 +108,12 @@ const initLikeButton = () => {
     });
   }
 };
-
-const handleEditClick = (index) => {
-    editButtonElements[index].style.display = "none";
-    saveButtonElements[index].style.display = "inline-block";
-  
-    const commentTextElement =
-      listElement.getElementsByClassName("comment-text")[index];
-    const currentText = commentTextElement.textContent.trim();
-    const textareaElement = document.createElement("textarea");
-    textareaElement.value = currentText;
-    commentTextElement.innerHTML = "";
-    commentTextElement.appendChild(textareaElement);
-  };
-  
-  const handleSaveClick = (index) => {
-    // Update the comment text with the edited text
-    const textareaElement = listElement.querySelector(".comment textarea");
-    const editedText = textareaElement.value;
-  
-    // Update the comments array
-    comments[index].comment = editedText;
-  
-    // Render the comments to reflect the changes
-    renderComments();
-  };
-
-
 const buttonElement = document.getElementById("add-button");
 const likeButton = document.getElementById("like_button");
 const listElement = document.getElementById("list");
 const nameInputElement = document.getElementById("input-name");
 const commentInputElement = document.getElementById("comment-input");
-const deleteLastButton = document.getElementById("delete-last-button");
-
-const editButtonElements = document.querySelectorAll(".edit-button");
-const saveButtonElements = document.querySelectorAll(".save-button");
-
+const deleteLastButton = document.getElementById("delete-last-button"); // Новая кнопка
 let date = new Date();
 let today = formatDate(date);
 
@@ -166,13 +135,41 @@ let comments = [
 ];
 renderComments();
 
-
 document.getElementsByClassName("add-form-text");
 nameInputElement.addEventListener("keypress", handleKeyPress);
 commentInputElement.addEventListener("keypress", handleKeyPress);
 buttonElement.addEventListener("keypress", handleKeyPress);
 deleteLastButton.addEventListener("click", deleteLastComment);
 
+const editButtonElements = document.querySelectorAll(".edit-button");
+const saveButtonElements = document.querySelectorAll(".save-button");
+
+const handleEditClick = (index) => {
+  editButtonElements[index].style.display = "none";
+  saveButtonElements[index].style.display = "inline-block";
+
+  const commentTextElement =
+    listElement.getElementsByClassName("comment-text")[index];
+  const currentText = commentTextElement.textContent.trim();
+  const textareaElement = document.createElement("textarea");
+  textareaElement.value = currentText;
+  commentTextElement.innerHTML = "";
+  commentTextElement.appendChild(textareaElement);
+};
+
+const handleSaveClick = (index) => {
+  // Update the comment text with the edited text
+  const textareaElement = listElement.querySelector(".comment textarea");
+  const editedText = textareaElement.value;
+
+  // Update the comments array
+  comments[index].comment = editedText;
+
+  // Render the comments to reflect the changes
+  renderComments();
+};
+
+// Add event listeners for edit and save buttons
 editButtonElements.forEach((editButton, index) => {
   editButton.addEventListener("click", () => handleEditClick(index));
 });
