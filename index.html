@@ -19,40 +19,7 @@
   <body>
     <div class="container">
       <ul id="list" class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+        <!-- Список комментов рендериться в JS -->
       </ul>
       <div class="add-form">
         <input
@@ -84,13 +51,13 @@
   <script>
     "use strict";
     function formatDate(date) {
-      var day = ("0" + date.getDate()).slice(-2);
-      var month = ("0" + (date.getMonth() + 1)).slice(-2);
-      var year = date.getFullYear().toString().slice(-2);
-      var hours = ("0" + date.getHours()).slice(-2);
-      var minutes = ("0" + date.getMinutes()).slice(-2);
+      const day = ("0" + date.getDate()).slice(-2);
+      const month = ("0" + (date.getMonth() + 1)).slice(-2);
+      const year = date.getFullYear().toString().slice(-2);
+      const hours = ("0" + date.getHours()).slice(-2);
+      const minutes = ("0" + date.getMinutes()).slice(-2);
 
-      var formattedDate =
+      const formattedDate =
         day + "." + month + "." + year + " " + hours + ":" + minutes;
 
       return formattedDate;
@@ -122,13 +89,151 @@
       }
     }
 
+    const renderComments = () => {
+      const commnetsHTML = comments
+        .map((comment, index) => {
+          if (comment.isLike === false) {
+            return `<li class="comment">
+            <div class="comment-header">
+              <div>${comment.name}</div>
+              <div>${comment.date}</div>
+            </div>
+            <div class="comment-body">
+              <div class="comment-text">
+                ${comment.comment}
+              </div>
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">${comment.likes}</span>
+                <button id="like_button" data-index="${index}" class="like-button"></button>
+              </div>
+            </div>
+            <button id="edit_button" data-index="${index}" class="add-form-button">Редактировать</button>
+        
+          </li>`;
+          } else {
+            return `<li class="comment">
+            <div class="comment-header">
+              <div>${comment.name}</div>
+              <div>${comment.date}</div>
+            </div>
+            <div class="comment-body">
+              <div class="comment-text">
+                ${comment.comment}
+              </div>
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">${comment.likes}</span>
+                <button id="like_button" data-index="${index}" class="like-button -active-like"></button>
+              </div>
+            </div>
+            <button id="edit_button" data-index="${index}" class="add-form-button">Редактировать</button>
+          </li>`;
+          }
+        })
+        .join("");
+      listElement.innerHTML = commnetsHTML;
+      initLikeButton();
+    };
+
+    const initLikeButton = () => {
+      const likeButtonsElements = document.querySelectorAll(".like-button");
+      for (const likeButton of likeButtonsElements) {
+        likeButton.addEventListener("click", () => {
+          const index = likeButton.dataset.index;
+          if (comments[index].isLike === false) {
+            comments[index].isLike = true;
+            comments[index].likes++;
+            likeButton.classList.add("-active-like");
+          } else {
+            comments[index].isLike = false;
+            likeButton.classList.remove("-active-like");
+            comments[index].likes--;
+          }
+          const likesCounter =
+            likeButton.parentNode.querySelector(".likes-counter");
+          likesCounter.textContent = comments[index].likes;
+        });
+      }
+    };
     const buttonElement = document.getElementById("add-button");
+    const likeButton = document.getElementById("like_button");
     const listElement = document.getElementById("list");
     const nameInputElement = document.getElementById("input-name");
     const commentInputElement = document.getElementById("comment-input");
     const deleteLastButton = document.getElementById("delete-last-button"); // Новая кнопка
     let date = new Date();
     let today = formatDate(date);
+    function createEditButton(index) {
+      const editButton = document.createElement("button");
+      editButton.innerText = "Редактировать";
+      editButton.classList.add("add-form-button");
+      editButton.addEventListener("click", () => {
+        handleEditClick(index);
+      });
+      return editButton;
+    }
+
+    function createSaveButton(index) {
+      const saveButton = document.createElement("button");
+      saveButton.innerText = "Сохранить";
+      saveButton.classList.add("add-form-button", "edit-form-button");
+      saveButton.addEventListener("click", () => {
+        handleSaveClick(index);
+      });
+      return saveButton;
+    }
+
+    function handleEditClick(index) {
+      const comment = comments[index];
+      const commentElement = listElement.childNodes[index];
+      const commentTextElement = commentElement.querySelector(".comment-text");
+
+      // Replace the comment text with a textarea containing the current text
+      const textarea = document.createElement("textarea");
+      textarea.value = comment.comment;
+      commentTextElement.innerHTML = "";
+      commentTextElement.appendChild(textarea);
+
+      // Replace the "Edit" button with the "Save" button
+      const editButton = commentElement.querySelector(".edit-form-button");
+      commentElement.replaceChild(createSaveButton(index), editButton);
+    }
+
+    function handleSaveClick(index) {
+      const commentElement = listElement.childNodes[index];
+      const commentTextElement = commentElement.querySelector(".comment-text");
+
+      // Get the updated comment text from the textarea
+      const textarea = commentTextElement.querySelector("textarea");
+      const updatedComment = textarea.value;
+
+      // Update the comment text in the array
+      comments[index].comment = updatedComment;
+
+      // Render the comments to reflect the changes
+      renderComments();
+    }
+
+    let comments = [
+      {
+        name: "Глеб Фокин",
+        comment: "Это будет первый комментарий на этой странице",
+        likes: 3,
+        isLike: true,
+        date: "12.02.22 12:18",
+      },
+      {
+        name: "Варвара Н.",
+        comment: "Мне нравится как оформлена эта страница! ❤",
+        likes: 75,
+        isLike: false,
+        date: "13.02.22 19:22",
+      },
+    ];
+    renderComments();
 
     document.getElementsByClassName("add-form-text");
     nameInputElement.addEventListener("keypress", handleKeyPress);
@@ -151,26 +256,14 @@
         buttonElement.classList.add("error__button");
         commentInputElement.addEventListener("input", updateButtonState);
       } else {
-        const oldListElement = listElement.innerHTML;
-        listElement.innerHTML =
-          oldListElement +
-          `<li class="comment">
-            <div class="comment-header">
-              <div>${nameInputElement.value}</div>
-              <div>${today}</div>
-            </div>
-            <div class="comment-body">
-              <div class="comment-text">
-                ${commentInputElement.value}
-              </div>
-            </div>
-            <div class="comment-footer">
-              <div class="likes">
-                <span class="likes-counter">${0}</span>
-                <button class="like-button -active-like"></button>
-              </div>
-            </div>
-          </li>`;
+        comments.push({
+          name: nameInputElement.value,
+          comment: commentInputElement.value,
+          likes: 0,
+          isLike: false,
+          date: today,
+        });
+        renderComments();
       }
     });
     console.log("It works!");
