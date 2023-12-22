@@ -200,6 +200,8 @@ buttonElement.addEventListener("click", () => {
       isLike: false,
       date: today,
     });
+    nameInputElement.value = "";
+    commentInputElement.value = "";
     renderComments();
   }
 });
