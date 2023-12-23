@@ -5,18 +5,14 @@ const nameInput = document.querySelector(".add-form-name");
 const commentInput = document.querySelector(".add-form-text");
 //добавляю текст и если ничего нет мне пишут напиши поле ввода и кнопка становиться серой
 function addComment() {
-  const nameInput = document.querySelector(".add-form-name");
-  const commentInput = document.querySelector(".add-form-text");
   const name = nameInput.value;
   const comment = commentInput.value;
-
   // Validation check
-  if (name.trim() === "" || comment.trim() === "") {
+  if (name === "" || comment === "") {
     alert("Пожалуста введите поля ввода");
     addFormButton.classList.toggle("grey");
     return;
   }
-
   // Create new comment
   const currentDate = new Date();
   const formattedDate = `${currentDate.getDate()}.${currentDate.getMonth() + 1}.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
@@ -38,24 +34,18 @@ function addComment() {
         <button class="like-button"></button>
       </div>
     </div>`;
-
   commentsList.appendChild(newComment);
-
   // Reset input values
   nameInput.value = "";
   commentInput.value = "";
 }
 //текст добавляеться при нажатии кнопки Enter
 addFormButton.addEventListener("click", addComment);
-
-
-
 nameInput.addEventListener("keyup", (event) => {
   if (event.key === "Enter") {
     addComment();
   }
 });
-
 commentInput.addEventListener("keyup", (event) => {
   if (event.key === "Enter") {
     addComment();
