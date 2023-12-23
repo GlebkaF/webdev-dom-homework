@@ -19,40 +19,7 @@
   <body>
     <div class="container">
       <ul id="list" class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+        <!-- Список комментов рендериться в JS -->
       </ul>
       <div class="add-form">
         <input
@@ -79,100 +46,6 @@
         Удалить последний комментарий
       </button>
     </div>
+    <script src="script.js"></script>
   </body>
-
-  <script>
-    "use strict";
-    function formatDate(date) {
-      var day = ("0" + date.getDate()).slice(-2);
-      var month = ("0" + (date.getMonth() + 1)).slice(-2);
-      var year = date.getFullYear().toString().slice(-2);
-      var hours = ("0" + date.getHours()).slice(-2);
-      var minutes = ("0" + date.getMinutes()).slice(-2);
-
-      var formattedDate =
-        day + "." + month + "." + year + " " + hours + ":" + minutes;
-
-      return formattedDate;
-    }
-
-    function updateButtonState() {
-      buttonElement.classList.remove("error__button");
-      addButton.disabled =
-        nameInputElement.value.trim() === "" ||
-        commentInputElement.value.trim() === "";
-    }
-
-    function handleKeyPress(event) {
-      if (event.key === "Enter") {
-        event.preventDefault();
-
-        buttonElement.click();
-      }
-    }
-
-    function deleteLastComment() {
-      const comments = listElement.getElementsByClassName("comment");
-
-      // Проверяем, есть ли комментарии для удаления
-      if (comments.length > 0) {
-        // Удаляем последний комментарий
-        const lastComment = comments[comments.length - 1];
-        listElement.removeChild(lastComment);
-      }
-    }
-
-    const buttonElement = document.getElementById("add-button");
-    const listElement = document.getElementById("list");
-    const nameInputElement = document.getElementById("input-name");
-    const commentInputElement = document.getElementById("comment-input");
-    const deleteLastButton = document.getElementById("delete-last-button"); // Новая кнопка
-    let date = new Date();
-    let today = formatDate(date);
-
-    document.getElementsByClassName("add-form-text");
-    nameInputElement.addEventListener("keypress", handleKeyPress);
-    commentInputElement.addEventListener("keypress", handleKeyPress);
-    buttonElement.addEventListener("keypress", handleKeyPress);
-    deleteLastButton.addEventListener("click", deleteLastComment);
-
-    buttonElement.addEventListener("click", () => {
-      nameInputElement.classList.remove("error");
-      commentInputElement.classList.remove("error");
-      buttonElement.classList.remove("error__button");
-
-      if (nameInputElement.value === "") {
-        nameInputElement.classList.add("error");
-        buttonElement.classList.add("error__button");
-        nameInputElement.addEventListener("input", updateButtonState);
-        return;
-      } else if (commentInputElement.value === "") {
-        commentInputElement.classList.add("error");
-        buttonElement.classList.add("error__button");
-        commentInputElement.addEventListener("input", updateButtonState);
-      } else {
-        const oldListElement = listElement.innerHTML;
-        listElement.innerHTML =
-          oldListElement +
-          `<li class="comment">
-            <div class="comment-header">
-              <div>${nameInputElement.value}</div>
-              <div>${today}</div>
-            </div>
-            <div class="comment-body">
-              <div class="comment-text">
-                ${commentInputElement.value}
-              </div>
-            </div>
-            <div class="comment-footer">
-              <div class="likes">
-                <span class="likes-counter">${0}</span>
-                <button class="like-button -active-like"></button>
-              </div>
-            </div>
-          </li>`;
-      }
-    });
-    console.log("It works!");
-  </script>
 </html>
