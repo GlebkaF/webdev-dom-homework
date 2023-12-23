@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="comment-list">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -44,20 +44,25 @@
           </div>
         </li>
       </ul>
-      <div class="add-form">
+      <div class="add-form" id="forma">
         <input
           type="text"
+          id="form-name"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
+          id="form-text"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="add-form-button">Написать</button>
+        </div>
+        <div class="add-form-row">
+          <button class="delete-form-button" id="delete-form-button">Удалить последний коммент</button>
         </div>
       </div>
     </div>
@@ -65,7 +70,129 @@
 
   <script>
     "use strict";
-    // Код писать здесь
-    console.log("It works!");
+
+
+    // Получаем дату и время
+
+    let date = new Date();
+    let year = date.getFullYear().toString().slice(-2); // Получаем последние две цифры года
+    let month = (date.getMonth() + 1 < 10) ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1); // Получаем месяц с ведущим нулем, если нужно
+    let day = (date.getDate() < 10) ? '0' + date.getDate() : date.getDate(); // Получаем день с ведущим нулем, если нужно
+    let hours = (date.getHours() < 10) ? '0' + date.getHours() : date.getHours(); // Получаем часы с ведущим нулем, если нужно
+    let minutes = (date.getMinutes() < 10) ? '0' + date.getMinutes() : date.getMinutes(); // Получаем минуты с ведущим нулем, если нужно
+
+    let formattedDate = day + '.' + month + '.' + year; // Склеиваем день, месяц и год в нужном формате
+    let formattedTime = hours + ':' + minutes; // Склеиваем часы и минуты в нужном формате
+
+    //console.log(formattedDate + ' в ' + formattedTime); // Выводим отформатированную дату и время
+
+
+    // Запрет на действие по умолчанию для textArea - gthеход на новую строку. Иначе функция addComment будет выполняться, 
+    // если заполнено поле с именеи и в поле комментария есть переход на новую строку
+
+    const textArea = document.getElementById('form-text').addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault(); 
+      }
+    })
+
+
+
+
+    // Получаем все необходимые элементы
+
+    const commentList = document.getElementById('comment-list');
+    const buttonAddComment = document.getElementById('add-form-button');
+    const inputName = document.getElementById('form-name');
+    const inputText = document.getElementById('form-text');
+    const formaComment = document.getElementById('forma');
+    const buttonDeleteComment = document.getElementById('delete-form-button');
+
+    // Функция разблокировки кнопки "Написать", если поле с именем не пустое
+
+    inputName.addEventListener('input', () => {
+      buttonAddComment.disabled = false;
+    })
+
+    // Функция разблокировки кнопки "Написать", если поле с текстом комментария не пустое
+
+    inputText.addEventListener('input', () => {
+      buttonAddComment.disabled = false;
+    })
+
+
+    // Функция отправки комментария
+
+    function addComment(event) {
+
+      if (event.type === 'click' || (event.type === 'keyup' && event.key === 'Enter'))  {
+
+        const oldCommentList = commentList.innerHTML;
+        if (inputName.value == '' && inputText.value !== '') {
+          inputName.classList.add('error-form');
+          inputText.classList.remove('error-form');
+          buttonAddComment.disabled = true;
+          return;} 
+          
+        else if (inputText.value == '' && inputName.value !== '') {
+          inputText.classList.add('error-form');
+          inputName.classList.remove('error-form');
+          buttonAddComment.disabled = true;
+          return;} 
+        
+        else if (inputName.value == '' && inputText.value == '') {
+          inputName.classList.add('error-form');
+          inputText.classList.add('error-form');
+          buttonAddComment.disabled = true;
+          return;
+        }
+
+        inputName.classList.remove('error-form');
+        inputText.classList.remove('error-form');
+        
+        commentList.innerHTML = oldCommentList + `
+        <li class="comment" id="comment-list">
+            <div class="comment-header">
+              <div>${inputName.value}</div>
+              <div>${formattedDate + ' ' + formattedTime}</div>
+            </div>
+            <div class="comment-body">
+              <div class="comment-text">
+                ${inputText.value}
+              </div>
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">0</span>
+                <button class="like-button"></button>
+              </div>
+            </div>
+          </li>`;
+        inputName.value = '';
+        inputText.value = '';
+      }
+    }
+
+    // buttonDeleteComment.addEventListener('click', () => {
+      
+    //   let arrList = Array.from(commentList.children)
+    //   //const lastComment = commentList.innerHTML.lastIndexOf();
+    //   console.log(arrList);
+    //   arrList = arrList.pop();
+
+    //   console.log(arrList);
+    //   console.log(commentList);
+
+    //   commentList.innerHTML = String.from(arrList);
+    //   //commentList.innerHTML = arrList;
+      
+    //   //commentList.innerHTML = commentList - lastComment;
+    // });
+
+
+    buttonAddComment.addEventListener('click', addComment);
+    formaComment.addEventListener('keyup', addComment);
+
+
   </script>
 </html>
