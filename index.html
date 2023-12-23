@@ -52,7 +52,7 @@ const commentsArray = [
     comment: "Это будет первый комментарий на этой странице",
     like: 3,
     userLike: false,
-    filling: "",
+   //  filling: "",
 	 isEdit: false,
   },
   {
@@ -140,7 +140,7 @@ const renderComments = () => {
             <div class="comment-footer">
               <div class="likes">
                 <span class="likes-counter">${item.like}</span>
-                <button data-index='${index}' class="like-button ${item.filling}"></button>
+                <button data-index='${index}' class="like-button ${item.userLike ? "-active-like" : ""}"></button>
               </div>	
             </div>
           </li>
@@ -205,7 +205,7 @@ buttonElement.addEventListener("click", () => {
     comment: commentInputElement.value,
     like: 0,
     userLike: false,
-    filling: "",
+   //  filling: "",
 	 isEdit: false, 
   });
   renderComments();
