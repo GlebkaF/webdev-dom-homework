@@ -58,7 +58,7 @@
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
-        <div class="add-form-row">
+        <div id="add-form-id" class="add-form-row">
           <button id="btnId" class="add-form-button">Написать</button>
         </div>
       </div>
@@ -70,12 +70,13 @@
     }
   </style>
   <script>
-    const {log} = console;
     "use strict"
     const buttonElement = document.getElementById("btnId");
     const listElement = document.getElementById("comment-id");
     const nameInputElement = document.getElementById("add-name-id");
     const textInputElement = document.getElementById("add-text-id");
+    const buttonPlaceElemet = document.getElementById("add-form-id");
+    const buttonDellElement = document.getElementById("btn-dell-id")
 
     let time = {
       hour: 'numeric',
@@ -127,7 +128,7 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">23</span>
+              <span class="likes-counter">0</span>
               <button class="like-button -active-like"></button>
             </div>
           </div>
@@ -135,7 +136,7 @@
 
       nameInputElement.value = "";
     });
-    
+
     console.log(nameInputElement);
   </script>
 </html>
