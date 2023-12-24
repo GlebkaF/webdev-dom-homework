@@ -78,6 +78,9 @@
       m = '0' + m;
     }
     let mth = date.getMonth() + 1;
+    if (mth >= 0 && mth <= 9) {
+      mth = '0' + mth;
+    }
     let innerDate = date.getDate() + '.' + `${mth}` + '.' + date.getFullYear().toString().substring(2) + ' ' + `${h}` + ':' + `${m}`;
     const innerName = nameInputElement.value;
     const innerCommit = commitInputElement.value;
