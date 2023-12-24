@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="comments" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -22,7 +22,7 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">3</span>
-              <button class="like-button"></button>
+              <button id="like-button" class="like-button"></button>
             </div>
           </div>
         </li>
@@ -38,7 +38,7 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">75</span>
+              <span id="likesCoun" class="likes-counter">75</span>
               <button class="like-button -active-like"></button>
             </div>
           </div>
@@ -47,17 +47,19 @@
       <div class="add-form">
         <input
           type="text"
+          id="add-form-name"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
           type="textarea"
+          id="add-form-text"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="add-button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
@@ -66,6 +68,143 @@
   <script>
     "use strict";
     // Код писать здесь
-    console.log("It works!");
+    
+    
+  const nameInput = document.getElementById("add-form-name");
+  const textInput = document.getElementById("add-form-text");
+  const commentsList = document.getElementById("comments");
+  const likesButton = document.getElementById("like-button");
+  const likesCount = document.getElementById("likes-co")
+  
+//   // likesButton.addEventListener("click",()=>{
+//     likesButton.classList.toggle('clicked');
+//         if(likesButton === like-button){
+//             btn_down.classList.remove('clicked');
+//         }else{
+//           -active-like.classList.remove('clicked');
+//         }
+// //     }
+// // )
+
+  const addButton = document.getElementById("add-button");
+
+  addButton.addEventListener('click', ()=>{
+
+            if (nameInput.value=== "" || textInput.value=== ""){
+                console.log("error")
+                return
+            }
+    // nameInput.addEventListener('input', (event) => {
+    // if(event.target.value === '') {
+    // addButton.disabled = true
+    // }
+    // })
+
+        const currentDate = new Date();
+        let dateNum = currentDate.getDate();
+        let monthNum = currentDate.getMonth()+1;
+     
+        let yearNum = currentDate.getFullYear().toString().substring(2)
+
+        let hour = currentDate.getHours();
+        if (hour < 10) { 
+	       hour = "0" + hour; 
+        }
+
+        let minute = currentDate.getMinutes(); 
+        if (minute < 10) { 
+	      minute = "0" + minute; 
+          }
+        
+        const oldCommentsList = commentsList.innerHTML;
+        commentsList.innerHTML = oldCommentsList + `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInput.value}</div>
+            <div>${dateNum}.${monthNum}.${yearNum} ${hour}:${minute}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+             ${textInput.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter"></span>
+              <button class="like-button">${likesButton.value}</button>
+            </div>
+          </div>
+        </li>`;
+        
+
+  
+        nameInput.value = ""
+        nameInput.disabled = true;
+        textInput.value = ""
+        textInput.disabled = true;
+        })
+
+// addButton.addEventListener('keyup', function (Enter) {
+  
+  // if (nameInput.value=== "" || textInput.value=== ""){
+  //               console.log("error")
+  //               return
+  //           }
+    // nameInput.addEventListener('input', (event) => {
+    // if(event.target.value === '') {
+    // addButton.disabled = true
+    // }
+    // })
+
+        // const currentDate = new Date();
+        // let dateNum = currentDate.getDate();
+
+        // let monthNum = currentDate.getMonth();
+        
+
+        // let yearNum = currentDate.getFullYear().toString().substring(2)
+
+        // let hour = currentDate.getHours();
+        // if (hour < 10) { 
+	      //  hour = "0" + hour; 
+        // }
+
+        // let minute = currentDate.getMinutes(); 
+        // if (minute < 10) { 
+	      // minute = "0" + minute; 
+        //   }
+        
+        // const oldCommentsList = commentsList.innerHTML;
+        // commentsList.innerHTML = oldCommentsList + `<li class="comment">
+        //   <div class="comment-header">
+        //     <div>${nameInput.value}</div>
+        //     <div>${dateNum}.${monthNum}.${yearNum} ${hour}:${minute}</div>
+        //   </div>
+        //   <div class="comment-body">
+        //     <div class="comment-text">
+        //      ${textInput.value}
+        //     </div>
+        //   </div>
+        //   <div class="comment-footer">
+        //     <div class="likes">
+        //       <span class="likes-counter"></span>
+        //       <button class="like-button">${likesButton.value}</button>
+        //     </div>
+        //   </div>
+        // </li>`;
+        
+
+  
+        // nameInput.value = ""
+        // nameInput.disabled = true;
+        // textInput.value = ""
+        // textInput.disabled = true;
+
+        // })
+
+
+
+
+
+
   </script>
 </html>
