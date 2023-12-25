@@ -39,8 +39,9 @@ function validationForm() {
 // Получает текущую дату и время
 function getCurrentDate() {
   const currentDate = new Date();
-  const formattedDate = `${currentDate.getDate()}.${currentDate.getMonth() + 1}.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
-  return formattedDate;
+  return `${currentDate.getDate()}.${
+    currentDate.getMonth() + 1
+  }.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
 }
 
 // Обновляет счетчик лайков в разметке
@@ -58,39 +59,53 @@ function addComment() {
     likes: 0,
     liked: false,
   };
-
   comments.push(newComment);
+  renderComments()
+  clearForm()
+  disabledBtn()
+}
 
-  const commentElement = document.createElement("li");
-  commentElement.classList.add("comment");
-  commentElement.innerHTML = `
-    <div class="comment-header">
-      <div>${newComment.name}</div>
-      <div>${getCurrentDate()}</div>
-    </div>
-    <div class="comment-body">
-      <div class="comment-text">
-        ${newComment.text}
+// Инициализация слушателей лайков
+function initEventListeners(e) {
+    let id = Number(e.target.id)
+    let s = comments.filter((item) => item.id === id ? {...item, liked: true, likes: item.likes++} : item)
+
+
+      console.log(id,s, comments)
+    // updateLikesCounter(commentId, comment.likes);
+}
+
+// Рендерит список комментариев
+function renderComments() {
+  commentsList.innerHTML = "";
+
+  comments.forEach((comment) => {
+    commentsList.innerHTML += `
+    <li class ='comment'>
+      <div class="comment-header">
+        <div>${comment.name}</div>
+        <div>${getCurrentDate()}</div>
       </div>
-    </div>
-    <div class="comment-footer">
-      <div class="likes">
-        <span class="likes-counter" id="likesCounter-${newComment.id}">${newComment.likes}</span>
-        <button class="like-button" id="likeButton-${newComment.id}" data-post-index="${newComment.id}"></button>
+      <div class="comment-body">
+        <div class="comment-text">${comment.text}</div>
       </div>
-    </div>`;
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter" id="${comment.id}">${comment.likes}</span>
+          <button class="like-button" id="${comment.id}" data-post-index="${comment.id}"></button>
+        </div>
+      </div>
+      </li>`;
 
-  commentsList.appendChild(commentElement);
-  clearForm();
-  disabledBtn();
-
-  initEventListeners(newComment.id);
+    // initEventListeners(comment.id);
+  });
+  document.querySelectorAll('.like-button').forEach((btn) => btn.addEventListener('click', initEventListeners))
 }
 
 // Удаляет последний комментарий
 function deleteComment() {
   comments.pop();
-  commentsList.lastChild.remove();
+  renderComments();
 }
 
 // Обработка клика по Enter
@@ -113,52 +128,7 @@ commentInput.addEventListener("input", (e) => {
   validationForm();
 });
 
-// Инициализация слушателей лайков
-function initEventListeners(commentId) {
-  const likeButtonElement = document.getElementById(`likeButton-${commentId}`);
-  const comment = comments.find((comment) => comment.id === commentId);
 
-  likeButtonElement.addEventListener("click", () => {
-    if (comment.liked) {
-      comment.liked = false;
-      comment.likes--;
-    } else {
-      comment.liked = true;
-      comment.likes++;
-    }
-    updateLikesCounter(commentId, comment.likes);
-    renderComments();
-    likeButtonElement.classList.toggle('-active-like');
-  });
-}
 
-// Рендерит список комментариев
-function renderComments() {
-  commentsList.innerHTML = "";
 
-  comments.forEach((comment) => {
-    const commentElement = document.createElement("li");
-    commentElement.classList.add("comment");
-    commentElement.innerHTML = `
-      <div class="comment-header">
-        <div>${comment.name}</div>
-        <div>${getCurrentDate()}</div>
-      </div>
-      <div class="comment-body">
-        <div class="comment-text">
-          ${comment.text}
-        </div>
-      </div>
-      <div class="comment-footer">
-        <div class="likes">
-          <span class="likes-counter" id="likesCounter-${comment.id}">${comment.likes}</span>
-          <button class="like-button" id="likeButton-${comment.id}" data-post-index="${comment.id}"></button>
-        </div>
-      </div>`;
 
-    commentsList.appendChild(commentElement);
-    initEventListeners(comment.id);
-  });
-}
-
-renderComments();
