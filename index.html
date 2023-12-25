@@ -67,15 +67,14 @@
 
   <script>
     "use strict";
-    // Код писать здесь
-    
-    
+     
   const nameInput = document.getElementById("add-form-name");
   const textInput = document.getElementById("add-form-text");
   const commentsList = document.getElementById("comments");
   const likesButton = document.getElementById("like-button");
   const likesCount = document.getElementById("likes-co")
   
+
 //   // likesButton.addEventListener("click",()=>{
 //     likesButton.classList.toggle('clicked');
 //         if(likesButton === like-button){
@@ -94,11 +93,7 @@
                 console.log("error")
                 return
             }
-    // nameInput.addEventListener('input', (event) => {
-    // if(event.target.value === '') {
-    // addButton.disabled = true
-    // }
-    // })
+
 
         const currentDate = new Date();
         let dateNum = currentDate.getDate();
@@ -110,7 +105,6 @@
         if (hour < 10) { 
 	       hour = "0" + hour; 
         }
-
         let minute = currentDate.getMinutes(); 
         if (minute < 10) { 
 	      minute = "0" + minute; 
@@ -135,12 +129,6 @@
           </div>
         </li>`;
         
-
-  
-        nameInput.value = ""
-        nameInput.disabled = true;
-        textInput.value = ""
-        textInput.disabled = true;
         })
 
 // addButton.addEventListener('keyup', function (Enter) {
