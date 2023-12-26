@@ -1,4 +1,3 @@
-import { sanitizeHtml } from "./areacomment.js";
 import { formatDateTime } from "./datetime.js";
 let urlApi = "https://wedev-api.sky.pro/api/v1/zenin-dmitry/comments";
 export function get() {
@@ -11,7 +10,7 @@ export function get() {
         })
 }
 
-export function post({name, text}) {
+export function post(name, text) {
     return fetch(urlApi,
         {
             method: 'POST',
