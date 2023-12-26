@@ -9,40 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments" id="comment-list">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+        
       </ul>
       <div class="add-form" id="forma">
         <input
@@ -62,7 +29,7 @@
           <button class="add-form-button" id="add-form-button">Написать</button>
         </div>
         <div class="add-form-row">
-          <button class="delete-form-button" id="delete-form-button">Удалить последний коммент</button>
+          <!--<button class="delete-form-button" id="delete-form-button">Удалить последний коммент</button>-->
         </div>
       </div>
     </div>
@@ -108,6 +75,25 @@
     const formaComment = document.getElementById('forma');
     const buttonDeleteComment = document.getElementById('delete-form-button');
 
+
+    const comments = [
+      {
+        text: 'Это будет первый комментарий на этой странице',
+        author: 'Глеб Фокин',
+        date: '12.02.22 12:18',
+        likeCount: 3,
+        myLike: true
+      },
+      {
+        text: 'Мне нравится как оформлена эта страница! ❤',
+        author: 'Варвара Н.',
+        date: '13.02.22 19:22',
+        likeCount: 75,
+        myLike: false
+      }
+    ]
+
+
     // Функция разблокировки кнопки "Написать", если поле с именем не пустое
 
     inputName.addEventListener('input', () => {
@@ -120,6 +106,61 @@
       buttonAddComment.disabled = false;
     })
 
+    // Функция добавления лайка
+
+    const ititAddLikeListener = () => {
+      const likeButtons = document.querySelectorAll(".like-button");
+
+      for (const likeButton of likeButtons) {
+        likeButton.addEventListener('click', () => {
+          let index = likeButton.dataset.islike;
+          
+          if (comments[index].myLike) {
+            comments[index].myLike = false;
+            comments[index].likeCount--;
+          } else {
+            comments[index].myLike = true;
+            comments[index].likeCount++;
+          }
+          
+          renderComments();
+        })
+      }
+    }
+
+    // Функция рендера комментариев
+
+    const renderComments = () => {
+      const CommentsHtml = comments.map((comment, index) => {
+        let isLike;
+        comment.myLike ? isLike = "-active-like" : false
+
+        return `<li class="comment">
+                  <div class="comment-header">
+                    <div>${comment.author}</div>
+                    <div>${comment.date}</div>
+                  </div>
+                  <div class="comment-body">
+                    <div class="comment-text">
+                      ${comment.text}
+                    </div>
+                  </div>
+                  <div class="comment-footer">
+                    <div class="likes">
+                      <span class="likes-counter">${comment.likeCount}</span>
+                      <button class="like-button ${isLike}" id="like-button" data-islike="${index}"></button>
+                    </div>
+                  </div>
+                </li>`;
+                
+      }).join("");
+      commentList.innerHTML = CommentsHtml;
+      ititAddLikeListener();
+    };
+
+    renderComments();
+
+
 
     // Функция отправки комментария
 
@@ -128,19 +169,19 @@
       if (event.type === 'click' || (event.type === 'keyup' && event.key === 'Enter'))  {
 
         const oldCommentList = commentList.innerHTML;
-        if (inputName.value == '' && inputText.value !== '') {
+        if (inputName.value === '' && inputText.value !== '') {
           inputName.classList.add('error-form');
           inputText.classList.remove('error-form');
           buttonAddComment.disabled = true;
           return;} 
           
-        else if (inputText.value == '' && inputName.value !== '') {
+        else if (inputText.value === '' && inputName.value !== '') {
           inputText.classList.add('error-form');
           inputName.classList.remove('error-form');
           buttonAddComment.disabled = true;
           return;} 
         
-        else if (inputName.value == '' && inputText.value == '') {
+        else if (inputName.value === '' && inputText.value === '') {
           inputName.classList.add('error-form');
           inputText.classList.add('error-form');
           buttonAddComment.disabled = true;
@@ -150,26 +191,18 @@
         inputName.classList.remove('error-form');
         inputText.classList.remove('error-form');
         
-        commentList.innerHTML = oldCommentList + `
-        <li class="comment" id="comment-list">
-            <div class="comment-header">
-              <div>${inputName.value}</div>
-              <div>${formattedDate + ' ' + formattedTime}</div>
-            </div>
-            <div class="comment-body">
-              <div class="comment-text">
-                ${inputText.value}
-              </div>
-            </div>
-            <div class="comment-footer">
-              <div class="likes">
-                <span class="likes-counter">0</span>
-                <button class="like-button"></button>
-              </div>
-            </div>
-          </li>`;
+        comments.push({
+          text: inputText.value,
+          author: inputName.value,
+          date: formattedDate + ' ' + formattedTime,
+          likeCount: 0,
+          myLike: false
+        });
+
         inputName.value = '';
         inputText.value = '';
+
+        renderComments();
       }
     }
 
