@@ -1,41 +1,53 @@
-export function getTodos() {
-    return fetchPromiseGet = fetch(
-        'https://wedev-api.sky.pro/api/v1/nastya-mikheykina/comments',
-        {
-          method: "GET"
-        }
-      );
-      fetchPromiseGet     
-        .then((response) => {
-          if (!response.ok) {
-            if (response.status === 500) {
-              /* текст ошибки */
-              throw new Error('Ошибка 500');
-            }
-          }
-          /*при успешном выполнеии запроса возвращаем данные*/
-          return response.json();
-        })
+const host = "https://wedev-api.sky.pro/api/v1/nastya-mikheykina/comments";
+const userUrl = "https://wedev-api.sky.pro/api/user/login";
+
+export let token=null;
+export const setToken = (newToken) => {
+  token = newToken;
+};
+
+
+export function getComments() {
+  return fetch(host, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }).then((responce) => {
+    if (responce.status === 401) {
+      throw new Error("Not authorised");
+    }
+    return responce.json();
+  })
 }
 
-export function postTodo( text ) {
-    return fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/nastya-mikheykina/comments', {
-    method: 'POST',
-    body: JSON.stringify({
+
+export function postComment({ text }) {
+  return fetch(host,
+  {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stribgify({
+      name: name,
       text: text,
-      name: name.value,
-      forceError: true, 
     }),
   })
-    .then((response) => {
-      if (!response.ok) {
-        if (response.status === 500) {
-          throw new Error('Ошибка 500');
-        } else if (response.status === 400) {
-          throw new Error('Ошибка 400');
-        }
-      }
+}
 
-      return response.json();
-    })
+
+export function login({ login, password}) {
+  return fetch(userUrl, {
+    method: "POST",
+    body: JSON.stribgify({
+      login,
+      password,
+    }),
+  }).then((responce) => {
+    if (responce.status === 201) {
+      console.log("это страница с комментариями и формой");
+    }
+    return responce.json();
+  });
 }
