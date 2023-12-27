@@ -1,4 +1,4 @@
-const comments = [];
+let comments = [];
 
 const addFormButton = document.querySelector(".add-form-button");
 const buttonDelete = document.querySelector(".add-form-buttondelete");
@@ -28,7 +28,7 @@ function clearForm() {
 
 // Валидирует форму
 function validationForm() {
-  if (valueInputName !== "" && valueInputText !== "") {
+  if (valueInputName.trim() !== "" && valueInputText.trim() !== "") {
     addFormButton.disabled = false;
     addFormButton.classList.remove("grey");
   } else {
@@ -39,40 +39,43 @@ function validationForm() {
 // Получает текущую дату и время
 function getCurrentDate() {
   const currentDate = new Date();
-  return `${currentDate.getDate()}.${
-    currentDate.getMonth() + 1
-  }.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+  return `${currentDate.getDate()}.${currentDate.getMonth() + 1}.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
 }
 
-// Обновляет счетчик лайков в разметке
-function updateLikesCounter(commentId, likes) {
-  const likesCounter = document.getElementById(`likesCounter-${commentId}`);
-  likesCounter.textContent = likes;
-}
+
 
 // Добавляет новый комментарий
 function addComment() {
-  const newComment = {
-    id: Date.now(),
-    name: valueInputName,
-    text: valueInputText,
-    likes: 0,
-    liked: false,
-  };
-  comments.push(newComment);
-  renderComments()
-  clearForm()
-  disabledBtn()
+  if (valueInputName.trim() !== "" && valueInputText.trim() !== "") {
+    const newComment = {
+      id: Date.now(),
+      name: valueInputName,
+      text: valueInputText,
+      likes: 0,
+      liked: false,
+    };
+    comments.push(newComment);
+    renderComments()
+    clearForm()
+    disabledBtn()
+  }
+  return
 }
 
 // Инициализация слушателей лайков
-function initEventListeners(e) {
+function likesComment(e) {
     let id = Number(e.target.id)
-    let s = comments.filter((item) => item.id === id ? {...item, liked: true, likes: item.likes++} : item)
-
-
-      console.log(id,s, comments)
-    // updateLikesCounter(commentId, comment.likes);
+    console.log(comments, id)
+    comments = comments.map((comment)=>{
+      if (comment.id === id && comment.liked === false) {
+        return {...comment, liked: !comment.liked, likes: 1}
+      } else if((comment.id === id && comment.liked === true)) {
+        return {...comment, liked: !comment.liked, likes: 0}
+      } else {
+        return comment
+      }
+    })
+    renderComments()
 }
 
 // Рендерит список комментариев
@@ -92,14 +95,14 @@ function renderComments() {
       <div class="comment-footer">
         <div class="likes">
           <span class="likes-counter" id="${comment.id}">${comment.likes}</span>
-          <button class="like-button" id="${comment.id}" data-post-index="${comment.id}"></button>
+          <button class=${comment.liked ? 'like-button_like-button-red' : 'like-button'} id="${comment.id}" data-post-index="likeBtn"></button>
         </div>
       </div>
       </li>`;
 
     // initEventListeners(comment.id);
   });
-  document.querySelectorAll('.like-button').forEach((btn) => btn.addEventListener('click', initEventListeners))
+  document.querySelectorAll('[data-post-index="likeBtn"]').forEach((btn) => btn.addEventListener('click', likesComment))
 }
 
 // Удаляет последний комментарий
@@ -131,4 +134,4 @@ commentInput.addEventListener("input", (e) => {
 
 
 
-
+ 
