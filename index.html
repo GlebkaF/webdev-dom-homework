@@ -46,7 +46,6 @@
       </ul>
       <div class="add-form">
         <input
-        id="add-form-name"
           type="text"
           class="add-form-name"
           id="name-input"
@@ -74,8 +73,8 @@
    const newDate = new Date()
 
     buttonElement.addEventListener("click", () => {
-      nameInputElement.classList.remove("error");
-      commentInputElement.classList.remove("error");
+      nameInputElement.classList.remove(`error`);
+      commentInputElement.classList.remove(`error`);
 
       if(nameInputElement.value === ""){
         nameInputElement.classList.add("error");
