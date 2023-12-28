@@ -100,7 +100,7 @@
       
       const commentsHtml = comments.map((comment, index) => {
         
-        return `<li class="comment">
+        return `<li class="comment" data-comment="${index}">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.date}</div>
@@ -121,17 +121,19 @@
 
       listElement.innerHTML = commentsHtml;
 
+      initReplyListeners();
       initLikeListeners();
-      
     };
     
-    // Обработчик клика
+    // Обработчик клика лайка
 
     const initLikeListeners = () => {
+      const likeButtons = document.querySelectorAll('.like-button');
 
-    const likeButtons= document.querySelectorAll('.like-button');
       for (const likeButton of likeButtons) {
-        likeButton.addEventListener("click", () => {
+        likeButton.addEventListener("click", (event) => {
+          event.stopPropagation();
+
           const index = likeButton.dataset.index;
 
           comments[index].likes += comments[index].isLiked ? -1 : +1;
@@ -141,6 +143,23 @@
         });
       }
     };
+
+    // Ответ на комментарий
+
+    const initReplyListeners = () => {
+      const commentElements = document.querySelectorAll('.comment');
+
+      for (const commentElement of commentElements) {
+        commentElement.addEventListener("click", () => {
+          const index = commentElement.dataset.comment;
+
+          commentInputElement.value = `>` + ` ${comments[index].text} (${comments[index].name})`
+
+        });
+      }
+
+
+    }
 
     renderComments();
     
@@ -159,7 +178,7 @@
       if (nameInputElement.value === "") {
         nameInputElement.classList.add("error");
         buttonElement.disabled = true;
-        return commentInputElement.value = "";
+        return;
       }
 
       if (commentInputElement.value === "") {
@@ -169,9 +188,9 @@
       }
 
       comments.push({
-        name: nameInputElement.value,
+        name: nameInputElement.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
         date: commentDate,
-        text: commentInputElement.value,
+        text: commentInputElement.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
         likes: likesCount,
         liked: true,
       });
@@ -180,6 +199,7 @@
 
       nameInputElement.value = "";
       commentInputElement.value = "";
+
       });
 
     // Добавление через клавишу Enter
