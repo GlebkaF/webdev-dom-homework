@@ -68,25 +68,15 @@
     const addFormUserName = document.getElementById('add-form-name');
     const addFormUserText = document.getElementById('add-form-text');
 
-    const arrComments = [
-      {
-        name: "Глеб Фокин",
-        date: "12.02.22 12:18",
-        commentText: "Это будет первый комментарий на этой странице",
-        numLike: 3,
-        liked: false,
-        replyText: ""
+    const errorTextChecking = (checkingText) => {
 
-      },
-      {
-        name: "Варвара Н.",
-        date: "13.02.22 19:22",
-        commentText: "Мне нравится как оформлена эта страница! ❤",
-        numLike: 75,
-        liked: true,
-        replyText: ""
-      },
-    ];
+      if (checkingText == undefined) {
+        return "";
+      } else {
+        return checkingText;
+      };
+
+    };
 
     const replyCommentCondition = (arrComments) => {
       if (replyBox.innerHTML == "") {
@@ -95,37 +85,43 @@
 
       } else {
       
-      return replyUserComment = `<div id="reply-box" class="add-form-reply-comments">
-        <div class="comment-header">
-          <div>${arrComments.name}</div>
-          <div>${arrComments.date}</div>
-        </div>
-          ${arrComments.commentText}
-        </div>`;
+        return replyUserComment = `<div id="reply-box" class="add-form-reply-comments">
+          <div class="comment-header">
+            <div>${arrComments.name}</div>
+            <div>${arrComments.date}</div>
+          </div>
+            ${arrComments.commentText}
+          </div>`;
 
       };
     };
 
-    const initReturnReplyBox = () => {
-      return replyBox.innerHTML = "";
-
-    };
-
-    const initDeleteReplyUserBox = () => {
+    const initDeleteReplyUserBox = (arrComments) => {
       replyBox.addEventListener("click", () => {
 
         event.stopPropagation()
 
-        initReturnReplyBox();
-        replyCommentCondition();
+        replyBox.innerHTML = "";
 
-    });
-  };
+        return replyCommentCondition(arrComments);
+      });
 
-    const initReplyClick = () => {
+    };
+
+    // const pullOutReplyUserComment = (arrComments) => {
+
+    //   if () {
+
+    //   } else {
+      
+    //     return 
+    //   };
+    // }
+    
+    const initReplyClick = (arrComments, replyUserComment) => {
     
       const useReplyClick = document.querySelectorAll(".-use-reply-comment");
-    
+
       for (const replyClick of useReplyClick) {
       
         replyClick.addEventListener("click", () => {
@@ -143,16 +139,19 @@
             ${arrComments[index].commentText}
           </div>`;
 
-          initDeleteReplyUserBox();
-          replyCommentCondition(arrComments[index]);
+          initDeleteReplyUserBox(arrComments);
 
+          replyUserComment = replyCommentCondition(arrComments[index]);
+
+          return replyUserComment
         });
-         
+
+
       };
 
     };
 
-    const initCommentsLiked = () => {
+    const initCommentsLiked = (arrComments) => {
 
       const useCommentsLike = document.querySelectorAll(".like-button");
       for (const useCommentLike of useCommentsLike) {
@@ -169,14 +168,14 @@
 
             arrComments[index].numLike++;
             arrComments[index].liked = true;
-            renderComments();
+            renderComments(arrComments);
             return;
 
           } else {
 
             arrComments[index].numLike--;
             arrComments[index].liked = false;
-            renderComments();
+            renderComments(arrComments);
             return;
 
           };
@@ -193,7 +192,7 @@
 
     };
 
-    const renderComments = () => {
+    const renderComments = (arrComments, replyUserComment) => {
 
       const commentsHtml = arrComments
       .map((comment, index) => {
@@ -227,12 +226,71 @@
 
       boxComments.innerHTML = commentsHtml;
 
-      initCommentsLiked();
-      initReplyClick();
+      initCommentsLiked(arrComments);
+      initReplyClick(arrComments, replyUserComment);
 
     };
 
-    renderComments();
+
+    const functionGetArrComments = () => {
+
+      const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/dmitriy-aleksahin/comments", {
+
+        method: "GET",
+
+      });
+
+      fetchPromise.then((response) => {
+
+        return response.json();
+
+      }).then((responseData) => {
+
+        let replyUserComment = "";
+        
+        const arrComments = responseData.comments.map((comment) => {
+
+          return {
+            name: comment.author.name,
+            date: comment.date,
+            commentText: comment.text,
+            numLike: comment.likes,
+            liked: comment.isLiked,
+            replyText: errorTextChecking(comment.replyText),
+          };
+
+        });
+
+        renderComments(arrComments, replyUserComment);
+
+      });
+    };
+
+    functionGetArrComments();
+
+    const initPostAPI = (timeForFetch, userNameForFetch, userTextForFetch) => {
+
+          
+      const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/dmitriy-aleksahin/comments", {
+
+        method: "POST",
+
+        body: JSON.stringify({
+          name: userNameForFetch,
+          date: timeForFetch,
+          text: userTextForFetch,
+          likes: 0,
+          isLiked: false,
+        }),
+
+      }).then(() => {
+
+        functionGetArrComments();
+
+      })
+
+
+    }
 
     buttonEvent.addEventListener("click", () => {
 
@@ -251,29 +309,26 @@
         return;
       };
 
-      arrComments.push({
-
-        name: addFormUserName.value.replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-        date: letTime(),
-        commentText: addFormUserText.value.replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-        numLike: 0,
-        liked: false,
-        replyText: replyUserComment
-      });
-
-      renderComments();
+      let timeForFetch = letTime();
+      let userNameForFetch = addFormUserName.value.replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;");
+      let userTextForFetch = addFormUserText.value.replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;");
+          console.log(timeForFetch)
+          console.log(userNameForFetch)
+          console.log(userTextForFetch)
+      
+      initPostAPI(timeForFetch, userNameForFetch, userTextForFetch)
 
       replyUserComment = ""
       addFormUserName.value = "";
       addFormUserText.value = "";
+      replyBox.innerHTML = "";
 
-      initReturnReplyBox();
     });
 
   </script>
