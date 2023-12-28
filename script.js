@@ -91,8 +91,14 @@ function renderComments() {
       </div>
       <div class="comment-body">
         <div class="comment-text">${comment.text}</div>
+       
       </div>
+      
       <div class="comment-footer">
+      <div class = "comment__add">
+      <button class="add-form-edit">Редактировать</button>
+    <button class="add-form-buttonsave">Сохранить</button>
+</div>
         <div class="likes">
           <span class="likes-counter" id="${comment.id}">${comment.likes}</span>
           <button class=${comment.liked ? 'like-button_like-button-red' : 'like-button'} id="${comment.id}" data-post-index="likeBtn"></button>
