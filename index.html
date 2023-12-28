@@ -82,14 +82,16 @@
         author: 'Глеб Фокин',
         date: '12.02.22 12:18',
         likeCount: 3,
-        myLike: true
+        myLike: true,
+        isEdit: false
       },
       {
         text: 'Мне нравится как оформлена эта страница! ❤',
         author: 'Варвара Н.',
         date: '13.02.22 19:22',
         likeCount: 75,
-        myLike: false
+        myLike: false,
+        isEdit: false
       }
     ]
 
@@ -128,12 +130,53 @@
       }
     }
 
+    // Функция изменения комментария - вызов по кнопке "Редактировать"
+
+    const initEditCommentListener = () => {
+      const editButtons = document.querySelectorAll(".comment-text-edit");
+
+      for (const editButton of editButtons) {
+        editButton.addEventListener('click', () => {
+          let index = editButton.dataset.edit;
+
+          comments[index].isEdit = true;
+          renderComments();
+        })
+      }
+    }
+
+      // Функция сохранения изменений в комментарии - вызов по кнопке "Сохранить"
+
+    const initSaveEditCommentListener = () => {
+      const saveButtons = document.querySelectorAll(".comment-text-save");
+
+      for (const saveButton of saveButtons) {
+        saveButton.addEventListener('click', () => {
+          let index = saveButton.dataset.edit;
+          const inputText = document.getElementById('form-text');
+
+          comments[index].text = inputText.value;
+          comments[index].isEdit = false;
+
+          renderComments();
+        })
+      }
+    }
+
+
     // Функция рендера комментариев
 
     const renderComments = () => {
       const CommentsHtml = comments.map((comment, index) => {
         let isLike;
+        let inputTextHtml;
+        let textButtonEditSave;
+        let classButtonEditSave;
         comment.myLike ? isLike = "-active-like" : false
+        
+        comment.isEdit ? textButtonEditSave = "Сохранить" : textButtonEditSave = "Редактировать"
+        comment.isEdit ? classButtonEditSave = "comment-text-save" : classButtonEditSave = "comment-text-edit"
+        comment.isEdit ? inputTextHtml = `<textarea id="form-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарй" rows="4">${comment.text}</textarea>` : inputTextHtml = `<div class="comment-text">${comment.text}</div>`;
 
         return `<li class="comment">
                   <div class="comment-header">
@@ -141,10 +184,9 @@
                     <div>${comment.date}</div>
                   </div>
                   <div class="comment-body">
-                    <div class="comment-text">
-                      ${comment.text}
-                    </div>
+                    ${inputTextHtml}
                   </div>
+                  <button data-edit="${index}" class="${classButtonEditSave}">${textButtonEditSave}</button>
                   <div class="comment-footer">
                     <div class="likes">
                       <span class="likes-counter">${comment.likeCount}</span>
@@ -156,6 +198,8 @@
       }).join("");
       commentList.innerHTML = CommentsHtml;
       ititAddLikeListener();
+      initEditCommentListener();
+      initSaveEditCommentListener();
     };
 
     renderComments();
@@ -169,6 +213,7 @@
       if (event.type === 'click' || (event.type === 'keyup' && event.key === 'Enter'))  {
 
         const oldCommentList = commentList.innerHTML;
+
         if (inputName.value === '' && inputText.value !== '') {
           inputName.classList.add('error-form');
           inputText.classList.remove('error-form');
@@ -196,7 +241,8 @@
           author: inputName.value,
           date: formattedDate + ' ' + formattedTime,
           likeCount: 0,
-          myLike: false
+          myLike: false,
+          isEdit: false
         });
 
         inputName.value = '';
