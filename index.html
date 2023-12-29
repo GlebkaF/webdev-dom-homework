@@ -44,31 +44,15 @@
 
   <script>
     "use strict";
-    // Массив с предыдущими комментариями
-
-    const comments = [
-      {
-        name: "Глеб Фокин",
-        date: "12.02.22 12:18",
-        text: "Это будет первый комментарий на этой странице",
-        likes: 3,
-        isLiked: false,
-      },
-      {
-        name: "Варвара Н.",
-        date: "13.02.22 19:22",
-        text: "Мне нравится как оформлена эта страница! ❤",
-        likes: 75,
-        isLiked: true,
-      },
-    ];
+    
+    let comments = [];
+    let likes;
 
     const buttonElement = document.getElementById('add-button');
     const listElement = document.getElementById('list');
     const nameInputElement = document.getElementById('name-input');
     const commentInputElement = document.getElementById('comment-input');
-    let likesCount = 0;
-    
+
     // Код для даты написания комментария
 
     let date = new Date();
@@ -94,11 +78,79 @@
 
     let commentDate = `${currentDate}.${currentMonth}.${currentYear()} ${currentHour}:${currentMinute}`;
 
+    // Работаем с API (принимаем)
+
+    const fetchGet = () => {
+      fetch("https://wedev-api.sky.pro/api/v1/eugene-alyoshin/comments", {
+        method: "GET",
+      }).then((response) => {
+        response.json().then((responseData) => {
+        
+          comments = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: comment.date,
+              text: comment.text,
+              likes: comment.likes,
+              isLiked: comment.isLiked,
+            };
+          });
+
+        renderComments();
+        });
+    
+      });
+    }
+
+    fetchGet();
+
+    // Обработчик клика лайка
+
+    const initLikeListeners = () => {
+
+      const likeButtons = document.querySelectorAll('.like-button');
+
+      for (const likeButton of likeButtons) {
+
+        likeButton.addEventListener("click", (event) => {
+
+          event.stopPropagation();
+
+          const index = likeButton.dataset.index;
+          comments[index].likes += comments[index].isLiked ? -1 : +1;
+          comments[index].isLiked = !comments[index].isLiked;
+
+          renderComments();
+        
+        });
+
+      }
+
+    };
+    
+    // Ответ на комментарий
+
+    const initReplyListeners = () => {
+
+      const commentElements = document.querySelectorAll('.comment');
+
+      for (const commentElement of commentElements) {
+
+        commentElement.addEventListener("click", () => {
+
+          const index = commentElement.dataset.comment;
+
+          commentInputElement.value = `>` + ` ${comments[index].text} (${comments[index].name})`
+        });
+      }
+
+    }
+
     // Функция рендера Html страницы
 
     const renderComments = () => {
       
-      const commentsHtml = comments.map((comment, index) => {
+      listElement.innerHTML = comments.map((comment, index) => {
         
         return `<li class="comment" data-comment="${index}">
           <div class="comment-header">
@@ -119,50 +171,10 @@
         </li>`;
       }).join('');
 
-      listElement.innerHTML = commentsHtml;
-
       initReplyListeners();
       initLikeListeners();
     };
-    
-    // Обработчик клика лайка
 
-    const initLikeListeners = () => {
-      const likeButtons = document.querySelectorAll('.like-button');
-
-      for (const likeButton of likeButtons) {
-        likeButton.addEventListener("click", (event) => {
-          event.stopPropagation();
-
-          const index = likeButton.dataset.index;
-
-          comments[index].likes += comments[index].isLiked ? -1 : +1;
-          comments[index].isLiked = !comments[index].isLiked;
-          
-          renderComments();
-        });
-      }
-    };
-
-    // Ответ на комментарий
-
-    const initReplyListeners = () => {
-      const commentElements = document.querySelectorAll('.comment');
-
-      for (const commentElement of commentElements) {
-        commentElement.addEventListener("click", () => {
-          const index = commentElement.dataset.comment;
-
-          commentInputElement.value = `>` + ` ${comments[index].text} (${comments[index].name})`
-
-        });
-      }
-
-
-    }
-
-    renderComments();
-    
     // Добавление нового комментария с валидацией
     
     buttonElement.addEventListener("click", () => {
@@ -187,20 +199,15 @@
         return commentInputElement.value = "";
       }
 
-      comments.push({
-        name: nameInputElement.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
-        date: commentDate,
-        text: commentInputElement.value.replaceAll("<", "&lt").replaceAll(">", "&gt"),
-        likes: likesCount,
-        liked: true,
-      });
-
       renderComments();
-
+      fetchPost();
+      fetchGet();
+      
       nameInputElement.value = "";
       commentInputElement.value = "";
+    })
 
-      });
+    renderComments();
 
     // Добавление через клавишу Enter
 
@@ -212,6 +219,26 @@
 
     
     });
+
+    renderComments();
+
+    // Работаем с API (передаем)
+
+    const fetchPost = () => {
+        
+        fetch("https://wedev-api.sky.pro/api/v1/eugene-alyoshin/comments", {
+          method: "POST",
+          body: JSON.stringify({
+            text: commentInputElement.value,
+            name: nameInputElement.value,
+            date: commentDate,
+            likes: comments.likes,
+            isLiked: comments.isLiked, 
+          }),
+        })
+  
+        fetchGet();
+      }
 
     console.log("It works!");
   </script>
