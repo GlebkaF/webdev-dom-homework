@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Проект "Комменты"</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <ul id="list" class="comments">
+        <!-- рендерится из JS -->
+      </ul>
+      <div class="add-form">
+        <input
+          id="name-input"
+          type="text"
+          class="add-form-name"
+          placeholder="Введите ваше имя"
+        />
+        <textarea
+          id="comment-input"
+          type="textarea"
+          class="add-form-text"
+          placeholder="Введите ваш коментарий"
+          rows="4"
+        ></textarea>
+        <div class="add-form-row">
+          <button id="add-button" class="add-form-button">Написать</button>
+        </div>
+      </div>
+    </div>
+  </body>
+
+  <style>
+    .error {
+      background-color: rgb(226, 94, 94);
+      border: 1px solid black;
+    }
+    .-active-like {
+      background-image: url("data:image/svg+xml,%3Csvg width='22' height='20' viewBox='0 0 22 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15.95 0C14.036 0 12.199 0.882834 11 2.26703C9.801 0.882834 7.964 0 6.05 0C2.662 0 0 2.6267 0 5.99455C0 10.1035 3.74 13.4714 9.405 18.5613L11 20L12.595 18.5613C18.26 13.4714 22 10.1035 22 5.99455C22 2.6267 19.338 0 15.95 0Z' fill='%23BCEC30'/%3E%3C/svg%3E");
+    }
+  </style>
+
+  <script>
+    "use strict";
+    
+    let comments = [];
+    let likes;
+
+    const buttonElement = document.getElementById('add-button');
+    const listElement = document.getElementById('list');
+    const nameInputElement = document.getElementById('name-input');
+    const commentInputElement = document.getElementById('comment-input');
+
+    // Код для даты написания комментария
+
+    let date = new Date();
+    let currentDate = date.getDate();
+    let currentMonth = date.getMonth() + 1;
+    let currentYear = () => {
+      return ('' + date.getFullYear()).substr(2);
+    }
+    let currentHour = date.getHours();
+    let currentMinute = date.getMinutes();
+
+    if (currentDate < 10) {
+      currentDate = "0" + currentDate;
+    }
+
+    if (currentMonth < 10) {
+      currentMonth = "0" + currentMonth;
+    }
+
+    if (currentMinute < 10) {
+      currentMinute = "0" + currentMinute;
+    }
+
+    let commentDate = `${currentDate}.${currentMonth}.${currentYear()} ${currentHour}:${currentMinute}`;
+
+    // Работаем с API (принимаем)
+
+    const fetchGet = () => {
+      fetch("https://wedev-api.sky.pro/api/v1/eugene-alyoshin/comments", {
+        method: "GET",
+      }).then((response) => {
+        response.json().then((responseData) => {
+        
+          comments = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: comment.date,
+              text: comment.text,
+              likes: comment.likes,
+              isLiked: comment.isLiked,
+            };
+          });
+
+        renderComments();
+        });
+    
+      });
+    }
+
+    fetchGet();
+
+    // Обработчик клика лайка
+
+    const initLikeListeners = () => {
+
+      const likeButtons = document.querySelectorAll('.like-button');
+
+      for (const likeButton of likeButtons) {
+
+        likeButton.addEventListener("click", (event) => {
+
+          event.stopPropagation();
+
+          const index = likeButton.dataset.index;
+          comments[index].likes += comments[index].isLiked ? -1 : +1;
+          comments[index].isLiked = !comments[index].isLiked;
+
+          renderComments();
+        
+        });
+
+      }
+
+    };
+    
+    // Ответ на комментарий
+
+    const initReplyListeners = () => {
+
+      const commentElements = document.querySelectorAll('.comment');
+
+      for (const commentElement of commentElements) {
+
+        commentElement.addEventListener("click", () => {
+
+          const index = commentElement.dataset.comment;
+
+          commentInputElement.value = `>` + ` ${comments[index].text} (${comments[index].name})`
+        });
+      }
+
+    }
+
+    // Функция рендера Html страницы
+
+    const renderComments = () => {
+      
+      listElement.innerHTML = comments.map((comment, index) => {
+        
+        return `<li class="comment" data-comment="${index}">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.text}
+             </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.likes}</span>
+              <button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index="${index}"></button>
+            </div>
+          </div>
+        </li>`;
+      }).join('');
+
+      initReplyListeners();
+      initLikeListeners();
+    };
+
+    // Добавление нового комментария с валидацией
+    
+    buttonElement.addEventListener("click", () => {
+      
+      const clearInput = () => {
+        nameInputElement.classList.remove("error");
+        commentInputElement.classList.remove("error");
+        buttonElement.disabled = false;
+      }
+      nameInputElement.addEventListener("click", clearInput);
+      commentInputElement.addEventListener("click", clearInput);
+
+      if (nameInputElement.value === "") {
+        nameInputElement.classList.add("error");
+        buttonElement.disabled = true;
+        return;
+      }
+
+      if (commentInputElement.value === "") {
+        commentInputElement.classList.add("error");
+        buttonElement.disabled = true;
+        return commentInputElement.value = "";
+      }
+
+      renderComments();
+      fetchPost();
+      fetchGet();
+      
+      nameInputElement.value = "";
+      commentInputElement.value = "";
+    })
+
+    renderComments();
+
+    // Добавление через клавишу Enter
+
+    document.addEventListener('keypress', function(e) {
+      const key = e.which || e.keyCode;
+      if (key === 13) {
+        buttonElement.click();
+      }
+
+    
+    });
+
+    renderComments();
+
+    // Работаем с API (передаем)
+
+    const fetchPost = () => {
+        
+        fetch("https://wedev-api.sky.pro/api/v1/eugene-alyoshin/comments", {
+          method: "POST",
+          body: JSON.stringify({
+            text: commentInputElement.value,
+            name: nameInputElement.value,
+            date: commentDate,
+            likes: comments.likes,
+            isLiked: comments.isLiked, 
+          }),
+        })
+  
+        fetchGet();
+      }
+
+    console.log("It works!");
+  </script>
+</html>
