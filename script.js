@@ -96,8 +96,11 @@ function renderComments() {
       
       <div class="comment-footer">
       <div class = "comment__add">
-      <button class="add-form-edit">Редактировать</button>
-    <button class="add-form-buttonsave">Сохранить</button>
+      <div class="comment-edit">
+    <textarea class="text"></textarea>
+    <button class="edit-button">Редактировать</button>
+    <button class="save-button">Сохранить</button>
+  </div>
 </div>
         <div class="likes">
           <span class="likes-counter" id="${comment.id}">${comment.likes}</span>
@@ -108,6 +111,9 @@ function renderComments() {
 
     // initEventListeners(comment.id);
   });
+  // Добавьте обработчик событий для кнопки "Редактировать"
+  
+ 
   document.querySelectorAll('[data-post-index="likeBtn"]').forEach((btn) => btn.addEventListener('click', likesComment))
 }
 
@@ -136,8 +142,35 @@ commentInput.addEventListener("input", (e) => {
   valueInputText = e.target.value;
   validationForm();
 });
+//10 задание dop
+
+let editButton = document.querySelector(".edit-button");
+let saveButton = document.querySelector(".save-button");
+let textarea = document.querySelector(".text");
+commentsList.addEventListener('click',(event)=>{
+    const commentEdit = event.target.closest('.comment-edit');
+    if(!commentEdit) return ;
+    let editButton = document.querySelector(".edit-button");
+   let saveButton = document.querySelector(".save-button");
+    let textarea = document.querySelector(".text");
+    if (event.target === editButton) {
+        // пользователь нажал кнопку "Редактировать"
+        textarea.style.display = 'block';
+        textarea.value = textEl.textContent.trim();
+        editButton.style.display = 'none';
+        saveButton.style.display = 'block';
+      } 
+      else if (event.target === saveButton) {
+        // пользователь нажал кнопку "Сохранить"
+        const newText = textarea.value.trim();
+        if (newText) {
+          textarea.style.display = 'none';
+          editButton.style.display = 'block';
+          saveButton.style.display = 'none';
+        }
+      }
+})
+   
+    
 
 
-
-
- 
