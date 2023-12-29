@@ -1,3 +1,6 @@
+import { initLikeListeners } from "./initLikelisteners.js";
+import {initAnswerComments} from "./initAnswerComments.js";
+
 // Рендер-функция отрисовывает новые комменты
 const listElement = document.getElementById('list');
 export const renderStudentsComments = ({studentsComments, fetchAndRenderComments}) => {

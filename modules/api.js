@@ -33,6 +33,5 @@ return fetch("https://wedev-api.sky.pro/api/v1/elena-bersh/comments", {
             alert("Вы ввели меньше трёх символов в поле ввода имени или комментария. Введите, пожалуйста, заново.");
             throw new Error("Имя или комментарий короче 3х символов");
         }
-
     });
 }
