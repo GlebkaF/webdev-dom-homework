@@ -87,9 +87,33 @@
         response.json().then((responseData) => {
         
           comments = responseData.comments.map((comment) => {
+
+            let time = new Date(comment.date);
+            let commentDate = time.getDate();
+            let commentMonth = time.getMonth() + 1;
+            let commentYear = () => {
+              return ('' + time.getFullYear()).substr(2);
+            }
+            let commentHours = time.getHours();
+            let commentMinutes = time.getMinutes();
+
+            if (commentDate < 10) {
+              commentDate = "0" + commentDate;
+            }
+
+            if (commentMonth < 10) {
+              commentMonth = "0" + commentMonth;
+            }
+
+            if (commentMinutes < 10) {
+              commentMinutes = "0" + commentMinutes;
+            }
+
+            let commentTime = `${commentDate}.${commentMonth}.${commentYear()} ${commentHours}:${commentMinutes}`
+
             return {
               name: comment.author.name,
-              date: comment.date,
+              date: commentTime, 
               text: comment.text,
               likes: comment.likes,
               isLiked: comment.isLiked,
