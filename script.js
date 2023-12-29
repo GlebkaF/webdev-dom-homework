@@ -90,7 +90,7 @@ function renderComments() {
     commentFooter.innerHTML = `
       <div class="likes">
         <span class="likes-counter" id="${comment.id}">${comment.likes}</span>
-        <button class="like-button ${comment.liked ? 'like-button_like-button-red' : ''}" id="${comment.id}"></button>
+        <button class="like-button ${comment.liked ? 'like-button_like-button-red' : ''}" id="${comment.id}"
       </div>
     `;
 
@@ -163,5 +163,7 @@ commentInput.addEventListener("input", (e) => {
   validationForm();
 });
     
-
+function toggleLike(button) {
+    button.classList.toggle("like-button_like-button-red");
+  }
 
