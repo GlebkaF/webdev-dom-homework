@@ -26,6 +26,7 @@
           rows="4"
         ></textarea>
         <div class="add-form-row">
+          <span id="adding" class="add-form-adding">Добавляем комментарий...</span>
           <button id="add-button" class="add-form-button">Написать</button>
         </div>
       </div>
@@ -52,77 +53,65 @@
     const listElement = document.getElementById('list');
     const nameInputElement = document.getElementById('name-input');
     const commentInputElement = document.getElementById('comment-input');
+    const addingText = document.getElementById('adding')
+
+    
 
     // Код для даты написания комментария
 
-    let date = new Date();
-    let currentDate = date.getDate();
-    let currentMonth = date.getMonth() + 1;
-    let currentYear = () => {
-      return ('' + date.getFullYear()).substr(2);
-    }
-    let currentHour = date.getHours();
-    let currentMinute = date.getMinutes();
+    const timeFunction = (date) => {
 
-    if (currentDate < 10) {
-      currentDate = "0" + currentDate;
-    }
+      let time = new Date(date)
+      let commentDate = time.getDate();
+      let commentMonth = time.getMonth() + 1;
+      let commentYear = () => {
+        return ('' + time.getFullYear()).substr(2);
+      }
+      let commentHours = time.getHours();
+      let commentMinutes = time.getMinutes();
 
-    if (currentMonth < 10) {
-      currentMonth = "0" + currentMonth;
-    }
+      if (commentDate < 10) {
+        commentDate = "0" + commentDate;
+      }
 
-    if (currentMinute < 10) {
-      currentMinute = "0" + currentMinute;
-    }
+      if (commentMonth < 10) {
+        commentMonth = "0" + commentMonth;
+      }
 
-    let commentDate = `${currentDate}.${currentMonth}.${currentYear()} ${currentHour}:${currentMinute}`;
+      if (commentMinutes < 10) {
+        commentMinutes = "0" + commentMinutes;
+      }
+
+      let commentTime = `${commentDate}.${commentMonth}.${commentYear()} ${commentHours}:${commentMinutes}`;
+      return commentTime;
+    };
 
     // Работаем с API (принимаем)
 
     const fetchGet = () => {
-      fetch("https://wedev-api.sky.pro/api/v1/eugene-alyoshin/comments", {
+
+      return fetch("https://wedev-api.sky.pro/api/v1/eugene-alyoshin/comments", {
         method: "GET",
       }).then((response) => {
-        response.json().then((responseData) => {
+        return response.json();
+      }).then((responseData) => {
         
-          comments = responseData.comments.map((comment) => {
-
-            let time = new Date(comment.date);
-            let commentDate = time.getDate();
-            let commentMonth = time.getMonth() + 1;
-            let commentYear = () => {
-              return ('' + time.getFullYear()).substr(2);
-            }
-            let commentHours = time.getHours();
-            let commentMinutes = time.getMinutes();
-
-            if (commentDate < 10) {
-              commentDate = "0" + commentDate;
-            }
-
-            if (commentMonth < 10) {
-              commentMonth = "0" + commentMonth;
-            }
-
-            if (commentMinutes < 10) {
-              commentMinutes = "0" + commentMinutes;
-            }
-
-            let commentTime = `${commentDate}.${commentMonth}.${commentYear()} ${commentHours}:${commentMinutes}`
-
-            return {
-              name: comment.author.name,
-              date: commentTime, 
-              text: comment.text,
-              likes: comment.likes,
-              isLiked: comment.isLiked,
-            };
-          });
-
-        renderComments();
+        comments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: timeFunction(comment.date), 
+            text: comment.text,
+            likes: comment.likes,
+            isLiked: comment.isLiked,
+          };
         });
-    
+
+      }).then(() => {
+        return renderComments();
+      }).then(() => {
+        buttonElement.disabled = false;
+        nameInputElement.disabled = false;
+        commentInputElement.disabled = false;
       });
     }
 
@@ -173,6 +162,8 @@
     // Функция рендера Html страницы
 
     const renderComments = () => {
+
+      addingText.style.opacity = "0";
       
       listElement.innerHTML = comments.map((comment, index) => {
         
@@ -208,6 +199,7 @@
         commentInputElement.classList.remove("error");
         buttonElement.disabled = false;
       }
+
       nameInputElement.addEventListener("click", clearInput);
       commentInputElement.addEventListener("click", clearInput);
 
@@ -223,12 +215,16 @@
         return commentInputElement.value = "";
       }
 
-      renderComments();
+      buttonElement.disabled = true;
+      nameInputElement.disabled = true;
+      commentInputElement.disabled = true;
+      addingText.style.opacity = "1";
+
       fetchPost();
-      fetchGet();
-      
+
       nameInputElement.value = "";
       commentInputElement.value = "";
+      
     })
 
     renderComments();
@@ -250,19 +246,19 @@
 
     const fetchPost = () => {
         
-        fetch("https://wedev-api.sky.pro/api/v1/eugene-alyoshin/comments", {
-          method: "POST",
-          body: JSON.stringify({
-            text: commentInputElement.value,
-            name: nameInputElement.value,
-            date: commentDate,
-            likes: comments.likes,
-            isLiked: comments.isLiked, 
-          }),
-        })
-  
-        fetchGet();
-      }
+      return fetch("https://wedev-api.sky.pro/api/v1/eugene-alyoshin/comments", {
+        method: "POST",
+        body: JSON.stringify({
+          text: commentInputElement.value,
+          name: nameInputElement.value,
+          date: timeFunction(),
+          likes: comments.likes,
+          isLiked: comments.isLiked, 
+        }),
+      }).then(() => { 
+        return fetchGet();
+      });
+    }
 
     console.log("It works!");
   </script>
