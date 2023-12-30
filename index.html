@@ -11,6 +11,7 @@
       <ul class="comments" id="list">
         <!-- Список рендерится из Js -->
       </ul>
+		
       <div class="add-form">
         <input
           type="text"
@@ -45,6 +46,7 @@ const nameInputElement = document.getElementById("name-input");
 const commentInputElement = document.getElementById("comment-input");
 const deleteButtonElement = document.getElementById("delete-button");
 
+
 const commentsArray = [
   {
     name: "Глеб Фокин",
@@ -52,7 +54,6 @@ const commentsArray = [
     comment: "Это будет первый комментарий на этой странице",
     like: 3,
     userLike: false,
-   //  filling: "",
 	 isEdit: false,
   },
   {
@@ -61,7 +62,6 @@ const commentsArray = [
     comment: "Мне нравится как оформлена эта страница! ❤️",
     like: 75,
     userLike: true,
-    filling: "-active-like",
 	 isEdit: false,
   },
 ];
@@ -69,7 +69,8 @@ const commentsArray = [
 const likes = () => {
   const likeButtons = document.querySelectorAll(".like-button");
   for (const likeButton of likeButtons) {
-    likeButton.addEventListener("click", () => {
+    likeButton.addEventListener("click", (event) => {
+		event.stopPropagation();
       const index = likeButton.dataset.index;
       const comment = commentsArray[index];
 
@@ -89,89 +90,123 @@ const likes = () => {
   }
 };
 
-
 const handleEdit = (index) => {
+	const handleEditElements = document.querySelectorAll(".editing");
+	for ( const handleEditElement of handleEditElements) {
+		handleEditElement.addEventListener("click" , (event) => {
+		event.stopPropagation();
   commentsArray[index].isEdit = true;
   renderComments();
   // Показываем кнопку "Сохранить"
   listElement.querySelectorAll('.comment')[index].querySelector('.save-button').style.display = "block";
+  renderComments();
+	});
+  }
 };
 
+
+
 const handleSave = (index) => {
+	const handleSaveElements = document.querySelectorAll(".saving");
+	for ( const handleSaveElement of handleSaveElements) {
+		handleSaveElement.addEventListener("click" , (event) => {
+			event.stopPropagation();
   const editedComment = listElement.querySelectorAll('.comment')[index].querySelector('.comment-input').value; // Получаем отредактированный комментарий
   commentsArray[index].comment = editedComment; // Обновляем комментарий в массиве
   commentsArray[index].isEdit = false; // Устанавливаем флаг редактирования в false
   renderComments(); // Перерисовываем комментарии
   // Скрываем кнопку "Сохранить" после сохранения
   listElement.querySelectorAll('.comment')[index].querySelector('.save-buttons').style.display = "none";
+		});
+  }
 };
 
 const renderComments = () => {
   const commentsHtml = commentsArray
   .map((item, index) => {
-      if (item.isEdit) {	
-	return`
-		<li class="comment">
-	<div class="comment-header">
-		<div>${item.name}</div>
-		<div>${item.date}</div>
-		<button onclick="handleSave(${index})" class="save-buttons add-form-button">Сохранить</button> 
-	</div>
-	<div class="comment-body">
+      if (item.isEdit) {  
+  return`
+    <li class="comment">
+  <div class="comment-header">
+    <div>${item.name}</div>
+    <div>${item.date}</div>
+    <button onclick="handleSave(${index})" class="save-buttons add-form-button saving">Сохранить</button> 
+  </div>
+  <div class="comment-body">
                 <div class="comment-text">
-                  <textarea class="comment-input dd-form-text add-text " rows="4">${item.comment}</textarea>
+                  <textarea data-index='${index}' class="comment-input add-form-text add-text add-text-edit" rows="4">${item.comment}</textarea>
                 </div>
               </div>
             </li>
           `;
-	} else {
+  } else {
             return `
           <li class="comment">
             <div class="comment-header">
-              <div>${item.name}</div>
+              <div class="comment-name">${item.name}</div>
               <div>${item.date}</div>     
-				  </div>
+          </div>
             <div class="comment-body">
               <div class="comment-text">
                 <span class="comment-content">${item.comment}</span>
-              </div>			  
+              </div>        
             </div>
-				<button onclick="handleSave(${index})" class="edit-button add-form-button">Редактировать</button> <!-- новая кнопка -->
+        <button onclick="handleSave(${index})" class="edit-button add-form-button">Редактировать</button> <!-- новая кнопка -->
             <div class="comment-footer">
               <div class="likes">
                 <span class="likes-counter">${item.like}</span>
                 <button data-index='${index}' class="like-button ${item.userLike ? "-active-like" : ""}"></button>
-              </div>	
+              </div>  
             </div>
           </li>
           `;
-			}
+      }
         })
         .join("");
       listElement.innerHTML = commentsHtml;
 
       likes();
-
-		const editButtons = document.querySelectorAll(".edit-button");
+		handleEdit();
+		handleSave();
+		
+    const editButtons = document.querySelectorAll(".edit-button");
       editButtons.forEach((button, index) => {
-        button.addEventListener("click", () => {
+        button.addEventListener("click", (event) => {
+      event.stopPropagation();
           commentsArray[index].isEdit = true;
           renderComments();
         });
       });
+		const commentElements = document.querySelectorAll(".comment");
+commentElements.forEach((comment) => {
+  comment.addEventListener('click', (event) => {
+	
+    // Получаем имя автора и текст комментария
+    const author = comment.querySelector('.comment-header .comment-name').textContent;
+    const text = comment.querySelector('.comment-text .comment-content').textContent;
+	 	 
+    // Формируем ответную цитату для вставки в поле комментария
+    const quotedText = `> ${text}\n\n @${author}, `; 
+    document.getElementById('comment-input').value = quotedText;
+	 renderComments();
+  }); 
 
-      const saveButtons = document.querySelectorAll(".save-button");
+  
+});
+
+    const saveButtons = document.querySelectorAll(".save-button");
       saveButtons.forEach((button, index) => {
-        button.addEventListener("click", () => {
+        button.addEventListener("click", (event) => {
+      event.stopPropagation();
           const editedComment = button.parentNode.nextElementSibling.children[0].children[0].value;
           commentsArray[index].comment = editedComment;
           commentsArray[index].isEdit = false;
-          renderComments(); 
+			 renderComments();
         });
       });
-    };
+};
 
-    renderComments();
+renderComments();
 
 buttonElement.disabled = true;
 nameInputElement.addEventListener("input", () => {
@@ -190,8 +225,8 @@ buttonElement.addEventListener("click", () => {
     commentInputElement.classList.add("error");
     return;
   }
-
-  const currentDate = new Date();
+ renderComments();
+const currentDate = new Date();
   const day = currentDate.getDate().toString().padStart(2, "0");
   const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
   const year = currentDate.getFullYear().toString().slice(-2);
@@ -200,34 +235,40 @@ buttonElement.addEventListener("click", () => {
   const formattedDate = `${day}.${month}.${year} ${hours}:${minutes}`;
 
   commentsArray.push({
-    name: nameInputElement.value,
+    name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
     date: formattedDate,
-    comment: commentInputElement.value,
+    comment: commentInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
     like: 0,
     userLike: false,
-   //  filling: "",
-	 isEdit: false, 
+   isEdit: false,
   });
-  renderComments();
+
 
   nameInputElement.value = "";
   commentInputElement.value = "";
   buttonElement.disabled = true;
+  nameInputElement.classList.remove("error");
+  commentInputElement.classList.remove("error");
+
+  renderComments();
 });
+
 
 deleteButtonElement.addEventListener("click", () => {
   const comments = listElement.querySelectorAll(".comment");
+ 
   if (comments.length > 0) {
     listElement.removeChild(comments[comments.length - 1]);
-	}
+  }
       commentsArray.pop(); // Удаляем последний комментарий из массива
     });
-
+renderComments();
     document.addEventListener("keyup", (event) => {
       if (event.key === "Enter") {
         buttonElement.click();
       }
     });
-  </script>
- 
+
+</script>
+
 </html>
