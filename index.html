@@ -171,7 +171,7 @@
 
           initDeleteReplyUserBox(arrComments);
           replyCommentCondition(arrComments[index]);
-          console.log(replyUserComment)
+          // console.log(replyUserComment)
           return replyUserComment
         });
 
@@ -317,6 +317,12 @@ const functionGetArrComments = () => {
 
       }).then((arrCommentsData) => {
 
+        if (arrCommentsData.status === 500 ) {
+
+          throw new Error('Ошибка сервера')
+          
+        };
+        
         // после получения массива с данными коментариев нужно 
         // чтобы создалось физуальное представление коментариев на странице нашего сайта.
         // на этом моменте создались коментарии на нашей странице 
@@ -334,7 +340,22 @@ const functionGetArrComments = () => {
         
         loadingСompleteFunctionButton();
 
-      })
+      }).catch((error) => {
+
+          if (error.message === "Ошибка сервера") {
+
+            alert("Сервер сломался, попробуй позже");
+            
+          } else {
+
+            alert("Что-то пошло не так, попробуй позже");
+
+          };
+ 
+        console.log(error);
+        loadingСompleteFunctionButton();
+
+      });
 
     };
 
@@ -345,29 +366,36 @@ const functionGetArrComments = () => {
 // Это блок Функции Отправки на Сайт написанного пользователем комментария_____________________________________
 // |                                                                                                          |
 // V                                                                                                          V
-const initPostAPI = (userNameForFetch, timeForFetch, userTextForFetch, userReplyText) => {
+// const initPostAPI = (userNameForFetch, timeForFetch, userTextForFetch, userReplyText) => {
   
-  loadingStartFunctionButton();
+//   loadingStartFunctionButton();
 
-      const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/dmitriy-aleksahin/comments", {
+//       const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/dmitriy-aleksahin/comments", {
 
-        method: "POST",
+//         method: "POST",
 
-        body: JSON.stringify({
-          name: userNameForFetch,
-          date: timeForFetch,
-          text: userTextForFetch,
-          likes: 0,
-          isLiked: false,
-          replyText: errorTextChecking(userReplyText),
-        }),
+//         body: JSON.stringify({
+//           name: userNameForFetch,
+//           date: timeForFetch,
+//           text: userTextForFetch,
+//           likes: 0,
+//           isLiked: false,
+//           replyText: errorTextChecking(userReplyText),
+//           forceError: true,
+//         }),
     
-      }).then(() => {
+//       }).then(() => {
 
-        functionGetArrComments();
+//         functionGetArrComments();
 
-      });
-    };
+//       }).catch((error) => {
+ 
+//         loadingСompleteFunctionButton();
+//         console.log(error);
+//         console.log("Ошибка");
+
+//       });
+//     };
 
 // |                                                                                                          |
 // Это блок Функции Отправки на Сайт написанного пользователем комментария____________________________________|
@@ -405,18 +433,72 @@ const buttonEventClick = () => {
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;");
     let userReplyText = errorTextChecking(replyUserComment);
-        console.log(timeForFetch)
-        console.log(userNameForFetch)
-        console.log(userTextForFetch)
-        console.log(userReplyText)
+        // console.log(timeForFetch)
+        // console.log(userNameForFetch)
+        // console.log(userTextForFetch)
+        // console.log(userReplyText)
+    loadingStartFunctionButton();
 
-    initPostAPI(userNameForFetch, timeForFetch, userTextForFetch, userReplyText)
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/dmitriy-aleksahin/comments", {
+
+      method: "POST",
+
+      body: JSON.stringify({
+
+        name: userNameForFetch,
+        date: timeForFetch,
+        text: userTextForFetch,
+        likes: 0,
+        isLiked: false,
+        replyText: userReplyText,
+        forceError: true,
+
+      }),
+
+    }).then((response) => {
+      if(response.status === 400 ) {
+        throw new Error('Неверный запрос')
+      }
+      if (response.status === 500 ) {
+        throw new Error('Ошибка сервера')
+      };
+      replyUserComment = "";
+      addFormUserName.value = "";
+      addFormUserText.value = "";
+      replyBox.innerHTML = "";
+
+    }).then(() => {
+
+      functionGetArrComments();
+      loadingСompleteFunctionButton();
+
+    }).catch((error) => {
+
+      if (error.message === "Ошибка сервера") {
+
+        alert("Сервер сломался, попробуй позже");
+
+      } else if (error.message === "Неверный запрос") {
+
+        alert("Имя и комментарий должны быть не короче 3х символов");
+
+      } else {
+
+        alert("Что-то пошло не так, попробуй позже");
+
+      };
+ 
+      console.log(error);
+      loadingСompleteFunctionButton();
+
+    });
+  
+    // initPostAPI(userNameForFetch, timeForFetch, userTextForFetch, userReplyText)
 
 
-    replyUserComment = "";
-    addFormUserName.value = "";
-    addFormUserText.value = "";
-    replyBox.innerHTML = "";
+
+    
+
 
   });
 };
