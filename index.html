@@ -42,21 +42,9 @@
 
   <script>
 
-    const letTime = () => {
-
-      let date = new Date();
-
-      let day = date.getDate();
-      let month = date.getMonth() + 1;
-      let year = date.getFullYear() - 2000;
-      let hours = date.getHours();
-      let minutes = date.getMinutes();
-    
-      let formattedDate = day + "." + month + "." + year + " " + hours + ":" + minutes;
-
-      return formattedDate;
-    };
-
+// Это блок Присваивания имён элементам________________________________________________________________________
+// |                                                                                                          |
+// V                                                                                                          V
     const buttonEvent = document.getElementById("add-form-button");
     const boxComments = document.getElementById('comments');
 
@@ -68,9 +56,35 @@
     const addFormUserName = document.getElementById('add-form-name');
     const addFormUserText = document.getElementById('add-form-text');
 
+// |                                                                                                          |
+// Это блок Присваивания имён элементам_______________________________________________________________________|
+
+
+// Это блок для Вспомогательных функций________________________________________________________________________
+// |                                                                                                          |
+// V                                                                                                          V
+
+      //  (1) __ Функция Эстетичного создания и отображения времени           
+    const letTime = () => {
+    
+      let date = new Date();
+      
+      let day = date.getDate();
+      let month = date.getMonth() + 1;
+      let year = date.getFullYear() - 2000;
+      let hours = date.getHours();
+      let minutes = date.getMinutes();
+      
+      let formattedDate = day + "." + month + "." + year + " " + hours + ":" + minutes;
+      
+      return formattedDate;
+    };
+
+      // (2) __ Функция Исправления ошибки при получении отсутствующего текста
+
     const errorTextChecking = (checkingText) => {
 
-      if (checkingText == undefined) {
+      if (checkingText === undefined) {
         return "";
       } else {
         return checkingText;
@@ -78,8 +92,32 @@
 
     };
 
+      // (3) __ Функция Загруски страницы
+
+    const loadingStartFunctionButton = () => {
+
+      buttonEvent.disabled = true;
+      buttonEvent.textContent = "Загрузка данных, подождите"
+
+    }
+    const loadingСompleteFunctionButton = () => {
+
+      buttonEvent.disabled = false;
+      buttonEvent.textContent = "Написать"
+
+    }
+
+
+// |                                                                                                          |
+// Это блок для Вспомогательных функций_______________________________________________________________________|
+
+
+// Это блок копируемого комментария____________________________________________________________________________
+// |                                                                                                          |
+// V                                                                                                          V
+
     const replyCommentCondition = (arrComments) => {
-      if (replyBox.innerHTML == "") {
+      if (replyBox.innerHTML == "" || replyBox.innerHTML == undefined) {
 
         return replyUserComment = "";
 
@@ -91,9 +129,11 @@
             <div>${arrComments.date}</div>
           </div>
             ${arrComments.commentText}
-          </div>`;
+          </div>`;   
 
       };
+      
+      return replyUserComment;
     };
 
     const initDeleteReplyUserBox = (arrComments) => {
@@ -107,18 +147,8 @@
       });
 
     };
-
-    // const pullOutReplyUserComment = (arrComments) => {
-
-    //   if () {
-
-    //   } else {
-      
-    //     return 
-    //   };
-    // }
     
-    const initReplyClick = (arrComments, replyUserComment) => {
+    const initReplyClick = (arrComments) => {
     
       const useReplyClick = document.querySelectorAll(".-use-reply-comment");
 
@@ -140,9 +170,8 @@
           </div>`;
 
           initDeleteReplyUserBox(arrComments);
-
-          replyUserComment = replyCommentCondition(arrComments[index]);
-
+          replyCommentCondition(arrComments[index]);
+          console.log(replyUserComment)
           return replyUserComment
         });
 
@@ -150,8 +179,15 @@
       };
 
     };
+// |                                                                                                          |
+// Это блок Копируемого Комментария___________________________________________________________________________|
 
-    const initCommentsLiked = (arrComments) => {
+
+
+// Это блок Использования Лайка________________________________________________________________________________
+// |                                                                                                          |
+// V                                                                                                          V
+const initCommentsLiked = (arrComments) => {
 
       const useCommentsLike = document.querySelectorAll(".like-button");
       for (const useCommentLike of useCommentsLike) {
@@ -169,6 +205,9 @@
             arrComments[index].numLike++;
             arrComments[index].liked = true;
             renderComments(arrComments);
+            initCommentsLiked(arrComments);
+            initReplyClick(arrComments);
+            buttonEventClick()
             return;
 
           } else {
@@ -176,6 +215,9 @@
             arrComments[index].numLike--;
             arrComments[index].liked = false;
             renderComments(arrComments);
+            initCommentsLiked(arrComments);
+            initReplyClick(arrComments);
+            buttonEventClick()
             return;
 
           };
@@ -191,11 +233,16 @@
       };
 
     };
+// |                                                                                                          |
+// Это блок использования Лайка_______________________________________________________________________________|
 
-    const renderComments = (arrComments, replyUserComment) => {
+// Это блок Получения Визуалоного Блока комментариев в HTML____________________________________________________
+// |                                                                                                          |
+// V                                                                                                          V
+const renderComments = (arrComments) => {
 
-      const commentsHtml = arrComments
-      .map((comment, index) => {
+      const commentsHtml = arrComments.map((comment, index) => {
+
         return `<li data-index="${index}" id="comment" class="comment -use-reply-comment">
 
             <div data-index="${index}" id="comment-header" class="comment-header -use-reply-comment">
@@ -221,18 +268,25 @@
             </div>
 
           </li>`;
-      })
-      .join("");
+
+      }).join("");
 
       boxComments.innerHTML = commentsHtml;
 
-      initCommentsLiked(arrComments);
-      initReplyClick(arrComments, replyUserComment);
 
     };
 
+// |                                                                                                          |
+// Это блок Получения Визуалоного Блока комментариев в HTML___________________________________________________|
 
-    const functionGetArrComments = () => {
+
+
+// Это блок Получения Массива Комментариев и дальнейшее работа с ним___________________________________________
+// |                                                                                                          |
+// V                                                                                                          V
+const functionGetArrComments = () => {
+
+
 
       const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/dmitriy-aleksahin/comments", {
 
@@ -247,8 +301,8 @@
       }).then((responseData) => {
 
         let replyUserComment = "";
-        
-        const arrComments = responseData.comments.map((comment) => {
+
+        return arrComments = responseData.comments.map((comment) => {
 
           return {
             name: comment.author.name,
@@ -258,19 +312,43 @@
             liked: comment.isLiked,
             replyText: errorTextChecking(comment.replyText),
           };
-
         });
 
-        renderComments(arrComments, replyUserComment);
 
-      });
+      }).then((arrCommentsData) => {
+
+        // после получения массива с данными коментариев нужно 
+        // чтобы создалось физуальное представление коментариев на странице нашего сайта.
+        // на этом моменте создались коментарии на нашей странице 
+        // с возможностью! поставить "лайк" и "откоментировать" чужой коментарий в своём. 
+        // теперь нам нужно
+        replyUserComment = "";
+
+        renderComments(arrCommentsData)
+        initCommentsLiked(arrCommentsData);
+        initReplyClick(arrCommentsData);
+        buttonEventClick()
+
+        
+      }).then(() => {
+        
+        loadingСompleteFunctionButton();
+
+      })
+
     };
 
-    functionGetArrComments();
+// |                                                                                                          |
+// Это блок Получения Массива Комментариев и дальнейшее работа с ним__________________________________________|
 
-    const initPostAPI = (timeForFetch, userNameForFetch, userTextForFetch) => {
+ 
+// Это блок Функции Отправки на Сайт написанного пользователем комментария_____________________________________
+// |                                                                                                          |
+// V                                                                                                          V
+const initPostAPI = (userNameForFetch, timeForFetch, userTextForFetch, userReplyText) => {
+  
+  loadingStartFunctionButton();
 
-          
       const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/dmitriy-aleksahin/comments", {
 
         method: "POST",
@@ -281,55 +359,94 @@
           text: userTextForFetch,
           likes: 0,
           isLiked: false,
+          replyText: errorTextChecking(userReplyText),
         }),
-
+    
       }).then(() => {
 
         functionGetArrComments();
 
-      })
+      });
+    };
+
+// |                                                                                                          |
+// Это блок Функции Отправки на Сайт написанного пользователем комментария____________________________________|
 
 
-    }
+// Это блок Создания элементов для массива комментариев________________________________________________________
+// |                                                                                                          |
+// V                                                                                                          V
+const buttonEventClick = () => {
 
-    buttonEvent.addEventListener("click", () => {
+  buttonEvent.addEventListener("click", () => {
 
-      event.stopPropagation()
+    event.stopPropagation()
 
-      addFormUserName.classList.remove("error");
-      addFormUserText.classList.remove("error");
+    addFormUserName.classList.remove("error");
+    addFormUserText.classList.remove("error");
 
-      if (addFormUserName.value === "") {
-        addFormUserName.classList.add("error");
-        return;
-      };
+    if (addFormUserName.value === "") {
+      addFormUserName.classList.add("error");
+      return;
+    };
 
-      if (addFormUserText.value === "") {
-        addFormUserText.classList.add("error");
-        return;
-      };
+    if (addFormUserText.value === "") {
+      addFormUserText.classList.add("error");
+      return;
+    };
 
-      let timeForFetch = letTime();
-      let userNameForFetch = addFormUserName.value.replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;");
-      let userTextForFetch = addFormUserText.value.replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;");
-          console.log(timeForFetch)
-          console.log(userNameForFetch)
-          console.log(userTextForFetch)
-      
-      initPostAPI(timeForFetch, userNameForFetch, userTextForFetch)
+    let timeForFetch = letTime();
+    let userNameForFetch = addFormUserName.value.replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    let userTextForFetch = addFormUserText.value.replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    let userReplyText = errorTextChecking(replyUserComment);
+        console.log(timeForFetch)
+        console.log(userNameForFetch)
+        console.log(userTextForFetch)
+        console.log(userReplyText)
 
-      replyUserComment = ""
-      addFormUserName.value = "";
-      addFormUserText.value = "";
-      replyBox.innerHTML = "";
+    initPostAPI(userNameForFetch, timeForFetch, userTextForFetch, userReplyText)
 
-    });
+
+    replyUserComment = "";
+    addFormUserName.value = "";
+    addFormUserText.value = "";
+    replyBox.innerHTML = "";
+
+  });
+};
+// |                                                                                                          |
+// Это блок Создания элементов для массива комментариев_______________________________________________________|
+
+
+
+// Это блок для Внешнего запуска кода__________________________________________________________________________
+// |                                                                                                          |
+// V                                                                                                          V
+    loadingStartFunctionButton(); 
+    functionGetArrComments();
+
+// |                                                                                                          |
+// Это блок для Внешнего запуска кода_________________________________________________________________________|
+
+    
+
+// Это блок для копирования Или коментариев к работе___________________________________________________________
+// |                                                                                                          |
+// V                                                                                                          V
+
+// Копируемый текст теперь исправно высылается, я доволен!
+// Недоволен, что сайт запрещает добавлять в него доп сведения.
+
+
+// |                                                                                                          |
+// Это блок для копирования Или коментариев к работе__________________________________________________________|
+
 
   </script>
 
