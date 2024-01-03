@@ -40,8 +40,10 @@ function addComment() {
   if (valueInputName.trim() !== "" && valueInputText.trim() !== "") {
     const newComment = {
       id: Date.now(),
+      date: getCurrentDate(),
       name: valueInputName,
       text: valueInputText,
+      isEdit: false,
       likes: 0,
       liked: false,
     };
@@ -52,13 +54,19 @@ function addComment() {
   }
 }
 
+function editComment(e){
+   let id = Number(e.target.id)
+   comments = comments.map((comment) => comment.id === id ? {...comment, isEdit: !comment.isEdit} : comment)
+   renderComments()
+}
+
 function likesComment(e) {
   let id = parseInt(e.target.id);
   comments = comments.map((comment) => {
     if (comment.id === id && comment.liked === false) {
-      return { ...comment, liked: !comment.liked, likes: 1 };
+      return {...comment, liked: !comment.liked, likes: 1 };
     } else if (comment.id === id && comment.liked === true) {
-      return { ...comment, liked: !comment.liked, likes: 0 };
+      return {...comment, liked: !comment.liked, likes: 0 };
     } else {
       return comment;
     }
@@ -66,79 +74,44 @@ function likesComment(e) {
   renderComments();
 }
 
+// Рендерит список комментариев
 function renderComments() {
   commentsList.innerHTML = "";
+
   comments.forEach((comment) => {
-    const commentElement = document.createElement("li");
-    commentElement.classList.add("comment");
-
-    const commentHeader = document.createElement("div");
-    commentHeader.classList.add("comment-header");
-    commentHeader.innerHTML = `
-      <div>${comment.name}</div>
-      <div>${getCurrentDate()}</div>
-    `;
-
-    const commentBody = document.createElement("div");
-    commentBody.classList.add("comment-body");
-    commentBody.innerHTML = `
-      <div class="comment-text">${comment.text}</div>
-    `;
-
-    const commentFooter = document.createElement("div");
-    commentFooter.classList.add("comment-footer");
-    commentFooter.innerHTML = `
-      <div class="likes">
-        <span class="likes-counter" id="${comment.id}">${comment.likes}</span>
-        <button class="like-button ${comment.liked ? 'like-button_like-button-red' : ''}" id="${comment.id}"
+    commentsList.innerHTML += `
+    <li class ='comment'>
+      <div class="comment-header">
+       ${comment.isEdit 
+              ? `<input value=${comment.name} type='text'></input>` 
+              : `<div>${comment.name}</div>`
+        }
+        <div>${comment.date}</div>
       </div>
-    `;
-
-    const editButton = document.createElement("button");
-    editButton.classList.add("edit-button");
-    editButton.textContent = "Редактировать";
-
-    const saveButton = document.createElement("button");
-    saveButton.classList.add("save-button");
-    saveButton.textContent = "Сохранить";
-
-    const textarea = document.createElement("textarea");
-    textarea.classList.add("text");
-    textarea.style.display = "none";
-
-    editButton.addEventListener("click", () => {
-      textarea.style.display = "block";
-      textarea.value = comment.text;
-      editButton.style.display = "none";
-      saveButton.style.display = "block";
-    });
-
-    saveButton.addEventListener("click", () => {
-      const newText = textarea.value.trim();
-      if (newText) {
-        comment.text = newText;
-        textarea.style.display = "none";
-        editButton.style.display = "block";
-        saveButton.style.display = "none";
-        renderComments();
-      }
-    });
-
-    commentFooter.appendChild(editButton);
-    commentFooter.appendChild(saveButton);
-    commentFooter.appendChild(textarea);
-
-    commentElement.appendChild(commentHeader);
-    commentElement.appendChild(commentBody);
-    commentElement.appendChild(commentFooter);
-
-    commentsList.appendChild(commentElement);
+      <div class="comment-body">
+          ${comment.isEdit 
+                ? `<textarea>${comment.text}</textarea>` 
+                : `<div class="comment-text">${comment.text}</div>`
+          }
+      </div>
+      <div class="comment-footer">
+        <div class ="btn">
+           <button class="btn-edit" id="${comment.id}">Редактировать</button>
+           ${comment.isEdit 
+                 ? `<button class="btn-save">Сохранить</button>` 
+                 : ''}
+        </div>
+        <div class="likes">
+          <span class="likes-counter" id="${comment.id}">${comment.likes}</span>
+          <button class=${comment.liked ? 'like-button_like-button-red' : 'like-button'} id="${comment.id}" data-post-index="likeBtn"></button>
+        </div>
+      </div>
+      </li>`;
   });
-
-  document.querySelectorAll(".like-button").forEach((btn) =>
-    btn.addEventListener("click", likesComment)
-  );
+  document.querySelectorAll('.btn-edit').forEach((btnEdit) => btnEdit.addEventListener('click', editComment))
+  document.querySelectorAll('[data-post-index="likeBtn"]').forEach((btn) => btn.addEventListener('click', likesComment))
 }
+
 
 function deleteComment() {
   comments.pop();
@@ -163,7 +136,5 @@ commentInput.addEventListener("input", (e) => {
   validationForm();
 });
     
-function toggleLike(button) {
-    button.classList.toggle("like-button_like-button-red");
-  }
+
 
