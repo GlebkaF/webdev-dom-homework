@@ -54,12 +54,25 @@ function addComment() {
   }
 }
 
-function editComment(e){
-   let id = Number(e.target.id)
-   comments = comments.map((comment) => comment.id === id ? {...comment, isEdit: !comment.isEdit} : comment)
-   renderComments()
+function editComment(e) {
+  let id = Number(e.target.id);
+  comments = comments.map((comment) =>
+    comment.id === id ? { ...comment, isEdit: !comment.isEdit } : comment
+  );
+  renderComments();
 }
 
+function saveComment(e) {
+  let id = Number(e.target.id);
+  let updatedName = document.querySelector(`input[id="${id}"]`).value;
+  let updatedText = document.querySelector(`textarea[id="${id}"]`).value;
+  comments = comments.map((comment) =>
+    comment.id === id
+      ? { ...comment, name: updatedName, text: updatedText, isEdit: !comment.isEdit }
+      : comment
+  );
+  renderComments();
+}
 function likesComment(e) {
   let id = parseInt(e.target.id);
   comments = comments.map((comment) => {
@@ -77,20 +90,19 @@ function likesComment(e) {
 // Рендерит список комментариев
 function renderComments() {
   commentsList.innerHTML = "";
-
   comments.forEach((comment) => {
     commentsList.innerHTML += `
     <li class ='comment'>
       <div class="comment-header">
        ${comment.isEdit 
-              ? `<input value=${comment.name} type='text'></input>` 
+              ? `<input value="${comment.name}" type='text' id="${comment.id}"></input>` 
               : `<div>${comment.name}</div>`
         }
         <div>${comment.date}</div>
       </div>
       <div class="comment-body">
           ${comment.isEdit 
-                ? `<textarea>${comment.text}</textarea>` 
+                ? `<textarea id="${comment.id}">${comment.text}</textarea>` 
                 : `<div class="comment-text">${comment.text}</div>`
           }
       </div>
@@ -98,7 +110,7 @@ function renderComments() {
         <div class ="btn">
            <button class="btn-edit" id="${comment.id}">Редактировать</button>
            ${comment.isEdit 
-                 ? `<button class="btn-save">Сохранить</button>` 
+                 ? `<button class="btn-save" id="${comment.id}">Сохранить</button>` 
                  : ''}
         </div>
         <div class="likes">
@@ -108,10 +120,10 @@ function renderComments() {
       </div>
       </li>`;
   });
-  document.querySelectorAll('.btn-edit').forEach((btnEdit) => btnEdit.addEventListener('click', editComment))
-  document.querySelectorAll('[data-post-index="likeBtn"]').forEach((btn) => btn.addEventListener('click', likesComment))
+  document.querySelectorAll('.btn-edit').forEach((btnEdit) => btnEdit.addEventListener('click', editComment));
+  document.querySelectorAll('.btn-save').forEach((btnSave) => btnSave.addEventListener('click', saveComment));
+  document.querySelectorAll('[data-post-index="likeBtn"]').forEach((btn) => btn.addEventListener('click', likesComment));
 }
-
 
 function deleteComment() {
   comments.pop();
