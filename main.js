@@ -6,13 +6,13 @@ import { checkInputs } from './checkInputs.js';
 
 
 const buttonElement = document.getElementById('add-form-button');
-const listElement = document.getElementById('list');
+
 const addForm = document.querySelector('.add-form');
 const addFormName = document.getElementById('add-form-name');
-const addFormText = document.getElementById('add-form-text');
+export const addFormText = document.getElementById('add-form-text');
 const loaderText = document.querySelector('.loader-text');
 
-let comments = [];
+export let comments = [];
 const getComments = () => {
   getCommentsAPI().then((responseData) => {
 	  const appComments = responseData.comments.map((comment) => {

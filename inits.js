@@ -1,3 +1,6 @@
+import { comments, addFormText } from "./main.js";
+import { renderComments } from "./renderComments.js";
+
 export const initCommentsListeners = () => {
   const commentsElements = document.querySelectorAll(".comment");
   for (const commentElement of commentsElements) {

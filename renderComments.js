@@ -1,3 +1,8 @@
+import { comments } from "./main.js";
+import { initCommentsListeners, initLikeButtonsListeners } from "./inits.js";
+
+const listElement = document.getElementById('list');
+
 export const renderComments = () => {
  const commentsHtml = comments
   .map((comment, index) => {
