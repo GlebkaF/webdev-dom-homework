@@ -148,6 +148,3 @@ commentInput.addEventListener("input", (e) => {
   validationForm();
 });
 
-    
-
-
