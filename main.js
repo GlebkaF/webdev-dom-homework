@@ -27,6 +27,15 @@ const getComments = () => {
     comments = appComments;
     renderComments({comments});
   })
+  .catch((error) => {
+    if (error.status === 500) {
+      getComments();
+      return;
+    } else {
+      alert("Похоже, пропал интернет. Попробуй позже");
+    }
+    console.log(error);
+    })
 };
 getComments();
 
@@ -58,6 +67,14 @@ buttonElement.addEventListener("click", () => {
   addForm.classList.add("hidden");
   loaderText.classList.remove("hidden");
   postCommentAPI({name: sanitizeHtml(addFormName.value), text: sanitizeHtml(addFormText.value)})
+  .then((response) => {
+      if (response.status === 400) {
+      throw new Error("Плохой запрос");
+      }
+      if (response.status === 500) {
+      throw new Error("Сервер сломался");
+      }
+    })
   .then(() => {
   return getComments();
   })
@@ -65,8 +82,23 @@ buttonElement.addEventListener("click", () => {
   buttonElement.disabled = false;
   addForm.classList.remove("hidden");
   loaderText.classList.add("hidden");
-  });
   addFormName.value = '';
   addFormText.value = '';
+  })
+  .catch((error) => {
+      buttonElement.disabled = false;
+      addForm.classList.remove("hidden");
+      loaderText.classList.add("hidden");
+    if (error.message === "Сервер сломался") {
+      postCommentAPI({name: sanitizeHtml(addFormName.value), text: sanitizeHtml(addFormText.value)});
+      return;
+    } else if (error.message === "Плохой запрос") {
+      alert("Имя или текст не должны быть короче 3 символов, попробуй снова");
+      return;
+    } else {
+      alert("Что-то пошло не так, проверьте интернет");
+    }
+    console.log(error);
+  });
 });
     

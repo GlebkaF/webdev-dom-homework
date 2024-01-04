@@ -1,4 +1,5 @@
 export function getCommentsAPI() {
+    
     return fetch("https://wedev-api.sky.pro/api/v1/:anastasiya-grebneva/comments", {
     method: "GET"
   })
