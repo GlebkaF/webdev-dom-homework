@@ -9,40 +9,7 @@
   <body>
     <div class="container">
       <ul id="list" class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+        <!-- Список рендерится из js -->
       </ul>
       <div class="add-form">
         <input id="name-input"
@@ -77,15 +44,77 @@
     const listElement = document.getElementById('list');
     const nameInputElement = document.getElementById('name-input');
     const commentInputElement = document.getElementById('comment-input');
-    
+    const users = [
+      {
+        name: 'Глеб Фокин',
+        date: '12.02.22 12:18',
+        comment: 'Это будет первый комментарий на этой странице',
+        likeCounter: 3,
+        isLiked: false
+
+      },
+      {
+        name: 'Варвара Н.',
+        date: '13.02.22 19:22',
+        comment: 'Мне нравится как оформлена эта страница! ❤',
+        likeCounter: 75,
+        isLiked: false
+
+      }
+    ];
+
     function getDate() {
-        let currentDate = new Date();
+      let currentDate = new Date();
         let month = currentDate.getMonth() + 1;
         let hour = currentDate.getHours();
         let minute = currentDate.getMinutes();
         let second = currentDate.getSeconds();
+        if (hour < 10) hour = "0" + hour;
+        if (minute < 10) minute = "0" + minute;
+        if (second < 10) second = "0" + second;
+        if (month < 10) month = "0" + month;
         currentDate = currentDate.getDate() + "." + month + "." + String(currentDate.getFullYear()).split('').slice(2).join('') + " " + hour + ":" + minute;
         return currentDate;
+    };
+
+    
+    const renderUsers  = () => {
+      const usersHtml = users.map((user, index) => {
+        return ` <li class="comment">
+              <div class="comment-header">
+                <div>${user.name}</div>
+                <div>${user.date}</div>
+              </div>
+              <div class="comment-body">
+                <div class="comment-text">
+                  ${user.comment}
+                </div>
+              </div>
+              <div class="comment-footer">
+                <div class="likes">
+                  <span class="likes-counter">${user.likeCounter}</span>
+                  <button  class="like-button ${user.isLiked?'-active-like':''}" data-index=${index}></button>
+                </div>
+              </div>
+            </li>`;
+      }).join('');
+
+      listElement.innerHTML = usersHtml;
+
+      nameInputElement.addEventListener('input', (event) => {
+      if(event.target.value === '') {
+        buttonElement.disabled = true
+      }
+      });
+
+      commentInputElement.addEventListener('input', (event) => {
+      if(event.target.value === '') {
+        buttonElement.disabled = true
+      }
+      });
+
+      initLikeListener();
+
     };
 
     buttonElement.addEventListener('click', () => {
@@ -93,47 +122,42 @@
         commentInputElement.classList.remove('error');
         buttonElement.classList.remove('button-error');
       
-      if (nameInputElement.value === '' && commentInputElement.value === '') {
+      if (nameInputElement.value === '' || commentInputElement.value === '') {
         nameInputElement.classList.add('error');
         commentInputElement.classList.add('error');
         buttonElement.classList.add('button-error');
         return;
       }
-      const oldListHtml = listElement.innerHTML;
-      listElement.innerHTML = oldListHtml + 
-      ` <li class="comment">
-              <div class="comment-header">
-                <div>${nameInputElement.value}</div>
-                <div>${getDate()}</div>
-              </div>
-              <div class="comment-body">
-                <div class="comment-text">
-                  ${commentInputElement.value}
-                </div>
-              </div>
-              <div class="comment-footer">
-                <div class="likes">
-                  <span class="likes-counter">0</span>
-                  <button class="like-button"></button>
-                </div>
-              </div>
-            </li>`;
-      nameInputElement.value = '';
-      commentInputElement.value = '';    
-    });
-      
-    nameInputElement.addEventListener('input', (event) => {
-      if(event.target.value === '') {
-        buttonElement.disabled = true
-      }
-    });
+    
+    users.push({
+      name: nameInputElement.value,
+      date: getDate(),
+      comment: commentInputElement.value,
+      likeCounter: 0,
+      isLiked: false
+    });  
 
-    commentInputElement.addEventListener('input', (event) => {
-      if(event.target.value === '') {
-        buttonElement.disabled = true
-      }
-    });
+    nameInputElement.value = '';
+    commentInputElement.value = ''; 
 
-    console.log("It works!");
+    renderUsers();
+
+  });  
+    
+    const initLikeListener = () => {
+      const likeButtons = document.querySelectorAll('.like-button');
+
+      for(const likeButton of likeButtons) {
+        likeButton.addEventListener('click', () => {
+          const index = likeButton.dataset.index;
+          users[index].isLiked = !users[index].isLiked;
+          users[index].likeCounter += users[index].isLiked? +1 : -1;
+
+          renderUsers();
+        })
+      }
+    }
+
+    renderUsers();
   </script>
 </html>
