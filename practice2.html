@@ -1,0 +1,59 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Книжки</title>
+  </head>
+
+  <body>
+    <div id="books">Заглушка</div>
+    <button id="show-button">Посмотреть книги</button>
+  </body>
+
+  <script>
+    const books = [
+      {
+        title: "Искусство программирования",
+        price: 1300,
+      },
+      {
+        title: "Тихо!",
+        price: 700,
+      },
+      {
+        title: "Ночной дозор",
+        price: 980,
+      },
+    ];
+
+    let totalPrice = 0;
+    for (const book of books) {
+      totalPrice += book.price;
+    }
+
+    /* Допишите код: используйте цикл for...of, чтобы посчитать общую стоимость книг в массиве books */
+
+    // Должен выводить в консоль 2980
+    console.log(totalPrice)
+
+    /* Допишите код: используйте методы массива map + join, чтобы получить строчку, список всех книг через запятую */
+    const booksList = books.map(book => book.title).join(', ');
+    
+    // Должен выводить строку "Искусство программирования, Тихо!, Ночной дозор"
+    console.log(booksList)
+
+    /*
+     * Допишите код:
+     * Используйте document.getElementById, innerHtml и addEventListener,
+     * чтобы при клике на кнопку текст «Заглушка» на странице изменялся на
+     * «Искусство программирования, Тихо!, Ночной дозор = 2980 рублей»
+     * */
+    const buttonElement = document.getElementById('show-button');
+    
+    buttonElement.addEventListener('click', () => {
+      const booksElement = document.getElementById('books');
+      booksElement.innerHTML = `${booksList} = ${totalPrice} рублей`;
+    
+    })
+    
+  </script>
+</html>
