@@ -8,51 +8,17 @@
   <body>
     <div class="container">
       <ul id="list" class="comments">
-       <--Страница загружается-->
+        <--Страница загружается-->
       </ul>
-      <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          id="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          id="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button id="add-form-button" class="add-form-button">Написать</button>
-        </div>
+      
+      <div class="auth-button-box">
+        <button id="auth-button" class="auth-button">
+          Для добавления комментария <u>авторизуйтесь</u>
+        </button>
       </div>
-      <p class="loader-text hidden">Загрузка комментария..</p>
+      <div id="app"></div>
     </div>
-    <style>
-      .error {
-        background-color: rgb(134, 26, 26);
-      }
-      .-active-like{
-        color: chartreuse;
-      }
-      .comment-text{
-        white-space: pre-line;
-        word-break: break-word;
-      }
-      .quote {
-        color:cornsilk;
-        border: 1px solid cornsilk ;
-        border-radius: 20px;
-        padding: 20px;
-      }
-      .hidden{
-        display: none;
-      }
-    </style>
-<script type="module" src="./main.js"></script>  
-</body>
-
-  
+    
+    <script type="module" src="./main.js"></script>
+  </body>
 </html>

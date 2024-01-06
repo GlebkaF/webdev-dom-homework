@@ -1,5 +1,7 @@
-import { comments, addFormText } from "./main.js";
+import { comments } from "./main.js";
+import { addFormText } from "./add-form.js";
 import { renderComments } from "./renderComments.js";
+
 
 export const initCommentsListeners = () => {
   const commentsElements = document.querySelectorAll(".comment");
@@ -24,3 +26,6 @@ export const initLikeButtonsListeners = () => {
       });
     }
 }; 
+
+
+
