@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="list" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -45,19 +45,19 @@
         </li>
       </ul>
       <div class="add-form">
-        <input
+        <input id="add-input"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
-        <textarea
+        <textarea id="add-textarea"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="add-button">Написать</button>
         </div>
       </div>
     </div>
@@ -65,7 +65,50 @@
 
   <script>
     "use strict";
-    // Код писать здесь
+    const currentDate = new Date().toLocaleString().slice(0,-3);
+    const buttonElement = document.getElementById ('add-button');
+    const listElement = document.getElementById ('list');
+    const inputElement = document.getElementById ('add-input');
+    const textareaElement = document.getElementById ('add-textarea');
+    
+    buttonElement.addEventListener('click', () => {
+      const oldlistElement = listElement.innerHTML;
+      if (inputElement.value === '' && textareaElement.value === '') {
+        inputElement.style.backgroundColor = 'red';
+        textareaElement.style.backgroundColor = 'red';
+          return;
+        } else if (inputElement.value === '') {
+          inputElement.style.backgroundColor = 'red';
+          return;
+        } else if (textareaElement.value === '') {
+          textareaElement.style.backgroundColor = 'red';
+          return;
+        } else {
+          inputElement.style.backgroundColor = ''
+          textareaElement.style.backgroundColor = ''
+          listElement.innerHTML = oldlistElement + `<li class="comment">
+              <div class="comment-header">
+                <div>
+                  ${inputElement.value}
+                </div>
+                <div>
+                  ${currentDate}
+                </div>
+              </div>
+              <div class="comment-body">
+                ${textareaElement.value}
+              </div>
+              <div class="comment-footer">
+                <div class="likes">
+                  <span class="likes-counter">0</span>
+                  <button class="like-button"></button>
+                </div>
+              </div>
+            </li>`;
+        inputElement.value = '';
+        textareaElement.value = '';
+      };
+    })
     console.log("It works!");
   </script>
 </html>
