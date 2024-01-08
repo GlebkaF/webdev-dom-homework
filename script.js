@@ -117,7 +117,8 @@ const initReplyButton = () => {
     commentElement.addEventListener("click", () => {
       const indexComment = commentElement.dataset.index;
       const curruntComment = comments[indexComment].comment;
-      commentInputElement.value = curruntComment;
+      const curruntName = comments[indexComment].name;
+      commentInputElement.value = `${curruntComment}\n${curruntName} - `;
     });
   }
 };
