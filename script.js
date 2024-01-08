@@ -158,18 +158,14 @@ const handleEditClick = (index) => {
 };
 
 const handleSaveClick = (index) => {
-  // Update the comment text with the edited text
   const textareaElement = listElement.querySelector(".comment textarea");
   const editedText = textareaElement.value;
 
-  // Update the comments array
   comments[index].comment = editedText;
 
-  // Render the comments to reflect the changes
   renderComments();
 };
 
-// Add event listeners for edit and save buttons
 editButtonElements.forEach((editButton, index) => {
   editButton.addEventListener("click", () => handleEditClick(index));
 });
