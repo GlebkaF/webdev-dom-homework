@@ -45,8 +45,8 @@
     const initEventListerner = () => {
       const likeButtonElements = document.querySelectorAll('.like-button');
       for (const likeButtonElement of likeButtonElements) { //for..of.. - перебирание элементов объекта
-        likeButtonElement.addEventListener ('click', event => {
-          event.stopPropagation();
+        likeButtonElement.addEventListener ('click', event => {  // event - объект события, хранящий в себе инфу о нём.
+          event.stopPropagation();  //свойство объекта event. Прерывает процесс всплытия события по DOM.
           const index = likeButtonElement.dataset.index; //data-index для обращения к конкретному комментарию, а не ко всем
           if (comments[index].isLike === false) {
             comments[index].like++;
@@ -59,6 +59,19 @@
         });
       }
     }
+
+    const commentEventListener = () => {
+    const commentElements = document.querySelectorAll('.comment');
+      for(const comment of commentElements) {
+        comment.addEventListener('click', () => {
+          const index = comment.dataset.index;
+          const text = `QUOTE_BEGIN >${comments[index].comment}
+          
+  ${comments[index].name}, QUOTE_END`;
+          textareaElement.value = text.replaceAll('QUOTE_BEGIN', '').replaceAll('QUOTE_END', '');
+        })
+      }
+    } 
 
     // 3. Создаём массив для <ul>, чтобы зарендерить список через js 
     const comments = [
@@ -81,7 +94,7 @@
    // 2. рендерим массив для его отображения в виде строк в html (методы map, join)
    const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
-      return `<li class="comment">
+      return `<li class="comment" data-index ="${index}">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.time}</div>
@@ -105,6 +118,7 @@
     }).join('');
     listElement.innerHTML = commentsHtml; //innerHTML - свойство для отображения элементов в браузере
     initEventListerner();
+    commentEventListener();
    };
    renderComments();
 
@@ -136,9 +150,17 @@
 
           //Добавление нового комментария через свойство массива push.
           comments.push({
-            name: inputElement.value,
+            name: inputElement.value
+              .replaceAll('<', '&lt;')
+              .replaceAll('>', '&gt;')
+              .replaceAll('QUOTE_BEGIN', '<div class = "quote-text">')
+              .replaceAll('QUOTE_END', '</div>'),
             time: newDate,
-            comment: textareaElement.value,
+            comment: textareaElement.value
+              .replaceAll('<', '&lt;')
+              .replaceAll('>', '&gt;')
+              .replaceAll('QUOTE_BEGIN', '')
+              .replaceAll('QUOTE_END', ''),
             like: 0,
             isLike: false,
           })
