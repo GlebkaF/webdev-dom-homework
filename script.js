@@ -1,7 +1,9 @@
 let comments = [];
+
 const addFormButton = document.querySelector(".add-form-button");
 const buttonDelete = document.querySelector(".add-form-buttondelete");
 const commentsList = document.querySelector(".comments");
+const userComment = document.querySelector(".comms");
 const nameInput = document.querySelector(".add-form-name");
 const commentInput = document.querySelector(".add-form-text");
 const form = document.querySelector(".add-form");
@@ -94,7 +96,12 @@ function likesComment(e) {
   });
   renderComments();
 }
-
+function userComments{
+  userComment.addEventListener("click",()=>{
+    userComment.innerHTML +=`<div class='quote'>QUOTE_BEGIN ${comment.text} QUOTE_END</div>`
+  })
+  renderComments();
+}
 // Рендерит список комментариев
 function renderComments() {
   commentsList.innerHTML = "";
@@ -119,7 +126,8 @@ function renderComments() {
           }
       </div>
       <div class="comment-footer">
-      <div class='quote'><p>комментровать</p></div>
+      <div class='comms'><p>комментровать</p></div>
+     
         <div class ="btn">
            ${comment.isEdit 
                  ? `<button class="btn-save" id="${comment.id}">Сохранить</button>` 
@@ -134,12 +142,13 @@ function renderComments() {
       </div>
      
       </li>`;
-
-
+      `<div class='quote'>QUOTE_BEGIN ${comment.text} QUOTE_END</div>`
+      
   });
   document.querySelectorAll('.btn-edit').forEach((btnEdit) => btnEdit.addEventListener('click', editComment));
   document.querySelectorAll('.btn-save').forEach((btnSave) => btnSave.addEventListener('click', saveComment));
   document.querySelectorAll('[data-post-index="likeBtn"]').forEach((btn) => btn.addEventListener('click', likesComment));
+
 }
 
 function deleteComment() {
@@ -164,4 +173,5 @@ commentInput.addEventListener("input", (e) => {
   valueInputText = e.target.value;
   validationForm();
 });
+
 
