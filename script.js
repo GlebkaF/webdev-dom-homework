@@ -110,7 +110,6 @@ const initLikeButton = () => {
     });
   }
 };
-
 const initReplyButton = () => {
   const commentsElements = document.querySelectorAll(".comment");
   for (const commentElement of commentsElements) {
@@ -183,11 +182,17 @@ const handleSaveClick = (index) => {
 };
 
 editButtonElements.forEach((editButton, index) => {
-  editButton.addEventListener("click", () => handleEditClick(index));
+  editButton.addEventListener("click", (event) => {
+    event.stopPropagation();
+    handleEditClick(index);
+  });
 });
 
 saveButtonElements.forEach((saveButton, index) => {
-  saveButton.addEventListener("click", () => handleSaveClick(index));
+  saveButton.addEventListener("click", (event) => {
+    event.stopPropagation();
+    handleSaveClick(index);
+  });
 });
 
 buttonElement.addEventListener("click", () => {
