@@ -31,6 +31,14 @@ function validationForm() {
   }
 }
 
+function getSafeHtmlString (inputStr) {
+    return inputStr
+              .replaceAll("&", "&amp;")
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;")
+              .replaceAll('"', "&quot;");
+}
+
 function getCurrentDate() {
   const currentDate = new Date();
   return `${currentDate.getDate()}.${currentDate.getMonth() + 1}.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
@@ -41,8 +49,8 @@ function addComment() {
     const newComment = {
       id: Date.now(),
       date: getCurrentDate(),
-      name: valueInputName,
-      text: valueInputText,
+      name: getSafeHtmlString(valueInputName),
+      text: getSafeHtmlString(valueInputText),
       isEdit: false,
       likes: 0,
       liked: false,
@@ -68,7 +76,7 @@ function saveComment(e) {
   let updatedText = document.querySelector(`textarea[id="${id}"]`).value;
   comments = comments.map((comment) =>
     comment.id === id
-      ? { ...comment, name: updatedName, text: updatedText, isEdit: !comment.isEdit }
+      ? { ...comment, name: getSafeHtmlString(updatedName), text: getSafeHtmlString(updatedText), isEdit: !comment.isEdit }
       : comment
   );
   renderComments();
@@ -90,6 +98,7 @@ function likesComment(e) {
 // Рендерит список комментариев
 function renderComments() {
   commentsList.innerHTML = "";
+
   comments.forEach((comment) => {
     commentsList.innerHTML += `
     <li class ='comment'>
@@ -98,27 +107,35 @@ function renderComments() {
               ? `<input value="${comment.name}" type='text' id="${comment.id}"></input>` 
               : `<div>${comment.name}</div>`
         }
+       
         <div>${comment.date}</div>
       </div>
+     
       <div class="comment-body">
           ${comment.isEdit 
                 ? `<textarea id="${comment.id}">${comment.text}</textarea>` 
                 : `<div class="comment-text">${comment.text}</div>`
+               
           }
       </div>
       <div class="comment-footer">
+      <div class='quote'><p>комментровать</p></div>
         <div class ="btn">
-           <button class="btn-edit" id="${comment.id}">Редактировать</button>
            ${comment.isEdit 
                  ? `<button class="btn-save" id="${comment.id}">Сохранить</button>` 
-                 : ''}
+                 : `<button class="btn-edit" id="${comment.id}">Редактировать</button>`
+                }
+              
         </div>
         <div class="likes">
           <span class="likes-counter" id="${comment.id}">${comment.likes}</span>
           <button class=${comment.liked ? 'like-button_like-button-red' : 'like-button'} id="${comment.id}" data-post-index="likeBtn"></button>
         </div>
       </div>
+     
       </li>`;
+
+
   });
   document.querySelectorAll('.btn-edit').forEach((btnEdit) => btnEdit.addEventListener('click', editComment));
   document.querySelectorAll('.btn-save').forEach((btnSave) => btnSave.addEventListener('click', saveComment));
@@ -147,5 +164,4 @@ commentInput.addEventListener("input", (e) => {
   valueInputText = e.target.value;
   validationForm();
 });
-
 
