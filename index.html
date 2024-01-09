@@ -50,7 +50,6 @@
       text: "Это будет первый комментарий на этой странице",
       likesCounter: 3,
       itLikes: false,
-      class: "like-button",
 
     },
     {
@@ -59,7 +58,6 @@
       text: "Мне нравится как оформлена эта страница! ❤",
       likesCounter: 75,
       itLikes: false,
-      class: "like-button",
 
     },
   ]
@@ -73,11 +71,9 @@
         const index = likeButtonElement.dataset.index;
         console.log(index);
         if (comments[index]['itLikes'] === false) {
-          comments[index]['class'] === "-active-like";
           comments[index]['likesCounter'] += 1;
           comments[index]['itLikes'] = true;
         } else {
-          comments[index]['class'] === "like-button";
           comments[index]['likesCounter'] -= 1;
           comments[index]['itLikes'] = false;
         }
@@ -103,7 +99,8 @@
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter" >${comment.likesCounter}</span>
-            <button class="${comment.class}" data-index = "${index}"></button>
+            
+            <button class="like-button ${(comments[index]['itLikes']) ? "-active-like" : ""}" data-index = "${index}"></button>
           </div>
         </div>
       </li>`;
@@ -134,7 +131,7 @@
       text: commentInputElement.value,
       likesCounter: 0,
       itLikes: false,
-      class: "like-button",
+
     });
 
     renderComments();
