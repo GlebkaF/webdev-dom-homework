@@ -9,40 +9,7 @@
   <body>
     <div class="container">
       <ul id="list" class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+        <!-- рендерим через js -->
       </ul>
       <div class="add-form">
         <input id="add-input"
@@ -65,12 +32,83 @@
 
   <script>
     "use strict";
-    const currentDate = new Date().toLocaleString().slice(0,-3);
+    // 1. Находим объекты в документе с помощью методов document.getElementById (по id объекта)
+    // и document.querySelectorAll (по классу объекта)
     const buttonElement = document.getElementById ('add-button');
     const listElement = document.getElementById ('list');
     const inputElement = document.getElementById ('add-input');
     const textareaElement = document.getElementById ('add-textarea');
-    
+    const likesElements = document.querySelectorAll('.likes');
+    const likeButtonElements = document.querySelectorAll('.like-button');
+
+    // 2. Навешиваем отработчик на кнопку лайка
+    const initEventListerner = () => {
+      const likeButtonElements = document.querySelectorAll('.like-button');
+      for (const likeButtonElement of likeButtonElements) { //for..of.. - перебирание элементов объекта
+        likeButtonElement.addEventListener ('click', event => {
+          event.stopPropagation();
+          const index = likeButtonElement.dataset.index; //data-index для обращения к конкретному комментарию, а не ко всем
+          if (comments[index].isLike === false) {
+            comments[index].like++;
+            comments[index].isLike = true;
+        } else {
+            comments[index].like--;
+            comments[index].isLike = false;
+          };
+          renderComments(); //дублируем функцию рендеринга для обновления разметки после клика на кнопку
+        });
+      }
+    }
+
+    // 3. Создаём массив для <ul>, чтобы зарендерить список через js 
+    const comments = [
+      {
+        name: "Глеб Фокин",
+        time: "12.02.22 12:18",
+        comment: "Это будет первый комментарий на этой странице",
+        like: 3,
+        isLike: false,
+      },
+      {
+        name: "Варвара Н.",
+        time: "13.02.22 19:22",
+        comment: "Мне нравится как оформлена эта страница! ❤",
+        like: 75,
+        isLike: false,  
+      }
+    ]
+
+   // 2. рендерим массив для его отображения в виде строк в html (методы map, join)
+   const renderComments = () => {
+    const commentsHtml = comments.map((comment, index) => {
+      return `<li class="comment">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.time}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.comment}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">
+                <div>${comment.like}</div>
+              </span>
+              <button class="${comment.isLike ? 'like-button -active-like' : 'like-button'}" data-index ="${index}">
+              <div></div>
+              </button>
+            </div>
+          </div>
+        </li>`
+    }).join('');
+    listElement.innerHTML = commentsHtml; //innerHTML - свойство для отображения элементов в браузере
+    initEventListerner();
+   };
+   renderComments();
+
+    // 3. Навешиваем отработчик на кнопку ввода имени и комментария, настраиваем валидацию.
     buttonElement.addEventListener('click', () => {
       const oldlistElement = listElement.innerHTML;
       if (inputElement.value === '' && textareaElement.value === '') {
@@ -86,28 +124,29 @@
         } else {
           inputElement.style.backgroundColor = ''
           textareaElement.style.backgroundColor = ''
-          listElement.innerHTML = oldlistElement + `<li class="comment">
-              <div class="comment-header">
-                <div>
-                  ${inputElement.value}
-                </div>
-                <div>
-                  ${currentDate}
-                </div>
-              </div>
-              <div class="comment-body">
-                ${textareaElement.value}
-              </div>
-              <div class="comment-footer">
-                <div class="likes">
-                  <span class="likes-counter">0</span>
-                  <button class="like-button"></button>
-                </div>
-              </div>
-            </li>`;
+
+          let addTimeElement = new Date();
+          let year = addTimeElement.getFullYear().toString().slice(-2);
+          let minutes = addTimeElement.getMinutes() < 10 ? '0' + addTimeElement.getMinutes() : addTimeElement.getMinutes();
+          let hours = addTimeElement.getHours() < 10 ? '0' + addTimeElement.getHours() : addTimeElement.getHours();
+          let date = addTimeElement.getDate() < 10 ? '0' + addTimeElement.getDate() : addTimeElement.getDate();
+          let month = addTimeElement.getMonth() < 10 ? '0' + addTimeElement.getMonth() : addTimeElement.getMonth();
+          let newDate = `${date}.${month.slice(-1) + 1}.${year} 
+          ${hours}:${minutes}`;
+
+          //Добавление нового комментария через свойство массива push.
+          comments.push({
+            name: inputElement.value,
+            time: newDate,
+            comment: textareaElement.value,
+            like: 0,
+            isLike: false,
+          })
+          
         inputElement.value = '';
         textareaElement.value = '';
-      };
+        };
+        renderComments(); //дублируем функцию рендеринга для обновления разметки после клика на кнопку
     })
     console.log("It works!");
   </script>
