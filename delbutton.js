@@ -1,4 +1,6 @@
 
+/* import { commentList } from "./main"; */
+/* import { renderComments } from "./render"; */
 export const initDeleteButtonsListeners = () => {
     const deleteButtonsElements = document.querySelectorAll(".delete-form-button");
     for (const deleteButtonsElement of deleteButtonsElements) {

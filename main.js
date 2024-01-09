@@ -4,19 +4,18 @@ import { get, post } from "./api.js";
 import { initDeleteButtonsListeners } from "./delbutton.js";
 import { hideSeeAddComment } from "./hide.js";
 import { renderComments } from "./render.js";
-// Поиск в именах id 
-const buttonElement = document.getElementById("add-form-button");
+import { renderLoginForm } from "./render.js";
 
-const textAreaElement = document.getElementById("add-text");
-const inputElement = document.getElementById("add-name");
+
+/* const textAreaElement = document.getElementById("add-text"); */
+/* const inputElement = document.getElementById("add-name");
 const outerFormElement = document.getElementById("add-form");
-
-const addFormElement = document.querySelector(".add-form");
+const addFormElement = document.querySelector(".add-form"); */
 
 
 //Прелоадер страницы
 
-let commentList = [];
+export let commentList = [];
 // запрос коммента с api
 const getComments = () => {
     get().then((responseData) => {
@@ -30,24 +29,26 @@ const getComments = () => {
                 text: comment.text,
             };
         });
-        let hidePreload = document.querySelector(".preload").style.display = "none";
+        /* let hidePreload = document.querySelector(".preload").style.display = "none"; */
         console.log(commentList);
-        hideSeeAddComment();
-        renderComments(commentList);
+        /*  hideSeeAddComment(); */
+
+        renderComments();
+        addComment()
+        const buttonElement = document.getElementById("add-form-button");
         buttonElement.disabled = false;
     });
 };
 
-hideSeeAddComment();
+/* hideSeeAddComment(); */
 
 //1.commentList необходимо получать из хранилища коммент через API (метод GET). Строки 47-62
 getComments();
 
 //Активность кнопки удаления
-initDeleteButtonsListeners();
+
 
 //Отрисовка формы существующих комментов
-/* renderComments(); */
 //Активность кнопки лайк
 export const initLikeListener = () => {
     const buttonLike = document.querySelectorAll(".like-button");
@@ -57,13 +58,14 @@ export const initLikeListener = () => {
             const index = iteratorLike.dataset.index;
             commentList[index].likes += commentList[index].isLiked ? -1 : +1;
             commentList[index].isLiked = !commentList[index].isLiked;
-            renderComments(commentList); //перерисовываем форму для лайков с счетчиком
+            renderComments(); //перерисовываем форму для лайков с счетчиком
         });
     }
 };
 
 //Цитата коммента
 export const quoteCommets = () => {
+    const textAreaElement = document.getElementById("add-text");
     const commentElements = document.querySelectorAll(".comment");
     for (const commentElement of commentElements) {
         commentElement.addEventListener("click", () => {
@@ -74,20 +76,26 @@ export const quoteCommets = () => {
         })
     }
 }
+initDeleteButtonsListeners();
+//функция добавления коммента
+export function addComment() {
+    const textAreaElement = document.getElementById("add-text");
+    const inputElement = document.getElementById("add-name");
+    const buttonElement = document.getElementById("add-form-button");
+    console.log(inputElement, textAreaElement)
+    buttonElement.addEventListener("click", () => {
+        inputElement.classList.remove("error");
+        if (inputElement.value === "") {
+            inputElement.classList.add("error");
+        }
+        if (textAreaElement.value === "") {
+            textAreaElement.classList.add("error");
+            return;
+        };
+        //2.13. надпись о загрузке коммента и блокировка кнопки "добавить".
 
-//Кнопка с добавлением коммента
-buttonElement.addEventListener("click", () => {
-    inputElement.classList.remove("error");
-    if (inputElement.value === "") {
-        inputElement.classList.add("error");
-    }
-    if (textAreaElement.value === "") {
-        textAreaElement.classList.add("error");
-        return;
-    };
-    //2.13. надпись о загрузке коммента и блокировка кнопки "добавить".
+        /*   const fetchPromise = () => { */
 
-    const fetchPromise = () => {
         post(inputElement.value,
             textAreaElement.value)
             .then((response) => {
@@ -114,9 +122,12 @@ buttonElement.addEventListener("click", () => {
                     alert("Отуствует соединение к интеренету");
                 };
                 buttonElement.disabled = false;
-                renderComments(commentList);
+                renderComments();
+
             });
-    };
-    fetchPromise();
-    renderComments(commentList);
-})
+        /*     }; */
+        /*  fetchPromise(); */
+        /*  renderComments(); */
+
+    })
+}

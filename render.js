@@ -1,17 +1,19 @@
-import {initLikeListener} from "./main.js";
+import { initLikeListener } from "./main.js";
 import { initDeleteButtonsListeners } from "./delbutton.js";
-import { quoteCommets } from "./main.js";
-const listElement = document.getElementById("comments");
+import { quoteCommets, commentList } from "./main.js";
+import { token } from "./api.js";
+const buttonLoginElement = document.getElementById("login-form-button");
 
-export const renderComments = (commentList) => {
+export const renderComments = () => {
+    const appHtml = document.getElementById("app");
     const commentsHtml = commentList.map((comment, index) => {
         return `<li class="comment" data-index="${index}">
           <div class="comment-header">
-            <div id="add-name">${comment.name}</div>
+            <div id="">${comment.name}</div>
             <div>${comment.date}</div>
           </div>
           <div class="comment-body">
-            <div id="add-text" class="comment-text" >
+            <div id="" class="comment-text" >
               ${comment.text}
             </div>
           </div>
@@ -24,8 +26,54 @@ export const renderComments = (commentList) => {
           </div>
         </li>`;
     }).join("");
-    listElement.innerHTML = commentsHtml;
+
+    const contentHtml = () => {
+        if (!token) return buttonLoginElement;
+        return `<ul id="comments" class="comments">${commentsHtml}</ul>
+    <div id="add-form" class="add-form">
+      <input id="add-name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+      <textarea id="add-text" type="textArea" class="add-form-text" placeholder="Введите ваш коментарий"
+        rows="4"></textarea>
+      <div class="add-form-row">
+        <button id="add-form-button" class="add-form-button">Написать</button>
+      </div>
+    </div>`
+    }
+    const btnLogin = `
+    <p class="render-login-btn">  Чтобы добавить комментарий, 
+    <u>авторизуйтесь</u> </p>`
+
+    function actionRenderLoginbtn() {
+        if (token) return
+        const btn = document.querySelector(".render-login-btn")
+        btn.addEventListener('click', () => {
+          renderLogin()
+        })
+      }
+
     initLikeListener();
     initDeleteButtonsListeners();
     quoteCommets();
+
 };
+
+export const renderLoginForm = () => {
+    appHtml.innerHTML = loginHtml;
+    const appHtml = document.getElementById("app");
+    const loginHtml = `autForm`
+    return `
+    <divclass="container">
+      <input 
+      type="text" 
+      class="login-form-login" 
+      placeholder="Логин"
+      />
+      <input 
+      type="text"
+      class="login-form-pass"
+      placeholder="Пароль"
+      />
+      <button id="login-form-button" class="login-form-button">Войти</button>
+    </div>`;
+}
+token ? renderLoginForm() : buttonLoginElement;
