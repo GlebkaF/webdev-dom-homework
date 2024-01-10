@@ -42,13 +42,13 @@ const renderComments = () => {
   const commnetsHTML = comments
     .map((comment, index) => {
       if (comment.isLike === false) {
-        return `<li class="comment">
+        return `<li class="comment" data-index="${index}">
             <div class="comment-header">
               <div>${comment.name}</div>
               <div>${comment.date}</div>
             </div>
             <div class="comment-body">
-              <div class="comment-text">
+              <div class="comment-text"">
                 ${comment.comment}
               </div>
             </div>
@@ -62,13 +62,13 @@ const renderComments = () => {
             <button id="save_button" data-index="${index}" class="add-form-button save-button">Сохранить</button>
           </li>`;
       } else {
-        return `<li class="comment">
+        return `<li class="comment" data-index="${index}">
             <div class="comment-header">
               <div>${comment.name}</div>
               <div>${comment.date}</div>
             </div>
             <div class="comment-body">
-              <div class="comment-text">
+              <div class="comment-text"">
                 ${comment.comment}
               </div>
             </div>
@@ -86,12 +86,14 @@ const renderComments = () => {
     .join("");
   listElement.innerHTML = commnetsHTML;
   initLikeButton();
+  initReplyButton();
 };
 
 const initLikeButton = () => {
   const likeButtonsElements = document.querySelectorAll(".like-button");
   for (const likeButton of likeButtonsElements) {
-    likeButton.addEventListener("click", () => {
+    likeButton.addEventListener("click", (event) => {
+      event.stopPropagation();
       const index = likeButton.dataset.index;
       if (comments[index].isLike === false) {
         comments[index].isLike = true;
@@ -108,12 +110,24 @@ const initLikeButton = () => {
     });
   }
 };
+const initReplyButton = () => {
+  const commentsElements = document.querySelectorAll(".comment");
+  for (const commentElement of commentsElements) {
+    commentElement.addEventListener("click", () => {
+      const indexComment = commentElement.dataset.index;
+      const curruntComment = comments[indexComment].comment;
+      const curruntName = comments[indexComment].name;
+      commentInputElement.value = `${curruntComment}\n${curruntName} - `;
+    });
+  }
+};
+
 const buttonElement = document.getElementById("add-button");
 const likeButton = document.getElementById("like_button");
 const listElement = document.getElementById("list");
 const nameInputElement = document.getElementById("input-name");
 const commentInputElement = document.getElementById("comment-input");
-const deleteLastButton = document.getElementById("delete-last-button"); // Новая кнопка
+const deleteLastButton = document.getElementById("delete-last-button");
 let date = new Date();
 let today = formatDate(date);
 
@@ -133,6 +147,7 @@ let comments = [
     date: "13.02.22 19:22",
   },
 ];
+
 renderComments();
 
 document.getElementsByClassName("add-form-text");
@@ -158,24 +173,26 @@ const handleEditClick = (index) => {
 };
 
 const handleSaveClick = (index) => {
-  // Update the comment text with the edited text
   const textareaElement = listElement.querySelector(".comment textarea");
   const editedText = textareaElement.value;
 
-  // Update the comments array
   comments[index].comment = editedText;
 
-  // Render the comments to reflect the changes
   renderComments();
 };
 
-// Add event listeners for edit and save buttons
 editButtonElements.forEach((editButton, index) => {
-  editButton.addEventListener("click", () => handleEditClick(index));
+  editButton.addEventListener("click", (event) => {
+    event.stopPropagation();
+    handleEditClick(index);
+  });
 });
 
 saveButtonElements.forEach((saveButton, index) => {
-  saveButton.addEventListener("click", () => handleSaveClick(index));
+  saveButton.addEventListener("click", (event) => {
+    event.stopPropagation();
+    handleSaveClick(index);
+  });
 });
 
 buttonElement.addEventListener("click", () => {
@@ -194,8 +211,16 @@ buttonElement.addEventListener("click", () => {
     commentInputElement.addEventListener("input", updateButtonState);
   } else {
     comments.push({
-      name: nameInputElement.value,
-      comment: commentInputElement.value,
+      name: nameInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
+      comment: commentInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       likes: 0,
       isLike: false,
       date: today,
