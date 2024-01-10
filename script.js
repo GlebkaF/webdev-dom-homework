@@ -38,6 +38,83 @@ function deleteLastComment() {
   }
 }
 
+const handleEditClick = (index) => {
+  const editButtonElements = document.querySelectorAll(".edit-button");
+  const saveButtonElements = document.querySelectorAll(".save-button");
+  editButtonElements[index].style.display = "none";
+  saveButtonElements[index].style.display = "inline-block";
+
+  const commentTextElement =
+    listElement.getElementsByClassName("comment-text")[index];
+  const currentText = commentTextElement.textContent.trim();
+  const textareaElement = document.createElement("textarea");
+  textareaElement.value = currentText;
+  commentTextElement.innerHTML = "";
+  commentTextElement.appendChild(textareaElement);
+};
+
+const handleSaveClick = (index) => {
+  const textareaElement = listElement.querySelector(".comment textarea");
+  const editedText = textareaElement.value;
+
+  comments[index].comment = editedText;
+
+  renderComments();
+};
+
+const initLikeButton = () => {
+  const likeButtonsElements = document.querySelectorAll(".like-button");
+  for (const likeButton of likeButtonsElements) {
+    likeButton.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const index = likeButton.dataset.index;
+      if (comments[index].isLike === false) {
+        comments[index].isLike = true;
+        comments[index].likes++;
+        likeButton.classList.add("-active-like");
+      } else {
+        comments[index].isLike = false;
+        likeButton.classList.remove("-active-like");
+        comments[index].likes--;
+      }
+      const likesCounter =
+        likeButton.parentNode.querySelector(".likes-counter");
+      likesCounter.textContent = comments[index].likes;
+    });
+  }
+};
+const initReplyButton = () => {
+  const commentsElements = document.querySelectorAll(".comment");
+  for (const commentElement of commentsElements) {
+    commentElement.addEventListener("click", (event) => {
+      const indexComment = commentElement.dataset.index;
+      const curruntComment = comments[indexComment].comment;
+      const curruntName = comments[indexComment].name;
+      commentInputElement.value = `${curruntComment}\n${curruntName} - `;
+    });
+  }
+};
+//const editButtonElements = document.querySelectorAll(".edit-button");
+//const saveButtonElements = document.querySelectorAll(".save-button");
+const initEditButton = () => {
+  const editButtonElements = document.querySelectorAll(".edit-button");
+  editButtonElements.forEach((editButton, index) => {
+    editButton.addEventListener("click", (event) => {
+      event.stopPropagation();
+      handleEditClick(index);
+    });
+  });
+};
+const initSaveButton = () => {
+  const saveButtonElements = document.querySelectorAll(".save-button");
+  saveButtonElements.forEach((saveButton, index) => {
+    saveButton.addEventListener("click", (event) => {
+      event.stopPropagation();
+      handleSaveClick(index);
+    });
+  });
+};
+
 const renderComments = () => {
   const commnetsHTML = comments
     .map((comment, index) => {
@@ -86,40 +163,9 @@ const renderComments = () => {
     .join("");
   listElement.innerHTML = commnetsHTML;
   initLikeButton();
+  initSaveButton();
+  initEditButton();
   initReplyButton();
-};
-
-const initLikeButton = () => {
-  const likeButtonsElements = document.querySelectorAll(".like-button");
-  for (const likeButton of likeButtonsElements) {
-    likeButton.addEventListener("click", (event) => {
-      event.stopPropagation();
-      const index = likeButton.dataset.index;
-      if (comments[index].isLike === false) {
-        comments[index].isLike = true;
-        comments[index].likes++;
-        likeButton.classList.add("-active-like");
-      } else {
-        comments[index].isLike = false;
-        likeButton.classList.remove("-active-like");
-        comments[index].likes--;
-      }
-      const likesCounter =
-        likeButton.parentNode.querySelector(".likes-counter");
-      likesCounter.textContent = comments[index].likes;
-    });
-  }
-};
-const initReplyButton = () => {
-  const commentsElements = document.querySelectorAll(".comment");
-  for (const commentElement of commentsElements) {
-    commentElement.addEventListener("click", () => {
-      const indexComment = commentElement.dataset.index;
-      const curruntComment = comments[indexComment].comment;
-      const curruntName = comments[indexComment].name;
-      commentInputElement.value = `${curruntComment}\n${curruntName} - `;
-    });
-  }
 };
 
 const buttonElement = document.getElementById("add-button");
@@ -150,50 +196,10 @@ let comments = [
 
 renderComments();
 
-document.getElementsByClassName("add-form-text");
 nameInputElement.addEventListener("keypress", handleKeyPress);
 commentInputElement.addEventListener("keypress", handleKeyPress);
 buttonElement.addEventListener("keypress", handleKeyPress);
 deleteLastButton.addEventListener("click", deleteLastComment);
-
-const editButtonElements = document.querySelectorAll(".edit-button");
-const saveButtonElements = document.querySelectorAll(".save-button");
-
-const handleEditClick = (index) => {
-  editButtonElements[index].style.display = "none";
-  saveButtonElements[index].style.display = "inline-block";
-
-  const commentTextElement =
-    listElement.getElementsByClassName("comment-text")[index];
-  const currentText = commentTextElement.textContent.trim();
-  const textareaElement = document.createElement("textarea");
-  textareaElement.value = currentText;
-  commentTextElement.innerHTML = "";
-  commentTextElement.appendChild(textareaElement);
-};
-
-const handleSaveClick = (index) => {
-  const textareaElement = listElement.querySelector(".comment textarea");
-  const editedText = textareaElement.value;
-
-  comments[index].comment = editedText;
-
-  renderComments();
-};
-
-editButtonElements.forEach((editButton, index) => {
-  editButton.addEventListener("click", (event) => {
-    event.stopPropagation();
-    handleEditClick(index);
-  });
-});
-
-saveButtonElements.forEach((saveButton, index) => {
-  saveButton.addEventListener("click", (event) => {
-    event.stopPropagation();
-    handleSaveClick(index);
-  });
-});
 
 buttonElement.addEventListener("click", () => {
   nameInputElement.classList.remove("error");
