@@ -41,6 +41,18 @@
     const likesElements = document.querySelectorAll('.likes');
     const likeButtonElements = document.querySelectorAll('.like-button');
 
+    const currentDate = () => {
+      let addTimeElement = new Date();
+      let year = addTimeElement.getFullYear().toString().slice(-2);
+      let minutes = addTimeElement.getMinutes() < 10 ? '0' + addTimeElement.getMinutes() : addTimeElement.getMinutes();
+      let hours = addTimeElement.getHours() < 10 ? '0' + addTimeElement.getHours() : addTimeElement.getHours();
+      let date = addTimeElement.getDate() < 10 ? '0' + addTimeElement.getDate() : addTimeElement.getDate();
+      let month = addTimeElement.getMonth() < 10 ? '0' + addTimeElement.getMonth() : addTimeElement.getMonth();
+      let newDate = `${date}.${month.slice(-1) + 1}.${year} 
+      ${hours}:${minutes}`;
+      return newDate;
+    };
+
     // 2. Навешиваем отработчик на кнопку лайка
     const initEventListerner = () => {
       const likeButtonElements = document.querySelectorAll('.like-button');
@@ -71,27 +83,31 @@
           textareaElement.value = text.replaceAll('QUOTE_BEGIN', '').replaceAll('QUOTE_END', '');
         })
       }
-    } 
+    }
 
-    // 3. Создаём массив для <ul>, чтобы зарендерить список через js 
-    const comments = [
-      {
-        name: "Глеб Фокин",
-        time: "12.02.22 12:18",
-        comment: "Это будет первый комментарий на этой странице",
-        like: 3,
-        isLike: false,
-      },
-      {
-        name: "Варвара Н.",
-        time: "13.02.22 19:22",
-        comment: "Мне нравится как оформлена эта страница! ❤",
-        like: 75,
-        isLike: false,  
-      }
-    ]
+    let comments = [];
 
-   // 2. рендерим массив для его отображения в виде строк в html (методы map, join)
+    const fetchRender = () => {
+      fetch("https://wedev-api.sky.pro/api/v1/vlad-tishkin/comments", {
+        method: "GET",
+      }).then((response) => {
+        const jsonPromise = response.json();
+        jsonPromise.then((responseData) => {
+          comments = responseData.comments.map((comment) => { 
+            return { 
+            name: comment.author.name, 
+            time: new Date(comment.date).toLocaleTimeString('sm', {day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit'}), 
+            comment: comment.text, 
+            like: comment.likes, 
+            isLike: false, 
+            }; 
+          }); 
+            renderComments(); 
+        }); 
+      });
+    };
+    fetchRender();
+
    const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
       return `<li class="comment" data-index ="${index}">
@@ -139,32 +155,27 @@
           inputElement.style.backgroundColor = ''
           textareaElement.style.backgroundColor = ''
 
-          let addTimeElement = new Date();
-          let year = addTimeElement.getFullYear().toString().slice(-2);
-          let minutes = addTimeElement.getMinutes() < 10 ? '0' + addTimeElement.getMinutes() : addTimeElement.getMinutes();
-          let hours = addTimeElement.getHours() < 10 ? '0' + addTimeElement.getHours() : addTimeElement.getHours();
-          let date = addTimeElement.getDate() < 10 ? '0' + addTimeElement.getDate() : addTimeElement.getDate();
-          let month = addTimeElement.getMonth() < 10 ? '0' + addTimeElement.getMonth() : addTimeElement.getMonth();
-          let newDate = `${date}.${month.slice(-1) + 1}.${year} 
-          ${hours}:${minutes}`;
 
-          //Добавление нового комментария через свойство массива push.
-          comments.push({
-            name: inputElement.value
-              .replaceAll('<', '&lt;')
-              .replaceAll('>', '&gt;')
-              .replaceAll('QUOTE_BEGIN', '<div class = "quote-text">')
-              .replaceAll('QUOTE_END', '</div>'),
-            time: newDate,
-            comment: textareaElement.value
-              .replaceAll('<', '&lt;')
-              .replaceAll('>', '&gt;')
-              .replaceAll('QUOTE_BEGIN', '')
-              .replaceAll('QUOTE_END', ''),
-            like: 0,
-            isLike: false,
-          })
-          
+        fetch("https://wedev-api.sky.pro/api/v1/vlad-tishkin/comments", {
+          method: "POST",
+          body: JSON.stringify({
+              name: inputElement.value
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('QUOTE_BEGIN', '')
+                .replaceAll('QUOTE_END', ''),
+              text: textareaElement.value
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('QUOTE_BEGIN', '')
+                .replaceAll('QUOTE_END', ''),
+          }),
+        }).then((response) => {
+            response.json().then((responseData) => {
+            });
+            fetchRender();
+          });
+
         inputElement.value = '';
         textareaElement.value = '';
         };
