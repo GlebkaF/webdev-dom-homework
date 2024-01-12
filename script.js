@@ -65,10 +65,10 @@ const addComment = async () => {
     };
     try {
    
-      let response = await fetch('https://wedev-api.sky.pro/api/v1/andrew-zharuck/comments', {
+      let response = await fetch('https://wedev-api.sky.pro/api/v1/:andrey-zharuck/comments', {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/activity+json",
         },
         body: JSON.stringify(newComment),
       });
