@@ -46,7 +46,6 @@ function getCurrentDate() {
 
    
 
-
 const addComment = async () => {
   if (valueInputName.trim() !== "" && valueInputText.trim() !== "") {
     const newComment = {
@@ -208,7 +207,6 @@ addFormButton.addEventListener("click", function() {
   addComment();
   renderComments();
 });
-
 
 function uberComments(e) {
     if (e.target.classList.contains('comment')) {
