@@ -57,12 +57,14 @@ const addComment = async () => {
       isEdit: false,
       likes: 0,
       liked: false,
+      
     };
     const comment = {
       text: 'Текст коммента',
       name: 'Андрей Жарук.'
     };
     try {
+   
       let response = await fetch('https://wedev-api.sky.pro/api/v1/andrew-zharuck/comments', {
         method: "POST",
         headers: {
