@@ -44,8 +44,6 @@ function getCurrentDate() {
   return `${currentDate.getDate()}.${currentDate.getMonth() + 1}.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
 }
 
-
-   
    
 
 
@@ -59,6 +57,10 @@ const addComment = async () => {
       isEdit: false,
       likes: 0,
       liked: false,
+    };
+    const comment = {
+      text: 'Текст коммента',
+      name: 'Андрей Жарук.'
     };
     try {
       let response = await fetch('https://wedev-api.sky.pro/api/v1/andrew-zharuck/comments', {
@@ -99,6 +101,7 @@ const addComment = async () => {
         disabledBtn();
   }
 };
+
 function editComment(e) {
   e.stopPropagation();
   let id = Number(e.target.id);
@@ -135,7 +138,6 @@ function likesComment(e) {
   });
   renderComments();
 }
-
 
 // Рендерит список комментариев
 function renderComments() {
@@ -207,7 +209,6 @@ addFormButton.addEventListener("click", function() {
   addComment();
   renderComments();
 });
-
 
 
 function uberComments(e) {
