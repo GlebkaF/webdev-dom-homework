@@ -10,40 +10,9 @@
 <body>
   <div class="container">
     <ul class="comments" id="list">
-      <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>
+
+      <!--список рендерится из js-->
+
     </ul>
     <div class="add-form">
       <input type="text" class="add-form-name" id="name-input" placeholder="Введите ваше имя" />
@@ -60,6 +29,10 @@
   .error {
     background-color: red;
   }
+
+  .-active-like {
+    background-image: url("data:image/svg+xml,%3Csvg width='22' height='20' viewBox='0 0 22 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15.95 0C14.036 0 12.199 0.882834 11 2.26703C9.801 0.882834 7.964 0 6.05 0C2.662 0 0 2.6267 0 5.99455C0 10.1035 3.74 13.4714 9.405 18.5613L11 20L12.595 18.5613C18.26 13.4714 22 10.1035 22 5.99455C22 2.6267 19.338 0 15.95 0Z' fill='%23BCEC30'/%3E%3C/svg%3E");
+  }
 </style>
 <script>
   "use strict";
@@ -68,6 +41,77 @@
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
 
+
+  //создание массива
+  const comments = [
+    {
+      name: "Глеб Фокин",
+      date: "12.02.22 12:18",
+      text: "Это будет первый комментарий на этой странице",
+      likesCounter: 3,
+      itLikes: false,
+
+    },
+    {
+      name: "Варвара Н.",
+      date: "13.02.22 19:22",
+      text: "Мне нравится как оформлена эта страница! ❤",
+      likesCounter: 75,
+      itLikes: false,
+
+    },
+  ]
+
+
+  //добавление обработчика динамическим элементам
+  const InitEventListeners = () => {
+    const likeButtonElements = document.querySelectorAll(".like-button");
+    for (const likeButtonElement of likeButtonElements) {
+      likeButtonElement.addEventListener('click', () => {
+        const index = likeButtonElement.dataset.index;
+        console.log(index);
+        if (comments[index]['itLikes'] === false) {
+          comments[index]['likesCounter'] += 1;
+          comments[index]['itLikes'] = true;
+        } else {
+          comments[index]['likesCounter'] -= 1;
+          comments[index]['itLikes'] = false;
+        }
+        renderComments();
+      })
+    }
+  }
+
+
+  //рендерфункция
+  const renderComments = () => {
+    const commentsHtml = comments.map((comment, index) => {
+      return `<li class="comment">
+        <div class="comment-header">
+          <div>${comment.name}</div>
+          <div>${comment.date}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${comment.text}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter" >${comment.likesCounter}</span>
+            
+            <button class="like-button ${(comments[index]['itLikes']) ? "-active-like" : ""}" data-index = "${index}"></button>
+          </div>
+        </div>
+      </li>`;
+    }).join('');
+    listElement.innerHTML = commentsHtml;
+    InitEventListeners();
+  };
+  renderComments();
+
+
+  //добавление комментария по клику на кнопку "написать"
   buttonElement.addEventListener('click', () => {
     nameInputElement.classList.remove("error");
     commentInputElement.classList.remove("error");
@@ -78,27 +122,24 @@
       commentInputElement.classList.add("error");
       return;
     }
+
     let myDate = new Date();
-    const oldListHtml = listElement.innerHTML;
-    listElement.innerHTML = oldListHtml + `<li class="comment">
-        <div class="comment-header">
-          <div>${nameInputElement.value}</div>
-          <div>${myDate.getDate() + ":" + (myDate.getMonth() + 1) +
-      ":" + myDate.getFullYear() + " " + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds()}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${commentInputElement.value}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>`;
+    comments.push({
+      name: nameInputElement.value,
+      date: myDate.getDate() + ":" + (myDate.getMonth() + 1) +
+        ":" + myDate.getFullYear() + " " + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds(),
+      text: commentInputElement.value,
+      likesCounter: 0,
+      itLikes: false,
+
+    });
+
+    renderComments();
+    nameInputElement.value = '';
+    commentInputElement.value = '';
   });
+
+
   console.log("It works!");
 </script>
 
