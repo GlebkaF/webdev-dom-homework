@@ -66,6 +66,7 @@ function getCurrentDate() {
 //   }
 
 // }
+//
 const addComment = async () => {
   if (valueInputName.trim() !== "" && valueInputText.trim() !== "") {
     const newComment = {
@@ -78,7 +79,7 @@ const addComment = async () => {
       liked: false,
     };
     try {
-      let response = await fetch(' https://wedev-api.sky.pro/api/v1/:personal-key/comments', {
+      let response = await fetch('https://wedev-api.sky.pro/api/v1/andrew-zharuck/comments', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -91,11 +92,11 @@ const addComment = async () => {
             return {
               id: comment.id,
               date: comment.date,
-              name: comment.name,
+              name: comment.author.name,
               text: comment.text,
               isEdit: false,
               likes: comment.likes,
-              liked: comment.liked,
+              liked: comment.isLiked,
             };
           });
           comments = appComments;
@@ -109,6 +110,7 @@ const addComment = async () => {
     } catch (error) {
       console.error("Error adding comment:", error);
     }
+  
     comments.push(newComment);
         renderComments();
         clearForm();
@@ -234,4 +236,3 @@ function uberComments(e) {
     }
     return 
 }
- //
