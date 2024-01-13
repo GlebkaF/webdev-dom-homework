@@ -8,6 +8,9 @@
 
   <body>
     <div class="container">
+      <h1 class="title">
+        Данные загружаются...
+      </h1>
       <ul id="list" class="comments">
         <!-- рендерим через js -->
       </ul>
@@ -29,6 +32,11 @@
       </div>
     </div>
   </body>
+   <style>
+    .error {
+      background-color: red;
+    }
+   </style>
 
   <script>
     "use strict";
@@ -40,6 +48,8 @@
     const textareaElement = document.getElementById ('add-textarea');
     const likesElements = document.querySelectorAll('.likes');
     const likeButtonElements = document.querySelectorAll('.like-button');
+    const buttonDeleteElements = document.querySelectorAll('.add-form-button');
+    
 
     const currentDate = () => {
       let addTimeElement = new Date();
@@ -86,25 +96,27 @@
     }
 
     let comments = [];
+    const baseURL = "https://wedev-api.sky.pro/api/v1/vlad-tishkin/comments";
 
     const fetchRender = () => {
-      fetch("https://wedev-api.sky.pro/api/v1/vlad-tishkin/comments", {
+      fetch(baseURL, {
         method: "GET",
       }).then((response) => {
-        const jsonPromise = response.json();
-        jsonPromise.then((responseData) => {
-          comments = responseData.comments.map((comment) => { 
+        return response.json();
+      }).then((responseData) => {
+          comments = responseData.comments.map((comment) => {
             return { 
             name: comment.author.name, 
             time: new Date(comment.date).toLocaleTimeString('sm', {day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit'}), 
             comment: comment.text, 
             like: comment.likes, 
             isLike: false, 
-            }; 
+            };
           }); 
-            renderComments(); 
-        }); 
-      });
+        const textExpectation = document.querySelector('.title');
+        textExpectation.style.display = 'none';
+        renderComments(); 
+      }); 
     };
     fetchRender();
 
@@ -139,48 +151,66 @@
    renderComments();
 
     // 3. Навешиваем отработчик на кнопку ввода имени и комментария, настраиваем валидацию.
+    
+
     buttonElement.addEventListener('click', () => {
-      const oldlistElement = listElement.innerHTML;
       if (inputElement.value === '' && textareaElement.value === '') {
-        inputElement.style.backgroundColor = 'red';
-        textareaElement.style.backgroundColor = 'red';
+        inputElement.classList.add('error');
+        textareaElement.classList.add('error');
           return;
         } else if (inputElement.value === '') {
-          inputElement.style.backgroundColor = 'red';
+          inputElement.classList.add('error');
           return;
         } else if (textareaElement.value === '') {
-          textareaElement.style.backgroundColor = 'red';
+          textareaElement.classList.add('error');
           return;
         } else {
-          inputElement.style.backgroundColor = ''
-          textareaElement.style.backgroundColor = ''
+          inputElement.classList.remove('error');
+          textareaElement.classList.remove('error');
 
 
-        fetch("https://wedev-api.sky.pro/api/v1/vlad-tishkin/comments", {
-          method: "POST",
-          body: JSON.stringify({
-              name: inputElement.value
-                .replaceAll('<', '&lt;')
-                .replaceAll('>', '&gt;')
-                .replaceAll('QUOTE_BEGIN', '')
-                .replaceAll('QUOTE_END', ''),
-              text: textareaElement.value
-                .replaceAll('<', '&lt;')
-                .replaceAll('>', '&gt;')
-                .replaceAll('QUOTE_BEGIN', '')
-                .replaceAll('QUOTE_END', ''),
-          }),
-        }).then((response) => {
-            response.json().then((responseData) => {
-            });
-            fetchRender();
-          });
+      buttonElement.disabled = true;
+      buttonElement.textContent = 'Комментарий загружается...'
+      buttonElement.classList.remove('hover') 
 
-        inputElement.value = '';
-        textareaElement.value = '';
-        };
-        renderComments(); //дублируем функцию рендеринга для обновления разметки после клика на кнопку
-    })
+
+      fetch(baseURL, {
+        method: "POST",
+        body: JSON.stringify({
+            name: inputElement.value
+              .replaceAll('<', '&lt;')
+              .replaceAll('>', '&gt;')
+              .replaceAll('QUOTE_BEGIN', '')
+              .replaceAll('QUOTE_END', ''),
+            text: textareaElement.value
+              .replaceAll('<', '&lt;')
+              .replaceAll('>', '&gt;')
+              .replaceAll('QUOTE_BEGIN', '')
+              .replaceAll('QUOTE_END', ''),
+        }),
+      }).then((response) => {
+          return response.json();
+      }).then((response) => {
+        return 
+      }).then((responseData) => {
+          return fetch(baseURL, {
+                method: "GET",
+              });
+      }).then((response) => {
+          return response.json();
+      }).then((responseData) => {
+          return responseData;
+      }).then((response) => {
+          buttonElement.disabled = false;
+          buttonElement.textContent = 'Написать';
+          return response;
+      });
+      fetchRender();
+      inputElement.value = '';
+      textareaElement.value = '';
+      };
+      renderComments(); //дублируем функцию рендеринга для обновления разметки после клика на кнопку
+    });
     console.log("It works!");
   </script>
 </html>
