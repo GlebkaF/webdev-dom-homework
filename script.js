@@ -15,6 +15,41 @@ function disabledBtn() {
 
 disabledBtn();
 
+const getData =async()=>{
+try {
+   let response = await fetch('https://wedev-api.sky.pro/api/v1/:andrey-zharuck/comments', {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/activity+json",
+        },
+        
+      });
+      if (response.ok) {
+        response.json().then((responseData) => {
+          const appComments = responseData.comments.map((comment) => {
+            return {
+              id: comment.id,
+              date: comment.date,
+              name: comment.author.name,
+              text: comment.text,
+              isEdit: false,
+              likes: comment.likes,
+              liked: comment.isLiked,
+            };
+          });
+          comments = appComments;
+          renderComments();
+          
+        });
+      } else {
+        console.error("Error adding comment:", response.status);
+      }
+    } catch (error) {
+      console.error("Error adding comment:", error);
+      }
+      
+    }
+    getData()
 function clearForm() {
   nameInput.value = "";
   commentInput.value = "";
@@ -182,7 +217,7 @@ function uberComments(e) {
 }
 
 
-//hhh
+
 // const addComment = async () => {
 //   if (valueInputName.trim() !== "" && valueInputText.trim() !== "") {
 //     const newComment = {
@@ -205,23 +240,11 @@ function uberComments(e) {
 //         },
 //         body: JSON.stringify(newComment),
 //       });
-//       if (response.ok) {
-//         response.json().then((responseData) => {
-//           const appComments = responseData.comments.map((comment) => {
-//             return {
-//               id: comment.id,
-//               date: comment.date,
-//               name: comment.author.name,
-//               text: comment.text,
-//               isEdit: false,
-//               likes: comment.likes,
-//               liked: comment.isLiked,
-//             };
-//           });
-//           comments = appComments;
+//       
+//           
+//           
 //           renderComments();
-//           clearForm();
-//           disabledBtn();
+//          
 //         });
 //       } else {
 //         console.error("Error adding comment:", response.status);
