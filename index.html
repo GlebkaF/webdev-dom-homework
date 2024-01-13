@@ -99,7 +99,6 @@
 
     const initAnswerComment = () => {
       const textComments = document.querySelectorAll(".comment-text");
-      const inputText = document.getElementById('form-text');
 
       for (const textComment of textComments) {
         textComment.addEventListener("click", () => {
@@ -110,6 +109,7 @@
         })
       }
     }
+
 
     // Функция разблокировки кнопки "Написать", если поле с именем не пустое
 
@@ -253,8 +253,8 @@
         inputText.classList.remove('error-form');
         
         comments.push({
-          text: inputText.value.replaceAll("<", "&lt;").replaceAll(">", "&gt:"),
-          author: inputName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt:"),
+          text: inputText.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+          author: inputName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
           date: formattedDate + ' ' + formattedTime,
           likeCount: 0,
           myLike: false,
