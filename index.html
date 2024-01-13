@@ -95,6 +95,21 @@
       }
     ]
 
+    // Функция ответа на комментарий
+
+    const initAnswerComment = () => {
+      const textComments = document.querySelectorAll(".comment-text");
+      const inputText = document.getElementById('form-text');
+
+      for (const textComment of textComments) {
+        textComment.addEventListener("click", () => {
+          //console.log(textComment.innerHTML);
+          let index = textComment.dataset.index;
+          
+          inputText.value = '> ' + comments[index].text + '\n' + comments[index].author + ', ';
+        })
+      }
+    }
 
     // Функция разблокировки кнопки "Написать", если поле с именем не пустое
 
@@ -176,7 +191,7 @@
         
         comment.isEdit ? textButtonEditSave = "Сохранить" : textButtonEditSave = "Редактировать"
         comment.isEdit ? classButtonEditSave = "comment-text-save" : classButtonEditSave = "comment-text-edit"
-        comment.isEdit ? inputTextHtml = `<textarea id="form-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарй" rows="4">${comment.text}</textarea>` : inputTextHtml = `<div class="comment-text">${comment.text}</div>`;
+        comment.isEdit ? inputTextHtml = `<textarea id="form-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарй" rows="4">${comment.text}</textarea>` : inputTextHtml = `<div data-index="${index}" class="comment-text">${comment.text}</div>`;
 
         return `<li class="comment">
                   <div class="comment-header">
@@ -200,6 +215,7 @@
       ititAddLikeListener();
       initEditCommentListener();
       initSaveEditCommentListener();
+      initAnswerComment();
     };
 
     renderComments();
@@ -237,8 +253,8 @@
         inputText.classList.remove('error-form');
         
         comments.push({
-          text: inputText.value,
-          author: inputName.value,
+          text: inputText.value.replaceAll("<", "&lt;").replaceAll(">", "&gt:"),
+          author: inputName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt:"),
           date: formattedDate + ' ' + formattedTime,
           likeCount: 0,
           myLike: false,
