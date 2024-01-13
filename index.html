@@ -69,7 +69,19 @@
 
   buttonAdd.addEventListener('click', () => {
     let date = new Date();
-    let innerDate = date.getDate() + '.' + date.getMonth() + '.' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes();
+    let h = date.getHours();
+    if (h >= 0 && h <= 9) {
+      h = '0' + h;
+    }
+    let m = date.getMinutes();
+    if (m >= 0 && m <= 9) {
+      m = '0' + m;
+    }
+    let mth = date.getMonth() + 1;
+    if (mth >= 0 && mth <= 9) {
+      mth = '0' + mth;
+    }
+    let innerDate = date.getDate() + '.' + `${mth}` + '.' + date.getFullYear().toString().substring(2) + ' ' + `${h}` + ':' + `${m}`;
     const innerName = nameInputElement.value;
     const innerCommit = commitInputElement.value;
     nameInputElement.classList.remove("error");
