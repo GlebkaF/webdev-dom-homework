@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <title>Проект "Комменты"</title>
@@ -8,26 +8,18 @@
 </head>
 
 <body>
-    <div class="container">
-        <span class="alert">Подождите, пожалуйста, идёт загрузка данных!</span>
-        <ul id="list" class="comments">
-            <!-- Список рендерится из JS-->
-        </ul>
-        <div class="add-form">
-            <input id="add-name" value="" type="text" class="add-form-name" placeholder="Введите ваше имя" />
-            <textarea id="add-text" value="" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
-                rows="4"></textarea>
-            <div class="add-form-row">
-                <button id="button-add" class="add-form-button">Написать</button>
-            </div>
-        </div>
-    </div>
+    
+    <div id="app"></div>
 </body>
 <style>
     .error {
         background-color: orangered;
     }
+    .link-autorization {
+        text-decoration: underline;
+        color:aliceblue;
+    }
 </style>
-<script type="module" src="./modules/main.js"></script>
+<script src="./dist/main.js"></script>
 
 </html>

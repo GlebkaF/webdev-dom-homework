@@ -1,6 +1,6 @@
 import { studentsComments } from "./main.js";
 
-const textAreaElement = document.getElementById('add-text');
+const textAreaElement = document.getElementById("add-text");
 
 //Цитируем комментарий в форму
 export const initAnswerComments = () => {
@@ -14,5 +14,5 @@ export const initAnswerComments = () => {
             //console.log(commentText, commentAuthor);
             textAreaElement.value = `${commentText} > ${commentAuthor}`;
         });
-    };
+    }
 };
