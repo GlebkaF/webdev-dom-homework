@@ -218,7 +218,7 @@ function uberComments(e) {
 }
 
 
-function getSum(a,b){
+
   
 
 
