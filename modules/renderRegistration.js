@@ -1,4 +1,4 @@
-import { registration, setToken, token } from "./api.js";
+import { registration, setName } from "./api.js";
 
 export const renderRegistration = ({ fetchAndRenderComments }) => {
     const appElement = document.getElementById("app");
@@ -19,7 +19,7 @@ export const renderRegistration = ({ fetchAndRenderComments }) => {
       <br />
       <button class="add-form-login-button" id="registration-button">Зарегистрироваться</button>
       <br />
-      <a href="index.html" class="link">Войти</a>
+      <a href="login.html" class="link">Войти</a>
     </div>
     </div>
     `;
@@ -32,15 +32,21 @@ export const renderRegistration = ({ fetchAndRenderComments }) => {
     const passwordInputElement = document.getElementById("password-input");
 
     registrationButtonElement.addEventListener("click", () => {
+        //   console.log(5);
+        //   console.log(`{
+        //   name: nameInputElement.value,
+        //   login: loginInputElement.value,
+        //   password: passwordInputElement.value,
+        // }`);
         registration({
             name: nameInputElement.value,
             login: loginInputElement.value,
             password: passwordInputElement.value,
         })
             .then((responseData) => {
-                console.log(token);
-                setToken(responseData.user.token);
-                console.log(token);
+                console.log(responseData.user.name);
+                setName(responseData.user.name);
+                console.log(responseData.user.name);
             })
             .then(() => {
                 fetchAndRenderComments();

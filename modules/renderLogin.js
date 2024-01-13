@@ -18,7 +18,7 @@ export const renderLogin = ({ fetchAndRenderComments }) => {
       <br />
       <button class="add-form-login-button" id="login-button">Войти</button>
       <br />
-      <a href="registration.html" class="link">Зарегистрироваться</a>
+      <a href="index.html" class="link">Зарегистрироваться</a>
     </div>
     </div>
     `;

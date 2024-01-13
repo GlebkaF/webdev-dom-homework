@@ -2,11 +2,14 @@
 // писать use strict в начале не нужно.
 import { getTodos } from "./api.js";
 import { renderStudentsComments } from "./renderStudentsComments.js";
+import { renderRegistration } from "./renderRegistration.js";
+import { renderLogin } from "./renderLogin.js";
 //import { formatDateTime } from "./date.js";
 //import { addCommentButton } from "./renderStudentsComments.js";
 export { studentsComments, fetchAndRenderComments };
 
 let studentsComments = [];
+console.log(6);
 
 const fetchAndRenderComments = () => {
     getTodos()
@@ -38,6 +41,8 @@ const fetchAndRenderComments = () => {
                 studentsComments,
                 fetchAndRenderComments,
             });
+            renderRegistration();
+            renderLogin();
             // }, 1000);
         })
         .catch((error) => {
