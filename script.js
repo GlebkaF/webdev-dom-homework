@@ -192,6 +192,8 @@ function deleteComment() {
   renderComments();
 }
 
+
+
 function handleEnterKey(e) {
   if (e.key === "Enter") {
     addComment();
