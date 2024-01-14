@@ -79,24 +79,7 @@ function getCurrentDate() {
   return `${currentDate.getDate()}.${currentDate.getMonth() + 1}.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
 }
 
-// function addComment() {
-//   if (valueInputName.trim() !== "" && valueInputText.trim() !== "") {
-//     const newComment = {
-//       id: Date.now(),
-//       date: getCurrentDate(),
-//       name: getSafeHtmlString(valueInputName),
-//       text: getSafeHtmlString(valueInputText),
-//       isEdit: false,
-//       likes: 0,
-//       liked: false,
-//     };
-//     comments.push(newComment);
-//     renderComments();
-//     clearForm();
-//     disabledBtn();
-    
-//   }
-// }
+
 function addComment() {
   if (valueInputName.trim() !== "" && valueInputText.trim() !== "") {
     const newComment = {
