@@ -79,6 +79,24 @@ function getCurrentDate() {
   return `${currentDate.getDate()}.${currentDate.getMonth() + 1}.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
 }
 
+// function addComment() {
+//   if (valueInputName.trim() !== "" && valueInputText.trim() !== "") {
+//     const newComment = {
+//       id: Date.now(),
+//       date: getCurrentDate(),
+//       name: getSafeHtmlString(valueInputName),
+//       text: getSafeHtmlString(valueInputText),
+//       isEdit: false,
+//       likes: 0,
+//       liked: false,
+//     };
+//     comments.push(newComment);
+//     renderComments();
+//     clearForm();
+//     disabledBtn();
+    
+//   }
+// }
 function addComment() {
   if (valueInputName.trim() !== "" && valueInputText.trim() !== "") {
     const newComment = {
@@ -91,13 +109,20 @@ function addComment() {
       liked: false,
     };
     comments.push(newComment);
+     fetch('https://wedev-api.sky.pro/api/v1/:andrey-zharuck/comments', {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/activity+json",
+              },
+              body: JSON.stringify(newComment)
+            });
+          
     renderComments();
     clearForm();
     disabledBtn();
     
   }
 }
-
 function editComment(e) {
   e.stopPropagation();
   let id = Number(e.target.id);
