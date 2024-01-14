@@ -91,11 +91,10 @@
       like: 75,
       isLike: false,
     }
-    nameInputElement.value = "";
-    textInputElement.value = "";   
+      
   
-    const likesElements = document.querySelectorAll('.likes');
-    const likeButtonElement = document.querySelectorAll('.like-button');
+    const likesElements = document.querySelectorAll('likes');
+    const likeButtonElement = document.querySelectorAll('like-button');
   
 
 let time = {
@@ -103,18 +102,16 @@ let time = {
   minute: 'numeric',
   }; 
 
-buttonElement.addEventListener('click', () => {
-      
-  buttonElement.classList.remove("error");
-    if(nameInputElement.value === "" ||  textInputElement.value ===""){
-        buttonElement.classList.add("error");
-        return;
-      }
+    buttonElement.addEventListener('click', () => {
       const date = new Date();
       let dateTime = date.getDate() + "." + (date.getMonth() + 1)+ 
 "." + date.getFullYear().toString().substring(2) + " " + date.toLocaleString('ru', time);
+      buttonElement.classList.remove("error");
 
-
+if(nameInputElement.value === "" ||  textInputElement.value ===""){
+        buttonElement.classList.add("error");
+        return;
+      }
       comments.push({
         name: nameInputElement.value,
         time: dateTime,
@@ -143,14 +140,16 @@ buttonElement.addEventListener('click', () => {
         
         const oldListHtml = listElement.innerHTML;
         listElement.innerHTML =
-        oldListHtml + textHTML;
-        nameInputElement.value = "";
-        textInputElement.value = "";
+        oldListHtml + textHTML
+        nameInputElement.value = " ";
+        textInputElement.value = " ";
 })  
-console.log(likesElements);
 
+//const initEventListener = () =>{
+      const likeButtonElement = document.querySelectorAll('like-button');
       likeButtonElement.forEach((el, index) => {
         el.addEventListener('click', (event) => {
+
           event.stopPropagation();
           if (!comments[index].isLike){
               comments[index].like++;}
@@ -158,11 +157,12 @@ console.log(likesElements);
             comments[index].like--;
           }
           comments[index].isLike = !comments[index].isLike;
-   
+          console.log(comments[index]);
                     })
-
       })
-      
+  //  }
+    console.log(initEventListener)
+    
     
   </script>
 </html>
