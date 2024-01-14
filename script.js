@@ -243,41 +243,6 @@ function uberComments(e) {
 
 
 
-// const addComment = async () => {
-//   if (valueInputName.trim() !== "" && valueInputText.trim() !== "") {
-//     const newComment = {
-//       id: Date.now(),
-//       date: getCurrentDate(),
-//       name: getSafeHtmlString(valueInputName),
-//       text: getSafeHtmlString(valueInputText),
-//       isEdit: false,
-//       likes: 0,
-//       liked: false,
-      
-//     };
-    
-//     try {
-   
-//       let response = await fetch('https://wedev-api.sky.pro/api/v1/:andrey-zharuck/comments', {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/activity+json",
-//         },
-//         body: JSON.stringify(newComment),
-//       });
-//       
-//           
-//           
-//           renderComments();
-//          
-//         });
-//       } else {
-//         console.error("Error adding comment:", response.status);
-//       }
-//     } catch (error) {
-//       console.error("Error adding comment:", error);
-//     }
-  
 
 
 
