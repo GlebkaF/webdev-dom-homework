@@ -8,6 +8,7 @@
 
   <body>
     <div class="container">
+		<div id="add-sign"></div>
       <ul class="comments" id="list">
         <!-- Список рендерится из Js -->
       </ul>
@@ -26,7 +27,7 @@
           rows="4"
           id="comment-input"
         ></textarea>
-
+		
         <div class="add-form-row">
           <button type="submit" id="add-button" class="add-form-button post-button">Написать</button>
           <button id="delete-button" class="add-form-button">Удалить</button>
@@ -46,16 +47,44 @@ const listElement = document.getElementById("list");
 const nameInputElement = document.getElementById("name-input");
 const commentInputElement = document.getElementById("comment-input");
 const deleteButtonElement = document.getElementById("delete-button");
+const addSignElement = document.getElementById("add-sign"); 
 
+
+window.addEventListener('load', function() {
+const addSign = document.getElementById('add-sign');
+const list = document.getElementById('list');
+addSign.innerHTML = "Пожалуйста, подождите, загружаются комментарии...";
+
+list.value = "";
+list.style.display = "none";
+return delayForSecond()
+.then(() => {
+	addSign.style.display = "none";
+	list.style.display = "block";
+	});
+});
+
+function delayForSecond(){
+	delay(3000);
+	return delay();
+
+}
+function delay(interval = 2000) {
+	return new Promise((resolve) => {
+	setTimeout(() => {
+		resolve();
+	}, interval);
+	});
+}
 
 let comments = [];
 
+const fetchAndRenderComments = () => { 
 
-function fetchAndRenderComments () { 
-const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/elena-uvarova/comments", {
+fetch("https://wedev-api.sky.pro/api/v1/elena-uvarova/comments", {
 	method: 'GET',
 })
-fetchPromise.then(response => response.json())
+.then(response => response.json())
 .then(responseData => {
 const appComments = responseData.comments.map((comment) => {
 return {
@@ -72,7 +101,86 @@ return {
 	renderComments();
 	});
 }
-fetchAndRenderComments();
+
+
+// fetch("https://wedev-api.sky.pro/api/v1/elena-uvarova/comments", {
+// 	method: 'GET',
+// })
+// .then(response => response.json())
+// .then(responseData => {
+// const appComments = responseData.comments.map((comment) => {
+// return {
+// 	name: comment.author.name,
+// 	date: new Date(comment.date).toLocaleTimeString('sm', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }),
+// 	comment: comment.text,
+// 	like: comment.likes,
+// 	userLike: false,
+// 	isEdit: false
+// 	};
+// });
+
+
+// comments = appComments;
+// renderComments();
+// });
+
+
+  
+//  внизу то, что было. Вверху переделано на цепочку Промисов
+//   fetchPromise.then((response) => {
+//     const jsonPromise = response.json();
+    
+//     jsonPromise.then((responseData) => {
+//       const appComments = responseData.comments.map((comment) => {
+//         return {
+//           name: comment.author.name,
+//           date: new Date(comment.date).toLocaleTimeString('sm', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }),
+//           comment: comment.text,
+//           like: comment.likes,
+//           userLike: false,
+//           isEdit: false
+//         };
+//       });
+		
+//       comments = appComments;
+//       renderComments();	
+//     });
+//   });
+
+
+function addTodo() {
+	const startAt = Date.now();
+	console.log("Start doing require");
+	fetch("https://wedev-api.sky.pro/api/v1/elena-uvarova/comments", {
+    method: "POST",
+    body: JSON.stringify({
+      name: nameInputElement.value.replaceAll("<", "&lt").replaceAll(">", "&gt").replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll(" ", "&nbsp;"),
+      text: commentInputElement.value.replaceAll("<", "&lt").replaceAll(">", "&gt").replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll(" ", "&nbsp;"),
+        }),
+      })
+		.then((response) => {
+			console.log("Time: " + (Date.now() - startAt));
+			return response;
+		})
+		.then((response) => {
+		return response.json();
+	})
+	.then((response) => {
+			console.log("Time: " + (Date.now() - startAt));
+			return response;
+		})
+		.then(() => {
+			fetchAndRenderComments();
+			buttonElement.disabled = false;
+			buttonElement.textContent = "Написать";
+		});
+			nameInputElement.value = "";
+			commentInputElement.value = "";
+			nameInputElement.disabled = false;
+			commentInputElement.disabled = false;
+			buttonElement.disabled = false;
+			nameInputElement.focus();
+	}
 
   buttonElement.addEventListener("click", () => {
   nameInputElement.classList.remove("error");
@@ -87,45 +195,87 @@ fetchAndRenderComments();
   if (nameInputElement.value.trim() === "" || commentInputElement.value.trim() === "") {
     return;
   }
+	buttonElement.disabled = true;
+	buttonElement.textContent = "Комментарий добавляется...";
+	addTodo()
+	// .then(() => {
+	// 	renderComments();
+	// });
+		
+});
+fetchAndRenderComments();
   
-  
-  fetch("https://wedev-api.sky.pro/api/v1/elena-uvarova/comments", {
-    method: "POST",
-    body: JSON.stringify({
-      name: nameInputElement.value.replaceAll("<", "&lt").replaceAll(">", "&gt").replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll(" ", "&nbsp;"),
-      text: commentInputElement.value.replaceAll("<", "&lt").replaceAll(">", "&gt").replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll(" ", "&nbsp;"),
-        }),
-      }).then((response) => {
-        response.json().then((responseData) => {
-		fetch("https://wedev-api.sky.pro/api/v1/elena-uvarova/comments", {
-    method: 'GET',
-	}).then((response) => {
-            response.json().then((responseData) => {
-      const appComments = responseData.comments.map((comment) => {
-        return {
-          name: comment.author.name,
-          date: new Date(comment.date).toLocaleTimeString('sm', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }),
-          comment: comment.text,
-          like: comment.likes,
-          userLike: false,
-          isEdit: false
-        };
-      });
-		nameInputElement.value = "";
-      commentInputElement.value = "";
-		nameInputElement.value || commentInputElement.value === "";
-      // buttonElement.disabled = true;
-      comments = appComments;
-      renderComments();	
-    });
+//   fetch("https://wedev-api.sky.pro/api/v1/elena-uvarova/comments", {
+//     method: "POST",
+//     body: JSON.stringify({
+//       name: nameInputElement.value.replaceAll("<", "&lt").replaceAll(">", "&gt").replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll(" ", "&nbsp;"),
+//       text: commentInputElement.value.replaceAll("<", "&lt").replaceAll(">", "&gt").replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll(" ", "&nbsp;"),
+//         }),
+//       }).then((response) => {
+//         response.json().then((responseData) => {
+// 		fetch("https://wedev-api.sky.pro/api/v1/elena-uvarova/comments", {
+//     method: 'GET',
+// 	}).then((response) => {
+//             response.json().then((responseData) => {
+//       const appComments = responseData.comments.map((comment) => {
+//         return {
+//           name: comment.author.name,
+//           date: new Date(comment.date).toLocaleTimeString('sm', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }),
+//           comment: comment.text,
+//           like: comment.likes,
+//           userLike: false,
+//           isEdit: false
+//         };
+//       });
+// 		nameInputElement.value = "";
+//       commentInputElement.value = "";
+// 		nameInputElement.value || commentInputElement.value === "";
+//       // buttonElement.disabled = true;
+//       comments = appComments;
+//       renderComments();	
+//     });
 
-      // comments = responseData.comments;
-      // renderComments();
-         });
-			// renderComments();
-          });
-        });
-      });
+//       comments = responseData.comments;
+//       renderComments();
+
+
+//          });
+// 			renderComments();
+//           });
+//         });
+		  
+		 
+		 
+// function delay(interval = 300) {
+//       return new Promise((resolve) => {
+//         setTimeout(() => {
+//           resolve();
+//         }, interval);
+//       });
+// }
+
+// const likes = () => {
+//   const likeButtons = document.querySelectorAll(".like-button");
+//   for (const likeButton of likeButtons) {
+//     likeButton.addEventListener("click", (event) => {
+// 		event.stopPropagation();
+//       const index = likeButton.dataset.index;
+//       const comment = comments[index];
+
+//       delay(2000).then(() => {
+//     comment.like = comment.userLike
+//       ? comment.like - 1
+//       : comment.like + 1;
+// 		comment.userLike = !comment.userLike;
+// 		comment.filling = false;
+//     renderComments();
+//   });
+
+//       renderComments();
+//     });
+//   };
+// };
+
 
 
 const likes = () => {
