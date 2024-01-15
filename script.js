@@ -94,8 +94,7 @@ const initReplyButton = () => {
     });
   }
 };
-//const editButtonElements = document.querySelectorAll(".edit-button");
-//const saveButtonElements = document.querySelectorAll(".save-button");
+
 const initEditButton = () => {
   const editButtonElements = document.querySelectorAll(".edit-button");
   editButtonElements.forEach((editButton, index) => {
