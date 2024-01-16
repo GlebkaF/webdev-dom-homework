@@ -116,6 +116,11 @@
         const textExpectation = document.querySelector('.title');
         textExpectation.style.display = 'none';
         renderComments(); 
+      }).catch((error) => {
+         buttonElement.disabled = false;
+         buttonElement.textContent = 'Написать';
+         alert('Кажется, у вас сломался интернет, попробуйте позже');
+         console.warn(error);
       }); 
     };
     fetchRender();
@@ -158,20 +163,20 @@
         inputElement.classList.add('error');
         textareaElement.classList.add('error');
           return;
-        } else if (inputElement.value === '') {
+      } else if (inputElement.value === '') {
           inputElement.classList.add('error');
           return;
-        } else if (textareaElement.value === '') {
+      } else if (textareaElement.value === '') {
           textareaElement.classList.add('error');
           return;
-        } else {
-          inputElement.classList.remove('error');
-          textareaElement.classList.remove('error');
+      } else {
+        inputElement.classList.remove('error');
+        textareaElement.classList.remove('error');
 
 
       buttonElement.disabled = true;
-      buttonElement.textContent = 'Комментарий загружается...'
-      buttonElement.classList.remove('hover') 
+      buttonElement.textContent = 'Комментарий загружается...';
+      buttonElement.classList.remove('hover');
 
 
       fetch(baseURL, {
@@ -187,11 +192,17 @@
               .replaceAll('>', '&gt;')
               .replaceAll('QUOTE_BEGIN', '')
               .replaceAll('QUOTE_END', ''),
+            forceError: true,
         }),
       }).then((response) => {
-          return response.json();
-      }).then((response) => {
-        return 
+        if(response.status === 400) {
+          alert('Имя и комментарий не менее 3-ех символов');
+          throw new Error('Ошибка 400'); 
+        }else if (response.status === 500) {
+          alert('Сервер заболел:( Повторите попытку позднее');
+          throw new Error('Ошибка 500');
+        } else {
+          return response.json()};
       }).then((responseData) => {
           return fetch(baseURL, {
                 method: "GET",
@@ -203,11 +214,14 @@
       }).then((response) => {
           buttonElement.disabled = false;
           buttonElement.textContent = 'Написать';
-          return response;
-      });
+          inputElement.value = '';
+          textareaElement.value = '';
+      }).catch((error) => {
+         buttonElement.disabled = false;
+         buttonElement.textContent = 'Написать';
+         console.warn(error);
+      }); 
       fetchRender();
-      inputElement.value = '';
-      textareaElement.value = '';
       };
       renderComments(); //дублируем функцию рендеринга для обновления разметки после клика на кнопку
     });
