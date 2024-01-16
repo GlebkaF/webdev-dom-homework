@@ -33,6 +33,19 @@
   .-active-like {
     background-image: url("data:image/svg+xml,%3Csvg width='22' height='20' viewBox='0 0 22 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15.95 0C14.036 0 12.199 0.882834 11 2.26703C9.801 0.882834 7.964 0 6.05 0C2.662 0 0 2.6267 0 5.99455C0 10.1035 3.74 13.4714 9.405 18.5613L11 20L12.595 18.5613C18.26 13.4714 22 10.1035 22 5.99455C22 2.6267 19.338 0 15.95 0Z' fill='%23BCEC30'/%3E%3C/svg%3E");
   }
+
+   .comment-original {
+    width: auto;
+    height: auto;
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    font-size: 16px;
+    color: black;
+    background-color: rgb(222, 204, 245);
+    border-radius: 8px;
+    border: none;
+  }
 </style>
 <script>
   "use strict";
@@ -40,6 +53,7 @@
   const listElement = document.getElementById("list");
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
+  let originalComment = document.getElementById("comment-original");
 
 
   //создание массива
@@ -50,6 +64,8 @@
       text: "Это будет первый комментарий на этой странице",
       likesCounter: 3,
       itLikes: false,
+      original: '',
+      answer: '',
 
     },
     {
@@ -58,6 +74,8 @@
       text: "Мне нравится как оформлена эта страница! ❤",
       likesCounter: 75,
       itLikes: false,
+      original: '',
+      answer: '',
 
     },
   ]
@@ -69,7 +87,6 @@
     for (const likeButtonElement of likeButtonElements) {
       likeButtonElement.addEventListener('click', () => {
         const index = likeButtonElement.dataset.index;
-        console.log(index);
         if (comments[index]['itLikes'] === false) {
           comments[index]['likesCounter'] += 1;
           comments[index]['itLikes'] = true;
@@ -82,6 +99,22 @@
     }
   }
 
+  //ответ на комментарий по клику на комментарий
+  const InitCommentListeners = () => {
+    const EveryComments = document.querySelectorAll(".comment-text");
+    for (const EveryComment of EveryComments) {
+      EveryComment.addEventListener('click', () => {
+        const index = EveryComment.dataset.index;
+        originalComment = comments[index]['name'] + " " + comments[index]['text'];
+       // comments[index]['original'] = comments[index]['name'] + " " + comments[index]['text'];
+        //originalComment = comments[index]['original'];
+        commentInputElement.value = originalComment + comments[index]['answer'];
+        renderComments();
+      })
+    }
+  }
+
+
 
   //рендерфункция
   const renderComments = () => {
@@ -92,7 +125,10 @@
           <div>${comment.date}</div>
         </div>
         <div class="comment-body">
-          <div class="comment-text">
+          <div class=" ${(comments[index]['original'] != '') ? "comment-original" : ""}">
+            ${comment.original}
+          </div>
+          <div class="comment-text" data-index = "${index}">
             ${comment.text}
           </div>
         </div>
@@ -107,6 +143,7 @@
     }).join('');
     listElement.innerHTML = commentsHtml;
     InitEventListeners();
+    InitCommentListeners();
   };
   renderComments();
 
@@ -122,15 +159,17 @@
       commentInputElement.classList.add("error");
       return;
     }
-
+   
     let myDate = new Date();
     comments.push({
-      name: nameInputElement.value,
+      name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
       date: myDate.getDate() + ":" + (myDate.getMonth() + 1) +
         ":" + myDate.getFullYear() + " " + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds(),
-      text: commentInputElement.value,
+      text: commentInputElement.value.replace(originalComment, '').replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
       likesCounter: 0,
       itLikes: false,
+      original: originalComment,
+      answer: '',
 
     });
 
@@ -138,6 +177,7 @@
     nameInputElement.value = '';
     commentInputElement.value = '';
   });
+
 
 
   console.log("It works!");
