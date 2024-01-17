@@ -1,13 +1,62 @@
 import { initLikeListener } from "./main.js";
 import { initDeleteButtonsListeners } from "./delbutton.js";
 import { quoteCommets, commentList } from "./main.js";
-import { token } from "./api.js";
-const buttonLoginElement = document.getElementById("login-form-button");
+import { setToken, token, loginPost, getComments, setUser } from "./api.js";
 
+// Сохраняем данные об объекте User в localStorage
+// Сохраняем данные об объекте User в localStorage
+
+
+//Рендерим форму входа
+export const renderLoginForm = () => {
+  const appHtml = document.getElementById("app");
+  const loginHtml = `
+  <div class="add-form">
+    <input 
+    type="text"
+    id="login-input" 
+    class="add-form-name"
+    placeholder="Логин"
+    />
+    <input 
+    type="text"
+    id="password-input"
+    class="add-form-name"
+    placeholder="Пароль"
+    />
+    <button id="login-form-button" class="add-form-button">Войти</button>
+  </div>`;
+  appHtml.innerHTML = loginHtml;
+
+  //Добавляем действие по клику на "авторизация"
+  const buttonLoginElement = document.getElementById("login-form-button");
+  const loginInputElement = document.getElementById("login-input");
+  const passwordInputElement = document.getElementById("password-input");
+
+  buttonLoginElement.addEventListener("click", (event) => {
+    event.preventDefault();
+    if (!loginInputElement.value || !passwordInputElement.value) {
+      alert("Проверьте оба поля  на заполненность");
+      return
+    }
+    loginPost({
+      login: loginInputElement.value,
+      password: passwordInputElement.value,
+    }).then((responseData) => {
+      setToken(responseData.user.token);
+      setUser(responseData.user);
+
+    }).then(() => {
+
+    })
+  });
+};
+//Выводим комменты
 export const renderComments = () => {
-    const appHtml = document.getElementById("app");
-    const commentsHtml = commentList.map((comment, index) => {
-        return `<li class="comment" data-index="${index}">
+  const appHtml = document.getElementById("app");
+  console.log(commentList);
+  const commentsHtml = commentList.map((comment, index) => {
+    return `<li class="comment" data-index="${index}">
           <div class="comment-header">
             <div id="">${comment.name}</div>
             <div>${comment.date}</div>
@@ -25,11 +74,17 @@ export const renderComments = () => {
             </div>
           </div>
         </li>`;
-    }).join("");
+  }).join("");
 
-    const contentHtml = () => {
-        if (!token) return buttonLoginElement;
-        return `<ul id="comments" class="comments">${commentsHtml}</ul>
+  //Форма ввода комментария
+  const contentHtml = () => {
+
+    const btnLogin = `
+    <p class="render-login-btn">  Чтобы добавить комментарий, 
+    <a id="render-login-btn">авторизуйтесь</a> </p>`
+
+    if (!token) return `<ul id="comments" class="comments">${commentsHtml}</ul> ${btnLogin}`;
+    return `<ul id="comments" class="comments">${commentsHtml}</ul>
     <div id="add-form" class="add-form">
       <input id="add-name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
       <textarea id="add-text" type="textArea" class="add-form-text" placeholder="Введите ваш коментарий"
@@ -38,42 +93,38 @@ export const renderComments = () => {
         <button id="add-form-button" class="add-form-button">Написать</button>
       </div>
     </div>`
-    }
-    const btnLogin = `
-    <p class="render-login-btn">  Чтобы добавить комментарий, 
-    <u>авторизуйтесь</u> </p>`
+  }
 
-    function actionRenderLoginbtn() {
-        if (token) return
-        const btn = document.querySelector(".render-login-btn")
-        btn.addEventListener('click', () => {
-          renderLogin()
-        })
-      }
+  initLikeListener();
+  initDeleteButtonsListeners();
+  quoteCommets();
+  appHtml.innerHTML = contentHtml()
 
-    initLikeListener();
-    initDeleteButtonsListeners();
-    quoteCommets();
+  //Переход к форме авторизации по клику
+  const buttonElement = document.getElementById("render-login-btn");
+  buttonElement.addEventListener("click", (event) => {
+    event.preventDefault();
+    renderLoginForm();
+  });
 
+  const fetchAndRenderComments = (comments) => {
+    getComments({ token: setToken() })
+      .then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            id: comment.id,
+            name: comment.author.name,
+            date: createDate,
+            text: comment.text,
+            likes: comment.likes,
+            isLiked: comment.isLiked,
+          };
+        });
+        comments = appComments;
+        renderComments(comments);
+      });
+    
+  };fetchAndRenderComments(comments);
 };
 
-export const renderLoginForm = () => {
-    appHtml.innerHTML = loginHtml;
-    const appHtml = document.getElementById("app");
-    const loginHtml = `autForm`
-    return `
-    <divclass="container">
-      <input 
-      type="text" 
-      class="login-form-login" 
-      placeholder="Логин"
-      />
-      <input 
-      type="text"
-      class="login-form-pass"
-      placeholder="Пароль"
-      />
-      <button id="login-form-button" class="login-form-button">Войти</button>
-    </div>`;
-}
-token ? renderLoginForm() : buttonLoginElement;
+

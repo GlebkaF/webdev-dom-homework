@@ -5,6 +5,7 @@ import { initDeleteButtonsListeners } from "./delbutton.js";
 import { hideSeeAddComment } from "./hide.js";
 import { renderComments } from "./render.js";
 import { renderLoginForm } from "./render.js";
+import { getToken } from "./api.js";
 
 
 /* const textAreaElement = document.getElementById("add-text"); */
@@ -34,21 +35,23 @@ const getComments = () => {
         /*  hideSeeAddComment(); */
 
         renderComments();
-        addComment()
-        const buttonElement = document.getElementById("add-form-button");
-        buttonElement.disabled = false;
+
+        if (getToken()) {
+            addComment();
+            const buttonElement = document.getElementById("add-form-button");
+            buttonElement.disabled = false;
+        }
+
+
+
     });
 };
 
-/* hideSeeAddComment(); */
 
 //1.commentList необходимо получать из хранилища коммент через API (метод GET). Строки 47-62
 getComments();
 
-//Активность кнопки удаления
 
-
-//Отрисовка формы существующих комментов
 //Активность кнопки лайк
 export const initLikeListener = () => {
     const buttonLike = document.querySelectorAll(".like-button");
@@ -74,8 +77,10 @@ export const quoteCommets = () => {
             const commentAuthor = commentList[index].name;
             textAreaElement.value = `${commentText} > ${commentAuthor}`;
         })
-    }
+    };
+
 }
+
 initDeleteButtonsListeners();
 //функция добавления коммента
 export function addComment() {
@@ -92,9 +97,9 @@ export function addComment() {
             textAreaElement.classList.add("error");
             return;
         };
-        //2.13. надпись о загрузке коммента и блокировка кнопки "добавить".
 
-        /*   const fetchPromise = () => { */
+
+        //2.13. надпись о загрузке коммента и блокировка кнопки "добавить".
 
         post(inputElement.value,
             textAreaElement.value)
@@ -125,9 +130,5 @@ export function addComment() {
                 renderComments();
 
             });
-        /*     }; */
-        /*  fetchPromise(); */
-        /*  renderComments(); */
-
-    })
+    });
 }
