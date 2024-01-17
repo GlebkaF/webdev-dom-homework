@@ -67,8 +67,8 @@
     for (const editUserComment of editUsersComment) {
       // Добавляет обработчик клика на конкретный элемент в списке
       editUserComment.addEventListener('click', () => {
-        let index = editUserComment.dataset.comment;
-        commentTextarea.value = 'QUOTE_BEGIN ' + comments[index].author + ":" + '\n' + comments[index].text + ' QUOTE_END ';
+        const index = editUserComment.dataset.comment;
+        commentTextarea.value = 'QUOTE_BEGIN ' + comments[index].author + ':\n ' + comments[index].text + ' QUOTE_END ';
       });
     }
   };
