@@ -2,9 +2,23 @@
 // |                                                                                                          |
 // V                                                                                                          V
 
+// Main Elements
+import { buttonEvent } from "../main.js";
+import { boxComments } from "../main.js";
+import { replyBox } from "../main.js";
+import { replyComment } from "../main.js";
+import { replyBoxUser } from "../main.js";
+import { addFormUserName } from "../main.js";
+import { addFormUserText } from "../main.js";
+import { entranceButtom } from "../main.js";
+import { registeredUser } from "./moduleAPI.js";
+
+
 // Mini Functions
 import { letTime } from "./moduleMiniFunctions.js";
 import { errorTextChecking } from "./moduleMiniFunctions.js";
+
+
 
 // |                                                                                                          |
 // Это блок для импорта функций_______________________________________________________________________________|
@@ -14,20 +28,99 @@ import { errorTextChecking } from "./moduleMiniFunctions.js";
 // |                                                                                                          |
 // V                                                                                                          V
 
-const buttonEvent = document.getElementById("add-form-button");
-const boxComments = document.getElementById('comments');
-
-const replyBox = document.getElementById('reply-box');
-const replyComment = document.getElementById('add-form-reply');
-
-const replyBoxUser = document.getElementById('reply-user-box');
-
-const addFormUserName = document.getElementById('add-form-name');
-const addFormUserText = document.getElementById('add-form-text');
+const container = document.getElementById("container");
 
 // |                                                                                                          |
 // Это блок Присваивания имён элементам_______________________________________________________________________|
 
+
+// Это блок Рендера Контейнера страницы Входа__________________________________________________________________
+// |                                                                                                          |
+// V                                                                                                          V
+export const renderEntranceContainer = () => {
+
+  container.innerHTML = `<h1>Страница входа</h1>
+    <div class="form">
+      <h3 class="form-title">Форма входа</h3>
+      <div class="form-row">
+        <input type="text" id="login-input" class="input" placeholder="Логин" />
+        <input
+          type="text"
+          id="password-input"
+          class="input"
+          placeholder="Пароль"
+        />
+      </div>
+      <br />
+      <button class="button" id="login-button">Войти</button>
+      <button id="link-to-tasks">Перейти на страницу задач</button>
+    </div>`
+
+
+}
+
+// |                                                                                                          |
+// Это блок Рендера Контейнера страницы Входа_________________________________________________________________|
+
+
+// Это блок Присваивания Имени в Поле Ввода комментария________________________________________________________
+// |                                                                                                          |
+// V                                                                                                          V
+
+export const userPlaceholderName = () => {
+
+  if (registeredUser === undefined) {
+
+    return "Чтобы добавить комментарий, авторизуйтесь.";
+
+  } else {
+
+    return registeredUser.user.name;
+  };
+
+};
+
+// |                                                                                                          |
+// Это блок Присваивания Имени в Поле Ввода комментария_______________________________________________________|
+
+
+// Это блок Рендера Контейнера страницы комментариев___________________________________________________________
+// |                                                                                                          |
+// V                                                                                                          V
+export const renderCommentsContainer = (placeholderName) => {
+
+  container.innerHTML = `<ul id="comments" class="comments">
+  </ul>
+  <div id="add-form" class="add-form">
+    <input
+      id="add-form-name" 
+      type="text"
+      class="add-form-name"
+      placeholder= '${placeholderName}'
+      readonly
+    />
+    <div  id="reply-box"> </div>
+    <textarea
+      id="add-form-text" 
+      type="textarea"
+      class="add-form-text"
+      placeholder="Введите ваш коментарий"
+      rows="4"
+    ></textarea>
+    <div class="add-form-row">
+
+      <button id="entrance-button" class="add-form-button">Авторизироваться</button>
+
+      <button id="add-form-button" class="add-form-button">Написать</button>
+
+    </div>
+  </div>`;
+
+
+}
+
+// |                                                                                                          |
+// Это блок Рендера Контейнера страницы комментариев__________________________________________________________|
 
 // Это блок Функции Загруски страницы__________________________________________________________________________
 // |                                                                                                          |
@@ -147,7 +240,7 @@ export const initReplyClick = (arrComments) => {
 
     replyClick.addEventListener("click", () => {
 
-      event.stopPropagation()
+      event.stopPropagation();
 
 
       const index = replyClick.dataset.index;
@@ -191,7 +284,7 @@ export const initCommentsLiked = (arrComments) => {
 
     useCommentLike.addEventListener("click", () => {
 
-      event.stopPropagation()
+      event.stopPropagation();
 
       const index = useCommentLike.dataset.index;
 
