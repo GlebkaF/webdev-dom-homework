@@ -106,7 +106,6 @@
   const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
       comment.text = comment.text.replaceAll("QUOTE_BEGIN", "<div class='quote'>").replaceAll("QUOTE_END", "</div>");
-      // let quote_e = comment.text.replaceAll("QUOTE_END", "</div>");
       let activeLike;
       comment.myLike ? activeLike = '-active-like' : false;
       return `<li class="comment">
@@ -220,7 +219,6 @@
     // Рендерим комменты
     renderComments();
   })
-
 </script>
 
 </html>
