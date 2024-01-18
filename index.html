@@ -99,7 +99,6 @@
         return date
       }
       const dateComment = `${fullDate(currentDate.getDay())}.${fullDate(currentDate.getMonth() + 1)}.${fullDate(currentDate.getFullYear())} ${currentDate.getHours()}:${fullDate(currentDate.getMinutes())}`;
-      buttonElement.disabled = true;
       nameInputElement.classList.remove('error');
       commentInputElement.classList.remove('error');
       if (!nameInputElement.value) {
@@ -109,10 +108,8 @@
         commentInputElement.classList.add('error')
         return
       }
-  
 
-
-      return comments.innerHTML = oldComments + ` <li class="comment">
+      comments.innerHTML = oldComments + ` <li class="comment">
           <div class="comment-header">
             <div>${nameInputElement.value}</div>
             <div>${dateComment}</div>
@@ -129,29 +126,28 @@
             </div>
           </div>
         </li>`
+
+        nameInputElement.value = '';  
+        commentInputElement.value = '';  
     }
 
     buttonElement.addEventListener('click', () => {
-      renderFun()
-      nameInputElement.value = '';  
-      commentInputElement.value = '';
+    renderFun()
     })
 
     document.addEventListener('keyup', () => {
       if (event.key === 'Enter') {
         renderFun()
-        nameInputElement.value = '';  
-        commentInputElement.value = '';
       }
     })
 
     removeBtn.addEventListener('click', () => {
         let index = comments.innerHTML.lastIndexOf('<li class="comment">');
-        let commentsArr = comments.innerHTML.split('');
-        comments.innerHTML = commentsArr.splice(0, index).join(''); 
-    })
+          if (index) { 
+            let commentsArr = comments.innerHTML.split('');
+            comments.innerHTML = commentsArr.splice(0, index).join(''); 
+          }  
 
-    // Код писать здесь
-    console.log("It works!");
+    })
   </script>
 </html>
