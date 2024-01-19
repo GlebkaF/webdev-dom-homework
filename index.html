@@ -151,14 +151,11 @@
     for (const EditComment of EditComments) {
       EditComment.addEventListener('click', () => {
         const index = EditComment.dataset.index;
-        //EditButtonValue = "Сохранить";
-        //comments[index].edit = false;
-        //comments[index].isEditArea = true;
         comments[index].isEdit = true;
-       // EditKommittedElement.value = comments[index].text + comments[index]['answer'];
+        EditKommittedElement.value = comments[index].text + '';
 
         renderComments();
-        
+
       });
     };
     /*EditComments.forEach((element,index) => {
@@ -176,16 +173,10 @@
     const EditKommitteds = document.querySelectorAll(".edit-committed");
     for (const EditKommitted of EditKommitteds) {
       EditKommitted.addEventListener('click', () => {
-        //console.log(EditСommittedElement.value);
         const index = EditKommitted.dataset.index;
-        console.log(comments[index].text);
-       // comments[index].isEditArea = EditKommittedElement.value;
         comments[index].isEdit = false;
-        //comments[index].text = EditKommittedElement.value;
-        
+        comments[index].text = EditKommittedElement.value;
 
-        //EditButtonValue = "Редактировать";
-        //EditComment.value = "Сохранить";
         renderComments();
 
       });
@@ -263,8 +254,6 @@
     nameInputElement.value = '';
     commentInputElement.value = '';
   });
-
-
 
   console.log("It works!");
 </script>
