@@ -41,7 +41,8 @@ import { renderComments } from "./renderComments.js";
 
     let comments = [];
 
-    getTodos().then((responseData) => {
+    const fetchAndRenderComments = () => {
+      getTodos().then((responseData) => {
           comments = responseData.comments.map((comment) => {
             return { 
             name: comment.author.name, 
@@ -60,9 +61,9 @@ import { renderComments } from "./renderComments.js";
          alert('Кажется, у вас сломался интернет, попробуйте позже');
          console.warn(error);
       }); 
+    };
 
-
-   renderComments({ comments, likeEventListerner, commentEventListener });
+    fetchAndRenderComments();
 
     
    const buttonElementLinester = () => {
@@ -82,6 +83,7 @@ import { renderComments } from "./renderComments.js";
         };
       };
 
+
     buttonElement.addEventListener('click', () => {
       buttonElementLinester();
       buttonElement.disabled = true;
@@ -92,11 +94,11 @@ import { renderComments } from "./renderComments.js";
       postTodo({
         name: inputElement.value,
         text: textareaElement.value,
-    }).then((response) => {
-          return getTodos();
-      }).then((responseData) => {
-          return responseData;
       }).then(() => {
+        console.log(1);
+        return fetchAndRenderComments();
+      }).then(() => {
+        console.log(2);
           buttonElement.disabled = false;
           buttonElement.textContent = 'Написать';
           inputElement.value = '';
@@ -109,4 +111,5 @@ import { renderComments } from "./renderComments.js";
 
       renderComments({ comments, likeEventListerner, commentEventListener });
     });
+    renderComments({ comments, likeEventListerner, commentEventListener });
     console.log("It works!");
