@@ -91,83 +91,91 @@ const fetchAndRenderArrComment = () => {
 // |                                                                                                          |
 // V                                                                                                          V
 const buttonEventClick = (replyUserComment) => {
+    
+    if (registeredUser === undefined) {
 
-    buttonEvent.addEventListener("click", () => {
-  
-        event.stopPropagation()
+       return
         
-        addFormUserName.classList.remove("error");
-        addFormUserText.classList.remove("error");
+    } else {
+
+        buttonEvent.addEventListener("click", () => {
         
-        if (addFormUserName.value === "") {
-          addFormUserName.classList.add("error");
-          return;
-        };
-      
-        if (addFormUserText.value === "") {
-          addFormUserText.classList.add("error");
-          return;
-        };
-      
-        let timeForFetch = letTime();
-        let userNameForFetch = addFormUserName.value.replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;");
-        let userTextForFetch = addFormUserText.value.replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;");
+            event.stopPropagation()
+
+            addFormUserName.classList.remove("error");
+            addFormUserText.classList.remove("error");
+
+            if (addFormUserName.value === "") {
+              addFormUserName.classList.add("error");
+              return;
+            };
+        
+            if (addFormUserText.value === "") {
+              addFormUserText.classList.add("error");
+              return;
+            };
+        
+            let timeForFetch = letTime();
+            let userNameForFetch = addFormUserName.value.replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;");
+            let userTextForFetch = addFormUserText.value.replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;");
 
 
-        functionPostArrComments(timeForFetch, userNameForFetch, userTextForFetch).then((response) => {
+            functionPostArrComments(timeForFetch, userNameForFetch, userTextForFetch).then((response) => {
 
-            loadingСompleteFunctionButton();
-            return response;
+                loadingСompleteFunctionButton();
+                return response;
+
+            }).then((responseData) => {
+                if (responseData.status === 400) {
+                    throw new Error('Неверный запрос');
+                }
+                if (responseData.status === 500) {
+                    throw new Error('Ошибка сервера');
+                }
+                if (responseData.status === 401) {
+                    throw new Error('Не авторизирован');
+                };
+                addFormUserName.value = "";
+                addFormUserText.value = "";
+                replyBox.innerHTML = ""; 
+
+            }).then(() =>{
+
+                fetchAndRenderArrComment();
+
+
+
+            }).catch((error) => {
+                if (error.message === "Ошибка сервера") {
+                
+                    alert("Сервер сломался, попробуй позже");
+                
+                } else if (error.message === "Неверный запрос") {
+                
+                    alert("Имя и комментарий должны быть не короче 3х символов");
+                
+                } else if (error.message === 'Не авторизирован') {
+                
+                    alert("Чтобы оставить комментарий, нужно авторизироваться");
+                
+                } else {
+                
+                    alert("Что-то пошло не так, попробуй позже");
+                
+                };
             
-        }).then((responseData) => {
-            if (responseData.status === 400) {
-                throw new Error('Неверный запрос');
-            }
-            if (responseData.status === 500) {
-                throw new Error('Ошибка сервера');
-            }
-            if (responseData.status === 401) {
-                throw new Error('Не авторизирован');
-            };
-            addFormUserName.value = "";
-            addFormUserText.value = "";
-            replyBox.innerHTML = ""; 
+                console.log(error);
+                loadingСompleteFunctionButton();
 
-        }).then(() =>{
-
-            fetchAndRenderArrComment();
-
-
-
-        }).catch((error) => {
-            if (error.message === "Ошибка сервера") {
-    
-                alert("Сервер сломался, попробуй позже");
-    
-            } else if (error.message === "Неверный запрос") {
-    
-                alert("Имя и комментарий должны быть не короче 3х символов");
-    
-            } else if (error.message === 'Не авторизирован') {
-    
-                alert("Чтобы оставить комментарий, нужно авторизироваться");
-    
-            } else {
-    
-                alert("Что-то пошло не так, попробуй позже");
-    
-            };
-    
-            console.log(error);
-            loadingСompleteFunctionButton();
+            });
         });
-    });
+    };   
 };
 // |                                                                                                          |
 // Это блок Создания и отправки элементов для массива комментариев____________________________________________|
@@ -177,15 +185,23 @@ const buttonEventClick = (replyUserComment) => {
 // |                                                                                                          |
 // V                                                                                                          V
 const buttonEntranceClick = () => {
+    if (registeredUser === undefined) {
 
-    entranceButtom.addEventListener("click", () => {
+        return entranceButtom.addEventListener("click", () => {
   
-        event.stopPropagation();
+            event.stopPropagation();
+    
+            renderEntranceContainer();
+            authorizationUser()
+            buttonCommentsClick();
 
-        renderEntranceContainer();
-        authorizationUser()
-        buttonCommentsClick();
-    });
+        });
+         
+    } else {
+
+        return
+
+    };
 };      
 // |                                                                                                          |
 // Это блок для Перехода на страницу Авторизации______________________________________________________________|
@@ -263,9 +279,7 @@ const authorizationUser = () => {
 
         functionPostAuthorization(userLogin, userPassword).then((Data) => {
 
-            alert("Авторизация завершена");
             initNewRegisteredUser(Data)
-            loadingStartFunctionButton();
 
             functionGetArrComments().then((arrCommentsData) => {
 

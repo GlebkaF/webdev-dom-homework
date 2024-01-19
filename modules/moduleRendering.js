@@ -39,21 +39,23 @@ const container = document.getElementById("container");
 // V                                                                                                          V
 export const renderEntranceContainer = () => {
 
-  container.innerHTML = `<h1>Страница входа</h1>
+  container.innerHTML = `<div class="add-form">
+    <h1>Страница входа</h1>
     <div class="form">
       <h3 class="form-title">Форма входа</h3>
-      <div class="form-row">
-        <input type="text" id="login-input" class="input" placeholder="Логин" />
+      <div class="likes">
+        <input type="text" id="login-input" class="add-form-name" placeholder="Логин" />
         <input
           type="text"
           id="password-input"
-          class="input"
+          class="add-form-name"
           placeholder="Пароль"
         />
+      </div class="likes">
+        <br />
+        <button class="add-form-button" id="login-button">Войти</button>
+        <button class="add-form-button" id="link-to-tasks">Перейти на страницу задач</button>
       </div>
-      <br />
-      <button class="button" id="login-button">Войти</button>
-      <button id="link-to-tasks">Перейти на страницу задач</button>
     </div>`
 
 
@@ -71,7 +73,7 @@ export const userPlaceholderName = () => {
 
   if (registeredUser === undefined) {
 
-    return "Чтобы добавить комментарий, авторизуйтесь.";
+    return "Авторизуйтесь.";
 
   } else {
 
@@ -89,33 +91,43 @@ export const userPlaceholderName = () => {
 // V                                                                                                          V
 export const renderCommentsContainer = (placeholderName) => {
 
-  container.innerHTML = `<ul id="comments" class="comments">
-  </ul>
-  <div id="add-form" class="add-form">
-    <input
-      id="add-form-name" 
-      type="text"
-      class="add-form-name"
-      placeholder= '${placeholderName}'
-      readonly
-    />
-    <div  id="reply-box"> </div>
-    <textarea
-      id="add-form-text" 
-      type="textarea"
-      class="add-form-text"
-      placeholder="Введите ваш коментарий"
-      rows="4"
-    ></textarea>
-    <div class="add-form-row">
+  if (registeredUser === undefined) {
 
-      <button id="entrance-button" class="add-form-button">Авторизироваться</button>
+    container.innerHTML = `<ul id="comments" class="comments">
+    </ul>
+    <div id="add-form" class="add-form">
+    <button id="entrance-button" class="add-form-button">Чтобы добавить комментарий, авторизуйтесь.</button>
+    </div>`
+    
+  } else {
 
-      <button id="add-form-button" class="add-form-button">Написать</button>
+    container.innerHTML = `<ul id="comments" class="comments">
+    </ul>
+    <div id="add-form" class="add-form">
+      <input
+        id="add-form-name" 
+        type="text"
+        class="add-form-name"
+        value='${registeredUser.user.name}'
+        placeholder= '${placeholderName}'
+        readonly
+      />
+      <div  id="reply-box"> </div>
+      <textarea
+        id="add-form-text" 
+        type="textarea"
+        class="add-form-text"
+        placeholder="Введите ваш коментарий"
+        rows="4"
+      ></textarea>
+      <div class="add-form-row">
 
-    </div>
-  </div>`;
+        <button id="add-form-button" class="add-form-button">Написать</button>
 
+      </div>
+    </div>`;
+
+  }
 
 }
 
@@ -127,15 +139,22 @@ export const renderCommentsContainer = (placeholderName) => {
 // V                                                                                                          V
 
 export const loadingStartFunctionButton = () => {
-
-  buttonEvent.disabled = true;
-  buttonEvent.textContent = "Загрузка данных, подождите";
-
+  if (registeredUser === undefined) {
+    entranceButtom.disabled = true;
+    entranceButtom.textContent = "Загрузка данных, подождите";
+  } else {
+    buttonEvent.disabled = true;
+    buttonEvent.textContent = "Загрузка данных, подождите";
+  }
 };
 export const loadingСompleteFunctionButton = () => {
-
-  buttonEvent.disabled = false;
-  buttonEvent.textContent = "Написать";
+  if (registeredUser === undefined) {
+    entranceButtom.disabled = false;
+    entranceButtom.textContent = "Чтобы добавить комментарий, авторизуйтесь.";
+  } else {
+    buttonEvent.disabled = false;
+    buttonEvent.textContent = "Написать";
+  }
 
 };
 
