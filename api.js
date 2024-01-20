@@ -17,7 +17,7 @@ export const setUser = (newUser) => {
 
 
 export function getComments() {
-    return fetch(urlApiLogin, {
+    return fetch(urlApi, {
         method: "GET",
         headers: {
             Authorization: setToken(),
@@ -71,10 +71,19 @@ export function loginPost({ login, password }) {
                 password,
             }),
         }).then((response) => {
+            if (response.status === 201) {
+                console.log("страница комментов");
+                return response.json();
+            }
             if (response.status === 400) {
                 throw new Error("Некорректные логин\пароль 400");
             }
+            if (response.status === 500) {
+                return Promise.reject("ошибка сервера");
+            }
             return response.json();
-
+        }).catch((error) => {
+            alert(error);
+            console.warn(error);
         })
 };

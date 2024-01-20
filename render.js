@@ -1,7 +1,6 @@
-import { initLikeListener } from "./main.js";
+import { initLikeListener,quoteCommets, commentList, fetchAndRenderComments, addComment } from "./main.js";
 import { initDeleteButtonsListeners } from "./delbutton.js";
-import { quoteCommets, commentList } from "./main.js";
-import { setToken, token, loginPost, getComments, setUser } from "./api.js";
+import { setToken, token, loginPost, getComments, setUser} from "./api.js";
 
 // Сохраняем данные об объекте User в localStorage
 // Сохраняем данные об объекте User в localStorage
@@ -45,9 +44,9 @@ export const renderLoginForm = () => {
     }).then((responseData) => {
       setToken(responseData.user.token);
       setUser(responseData.user);
-
+      console.log(token);
     }).then(() => {
-
+      fetchAndRenderComments();
     })
   });
 };
@@ -107,24 +106,5 @@ export const renderComments = () => {
     renderLoginForm();
   });
 
-  const fetchAndRenderComments = (comments) => {
-    getComments({ token: setToken() })
-      .then((responseData) => {
-        const appComments = responseData.comments.map((comment) => {
-          return {
-            id: comment.id,
-            name: comment.author.name,
-            date: createDate,
-            text: comment.text,
-            likes: comment.likes,
-            isLiked: comment.isLiked,
-          };
-        });
-        comments = appComments;
-        renderComments(comments);
-      });
-    
-  };fetchAndRenderComments(comments);
+
 };
-
-

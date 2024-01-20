@@ -1,11 +1,10 @@
 
 import { formatDateTime } from "./datetime.js";
-import { get, post } from "./api.js";
+import { get, post, getToken, setToken } from "./api.js";
 import { initDeleteButtonsListeners } from "./delbutton.js";
 import { hideSeeAddComment } from "./hide.js";
-import { renderComments } from "./render.js";
-import { renderLoginForm } from "./render.js";
-import { getToken } from "./api.js";
+import { renderComments, renderLoginForm } from "./render.js";
+
 
 
 /* const textAreaElement = document.getElementById("add-text"); */
@@ -17,6 +16,27 @@ const addFormElement = document.querySelector(".add-form"); */
 //Прелоадер страницы
 
 export let commentList = [];
+
+export const fetchAndRenderComments = (comments) => {
+    getComments({ token: setToken() })
+      .then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            id: comment.id,
+            name: comment.author.name,
+            date: createDate,
+            text: comment.text,
+            likes: comment.likes,
+            isLiked: comment.isLiked,
+          };
+        });
+        console.log("htylth rjvvtynjd bp fgb")
+        comments = appComments;
+        renderComments(comments);
+      });
+  };
+ /*  fetchAndRenderComments(); */
+
 // запрос коммента с api
 const getComments = () => {
     get().then((responseData) => {
@@ -41,8 +61,6 @@ const getComments = () => {
             const buttonElement = document.getElementById("add-form-button");
             buttonElement.disabled = false;
         }
-
-
 
     });
 };
@@ -82,6 +100,9 @@ export const quoteCommets = () => {
 }
 
 initDeleteButtonsListeners();
+
+
+
 //функция добавления коммента
 export function addComment() {
     const textAreaElement = document.getElementById("add-text");
@@ -98,9 +119,7 @@ export function addComment() {
             return;
         };
 
-
         //2.13. надпись о загрузке коммента и блокировка кнопки "добавить".
-
         post(inputElement.value,
             textAreaElement.value)
             .then((response) => {
@@ -127,8 +146,9 @@ export function addComment() {
                     alert("Отуствует соединение к интеренету");
                 };
                 buttonElement.disabled = false;
-                renderComments();
+                /* renderComments(); */
 
             });
     });
+       
 }
