@@ -1,6 +1,7 @@
 import { formatDateTime } from "./datetime.js";
 let urlApi = "https://wedev-api.sky.pro/api/v1/zenin-dmitry/comments";
 let urlApiLogin = "https://wedev-api.sky.pro/api/user/login";
+
 export let token = null;
 export const setToken = (newToken) => {
     token = newToken;
@@ -10,11 +11,15 @@ export const getToken = () => {
     return token;
 };
 
-export let user = null;
+/* export let user = null;
+export const setUser = (newUser) => {
+    user = newUser;
+}; */
+export let user = JSON.parse(localStorage.getItem("user"));
 export const setUser = (newUser) => {
     user = newUser;
 };
-
+console.log(user);
 
 export function getComments() {
     return fetch(urlApi, {

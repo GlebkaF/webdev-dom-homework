@@ -42,14 +42,17 @@ export const renderLoginForm = () => {
       login: loginInputElement.value,
       password: passwordInputElement.value,
     }).then((responseData) => {
+      localStorage.setItem("token", responseData.user.token);
+      localStorage.setItem("user", JSON.stringify(responseData.user));
       setToken(responseData.user.token);
       setUser(responseData.user);
       console.log(token);
     }).then(() => {
-      fetchAndRenderComments();
+      renderComments();
     })
   });
 };
+
 //Выводим комменты
 export const renderComments = () => {
   const appHtml = document.getElementById("app");
