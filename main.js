@@ -1,14 +1,16 @@
-
 import { formatDateTime } from "./datetime.js";
-import { get, post, getToken, setToken } from "./api.js";
+import { getComments, postComment, loginPost,getToken, token} from "./api.js";
 import { initDeleteButtonsListeners } from "./delbutton.js";
-import { hideSeeAddComment } from "./hide.js";
-import { renderComments, renderLoginForm } from "./render.js";
+import { renderComments} from "./render.js";
+  
+export let user = null;
+export const setUser = (newUser) => {
+    user = newUser;
+};
+console.log(user);
 
-
-
-/* const textAreaElement = document.getElementById("add-text"); */
-/* const inputElement = document.getElementById("add-name");
+/* const textAreaElement = document.getElementById("add-text");
+const inputElement = document.getElementById("add-name");
 const outerFormElement = document.getElementById("add-form");
 const addFormElement = document.querySelector(".add-form"); */
 
@@ -17,29 +19,29 @@ const addFormElement = document.querySelector(".add-form"); */
 
 export let commentList = [];
 
-export const fetchAndRenderComments = (comments) => {
+/* export const fetchAndRenderComments = (comments) => {
     getComments({ token: setToken() })
       .then((responseData) => {
         const appComments = responseData.comments.map((comment) => {
           return {
             id: comment.id,
             name: comment.author.name,
-            date: createDate,
+            date: formatDateTime(comment.date),
             text: comment.text,
             likes: comment.likes,
             isLiked: comment.isLiked,
           };
         });
-        console.log("htylth rjvvtynjd bp fgb")
+        console.log("fetchAndRende работает")
         comments = appComments;
         renderComments(comments);
       });
-  };
- /*  fetchAndRenderComments(); */
+  }; */
+ 
 
 // запрос коммента с api
-const getComments = () => {
-    get().then((responseData) => {
+export const fetchAndRenderComments = () => {
+    getComments().then((responseData) => {
         commentList = responseData.comments.map((comment) => {
             return {
                 name: comment.author.name,
@@ -50,105 +52,29 @@ const getComments = () => {
                 text: comment.text,
             };
         });
-        /* let hidePreload = document.querySelector(".preload").style.display = "none"; */
         console.log(commentList);
-        /*  hideSeeAddComment(); */
-
         renderComments();
 
-        if (getToken()) {
+        if (getToken(token)) {
             addComment();
             const buttonElement = document.getElementById("add-form-button");
             buttonElement.disabled = false;
         }
-
     });
+    
 };
 
-
-//1.commentList необходимо получать из хранилища коммент через API (метод GET). Строки 47-62
-getComments();
+fetchAndRenderComments();
 
 
-//Активность кнопки лайк
-export const initLikeListener = () => {
-    const buttonLike = document.querySelectorAll(".like-button");
-    for (const iteratorLike of buttonLike) {
-        iteratorLike.addEventListener("click", (event) => {
-            event.stopPropagation();
-            const index = iteratorLike.dataset.index;
-            commentList[index].likes += commentList[index].isLiked ? -1 : +1;
-            commentList[index].isLiked = !commentList[index].isLiked;
-            renderComments(); //перерисовываем форму для лайков с счетчиком
-        });
-    }
-};
+
 
 //Цитата коммента
-export const quoteCommets = () => {
-    const textAreaElement = document.getElementById("add-text");
-    const commentElements = document.querySelectorAll(".comment");
-    for (const commentElement of commentElements) {
-        commentElement.addEventListener("click", () => {
-            const index = commentElement.dataset.index;
-            const commentText = commentList[index].text;
-            const commentAuthor = commentList[index].name;
-            textAreaElement.value = `${commentText} > ${commentAuthor}`;
-        })
-    };
 
-}
 
 initDeleteButtonsListeners();
 
 
-
 //функция добавления коммента
-export function addComment() {
-    const textAreaElement = document.getElementById("add-text");
-    const inputElement = document.getElementById("add-name");
-    const buttonElement = document.getElementById("add-form-button");
-    console.log(inputElement, textAreaElement)
-    buttonElement.addEventListener("click", () => {
-        inputElement.classList.remove("error");
-        if (inputElement.value === "") {
-            inputElement.classList.add("error");
-        }
-        if (textAreaElement.value === "") {
-            textAreaElement.classList.add("error");
-            return;
-        };
 
-        //2.13. надпись о загрузке коммента и блокировка кнопки "добавить".
-        post(inputElement.value,
-            textAreaElement.value)
-            .then((response) => {
-                if (response.status === 201) {
-                    return response.json();
-                }
-                if (response.status === 400) {
-                    throw new Error("Некорректный запрос error 400");
-                } if (response.status === 500) {
-                    throw new Error("Ошибка сервера error 500");
-                }
-            }).then(() => {
-                inputElement.value = "";
-                textAreaElement.value = "";
-                return getComments();
-            })
-            .catch((error) => {
-                buttonElement.disabled = true;
-                if (error.message === "Некорректный запрос error 400") {
-                    alert("Длина имени не может быть меньше 3 символов");
-                } else if (error.message === "Ошибка сервера error 500") {
-                    alert("Ошибка сервера");
-                } else if (error.message === "Failed to fetch") {
-                    alert("Отуствует соединение к интеренету");
-                };
-                buttonElement.disabled = false;
-                /* renderComments(); */
 
-            });
-    });
-       
-}

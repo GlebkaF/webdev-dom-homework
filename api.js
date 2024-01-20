@@ -1,4 +1,4 @@
-import { formatDateTime } from "./datetime.js";
+import { fetchAndRenderComments } from "./main";
 let urlApi = "https://wedev-api.sky.pro/api/v1/zenin-dmitry/comments";
 let urlApiLogin = "https://wedev-api.sky.pro/api/user/login";
 
@@ -11,45 +11,37 @@ export const getToken = () => {
     return token;
 };
 
-/* export let user = null;
-export const setUser = (newUser) => {
-    user = newUser;
-}; */
-export let user = JSON.parse(localStorage.getItem("user"));
-export const setUser = (newUser) => {
-    user = newUser;
-};
-console.log(user);
 
+
+//GET запрос авторизации на получение токена
 export function getComments() {
     return fetch(urlApi, {
         method: "GET",
         headers: {
-            Authorization: setToken(),
+            Authorization: `Bearer ${token}`,
         },
     }).then((response) => {
+        if (response.status === 401) {
+            throw new Error("Вы не авторизованы");
+        }
         return response.json();
-    });
+    })
 };
 
-export function get() {
+/* export function get() {
     return fetch(urlApi,
         {
             method: 'GET',
             headers: {
-                Autorization: `Bearer ${token}`,
+                Autorization: ,
             },
         })
-        .then((response) => {
-            if (response.status === 401) {
-                throw new Error("Вы не авторизованы");
-            }
-            return response.json();
-        })
-}
+        
+} */
 
-export const post = (name, text) => {
-    console.log("conslole", name, text);
+//POST запрос авторизации и токена
+export const postComment = ( text) => {
+    console.log("conslole", text);
     return fetch(urlApi,
         {
             method: 'POST',
@@ -57,7 +49,7 @@ export const post = (name, text) => {
                 Autorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
-                name: name,
+                /* name: name, */
                 text: text,
                 /*       date: formatDateTime(new Date),
                       isLiked: false,
@@ -86,9 +78,10 @@ export function loginPost({ login, password }) {
             if (response.status === 500) {
                 return Promise.reject("ошибка сервера");
             }
-            return response.json();
+            return Promise.reject("Отсутствует соединение");
         }).catch((error) => {
             alert(error);
             console.warn(error);
         })
+        fetchAndRenderComments();
 };
