@@ -75,3 +75,4 @@ function addComment() {
 deleteButtonElement.addEventListener("click", () => {
   commentsList.removeChild(commentsList.lastChild);
 });
+
