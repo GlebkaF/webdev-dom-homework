@@ -117,7 +117,7 @@ const quoteCommets = () => {
 
     //2.13. надпись о загрузке коммента и блокировка кнопки "добавить".
     postComment(inputElement.value,
-      textAreaElement.value, sanitizeHtml(textareaInputElement.value))
+      textAreaElement.value, text: sanitizeHtml(textareaInputElement.value))
       .then((response) => {
         if (response.status === 201) {
           return response.json();

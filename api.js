@@ -1,4 +1,4 @@
-import { fetchAndRenderComments } from "./main";
+import { fetchAndRenderComments } from "./main.js";
 let urlApi = "https://wedev-api.sky.pro/api/v1/zenin-dmitry/comments";
 let urlApiLogin = "https://wedev-api.sky.pro/api/user/login";
 
