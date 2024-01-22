@@ -35,7 +35,7 @@ export const renderLoginForm = () => {
             alert("Проверьте оба поля  на заполненность");
             return
         }
-        loginPost(login, password);
+        loginPost({login: loginInputElement.value, password:passwordInputElement.value});
 
     });
 

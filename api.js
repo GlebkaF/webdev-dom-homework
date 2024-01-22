@@ -83,5 +83,6 @@ export function loginPost({ login, password }) {
             alert(error);
             console.warn(error);
         })
-        fetchAndRenderComments();
+        
 };
+/* fetchAndRenderComments(); */

@@ -94,7 +94,7 @@ const quoteCommets = () => {
       textAreaElement.value = `${commentText} > ${commentAuthor}`;
     })
   };
-  /* addComment(); */
+  addComment();
 };
 
 
@@ -148,11 +148,13 @@ export const addComment = () => {
   })
   if (token) {
     const buttonElement = document.getElementById('add-button');
-    buttonElement.addEventListener('click', addNewComment);
+    buttonElement.addEventListener('click', addComment);
   }
+  renderComments();
   initLikeListener();
   initDeleteButtonsListeners
   quoteCommets();
+  fetchAndRenderComments();
 };
 
 
