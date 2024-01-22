@@ -1,5 +1,5 @@
-/* import { loginPost} from "./api"; */
-/* import { fetchAndRenderComments, setUser } from "./main"; */
+import { loginPost} from "./api.js";
+/* import { fetchAndRenderComments} from "./main.js"; */
 
 
 export const renderLoginForm = () => {
@@ -35,18 +35,7 @@ export const renderLoginForm = () => {
             alert("Проверьте оба поля  на заполненность");
             return
         }
-        loginPost(/* {
-            login: loginInputElement.value,
-            password: passwordInputElement.value,
-        }).then((responseData) => {
-            setToken(responseData.user.token);
-            setUser(responseData.user);
-            console.log(token);
-        }).then(() => {
-
-            fetchAndRenderComments();
-
-        } */);
+        loginPost(login, password);
 
     });
 

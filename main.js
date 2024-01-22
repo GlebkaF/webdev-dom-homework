@@ -1,7 +1,7 @@
 import { formatDateTime } from "./datetime.js";
 import { getComments, postComment, loginPost,getToken, token} from "./api.js";
 import { initDeleteButtonsListeners } from "./delbutton.js";
-import { renderComments} from "./render.js";
+import { renderComments, addComment} from "./render.js";
   
 export let user = null;
 export const setUser = (newUser) => {

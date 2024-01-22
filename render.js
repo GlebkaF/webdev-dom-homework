@@ -1,4 +1,4 @@
-import {commentList} from "./main.js";
+import { commentList } from "./main.js";
 import { initDeleteButtonsListeners } from "./delbutton.js";
 import { token, postComment } from "./api.js";
 import { renderLoginForm } from "./renderLogin.js";
@@ -56,7 +56,7 @@ export const renderComments = () => {
   appHtml.innerHTML = contentHtml()
 
   //Переход к форме авторизации по клику
-  setLoginBtn = () => {
+ const setLoginBtn = () => {
     const buttonLoginElement = document.getElementById("render-login-btn");
     buttonLoginElement.addEventListener("click", (event) => {
       event.preventDefault();
@@ -94,13 +94,13 @@ const quoteCommets = () => {
       textAreaElement.value = `${commentText} > ${commentAuthor}`;
     })
   };
-
+  /* addComment(); */
 };
 
-/* addComment(); */
 
 
- addComment = () => {
+
+export const addComment = () => {
   const textAreaElement = document.getElementById("add-text");
   const inputElement = document.getElementById("add-name");
   const buttonElement = document.getElementById("add-form-button");
@@ -117,7 +117,7 @@ const quoteCommets = () => {
 
     //2.13. надпись о загрузке коммента и блокировка кнопки "добавить".
     postComment(inputElement.value,
-      textAreaElement.value, text: sanitizeHtml(textareaInputElement.value))
+      textAreaElement.value, sanitizeHtml(textAreaInputElement.value))
       .then((response) => {
         if (response.status === 201) {
           return response.json();
