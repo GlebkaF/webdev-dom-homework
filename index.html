@@ -175,13 +175,13 @@
         }
         return date
       }
-      const dateComment = `${fullDate(currentDate.getDay())}.${fullDate(currentDate.getMonth() + 1)}.${fullDate(currentDate.getFullYear())} ${currentDate.getHours()}:${fullDate(currentDate.getMinutes())}`;
+      const dateComment = `${fullDate(currentDate.getDate())}.${fullDate(currentDate.getMonth() + 1)}.${fullDate(currentDate.getFullYear())} ${currentDate.getHours()}:${fullDate(currentDate.getMinutes())}`;
       nameInputElement.classList.remove('error');
       commentInputElement.classList.remove('error');
-      if (!nameInputElement.value) {
+      if (!nameInputElement.value || nameInputElement.value.trim() === "") {
         nameInputElement.classList.add('error')
         return
-      } else if (!commentInputElement.value) {
+      } else if (!commentInputElement.value || commentInputElement.value.trim() === "") {
         commentInputElement.classList.add('error')
         return
       }
@@ -218,6 +218,8 @@
             let commentsArr = comments.innerHTML.split('');
             comments.innerHTML = commentsArr.splice(0, index).join(''); 
           }  
+
+          
 
     })
   </script>
