@@ -1,4 +1,5 @@
 import { fetchAndRenderComments } from "./main.js";
+import { addComment, renderComments } from "./render.js";
 let urlApi = "https://wedev-api.sky.pro/api/v1/zenin-dmitry/comments";
 let urlApiLogin = "https://wedev-api.sky.pro/api/user/login";
 
@@ -40,7 +41,7 @@ export function getComments() {
 } */
 
 //POST запрос авторизации и токена
-export const postComment = ( text) => {
+export const postComment = (text) => {
     console.log("conslole", text);
     return fetch(urlApi,
         {
@@ -59,7 +60,7 @@ export const postComment = ( text) => {
         })
 };
 
-export function loginPost({ login, password }) {
+export function loginPost({ login, password}) {
     return fetch(urlApiLogin,
         {
             method: 'POST',
@@ -70,7 +71,8 @@ export function loginPost({ login, password }) {
         }).then((response) => {
             if (response.status === 201) {
                 console.log("страница комментов");
-                return response.json();
+                return response.json(fetchAndRenderComments());
+                
             }
             if (response.status === 400) {
                 throw new Error("Некорректные логин\пароль 400");
@@ -82,7 +84,7 @@ export function loginPost({ login, password }) {
         }).catch((error) => {
             alert(error);
             console.warn(error);
-        })
+        });
         
-};
 /* fetchAndRenderComments(); */
+};

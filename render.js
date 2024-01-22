@@ -150,13 +150,12 @@ export const addComment = () => {
     const buttonElement = document.getElementById('add-button');
     buttonElement.addEventListener('click', addComment);
   }
-  renderComments();
-  initLikeListener();
+
+  /* initLikeListener();
   initDeleteButtonsListeners
   quoteCommets();
-  fetchAndRenderComments();
+   */
 };
-
 
 
 

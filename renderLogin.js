@@ -36,7 +36,7 @@ export const renderLoginForm = () => {
             return
         }
         loginPost({login: loginInputElement.value, password:passwordInputElement.value});
-
+        
     });
 
 };
