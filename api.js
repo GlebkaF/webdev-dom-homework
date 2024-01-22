@@ -70,8 +70,8 @@ export function loginPost({ login, password}) {
             }),
         }).then((response) => {
             if (response.status === 201) {
-                console.log("страница комментов");
-                return response.json(fetchAndRenderComments());
+                console.log("комменты отрисовались?");
+                return response.json(), fetchAndRenderComments();
                 
             }
             if (response.status === 400) {
