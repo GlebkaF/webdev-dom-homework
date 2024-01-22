@@ -97,19 +97,28 @@
 
     // Функция ответа на комментарий
 
-    const initAnswerComment = () => {
-      const textComments = document.querySelectorAll(".comment-text");
+    // const initAnswerComment = () => {
+    //   const textComments = document.querySelectorAll(".comment-text");
 
-      for (const textComment of textComments) {
-        textComment.addEventListener("click", () => {
-          //console.log(textComment.innerHTML);
-          let index = textComment.dataset.index;
+    //   for (const textComment of textComments) {
+    //     textComment.addEventListener("click", () => {
+    //       //console.log(textComment.innerHTML);
+    //       let index = textComment.dataset.index;
           
+    //       inputText.value = '> ' + comments[index].text + '\n' + comments[index].author + ', ';
+    //     })
+    //   }
+    // }
+
+    function initAnswerComment2() {
+      const commentTexts = document.querySelectorAll(".comment-text");
+
+      commentTexts.forEach((commentText, index) => {
+        commentText.addEventListener("click", () => {
           inputText.value = '> ' + comments[index].text + '\n' + comments[index].author + ', ';
         })
-      }
+      })
     }
-
 
     // Функция разблокировки кнопки "Написать", если поле с именем не пустое
 
@@ -215,7 +224,8 @@
       ititAddLikeListener();
       initEditCommentListener();
       initSaveEditCommentListener();
-      initAnswerComment();
+      //initAnswerComment();
+      initAnswerComment2();
     };
 
     renderComments();
