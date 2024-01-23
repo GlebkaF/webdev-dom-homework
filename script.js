@@ -176,33 +176,33 @@ const deleteLastButton = document.getElementById("delete-last-button");
 let date = new Date();
 let today = formatDate(date);
 
-let comments = [
-  {
-    name: "Глеб Фокин",
-    comment: "Это будет первый комментарий на этой странице",
-    likes: 3,
-    isLike: true,
-    date: "12.02.22 12:18",
-  },
-  {
-    name: "Варвара Н.",
-    comment: "Мне нравится как оформлена эта страница! ❤",
-    likes: 75,
-    isLike: false,
-    date: "13.02.22 19:22",
-  },
-];
+let comments = [];
 
 renderComments();
 
-const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/gleb-fokin/comments', {
-  method: "get"
-})
+const fetchPromise = fetch(
+  "https://wedev-api.sky.pro/api/v1/gleb-fokin/comments",
+  {
+    method: "get",
+  }
+);
 
 fetchPromise.then((response) => {
-  console.log(response);
-  response.json
-})
+  const promiseJson = response.json();
+  promiseJson.then((response) => {
+    const appComments = response.comments.map((comment) => {
+      return {
+        name: comment.author.name,
+        date: formatDate(new Date(comment.date)),
+        comment: comment.text,
+        likes: comment.likes,
+        isLike: false,
+      };
+    });
+    comments = appComments;
+    renderComments();
+  });
+});
 
 nameInputElement.addEventListener("keypress", handleKeyPress);
 commentInputElement.addEventListener("keypress", handleKeyPress);
