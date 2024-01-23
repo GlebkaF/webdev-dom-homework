@@ -58,6 +58,7 @@
         ></textarea>
         <div class="add-form-row">
           <button id="write" class="add-form-button">Написать</button>
+      
         </div>
       </div>
     </div>
@@ -74,18 +75,35 @@
 
     buttonElement.addEventListener("click", () => {
       const oldListHtml = listElement.innerHTML;
+      const currentDate = new Date().toLocaleDateString('default', {day: '2-digit', month: '2-digit', year: '2-digit'}) + " "+ new Date().toLocaleTimeString().slice(0,-3);
+      
+      nameInputElement.classList.remove("error");
+      commentInputElement.classList.remove("error");
+
+      if (nameInputElement.value.length === 0 || commentInputElement.value.length === 0) {
+        nameInputElement.classList.add("error");
+        commentInputElement.classList.add("error");
+        return;
+      }
+
       listElement.innerHTML = oldListHtml + 
-        `<li class="comment"><div class="comment-header"><div>${nameInputElement.value}</div>
+        `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${currentDate}</div>
+          </div>
           <div class="comment-body">
             <div class="comment-text">${commentInputElement.value}</div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
+              <span class="likes-counter">0</span>
+              <button id="write" class="like-button -active-like"></button>
             </div>
           </div>
           </li>`;
+
+
 
       nameInputElement.value = '';
       commentInputElement.value = '';
@@ -97,6 +115,4 @@
   </script>
 </html>
 
-    //*let fullDate = myDate.getDate() + " " + months[myDate.getMonth()] + " " + myDate.getFullYear() + " " + days[myDate.getDay()];
-            
-    //*return(fullDate);
+    
