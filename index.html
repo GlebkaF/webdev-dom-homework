@@ -71,9 +71,21 @@
     const buttonElement = document.getElementById("write");
     const listElement = document.getElementById("list");
 
+
     buttonElement.addEventListener("click", () => {
       const oldListHtml = listElement.innerHTML;
-      listElement.innerHTML = oldListHtml + `<li>${nameInputElement.value}, ${commentInputElement.value}</li>`;
+      listElement.innerHTML = oldListHtml + 
+        `<li class="comment"><div class="comment-header"><div>${nameInputElement.value}</div>
+          <div class="comment-body">
+            <div class="comment-text">${commentInputElement.value}</div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">75</span>
+              <button class="like-button -active-like"></button>
+            </div>
+          </div>
+          </li>`;
 
       nameInputElement.value = '';
       commentInputElement.value = '';
@@ -84,3 +96,7 @@
     console.log("It works!");
   </script>
 </html>
+
+    //*let fullDate = myDate.getDate() + " " + months[myDate.getMonth()] + " " + myDate.getFullYear() + " " + days[myDate.getDay()];
+            
+    //*return(fullDate);
