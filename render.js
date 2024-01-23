@@ -1,6 +1,6 @@
 import { commentList } from "./main.js";
 import { initDeleteButtonsListeners } from "./delbutton.js";
-import { token, postComment } from "./api.js";
+import { setToken, token, postComment, getComments } from "./api.js";
 import { renderLoginForm } from "./renderLogin.js";
 import { sanitizeHtml } from './sanitizeHtml.js';
 
@@ -50,9 +50,9 @@ export const renderComments = () => {
     </div>`
   }
 
-  /* initLikeListener();
+  initLikeListener();
   initDeleteButtonsListeners();
-  quoteCommets(); */
+  quoteCommets();
   appHtml.innerHTML = contentHtml()
 
   //Переход к форме авторизации по клику
@@ -81,25 +81,6 @@ export const initLikeListener = () => {
     });
   }
 };
-
-//Цитирование
-const quoteCommets = () => {
-  const textAreaElement = document.getElementById("add-text");
-  const commentElements = document.querySelectorAll(".comment");
-  for (const commentElement of commentElements) {
-    commentElement.addEventListener("click", () => {
-      const index = commentElement.dataset.index;
-      const commentText = commentList[index].text;
-      const commentAuthor = commentList[index].name;
-      textAreaElement.value = `${commentText} > ${commentAuthor}`;
-    })
-  };
-  addComment();
-};
-
-
-
-
 export const addComment = () => {
   const textAreaElement = document.getElementById("add-text");
   const inputElement = document.getElementById("add-name");
@@ -142,20 +123,40 @@ export const addComment = () => {
           alert("Отуствует соединение к интеренету");
         };
         buttonElement.disabled = false;
-        renderComments();
+        addComments();
+
 
       })
   })
-  if (token) {
+  if (!setToken()) {
     const buttonElement = document.getElementById('add-button');
     buttonElement.addEventListener('click', addComment);
-  }
+  } addComment();
 
   /* initLikeListener();
   initDeleteButtonsListeners
   quoteCommets();
    */
 };
+//Цитирование
+const quoteCommets = () => {
+  const textAreaElement = document.getElementById("add-text");
+  const commentElements = document.querySelectorAll(".comment");
+  for (const commentElement of commentElements) {
+    commentElement.addEventListener("click", () => {
+      const index = commentElement.dataset.index;
+      const commentText = commentList[index].text;
+      const commentAuthor = commentList[index].name;
+      textAreaElement.value = `${commentText} > ${commentAuthor}`;
+    })
+  };
+ /*  addComment(); */
+};
+
+
+
+
+
 
 
 

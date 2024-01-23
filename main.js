@@ -1,9 +1,9 @@
 import { formatDateTime } from "./datetime.js";
-import { getComments, postComment, loginPost,getToken, token} from "./api.js";
+import { getComments, getToken, setToken, token} from "./api.js";
 import { initDeleteButtonsListeners } from "./delbutton.js";
 import { renderComments, addComment} from "./render.js";
   
-export let user = null;
+export let user = JSON.parse(localStorage.getItem("user"));
 export const setUser = (newUser) => {
     user = newUser;
 };
@@ -19,25 +19,6 @@ const addFormElement = document.querySelector(".add-form"); */
 
 export let commentList = [];
 
-/* export const fetchAndRenderComments = (comments) => {
-    getComments({ token: setToken() })
-      .then((responseData) => {
-        const appComments = responseData.comments.map((comment) => {
-          return {
-            id: comment.id,
-            name: comment.author.name,
-            date: formatDateTime(comment.date),
-            text: comment.text,
-            likes: comment.likes,
-            isLiked: comment.isLiked,
-          };
-        });
-        console.log("fetchAndRende работает")
-        comments = appComments;
-        renderComments(comments);
-      });
-  }; */
- 
 
 // запрос коммента с api
 export const fetchAndRenderComments = () => {
@@ -55,16 +36,15 @@ export const fetchAndRenderComments = () => {
         console.log(commentList);
         renderComments();
 
-        if (getToken(token)) {
+        if (getToken(setToken())) {
             addComment();
             const buttonElement = document.getElementById("add-form-button");
             buttonElement.disabled = false;
-        }
+        } 
     });
-    
 };
-
 fetchAndRenderComments();
+
 
 
 

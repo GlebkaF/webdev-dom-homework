@@ -1,12 +1,14 @@
-import { fetchAndRenderComments } from "./main.js";
-import { addComment, renderComments } from "./render.js";
+/* import { fetchAndRenderComments, commentList } from "./main.js";
+import { addComment, renderComments } from "./render.js"; */
 let urlApi = "https://wedev-api.sky.pro/api/v1/zenin-dmitry/comments";
 let urlApiLogin = "https://wedev-api.sky.pro/api/user/login";
 
-export let token = null;
+export let token = localStorage.getItem("token");
+console.log(token);
 export const setToken = (newToken) => {
-    token = newToken;
+     token = newToken;
 };
+
 
 export const getToken = () => {
     return token;
@@ -19,7 +21,7 @@ export function getComments() {
     return fetch(urlApi, {
         method: "GET",
         headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: setToken(),
         },
     }).then((response) => {
         if (response.status === 401) {
@@ -29,16 +31,6 @@ export function getComments() {
     })
 };
 
-/* export function get() {
-    return fetch(urlApi,
-        {
-            method: 'GET',
-            headers: {
-                Autorization: ,
-            },
-        })
-        
-} */
 
 //POST запрос авторизации и токена
 export const postComment = (text) => {
@@ -47,7 +39,7 @@ export const postComment = (text) => {
         {
             method: 'POST',
             headers: {
-                Autorization: `Bearer ${token}`,
+                Autorization: setToken(),
             },
             body: JSON.stringify({
                 /* name: name, */
@@ -71,8 +63,7 @@ export function loginPost({ login, password}) {
         }).then((response) => {
             if (response.status === 201) {
                 console.log("комменты отрисовались?");
-                return response.json(), fetchAndRenderComments();
-                
+                return response.json();
             }
             if (response.status === 400) {
                 throw new Error("Некорректные логин\пароль 400");
@@ -84,7 +75,6 @@ export function loginPost({ login, password}) {
         }).catch((error) => {
             alert(error);
             console.warn(error);
-        });
-        
-/* fetchAndRenderComments(); */
+        }) 
+
 };

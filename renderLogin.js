@@ -1,5 +1,5 @@
 import { loginPost} from "./api.js";
-/* import { fetchAndRenderComments} from "./main.js"; */
+/* import { fetchAndRenderComments } from "./main.js"; */
 
 
 export const renderLoginForm = () => {
@@ -38,5 +38,4 @@ export const renderLoginForm = () => {
         loginPost({login: loginInputElement.value, password:passwordInputElement.value});
         
     });
-
 };
