@@ -46,11 +46,11 @@
       </ul>
       <div class="add-form">
         <input
-          type="text"
+          id="enter-name" type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
-        <textarea
+        <textarea id="comment"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
@@ -66,6 +66,11 @@
   <script>
     "use strict";
     // Код писать здесь
+    const nameElement = document.getElementById("enter-name");
+    const commentElement = document.getElementById("comment");
+
+    console.log(nameElement.innerHTML);
+
     console.log("It works!");
   </script>
 </html>
