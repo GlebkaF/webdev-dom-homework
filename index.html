@@ -73,7 +73,7 @@
             <div>${users.date}</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
+            <div class="comment-text" data-index="${index}">
               ${users.commentUser}
             </div>
             <textarea
@@ -101,6 +101,7 @@
 
       initEventListeners();
       initEditButton();
+      initReComment();
 
     }  
     // Изменение кнопки like
@@ -150,11 +151,22 @@
       }
     }
 
+   // Добавляет ответ к комментарию
+   const initReComment = () => {
+    const commentsTexts = document.querySelectorAll('.comment-text');
+    for (const commentText of commentsTexts) {
+      commentText.addEventListener('click', (event) => {
+        const index = commentText.dataset.index;
+        event.stopPropagation();
+        commentText.style.whiteSpace = 'pre-line';
+        commentInputElement.value = `> ${users[index].commentUser}
+        ${users[index].name}`;
 
+      })
+    }
+   } 
 
     renderUsers();
-
-
 
     buttonElement.disabled = true;
 
@@ -188,9 +200,9 @@
 
       users.push(
         {
-          name: nameInputElement.value,
+          name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
           date: dateComment,
-          commentUser: commentInputElement.value,
+          commentUser: commentInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
           likeCount: 0,
           likeUser: false,
         }
