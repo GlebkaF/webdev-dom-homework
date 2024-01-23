@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="list" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -46,18 +46,18 @@
       </ul>
       <div class="add-form">
         <input
-          id="enter-name" type="text"
+          type="text" id="name-input"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
-        <textarea id="comment"
-          type="textarea"
+        <textarea
+          type="textarea" id="comment-input"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="write" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
@@ -66,10 +66,20 @@
   <script>
     "use strict";
     // Код писать здесь
-    const nameElement = document.getElementById("enter-name");
-    const commentElement = document.getElementById("comment");
+    const nameInputElement = document.getElementById("name-input");
+    const commentInputElement = document.getElementById("comment-input");
+    const buttonElement = document.getElementById("write");
+    const listElement = document.getElementById("list");
 
-    console.log(nameElement.innerHTML);
+    buttonElement.addEventListener("click", () => {
+      const oldListHtml = listElement.innerHTML;
+      listElement.innerHTML = oldListHtml + `<li>${nameInputElement.value}, ${commentInputElement.value}</li>`;
+
+      nameInputElement.value = '';
+      commentInputElement.value = '';
+    });
+
+    
 
     console.log("It works!");
   </script>
