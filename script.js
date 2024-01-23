@@ -195,6 +195,15 @@ let comments = [
 
 renderComments();
 
+const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/gleb-fokin/comments', {
+  method: "get"
+})
+
+fetchPromise.then((response) => {
+  console.log(response);
+  response.json
+})
+
 nameInputElement.addEventListener("keypress", handleKeyPress);
 commentInputElement.addEventListener("keypress", handleKeyPress);
 buttonElement.addEventListener("keypress", handleKeyPress);
