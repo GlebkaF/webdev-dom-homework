@@ -177,17 +177,14 @@ let date = new Date();
 let today = formatDate(date);
 
 let comments = [];
-
-renderComments();
-
-const fetchPromise = fetch(
+const fetchPromiseGet = fetch(
   "https://wedev-api.sky.pro/api/v1/gleb-fokin/comments",
   {
     method: "get",
   }
 );
 
-fetchPromise.then((response) => {
+fetchPromiseGet.then((response) => {
   const promiseJson = response.json();
   promiseJson.then((response) => {
     const appComments = response.comments.map((comment) => {
@@ -224,24 +221,59 @@ buttonElement.addEventListener("click", () => {
     buttonElement.classList.add("error__button");
     commentInputElement.addEventListener("input", updateButtonState);
   } else {
-    comments.push({
-      name: nameInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-      comment: commentInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-      likes: 0,
-      isLike: false,
-      date: today,
+    // comments.push({
+    //   name: nameInputElement.value
+    //     .replaceAll("&", "&amp;")
+    //     .replaceAll("<", "&lt;")
+    //     .replaceAll(">", "&gt;")
+    //     .replaceAll('"', "&quot;"),
+    //   comment: commentInputElement.value
+    //     .replaceAll("&", "&amp;")
+    //     .replaceAll("<", "&lt;")
+    //     .replaceAll(">", "&gt;")
+    //     .replaceAll('"', "&quot;"),
+    //   likes: 0,
+    //   isLike: false,
+    //   date: today,
+    // });
+
+    const fetchPromise = fetch(
+      "https://wedev-api.sky.pro/api/v1/gleb-fokin/comments",
+      {
+        method: "post",
+        body: JSON.stringify({
+          text: commentInputElement.value,
+          name: nameInputElement.value,
+        }),
+      }
+    );
+
+    const fetchPromiseGet = fetch(
+      "https://wedev-api.sky.pro/api/v1/gleb-fokin/comments",
+      {
+        method: "get",
+      }
+    );
+
+    fetchPromiseGet.then((response) => {
+      const promiseJson = response.json();
+      promiseJson.then((response) => {
+        const appComments = response.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: formatDate(new Date(comment.date)),
+            comment: comment.text,
+            likes: comment.likes,
+            isLike: false,
+          };
+        });
+        comments = appComments;
+        renderComments();
+      });
     });
+
     nameInputElement.value = "";
     commentInputElement.value = "";
-    renderComments();
   }
 });
 console.log("It works!");
