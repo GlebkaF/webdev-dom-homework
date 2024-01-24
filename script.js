@@ -22,7 +22,6 @@ function updateButtonState() {
 function handleKeyPress(event) {
   if (event.key === "Enter") {
     event.preventDefault();
-
     buttonElement.click();
   }
 }
@@ -58,7 +57,7 @@ const handleSaveClick = (index) => {
   const editedText = textareaElement.value;
 
   comments[index].comment = editedText;
-
+  fetchPromisePost(comments[index].comment, comments[index].name);
   renderComments();
 };
 
@@ -177,29 +176,44 @@ let date = new Date();
 let today = formatDate(date);
 
 let comments = [];
-const fetchPromiseGet = fetch(
-  "https://wedev-api.sky.pro/api/v1/gleb-fokin/comments",
-  {
-    method: "get",
-  }
-);
+const fetchPromiseGet = () => {
+  const fetchPromise = fetch(
+    "https://wedev-api.sky.pro/api/v1/gleb-fokin/comments",
+    {
+      method: "get",
+    }
+  );
 
-fetchPromiseGet.then((response) => {
-  const promiseJson = response.json();
-  promiseJson.then((response) => {
-    const appComments = response.comments.map((comment) => {
-      return {
-        name: comment.author.name,
-        date: formatDate(new Date(comment.date)),
-        comment: comment.text,
-        likes: comment.likes,
-        isLike: false,
-      };
+  fetchPromise.then((response) => {
+    const promiseJson = response.json();
+    promiseJson.then((response) => {
+      const appComments = response.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: formatDate(new Date(comment.date)),
+          comment: comment.text,
+          likes: comment.likes,
+          isLike: false,
+        };
+      });
+      comments = appComments;
+      renderComments();
     });
-    comments = appComments;
-    renderComments();
   });
-});
+};
+const fetchPromisePost = (textValue, nameValue) => {
+  const fetchPromise = fetch(
+    "https://wedev-api.sky.pro/api/v1/gleb-fokin/comments",
+    {
+      method: "post",
+      body: JSON.stringify({
+        text: textValue,
+        name: nameValue,
+      }),
+    }
+  );
+};
+fetchPromiseGet();
 
 nameInputElement.addEventListener("keypress", handleKeyPress);
 commentInputElement.addEventListener("keypress", handleKeyPress);
@@ -237,40 +251,8 @@ buttonElement.addEventListener("click", () => {
     //   date: today,
     // });
 
-    const fetchPromise = fetch(
-      "https://wedev-api.sky.pro/api/v1/gleb-fokin/comments",
-      {
-        method: "post",
-        body: JSON.stringify({
-          text: commentInputElement.value,
-          name: nameInputElement.value,
-        }),
-      }
-    );
-
-    const fetchPromiseGet = fetch(
-      "https://wedev-api.sky.pro/api/v1/gleb-fokin/comments",
-      {
-        method: "get",
-      }
-    );
-
-    fetchPromiseGet.then((response) => {
-      const promiseJson = response.json();
-      promiseJson.then((response) => {
-        const appComments = response.comments.map((comment) => {
-          return {
-            name: comment.author.name,
-            date: formatDate(new Date(comment.date)),
-            comment: comment.text,
-            likes: comment.likes,
-            isLike: false,
-          };
-        });
-        comments = appComments;
-        renderComments();
-      });
-    });
+    fetchPromisePost(commentInputElement.value, nameInputElement.value);
+    fetchPromiseGet();
 
     nameInputElement.value = "";
     commentInputElement.value = "";
