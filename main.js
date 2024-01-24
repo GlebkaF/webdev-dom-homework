@@ -127,4 +127,4 @@ import { listElement, renderComments } from "./renderComments.js";
     // renderComments({ comments, likeEventListerner, commentEventListener });
 
 
-    console.log("It works!");
+    // console.log("It works!");
