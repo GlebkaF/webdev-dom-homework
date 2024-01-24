@@ -12,6 +12,14 @@ function formatDate(date) {
   return formattedDate;
 }
 
+const sanitizeHtml = (htmlString) => {
+  return htmlString
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+};
+
 function updateButtonState() {
   buttonElement.classList.remove("error__button");
   addButton.disabled =
@@ -22,7 +30,6 @@ function updateButtonState() {
 function handleKeyPress(event) {
   if (event.key === "Enter") {
     event.preventDefault();
-
     buttonElement.click();
   }
 }
@@ -58,7 +65,7 @@ const handleSaveClick = (index) => {
   const editedText = textareaElement.value;
 
   comments[index].comment = editedText;
-
+  fetchPromisePost(comments[index].comment, comments[index].name);
   renderComments();
 };
 
@@ -176,33 +183,45 @@ const deleteLastButton = document.getElementById("delete-last-button");
 let date = new Date();
 let today = formatDate(date);
 
-let comments = [
-  {
-    name: "Глеб Фокин",
-    comment: "Это будет первый комментарий на этой странице",
-    likes: 3,
-    isLike: true,
-    date: "12.02.22 12:18",
-  },
-  {
-    name: "Варвара Н.",
-    comment: "Мне нравится как оформлена эта страница! ❤",
-    likes: 75,
-    isLike: false,
-    date: "13.02.22 19:22",
-  },
-];
+let comments = [];
+const fetchPromiseGet = () => {
+  const fetchPromise = fetch(
+    "https://wedev-api.sky.pro/api/v1/gleb-fokin/comments",
+    {
+      method: "get",
+    }
+  );
 
-renderComments();
-
-const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/gleb-fokin/comments', {
-  method: "get"
-})
-
-fetchPromise.then((response) => {
-  console.log(response);
-  response.json
-})
+  fetchPromise.then((response) => {
+    const promiseJson = response.json();
+    promiseJson.then((response) => {
+      const appComments = response.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: formatDate(new Date(comment.date)),
+          comment: comment.text,
+          likes: comment.likes,
+          isLike: false,
+        };
+      });
+      comments = appComments;
+      renderComments();
+    });
+  });
+};
+const fetchPromisePost = (textValue, nameValue) => {
+  const fetchPromise = fetch(
+    "https://wedev-api.sky.pro/api/v1/gleb-fokin/comments",
+    {
+      method: "post",
+      body: JSON.stringify({
+        text: sanitizeHtml(textValue),
+        name: sanitizeHtml(nameValue),
+      }),
+    }
+  );
+};
+fetchPromiseGet();
 
 nameInputElement.addEventListener("keypress", handleKeyPress);
 commentInputElement.addEventListener("keypress", handleKeyPress);
@@ -224,24 +243,27 @@ buttonElement.addEventListener("click", () => {
     buttonElement.classList.add("error__button");
     commentInputElement.addEventListener("input", updateButtonState);
   } else {
-    comments.push({
-      name: nameInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-      comment: commentInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-      likes: 0,
-      isLike: false,
-      date: today,
-    });
+    // comments.push({
+    //   name: nameInputElement.value
+    //     .replaceAll("&", "&amp;")
+    //     .replaceAll("<", "&lt;")
+    //     .replaceAll(">", "&gt;")
+    //     .replaceAll('"', "&quot;"),
+    //   comment: commentInputElement.value
+    //     .replaceAll("&", "&amp;")
+    //     .replaceAll("<", "&lt;")
+    //     .replaceAll(">", "&gt;")
+    //     .replaceAll('"', "&quot;"),
+    //   likes: 0,
+    //   isLike: false,
+    //   date: today,
+    // });
+
+    fetchPromisePost(commentInputElement.value, nameInputElement.value);
+    fetchPromiseGet();
+
     nameInputElement.value = "";
     commentInputElement.value = "";
-    renderComments();
   }
 });
 console.log("It works!");
