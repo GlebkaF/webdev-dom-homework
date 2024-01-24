@@ -74,7 +74,7 @@
 
 
     // Получаем все необходимые элементы
-
+    const baseUrl = "https://wedev-api.sky.pro/api/v1/pavel-fedotov/";
     const body = document.querySelector(".container");
     //console.log(body);
     const commentList = document.getElementById('comment-list');
@@ -122,7 +122,7 @@
       // }
     ]
 
-    const fetchPromiseComments = fetch("https://wedev-api.sky.pro/api/v1/pavel-fedotov/comments", {
+    const fetchPromiseComments = fetch(`${baseUrl}comments`, {
       method: "GET",
     });
 
@@ -348,7 +348,7 @@
         isLoaded = true;
         console.log(isLoaded);
 
-        const fetchPromises = fetch("https://wedev-api.sky.pro/api/v1/pavel-fedotov/comments", {
+        const fetchPromises = fetch(`${baseUrl}comments`, {
           method: "POST",
           body: JSON.stringify({
             text: inputText.value,
@@ -365,7 +365,7 @@
           //console.log(resultComments);
 
           resultComments.json().then((resultCommentsData) => {
-            const fetchPromiseComments = fetch("https://wedev-api.sky.pro/api/v1/pavel-fedotov/comments", {
+            const fetchPromiseComments = fetch(`${baseUrl}comments`, {
               method: "GET",
             });
     
