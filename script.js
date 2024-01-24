@@ -12,6 +12,14 @@ function formatDate(date) {
   return formattedDate;
 }
 
+const sanitizeHtml = (htmlString) => {
+  return htmlString
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+};
+
 function updateButtonState() {
   buttonElement.classList.remove("error__button");
   addButton.disabled =
@@ -207,8 +215,8 @@ const fetchPromisePost = (textValue, nameValue) => {
     {
       method: "post",
       body: JSON.stringify({
-        text: textValue,
-        name: nameValue,
+        text: sanitizeHtml(textValue),
+        name: sanitizeHtml(nameValue),
       }),
     }
   );
