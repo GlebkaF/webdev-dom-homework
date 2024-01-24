@@ -21,7 +21,7 @@ export function getComments() {
     return fetch(urlApi, {
         method: "GET",
         headers: {
-            Authorization: setToken(),
+            Authorization: setToken() /* `Bearer ${token}` */,
         },
     }).then((response) => {
         if (response.status === 401) {
@@ -39,7 +39,7 @@ export const postComment = (text) => {
         {
             method: 'POST',
             headers: {
-                Autorization: setToken(),
+                Autorization: getToken()/* `Bearer ${token}` */,
             },
             body: JSON.stringify({
                 /* name: name, */

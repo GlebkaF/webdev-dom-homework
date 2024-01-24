@@ -1,6 +1,6 @@
-import { commentList } from "./main.js";
+import { commentList, fetchAndRenderComments } from "./main.js";
 import { initDeleteButtonsListeners } from "./delbutton.js";
-import { setToken, token, postComment, getComments } from "./api.js";
+import { setToken, token, postComment, getComments, getToken } from "./api.js";
 import { renderLoginForm } from "./renderLogin.js";
 import { sanitizeHtml } from './sanitizeHtml.js';
 
@@ -9,7 +9,7 @@ import { sanitizeHtml } from './sanitizeHtml.js';
 //Выводим комменты
 export const renderComments = () => {
   const appHtml = document.getElementById("app");
-  console.log(commentList);
+/*   console.log(commentList); */
   const commentsHtml = commentList.map((comment, index) => {
     return `<li class="comment" data-index="${index}">
           <div class="comment-header">
@@ -63,11 +63,9 @@ export const renderComments = () => {
       renderLoginForm();
     });
   };
-
   setLoginBtn();
-
-
 };
+
 //Активность кнопки лайк
 export const initLikeListener = () => {
   const buttonLike = document.querySelectorAll(".like-button");
@@ -81,6 +79,22 @@ export const initLikeListener = () => {
     });
   }
 };
+
+//Цитирование
+export const quoteCommets = () => {
+  const textAreaElement = document.getElementById("add-text");
+  const commentElements = document.querySelectorAll(".comment");
+  for (const commentElement of commentElements) {
+    commentElement.addEventListener("click", () => {
+      const index = commentElement.dataset.index;
+      const commentText = commentList[index].text;
+      const commentAuthor = commentList[index].name;
+      textAreaElement.value = `${commentText} > ${commentAuthor}`;
+    })
+  };
+ /*  addComment(); */
+};
+
 export const addComment = () => {
   const textAreaElement = document.getElementById("add-text");
   const inputElement = document.getElementById("add-name");
@@ -97,11 +111,16 @@ export const addComment = () => {
     };
 
     //2.13. надпись о загрузке коммента и блокировка кнопки "добавить".
-    postComment(inputElement.value,
-      textAreaElement.value, sanitizeHtml(textAreaInputElement.value))
+    postComment(/* inputElement.value,
+      textAreaElement.value,  */sanitizeHtml(textAreaElement.value))
       .then((response) => {
         if (response.status === 201) {
-          return response.json();
+          /* return response.json(); */
+          fetchAndRenderComments();
+          addForm.classList.remove("hidden");
+          addComment.classList.add("hidden");
+          textareaInputElement.value = "";
+          return;
         }
         if (response.status === 400) {
           throw new Error("Некорректный запрос error 400");
@@ -111,7 +130,7 @@ export const addComment = () => {
       }).then(() => {
         inputElement.value = "";
         textAreaElement.value = "";
-        return getComments();
+        /* return  */getComments();
       })
       .catch((error) => {
         buttonElement.disabled = true;
@@ -123,37 +142,21 @@ export const addComment = () => {
           alert("Отуствует соединение к интеренету");
         };
         buttonElement.disabled = false;
-        addComments();
-
+        /* renderComments(); */
 
       })
   })
-  if (!setToken()) {
+  if (getToken()) {
     const buttonElement = document.getElementById('add-button');
     buttonElement.addEventListener('click', addComment);
-  } addComment();
-
-  /* initLikeListener();
+    addComment();
+  }
+  
+  initLikeListener();
   initDeleteButtonsListeners
   quoteCommets();
-   */
+  addComment();
 };
-//Цитирование
-const quoteCommets = () => {
-  const textAreaElement = document.getElementById("add-text");
-  const commentElements = document.querySelectorAll(".comment");
-  for (const commentElement of commentElements) {
-    commentElement.addEventListener("click", () => {
-      const index = commentElement.dataset.index;
-      const commentText = commentList[index].text;
-      const commentAuthor = commentList[index].name;
-      textAreaElement.value = `${commentText} > ${commentAuthor}`;
-    })
-  };
- /*  addComment(); */
-};
-
-
 
 
 
