@@ -3,6 +3,7 @@ import { getComments, getToken, setToken, token } from "./api.js";
 import { initDeleteButtonsListeners } from "./delbutton.js";
 import { renderComments, addComment } from "./render.js";
 
+
 export let user = JSON.parse(localStorage.getItem("user"));
 export const setUser = (newUser) => {
   user = newUser;
@@ -27,7 +28,7 @@ export const fetchAndRenderComments = () => {
       return {
         name: comment.author.name,
         date: formatDateTime(comment.date),
-        id: comment.id,
+        id: comment.id,/*  */
         isLiked: comment.isLiked,
         likes: comment.likes,
         text: comment.text,
@@ -37,10 +38,11 @@ export const fetchAndRenderComments = () => {
     renderComments();
 
     if (token) {
-      renderComments();
+      
       const buttonElement = document.getElementById("add-form-button");
       buttonElement.disabled = false;
       addComment();
+      renderComments();
     }
   });
 
@@ -51,7 +53,7 @@ fetchAndRenderComments();
 //Цитата коммента
 
 
-initDeleteButtonsListeners();
+/* initDeleteButtonsListeners(); */
 
 
 //функция добавления коммента

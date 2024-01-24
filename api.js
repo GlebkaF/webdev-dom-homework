@@ -1,6 +1,6 @@
 /* import { fetchAndRenderComments, commentList } from "./main.js";
 import { addComment, renderComments } from "./render.js"; */
-let urlApi = "https://wedev-api.sky.pro/api/v1/zenin-dmitry/comments";
+let urlApi = "https://wedev-api.sky.pro/api/v2/zenin-dmitry/comments";
 let urlApiLogin = "https://wedev-api.sky.pro/api/user/login";
 
 export let token = localStorage.getItem("token");
@@ -8,6 +8,7 @@ console.log(token);
 export const setToken = (newToken) => {
      token = newToken;
 };
+
 
 
 export const getToken = () => {
@@ -21,7 +22,7 @@ export function getComments() {
     return fetch(urlApi, {
         method: "GET",
         headers: {
-            Authorization: setToken() /* `Bearer ${token}` */,
+            Authorization: `Bearer ${token}`,
         },
     }).then((response) => {
         if (response.status === 401) {
@@ -39,7 +40,7 @@ export const postComment = (text) => {
         {
             method: 'POST',
             headers: {
-                Autorization: getToken()/* `Bearer ${token}` */,
+                Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
                 /* name: name, */

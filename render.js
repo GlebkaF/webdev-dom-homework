@@ -58,6 +58,9 @@ export const renderComments = () => {
   //Переход к форме авторизации по клику
  const setLoginBtn = () => {
     const buttonLoginElement = document.getElementById("render-login-btn");
+    if (!buttonLoginElement){
+      return;
+    }
     buttonLoginElement.addEventListener("click", (event) => {
       event.preventDefault();
       renderLoginForm();
@@ -65,6 +68,8 @@ export const renderComments = () => {
   };
   setLoginBtn();
 };
+
+
 
 //Активность кнопки лайк
 export const initLikeListener = () => {
@@ -130,7 +135,7 @@ export const addComment = () => {
       }).then(() => {
         inputElement.value = "";
         textAreaElement.value = "";
-        /* return  */getComments();
+        return /* getComments() */;
       })
       .catch((error) => {
         buttonElement.disabled = true;
@@ -146,7 +151,7 @@ export const addComment = () => {
 
       })
   })
-  if (getToken()) {
+  if (setToken) {
     const buttonElement = document.getElementById('add-button');
     buttonElement.addEventListener('click', addComment);
     addComment();
