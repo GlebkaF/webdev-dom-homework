@@ -1,7 +1,8 @@
 "use strict";
 
 import { getTodos, postTodo } from "./api.js";
-import { renderComments } from "./renderComments.js";
+import { loginButtonListerner, renderLogin } from "./loginPage.js";
+import { listElement, renderComments } from "./renderComments.js";
 
 
     const buttonElement = document.querySelector ('.add-form-button');
@@ -54,7 +55,7 @@ import { renderComments } from "./renderComments.js";
           }); 
         const textExpectation = document.querySelector('.title');
         textExpectation.style.display = 'none';
-        renderComments({ comments, likeEventListerner, commentEventListener }); 
+        renderComments({ comments, likeEventListerner, commentEventListener })
       }).catch((error) => {
          buttonElement.disabled = false;
          buttonElement.textContent = 'Написать';
@@ -64,6 +65,18 @@ import { renderComments } from "./renderComments.js";
     };
 
     fetchAndRenderComments();
+
+    const loginLinkElement = document.querySelector('.login-link');
+
+    loginLinkElement.addEventListener('click', () => {
+      listElement.style.display = 'none'
+      renderLogin({ fetchAndRenderComments });
+      window.scrollTo({
+        top:document.querySelector('.form'),
+      })
+      loginButtonListerner();
+    });
+        
 
     
    const buttonElementLinester = () => {
@@ -111,5 +124,7 @@ import { renderComments } from "./renderComments.js";
 
       renderComments({ comments, likeEventListerner, commentEventListener });
     });
-    renderComments({ comments, likeEventListerner, commentEventListener });
+    // renderComments({ comments, likeEventListerner, commentEventListener });
+
+
     console.log("It works!");

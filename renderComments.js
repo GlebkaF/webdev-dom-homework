@@ -1,4 +1,4 @@
-const listElement = document.querySelector ('.comments');
+export const listElement = document.querySelector ('.comments');
 
 export const renderComments = ({ comments, likeEventListerner, commentEventListener }) => {
     const commentsHtml = comments.map((comment, index) => {
@@ -27,4 +27,4 @@ export const renderComments = ({ comments, likeEventListerner, commentEventListe
     listElement.innerHTML = commentsHtml;
     likeEventListerner();
     commentEventListener();
-   };
+};

@@ -1,9 +1,18 @@
 import { stringHTML } from "./stringHTML.js";
-const baseURL = "https://wedev-api.sky.pro/api/v1/vlad-tishkin/comments";
+const baseURL = "https://wedev-api.sky.pro/api/v2/vlad-tishkin/comments/";
+const tokenURL = "https://wedev-api.sky.pro/api/user/login";
+
+export let token;
+export const setToken = (newToken) => {
+  token = newToken;
+}
 
 export function getTodos() {
     return fetch(baseURL, {
           method: "GET",
+          // headers: {
+          //   Authorization: `Bearer ${token}`
+          // },
         }).then((response) => {
           return response.json();
         });
@@ -13,6 +22,9 @@ export function getTodos() {
 export function postTodo({ name, text }) {
     return fetch(baseURL, {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
         body: JSON.stringify({
             name: stringHTML(name),  
             text: stringHTML(text),
@@ -29,3 +41,15 @@ export function postTodo({ name, text }) {
           return response.json()};
       });
 };
+
+export function login({ login, password }) {
+  return fetch(tokenURL, {
+    method: "POST",
+    body: JSON.stringify({
+      login,
+      password,
+    }),
+  }).then((response) => {
+      return response.json();
+    });
+  };
