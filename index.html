@@ -90,19 +90,28 @@
       isLike: false,
     }];
 
+function sanitizeHTML(htmlString) {
+  return htmlString
+  .replaceAll("<", "&lt;")
+  .replaceAll(">", "&gt;")
+  .replaceAll("&", "&amp;")
+  .replaceAll('"', "&quot;");
+}
+console.log(sanitizeHTML);
+
 const renderComments = () => {
   const commentsHTML = comments.map((comment, index) => {
+    console.log(comment.comment);
       return `<li class="comment">
           <div class="comment-header">
-            <div>${comment.name}</div>
+            <div class="commeent-name">${sanitizeHTML(comment.name)}</div>
             <div>${comment.time} </div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
-              ${comment.comment}  
+            <div class="comment-text">${sanitizeHTML(comment.comment)}  
             </div>
           </div>
-          <div class="comment-footer">
+         <div class="comment-footer">
             <div class="likes">
               <span  class="likes-counter">${comment.like}</span>
               <button data-index ='${index}' class="${comments[index].isLike ? 'like-button -active-like' : 'like-button'}">
@@ -113,6 +122,8 @@ const renderComments = () => {
 
         </li>`;
   }). join(''); 
+
+
   listElement.innerHTML = commentsHTML;
   initEventListeners();
   };
@@ -148,10 +159,40 @@ buttonElement.addEventListener('click', () => {
   
   initEventListeners();
   renderComments (); 
+  answerComment();
 })  
-      
+
+function answerComment() {
+  const commentAnswer = document.querySelectorAll('.comment');
+  const formText = document.querySelector('.add-form-text');
+
+  commentAnswer.forEach((comment, index) =>{
+    comment.addEventListener('click', () => {
+      console.log(index);
+      formText.value = `-${comments[index].name} \n -${comments[index].comment}`;
+    renderComments()
+    })
+  })
+}
+answerComment();
+
+
+// function editComment(){
+//   const editButton = document.querySelectorAll('.edit-form-button');
+//   const commentText = document.querySelectorAll('.comment-text');
+//   editButton.forEach((el, index) => {
+//     el.addEventListener('click', (event) => {
+//       event.stopPropagation();
+//       comments[index].isEdit = !comments[index].isEdit
+//       if(!comments[index].isEdit) {
+//         comments[index].comment = commentText[index].value
+//       }
+//       renderComments()
+//     })
+//   })
+// }
        
-    
+// editComment();
     
   </script>
 </html>
