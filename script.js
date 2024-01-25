@@ -90,6 +90,7 @@ const initLikeButton = () => {
     });
   }
 };
+
 const initReplyButton = () => {
   const commentsElements = document.querySelectorAll(".comment");
   for (const commentElement of commentsElements) {
@@ -111,6 +112,7 @@ const initEditButton = () => {
     });
   });
 };
+
 const initSaveButton = () => {
   const saveButtonElements = document.querySelectorAll(".save-button");
   saveButtonElements.forEach((saveButton, index) => {
@@ -222,7 +224,11 @@ const fetchPromisePost = async (textValue, nameValue) => {
     }
   );
 };
-fetchPromiseGet();
+
+document.addEventListener("DOMContentLoaded", async () => {
+  listElement.innerHTML = "<p>Загрузка данных...</p>";
+  await fetchPromiseGet();
+});
 
 nameInputElement.addEventListener("keypress", handleKeyPress);
 commentInputElement.addEventListener("keypress", handleKeyPress);
