@@ -36,10 +36,7 @@ function handleKeyPress(event) {
 
 function deleteLastComment() {
   const comments = listElement.getElementsByClassName("comment");
-
-  // Проверяем, есть ли комментарии для удаления
   if (comments.length > 0) {
-    // Удаляем последний комментарий
     const lastComment = comments[comments.length - 1];
     listElement.removeChild(lastComment);
   }
@@ -250,26 +247,9 @@ buttonElement.addEventListener("click", async () => {
     buttonElement.classList.add("error__button");
     commentInputElement.addEventListener("input", updateButtonState);
   } else {
-    // comments.push({
-    //   name: nameInputElement.value
-    //     .replaceAll("&", "&amp;")
-    //     .replaceAll("<", "&lt;")
-    //     .replaceAll(">", "&gt;")
-    //     .replaceAll('"', "&quot;"),
-    //   comment: commentInputElement.value
-    //     .replaceAll("&", "&amp;")
-    //     .replaceAll("<", "&lt;")
-    //     .replaceAll(">", "&gt;")
-    //     .replaceAll('"', "&quot;"),
-    //   likes: 0,
-    //   isLike: false,
-    //   date: today,
-    // });
-
     formElement.innerHTML = "<p>Комментарий добавляется...</p>";
 
     await fetchPromisePost(commentInputElement.value, nameInputElement.value);
-    //fetchPromisePost(commentInputElement.value, nameInputElement.value);
     fetchPromiseGet();
     formElement.innerHTML = `
     <input type="text" id="input-name" class="add-form-name" placeholder="Введите ваше имя" />
