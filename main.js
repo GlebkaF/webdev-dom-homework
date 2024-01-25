@@ -31,6 +31,10 @@ import { usedLike } from "./modules/moduleRendering.js";
 
 import { userPlaceholderName, renderEntranceContainer } from "./modules/moduleRendering.js";
 
+// Node_Module functions
+
+import { format } from "date-fns";
+
 // |                                                                                                          |
 // Это блок для импорта функций_______________________________________________________________________________|
 
@@ -115,7 +119,7 @@ const buttonEventClick = (replyUserComment) => {
               return;
             };
         
-            let timeForFetch = letTime();
+            let timeForFetch = format(new Date, `yyyy-MM-dd hh:mm`);
             let userNameForFetch = addFormUserName.value.replaceAll("&", "&amp;")
             .replaceAll("<", "&lt;")
             .replaceAll(">", "&gt;")
@@ -329,6 +333,7 @@ loadingStartFunctionButton();
 fetchAndRenderArrComment();
 buttonEventClick();
 buttonEntranceClick();
+// console.log(format(new Date, `yyyy-MM-dd hh:mm`));
 // |                                                                                                          |
 // Это блок для Внешнего запуска кода_________________________________________________________________________|
 //  Пожалуйста работай!    

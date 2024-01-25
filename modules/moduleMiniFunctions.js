@@ -7,15 +7,8 @@ export const letTime = () => {
 
   let date = new Date();
 
-  let day = date.getDate();
-  let month = date.getMonth() + 1;
-  let year = date.getFullYear() - 2000;
-  let hours = date.getHours();
-  let minutes = date.getMinutes();
+  return `${date.getDate() < 10 ? '0' + date.getDate() : date.getDate()}/${date.getMonth() < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)}/${date.getFullYear()} ${date.getHours() < 10 ? '0' + date.getHours() : date.getHours()}:${date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()}`;
 
-  let formattedDate = day + "." + month + "." + year + " " + hours + ":" + minutes;
-
-  return formattedDate;
 };
 
 // (2) __ Функция Исправления ошибки при получении отсутствующего текста
