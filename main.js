@@ -38,13 +38,13 @@ export const fetchAndRenderComments = () => {
     renderComments();
 
     if (token) {
-      initLikeListener();
-      initDeleteButtonsListeners();
       const buttonElement = document.getElementById("add-form-button");
       buttonElement.disabled = false;
       
+      initLikeListener();
+      initDeleteButtonsListeners();
       addComment();
-      
+      renderComments();
     }
   });
 
