@@ -205,10 +205,12 @@ const fetchPromiseGet = () => {
     }
   );
 
-  fetchPromise.then((response) => {
-    const promiseJson = response.json();
-    promiseJson.then((response) => {
-      const appComments = response.comments.map((comment) => {
+  fetchPromise
+    .then((response) => {
+      return response.json();
+    })
+    .then((responseData) => {
+      const appComments = responseData.comments.map((comment) => {
         return {
           name: comment.author.name,
           date: formatDate(new Date(comment.date)),
@@ -220,7 +222,6 @@ const fetchPromiseGet = () => {
       comments = appComments;
       renderComments();
     });
-  });
 };
 const fetchPromisePost = async (textValue, nameValue) => {
   const fetchPromise = await fetch(
