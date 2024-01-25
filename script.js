@@ -177,6 +177,7 @@ const renderComments = () => {
 const buttonElement = document.getElementById("add-button");
 const likeButton = document.getElementById("like_button");
 const listElement = document.getElementById("list");
+const formElement = document.querySelector(".add-form");
 const nameInputElement = document.getElementById("input-name");
 const commentInputElement = document.getElementById("comment-input");
 const deleteLastButton = document.getElementById("delete-last-button");
@@ -209,8 +210,8 @@ const fetchPromiseGet = () => {
     });
   });
 };
-const fetchPromisePost = (textValue, nameValue) => {
-  const fetchPromise = fetch(
+const fetchPromisePost = async (textValue, nameValue) => {
+  const fetchPromise = await fetch(
     "https://wedev-api.sky.pro/api/v1/gleb-fokin/comments",
     {
       method: "post",
@@ -228,7 +229,7 @@ commentInputElement.addEventListener("keypress", handleKeyPress);
 buttonElement.addEventListener("keypress", handleKeyPress);
 deleteLastButton.addEventListener("click", deleteLastComment);
 
-buttonElement.addEventListener("click", () => {
+buttonElement.addEventListener("click", async () => {
   nameInputElement.classList.remove("error");
   commentInputElement.classList.remove("error");
   buttonElement.classList.remove("error__button");
@@ -259,9 +260,18 @@ buttonElement.addEventListener("click", () => {
     //   date: today,
     // });
 
-    fetchPromisePost(commentInputElement.value, nameInputElement.value);
-    fetchPromiseGet();
+    formElement.innerHTML = "<p>Комментарий добавляется...</p>";
 
+    await fetchPromisePost(commentInputElement.value, nameInputElement.value);
+    //fetchPromisePost(commentInputElement.value, nameInputElement.value);
+    fetchPromiseGet();
+    formElement.innerHTML = `
+    <input type="text" id="input-name" class="add-form-name" placeholder="Введите ваше имя" />
+    <textarea type="textarea" id="comment-input" class="add-form-text" placeholder="Введите ваш комментарий" rows="4"></textarea>
+    <div class="add-form-row">
+      <button id="add-button" class="add-form-button">Написать</button>
+    </div>
+  `;
     nameInputElement.value = "";
     commentInputElement.value = "";
   }
