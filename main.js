@@ -1,7 +1,7 @@
 import { formatDateTime } from "./datetime.js";
 import { getComments, getToken, setToken, token } from "./api.js";
 import { initDeleteButtonsListeners } from "./delbutton.js";
-import { renderComments, addComment } from "./render.js";
+import { renderComments, addComment, initLikeListener } from "./render.js";
 
 
 export let user = JSON.parse(localStorage.getItem("user"));
@@ -38,11 +38,13 @@ export const fetchAndRenderComments = () => {
     renderComments();
 
     if (token) {
-      
+      initLikeListener();
+      initDeleteButtonsListeners();
       const buttonElement = document.getElementById("add-form-button");
       buttonElement.disabled = false;
+      
       addComment();
-      renderComments();
+      
     }
   });
 

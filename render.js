@@ -46,15 +46,14 @@ export const renderComments = () => {
         rows="4"></textarea>
       <div class="add-form-row">
         <button id="add-form-button" class="add-form-button">Написать</button>
-      </div>
-    </div>`
+        </div>
+    </div>
+    `
   }
 
-  initLikeListener();
-  initDeleteButtonsListeners();
-  quoteCommets();
   appHtml.innerHTML = contentHtml()
 
+  
   //Переход к форме авторизации по клику
  const setLoginBtn = () => {
     const buttonLoginElement = document.getElementById("render-login-btn");
@@ -67,23 +66,36 @@ export const renderComments = () => {
     });
   };
   setLoginBtn();
+
+
+
 };
 
+/* initLikeListener();
+initDeleteButtonsListeners();
+quoteCommets(); */
 
 
-//Активность кнопки лайк
-export const initLikeListener = () => {
-  const buttonLike = document.querySelectorAll(".like-button");
-  for (const iteratorLike of buttonLike) {
-    iteratorLike.addEventListener("click", (event) => {
-      event.stopPropagation();
-      const index = iteratorLike.dataset.index;
-      commentList[index].likes += commentList[index].isLiked ? -1 : +1;
-      commentList[index].isLiked = !commentList[index].isLiked;
-      renderComments(); //перерисовываем форму для лайков с счетчиком
-    });
+  //Активность кнопки лайк
+  export const initLikeListener = () => {
+    const buttonLike = document.querySelectorAll(".like-button");
+    for (const iteratorLike of buttonLike) {
+      iteratorLike.addEventListener("click", (event) => {
+        
+        event.stopPropagation();
+        if (!token) {
+          alert("autorize")
+          return
+        }
+        const index = iteratorLike.dataset.index;
+        commentList[index].likes += commentList[index].isLiked ? -1 : +1;
+        commentList[index].isLiked = !commentList[index].isLiked;
+        renderComments(); //перерисовываем форму для лайков с счетчиком
+      });
+    }
+    initLikeListener()
   }
-};
+
 
 //Цитирование
 export const quoteCommets = () => {
@@ -151,16 +163,21 @@ export const addComment = () => {
 
       })
   })
-  if (setToken) {
+  if (getToken) {
     const buttonElement = document.getElementById('add-button');
-    buttonElement.addEventListener('click', addComment);
-    addComment();
+    buttonElement.addEventListener('click', (event) => {
+      initLikeListener();
+      initDeleteButtonsListeners();
+      quoteCommets();
+     renderComments();
+     exit();
+    });
+
+    /* addComment(); */
   }
-  
-  initLikeListener();
-  initDeleteButtonsListeners
-  quoteCommets();
-  addComment();
+  fetchAndRenderComments();
+ 
+
 };
 
 
