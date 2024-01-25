@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
 
-  <body>
+  <body id="body">
     <div class="container">
       <ul class="comments" id="comment-list">
         
@@ -41,17 +41,24 @@
 
     // Получаем дату и время
 
-    let date = new Date();
-    let year = date.getFullYear().toString().slice(-2); // Получаем последние две цифры года
-    let month = (date.getMonth() + 1 < 10) ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1); // Получаем месяц с ведущим нулем, если нужно
-    let day = (date.getDate() < 10) ? '0' + date.getDate() : date.getDate(); // Получаем день с ведущим нулем, если нужно
-    let hours = (date.getHours() < 10) ? '0' + date.getHours() : date.getHours(); // Получаем часы с ведущим нулем, если нужно
-    let minutes = (date.getMinutes() < 10) ? '0' + date.getMinutes() : date.getMinutes(); // Получаем минуты с ведущим нулем, если нужно
+    function getCurrentDate(date) {
 
-    let formattedDate = day + '.' + month + '.' + year; // Склеиваем день, месяц и год в нужном формате
-    let formattedTime = hours + ':' + minutes; // Склеиваем часы и минуты в нужном формате
+      let year = date.getFullYear().toString().slice(-2); // Получаем последние две цифры года
+      let month = (date.getMonth() + 1 < 10) ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1); // Получаем месяц с ведущим нулем, если нужно
+      let day = (date.getDate() < 10) ? '0' + date.getDate() : date.getDate(); // Получаем день с ведущим нулем, если нужно
+      let hours = (date.getHours() < 10) ? '0' + date.getHours() : date.getHours(); // Получаем часы с ведущим нулем, если нужно
+      let minutes = (date.getMinutes() < 10) ? '0' + date.getMinutes() : date.getMinutes(); // Получаем минуты с ведущим нулем, если нужно
 
-    //console.log(formattedDate + ' в ' + formattedTime); // Выводим отформатированную дату и время
+      let formattedDate = day + '.' + month + '.' + year; // Склеиваем день, месяц и год в нужном формате
+      let formattedTime = hours + ':' + minutes; // Склеиваем часы и минуты в нужном формате
+
+      let currentDate = formattedDate + ' ' + formattedTime;
+      return currentDate;
+
+      //console.log(formattedDate + ' в ' + formattedTime); // Выводим отформатированную дату и время
+      }
+
+    
 
 
     // Запрет на действие по умолчанию для textArea - gthеход на новую строку. Иначе функция addComment будет выполняться, 
@@ -67,33 +74,89 @@
 
 
     // Получаем все необходимые элементы
-
+    const baseUrl = "https://wedev-api.sky.pro/api/v1/pavel-fedotov/";
+    const body = document.querySelector(".container");
+    //console.log(body);
     const commentList = document.getElementById('comment-list');
     const buttonAddComment = document.getElementById('add-form-button');
     const inputName = document.getElementById('form-name');
     const inputText = document.getElementById('form-text');
     const formaComment = document.getElementById('forma');
     const buttonDeleteComment = document.getElementById('delete-form-button');
+    let isLoaded;
 
+    // const fetchPromise = fetch("https://wedev-api.sky.pro/api/tasks/random-red", {
+    //   method: "GET",
+    // });
 
-    const comments = [
-      {
-        text: 'Это будет первый комментарий на этой странице',
-        author: 'Глеб Фокин',
-        date: '12.02.22 12:18',
-        likeCount: 3,
-        myLike: true,
-        isEdit: false
-      },
-      {
-        text: 'Мне нравится как оформлена эта страница! ❤',
-        author: 'Варвара Н.',
-        date: '13.02.22 19:22',
-        likeCount: 75,
-        myLike: false,
-        isEdit: false
-      }
+    // console.log(fetchPromise);
+
+    // fetchPromise.then((response) => {
+    //   console.log(response);
+
+    //   const jsonPromise = response.json();
+
+    //   jsonPromise.then((responseData) => {
+    //      console.log(responseData);
+
+    //      body.style.backgroundColor = responseData.color;
+    //   });
+    // });
+
+    let comments = [
+      // {
+      //   text: 'Это будет первый комментарий на этой странице',
+      //   author: 'Глеб Фокин',
+      //   date: '12.02.22 12:18',
+      //   likeCount: 3,
+      //   myLike: true,
+      //   isEdit: false
+      // },
+      // {
+      //   text: 'Мне нравится как оформлена эта страница! ❤',
+      //   author: 'Варвара Н.',
+      //   date: '13.02.22 19:22',
+      //   likeCount: 75,
+      //   myLike: false,
+      //   isEdit: false
+      // }
     ]
+
+    const fetchPromiseComments = fetch(`${baseUrl}comments`, {
+      method: "GET",
+    });
+
+    //console.log(fetchPromiseComments);
+
+    fetchPromiseComments.then((result) => {
+      //console.log(result);
+
+      const resultJSON = result.json();
+
+      resultJSON.then((resultData) => {
+        //console.log(resultData.comments);
+        const resultComments = resultData.comments.map((comment) => {
+          //console.log(comment.author.name);
+          let currentDate = getCurrentDate(new Date(comment.date));
+          return {
+            author: comment.author.name,
+            date: currentDate,
+            text: comment.text,
+            likeCount: comment.likes,
+            myLike: comment.isLiked
+          };
+        });
+        comments = resultComments;
+        renderComments();
+        
+      });
+    });
+
+    // const jsonArr = JSON.stringify(comments);
+    // console.log(jsonArr);
+
+    // const arrFromJson = JSON.parse(jsonArr);
+    // console.log(arrFromJson);
 
     // Функция ответа на комментарий
 
@@ -202,7 +265,14 @@
         comment.isEdit ? classButtonEditSave = "comment-text-save" : classButtonEditSave = "comment-text-edit"
         comment.isEdit ? inputTextHtml = `<textarea id="form-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарй" rows="4">${comment.text}</textarea>` : inputTextHtml = `<div data-index="${index}" class="comment-text">${comment.text}</div>`;
 
-        return `<li class="comment">
+        if (isLoaded) {
+          return `<li class="comment">
+                  <div class="comment-body">
+                    Комментарий добавляется...
+                  </div>
+                </li>`;
+        } else {
+          return `<li class="comment">
                   <div class="comment-header">
                     <div>${comment.author}</div>
                     <div>${comment.date}</div>
@@ -218,6 +288,8 @@
                     </div>
                   </div>
                 </li>`;
+        }
+        
                 
       }).join("");
       commentList.innerHTML = CommentsHtml;
@@ -262,19 +334,75 @@
         inputName.classList.remove('error-form');
         inputText.classList.remove('error-form');
         
-        comments.push({
-          text: inputText.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-          author: inputName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-          date: formattedDate + ' ' + formattedTime,
-          likeCount: 0,
-          myLike: false,
-          isEdit: false
+        let currentDate = getCurrentDate(new Date());
+
+        // comments.push({
+        //   text: inputText.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+        //   author: inputName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+        //   date: currentDate,
+        //   likeCount: 0,
+        //   myLike: false,
+        //   isEdit: false
+        // });
+
+        isLoaded = true;
+        console.log(isLoaded);
+
+        const fetchPromises = fetch(`${baseUrl}comments`, {
+          method: "POST",
+          body: JSON.stringify({
+            text: inputText.value,
+            name: inputName.value,
+            date: currentDate,
+            likes: 0,
+            isLiked: false
+          }),
         });
+
+        console.log(fetchPromises);
+
+        fetchPromises.then((resultComments) => {
+          //console.log(resultComments);
+
+          resultComments.json().then((resultCommentsData) => {
+            const fetchPromiseComments = fetch(`${baseUrl}comments`, {
+              method: "GET",
+            });
+    
+            //console.log(fetchPromiseComments); 
+            fetchPromiseComments.then((result) => {
+              //console.log(result);
+              const resultJSON = result.json();
+              
+              resultJSON.then((resultData) => {
+                //console.log(resultData.comments);
+                const resultComments = resultData.comments.map((comment) => {
+                  //console.log(comment.author.name);
+                  let currentDate = getCurrentDate(new Date(comment.date));
+                  
+                  return {
+                    author: comment.author.name,
+                     date: currentDate,
+                    text: comment.text,
+                    likeCount: comment.likes,
+                    myLike: comment.isLiked
+                  };
+                });
+                isLoaded = false;
+                console.log(isLoaded);
+                comments = resultComments;
+                renderComments();
+              });
+            });
+          });
+        });
+        
 
         inputName.value = '';
         inputText.value = '';
 
         renderComments();
+        
       }
     }
 
