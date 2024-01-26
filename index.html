@@ -75,12 +75,12 @@
     const commentsHtml = comments.map((comment, index) => {
       return `<li class="comment">
         <div class="comment-header">
-          <div>${comment.name}</div>
+          <div class "commentName">${sanitizeHtml(comment.name)}</div>
           <div>${comment.time}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
-            ${comment.comment}
+            ${sanitizeHtml(comment.comment)}
           </div>
         </div>
         <div class="comment-footer">
@@ -97,6 +97,7 @@
     }).join('');
     listElement.innerHTML = commentsHtml;
     initEventListener();
+    commitAnswer();
   };
   renderComments();
 
@@ -142,6 +143,20 @@
     };
     renderComments();
   })
+
+  function sanitizeHtml(htmlString) {
+    return htmlString.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+  };
+
+  function commitAnswer() {
+    const commentsAnswer = document.querySelectorAll('.comment');
+    const formText = document.querySelector('.add-form-text');
+    commentsAnswer.forEach((comment, index) => {
+      comment.addEventListener('click', () => {
+        formText.value = `> ${comments[index].name} \n ${comments[index].comment}`;
+      })
+    })
+  }
   console.log("It works!");
 </script>
 
