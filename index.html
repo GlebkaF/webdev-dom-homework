@@ -22,6 +22,11 @@
         <button class="add-form-button" id="add-form-button">Написать</button>
       </div>
     </div>
+    <div class="add-form">
+      <div class="add-form-row">
+        <button class="add-form-button" id="delete-button">Удалить последний комментарий</button>
+      </div>
+    </div>
   </div>
 </body>
 
@@ -70,21 +75,28 @@
     border-radius: 18px;
     cursor: pointer;
   }
+
+  .click-none {
+    background-color: gray;
+  }
 </style>
 <script>
   "use strict";
+  const formElement = document.getElementById("add-form");
   const buttonElement = document.getElementById("add-form-button");
   const listElement = document.getElementById("list");
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
-  const EditKommittedElement = document.getElementById("edit-input");
 
   let originalComment = document.getElementById("comment-original");
-  //let EditButtonValue = "Редактировать";
+
+
+
+
 
 
   //создание массива
-  const comments = [
+  let comments = [
     {
       name: "Глеб Фокин",
       date: "12.02.22 12:18",
@@ -109,6 +121,34 @@
     },
   ]
 
+
+  const fetchPromise = fetch ('https://wedev-api.sky.pro/api/v1/:Tatyana-JSc2/comments', {
+  method: "GET"
+}).then ((response) => {
+  console.log(response);
+  const jsonPromise = response.json()
+  jsonPromise.then((responseData) => {
+    console.log(responseData);
+    const appComments = responseData.comments.map((comment) => {
+      let myDate = new Date();
+      return {
+        name: comment.author.name,
+        date: myDate.getDate() + ":" + (myDate.getMonth() + 1) +
+        ":" + myDate.getFullYear() + " " + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds(),
+        text: comment.text,
+        likesCounter: comment.likes,
+        itLikes: comment.isLiked,
+        original: '',
+        edit: false,
+        answer: '',
+      }
+    })
+    comments = appComments;
+    console.log(appComments);
+    renderComments();
+
+  });
+})
 
   //добавление обработчика динамическим элементам
   const InitEventListeners = () => {
@@ -152,7 +192,7 @@
       EditComment.addEventListener('click', () => {
         const index = EditComment.dataset.index;
         comments[index].isEdit = true;
-        EditKommittedElement.value = comments[index].text + '';
+        //EditKommittedElement[index].value = comments[index].text + '';
 
         renderComments();
 
@@ -163,10 +203,19 @@
         console.log(1);
         element[index].value = "сохранить";
         renderComments();
-
       });
     });*/
   }
+
+  // saveButton.closest('.comment').querySelector('textarea').value
+  /* <div class="comment-footer">
+            <div class="redact">
+               ${comment.isEdit ?
+                   '<textarea type="textarea" class="add-form-text" rows="4">${comment.text}</textarea>
+                    <button class="redact-button" data-index="${index}">Сохранить</button>' :
+                   '<button class="redact-button" data-index="${index}">Редактировать</button>"'
+            </div>    
+         </div>*/
 
   //добавление редактированного комментария
   const InitEditKommitted = () => {
@@ -174,8 +223,8 @@
     for (const EditKommitted of EditKommitteds) {
       EditKommitted.addEventListener('click', () => {
         const index = EditKommitted.dataset.index;
+        comments[index].text = EditKommitted.closest('.comment').querySelector('textarea').value;
         comments[index].isEdit = false;
-        comments[index].text = EditKommittedElement.value;
 
         renderComments();
 
@@ -222,15 +271,42 @@
   renderComments();
 
 
+  //ввод данных в поля ввода (проверки)
+  nameInputElement.addEventListener('click', () => {
+
+    nameInputElement.classList.remove("error");
+    if (nameInputElement.value === '') {
+      buttonElement.classList.add("click-none");
+      return;
+    }
+    buttonElement.classList.remove("click-none");
+  })
+
+  commentInputElement.addEventListener('click', () => {
+
+    commentInputElement.classList.remove("error");
+    if (commentInputElement.value === '') {
+      buttonElement.classList.add("click-none");
+      return;
+    }
+    buttonElement.classList.remove("click-none");
+  })
+  //как "выключить"кнопку, сделать некликабельной?
+
+
   //добавление комментария по клику на кнопку "написать"
-  buttonElement.addEventListener('click', () => {
+
+  function buttonClick() {
     nameInputElement.classList.remove("error");
     commentInputElement.classList.remove("error");
+    buttonElement.classList.remove("click-none");
     if (nameInputElement.value === '') {
       nameInputElement.classList.add("error");
+      buttonElement.classList.add("click-none");
       return;
     } else if (commentInputElement.value === '') {
       commentInputElement.classList.add("error");
+      buttonElement.classList.add("click-none");
       return;
     }
 
@@ -250,9 +326,19 @@
 
     renderComments();
 
-
     nameInputElement.value = '';
     commentInputElement.value = '';
+  }
+
+
+  buttonElement.addEventListener('click', buttonClick);
+
+  //добавление комментария по клику на кнопку "Enter"
+
+  document.body.addEventListener('keyup', (e) => {
+    if (e.key == 'Enter') {
+      buttonClick();
+    }
   });
 
   console.log("It works!");
