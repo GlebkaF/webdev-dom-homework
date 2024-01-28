@@ -22,6 +22,11 @@
         <button class="add-form-button" id="add-form-button">Написать</button>
       </div>
     </div>
+    <div class="add-form">
+      <div class="add-form-row">
+        <button class="add-form-button" id="delete-button">Удалить последний комментарий</button>
+      </div>
+    </div>
   </div>
 </body>
 
@@ -34,7 +39,7 @@
     background-image: url("data:image/svg+xml,%3Csvg width='22' height='20' viewBox='0 0 22 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15.95 0C14.036 0 12.199 0.882834 11 2.26703C9.801 0.882834 7.964 0 6.05 0C2.662 0 0 2.6267 0 5.99455C0 10.1035 3.74 13.4714 9.405 18.5613L11 20L12.595 18.5613C18.26 13.4714 22 10.1035 22 5.99455C22 2.6267 19.338 0 15.95 0Z' fill='%23BCEC30'/%3E%3C/svg%3E");
   }
 
-   .comment-original {
+  .comment-original {
     width: auto;
     height: auto;
     padding: 10px;
@@ -42,22 +47,56 @@
     margin-bottom: 15px;
     font-size: 16px;
     color: black;
-    background-color: rgb(222, 204, 245);
+    background-color: rgb(215, 204, 245);
     border-radius: 8px;
     border: none;
+  }
+
+  .edit-button {
+    margin-top: 24px;
+    font-size: 18px;
+    padding: 10px 20px;
+    background-color: #d9eba3;
+    border: none;
+    border-radius: 18px;
+    cursor: pointer;
+  }
+
+  .edit-none {
+    display: none;
+  }
+
+  .edit-committed {
+    margin-top: 24px;
+    font-size: 18px;
+    padding: 10px 20px;
+    background-color: #d9eba3;
+    border: none;
+    border-radius: 18px;
+    cursor: pointer;
+  }
+
+  .click-none {
+    background-color: gray;
   }
 </style>
 <script>
   "use strict";
+  const formElement = document.getElementById("add-form");
   const buttonElement = document.getElementById("add-form-button");
   const listElement = document.getElementById("list");
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
+
   let originalComment = document.getElementById("comment-original");
 
 
+
+
+
+
   //создание массива
-  const comments = [
+  let comments = [
     {
       name: "Глеб Фокин",
       date: "12.02.22 12:18",
@@ -65,6 +104,7 @@
       likesCounter: 3,
       itLikes: false,
       original: '',
+      edit: false,
       answer: '',
 
     },
@@ -75,11 +115,40 @@
       likesCounter: 75,
       itLikes: false,
       original: '',
+      edit: false,
       answer: '',
 
     },
   ]
 
+
+  const fetchPromise = fetch ('https://wedev-api.sky.pro/api/v1/:Tatyana-JSc2/comments', {
+  method: "GET"
+}).then ((response) => {
+  console.log(response);
+  const jsonPromise = response.json()
+  jsonPromise.then((responseData) => {
+    console.log(responseData);
+    const appComments = responseData.comments.map((comment) => {
+      let myDate = new Date();
+      return {
+        name: comment.author.name,
+        date: myDate.getDate() + ":" + (myDate.getMonth() + 1) +
+        ":" + myDate.getFullYear() + " " + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds(),
+        text: comment.text,
+        likesCounter: comment.likes,
+        itLikes: comment.isLiked,
+        original: '',
+        edit: false,
+        answer: '',
+      }
+    })
+    comments = appComments;
+    console.log(appComments);
+    renderComments();
+
+  });
+})
 
   //добавление обработчика динамическим элементам
   const InitEventListeners = () => {
@@ -88,12 +157,13 @@
       likeButtonElement.addEventListener('click', () => {
         const index = likeButtonElement.dataset.index;
         if (comments[index]['itLikes'] === false) {
-          comments[index]['likesCounter'] += 1;
+          comments[index].likesCounter++;
           comments[index]['itLikes'] = true;
         } else {
           comments[index]['likesCounter'] -= 1;
           comments[index]['itLikes'] = false;
         }
+        //comments[index]['itLikes'] = !comments[index]['itLikes'] - можно заменить одной этой строкой строки 92+95 (сокращение кода)
         renderComments();
       })
     }
@@ -105,13 +175,61 @@
     for (const EveryComment of EveryComments) {
       EveryComment.addEventListener('click', () => {
         const index = EveryComment.dataset.index;
-        originalComment = comments[index]['name'] + " " + comments[index]['text'];
-       // comments[index]['original'] = comments[index]['name'] + " " + comments[index]['text'];
-        //originalComment = comments[index]['original'];
+        originalComment = `${comments[index]['name']} \n ${comments[index]['text']} \n`;
         commentInputElement.value = originalComment + comments[index]['answer'];
         renderComments();
       })
     }
+  }
+
+  //<button class="${comment.itLikes ? "-active-like" : "like-button"}" data-index = "${index}"></button> 
+
+
+  //редактирование комментария
+  const InitEditComments = () => {
+    const EditComments = document.querySelectorAll(".edit-button");
+    for (const EditComment of EditComments) {
+      EditComment.addEventListener('click', () => {
+        const index = EditComment.dataset.index;
+        comments[index].isEdit = true;
+        //EditKommittedElement[index].value = comments[index].text + '';
+
+        renderComments();
+
+      });
+    };
+    /*EditComments.forEach((element,index) => {
+      element.addEventListener('click', () => {
+        console.log(1);
+        element[index].value = "сохранить";
+        renderComments();
+      });
+    });*/
+  }
+
+  // saveButton.closest('.comment').querySelector('textarea').value
+  /* <div class="comment-footer">
+            <div class="redact">
+               ${comment.isEdit ?
+                   '<textarea type="textarea" class="add-form-text" rows="4">${comment.text}</textarea>
+                    <button class="redact-button" data-index="${index}">Сохранить</button>' :
+                   '<button class="redact-button" data-index="${index}">Редактировать</button>"'
+            </div>    
+         </div>*/
+
+  //добавление редактированного комментария
+  const InitEditKommitted = () => {
+    const EditKommitteds = document.querySelectorAll(".edit-committed");
+    for (const EditKommitted of EditKommitteds) {
+      EditKommitted.addEventListener('click', () => {
+        const index = EditKommitted.dataset.index;
+        comments[index].text = EditKommitted.closest('.comment').querySelector('textarea').value;
+        comments[index].isEdit = false;
+
+        renderComments();
+
+      });
+    };
   }
 
 
@@ -128,15 +246,18 @@
           <div class=" ${(comments[index]['original'] != '') ? "comment-original" : ""}">
             ${comment.original}
           </div>
-          <div class="comment-text" data-index = "${index}">
+          <div class="${comment.isEdit ? "edit-none" : "comment-text"}" data-index = "${index}">
             ${comment.text}
           </div>
+          <textarea type="textarea" id="edit-input" class="${comment.isEdit ? "add-form-text" : "edit-none"}" rows="4" >${comment.text}</textarea>
+          <button class="${comment.edit && !comment.isEdit ? "edit-button" : "edit-none"}" data-index = "${index}">Редактировать</button>
+          <button class="${comment.edit && comment.isEdit ? "edit-committed" : "edit-none"}" data-index = "${index}">Сохранить</button>
+
         </div>
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter" >${comment.likesCounter}</span>
-            
-            <button class="like-button ${(comments[index]['itLikes']) ? "-active-like" : ""}" data-index = "${index}"></button>
+            <button class="like-button ${(comments[index]['itLikes']) ? "-active-like" : "like-button"}" data-index = "${index}"></button> 
           </div>
         </div>
       </li>`;
@@ -144,22 +265,51 @@
     listElement.innerHTML = commentsHtml;
     InitEventListeners();
     InitCommentListeners();
+    InitEditComments();
+    InitEditKommitted();
   };
   renderComments();
 
 
+  //ввод данных в поля ввода (проверки)
+  nameInputElement.addEventListener('click', () => {
+
+    nameInputElement.classList.remove("error");
+    if (nameInputElement.value === '') {
+      buttonElement.classList.add("click-none");
+      return;
+    }
+    buttonElement.classList.remove("click-none");
+  })
+
+  commentInputElement.addEventListener('click', () => {
+
+    commentInputElement.classList.remove("error");
+    if (commentInputElement.value === '') {
+      buttonElement.classList.add("click-none");
+      return;
+    }
+    buttonElement.classList.remove("click-none");
+  })
+  //как "выключить"кнопку, сделать некликабельной?
+
+
   //добавление комментария по клику на кнопку "написать"
-  buttonElement.addEventListener('click', () => {
+
+  function buttonClick() {
     nameInputElement.classList.remove("error");
     commentInputElement.classList.remove("error");
+    buttonElement.classList.remove("click-none");
     if (nameInputElement.value === '') {
       nameInputElement.classList.add("error");
+      buttonElement.classList.add("click-none");
       return;
     } else if (commentInputElement.value === '') {
       commentInputElement.classList.add("error");
+      buttonElement.classList.add("click-none");
       return;
     }
-   
+
     let myDate = new Date();
     comments.push({
       name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
@@ -168,17 +318,28 @@
       text: commentInputElement.value.replace(originalComment, '').replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
       likesCounter: 0,
       itLikes: false,
-      original: originalComment,
+      original: `${commentInputElement.value.includes(originalComment) ? originalComment : ''}`,
+      edit: true,
       answer: '',
 
     });
 
     renderComments();
+
     nameInputElement.value = '';
     commentInputElement.value = '';
+  }
+
+
+  buttonElement.addEventListener('click', buttonClick);
+
+  //добавление комментария по клику на кнопку "Enter"
+
+  document.body.addEventListener('keyup', (e) => {
+    if (e.key == 'Enter') {
+      buttonClick();
+    }
   });
-
-
 
   console.log("It works!");
 </script>
