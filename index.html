@@ -96,7 +96,7 @@
 
 
   //создание массива
-  let comments = [
+  let comments = [/*
     {
       name: "Глеб Фокин",
       date: "12.02.22 12:18",
@@ -118,7 +118,7 @@
       edit: false,
       answer: '',
 
-    },
+    },*/
   ]
 
 
@@ -139,7 +139,7 @@
           likesCounter: comment.likes,
           itLikes: comment.isLiked,
           original: '',
-          edit: false,
+          edit: true,
           answer: '',
         }
       })
@@ -182,8 +182,6 @@
     }
   }
 
-  //<button class="${comment.itLikes ? "-active-like" : "like-button"}" data-index = "${index}"></button> 
-
 
   //редактирование комментария
   const InitEditComments = () => {
@@ -217,6 +215,8 @@
             </div>    
          </div>*/
 
+
+
   //добавление редактированного комментария
   const InitEditKommitted = () => {
     const EditKommitteds = document.querySelectorAll(".edit-committed");
@@ -225,12 +225,34 @@
         const index = EditKommitted.dataset.index;
         comments[index].text = EditKommitted.closest('.comment').querySelector('textarea').value;
         comments[index].isEdit = false;
-
         renderComments();
+        const id = EditKommitted.dataset.id;
+
+        fetch('https://wedev-api.sky.pro/api/v1/:Tatyana-JSc2/comments' + id, {
+          method: "POST",
+          body: JSON.stringify({
+            name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+            date: myDate.getDate() + ":" + (myDate.getMonth() + 1) +
+              ":" + myDate.getFullYear() + " " + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds(),
+            text: EditKommitted.closest('.comment').querySelector('textarea').value.replace(originalComment, '').replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+            likesCounter: 0,
+            itLikes: false,
+            original: `${commentInputElement.value.includes(originalComment) ? originalComment : ''}`,
+            edit: true,
+            answer: '',
+          }),
+        }).then((response) => {
+          response.json().then((responseData) => {
+            Comments = responseData.comments
+
+            renderComments();
+          });
+        });
 
       });
     };
-  }
+  };// теперь не работает кнопка "сохранить"
+
 
 
 
@@ -251,7 +273,7 @@
           </div>
           <textarea type="textarea" id="edit-input" class="${comment.isEdit ? "add-form-text" : "edit-none"}" rows="4" >${comment.text}</textarea>
           <button class="${comment.edit && !comment.isEdit ? "edit-button" : "edit-none"}" data-index = "${index}">Редактировать</button>
-          <button class="${comment.edit && comment.isEdit ? "edit-committed" : "edit-none"}" data-index = "${index}">Сохранить</button>
+          <button class="${comment.edit && comment.isEdit ? "edit-committed" : "edit-none"}" data-index = "${index}" data-id = "${comment.id}" >Сохранить</button>
 
         </div>
         <div class="comment-footer">
@@ -311,7 +333,7 @@
     }
 
     let myDate = new Date();
-    comments.push({
+    /*comments.push({
       name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
       date: myDate.getDate() + ":" + (myDate.getMonth() + 1) +
         ":" + myDate.getFullYear() + " " + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds(),
@@ -321,8 +343,47 @@
       original: `${commentInputElement.value.includes(originalComment) ? originalComment : ''}`,
       edit: true,
       answer: '',
+ 
+    });*/
 
-    });
+
+    const clickFetchPromise = fetch('https://wedev-api.sky.pro/api/v1/:Tatyana-JSc2/comments', {
+
+      method: "POST",
+      body: JSON.stringify({
+        name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+        date: myDate.getDate() + ":" + (myDate.getMonth() + 1) +
+          ":" + myDate.getFullYear() + " " + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds(),
+        text: commentInputElement.value.replace(originalComment, '').replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+        likesCounter: 0,
+        itLikes: false,
+        original: `${commentInputElement.value.includes(originalComment) ? originalComment : ''}`,
+        edit: true,
+        answer: '',
+      }),
+    }).then((response) => {
+      response.json().then((responseData) => {
+        /*const appComments = responseData.comments.map((comment) => {
+          let myDate = new Date();
+          return {
+            name: comment.author.name,
+            date: myDate.getDate() + ":" + (myDate.getMonth() + 1) +
+              ":" + myDate.getFullYear() + " " + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds(),
+            text: comment.text,
+            likesCounter: comment.likes,
+            itLikes: comment.isLiked,
+            original: '',
+            edit: false,
+            answer: '',
+          }
+        })
+        comments = appComments;
+        console.log(appComments);*/
+        console.log(responseData);
+        Comments = responseData.comments
+        renderComments();
+      });
+    })
 
     renderComments();
 
