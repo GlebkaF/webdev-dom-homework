@@ -140,7 +140,7 @@
     const commentHtml = comments.map((comment, index) => {
       return `<li class="comment">
         <div class="comment-header">
-          <div>${comment.name}</div>
+          <div class="comment-name">${comment.name}</div>
           <div>${comment.commentDate}</div>
         </div>
         <div class="comment-body">
@@ -160,6 +160,7 @@
     elementList.innerHTML = commentHtml;
     initLikeButtonsListeners();
     initEventListeners();
+    reanswerComment();
   };
 
   renderComments();
@@ -177,9 +178,13 @@
     }
 
     comments.push({
-      name: userName.value,
+      name: userName.value
+        .replaceAll("<", "&#60;")
+        .replaceAll(">", "&#62;"),
       commentDate: dat(),
-      commentUser: userComment.value,
+      commentUser: userComment.value
+        .replaceAll("<", "&#60;")
+        .replaceAll(">", "&#62;"),
       like: 0,
       isLike: false,
     });
@@ -193,6 +198,16 @@
     }
 
   });
+
+  function reanswerComment() {
+    const answerComment = document.querySelectorAll('.comment');
+    const formText = document.querySelector('.add-form-text');
+    answerComment.forEach((comment, index) => {
+      comment.addEventListener('click', () => {
+        formText.value = `${comments[index].name} \n${comments[index].commentUser}`
+      })
+    })
+  }
   console.log("It works!");
 </script>
 
