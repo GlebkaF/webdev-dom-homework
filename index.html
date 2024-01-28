@@ -64,16 +64,22 @@
       </div>
     </div>
   </body>
-
+  <style>
+    .error {
+      background-color: mistyrose;
+    }
+    .error::placeholder {
+      color: rgb(222, 52, 52);
+      opacity: 1; /* Firefox */
+    }
+  </style>
   <script>
     "use strict";
     const listElement = document.getElementById("list");
     const nameElement = document.getElementById("add-form-name");
     const textElement = document.getElementById('add-form-text');
     const buttonElement = document.getElementById('add-form-button');
-    
-
-    
+   
 
     buttonElement.addEventListener('click', () => {
       const currentDate = new Date();
@@ -88,9 +94,17 @@
       let minute = currentDate.getMinutes();
       if (minute < 10) minute = '0' + minute;
       const date = dd + "." + mm + "." + yy + " " + hour + ":" + minute
+      
+      
+      nameElement.classList.remove("error");
+      textElement.classList.remove("error");
+      if (nameElement.value === '' || textElement.value === '') {
+        nameElement.classList.add("error");
+        textElement.classList.add("error");
+        return;
+      }
+      
 
-
-     
       const oldListElement = listElement.innerHTML;
       listElement.innerHTML = 
       oldListElement + `<li class="comment">
@@ -110,6 +124,7 @@
             </div>
           </div>
         </li>`;
-    })
+    });
+
   </script>
 </html>
