@@ -122,33 +122,33 @@
   ]
 
 
-  const fetchPromise = fetch ('https://wedev-api.sky.pro/api/v1/:Tatyana-JSc2/comments', {
-  method: "GET"
-}).then ((response) => {
-  console.log(response);
-  const jsonPromise = response.json()
-  jsonPromise.then((responseData) => {
-    console.log(responseData);
-    const appComments = responseData.comments.map((comment) => {
-      let myDate = new Date();
-      return {
-        name: comment.author.name,
-        date: myDate.getDate() + ":" + (myDate.getMonth() + 1) +
-        ":" + myDate.getFullYear() + " " + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds(),
-        text: comment.text,
-        likesCounter: comment.likes,
-        itLikes: comment.isLiked,
-        original: '',
-        edit: false,
-        answer: '',
-      }
-    })
-    comments = appComments;
-    console.log(appComments);
-    renderComments();
+  const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/:Tatyana-JSc2/comments', {
+    method: "GET"
+  }).then((response) => {
+    console.log(response);
+    const jsonPromise = response.json()
+    jsonPromise.then((responseData) => {
+      console.log(responseData);
+      const appComments = responseData.comments.map((comment) => {
+        let myDate = new Date();
+        return {
+          name: comment.author.name,
+          date: myDate.getDate() + ":" + (myDate.getMonth() + 1) +
+            ":" + myDate.getFullYear() + " " + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds(),
+          text: comment.text,
+          likesCounter: comment.likes,
+          itLikes: comment.isLiked,
+          original: '',
+          edit: false,
+          answer: '',
+        }
+      })
+      comments = appComments;
+      console.log(appComments);
+      renderComments();
 
-  });
-})
+    });
+  })
 
   //добавление обработчика динамическим элементам
   const InitEventListeners = () => {
