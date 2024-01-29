@@ -3,7 +3,7 @@
   <head>
     <title>Проект "Комменты"</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="styles.css" />
   </head>
 
   <body>
@@ -74,33 +74,104 @@
   const commentsList = document.getElementById("comments");
   const addButton = document.getElementById("add-button");
 
-  const commentsArray = [
+  
+
+
+  let commentsArray = [
     {
-      nameCommentator: "Глеб Фокин",
-      dateOfComment: "12.02.22 12:18",
-      textOfComent: "Это будет первый комментарий на этой странице",
-      likesCount: 3,
-      isLike: false
+      name: "Глеб Фокин",
+      date: "12.02.22 12:18",
+      text: "Это будет первый комментарий на этой странице",
+      likes: 3,
+      isLike: false,
+      isEdit: false
     },
-    {nameCommentator: "Варвара Н.",
-      dateOfComment: "13.02.22 19:22",
-      textOfComent: "Мне нравится как оформлена эта страница! ❤",
-      likesCount: 75,
-      isLike: true
+    {name: "Варвара Н.",
+      date: "13.02.22 19:22",
+      text: "Мне нравится как оформлена эта страница! ❤",
+      likes: 75,
+      isLike: true,
+      isEdit: false
     }
   ];
+
+
+  const apiResult = fetch(
+    'https://wedev-api.sky.pro/api/v1/:ivanova_Kate/comments',{
+      method:"GET"
+    }
+  )
+  console.log(apiResult)
+
+  apiResult.then((response)=>{
+
+    const jsonPromise = response.json();
+
+    jsonPromise.then((responseData)=>{
+      console.log(responseData)
+
+      commentsArray = responseData.comments.map((comment)=>{
+          return {
+            name: comment.author.name,
+            date: new Date(comment.date),
+            text: comment.text,
+            likes: comment.likes,
+            isLike: false,
+            isEdit: false
+          }
+      })
   
+      renderCommentsList()
+    })
+  })
+
+  function renderCommentsList() {
+   const commentsHTML = commentsArray.map((comment,index)=>{
+      return `<li class="comment">
+          <div class="comment-header">
+            <div class ="comment-nameOfCommentator">${comment.name}</div>
+            <div>${comment.date}</div>
+          </div>
+          <div class="comment-body">
+            ${commentsArray[index].isEdit ? `<textarea class="comment-edited-text"> ${commentsArray[index].text} </textarea>` : `<div class="comment-text"> ${commentsArray[index].text} </div>` }
+           
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter"  data-count=${comment.likes} >${comment.likes}</span>
+              <button data-index=${index} class="like-button ${commentsArray[index].isLike ? "-active-like" : ""}" ></button>
+              <button data-index=${index} class ="editButton"> ${commentsArray[index].isEdit? "Сохранить":"Редактировать"} </button>
+            </div>
+          </div>
+        </li>`
+    }).join("");
+    
+        commentsList.innerHTML = commentsHTML
+        likeAdd();
+        commentsAnswer();
+        editComments();
+        adding()
+  };
+  renderCommentsList()
+
+
+ 
+
+
+
+
   function likeAdd() {
   const likesButton = document.querySelectorAll(".like-button");
     for (const likeButton of likesButton) {
-      likeButton.addEventListener("click",()=>{
+      likeButton.addEventListener("click",(event)=>{
+        event.stopPropagation();
         const index = likeButton.dataset.index;
         if (commentsArray[index].isLike) {
-          commentsArray[index].likesCount--;
+          commentsArray[index].likes--;
           commentsArray[index].isLike = false;
          
         } else {
-          commentsArray[index].likesCount++;
+          commentsArray[index].likes++;
           commentsArray[index].isLike = true;
           
         }
@@ -109,163 +180,211 @@
       })
     }
   }
+
+
+  // const likeAdd = ()=>{
+  //   const likesButton = document.querySelectorAll(".like-button");
+  //   likesButton.forEach(likeButton, index => {
+  //     likeButton.addEventListener("click",(event)=>{
+  //       event.stopPropagation();
+  //       const index = likeButton.dataset.index;
+  //       if (!commentsArray[index].isLike) {
+  //         commentsArray[index].likesCount++;
+  //       } 
+  //       else {
+  //         commentsArray[index].likesCount--;
+  //       }
+  //       commentsArray[index].isLike = !commentsArray[index].isLike;
+  //       renderCommentsList();
+  //     })
+      
+  //   })
+  // };
+
   likeAdd()
 
-  function renderCommentsList() {
-   const commentsHTML = commentsArray.map((comment,index)=>{
-      return `<li class="comment">
-          <div class="comment-header">
-            <div>${comment.nameCommentator}</div>
-            <div>${comment.dateOfComment}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-             ${comment.textOfComent}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter"  data-count=${comment.likesCount} >${comment.likesCount}</span>
-              <button data-index=${index} class="like-button ${commentsArray[index].isLike ? "-active-like" : ""}" ></button>
-            </div>
-          </div>
-        </li>`
-    }).join("");
-        commentsList.innerHTML = commentsHTML
-        likeAdd()
-  };
-  renderCommentsList()
 
-  addButton.addEventListener('click', ()=>{
+  function editComments(){
+    const commentsBody = document.querySelector(".comment-body");
+    const editedComment = document.querySelectorAll('.comment-edited-text')
+    const editButtons = document.querySelectorAll(".editButton");
+            // for (const editButton of editButtons) {
+            //   editButton.addEventListener("click",()=>{
+            //   const editIndex = editButton.dataset.index;
+            //   console.log(editIndex)
+            //   if (commentsArray[editIndex].isEdit) {
+            //       commentsArray[editIndex].textOfComent=prompt("Введите новый комментарий") ;
+                  
+            //     } 
+            //     renderCommentsList()
+            //   })
+            // }
+        editButtons.forEach((editButton,index) => {
+            editButton.addEventListener("click",(event)=>{
+                event.stopPropagation();
+               commentsArray[index].isEdit = !commentsArray[index].isEdit;
+               if(commentsArray.isEdit){
+                  commentsArray[index].textOfComent = editedComment[index].value
+               }
+               renderCommentsList()
 
-    if (nameInput.value=== "" || textInput.value=== ""){
-                console.log("error")
-                return
+              })
+
+        });
+   }
+
+
+
+function adding() {
+  addButton.addEventListener('click', (event)=>{
+    event.stopPropagation();
+if (nameInput.value=== "" || textInput.value=== ""){
+          console.log("а ну ка пиши коммент")
+          return
+}
+
+  textInput.disabled = true;
+  nameInput.disabled = true;
+ 
+
+
+  const currentDate = new Date();
+  let dateNum = currentDate.getDate();
+  if (dateNum < 10) { 
+   dateNum = "0" + dateNum; 
+  }
+  let monthNum = currentDate.getMonth()+1;
+  if (monthNum < 10) { 
+   monthNum = "0" + monthNum; 
+  }
+  let yearNum = currentDate.getFullYear().toString().substring(2)
+  let hour = currentDate.getHours();
+  if (hour < 10) { 
+   hour = "0" + hour; 
+  }
+  let minute = currentDate.getMinutes(); 
+  if (minute < 10) { 
+  minute = "0" + minute; 
     }
-
-        const currentDate = new Date();
-        let dateNum = currentDate.getDate();
-        let monthNum = currentDate.getMonth()+1;
-        let yearNum = currentDate.getFullYear().toString().substring(2)
-        let hour = currentDate.getHours();
-        if (hour < 10) { 
-	       hour = "0" + hour; 
-        }
-        let minute = currentDate.getMinutes(); 
-        if (minute < 10) { 
-	      minute = "0" + minute; 
-          }
-          
-
-          commentsArray.push({
-            nameCommentator: nameInput.value,
-            dateOfComment: `${dateNum}.${monthNum}.${yearNum} ${hour}:${minute}`,
-            textOfComent: textInput.value,
-            likesCount: 0,
-            isLike: false
-
-          })
-            renderCommentsList();
     
-        // const currentDate = new Date();
-        // let dateNum = currentDate.getDate();
-        // let monthNum = currentDate.getMonth()+1;
-     
-        // let yearNum = currentDate.getFullYear().toString().substring(2)
 
-        // let hour = currentDate.getHours();
-        // if (hour < 10) { 
-	      //  hour = "0" + hour; 
-        // }
-        // let minute = currentDate.getMinutes(); 
-        // if (minute < 10) { 
-	      // minute = "0" + minute; 
-        //   }
-        
-        // const oldCommentsList = commentsList.innerHTML;
-        // commentsList.innerHTML = oldCommentsList + `<li class="comment">
-        //   <div class="comment-header">
-        //     <div>${nameInput.value}</div>
-        //     <div>${dateNum}.${monthNum}.${yearNum} ${hour}:${minute}</div>
-        //   </div>
-        //   <div class="comment-body">
-        //     <div class="comment-text">
-        //      ${textInput.value}
-        //     </div>
-        //   </div>
-        //   <div class="comment-footer">
-        //     <div class="likes">
-        //       <span class="likes-counter"></span>
-        //       <button class="like-button" data-count= 0> </button>
-        //     </div>
-        //   </div>
-        // </li>`;
+    commentsArray.push({
+      name: nameInput.value.replaceAll('>','&gt').replaceAll('<','&lt;'),
+      date: `${dateNum}.${monthNum}.${yearNum} ${hour}:${minute}`,
+      text: textInput.value.replaceAll('>','&gt').replaceAll('<','&lt;'),
+      likes: 0,
+      isLike: false,
+      isEdit: false
+
+    })
+
+      const apiResult = fetch(
+        'https://wedev-api.sky.pro/api/v1/:ivanova_Kate/comments',{
+          method:"POST",
+          body: JSON.stringify({
+            text: textInput.value,
+            name: nameInput.value
+          })
+        }
+      )
+
+      apiResult.then((response)=>{
+        console.log(response);
+        const jsonPromise = response.json();
+
+        jsonPromise.then((responseData)=>{
+          console.log(responseData)
+
+          commentsArray = responserData.comments.map((comment)=>{
+              return {
+                name: comment.author.name,
+                date: new Date(comment.date),
+                text: comment.text,
+                likes: comment.likes,
+                isLike: false,
+                isEdit: false
+              }
+            
+          })
+          renderCommentsList()
+          textInput.disabled = true;
+          nameInput.disabled = true;
+          })
         })
 
 
+   
+    renderCommentsList();
 
-// addButton.addEventListener('keyup', function (Enter) {
-  
-  // if (nameInput.value=== "" || textInput.value=== ""){
-  //               console.log("error")
-  //               return
-  //           }
-    // nameInput.addEventListener('input', (event) => {
-    // if(event.target.value === '') {
-    // addButton.disabled = true
-    // }
-    // })
+      nameInput.value="";
+      textInput.value=""
+  })
+}
 
-        // const currentDate = new Date();
-        // let dateNum = currentDate.getDate();
 
-        // let monthNum = currentDate.getMonth();
+   function commentsAnswer(){
+    const formInputText = document.querySelector(".add-form-text");
+    const formName = document.querySelector(".add-form-name");
+    const comments = document.querySelectorAll(".comment");
+        comments.forEach((commentElement,index) => {
+           commentElement.addEventListener("click",()=>{
+            // formName.value = commentsArray[index].nameCommentator;
+          formInputText.value = `>${commentsArray[index].text} \n${commentsArray[index].name},`;
+          
+          
+           })
+        });
+   }   
+    
+   
+
+  document.addEventListener("keydown",(e)=>{
+        if (e.key==="Enter") {
+           
+            if (nameInput.value=== "" || textInput.value=== ""){
+                    console.log("error")
+                    return
+             }
+
+            const currentDate = new Date();
+            let dateNum = currentDate.getDate();
+            if (dateNum < 10) { 
+            dateNum = "0" + dateNum; 
+            }
+            let monthNum = currentDate.getMonth()+1;
+            if (monthNum < 10) { 
+            monthNum = "0" + monthNum; 
+            }
+            let yearNum = currentDate.getFullYear().toString().substring(2)
+            let hour = currentDate.getHours();
+            if (hour < 10) { 
+            hour = "0" + hour; 
+            }
+            let minute = currentDate.getMinutes(); 
+            if (minute < 10) { 
+            minute = "0" + minute; 
+              }
+              
+
+                commentsArray.push({
+                name: nameInput.value.replaceAll('>','&gt').replaceAll('<','&lt;'),
+                date: `${dateNum}.${monthNum}.${yearNum} ${hour}:${minute}`,
+                text: textInput.value.replaceAll('>','&gt').replaceAll('<','&lt;'),
+                likes: 0,
+                isLike: false,
+                isEdit: false
+
+              })
+                
+                renderCommentsList();
+                editComments()
+              
+                nameInput.value="";
+                textInput.value=""
         
-
-        // let yearNum = currentDate.getFullYear().toString().substring(2)
-
-        // let hour = currentDate.getHours();
-        // if (hour < 10) { 
-	      //  hour = "0" + hour; 
-        // }
-
-        // let minute = currentDate.getMinutes(); 
-        // if (minute < 10) { 
-	      // minute = "0" + minute; 
-        //   }
-        
-        // const oldCommentsList = commentsList.innerHTML;
-        // commentsList.innerHTML = oldCommentsList + `<li class="comment">
-        //   <div class="comment-header">
-        //     <div>${nameInput.value}</div>
-        //     <div>${dateNum}.${monthNum}.${yearNum} ${hour}:${minute}</div>
-        //   </div>
-        //   <div class="comment-body">
-        //     <div class="comment-text">
-        //      ${textInput.value}
-        //     </div>
-        //   </div>
-        //   <div class="comment-footer">
-        //     <div class="likes">
-        //       <span class="likes-counter"></span>
-        //       <button class="like-button">${likesButton.value}</button>
-        //     </div>
-        //   </div>
-        // </li>`;
-        
-
-  
-        // nameInput.value = ""
-        // nameInput.disabled = true;
-        // textInput.value = ""
-        // textInput.disabled = true;
-
-        // })
-
-
-
-
-
-
+        }
+      })
+      
+ 
   </script>
 </html>
