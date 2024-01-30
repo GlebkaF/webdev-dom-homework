@@ -119,7 +119,7 @@
         time: getDate(),
         comments: commentInputElement.value,
         likes: 0,
-        islike: false,
+        isLiked: false,
       });
 
       renderComments();
@@ -132,12 +132,12 @@
         likeButtonElement.addEventListener ('click', event => {
           event.stopPropagation();
           const index = likeButtonElement.dataset.index;
-          if (newComments[index].islike === false) {
+          if (newComments[index].isLiked === false) {
             newComments[index].likes++;
-            newComments[index].islike = true;
+            newComments[index].isLiked = true;
           } else {
             newComments[index].likes--;
-            newComments[index].islike = false;
+            newComments[index].isLiked = false;
           };
           renderComments();
         });
@@ -152,14 +152,14 @@
         time: "12.02.22 12:18",
         comments: "Это будет первый комментарий на этой странице",
         likes: 3,
-        isLike: false,
+        isLiked: false,
       },
       {
         name: "Варвара Н.",
         time: "13.02.22 19:22",
         comments: "Мне нравится как оформлена эта страница! ❤",
         likes: 75,
-        isLike: false,
+        isLiked: false,
       },
     ];
 
@@ -178,7 +178,7 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${comment.likes}</span>
-              <button data-index="${index}" class="like-button"></button>
+              <button data-index="${index}" class="${comment.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
             </div>
           </div>`
       }).join('');
