@@ -14,7 +14,7 @@
       <!--список рендерится из js-->
 
     </ul>
-    <div class="add-form">
+    <div class="add-form" id="add-form-wait">
       <input type="text" class="add-form-name" id="name-input" placeholder="Введите ваше имя" />
       <textarea type="textarea" class="add-form-text" id="comment-input" placeholder="Введите ваш коментарий"
         rows="4"></textarea>
@@ -22,10 +22,11 @@
         <button class="add-form-button" id="add-form-button">Написать</button>
       </div>
     </div>
+    <div class="add-form" id="form-wait">
+      <p>Загружаем Ваш комментарий...</p>
+    </div>
     <div class="add-form">
-      <div class="add-form-row">
-        <button class="add-form-button" id="delete-button">Удалить последний комментарий</button>
-      </div>
+      <button class="add-form-button" id="delete-button">Удалить последний комментарий</button>
     </div>
   </div>
 </body>
@@ -82,6 +83,8 @@
 </style>
 <script>
   "use strict";
+  const waitElement = document.getElementById("form-wait");
+  const waitFormElement = document.getElementById("add-form-wait");
   const formElement = document.getElementById("add-form");
   const buttonElement = document.getElementById("add-form-button");
   const listElement = document.getElementById("list");
@@ -90,7 +93,7 @@
 
   let originalComment = document.getElementById("comment-original");
 
-
+  waitElement.classList.add("edit-none");
 
 
 
@@ -130,7 +133,7 @@
     jsonPromise.then((responseData) => {
       console.log(responseData);
       const appComments = responseData.comments.map((comment) => {
-        let myDate = new Date();
+        let myDate = new Date(comment.date);
         return {
           name: comment.author.name,
           date: myDate.getDate() + ":" + (myDate.getMonth() + 1) +
@@ -243,8 +246,7 @@
           }),
         }).then((response) => {
           response.json().then((responseData) => {
-            Comments = responseData.comments
-
+            сomments = responseData.comments;
             renderComments();
           });
         });
@@ -252,8 +254,6 @@
       });
     };
   };// теперь не работает кнопка "сохранить"
-
-
 
 
   //рендерфункция
@@ -345,10 +345,11 @@
       answer: '',
  
     });*/
-
+    //isLoading = true;
+   // waitFormElement.classList.add("edit-none");
+    //waitElement.classList.remove("edit-none");
 
     const clickFetchPromise = fetch('https://wedev-api.sky.pro/api/v1/:Tatyana-JSc2/comments', {
-
       method: "POST",
       body: JSON.stringify({
         name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
@@ -363,8 +364,21 @@
       }),
     }).then((response) => {
       response.json().then((responseData) => {
-        /*const appComments = responseData.comments.map((comment) => {
-          let myDate = new Date();
+        сomments = responseData.comments
+        console.log(сomments);
+      });
+    });
+
+
+    const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/:Tatyana-JSc2/comments', {
+      method: "GET"
+    }).then((response) => {
+      console.log(response);
+      const jsonPromise = response.json()
+      jsonPromise.then((responseData) => {
+        console.log(responseData);
+        const appComments = responseData.comments.map((comment) => {
+          let myDate = new Date(comment.date);
           return {
             name: comment.author.name,
             date: myDate.getDate() + ":" + (myDate.getMonth() + 1) +
@@ -373,26 +387,35 @@
             likesCounter: comment.likes,
             itLikes: comment.isLiked,
             original: '',
-            edit: false,
+            edit: true,
             answer: '',
           }
         })
         comments = appComments;
-        console.log(appComments);*/
-        console.log(responseData);
-        Comments = responseData.comments
+        //isLoading = false;
         renderComments();
+        /*if (comments = appComments) {
+          waitFormElement.classList.remove("edit-none");
+          waitElement.classList.add("edit-none");
+          renderComments();
+        } else {
+          waitFormElement.classList.add("edit-none");
+          waitElement.classList.remove("edit-none");
+        }*/
       });
     })
-
-    renderComments();
+    
+    //waitFormElement.classList.remove("edit-none");
+    //waitElement.classList.add("edit-none");
+    
 
     nameInputElement.value = '';
     commentInputElement.value = '';
   }
 
-
   buttonElement.addEventListener('click', buttonClick);
+
+
 
   //добавление комментария по клику на кнопку "Enter"
 
