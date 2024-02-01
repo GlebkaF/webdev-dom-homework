@@ -9,9 +9,11 @@
 
 <body>
   <div class="container">
+    <span class="loaded-page">Коментарии загружаются</span>
     <ul id="list" class="comments">
 
     </ul>
+    <span class="loaded-comment">Коментарий добавляется</span>
     <div class="add-form">
       <input id="add-name" value="" type="text" class="add-form-name" placeholder="Введите ваше имя" />
       <textarea id="add-comment" value="" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
@@ -40,31 +42,57 @@
   const nameInput = document.getElementById('add-name');
   const commentTextarea = document.getElementById('add-comment');
   const buttonElement = document.getElementById('add-button');
+  const loadedComment = document.querySelector('.loaded-comment');
+  const loadedPage = document.querySelector('.loaded-page');
 
   // Массив со статичными комментариями в объекте
-  const comments = [
-    {
-      author: 'Глеб Фокин',
-      text: 'Это будет первый комментарий на этой странице',
-      like: 3,
-      date: '12.02.22 12:18',
-      myLike: false,
-    },
-    {
-      author: 'Варвара Н.',
-      text: 'Мне нравится как оформлена эта страница! ❤',
-      like: 75,
-      date: '13.02.22 19:22',
-      myLike: true,
-    },
+  let comments = [
+    // {
+    //   author: 'Глеб Фокин',
+    //   text: 'Это будет первый комментарий на этой странице',
+    //   like: 3,
+    //   date: '12.02.22 12:18',
+    //   myLike: false,
+    // },
+    // {
+    //   author: 'Варвара Н.',
+    //   text: 'Мне нравится как оформлена эта страница! ❤',
+    //   like: 75,
+    //   date: '13.02.22 19:22',
+    //   myLike: true,
+    // },
   ];
+
+  fetch('https://wedev-api.sky.pro/api/v1/aman_arazmedov/comments',
+    {
+      method: 'GET',
+    }).then((response) => {
+
+      response.json().then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            author: comment.author.name,
+            text: comment.text,
+            date: fullDate(new Date(comment.date)),
+            like: comment.likes,
+            myLike: comment.isLiked,
+          }
+        });
+        comments = appComments;
+        renderComments();
+      })
+    })
+    .then((response) => {
+      loadedPage.style.display = 'none';
+    });
 
   // Опция ответить на комментарий
   const editTextArea = () => {
     const editUsersComment = document.querySelectorAll('.comment-text');
-    console.log(editUsersComment);
+
     // Цикл for проходит по каждому элементу в списке
     for (const editUserComment of editUsersComment) {
+
       // Добавляет обработчик клика на конкретный элемент в списке
       editUserComment.addEventListener('click', () => {
         const index = editUserComment.dataset.comment;
@@ -136,7 +164,7 @@
   renderComments();
 
   // Считаем время
-  const fulldate = (date) => {
+  const fullDate = (date) => {
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Добавляем ко дня +1, у месяцев отчет с 0
     const year = date.getFullYear().toString().slice(-2); // Отнимаем у года первые 2 цифры
@@ -145,7 +173,7 @@
     return `${day}.${month}.${year} ${hours}:${minutes}`;
   }
 
-  // Раздизейблим кнопку «Написать»
+  // Функция разблокировки кнопки «Написать»
   nameInput.addEventListener('input', () => {
     buttonElement.disabled = false;
   })
@@ -175,49 +203,87 @@
       return;
     }
 
-    // Добавление блока с комментарием + защита от фрода
-    comments.push({
-      author: nameInput.value
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#39;')
-        .replaceAll('`', '&#x60;')
-        .replaceAll('=', '&#x3D;')
-        .replaceAll('(', '&#40;')
-        .replaceAll(')', '&#41;')
-        .replaceAll('%', '&#37;')
-        .replaceAll('+', '&#43;')
-        .replaceAll('{', '&#123;')
-        .replaceAll('}', '&#125;')
-        .replaceAll('[', '&#91;'),
-      text: commentTextarea.value
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#39;')
-        .replaceAll('`', '&#x60;')
-        .replaceAll('=', '&#x3D;')
-        .replaceAll('(', '&#40;')
-        .replaceAll(')', '&#41;')
-        .replaceAll('%', '&#37;')
-        .replaceAll('+', '&#43;')
-        .replaceAll('{', '&#123;')
-        .replaceAll('}', '&#125;')
-        .replaceAll('[', '&#91;'),
-      like: 0,
-      date: fulldate(new Date()),
-      myLike: false,
-    })
-
-    // Очищаем поле ввода имени и комментария + дизейблим кнопку «Написать», если поля пустые
-    nameInput.value = '';
-    commentTextarea.value = '';
+    loadedComment.style.display = 'block';
     buttonElement.disabled = true;
 
-    // Рендерим комменты
+    // Добавление блока с комментарием + защита от фрода
+    // comments.push({
+    //   author: nameInput.value
+    //     .replaceAll('&', '&amp;')
+    //     .replaceAll('<', '&lt;')
+    //     .replaceAll('>', '&gt;')
+    //     .replaceAll('"', '&quot;')
+    //     .replaceAll("'", '&#39;')
+    //     .replaceAll('`', '&#x60;')
+    //     .replaceAll('=', '&#x3D;')
+    //     .replaceAll('(', '&#40;')
+    //     .replaceAll(')', '&#41;')
+    //     .replaceAll('%', '&#37;')
+    //     .replaceAll('+', '&#43;')
+    //     .replaceAll('{', '&#123;')
+    //     .replaceAll('}', '&#125;')
+    //     .replaceAll('[', '&#91;'),
+    //   text: commentTextarea.value
+    //     .replaceAll('&', '&amp;')
+    //     .replaceAll('<', '&lt;')
+    //     .replaceAll('>', '&gt;')
+    //     .replaceAll('"', '&quot;')
+    //     .replaceAll("'", '&#39;')
+    //     .replaceAll('`', '&#x60;')
+    //     .replaceAll('=', '&#x3D;')
+    //     .replaceAll('(', '&#40;')
+    //     .replaceAll(')', '&#41;')
+    //     .replaceAll('%', '&#37;')
+    //     .replaceAll('+', '&#43;')
+    //     .replaceAll('{', '&#123;')
+    //     .replaceAll('}', '&#125;')
+    //     .replaceAll('[', '&#91;'),
+    //   like: 0,
+    //   date: fullDate(new Date()),
+    //   myLike: false,
+    // })
+
+    fetch('https://wedev-api.sky.pro/api/v1/aman_arazmedov/comments',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          name: nameInput.value,
+          text: commentTextarea.value,
+        })
+      })
+      .then((response) => {
+        return response.json()
+      })
+      .then((response) => {
+        return fetch('https://wedev-api.sky.pro/api/v1/aman_arazmedov/comments',
+          {
+            method: 'GET',
+          })
+      })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            author: comment.author.name,
+            text: comment.text,
+            date: fullDate(new Date(comment.date)),
+            like: comment.likes,
+            myLike: comment.isLiked,
+          }
+        });
+        comments = appComments;
+        renderComments();
+      })
+      .then((response) => {
+        loadedComment.style.display = 'none';
+        buttonElement.disabled = false;
+      });
+
+    // Очищаем поле ввода имени и комментария + рендерим комменты
+    nameInput.value = '';
+    commentTextarea.value = '';
     renderComments();
   })
 
