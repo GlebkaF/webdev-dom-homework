@@ -1,26 +1,81 @@
-import { formatDateTime } from "./datetime.js";
-let urlApi = "https://wedev-api.sky.pro/api/v1/zenin-dmitry/comments";
-export function get() {
-    return fetch(urlApi,
-        {
-            method: 'GET',
-        })
-        .then((response) => {
-            return response.json();
-        })
-}
+/* import { fetchAndRenderComments, commentList } from "./main.js";
+import { addComment, renderComments } from "./render.js"; */
+let urlApi = "https://wedev-api.sky.pro/api/v2/zenin-dmitry/comments";
+let urlApiLogin = "https://wedev-api.sky.pro/api/user/login";
 
-export function post(name, text) {
+export let token = localStorage.getItem("token");
+console.log(token);
+export const setToken = (newToken) => {
+     token = newToken;
+};
+
+
+
+export const getToken = () => {
+    return token;
+};
+
+
+
+//GET запрос авторизации на получение токена
+export function getComments() {
+    return fetch(urlApi, {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    }).then((response) => {
+        if (response.status === 401) {
+            throw new Error("Вы не авторизованы");
+        }
+        return response.json();
+    })
+};
+
+
+//POST запрос авторизации и токена
+export const postComment = (text) => {
+    console.log("conslole", text);
     return fetch(urlApi,
         {
             method: 'POST',
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
             body: JSON.stringify({
-                name: name,
+                /* name: name, */
                 text: text,
-                date: formatDateTime(new Date),
-                isLiked: false,
-                likes: 0,
+                /*       date: formatDateTime(new Date),
+                      isLiked: false,
+                      likes: 0, */
                 /* forceError: true, */
-            })
+            }),
         })
+};
+
+export function loginPost({ login, password}) {
+    return fetch(urlApiLogin,
+        {
+            method: 'POST',
+            body: JSON.stringify({
+                login,
+                password,
+            }),
+        }).then((response) => {
+            if (response.status === 201) {
+                console.log("комменты отрисовались?");
+                return response.json();
+            }
+            if (response.status === 400) {
+                throw new Error("Некорректные логин\пароль 400");
+            }
+            if (response.status === 500) {
+                return Promise.reject("ошибка сервера");
+            }
+            return Promise.reject("Отсутствует соединение");
+        }).catch((error) => {
+            alert(error);
+            console.warn(error);
+        }) 
+
 };
