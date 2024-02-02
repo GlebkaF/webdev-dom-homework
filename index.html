@@ -14,7 +14,7 @@
       <!--список рендерится из js-->
 
     </ul>
-    <div class="add-form">
+    <div class="add-form" id="add-form-wait">
       <input type="text" class="add-form-name" id="name-input" placeholder="Введите ваше имя" />
       <textarea type="textarea" class="add-form-text" id="comment-input" placeholder="Введите ваш коментарий"
         rows="4"></textarea>
@@ -22,10 +22,11 @@
         <button class="add-form-button" id="add-form-button">Написать</button>
       </div>
     </div>
+    <div class="add-form" id="form-wait">
+      <p>Загружаем Ваш комментарий...</p>
+    </div>
     <div class="add-form">
-      <div class="add-form-row">
-        <button class="add-form-button" id="delete-button">Удалить последний комментарий</button>
-      </div>
+      <button class="add-form-button" id="delete-button">Удалить последний комментарий</button>
     </div>
   </div>
 </body>
@@ -82,21 +83,24 @@
 </style>
 <script>
   "use strict";
+  const waitElement = document.getElementById("form-wait");
+  const waitFormElement = document.getElementById("add-form-wait");
   const formElement = document.getElementById("add-form");
   const buttonElement = document.getElementById("add-form-button");
   const listElement = document.getElementById("list");
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
+  const containerElement = document.querySelector(".container");
 
   let originalComment = document.getElementById("comment-original");
 
-
+  waitElement.classList.add("edit-none");
 
 
 
 
   //создание массива
-  let comments = [
+  let comments = [/*
     {
       name: "Глеб Фокин",
       date: "12.02.22 12:18",
@@ -118,37 +122,48 @@
       edit: false,
       answer: '',
 
-    },
+    },*/
   ]
 
+  //запрос на получение данных с сервера
+  const fetchPromise = () => {
+    //containerElement.disabled = true;
+    //containerElement.textContent = "Данные обновляются...";
+    return fetch('https://wedev-api.sky.pro/api/v1/:Tatyana-JSc2/comments', {
+      method: "GET"
+    }).then((response) => {
+      return response.json();
+    }).then((responseData) => {
+      //const commentsMap = () => {
+      console.log(responseData);
+      const appComments = responseData.comments.map((comment) => {
+        let myDate = new Date(comment.date);
+        return {
+          name: comment.author.name,
+          date: myDate.getDate() + ":" + (myDate.getMonth() + 1) +
+            ":" + myDate.getFullYear() + " " + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds(),
+          text: comment.text,
+          likesCounter: comment.likes,
+          itLikes: comment.isLiked,
+          original: '',
+          edit: true,
+          answer: '',
+        };
+      });
+      comments = appComments;
+      console.log(appComments);
+      renderComments();
+      //};
+      //return commentsMap;
+      // }).then(() => {
+      //   containerElement.disabled = false;
+      //   containerElement.innerHTML = ``;
+    });
+  };
 
-  const fetchPromise = fetch ('https://wedev-api.sky.pro/api/v1/:Tatyana-JSc2/comments', {
-  method: "GET"
-}).then ((response) => {
-  console.log(response);
-  const jsonPromise = response.json()
-  jsonPromise.then((responseData) => {
-    console.log(responseData);
-    const appComments = responseData.comments.map((comment) => {
-      let myDate = new Date();
-      return {
-        name: comment.author.name,
-        date: myDate.getDate() + ":" + (myDate.getMonth() + 1) +
-        ":" + myDate.getFullYear() + " " + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds(),
-        text: comment.text,
-        likesCounter: comment.likes,
-        itLikes: comment.isLiked,
-        original: '',
-        edit: false,
-        answer: '',
-      }
-    })
-    comments = appComments;
-    console.log(appComments);
-    renderComments();
 
-  });
-})
+
+
 
   //добавление обработчика динамическим элементам
   const InitEventListeners = () => {
@@ -182,8 +197,6 @@
     }
   }
 
-  //<button class="${comment.itLikes ? "-active-like" : "like-button"}" data-index = "${index}"></button> 
-
 
   //редактирование комментария
   const InitEditComments = () => {
@@ -198,13 +211,6 @@
 
       });
     };
-    /*EditComments.forEach((element,index) => {
-      element.addEventListener('click', () => {
-        console.log(1);
-        element[index].value = "сохранить";
-        renderComments();
-      });
-    });*/
   }
 
   // saveButton.closest('.comment').querySelector('textarea').value
@@ -217,6 +223,8 @@
             </div>    
          </div>*/
 
+
+
   //добавление редактированного комментария
   const InitEditKommitted = () => {
     const EditKommitteds = document.querySelectorAll(".edit-committed");
@@ -225,13 +233,32 @@
         const index = EditKommitted.dataset.index;
         comments[index].text = EditKommitted.closest('.comment').querySelector('textarea').value;
         comments[index].isEdit = false;
-
         renderComments();
+
+        const id = EditKommitted.dataset.id;
+        fetch('https://wedev-api.sky.pro/api/v1/:Tatyana-JSc2/comments' + id, {
+          method: "POST",
+          body: JSON.stringify({
+            name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+            date: myDate.getDate() + ":" + (myDate.getMonth() + 1) +   // myDate не определено, неверно записано, нужно переделать
+              ":" + myDate.getFullYear() + " " + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds(),
+            text: EditKommitted.closest('.comment').querySelector('textarea').value.replace(originalComment, '').replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+            likesCounter: 0,
+            itLikes: false,
+            original: `${commentInputElement.value.includes(originalComment) ? originalComment : ''}`,
+            edit: true,
+            answer: '',
+          }),
+        }).then((response) => {
+          response.json().then((responseData) => {
+            сomments = responseData.comments;
+            renderComments();
+          });
+        });
 
       });
     };
-  }
-
+  };// теперь не работает кнопка "сохранить"
 
 
   //рендерфункция
@@ -251,7 +278,7 @@
           </div>
           <textarea type="textarea" id="edit-input" class="${comment.isEdit ? "add-form-text" : "edit-none"}" rows="4" >${comment.text}</textarea>
           <button class="${comment.edit && !comment.isEdit ? "edit-button" : "edit-none"}" data-index = "${index}">Редактировать</button>
-          <button class="${comment.edit && comment.isEdit ? "edit-committed" : "edit-none"}" data-index = "${index}">Сохранить</button>
+          <button class="${comment.edit && comment.isEdit ? "edit-committed" : "edit-none"}" data-index = "${index}" data-id = "${comment.id}" >Сохранить</button>
 
         </div>
         <div class="comment-footer">
@@ -268,6 +295,8 @@
     InitEditComments();
     InitEditKommitted();
   };
+
+  fetchPromise();
   renderComments();
 
 
@@ -311,7 +340,7 @@
     }
 
     let myDate = new Date();
-    comments.push({
+    /*comments.push({
       name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
       date: myDate.getDate() + ":" + (myDate.getMonth() + 1) +
         ":" + myDate.getFullYear() + " " + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds(),
@@ -321,17 +350,49 @@
       original: `${commentInputElement.value.includes(originalComment) ? originalComment : ''}`,
       edit: true,
       answer: '',
+ 
+    });*/
 
-    });
+    buttonElement.disabled = true;
+    waitFormElement.classList.add("edit-none");
+    waitElement.classList.remove("edit-none");
+    // buttonElement.textContent = "Ваш омментарий добавляется...";
+    //buttonElement.classList.add("click-none");
+
+    const clickFetchPromise = fetch('https://wedev-api.sky.pro/api/v1/:Tatyana-JSc2/comments', {
+      method: "POST",
+      body: JSON.stringify({
+        name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+        date: myDate.getDate() + ":" + (myDate.getMonth() + 1) +
+          ":" + myDate.getFullYear() + " " + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds(),
+        text: commentInputElement.value.replace(originalComment, '').replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+        likesCounter: 0,
+        itLikes: false,
+        original: `${commentInputElement.value.includes(originalComment) ? originalComment : ''}`,
+        edit: true,
+        answer: '',
+      }),
+    }).then((response) => {
+      return response.json();
+    }).then(() => {
+      return fetchPromise();
+    }).then((data) => {
+      buttonElement.disabled = false;
+      waitFormElement.classList.remove("edit-none");
+      waitElement.classList.add("edit-none");
+      //buttonElement.textContent = "Написать";
+      //buttonElement.classList.remove("click-none");
+    })
 
     renderComments();
 
     nameInputElement.value = '';
     commentInputElement.value = '';
-  }
-
+  };
 
   buttonElement.addEventListener('click', buttonClick);
+
+
 
   //добавление комментария по клику на кнопку "Enter"
 
