@@ -8,6 +8,9 @@
 </head>
 
 <body>
+  <div class="loading">
+    <p>Загружаем данные...</p>
+  </div>
   <div class="container">
     <ul class="comments" id="list">
 
@@ -80,9 +83,16 @@
   .click-none {
     background-color: gray;
   }
+
+  .loading {
+    font-size: 32px;
+    padding: 200px;
+    color: #7329af;
+  }
 </style>
 <script>
   "use strict";
+
   const waitElement = document.getElementById("form-wait");
   const waitFormElement = document.getElementById("add-form-wait");
   const formElement = document.getElementById("add-form");
@@ -91,6 +101,7 @@
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
   const containerElement = document.querySelector(".container");
+  const loadingElement = document.querySelector(".loading");
 
   let originalComment = document.getElementById("comment-original");
 
@@ -125,8 +136,6 @@
 
   //запрос на получение данных с сервера
   const fetchPromise = () => {
-    //containerElement.disabled = true;
-    //containerElement.textContent = "Данные обновляются...";
     return fetch('https://wedev-api.sky.pro/api/v1/:Tatyana-JSc2/comments', {
       method: "GET"
     }).then((response) => {
@@ -151,15 +160,19 @@
       comments = appComments;
       console.log(appComments);
       renderComments();
-      //};
-      //return commentsMap;
-      // }).then(() => {
-      //   containerElement.disabled = false;
-      //   containerElement.innerHTML = ``;
     });
   };
 
 
+  //Получение данных с сервера + время ожидания загрузки
+  const waitFetchPromise = () => {
+    containerElement.classList.add("edit-none");
+    // loadingElement.classList.remove("edit-none");
+    return fetchPromise().then((data) => {
+      containerElement.classList.remove("edit-none");
+      loadingElement.classList.add("edit-none");
+    });
+  }
 
 
 
@@ -182,6 +195,7 @@
     }
   }
 
+
   //ответ на комментарий по клику на комментарий
   const InitCommentListeners = () => {
     const EveryComments = document.querySelectorAll(".comment-text");
@@ -190,6 +204,7 @@
         const index = EveryComment.dataset.index;
         originalComment = `${comments[index]['name']} \n ${comments[index]['text']} \n`;
         commentInputElement.value = originalComment + comments[index]['answer'];
+
         renderComments();
       })
     }
@@ -206,7 +221,6 @@
         //EditKommittedElement[index].value = comments[index].text + '';
 
         renderComments();
-
       });
     };
   }
@@ -223,6 +237,7 @@
 
 
 
+
   //добавление редактированного комментария
   const InitEditKommitted = () => {
     const EditKommitteds = document.querySelectorAll(".edit-committed");
@@ -231,32 +246,25 @@
         const index = EditKommitted.dataset.index;
         comments[index].text = EditKommitted.closest('.comment').querySelector('textarea').value;
         comments[index].isEdit = false;
-        renderComments();
+        renderComments();//обновленный комментарий рендерится в локальное хранилище(массив)
 
+
+        //PATH не прописан в API - нет возможности проверки работы данного кода:
         const id = EditKommitted.dataset.id;
         fetch('https://wedev-api.sky.pro/api/v1/:Tatyana-JSc2/comments' + id, {
-          method: "POST",
+          method: "PATCH",
           body: JSON.stringify({
-            name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-            date: myDate.getDate() + ":" + (myDate.getMonth() + 1) +   // myDate не определено, неверно записано, нужно переделать
-              ":" + myDate.getFullYear() + " " + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds(),
-            text: EditKommitted.closest('.comment').querySelector('textarea').value.replace(originalComment, '').replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-            likesCounter: 0,
-            itLikes: false,
-            original: `${commentInputElement.value.includes(originalComment) ? originalComment : ''}`,
-            edit: true,
-            answer: '',
+            text: EditKommitted.closest('.comment').querySelector('textarea').value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
           }),
         }).then((response) => {
-          response.json().then((responseData) => {
-            сomments = responseData.comments;
-            renderComments();
-          });
+          return response.json();
+        }).then((responseData) => {
+          сomments = responseData.comments;
+          renderComments();
         });
-
       });
     };
-  };// теперь не работает кнопка "сохранить"
+  };
 
 
   //рендерфункция
@@ -294,7 +302,7 @@
     InitEditKommitted();
   };
 
-  fetchPromise();
+  waitFetchPromise();
   renderComments();
 
 
