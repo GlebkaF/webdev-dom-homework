@@ -89,6 +89,35 @@
     padding: 200px;
     color: #7329af;
   }
+
+  @keyframes rotating {
+    from {
+      transform: rotate(0deg);
+    }
+
+    25% {
+      transform: rotate(30deg);
+      ;
+    }
+
+    75% {
+      transform: rotate(-30deg);
+      ;
+    }
+
+    to {
+      transform: rotate(0deg);
+    }
+  }
+
+  .-loading-like {
+    /*margin-left: 10px;
+    background-image: url("data:image/svg+xml,%3Csvg width='22' height='20' viewBox='0 0 22 20' fill='none' xmlns='http://www.w3.org/2000/svg' %3E%3Cpath d='M11.11 16.9482L11 17.0572L10.879 16.9482C5.654 12.2507 2.2 9.14441 2.2 5.99455C2.2 3.81471 3.85 2.17984 6.05 2.17984C7.744 2.17984 9.394 3.26975 9.977 4.75204H12.023C12.606 3.26975 14.256 2.17984 15.95 2.17984C18.15 2.17984 19.8 3.81471 19.8 5.99455C19.8 9.14441 16.346 12.2507 11.11 16.9482ZM15.95 0C14.036 0 12.199 0.882834 11 2.26703C9.801 0.882834 7.964 0 6.05 0C2.662 0 0 2.6267 0 5.99455C0 10.1035 3.74 13.4714 9.405 18.5613L11 20L12.595 18.5613C18.26 13.4714 22 10.1035 22 5.99455C22 2.6267 19.338 0 15.95 0Z' fill='%23BCEC30' /%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    width: 22px;
+    height: 22px;*/
+    animation: rotating 2s linear infinite;
+  }
 </style>
 <script>
   "use strict";
@@ -102,6 +131,8 @@
   const commentInputElement = document.getElementById("comment-input");
   const containerElement = document.querySelector(".container");
   const loadingElement = document.querySelector(".loading");
+  const likesCounterElement = document.querySelector(".likes-counter");
+  const likeButtonElement = document.querySelector(".like-button");
 
   let originalComment = document.getElementById("comment-original");
 
@@ -155,6 +186,7 @@
           original: '',
           edit: true,
           answer: '',
+          isLikeLoading: false,
         };
       });
       comments = appComments;
@@ -174,25 +206,52 @@
     });
   }
 
+  //имимтация загрузки данных
+  function delay(interval = 300) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, interval);
+    });
+  }
+
+  /*delay(2000).then(() => {
+    comment.likes = comment.isLiked
+      ? comment.likes - 1
+      : comment.likes + 1;
+    comment.isLiked = !comment.isLiked;
+    comment.isLikeLoading = false;
+    renderComments();
+  });*/
 
 
-  //добавление обработчика динамическим элементам
+
+  //добавление обработчика динамическим элементам (кнопка лайков)
   const InitEventListeners = () => {
     const likeButtonElements = document.querySelectorAll(".like-button");
     for (const likeButtonElement of likeButtonElements) {
       likeButtonElement.addEventListener('click', () => {
         const index = likeButtonElement.dataset.index;
-        if (comments[index]['itLikes'] === false) {
-          comments[index].likesCounter++;
-          comments[index]['itLikes'] = true;
-        } else {
-          comments[index]['likesCounter'] -= 1;
-          comments[index]['itLikes'] = false;
-        }
-        //comments[index]['itLikes'] = !comments[index]['itLikes'] - можно заменить одной этой строкой строки 92+95 (сокращение кода)
-        renderComments();
-      })
-    }
+        // comments[index].isLikeLoading = true;
+        // likesCounterElement.classList.add("edit-none");
+        // likeButtonElement.classList.add("-loading-like");
+        delay(2000).then(() => {
+
+          if (comments[index]['itLikes'] === false) {
+            comments[index].likesCounter++;
+            comments[index]['itLikes'] = true;
+          } else {
+            comments[index]['likesCounter'] -= 1;
+            comments[index]['itLikes'] = false;
+          }
+          //comments[index]['itLikes'] = !comments[index]['itLikes'] - можно заменить одной этой строкой строки 92+95 (сокращение кода)
+          // comments[index].isLikeLoading = false;
+          //likesCounterElement.classList.remove("edit-none");
+          //likeButtonElement.classList.remove("-loading-like");
+          renderComments();
+        });
+      });
+    };
   }
 
 
@@ -225,7 +284,7 @@
     };
   }
 
-  // saveButton.closest('.comment').querySelector('textarea').value
+  // вариант для редактирования комментария:
   /* <div class="comment-footer">
             <div class="redact">
                ${comment.isEdit ?
@@ -250,7 +309,7 @@
 
 
         //PATH не прописан в API - нет возможности проверки работы данного кода:
-        const id = EditKommitted.dataset.id;
+        /*const id = EditKommitted.dataset.id;
         fetch('https://wedev-api.sky.pro/api/v1/:Tatyana-JSc2/comments' + id, {
           method: "PATCH",
           body: JSON.stringify({
@@ -261,12 +320,16 @@
         }).then((responseData) => {
           сomments = responseData.comments;
           renderComments();
-        });
+        });*/
       });
     };
   };
 
 
+  //(comments[index]['itLikes']) ? "-active-like" : "like-button"
+  //${(comments[index]['isLikeLoading']) ? "like-button -loading-like" 
+
+  //like-button 
   //рендерфункция
   const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
@@ -290,7 +353,7 @@
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter" >${comment.likesCounter}</span>
-            <button class="like-button ${(comments[index]['itLikes']) ? "-active-like" : "like-button"}" data-index = "${index}"></button> 
+            <button class="like-button ${comment.itLikes ? "-active-like" : "like-button"}" data-index = "${index}"></button> 
           </div>
         </div>
       </li>`;
@@ -377,6 +440,7 @@
         original: `${commentInputElement.value.includes(originalComment) ? originalComment : ''}`,
         edit: true,
         answer: '',
+        isLikeLoading: false,
       }),
     }).then((response) => {
       return response.json();
