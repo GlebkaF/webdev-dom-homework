@@ -1,71 +1,127 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
-      <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <ul id="list" class="comments">
+      <li class="comment">
+        <div class="comment-header">
+          <div>Глеб Фокин</div>
+          <div>12.02.22 12:18</div>
         </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Это будет первый комментарий на этой странице
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">3</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>
+      <li class="comment">
+        <div class="comment-header">
+          <div>Варвара Н.</div>
+          <div>13.02.22 19:22</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Мне нравится как оформлена эта страница! ❤
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">75</span>
+            <button class="like-button -active-like"></button>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <div class="add-form">
+      <input id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+      <textarea id="text-input" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+        rows="4"></textarea>
+      <div class="add-form-row">
+        <button id="write-button" class="add-form-button">Написать</button>
       </div>
     </div>
-  </body>
+  </div>
+</body>
 
-  <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
-  </script>
+<script>
+  "use strict";
+  // Код писать здесь
+  let currentDate = new Date();
+  let dayWeek = currentDate.getDate();
+  if (dayWeek < 10) {
+    dayWeek = "0" + dayWeek;
+  }
+  let month = currentDate.getMonth() + 1;
+  if (month < 10) {
+    month = "0" + month;
+  }
+  let years = currentDate.getFullYear();
+  let hours = currentDate.getHours();
+  if (hours < 10) {
+    hours = "0" + hours;
+  }
+  let minutes = currentDate.getMinutes();
+  if (minutes < 10) {
+    minutes = "0" + minutes;
+  }
+  let myDate = dayWeek + "." + month + "." + years + " " + hours + ":" + minutes;
+  // console.log(currentDate);
+  const listElement = document.getElementById("list");
+  const nameInputElement = document.getElementById("name-input");
+  const textAreaElement = document.getElementById("text-input");
+  const buttonElement = document.getElementById("write-button");
+  buttonElement.addEventListener('click', () => {
+
+    nameInputElement.classList.remove("error");
+    textAreaElement.classList.remove("error");
+
+    if (nameInputElement.value === "") {
+      nameInputElement.classList.add("error");
+      return;
+    }
+
+    else if (textAreaElement.value === "") {
+      textAreaElement.classList.add("error");
+      return;
+    }
+
+    listElement.innerHTML +=
+      `<li class="comment">
+        <div class="comment-header">
+          <div>${nameInputElement.value}</div>
+          <div>${myDate}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${textAreaElement.value}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">0</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>`;
+    nameInputElement.value = "";
+    textAreaElement.value = "";
+
+  });
+console.log((new Date()).toLocaleString());
+  console.log("It works!");
+</script>
+
 </html>
