@@ -87,6 +87,13 @@
       minute: "numeric",
     };
 
+    buttonEl.disabled = true;
+    nameEl.addEventListener("input", evnt);
+    textEl.addEventListener("input", evnt);
+    function evnt() {
+      if (Text.value !== "") buttonEl.disabled = false;
+    }
+
     buttonEl.addEventListener("click", () => {
       nameEl.classList.remove("add-form_error");
       textEl.classList.remove("add-form_error");
@@ -107,7 +114,10 @@
         `<li class="comment">
           <div class="comment-header">
             <div>${nameEl.value}</div>
-            <div>${date.toLocaleString("ru", options1)} ${date.toLocaleString("ru", options2)}</div>
+            <div>${date.toLocaleString("ru", options1)} ${date.toLocaleString(
+          "ru",
+          options2
+        )}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
