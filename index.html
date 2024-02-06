@@ -114,16 +114,26 @@
           commentInputElement.classList.add("error");
           return;
       }
+
       newComments.push({
-        name: nameInputElement.value,
+        name: nameInputElement.value
+          .replaceAll("&lt;", "<")
+          .replaceAll("&gt;", ">")
+          .replaceAll("&amp;", "&")
+          .replaceAll('&quot;', '"'),       
         time: getDate(),
-        comments: commentInputElement.value,
+        comments: commentInputElement.value
+          .replaceAll("&lt;", "<")
+          .replaceAll("&gt;", ">")
+          .replaceAll("&amp;", "&")
+          .replaceAll('&quot;', '"'),
         likes: 0,
         isLiked: false,
       });
+      nameInputElement.value = '';
+      commentInputElement.value = '';
 
       renderComments();
-
     });
     
     const initEventListerner = () => {
@@ -184,9 +194,23 @@
       }).join('');
       listElement.innerHTML = commentHtml;
       initEventListerner();
+      answerComment();
     };
 
     renderComments();
+
+    
+    function answerComment() {
+      const commentsAnswer = document.querySelectorAll('.comment');
+      const formText = document.querySelector('.add-form-text');
+      comments.forEach((comment, index) => {
+        comment.addEventListener('click', () => {
+          formText.value = '$comments[index].name \n $comments[index].text'
+        })
+      })
+    }
+    
+    
 
   </script>
 </html>
