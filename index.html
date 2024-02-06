@@ -51,6 +51,7 @@
         rows="4"></textarea>
       <div class="add-form-row">
         <button id="add-form-button" class="add-form-button">Написать</button>
+        <button id="remove-last-com" class="remove-last-com">Удалить последний</button>
       </div>
     </div>
   </div>
@@ -66,6 +67,7 @@
   const nameEl = document.getElementById("add-form-name");
   const textEl = document.getElementById("add-form-text");
   const buttonEl = document.getElementById("add-form-button");
+  const buttonRemEl = document.getElementById("remove-last-com");
   const listEl = document.getElementById("list");
   const formEl = document.getElementById("add-form");
   const date = new Date();
@@ -86,12 +88,7 @@
     if (Text.value !== "") buttonEl.disabled = false;
   }
 
-  formEl.addEventListener("keyup", evntKey);
-  function evntKey(e) {
-    if (e.code === 'Enter') {
-      buttonEl.click()
-    }
-  }
+  formEl.addEventListener("keyup", (e) => { if (e.code === 'Enter') { buttonEl.click() } });
 
   buttonEl.addEventListener("click", () => {
     nameEl.classList.remove("add-form_error");
@@ -127,6 +124,11 @@
           </div>
         </li>`;
   });
+
+  const lastCom = listEl.innerHTML.lastIndexOf(`<li class="comment">`)
+  buttonRemEl.addEventListener("click", () => {
+    listEl.innerHTML = listEl.innerHTML.slice(0, lastCom);
+  })
 
   console.log("It works!");
 </script>

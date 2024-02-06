@@ -122,9 +122,11 @@ body {
 .add-form-row {
   display: flex;
   justify-content: flex-end;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
-.add-form-button {
+.add-form-button, .remove-last-com  {
   margin-top: 24px;
   font-size: 24px;
   padding: 10px 20px;
@@ -134,7 +136,7 @@ body {
   cursor: pointer;
 }
 
-.add-form-button:hover {
+.add-form-button:hover, .remove-last-com:hover {
   opacity: 0.9;
 }
 
@@ -142,4 +144,3 @@ body {
   background-color: rgb(114, 110, 106);
   cursor: default;
 }
-
