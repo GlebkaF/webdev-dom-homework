@@ -1,71 +1,148 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
-      <ul class="comments">
-        <li class="comment">
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <ul class="comments" id="comments-push">
+      <li class="comment" id="comment-push">
+        <div class="comment-header">
+          <div>Глеб Фокин</div>
+          <div>12.02.22 12:18</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Это будет первый комментарий на этой странице
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">3</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>
+      <li class="comment" id="comment-push">
+        <div class="comment-header">
+          <div>Варвара Н.</div>
+          <div>13.02.22 19:22</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Мне нравится как оформлена эта страница! ❤
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">75</span>
+            <button class="like-button -active-like"></button>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <div class="add-form" id="add-form">
+      <input type="text" class="add-form-name" id="name-input" placeholder="Введите ваше имя" />
+      <textarea type="textarea" class="add-form-text" id="text-input" placeholder="Введите ваш коментарий" rows="4"></textarea>
+      <div class="add-form-row">
+        <button class="add-form-button" id="add-button">Написать</button>
+        <button id="deleteButton" class="add-form-button">
+          Удалить последний комментарий
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+
+<script>
+  "use strict";
+    const addFormButtonElement = document.getElementById("add-button");
+    const addFormTextElement = document.getElementById("text-input");
+    const addFormNameElement = document.getElementById("name-input");
+    const addFormElement = document.getElementById("add-form");
+    const commentsList = document.getElementById("comments-push");
+    const commentElement = document.getElementById("comment-push");
+    const delCom = document.getElementById("deleteButton");
+    
+
+    
+    document.addEventListener("keyup", () => {
+      
+    });
+
+
+    addFormButtonElement.addEventListener("click", () => {
+      const name = addFormButtonElement.value.trim();
+      const text = addFormTextElement.value.trim();
+      const newComment = document.createElement("li");
+      newComment.classList.add("comment");
+      const oldListHtml = commentsList.innerHTML
+      commentsList.innerHTML = oldListHtml + `<li class="comment" id="comment-push">
           <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
+            <div>${addFormNameElement.value}</div>
+            <div>${(new Date()).toLocaleString()}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              Это будет первый комментарий на этой странице
+              ${addFormTextElement.value}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">3</span>
+              <span class="likes-counter">0</span>
               <button class="like-button"></button>
             </div>
           </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
-        </div>
-      </div>
-    </div>
-  </body>
+        </li>`
 
-  <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
-  </script>
+
+        function input() {
+        if (addFormNameElement.value === "" || addFormTextElement.value === ""){
+          addFormButtonElement.setAttribute("disabled", true);
+        } else {
+          addFormButtonElement.removeAttribute("disabled");
+        }
+      }
+      addFormNameElement.addEventListener("input", input);
+      addFormTextElement.addEventListener("input", input);
+
+
+      addFormButtonElement.addEventListener('click', () => {
+        addFormNameElement.classList.remove("error");
+        addFormTextElement.classList.remove("error");
+        if (addFormNameElement.value === "") {
+          addFormNameElement.classList.add("error");
+        return;
+      } else if (addFormTextElement.value === ""){
+        addFormTextElement.classList.add("error")
+        return;
+      }
+      });
+
+      input.addEventListener("keydown", function (event) {
+      if (event.keyCode === 13) {
+        addComment();
+      }
+    });
+
+
+      function deleteCommit() {
+      const ul = document.getElementById("comments-push");
+      let latComm = ul.getElementsByTagName("li").length - 1;
+      ul.getElementsByTagName("li")[latComm].remove();
+    }
+    delCom.addEventListener("click", function () {
+      deleteCommit();
+    });
+    
+        addFormNameElement.value = "";
+        addFormTextElement.value = "";
+        });
+  console.log("It works!");
+</script>
+
 </html>
