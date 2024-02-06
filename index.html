@@ -47,17 +47,17 @@
       <div class="add-form">
         <input
           type="text"
-          class="add-form-name"
+          class="add-form-name" id="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
           type="textarea"
-          class="add-form-text"
+          class="add-form-text" id="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="add-form-button">Написать</button>
         </div>
       </div>
     </div>
@@ -65,7 +65,91 @@
 
   <script>
     "use strict";
-    // Код писать здесь
+    const nameForm = document.getElementById('add-form-name');
+  const commentForm = document.getElementById('add-form-text');
+  const button = document.getElementById('add-form-button');
+  let comments = document.getElementById('comments');
+
+  function addComment() {
+
+nameForm.classList.remove('error');
+  commentForm.classList.remove('error');
+
+  if ((nameForm.value.trim() == '') && (commentForm.value.trim() == '')) {
+    nameForm.classList.add('error');
+    commentForm.classList.add('error');
+    return;
+  }
+  else if (nameForm.value.trim() == '') {
+    nameForm.classList.add('error');
+    return;
+  } else if (commentForm.value.trim() == '') {
+    commentForm.classList.add('error');
+    return;
+  }
+
+  let date = new Date();
+
+  let day = date.getDate();
+  let month = date.getMonth();
+  let year = date.getFullYear() - 2000;
+  let minutes = date.getMinutes();
+  let hours = date.getHours();
+
+  function dateCheck(num) {
+    let result = ''
+
+    if (num < 10) {
+      result = '0' + num;
+    } else {
+      result = num;
+    }
+
+    return result;
+  }
+
+  let oldComments = comments.innerHTML;
+  comments.innerHTML = oldComments + `<li class="comment">
+      <div class="comment-header">
+        <div>${nameForm.value}</div>
+        <div>${dateCheck(day)}.${dateCheck(month)}.${dateCheck(year)} ${dateCheck(hours)}:${dateCheck(minutes)}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">
+          ${commentForm.value}
+        </div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter"></span>
+          <button class="like-button"></button>
+        </div>
+      </div>
+    </li>`;
+}
+
+  button.disabled = true;
+
+  nameForm.addEventListener('input', () => {
+    commentForm.addEventListener('input', () => {
+      button.disabled = false;
+    })
+  })
+
+  commentForm.addEventListener('input', () => {
+    nameForm.addEventListener('input', () => {
+      button.disabled = false;
+    })
+  })
+
+  button.addEventListener("click", addComment);
+  commentForm.addEventListener('keypress', (e) => {
+    if (e.keyCode == 13) {
+      // button.click();
+      addComment();
+    }
+  })
+  
     console.log("It works!");
   </script>
 </html>
