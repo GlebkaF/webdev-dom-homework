@@ -9,6 +9,7 @@
 
 <body>
   <div class="container">
+    <span id="preload">Загрузка страницы комментариев</span>
     <ul class="comments" id="list">
       <!-- <li class="comment">
         <div class="comment-header">
@@ -86,6 +87,7 @@
   const confirmButton = document.getElementById("add-form-button");
   let userComment = document.getElementById("add-form-text");
   const elementList = document.getElementById("list");
+  const preloadText = document.getElementById('preload');
 
   let comments = [
     // {
@@ -113,28 +115,27 @@
     }
   };
 
-  const commentPromise = fetch("https://wedev-api.sky.pro/api/v1/gleb-fokin/comments",
-    {
-      method: "GET",
-    });
-
-  commentPromise.then((response) => {
-    const jsonPromise = response.json();
-
-    jsonPromise.then((responseData) => {
-      comments = responseData.comments.map((comment) => {
-        return {
-          name: comment.author.name,
-          commentDate: dat(comment.date),
-          commentUser: comment.text,
-          like: comment.likes,
-          isLike: comment.isLiked
-        }
+  const fetchAndRenderTasks = () => {
+    return fetch("https://wedev-api.sky.pro/api/v1/gleb-fokin/comments",
+      {
+        method: "GET",
+      }).then((response) => {
+        response.json().then((responseData) => {
+          comments = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              commentDate: dat(comment.date),
+              commentUser: comment.text,
+              like: comment.likes,
+              isLike: comment.isLiked
+            }
+          });
+          renderComments();
+          preloadText.style.display = 'none';
+        });
       });
-      console.log(comments);
-      renderComments();
-    });
-  });
+  };
+
 
   // Нажатие на кнопку лайк
   const initLikeButtonsListeners = () => {
@@ -190,7 +191,7 @@
     initEventListeners();
     reanswerComment();
   };
-
+  fetchAndRenderTasks();
   renderComments();
 
   confirmButton.addEventListener("click", () => {
@@ -225,30 +226,18 @@
           name: userName.value,
         }),
       });
+    confirmButton.disabled = true;
+    confirmButton.textContent = "Комментарий добавляется";
     commentPromise.then((response) => {
       response.json().then((responseData) => {
         comments = responseData.todos;
       });
-    });
-    fetch("https://wedev-api.sky.pro/api/v1/gleb-fokin/comments",
-      {
-        method: "GET",
-      }).then((response) => {
-        response.json().then((responseData) => {
-          comments = responseData.comments.map((comment) => {
-            return {
-              name: comment.author.name,
-              commentDate: dat(comment.date),
-              commentUser: comment.text,
-              like: comment.likes,
-              isLike: comment.isLiked
-            }
-          });
-          renderComments();
-        });
-      });
-
-    renderComments();
+    }).then((response) => {
+      return fetchAndRenderTasks();
+    }).then(() => {
+      confirmButton.disabled = false;
+      confirmButton.textContent = "Написать";
+    })
 
     if (userName.value !== '' && userComment.value !== '') {
       userName.value = '';
