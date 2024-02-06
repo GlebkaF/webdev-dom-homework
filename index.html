@@ -66,14 +66,18 @@
     }
     let month = rusDat.getMonth();
     let minute = rusDat.getMinutes();
+    let day = rusDat.getDate();
     if (minute < 10) {
       minute = "0" + minute;
     }
     if (month < 9) {
       month = "0" + (month + 1);
     }
-    const fullRusDat = rusDat.getDate() + "." +
-      month + "." + "24"/*rusDat.getFullYear()*/ + " " +
+    if (day < 9) {
+      day = "0" + (day + 1);
+    }
+    const fullRusDat = day + "." +
+      month + "." + "24" + " " +
       rusDat.getHours() + ":" + minute;
     return fullRusDat;
   }
@@ -83,21 +87,21 @@
   let userComment = document.getElementById("add-form-text");
   const elementList = document.getElementById("list");
 
-  const comments = [
-    {
-      name: "Глеб Фокин",
-      commentDate: "12.02.22 12:18",
-      commentUser: "Это будет первый комментарий на этой странице",
-      like: 3,
-      isLike: false,
-    },
-    {
-      name: "Варвара Н.",
-      commentDate: "13.02.22 19:22",
-      commentUser: "Мне нравится как оформлена эта страница! ❤",
-      like: 75,
-      isLike: true,
-    },
+  let comments = [
+    // {
+    //   name: "Глеб Фокин",
+    //   commentDate: "12.02.22 12:18",
+    //   commentUser: "Это будет первый комментарий на этой странице",
+    //   like: 3,
+    //   isLike: false,
+    // },
+    // {
+    //   name: "Варвара Н.",
+    //   commentDate: "13.02.22 19:22",
+    //   commentUser: "Мне нравится как оформлена эта страница! ❤",
+    //   like: 75,
+    //   isLike: true,
+    // },
   ]
 
   const initEventListeners = () => {
@@ -108,6 +112,30 @@
       });
     }
   };
+
+  const commentPromise = fetch("https://wedev-api.sky.pro/api/v1/gleb-fokin/comments",
+    {
+      method: "GET",
+    });
+
+  commentPromise.then((response) => {
+    const jsonPromise = response.json();
+
+    jsonPromise.then((responseData) => {
+      comments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          commentDate: dat(comment.date),
+          commentUser: comment.text,
+          like: comment.likes,
+          isLike: comment.isLiked
+        }
+      });
+      console.log(comments);
+      renderComments();
+    });
+  });
+
   // Нажатие на кнопку лайк
   const initLikeButtonsListeners = () => {
     const likeButtonsElements = document.querySelectorAll(".like-button");
@@ -137,7 +165,7 @@
   };
 
   const renderComments = () => {
-    const commentHtml = comments.map((comment, index) => {
+    const commentHtml = comments?.map((comment, index) => {
       return `<li class="comment">
         <div class="comment-header">
           <div class="comment-name">${comment.name}</div>
@@ -177,17 +205,48 @@
       return;
     }
 
-    comments.push({
-      name: userName.value
-        .replaceAll("<", "&#60;")
-        .replaceAll(">", "&#62;"),
-      commentDate: dat(),
-      commentUser: userComment.value
-        .replaceAll("<", "&#60;")
-        .replaceAll(">", "&#62;"),
-      like: 0,
-      isLike: false,
+    // comments.push({
+    //   name: userName.value
+    //     .replaceAll("<", "&#60;")
+    //     .replaceAll(">", "&#62;"),
+    //   commentDate: dat(),
+    //   commentUser: userComment.value
+    //     .replaceAll("<", "&#60;")
+    //     .replaceAll(">", "&#62;"),
+    //   like: 0,
+    //   isLike: false,
+    // });
+
+    const commentPromise = fetch("https://wedev-api.sky.pro/api/v1/gleb-fokin/comments",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          text: userComment.value,
+          name: userName.value,
+        }),
+      });
+    commentPromise.then((response) => {
+      response.json().then((responseData) => {
+        comments = responseData.todos;
+      });
     });
+    fetch("https://wedev-api.sky.pro/api/v1/gleb-fokin/comments",
+      {
+        method: "GET",
+      }).then((response) => {
+        response.json().then((responseData) => {
+          comments = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              commentDate: dat(comment.date),
+              commentUser: comment.text,
+              like: comment.likes,
+              isLike: comment.isLiked
+            }
+          });
+          renderComments();
+        });
+      });
 
     renderComments();
 
