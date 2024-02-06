@@ -82,6 +82,7 @@
   const nameInputElement = document.getElementById("name-input");
   const textAreaElement = document.getElementById("text-input");
   const buttonElement = document.getElementById("write-button");
+  
   buttonElement.addEventListener('click', () => {
 
     nameInputElement.classList.remove("error");
@@ -91,6 +92,7 @@
       nameInputElement.classList.add("error");
       return;
     }
+   
     else if (textAreaElement.value === "") {
       textAreaElement.classList.add("error");
       return;
