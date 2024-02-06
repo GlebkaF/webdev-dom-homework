@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="list" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -45,19 +45,19 @@
         </li>
       </ul>
       <div class="add-form">
-        <input
+        <input id="name-input"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
-        <textarea
+        <textarea id="comment-input"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
@@ -65,7 +65,78 @@
 
   <script>
     "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    
+    //Поиск элементов
+    const buttonElement = document.getElementById("button");
+    const nameInputElement = document.getElementById("name-input");
+    const commentInputElement = document.getElementById("comment-input");
+    const listElement = document.getElementById("list");
+
+    //Создаю объекты для работы с датой
+    let myDate = new Date();
+    let date = myDate.getDate();
+    let month = myDate.getMonth();
+    let year = myDate.getFullYear();
+    let hours = myDate.getHours();
+    let minutes = myDate.getMinutes();
+
+    //Если в дате, месяце, часах и минутах будут числа меньше 10, добавлять к ним 0 в начале
+    date = date < 10 ? '0' + date : date;
+    month = month < 10 ? '0' + month : month;
+    hours = hours < 10 ? '0' + hours : hours;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+
+    //Создаю объект, который включает в себя формат "день.месяц.год(последние две цифры) часы:минуты"
+    const dateElement = date + '.' + month + '.' + year.toString().slice(2) + ' ' + hours + ':' + minutes;
+   
+    buttonElement.addEventListener("keyup", () => {
+      
+    })
+
+    //Добавил обработчик событий на button
+    buttonElement.addEventListener("click", () => {
+      
+      //Сброс валидации при кадом нажатии, чтобы импуты не оставались красными, после того как чел ошибся и потом исправил 
+      nameInputElement.classList.remove("error")
+      commentInputElement.classList.remove("error")
+      //Сделал валидацию при нажатии на кнопку, чтобы выдавало ошибку если не введен любой из элементов (name и comment, только name, только comment)
+      if (nameInputElement.value === '' && commentInputElement.value === '') {
+        nameInputElement.classList.add("error");
+        commentInputElement.classList.add("error");
+        return
+      } else if (nameInputElement.value === '') {
+        nameInputElement.classList.add("error");
+        return
+      } else if (commentInputElement.value === '') {
+        commentInputElement.classList.add("error");
+        return
+      }
+      
+      //При нажатии на кнопку, добавляет новый коммент в list (учитывает имя, коммент, дату и время, также лайки)
+      const oldListHtml = listElement.innerHTML;
+      listElement.innerHTML = 
+        oldListHtml +
+        `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${dateElement}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${commentInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${0}</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+      
+      //Обнуление импутов
+      nameInputElement.value = "";
+      commentInputElement.value = "";
+    })
   </script>
 </html>
