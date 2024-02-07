@@ -61,10 +61,11 @@
 </style>
 <script>
   "use strict";
-  const buttonWrite = document.getElementsByClassName('add-form-button');
-  const inputName = document.getElementsByClassName('add-form-name');
-  const inputText = document.getElementsByClassName('add-form-text');
-  const commentList = document.querySelector('.add-form-button');
+  const buttonWrite = document.querySelector('.add-form-button');
+  const inputName = document.querySelector('.add-form-name');
+  const inputText = document.querySelector('.add-form-text');
+  const commentList = document.querySelector('.comments');
+  const currentDate = new Date().toLocaleDateString('default', { day: '2-digit', month: '2-digit', year: '2-digit' }) + " " + new Date().toLocaleTimeString().slice(0, -3);
 
   buttonWrite.addEventListener("click", () => {
     inputName.classList.remove("error");
@@ -74,13 +75,14 @@
       return;
     } else if (inputText.value === "") {
       inputText.classList.add("error");
+      return;
     }
     const oldListElement = commentList.innerHTML;
     commentList.innerHTML = oldListElement + `
     <li class="comment">
         <div class="comment-header">
           <div>${inputName.value}</div>
-          <div>${(new Date()).toLocaleString}</div>
+          <div>${(currentDate)}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
@@ -89,13 +91,16 @@
         </div>
         <div class="comment-footer">
           <div class="likes">
-            <span class="likes-counter">3</span>
+            <span class="likes-counter">0</span>
             <button class="like-button"></button>
           </div>
         </div>
       </li>`;
     inputName.value = "";
     inputText.value = "";
+
+
+
   });
   console.log("It works!");
 </script>
