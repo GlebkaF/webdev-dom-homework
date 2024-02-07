@@ -64,6 +64,7 @@
   const buttonWrite = document.getElementsByClassName('add-form-button');
   const inputName = document.getElementsByClassName('add-form-name');
   const inputText = document.getElementsByClassName('add-form-text');
+  const commentList = document.querySelector('.comments');
 
   buttonWrite.addEventListener("click", () => {
     inputName.classList.remove("error");
@@ -74,9 +75,8 @@
     } else if (inputText.value === "") {
       inputText.classList.add("error");
     }
-
-    let listComments = document.querySelectorAll('.comments')
-    listComments.innerHtml = `
+    const oldListElement = commentList.innerHTML;
+    commentList.innerHTML = oldListElement + `
     <li class="comment">
         <div class="comment-header">
           <div>${inputName.value}</div>
@@ -93,8 +93,7 @@
             <button class="like-button"></button>
           </div>
         </div>
-      </li>
-    `
+      </li>`;
     inputName.value = "";
     inputText.value = "";
   });
