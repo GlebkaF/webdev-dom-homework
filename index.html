@@ -68,11 +68,9 @@
     const commentElement = document.getElementById("comment-push");
     const delCom = document.getElementById("deleteButton");
     
+    
 
     
-    document.addEventListener("keyup", () => {
-      
-    });
 
 
     addFormButtonElement.addEventListener("click", () => {
@@ -99,19 +97,6 @@
           </div>
         </li>`
 
-
-        function input() {
-        if (addFormNameElement.value === "" || addFormTextElement.value === ""){
-          addFormButtonElement.setAttribute("disabled", true);
-        } else {
-          addFormButtonElement.removeAttribute("disabled");
-        }
-      }
-      addFormNameElement.addEventListener("input", input);
-      addFormTextElement.addEventListener("input", input);
-
-
-      addFormButtonElement.addEventListener('click', () => {
         addFormNameElement.classList.remove("error");
         addFormTextElement.classList.remove("error");
         if (addFormNameElement.value === "") {
@@ -121,9 +106,27 @@
         addFormTextElement.classList.add("error")
         return;
       }
-      });
 
-      input.addEventListener("keydown", function (event) {
+
+        function input() {
+        if (addFormNameElement.value === "" || addFormTextElement.value === ""){
+          addFormButtonElement.setAttribute("disabled", true);
+        } else {
+          addFormButtonElement.removeAttribute("disabled");
+        }
+      }
+        addFormNameElement.addEventListener("input", input);
+        addFormTextElement.addEventListener("input", input);
+
+
+        addFormNameElement.value = "";
+        addFormTextElement.value = "";
+        });
+
+
+      
+
+      addFormButtonElement.addEventListener("keydown", function (event) {
       if (event.keyCode === 13) {
         addComment();
       }
@@ -139,9 +142,7 @@
       deleteCommit();
     });
     
-        addFormNameElement.value = "";
-        addFormTextElement.value = "";
-        });
+      
   console.log("It works!");
 </script>
 
