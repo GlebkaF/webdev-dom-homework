@@ -60,6 +60,8 @@
           <button class="add-form-button" id="add-form-button">Написать</button>
         </div>
       </div>
+
+      <div class="delete"><button class="button" id="delete-button">Удалить последний комментарий</button></div>
     </div>
   </body>
 
@@ -151,5 +153,22 @@ nameForm.classList.remove('error');
   })
   
     console.log("It works!");
+
+    const deleteButton = document.getElementById('delete-button');
+
+    deleteButton.addEventListener('click', () => {
+      let oldComments = comments.innerHTML;
+
+      if (oldComments.trim() == '') {
+        alert ('Удалять нечего');
+        return;
+      }
+
+      let deleteFromThis = comments.innerHTML.lastIndexOf('<li class="comment">');
+      comments.innerHTML = oldComments.slice(0, deleteFromThis);
+    })
   </script>
 </html>
+
+
+      
