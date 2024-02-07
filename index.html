@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="list">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -57,15 +57,57 @@
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="add-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
-
+  <style>
+    .error{
+      background-color: red;
+    }
+  </style>
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+  "use strict";
+
+const addButtonElement = document.getElementById('add-button');
+const addListElement = document.getElementById('list');
+const addFormNameElement = document.querySelector(".add-form-name");
+const addFormText = document.querySelector(".add-form-text");
+
+addButtonElement.addEventListener('click', addNewComment);
+
+function addNewComment() {
+  addFormNameElement.classList.remove("error")
+    addFormText.classList.remove("error")
+  // Проверяем, что оба поля не пустые
+  if (addFormNameElement.value === "" || addFormText.value === "") {
+    addFormNameElement.classList.add("error")
+    addFormText.classList.add("error")
+    return;
+  }
+
+  let commentList = document.getElementById('list');
+  commentList.innerHTML += `
+    <li class="comment">
+      <div class="comment-header">
+        <div>${addFormNameElement.value}</div>
+        <div>${(new Date()).toLocaleString()}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">
+          ${addFormText.value}
+        </div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">0</span>
+          <button class="like-button"></button>
+        </div>
+      </div>
+    </li>`;
+
+}
+
   </script>
 </html>
