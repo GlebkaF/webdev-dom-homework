@@ -139,8 +139,13 @@ body {
   /* Красная рамка и подсвечивания текста плейсхолдора красным если чел ничего не ввел */
   .error {
     border: 2px solid red;
+
+    &::placeholder {
+      color: red;
+    }
   }
 
-  .error::placeholder {
-    color: red;
-  }
+  /* Расширенная валидация, стиль для серой кнопки
+  .error-button {
+    background-color: silver;
+  } */

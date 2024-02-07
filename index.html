@@ -89,6 +89,30 @@
     //Создаю объект, который включает в себя формат "день.месяц.год(последние две цифры) часы:минуты"
     const dateElement = date + '.' + month + '.' + year.toString().slice(2) + ' ' + hours + ':' + minutes;
     
+    // //Расширенная валидация, чтобы кнопка "написать" изначально не была активна и была серой
+    // buttonElement.disabled = true;
+    // buttonElement.classList.add("error-button");
+    // //Расширенная валидация, кнопка "написать" становиться доступной после того как ввести "имя" и "коммент"
+    // nameInputElement.addEventListener("input", () => {
+    //   if (nameInputElement.value === '' || commentInputElement.value === '') {
+    //     buttonElement.disabled = true;
+    //     buttonElement.classList.add("error-button");
+    //   } else {
+    //     buttonElement.disabled = false;
+    //     buttonElement.classList.remove("error-button");
+    //   }
+    // });
+
+    // commentInputElement.addEventListener("input", () => {
+    //   if (nameInputElement.value === '' || commentInputElement.value === '') {
+    //     buttonElement.disabled = true;
+    //     buttonElement.classList.add("error-button");
+    //   } else {
+    //     buttonElement.disabled = false;
+    //     buttonElement.classList.remove("error-button");
+    //   } 
+    // });
+
     //Добавил обработчик событий на button
     buttonElement.addEventListener("click", () => {
       
@@ -133,6 +157,9 @@
       //Обнуление импутов
       nameInputElement.value = "";
       commentInputElement.value = "";
+      //Расширенная валидация, чтобы после нажатия, кнопка снова была неактивна
+      // buttonElement.disabled = true;
+      // buttonElement.classList.add("error-button");
     })
   </script>
 </html>
