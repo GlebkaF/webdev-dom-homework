@@ -44,9 +44,11 @@ function add_New_Comment() {
         name_Input_Element.classList.add("error");
         comment_Input_Element.classList.add("error");
         return;
+
     } else if (name_Input_Element.value === ""){
         name_Input_Element.classList.add("error")
         return;
+
     } else if (comment_Input_Element.value === ""){
         comment_Input_Element.classList.add("error")
         return;
@@ -64,7 +66,6 @@ function add_New_Comment() {
         textInputElement.value = "";
   });
   comment_Input_Element.value = "";
-
   //console.log(commentList)
   //console.log(name_Input_Element.value)
   //console.log(comment_Input_Element.value)
