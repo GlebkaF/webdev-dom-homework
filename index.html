@@ -59,41 +59,41 @@
 <script>
   "use strict";
   // Код писать здесь
-  let currentDate = new Date();
-  let dayWeek = currentDate.getDate();
-  if (dayWeek < 10) {
-    dayWeek = "0" + dayWeek;
-  }
-  let month = currentDate.getMonth() + 1;
-  if (month < 10) {
-    month = "0" + month;
-  }
-  let years = currentDate.getFullYear();
-  let hours = currentDate.getHours();
-  if (hours < 10) {
-    hours = "0" + hours;
-  }
-  let minutes = currentDate.getMinutes();
-  if (minutes < 10) {
-    minutes = "0" + minutes;
-  }
-  let myDate = dayWeek + "." + month + "." + years + " " + hours + ":" + minutes;
   const listElement = document.getElementById("list");
   const nameInputElement = document.getElementById("name-input");
   const textAreaElement = document.getElementById("text-input");
   const buttonElement = document.getElementById("write-button");
-  
+
   buttonElement.addEventListener('click', () => {
+    let currentDate = new Date();
+    let dayWeek = currentDate.getDate();
+    if (dayWeek < 10) {
+      dayWeek = "0" + dayWeek;
+    }
+    let month = currentDate.getMonth() + 1;
+    if (month < 10) {
+      month = "0" + month;
+    }
+    let years = currentDate.getFullYear();
+    let hours = currentDate.getHours();
+    if (hours < 10) {
+      hours = "0" + hours;
+    }
+    let minutes = currentDate.getMinutes();
+    if (minutes < 10) {
+      minutes = "0" + minutes;
+    }
+    let myDate = dayWeek + "." + month + "." + years + " " + hours + ":" + minutes;
 
     nameInputElement.classList.remove("error");
     textAreaElement.classList.remove("error");
 
-    if (nameInputElement.value === "") {
+    if (nameInputElement.value === "" || nameInputElement.value.trim().length === 0) {
       nameInputElement.classList.add("error");
       return;
     }
-   
-    else if (textAreaElement.value === "") {
+
+    else if (textAreaElement.value === "" || textAreaElement.value.trim().length === 0) {
       textAreaElement.classList.add("error");
       return;
     }
