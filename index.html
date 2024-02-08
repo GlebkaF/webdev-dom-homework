@@ -62,10 +62,67 @@
       </div>
     </div>
   </body>
-
+  <style>
+   
+  </style>
   <script>
     "use strict";
     // Код писать здесь
+    const nameElement = document.querySelector(".add-form-name");
+    const textElement = document.querySelector(".add-form-text");
+    const buttonElement = document.querySelector(".add-form-button");
+    
+    function addNewComment() {
+      let commentList = document.querySelector(".comments")
+      commentList.innerHTML += `
+      <li class="comment">
+          <div class="comment-header">
+            <div>${nameElement.value}</div>
+            <div>${(new Date()).toLocaleString() }</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+      </li>`
+    }
+
+    function inputValid() {
+        if (nameElement.value === "" || textElement.value === "") {
+          nameElement.style.backgroundColor = 'red';
+          buttonElement.disabled = true;
+          nameElement.placeholder = "";
+          textElement.placeholder = "";
+    } else {
+        nameElement.placeholder = "";
+        textElement.placeholder = "";
+    }
+      nameElement.addEventListener("input", inputValid);
+      textElement.addEventListener("input", inputValid);
+}
+
+    buttonElement.addEventListener("click", () => {
+      nameElement.classList.remove("error");
+      textElement.classList.remove("error");
+      if (nameElement.value === "" || textElement.value === "") {
+        nameElement.classList.add("error");
+        textElement.classList.add("error");
+        return;
+      }
+      addNewComment();
+
+      nameElement.value = "";
+      textElement.value = "";
+    
+});
+
     console.log("It works!");
   </script>
 </html>
