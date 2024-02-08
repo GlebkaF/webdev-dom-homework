@@ -1,110 +1,129 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>Проект "Комменты"</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
 
-<head>
-  <title>Проект "Комменты"</title>
-  <meta charset="utf-8" />
-  <link rel="stylesheet" href="styles.css" />
-</head>
-
-<body>
-  <div class="container">
-    <ul id="list" class="comments">
-      <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
+  <body>
+    <div class="container">
+      <ul id="list" class="comments">
+        <li class="comment">
+          <div class="comment-header">
+            <div>Глеб Фокин</div>
+            <div>12.02.22 12:18</div>
           </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
+          <div class="comment-body">
+            <div class="comment-text">
+              Это будет первый комментарий на этой странице
+            </div>
           </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">3</span>
+              <button class="like-button"></button>
+            </div>
           </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
+        </li>
+        <li class="comment">
+          <div class="comment-header">
+            <div>Варвара Н.</div>
+            <div>13.02.22 19:22</div>
           </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              Мне нравится как оформлена эта страница! ❤
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">75</span>
+              <button class="like-button -active-like"></button>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <div id="add-form" class="add-form">
+        <input
+          id="add-form-name"
+          type="text"
+          class="add-form-name"
+          placeholder="Введите ваше имя"
+        />
+        <textarea
+          id="add-form-text"
+          type="textarea"
+          class="add-form-text"
+          placeholder="Введите ваш коментарий"
+          rows="4"
+        ></textarea>
+        <div class="add-form-row">
+          <button id="add-form-button" class="add-form-button">Написать</button>
+          <button id="remove-last-com" class="remove-last-com">
+            Удалить последний
+          </button>
         </div>
-      </li>
-    </ul>
-    <div id="add-form" class="add-form">
-      <input id="add-form-name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
-      <textarea id="add-form-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
-        rows="4"></textarea>
-      <div class="add-form-row">
-        <button id="add-form-button" class="add-form-button">Написать</button>
-        <button id="remove-last-com" class="remove-last-com">Удалить последний</button>
       </div>
     </div>
-  </div>
-</body>
-<script>
-  "use strict";
-  // Код писать здесь
-  const nameEl = document.getElementById("add-form-name");
-  const textEl = document.getElementById("add-form-text");
-  const buttonEl = document.getElementById("add-form-button");
-  const buttonRemEl = document.getElementById("remove-last-com");
-  const listEl = document.getElementById("list");
-  const formEl = document.getElementById("add-form");
-  const date = new Date();
-  const options1 = {
-    year: "2-digit",
-    month: "2-digit",
-    day: "2-digit",
-  };
-  const options2 = {
-    hour: "numeric",
-    minute: "numeric",
-  };
+  </body>
+  <script>
+    "use strict";
+    // Код писать здесь
+    const nameEl = document.getElementById("add-form-name");
+    const textEl = document.getElementById("add-form-text");
+    const buttonEl = document.getElementById("add-form-button");
+    const buttonRemEl = document.getElementById("remove-last-com");
+    const listEl = document.getElementById("list");
+    const formEl = document.getElementById("add-form");
+    const date = new Date();
+    const options1 = {
+      year: "2-digit",
+      month: "2-digit",
+      day: "2-digit",
+    };
+    const options2 = {
+      hour: "numeric",
+      minute: "numeric",
+    };
 
-  buttonEl.disabled = true;
-  nameEl.addEventListener("input", evnt);
-  textEl.addEventListener("input", evnt);
-  function evnt() {
-    if (Text.value !== "") buttonEl.disabled = false;
-  }
-
-  formEl.addEventListener("keyup", (e) => { if (e.code === 'Enter') { buttonEl.click() } });
-
-  buttonEl.addEventListener("click", () => {
-    nameEl.classList.remove("add-form_error");
-    textEl.classList.remove("add-form_error");
-    if (nameEl.value === "" && textEl.value === "") {
-      nameEl.classList.add("add-form_error");
-      textEl.classList.add("add-form_error");
-      return;
-    } else if (nameEl.value === "") {
-      nameEl.classList.add("add-form_error");
-      return;
-    } else if (textEl.value === "") {
-      textEl.classList.add("add-form_error");
-      return;
+    buttonEl.disabled = true;
+    nameEl.addEventListener("input", evnt);
+    textEl.addEventListener("input", evnt);
+    function evnt() {
+      if (Text.value !== "") buttonEl.disabled = false;
     }
-    const oldlist = listEl.innerHTML;
-    listEl.innerHTML = oldlist +
-      `<li class="comment">
+
+    formEl.addEventListener("keyup", (e) => {
+      if (e.code === "Enter") {
+        buttonEl.click();
+      }
+    });
+
+    buttonEl.addEventListener("click", () => {
+      nameEl.classList.remove("add-form_error");
+      textEl.classList.remove("add-form_error");
+      if (nameEl.value === "" && textEl.value === "") {
+        nameEl.classList.add("add-form_error");
+        textEl.classList.add("add-form_error");
+        return;
+      } else if (nameEl.value === "") {
+        nameEl.classList.add("add-form_error");
+        return;
+      } else if (textEl.value === "") {
+        textEl.classList.add("add-form_error");
+        return;
+      }
+      const oldlist = listEl.innerHTML;
+      listEl.innerHTML =
+        oldlist +
+        `<li class="comment">
           <div class="comment-header">
             <div>${nameEl.value}</div>
-            <div>${date.toLocaleString("ru", options1)} ${date.toLocaleString("ru", options2)}</div>
+            <div>${date.toLocaleString("ru", options1)} ${date.toLocaleString(
+          "ru",
+          options2
+        )}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -114,18 +133,17 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">0</span>
-              <button class="like-button -active-like"></button>
+              <button class="like-button"></button>
             </div>
           </div>
         </li>`;
-  });
+    });
 
-  const lastCom = listEl.innerHTML.lastIndexOf(`<li class="comment">`)
-  buttonRemEl.addEventListener("click", () => {
-    listEl.innerHTML = listEl.innerHTML.slice(0, lastCom);
-  })
+    const lastCom = listEl.innerHTML.lastIndexOf(`<li class="comment">`);
+    buttonRemEl.addEventListener("click", () => {
+      listEl.innerHTML = listEl.innerHTML.slice(0, lastCom);
+    });
 
-  console.log("It works!");
-</script>
-
+    console.log("It works!");
+  </script>
 </html>
