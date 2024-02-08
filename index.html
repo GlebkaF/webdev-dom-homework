@@ -49,15 +49,17 @@
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          id="name-input"
         />
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+          id="text-input"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="add-button">Написать</button>
         </div>
       </div>
     </div>
@@ -65,6 +67,17 @@
 
   <script>
     "use strict";
+
+    const nameInputElement = document.getElementById('name-input');
+    const textInputElement = document.getElementById('text-input');
+    const buttonElement = document.getElementById('add-button');
+
+    buttonElement.addEventListener('click', () => {
+      if (buttonElement === '') {
+        
+        return;
+      }
+    });
     // Код писать здесь
     console.log("It works!");
   </script>
