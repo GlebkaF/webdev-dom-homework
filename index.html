@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="list">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -64,19 +64,53 @@
       </div>
     </div>
   </body>
-
+  
   <script>
     "use strict";
 
     const nameInputElement = document.getElementById('name-input');
     const textInputElement = document.getElementById('text-input');
     const buttonElement = document.getElementById('add-button');
+    const listElement = document.getElementById('list');
 
     buttonElement.addEventListener('click', () => {
-      if (buttonElement === '') {
-        
+      nameInputElement.classList.remove('error');
+      if (nameInputElement.value === '' || textInputElement.value === '') {
+        nameInputElement.classList.add('error');
+        textInputElement.classList.add('error');
         return;
-      }
+      };
+      const date = new Date();
+      const options = { 
+        year: '2-digit', 
+        month: 'numeric', 
+        day: 'numeric',
+      };
+      const optionsTime = { 
+        hour: 'numeric',
+        minute: 'numeric',
+      };
+      const oldListElement = listElement.innerHTML;
+      listElement.innerHTML = oldListElement + 
+      `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${date.toLocaleDateString('ru-RU', options)} ${date.toLocaleTimeString('ru-RU', optionsTime)}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+        nameInputElement.value = '';
+        textInputElement.value = '';
     });
     // Код писать здесь
     console.log("It works!");
