@@ -18,9 +18,9 @@
 
     </ul>
     <div class="add-form" id="add-form-wait">
-      <input type="text" class="add-form-name" id="name-input" placeholder="Введите ваше имя" />
-      <textarea type="textarea" class="add-form-text" id="comment-input" placeholder="Введите ваш коментарий"
-        rows="4"></textarea>
+      <input type="text" class="add-form-name" id="name-input" placeholder="Введите ваше имя (не менее 3-х знаков)" />
+      <textarea type="textarea" class="add-form-text" id="comment-input"
+        placeholder="Введите ваш коментарий (не менее 3-х знаков)" rows="4"></textarea>
       <div class="add-form-row">
         <button class="add-form-button" id="add-form-button">Написать</button>
       </div>
@@ -29,6 +29,7 @@
       <p>Загружаем Ваш комментарий...</p>
     </div>
     <div class="add-form">
+      <p id="delete-form">Удаляем Ваш комментарий...</p>
       <button class="add-form-button" id="delete-button">Удалить последний комментарий</button>
     </div>
   </div>
@@ -101,6 +102,7 @@
     display: none;
   }
 
+
   @keyframes rotating {
     from {
       transform: rotate(0deg);
@@ -128,9 +130,11 @@
 <script>
   "use strict";
 
+
+  //переменные для работы
   const waitElement = document.getElementById("form-wait");
   const waitFormElement = document.getElementById("add-form-wait");
-  const formElement = document.getElementById("add-form");
+  const waitDeleteElement = document.getElementById("delete-form");
   const buttonElement = document.getElementById("add-form-button");
   const listElement = document.getElementById("list");
   const nameInputElement = document.getElementById("name-input");
@@ -142,8 +146,12 @@
 
   let originalComment = document.getElementById("comment-original");
 
+
+  // классы для части разметки HTML, которая не рендерится из js
   waitElement.classList.add("edit-none");
   loadingElement.classList.add("loading-none");
+  waitDeleteElement.classList.add("edit-none");
+
 
   //создание массива
   let comments = [/*
@@ -154,9 +162,7 @@
       likesCounter: 3,
       itLikes: false,
       original: '',
-      edit: false,
       answer: '',
-
     },
     {
       name: "Варвара Н.",
@@ -165,9 +171,7 @@
       likesCounter: 75,
       itLikes: false,
       original: '',
-      edit: false,
       answer: '',
-
     },*/
   ]
 
@@ -190,7 +194,6 @@
           likesCounter: comment.likes,
           itLikes: comment.isLiked,
           original: '',
-          edit: true,
           answer: '',
           isLikeLoading: false,
         };
@@ -221,6 +224,7 @@
     });
   }
 
+  //вариант имимтации загрузки данных
   /*delay(2000).then(() => {
     comment.likes = comment.isLiked
       ? comment.likes - 1
@@ -265,7 +269,6 @@
         const index = EveryComment.dataset.index;
         originalComment = `${comments[index]['name']} \n ${comments[index]['text']} \n`;
         commentInputElement.value = originalComment + comments[index]['answer'];
-
         renderComments();
       })
     }
@@ -279,7 +282,6 @@
       EditComment.addEventListener('click', () => {
         const index = EditComment.dataset.index;
         comments[index].isEdit = true;
-
         renderComments();
       });
     };
@@ -307,7 +309,6 @@
         comments[index].text = EditKommitted.closest('.comment').querySelector('textarea').value;
         comments[index].isEdit = false;
         renderComments();//обновленный комментарий рендерится в локальное хранилище(массив)
-
 
         //PATH не прописан в API - нет возможности проверки работы данного кода:
         /*const id = EditKommitted.dataset.id;
@@ -343,10 +344,11 @@
           <div class="${comment.isEdit ? "edit-none" : "comment-text"}" data-index = "${index}">
             ${comment.text}
           </div>
+        <div>
           <textarea type="textarea" id="edit-input" class="${comment.isEdit ? "add-form-text" : "edit-none"}" rows="4" >${comment.text}</textarea>
-          <button class="${comment.edit && !comment.isEdit ? "edit-button" : "edit-none"}" data-index = "${index}">Редактировать</button>
-          <button class="${comment.edit && comment.isEdit ? "edit-committed" : "edit-none"}" data-index = "${index}" data-id = "${comment.id}" >Сохранить</button>
-
+        </div>
+          <button class="${!comment.isEdit ? "edit-button" : "edit-none"}" data-index = "${index}" data-id = "${comment.id}" >Редактировать</button>
+          <button class="${comment.isEdit ? "edit-committed" : "edit-none"}" data-index = "${index}" data-id = "${comment.id}" >Сохранить</button>
         </div>
         <div class="comment-footer">
           <div class="likes">
@@ -363,13 +365,14 @@
     InitEditKommitted();
   };
 
+
   waitFetchPromise();
   renderComments();
+  InitDeleteComment();
 
 
   //ввод данных в поля ввода (проверки)
   /* nameInputElement.addEventListener('click', () => {
- 
      nameInputElement.classList.remove("error");
      if (nameInputElement.value === '') {
        buttonElement.disabled = true;
@@ -381,7 +384,6 @@
    })
  
    commentInputElement.addEventListener('click', () => {
- 
      commentInputElement.classList.remove("error");
      if (commentInputElement.value === '') {
        buttonElement.disabled = true;
@@ -394,26 +396,24 @@
 
 
 
-  //добавление комментария по клику на кнопку "написать"
 
+  //функция добавления комментария (по клику)
   function buttonClick() {
     nameInputElement.classList.remove("error");
     commentInputElement.classList.remove("error");
     buttonElement.classList.remove("click-none");
     //buttonElement.disabled = false;
-
     if (nameInputElement.value === '') {
       nameInputElement.classList.add("error");
       buttonElement.classList.add("click-none");
+      //buttonElement.disabled = true;
       return;
-
     } else if (commentInputElement.value === '') {
       commentInputElement.classList.add("error");
       buttonElement.classList.add("click-none");
+      //buttonElement.disabled = true;
       return;
     };
-
-
     let myDate = new Date();
     /*comments.push({
       name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
@@ -423,17 +423,13 @@
       likesCounter: 0,
       itLikes: false,
       original: `${commentInputElement.value.includes(originalComment) ? originalComment : ''}`,
-      edit: true,
       answer: '',
- 
     });*/
-
     buttonElement.disabled = true;
     waitFormElement.classList.add("edit-none");
     waitElement.classList.remove("edit-none");
     // buttonElement.textContent = "Ваш омментарий добавляется...";
     //buttonElement.classList.add("click-none");
-
     const clickFetchPromise = fetch('https://wedev-api.sky.pro/api/v1/:Tatyana-JSc2/comments', {
       method: "POST",
       body: JSON.stringify({
@@ -444,7 +440,6 @@
         likesCounter: 0,
         itLikes: false,
         original: `${commentInputElement.value.includes(originalComment) ? originalComment : ''}`,
-        edit: true,
         answer: '',
         isLikeLoading: false,
       }),
@@ -459,24 +454,43 @@
       //buttonElement.textContent = "Написать";
       //buttonElement.classList.remove("click-none");
     })
-
     renderComments();
-
     nameInputElement.value = '';
     commentInputElement.value = '';
   };
 
+
+
+  //добавлениe комментария по клику на кнопку "написать"
   buttonElement.addEventListener('click', buttonClick);
 
 
 
-  //добавление комментария по клику на кнопку "Enter"
 
+  //добавление комментария по клику на кнопку "Enter"
   document.body.addEventListener('keyup', (e) => {
     if (e.key == 'Enter') {
       buttonClick();
     }
   });
+
+
+  //удаление  последнего комментария (комментарий удаляется в локальном хранилище(массиве) + имитация удаления с сервера)
+  function InitDeleteComment() {
+    const DeleteButtonElement = document.getElementById("delete-button");
+    DeleteButtonElement.addEventListener('click', () => {
+      const index = comments.length - 1;
+      comments.splice(index, 1);
+      DeleteButtonElement.classList.add("edit-none");
+      waitDeleteElement.classList.remove("edit-none");
+      delay(2000).then(() => {
+        renderComments();
+        DeleteButtonElement.classList.remove("edit-none");
+        waitDeleteElement.classList.add("edit-none");
+      });
+    });
+  };
+
 
   console.log("It works!");
 </script>
