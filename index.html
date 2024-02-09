@@ -28,7 +28,6 @@
 <script>
   "use strict";
   // Код писать здесь
-  const dateEl = document.getElementById("add-form-date");
   const nameEl = document.getElementById("add-form-name");
   const textEl = document.getElementById("add-form-text");
   const buttonEl = document.getElementById("add-form-button");
@@ -67,10 +66,11 @@
 
   const initLikeButtonListener = () => {
     const likeButtonElements = document.querySelectorAll(".like-button");
+    let count = 0
     for (const likeButtonElement of likeButtonElements) {
       likeButtonElement.addEventListener("click", () => {
         const index = likeButtonElement.dataset.index;
-        let count = comments[index].like_count++;
+        count = comments[index].like_count++;
         comments[index].like_active = true;
         renderComments();
       })
@@ -118,7 +118,6 @@
     initLikeButtonListener();
   }
 
-
   buttonEl.addEventListener("click", () => {
     nameEl.classList.remove("add-form_error");
     textEl.classList.remove("add-form_error");
@@ -144,13 +143,15 @@
     renderComments();
   });
   renderComments();
-  const lastCom = listEl.innerHTML.lastIndexOf(`<li class="comment">`);
+
   buttonRemEl.addEventListener("click", () => {
-    listEl.innerHTML = listEl.innerHTML.slice(0, lastCom);
+    comments.pop();
+    renderComments();
   });
+
   renderComments();
-  //initLikeButtonListener();
-  //console.log();
+ 
+ 
 </script>
 
 </html>
