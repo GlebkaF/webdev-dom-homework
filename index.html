@@ -143,6 +143,7 @@
   const loadingElement = document.querySelector(".loading");
   const likesCounterElement = document.querySelector(".likes-counter");
   const likeButtonElement = document.querySelector(".like-button");
+  const DeleteButtonElement = document.getElementById("delete-button");
 
   let originalComment = document.getElementById("comment-original");
 
@@ -180,10 +181,12 @@
     return fetch('https://wedev-api.sky.pro/api/v1/:Tatyana-JSc2/comments', {
       method: "GET"
     }).then((response) => {
-      return response.json();
+      if (response.status === 500) {
+        return Promise.reject("Сервер упал.");
+      } else {
+        return response.json();
+      };
     }).then((responseData) => {
-      //const commentsMap = () => {
-      console.log(responseData);
       const appComments = responseData.comments.map((comment) => {
         let myDate = new Date(comment.date);
         return {
@@ -201,6 +204,13 @@
       comments = appComments;
       console.log(appComments);
       renderComments();
+    }).catch((error) => {
+      if (error.message === "Сервер упал.") {
+        alert("Сервер упал. Попробуйте позже...");
+      } else {
+        alert("Что-то пошло не так, попробуйте позже...");
+      };
+      console.warn(error);
     });
   };
 
@@ -425,7 +435,8 @@
       original: `${commentInputElement.value.includes(originalComment) ? originalComment : ''}`,
       answer: '',
     });*/
-    buttonElement.disabled = true;
+    DeleteButtonElement.disabled = true;
+    DeleteButtonElement.classList.add("click-none");
     waitFormElement.classList.add("edit-none");
     waitElement.classList.remove("edit-none");
     // buttonElement.textContent = "Ваш омментарий добавляется...";
@@ -444,19 +455,40 @@
         isLikeLoading: false,
       }),
     }).then((response) => {
-      return response.json();
+      if (response.status === 400) {
+        throw new Error("Введенные имя или комментарий короче 3-х знаков");
+      } else if (response.status === 500) {
+        return Promise.reject("Сервер упал.");
+      } else {
+        return response.json();
+      };
     }).then(() => {
       return fetchPromise();
     }).then((data) => {
-      buttonElement.disabled = false;
+      DeleteButtonElement.disabled = false;
+      DeleteButtonElement.classList.remove("click-none");
       waitFormElement.classList.remove("edit-none");
       waitElement.classList.add("edit-none");
+      nameInputElement.value = '';
+      commentInputElement.value = '';
       //buttonElement.textContent = "Написать";
       //buttonElement.classList.remove("click-none");
-    })
+    }).catch((error) => {
+      if (error.message === "Введенные имя или комментарий короче 3-х знаков") {
+        alert("Ваше имя или Ваш комментарий короче 3-х знаков. Попробуйте еще раз!");
+      } else if (error.message === "Сервер упал.") {
+        alert("Сервер упал. Попробуйте позже...");
+      } else {
+        alert("Что-то пошло не так, попробуйте позже...");
+      };
+      console.warn(error);
+      DeleteButtonElement.disabled = false;
+      DeleteButtonElement.classList.remove("click-none");
+      waitFormElement.classList.remove("edit-none");
+      waitElement.classList.add("edit-none");
+    });
     renderComments();
-    nameInputElement.value = '';
-    commentInputElement.value = '';
+
   };
 
 
@@ -477,16 +509,20 @@
 
   //удаление  последнего комментария (комментарий удаляется в локальном хранилище(массиве) + имитация удаления с сервера)
   function InitDeleteComment() {
-    const DeleteButtonElement = document.getElementById("delete-button");
+
     DeleteButtonElement.addEventListener('click', () => {
       const index = comments.length - 1;
       comments.splice(index, 1);
       DeleteButtonElement.classList.add("edit-none");
       waitDeleteElement.classList.remove("edit-none");
+      buttonElement.disabled = true;
+      buttonElement.classList.add("click-none");
       delay(2000).then(() => {
         renderComments();
         DeleteButtonElement.classList.remove("edit-none");
         waitDeleteElement.classList.add("edit-none");
+        buttonElement.disabled = false;
+        buttonElement.classList.remove("click-none");
       });
     });
   };
