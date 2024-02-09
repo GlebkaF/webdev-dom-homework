@@ -87,6 +87,25 @@
       minute: "numeric",
     };
 
+    const comments = [
+      {
+        date: "12.02.22 12:18",
+        name: "Глеб Фокин",
+        text: "Это будет первый комментарий на этой странице",
+        like_active: false,
+        like_count: 3,
+      },
+      {
+        date: "13.02.22 19:22",
+        name: "Варвара Н.",
+        text: "ЭМне нравится как оформлена эта страница! ❤",
+        like_active: true,
+        like_count: 75,
+      },
+    ]
+
+    
+
     buttonEl.disabled = true;
     nameEl.addEventListener("input", evnt);
     textEl.addEventListener("input", evnt);
@@ -99,6 +118,11 @@
         buttonEl.click();
       }
     });
+
+const renderComments = () => {
+  
+}
+
 
     buttonEl.addEventListener("click", () => {
       nameEl.classList.remove("add-form_error");
