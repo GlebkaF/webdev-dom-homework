@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
-      <ul id="list" class="comments">
-        <li class="comment">
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <ul id="list" class="comments">
+      <!-- <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -42,70 +43,84 @@
               <button class="like-button -active-like"></button>
             </div>
           </div>
-        </li>
-      </ul>
-      <div id="add-form" class="add-form">
-        <input
-          id="add-form-name"
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          id="add-form-text"
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button id="add-form-button" class="add-form-button">Написать</button>
-          <button id="remove-last-com" class="remove-last-com">
-            Удалить последний
-          </button>
-        </div>
+        </li> -->
+    </ul>
+    <div id="add-form" class="add-form">
+      <input id="add-form-name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+      <textarea id="add-form-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+        rows="4"></textarea>
+      <div class="add-form-row">
+        <button id="add-form-button" class="add-form-button">Написать</button>
+        <button id="remove-last-com" class="remove-last-com">
+          Удалить последний
+        </button>
       </div>
     </div>
-  </body>
-  <script>
-    "use strict";
-    // Код писать здесь
-    const nameEl = document.getElementById("add-form-name");
-    const textEl = document.getElementById("add-form-text");
-    const buttonEl = document.getElementById("add-form-button");
-    const buttonRemEl = document.getElementById("remove-last-com");
-    const listEl = document.getElementById("list");
-    const formEl = document.getElementById("add-form");
-    const date = new Date();
-    const options1 = {
-      year: "2-digit",
-      month: "2-digit",
-      day: "2-digit",
-    };
-    const options2 = {
-      hour: "numeric",
-      minute: "numeric",
-    };
+  </div>
+</body>
+<script>
+  "use strict";
+  // Код писать здесь
+  const dateEl = document.getElementById("add-form-date");
+  const nameEl = document.getElementById("add-form-name");
+  const textEl = document.getElementById("add-form-text");
+  const buttonEl = document.getElementById("add-form-button");
+  const buttonRemEl = document.getElementById("remove-last-com");
+  const listEl = document.getElementById("list");
+  const formEl = document.getElementById("add-form");
+  const date = new Date();
+  const options1 = {
+    year: "2-digit",
+    month: "2-digit",
+    day: "2-digit",
+  };
+  const options2 = {
+    hour: "numeric",
+    minute: "numeric",
+  };
+  let currentDate = `${date.toLocaleString("ru", options1)} ${date.toLocaleString("ru", options2)}`
 
-    const comments = [
-      {
-        date: "12.02.22 12:18",
-        name: "Глеб Фокин",
-        text: "Это будет первый комментарий на этой странице",
-        like_active: false,
-        like_count: 3,
-      },
-      {
-        date: "13.02.22 19:22",
-        name: "Варвара Н.",
-        text: "ЭМне нравится как оформлена эта страница! ❤",
-        like_active: true,
-        like_count: 75,
-      },
-    ]
+  const comments = [
+    {
+      date: "12.02.22 12:18",
+      name: "Глеб Фокин",
+      text: "Это будет первый комментарий на этой странице",
+      like_active: false,
+      like_count: 3,
+    },
+    {
+      date: "13.02.22 19:22",
+      name: "Варвара Н.",
+      text: "ЭМне нравится как оформлена эта страница! ❤",
+      like_active: true,
+      like_count: 75,
+    },
+  ]
 
+
+  const renderComments = () => {
+    const commentsHtml = comments.map((comment) => {
+      return `<li class="comment">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div id="add-form-date">${comment.date}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.like_count}</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+    }).join("");
+
+    listEl.innerHTML = commentsHtml;
     
-
     buttonEl.disabled = true;
     nameEl.addEventListener("input", evnt);
     textEl.addEventListener("input", evnt);
@@ -119,55 +134,64 @@
       }
     });
 
-const renderComments = () => {
-  
-}
+  }
 
 
-    buttonEl.addEventListener("click", () => {
-      nameEl.classList.remove("add-form_error");
-      textEl.classList.remove("add-form_error");
-      if (nameEl.value === "" && textEl.value === "") {
-        nameEl.classList.add("add-form_error");
-        textEl.classList.add("add-form_error");
-        return;
-      } else if (nameEl.value === "") {
-        nameEl.classList.add("add-form_error");
-        return;
-      } else if (textEl.value === "") {
-        textEl.classList.add("add-form_error");
-        return;
-      }
-      const oldlist = listEl.innerHTML;
-      listEl.innerHTML =
-        oldlist +
-        `<li class="comment">
-          <div class="comment-header">
-            <div>${nameEl.value}</div>
-            <div>${date.toLocaleString("ru", options1)} ${date.toLocaleString(
-          "ru",
-          options2
-        )}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${textEl.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
+  buttonEl.addEventListener("click", () => {
+    nameEl.classList.remove("add-form_error");
+    textEl.classList.remove("add-form_error");
+    if (nameEl.value === "" && textEl.value === "") {
+      nameEl.classList.add("add-form_error");
+      textEl.classList.add("add-form_error");
+      return;
+    } else if (nameEl.value === "") {
+      nameEl.classList.add("add-form_error");
+      return;
+    } else if (textEl.value === "") {
+      textEl.classList.add("add-form_error");
+      return;
+    }
+    comments.push({
+      date: currentDate,
+      name: nameEl.value,
+      text: textEl.value,
+      like_active: true,
+      like_count: 10,
     });
 
-    const lastCom = listEl.innerHTML.lastIndexOf(`<li class="comment">`);
-    buttonRemEl.addEventListener("click", () => {
-      listEl.innerHTML = listEl.innerHTML.slice(0, lastCom);
-    });
+    // const oldlist = listEl.innerHTML;
+    // listEl.innerHTML =
+    //   oldlist +
+    //   `<li class="comment">
+    //     <div class="comment-header">
+    //       <div>${nameEl.value}</div>
+    //       <div>${date.toLocaleString("ru", options1)} ${date.toLocaleString(
+    //     "ru",
+    //     options2
+    //   )}</div>
+    //     </div>
+    //     <div class="comment-body">
+    //       <div class="comment-text">
+    //         ${textEl.value}
+    //       </div>
+    //     </div>
+    //     <div class="comment-footer">
+    //       <div class="likes">
+    //         <span class="likes-counter">0</span>
+    //         <button class="like-button"></button>
+    //       </div>
+    //     </div>
+    //   </li>`;
 
-    console.log("It works!");
-  </script>
+    renderComments();
+  });
+  renderComments();
+  const lastCom = listEl.innerHTML.lastIndexOf(`<li class="comment">`);
+  buttonRemEl.addEventListener("click", () => {
+    listEl.innerHTML = listEl.innerHTML.slice(0, lastCom);
+  });
+  renderComments();
+  //console.log();
+</script>
+
 </html>
