@@ -29,6 +29,7 @@ const date = function () {
       return fullDate
 }
 
+
 // Функция клика, валидация
 button_Element.addEventListener("click", () => {
   name_Input_Element.classList.remove("error");
@@ -40,6 +41,7 @@ button_Element.addEventListener("click", () => {
     button_Element.classList.add("disabled-button");
     return;
   }
+  
 // Добавляем новый комментарий
   const oldListElement = comments_Element.innerHTML;
   comments_Element.innerHTML = oldListElement + `<li class="comment">
