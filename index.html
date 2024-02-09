@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="list" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -46,18 +46,20 @@
       </ul>
       <div class="add-form">
         <input
+          id="name-input"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
+          id="text-input"
           type="textarea"
           class="add-form-text"
-          placeholder="Введите ваш коментарий"
+          placeholder="Введите ваш комментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="add-button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
@@ -66,6 +68,53 @@
   <script>
     "use strict";
     // Код писать здесь
+    const buttonElement = document.getElementById('add-button');
+    const listElement = document.getElementById('list');
+    const nameInputElement = document.getElementById('name-input');
+    const textInputElement = document.getElementById('text-input');
+
+    buttonElement.addEventListener('click', () => {
+      nameInputElement.classList.remove('error');
+      textInputElement.classList.remove('error');
+      if (nameInputElement.value === '') {
+        nameInputElement.classList.add('error');
+        return;
+      } else if (textInputElement.value === '') {
+        textInputElement.classList.add('error');
+        return;
+      }
+      const currentDate = new Date();
+      const day = currentDate.getDate();
+      const month = currentDate.getMonth() + 1;
+      const year = currentDate.getYear() % 100;
+      const hours = currentDate.getHours() ;
+      const minutes = currentDate.getMinutes();
+      const formattedDay = day < 10 ? `0${day}` : day;
+      const formattedMonth = month < 10 ? `0${month}` : month;
+      const formattedHours = hours < 10 ? `0${hours}` : hours;
+      const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+      const formattedDate = `${formattedDay}.${formattedMonth}.${year} ${formattedHours}:${formattedMinutes}`;
+
+      const oldList = listElement.innerHTML;
+      listElement.innerHTML = oldList + 
+        `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${formattedDate}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+    }) 
     console.log("It works!");
   </script>
 </html>
