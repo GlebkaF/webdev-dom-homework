@@ -10,40 +10,7 @@
 <body>
   <div class="container">
     <ul id="list" class="comments">
-      <!-- <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li> -->
+      <!-- Список рендерится JS -->
     </ul>
     <div id="add-form" class="add-form">
       <input id="add-form-name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
@@ -91,15 +58,20 @@
     {
       date: "13.02.22 19:22",
       name: "Варвара Н.",
-      text: "ЭМне нравится как оформлена эта страница! ❤",
+      text: "Мне нравится как оформлена эта страница! ❤",
       like_active: true,
       like_count: 75,
     },
   ]
 
 
+ 
+
   const renderComments = () => {
     const commentsHtml = comments.map((comment) => {
+      let activeLike = () => {
+        if (comment.like_active === true) { return "-active-like" } else { return; }
+      }
       return `<li class="comment">
           <div class="comment-header">
             <div>${comment.name}</div>
@@ -113,14 +85,14 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${comment.like_count}</span>
-              <button class="like-button"></button>
+              <button class="like-button ${activeLike()}"></button>
             </div>
           </div>
         </li>`;
     }).join("");
 
     listEl.innerHTML = commentsHtml;
-    
+
     buttonEl.disabled = true;
     nameEl.addEventListener("input", evnt);
     textEl.addEventListener("input", evnt);
@@ -155,33 +127,9 @@
       date: currentDate,
       name: nameEl.value,
       text: textEl.value,
-      like_active: true,
-      like_count: 10,
+      like_active: false,
+      like_count: 0,
     });
-
-    // const oldlist = listEl.innerHTML;
-    // listEl.innerHTML =
-    //   oldlist +
-    //   `<li class="comment">
-    //     <div class="comment-header">
-    //       <div>${nameEl.value}</div>
-    //       <div>${date.toLocaleString("ru", options1)} ${date.toLocaleString(
-    //     "ru",
-    //     options2
-    //   )}</div>
-    //     </div>
-    //     <div class="comment-body">
-    //       <div class="comment-text">
-    //         ${textEl.value}
-    //       </div>
-    //     </div>
-    //     <div class="comment-footer">
-    //       <div class="likes">
-    //         <span class="likes-counter">0</span>
-    //         <button class="like-button"></button>
-    //       </div>
-    //     </div>
-    //   </li>`;
 
     renderComments();
   });
