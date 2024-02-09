@@ -59,16 +59,26 @@
       date: "13.02.22 19:22",
       name: "Варвара Н.",
       text: "Мне нравится как оформлена эта страница! ❤",
-      like_active: true,
+      like_active: false,
       like_count: 75,
     },
   ]
 
 
- 
+  const initLikeButtonListener = () => {
+    const likeButtonElements = document.querySelectorAll(".like-button");
+    for (const likeButtonElement of likeButtonElements) {
+      likeButtonElement.addEventListener("click", () => {
+        const index = likeButtonElement.dataset.index;
+        let count = comments[index].like_count++;
+        comments[index].like_active = true;
+        renderComments();
+      })
+    }
+  }
 
   const renderComments = () => {
-    const commentsHtml = comments.map((comment) => {
+    const commentsHtml = comments.map((comment, index) => {
       let activeLike = () => {
         if (comment.like_active === true) { return "-active-like" } else { return; }
       }
@@ -84,8 +94,8 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">${comment.like_count}</span>
-              <button class="like-button ${activeLike()}"></button>
+              <span data-index="${index}" class="likes-counter">${comment.like_count}</span>
+              <button data-index="${index}" class="like-button ${activeLike()}"></button>
             </div>
           </div>
         </li>`;
@@ -105,7 +115,7 @@
         buttonEl.click();
       }
     });
-
+    initLikeButtonListener();
   }
 
 
@@ -139,6 +149,7 @@
     listEl.innerHTML = listEl.innerHTML.slice(0, lastCom);
   });
   renderComments();
+  //initLikeButtonListener();
   //console.log();
 </script>
 
