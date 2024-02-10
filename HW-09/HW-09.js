@@ -41,7 +41,7 @@ button_Element.addEventListener("click", () => {
     button_Element.classList.add("disabled-button");
     return;
   }
-  
+
 // Добавляем новый комментарий
   const oldListElement = comments_Element.innerHTML;
   comments_Element.innerHTML = oldListElement + `<li class="comment">
