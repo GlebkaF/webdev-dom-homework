@@ -35,12 +35,12 @@ button_Element.addEventListener("click", () => {
   name_Input_Element.classList.remove("error");
   comment_Input_Element.classList.remove("error");
   button_Element.classList.remove("disabled-button");
-  if (name_Input_Element.value === "" || comment_Input_Element.value === "") {
+  if (name_Input_Element.value === " " || comment_Input_Element.value === " " ) {
     name_Input_Element.classList.add("error");
     comment_Input_Element.classList.add("error");
     button_Element.classList.add("disabled-button");
     return;
-  }
+  };
 
 // Добавляем новый комментарий
   const oldListElement = comments_Element.innerHTML;
