@@ -40,6 +40,11 @@ button_Element.addEventListener("click", () => {
     comment_Input_Element.classList.add("error");
     button_Element.classList.add("disabled-button");
     return;
+  } else if (name_Input_Element.value === "" || comment_Input_Element.value === "" ){
+    name_Input_Element.classList.add("error");
+    comment_Input_Element.classList.add("error");
+    button_Element.classList.add("disabled-button");
+    return;
   };
 
 // Добавляем новый комментарий
