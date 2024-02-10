@@ -182,7 +182,9 @@
       method: "GET"
     }).then((response) => {
       if (response.status === 500) {
-        return Promise.reject("Сервер упал.");
+        throw new Error("Сервер упал.");
+      } else if (response.status !== 200) {
+        throw new Error("Отсутствует интернет");
       } else {
         return response.json();
       };
@@ -207,12 +209,27 @@
     }).catch((error) => {
       if (error.message === "Сервер упал.") {
         alert("Сервер упал. Попробуйте позже...");
+        //fetchPromise();
       } else {
         alert("Что-то пошло не так, попробуйте позже...");
       };
       console.warn(error);
     });
   };
+
+
+  //автопрокрутка обработки ошибки
+  /*function handleGetClick() {
+    //...
+    fetchPromise()
+      .catch((error) => {
+        if (error.message === "Сервер упал.") {
+          handleGetClick();
+        }
+      });
+    //...
+  };*/
+  //addButton.addEventListener("click", handlePostClick);
 
 
   //Получение данных с сервера + время ожидания загрузки
@@ -453,12 +470,15 @@
         original: `${commentInputElement.value.includes(originalComment) ? originalComment : ''}`,
         answer: '',
         isLikeLoading: false,
+        forceError: true,
       }),
     }).then((response) => {
       if (response.status === 400) {
         throw new Error("Введенные имя или комментарий короче 3-х знаков");
       } else if (response.status === 500) {
-        return Promise.reject("Сервер упал.");
+        throw new Error("Сервер упал.");
+      } else if (response.status !== 201) {
+        throw new Error("Отсутствует интернет");
       } else {
         return response.json();
       };
@@ -477,7 +497,8 @@
       if (error.message === "Введенные имя или комментарий короче 3-х знаков") {
         alert("Ваше имя или Ваш комментарий короче 3-х знаков. Попробуйте еще раз!");
       } else if (error.message === "Сервер упал.") {
-        alert("Сервер упал. Попробуйте позже...");
+        buttonClick();
+        //alert("Сервер упал. Попробуйте позже...");
       } else {
         alert("Что-то пошло не так, попробуйте позже...");
       };
@@ -490,6 +511,7 @@
     renderComments();
 
   };
+
 
 
 
