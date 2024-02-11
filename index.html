@@ -91,11 +91,25 @@
     }
   }
 
+  const initSaveButtonlistener = () => {
+    const textEditEl = document.getElementById("add-form-edit-text")
+    const saveButtonElements = document.querySelectorAll(".save-button");
+    for (const saveButtonElement of saveButtonElements) {
+      saveButtonElement.addEventListener("click", () => {
+        const index = saveButtonElement.dataset.index;
+        comments[index].isEdit = false;
+        comments[index].text = textEditEl.value
+        renderComments();
+      })
+    }
+  }
+
+
   const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
       let editComment = () => {
         if (comment.isEdit === true) {
-          return `<textarea id="add-form-text" type="textarea" class="add-form-text" placeholder=""
+          return `<textarea id="add-form-edit-text" type="textarea" class="add-form-edit-text" placeholder=""
         rows="4">${comment.text}</textarea>`} else { return `${comment.text}` }
       }
       let saveButton = () => {
@@ -141,6 +155,7 @@
     });
     initLikeButtonListener();
     initEditButtonlistener();
+    initSaveButtonlistener();
   }
 
   buttonEl.addEventListener("click", () => {
