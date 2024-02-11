@@ -85,39 +85,49 @@
       editButtonElement.addEventListener("click", () => {
         const index = editButtonElement.dataset.index;
         comments[index].isEdit = true;
-        console.log(comments);
         renderComments();
       })
     }
   }
 
   const initSaveButtonlistener = () => {
-    const textEditEl = document.getElementById("add-form-edit-text")
     const saveButtonElements = document.querySelectorAll(".save-button");
     for (const saveButtonElement of saveButtonElements) {
       saveButtonElement.addEventListener("click", () => {
         const index = saveButtonElement.dataset.index;
         comments[index].isEdit = false;
-        comments[index].text = textEditEl.value
+        comments[index].text = textEditElement();
         renderComments();
       })
     }
+  }
+
+  const textEditElement = () => {
+    const textEditElements = document.querySelectorAll(".add-form-edit-text")
+    let text;
+    for (const textEditElement of textEditElements) {
+      const index = textEditElement.dataset.index;
+      comments[index].text = textEditElement.value;
+      text = comments[index].text;
+      console.log(index);
+      console.log(comments[index].text);
+    } return text;
   }
 
 
   const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
       let editComment = () => {
-        if (comment.isEdit === true) {
-          return `<textarea id="add-form-edit-text" type="textarea" class="add-form-edit-text" placeholder=""
-        rows="4">${comment.text}</textarea>`} else { return `${comment.text}` }
+        if (comment.isEdit) {
+          return `<textarea data-index="${index}" id="add-form-edit-text" type="textarea" class="add-form-edit-text" placeholder=""
+        rows="4">${comment.text}</textarea>`
+        } else { return `${comment.text}` }
       }
       let saveButton = () => {
-        if (comment.isEdit === false) {
-          return `class="edit-button">Редактировать`} else { return `class="save-button">Сохранить` }
+        if (!comment.isEdit) { return `class="edit-button">Редактировать` } else { return `class="save-button">Сохранить` }
       }
       let activeLike = () => {
-        if (comment.like_active === true) { return "-active-like" } else { return; }
+        if (comment.like_active) { return "-active-like" } else { return; }
       }
       return `<li class="comment">
           <div class="comment-header">
@@ -156,6 +166,7 @@
     initLikeButtonListener();
     initEditButtonlistener();
     initSaveButtonlistener();
+    //textEditElement();
   }
 
   buttonEl.addEventListener("click", () => {
@@ -191,7 +202,6 @@
   });
 
   renderComments();
-
 
 </script>
 
