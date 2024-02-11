@@ -20,7 +20,7 @@ const peoples = [
 const commentListElement = document.getElementById('commentList');
 
 // Пишем функцию рендера для создания разметки:
-const renderPeoples = () => {
+const renderPeoples = () => {    
     const commentsHtml = peoples
         .map((people, index) => {
             return `
@@ -35,7 +35,7 @@ const renderPeoples = () => {
                     <div class="comment-footer">
                         <div class="likes">
                             <span class="likes-counter">${people.likes}</span>
-                            <button data-index=${index} class="like-button"></button>
+                            <button data-index=${index} class="like-button ${people.isLiked ? 'active-like' : ''}"></button>
                         </div>
                     </div>
                 </li>`;
@@ -43,6 +43,27 @@ const renderPeoples = () => {
         .join("");
 
     commentListElement.innerHTML = commentsHtml;
+
+    // Определяем кнопку лайка для JS:
+    const likeButtonElements = document.querySelectorAll(".like-button");
+
+    // Красим кнопку лайка:
+    for (let index = 0; index < likeButtonElements.length; index++) {
+        const button = likeButtonElements[index];
+        button.addEventListener("click", () => {  
+            const currentPeople = peoples[index];               
+
+            if (currentPeople.isLiked) {
+                currentPeople.likes--;
+            } else {
+                currentPeople.likes++;
+            };
+
+            currentPeople.isLiked = !currentPeople.isLiked;
+
+            renderPeoples();
+        });
+    }
 }
 
 // Определяем для JS элементы input-формы:
@@ -80,17 +101,5 @@ buttonElement.addEventListener("click", () => {
     peoples.push(newComment);
     renderPeoples();
 });
-
-// Определяем кнопку лайка для JS:
-const likeButtonElements = document.querySelectorAll(".like-button");
-
-// Красим кнопку лайка:
-for (let index = 0; index < likeButtonElements.length; index++) {
-    const button = likeButtonElements[index];
-    button.addEventListener("click", () => {
-        peoples[index].isLiked = !peoples[index].isLiked;
-        button.classList.toggle('active-like', peoples[index].isLiked);
-    });
-}
 
 renderPeoples();
