@@ -111,7 +111,8 @@ button_Element.addEventListener('click', () => {
   date.getFullYear().toString().slice(-2) + ' ' +
   date.getHours().toString().padStart(2, '0') + ':' +
   date.getMinutes().toString().padStart(2, '0');
-    commentsArray.push({
+
+  commentsArray.push({
       name: name_Input_Element.value
             .replaceAll("&", "&amp;")
             .replaceAll("<", "&lt;")
