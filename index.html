@@ -9,42 +9,7 @@
 
 <body>
   <div class="container">
-    <ul id="list" class="comments">
-      <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>
-    </ul>
+    <ul id="list" class="comments"></ul>
     <div class="add-form">
       <input id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
       <textarea id="text-input" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
@@ -58,11 +23,56 @@
 
 <script>
   "use strict";
-  // Код писать здесь
+  // Структура данных для комментариев
+  let commentsData = [
+    {
+      author: "Глеб Фокин",
+      date: "12.02.22 12:18",
+      text: "Это будет первый комментарий на этой странице",
+      likes: 3,
+      isLiked: false
+    },
+    {
+      author: "Варвара Н.",
+      date: "13.02.22 19:22",
+      text: "Мне нравится как оформлена эта страница! ❤",
+      likes: 75,
+      isLiked: true
+    }
+  ];
+
   const listElement = document.getElementById("list");
   const nameInputElement = document.getElementById("name-input");
   const textAreaElement = document.getElementById("text-input");
   const buttonElement = document.getElementById("write-button");
+
+  // Функция для рендеринга списка комментариев
+  function renderComments() {
+    listElement.innerHTML = commentsData.map((comment, index) => {
+      return `
+            <li class="comment">
+                <div class="comment-header">
+                    <div>${comment.author}</div>
+                    <div>${comment.date}</div>
+                </div>
+                <div class="comment-body">
+                    <div class="comment-text">${comment.text}</div>
+                </div>
+                <div class="comment-footer">
+                    <div class="likes">
+                        <span class="likes-counter">${comment.likes}</span>
+                        <button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index="${index}"></button>
+                    </div>
+                </div>
+            </li>
+        `;
+    }).join('');
+
+
+    attachLikeButtonHandler();
+  }
+
+  renderComments();
 
   buttonElement.addEventListener('click', () => {
     let currentDate = new Date();
@@ -98,29 +108,39 @@
       return;
     }
 
-    listElement.innerHTML +=
-      `<li class="comment">
-        <div class="comment-header">
-          <div>${nameInputElement.value}</div>
-          <div>${myDate}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${textAreaElement.value}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>`;
+    const newComment = {
+      author: nameInputElement.value,
+      date: myDate,
+      text: textAreaElement.value,
+      likes: 0,
+      isLiked: false
+    };
+
+    commentsData.push(newComment);
+    renderComments();
+
     nameInputElement.value = "";
     textAreaElement.value = "";
-
   });
-  console.log("It works!");
+
+  function attachLikeButtonHandler() {
+    const likeButtons = document.querySelectorAll('.like-button');
+    for (const button of likeButtons) {
+      button.addEventListener('click', () => {
+        const index = parseInt(button.dataset.index);
+        const currentLikes = commentsData[index].likes;
+        const isActive = commentsData[index].isLiked;
+        if (isActive) {
+          commentsData[index].likes--;
+        } else {
+          commentsData[index].likes++;
+        }
+        commentsData[index].isLiked = !isActive;
+        renderComments();
+      });
+    }
+  }
+
 </script>
 
 </html>
