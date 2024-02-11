@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Урок "Асинхронность"</title>
+  </head>
+
+  <body>
+    <h1>Список задач</h1>
+    <ul class="tasks" id="list">
+      <!— Список рендерится из JS —>
+    </ul>
+    <br />
+    <div class="form">
+      <h3 class="form-title">Форма добавления</h3>
+      <div class="form-row">
+        Что нужно сделать:
+        <input
+          type="text"
+          id="text-input"
+          class="input"
+          placeholder="Выпить кофе"
+        />
+      </div>
+      <br />
+      <button class="button" id="add-button">Добавить</button>
+    </div>
+  </body>
+
+  <script>
+    const buttonElement = document.getElementById("add-button");
+    const listElement = document.getElementById("list");
+    const textInputElement = document.getElementById("text-input");
+
+    let tasks = [];
+
+    const fetchAndRenderTasks = () => {
+      return fetch("https://webdev-hw-api.vercel.app/api/todos", {
+        method: "GET",
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((responseData) => {
+          tasks = responseData.todos;
+          renderTasks();
+        });
+    };
+
+    function postTask() {
+      fetch("https://webdev-hw-api.vercel.app/api/todos/with-error", {
+        method: "POST",
+        body: JSON.stringify({
+          text: textInputElement.value,
+        }),
+      })
+        .then((response) => {
+          console.log(response);
+          if (response.status === 201) {
+            return response.json();
+          } else if (response.status === 400) {
+            alert("Задачу \"ничего\" создать нельзя, займитесь чем-нибудь полезным");
+          }
+          else if (response.status === 500) {
+            throw new Error("Сервер сломался, пробуем отправить снова ...")
+          }
+          else {
+            // Код, который обработает ошибку
+            // throw new Error("Сервер упал");
+            return Promise.reject(new Error("Сервер упал"));
+          }
+        })
+        .then(() => {
+          return fetchAndRenderTasks();
+        })
+        .then(() => {
+          buttonElement.disabled = false;
+          buttonElement.textContent = "Добавить";
+          textInputElement.value = "";
+        })
+        .catch((error) => {
+          buttonElement.disabled = false;
+          buttonElement.textContent = "Добавить";
+          alert("Кажется, что-то пошло не так, попробуй позже");
+          // TODO: Отправлять в систему сбора ошибок
+          console.warn(error);
+          if (error.message = "Сервер сломался, пробуем отправить снова ...") {
+            postTask();
+          }
+        });
+    }
+
+    const renderTasks = () => {
+      const tasksHtml = tasks
+        .map((task) => {
+          return `
+          <li class="task">
+            <p class="task-text">
+              ${task.text}
+              <button data-id="${task.id}" class="button delete-button">Удалить</button>
+            </p>
+          </li>`;
+        })
+        .join("");
+
+      listElement.innerHTML = tasksHtml;
+      const deleteButtons = document.querySelectorAll(".delete-button");
+
+      for (const deleteButton of deleteButtons) {
+        deleteButton.addEventListener("click", (event) => {
+          event.stopPropagation();
+
+          const id = deleteButton.dataset.id;
+
+          fetch("https://webdev-hw-api.vercel.app/api/todos/" + id, {
+            method: "DELETE",
+          }).then((response) => {
+            response.json().then((responseData) => {
+              // { result: 'ok' }
+              tasks = responseData.todos;
+              renderTasks();
+            });
+          });
+
+          renderTasks();
+        });
+      }
+    };
+
+    fetchAndRenderTasks();
+    renderTasks();
+
+    buttonElement.addEventListener("click", () => {
+      if (textInputElement.value === "") {
+        return;
+      }
+
+      buttonElement.disabled = true;
+      buttonElement.textContent = "Элемент добавлятся...";
+      postTask();
+
+      renderTasks();
+    });
+  </script>
+</html>
