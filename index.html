@@ -72,9 +72,13 @@
     for (const likeButtonElement of likeButtonElements) {
       likeButtonElement.addEventListener("click", () => {
         const index = likeButtonElement.dataset.index;
-        count = comments[index].like_count++;
-        comments[index].like_active = true;
-        renderComments();
+        if (!comments[index].like_active) {
+          count = comments[index].like_count++;
+          comments[index].like_active = true;
+        } else {
+          count = comments[index].like_count--;
+          comments[index].like_active = false;
+        } renderComments();
       })
     }
   }
@@ -109,8 +113,6 @@
       const index = textEditElement.dataset.index;
       comments[index].text = textEditElement.value;
       text = comments[index].text;
-      // console.log(index);
-      // console.log(comments[index].text);
     } return text;
   }
 
@@ -166,7 +168,6 @@
     initLikeButtonListener();
     initEditButtonlistener();
     initSaveButtonlistener();
-    //textEditElement();
   }
 
   buttonEl.addEventListener("click", () => {
