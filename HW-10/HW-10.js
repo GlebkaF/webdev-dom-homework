@@ -141,7 +141,6 @@ delete_Button_Element.addEventListener('click', () =>{
   }
 });
 
-
 document.addEventListener('keyup', (event) =>{
   if (event.key === 'Enter') {
     button_Element.click();
