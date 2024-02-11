@@ -45,30 +45,18 @@
   const loadedComment = document.querySelector('.loaded-comment');
   const loadedPage = document.querySelector('.loaded-page');
 
-  // Массив со статичными комментариями в объекте
-  let comments = [
-    // {
-    //   author: 'Глеб Фокин',
-    //   text: 'Это будет первый комментарий на этой странице',
-    //   like: 3,
-    //   date: '12.02.22 12:18',
-    //   myLike: false,
-    // },
-    // {
-    //   author: 'Варвара Н.',
-    //   text: 'Мне нравится как оформлена эта страница! ❤',
-    //   like: 75,
-    //   date: '13.02.22 19:22',
-    //   myLike: true,
-    // },
-  ];
+  // Массив, в который кладем комменатрии пользователей
+  let comments = [];
 
-  fetch('https://wedev-api.sky.pro/api/v1/aman_arazmedov/comments',
-    {
-      method: 'GET',
-    }).then((response) => {
-
-      response.json().then((responseData) => {
+  const fetchAndRenderComments = () => {
+    return fetch('https://wedev-api.sky.pro/api/v1/aman_arazmedov/comments',
+      {
+        method: 'GET',
+      })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
         const appComments = responseData.comments.map((comment) => {
           return {
             author: comment.author.name,
@@ -81,10 +69,10 @@
         comments = appComments;
         renderComments();
       })
-    })
-    .then((response) => {
-      loadedPage.style.display = 'none';
-    });
+      .then((response) => {
+        return loadedPage.style.display = 'none';
+      });
+  }
 
   // Опция ответить на комментарий
   const editTextArea = () => {
@@ -161,6 +149,7 @@
     sendMessageByClickEnter();
   }
 
+  fetchAndRenderComments();
   renderComments();
 
   // Считаем время
@@ -202,6 +191,10 @@
       buttonElement.disabled = true;
       return;
     }
+
+    // Сохраняем имя и текст комментария
+    const saveName = nameInput.value;
+    const saveComment = commentTextarea.value;
 
     loadedComment.style.display = 'block';
     buttonElement.disabled = true;
@@ -249,45 +242,44 @@
         body: JSON.stringify({
           name: nameInput.value,
           text: commentTextarea.value,
+          forceError: true,
         })
       })
       .then((response) => {
-        return response.json()
+        if (response.status === 201) {
+          return response.json();
+        } else if (response.status === 400) {
+          throw new Error('Ошибка ввода');
+        } else {
+          throw new Error('Сервер упал');
+        }
       })
-      .then((response) => {
-        return fetch('https://wedev-api.sky.pro/api/v1/aman_arazmedov/comments',
-          {
-            method: 'GET',
-          })
-      })
-      .then((response) => {
-        return response.json();
-      })
-      .then((responseData) => {
-        const appComments = responseData.comments.map((comment) => {
-          return {
-            author: comment.author.name,
-            text: comment.text,
-            date: fullDate(new Date(comment.date)),
-            like: comment.likes,
-            myLike: comment.isLiked,
-          }
-        });
-        comments = appComments;
-        renderComments();
+      .then(() => {
+        return fetchAndRenderComments();
       })
       .then((response) => {
         loadedComment.style.display = 'none';
         buttonElement.disabled = false;
+        nameInput.value = ''; // Очищаем поле ввода имени
+        commentTextarea.value = ''; // Очищаем поле ввода комментария
+      })
+      .catch((error) => {
+        buttonElement.disabled = false;
+
+        if (error.message === 'Ошибка ввода') {
+          alert(`${nameInput.value} и ${commentTextarea.value} должны быть не короче 3 символов`)
+        } else if (error.message === 'Сервер упал') {
+          alert('Сервер сломался, попробуй позже');
+        } else {
+          alert('Кажется, у тебя сломался интернет, попробуй позже');
+        }
+        nameInput.value = saveName;
+        commentTextarea.value = saveComment;
       });
 
-    // Очищаем поле ввода имени и комментария + рендерим комменты
-    nameInput.value = '';
-    commentTextarea.value = '';
+    // Рендерим комменты
     renderComments();
   })
-
-  // просто пытаюсь слить ветку в главную
 
 </script>
 
