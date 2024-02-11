@@ -53,6 +53,7 @@
       text: "Это будет первый комментарий на этой странице",
       like_active: false,
       like_count: 3,
+      isEdit: false,
     },
     {
       date: "13.02.22 19:22",
@@ -60,6 +61,7 @@
       text: "Мне нравится как оформлена эта страница! ❤",
       like_active: false,
       like_count: 75,
+      isEdit: false,
     },
   ]
 
@@ -77,8 +79,29 @@
     }
   }
 
+  const initEditButtonlistener = () => {
+    const editButtonElements = document.querySelectorAll(".edit-button");
+    for (const editButtonElement of editButtonElements) {
+      editButtonElement.addEventListener("click", () => {
+        const index = editButtonElement.dataset.index;
+        comments[index].isEdit = true;
+        console.log(comments);
+        renderComments();
+      })
+    }
+  }
+
   const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
+      let editComment = () => {
+        if (comment.isEdit === true) {
+          return `<textarea id="add-form-text" type="textarea" class="add-form-text" placeholder=""
+        rows="4">${comment.text}</textarea>`} else { return `${comment.text}` }
+      }
+      let saveButton = () => {
+        if (comment.isEdit === false) {
+          return `class="edit-button">Редактировать`} else { return `class="save-button">Сохранить` }
+      }
       let activeLike = () => {
         if (comment.like_active === true) { return "-active-like" } else { return; }
       }
@@ -89,7 +112,7 @@
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${comment.text}
+              ${editComment()}
             </div>
           </div>
           <div class="comment-footer">
@@ -97,6 +120,7 @@
               <span data-index="${index}" class="likes-counter">${comment.like_count}</span>
               <button data-index="${index}" class="like-button ${activeLike()}"></button>
             </div>
+            <div><button data-index="${index}" ${saveButton()}</button></div>
           </div>
         </li>`;
     }).join("");
@@ -116,6 +140,7 @@
       }
     });
     initLikeButtonListener();
+    initEditButtonlistener();
   }
 
   buttonEl.addEventListener("click", () => {
@@ -138,6 +163,7 @@
       text: textEl.value,
       like_active: false,
       like_count: 0,
+      isEdit: false,
     });
 
     renderComments();
@@ -150,8 +176,8 @@
   });
 
   renderComments();
- 
- 
+
+
 </script>
 
 </html>
