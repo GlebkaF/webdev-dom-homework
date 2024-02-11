@@ -90,6 +90,12 @@ button_Element.addEventListener('click', () => {
     name_Input_Element.classList.remove('error');
     comment_Input_Element.classList.remove('error');
     button_Element.classList.remove("disabled-button");
+
+    // Удаление пробелов спереди и сзади в полях ввода
+    name_Input_Element.value = name_Input_Element.value.trim();
+    comment_Input_Element.value = comment_Input_Element.value.trim();
+
+    // Проверка на пустые поля
     if (name_Input_Element.value === "" || comment_Input_Element.value === "") {
       name_Input_Element.classList.add('error');
       comment_Input_Element.classList.add('error');
