@@ -129,14 +129,15 @@
       // }
     ]
 
-    fetch(`${baseUrl}comments`, {
+    const mapData = () => {
+      return fetch(`${baseUrl}comments`, {
       method: "GET",
-    })
-    .then((result) => {
-      return result.json();
-    })
-    .then((resultData) => {
-      const resultComments = resultData.comments.map((comment) => {
+      })
+      .then((result) => {
+        return result.json();
+      })
+      .then((resultData) => {
+        const resultComments = resultData.comments.map((comment) => {
           //console.log(comment.author.name);
           let currentDate = getCurrentDate(new Date(comment.date));
           return {
@@ -154,6 +155,9 @@
         //console.log('Загрузка страницы = ' + isLoadedPage);
         loaderPage.style.display = "none";
       });
+    }
+
+    mapData();    
 
     // const jsonArr = JSON.stringify(comments);
     // console.log(jsonArr);
@@ -362,29 +366,7 @@
           return resultComments.json()
         })
         .then((resultCommentsData) => {
-          return fetch(`${baseUrl}comments`, {
-              method: "GET",
-            });
-        })
-        .then((result) => {
-          return result.json();
-        })
-        .then((resultData) => {
-          const resultComments = resultData.comments.map((comment) => {
-            //console.log(comment.author.name);
-            let currentDate = getCurrentDate(new Date(comment.date));
-            return {
-              author: comment.author.name,
-              date: currentDate,
-              text: comment.text,
-              likeCount: comment.likes,
-              myLike: comment.isLiked
-            };
-                });
-                isLoaded = false;
-                console.log(isLoaded);
-                comments = resultComments;
-                renderComments();
+          return mapData();
           })
           .then((resultData) => {
             buttonAddComment.disabled = false;
