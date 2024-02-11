@@ -10,40 +10,7 @@
 <body>
   <div class="container">
     <ul class="comments">
-      <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>
+
     </ul>
     <div class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" value="" />
@@ -67,26 +34,30 @@
   const commentList = document.querySelector('.comments');
   const currentDate = new Date().toLocaleDateString('default', { day: '2-digit', month: '2-digit', year: '2-digit' }) + " " + new Date().toLocaleTimeString().slice(0, -3);
 
-  buttonWrite.addEventListener("click", () => {
-    inputName.classList.remove("error");
-    inputText.classList.remove("error");
-    if (inputName.value === "") {
-      inputName.classList.add("error");
-      return;
-    } else if (inputText.value === "") {
-      inputText.classList.add("error");
-      return;
-    }
-    const oldListElement = commentList.innerHTML;
-    commentList.innerHTML = oldListElement + `
-    <li class="comment">
+  const comments = [
+    {
+      name: "Глеб Фокин",
+      date: "12.02.22 12:18",
+      text: "Это будет первый комментарий на этой странице",
+    },
+    {
+      name: "Варвара Н.",
+      date: "13.02.22 19:22",
+      text: "Мне нравится как оформлена эта страница! ❤",
+    },
+  ];
+
+  const renderComments = () => {
+    const commentsHtml = comments
+      .map((comment) => {
+        return `<li class="comment">
         <div class="comment-header">
-          <div>${inputName.value}</div>
-          <div>${(currentDate)}</div>
+          <div>${comment.name}</div>
+          <div>${comment.date}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
-            ${inputText.value}
+            ${comment.text}
           </div>
         </div>
         <div class="comment-footer">
@@ -96,12 +67,26 @@
           </div>
         </div>
       </li>`;
-    inputName.value = "";
-    inputText.value = "";
+      })
+      .join("");
+    commentList.innerHTML = commentsHtml;
+  };
+
+  renderStudents();
+
+  //buttonWrite.addEventListener("click", () => {
+  //inputName.classList.remove("error");
+  //inputText.classList.remove("error");
+  //if (inputName.value === "") {
+  //  inputName.classList.add("error");
+  //  return;
+  // } else if (inputText.value === "") {
+  //   inputText.classList.add("error");
+  //   return;
+  // }
+  // });
 
 
-
-  });
   console.log("It works!");
 </script>
 
