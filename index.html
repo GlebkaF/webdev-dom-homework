@@ -46,10 +46,11 @@
       </li>
     </ul>
     <div class="add-form" id="add-form">
-      <input type="text" class="add-form-name" id="name-input" placeholder="Введите ваше имя" />
-      <textarea type="textarea" class="add-form-text" id="text-input" placeholder="Введите ваш коментарий" rows="4"></textarea>
+      <input type="text" class="add-form-name" id="name-input" required placeholder="Введите ваше имя" />
+      <textarea type="textarea" class="add-form-text" id="text-input" required placeholder="Введите ваш коментарий"
+        rows="4"></textarea>
       <div class="add-form-row">
-        <button class="add-form-button" id="add-button">Написать</button>
+        <button class="add-form-button" id="add-button" disabled>Написать</button>
         <button id="deleteButton" class="add-form-button">
           Удалить последний комментарий
         </button>
@@ -60,26 +61,38 @@
 
 <script>
   "use strict";
-    const addFormButtonElement = document.getElementById("add-button");
-    const addFormTextElement = document.getElementById("text-input");
-    const addFormNameElement = document.getElementById("name-input");
-    const addFormElement = document.getElementById("add-form");
-    const commentsList = document.getElementById("comments-push");
-    const commentElement = document.getElementById("comment-push");
-    const delCom = document.getElementById("deleteButton");
-    
-    
-
-    
+  const addFormButtonElement = document.getElementById("add-button");
+  const addFormTextElement = document.getElementById("text-input");
+  const addFormNameElement = document.getElementById("name-input");
+  const addFormElement = document.getElementById("add-form");
+  const commentsList = document.getElementById("comments-push");
+  const commentElement = document.getElementById("comment-push");
+  const delCom = document.getElementById("deleteButton");
 
 
-    addFormButtonElement.addEventListener("click", () => {
-      const name = addFormButtonElement.value.trim();
-      const text = addFormTextElement.value.trim();
-      const newComment = document.createElement("li");
-      newComment.classList.add("comment");
-      const oldListHtml = commentsList.innerHTML
-      commentsList.innerHTML = oldListHtml + `<li class="comment" id="comment-push">
+
+
+
+
+  addFormButtonElement.addEventListener("click", () => {
+    const name = addFormNameElement.value;
+    const comment = addFormTextElement.value;
+
+    if (name.trim() === '' || comment.trim() === '') {
+        alert('Пожалуйста, заполните все поля!');
+        return;
+    }
+
+    addComment(name, comment);
+});
+
+
+function addComment(name, comment) {
+    addFormButtonElement.disabled = true;
+    const newComment = document.createElement("li");
+    newComment.classList.add("comment");
+    const oldListHtml = commentsList.innerHTML
+    commentsList.innerHTML = oldListHtml + `<li class="comment" id="comment-push">
           <div class="comment-header">
             <div>${addFormNameElement.value}</div>
             <div>${(new Date()).toLocaleString()}</div>
@@ -97,52 +110,56 @@
           </div>
         </li>`
 
-        addFormNameElement.classList.remove("error");
-        addFormTextElement.classList.remove("error");
-        if (addFormNameElement.value === "") {
-          addFormNameElement.classList.add("error");
-        return;
-      } else if (addFormTextElement.value === ""){
-        addFormTextElement.classList.add("error")
-        return;
-      }
-
-
-        function input() {
-        if (addFormNameElement.value === "" || addFormTextElement.value === ""){
-          addFormButtonElement.setAttribute("disabled", true);
-        } else {
-          addFormButtonElement.removeAttribute("disabled");
-        }
-      }
-        addFormNameElement.addEventListener("input", input);
-        addFormTextElement.addEventListener("input", input);
-
-
-        addFormNameElement.value = "";
-        addFormTextElement.value = "";
-        });
-
-
-      
-
-      addFormButtonElement.addEventListener("keydown", function (event) {
-      if (event.keyCode === 13) {
-        addComment();
-      }
-    });
-
-
-      function deleteCommit() {
-      const ul = document.getElementById("comments-push");
-      let latComm = ul.getElementsByTagName("li").length - 1;
-      ul.getElementsByTagName("li")[latComm].remove();
+    addFormNameElement.classList.remove("error");
+    addFormTextElement.classList.remove("error");
+    if (addFormNameElement.value === "") {
+      addFormNameElement.classList.add("error");
+      return;
+    } else if (addFormTextElement.value === "") {
+      addFormTextElement.classList.add("error")
+      return;
     }
-    delCom.addEventListener("click", function () {
-      deleteCommit();
-    });
-    
-      
+
+
+
+
+    addFormNameElement.value = "";
+    addFormTextElement.value = "";
+};
+
+
+
+  function Input() {
+    if (addFormTextElement.value === "" || addFormNameElement.value === "") {
+      addFormButtonElement.setAttribute("disabled", true);
+    } else {
+      addFormButtonElement.removeAttribute("disabled");
+    }
+  }
+  addFormNameElement.addEventListener("input", Input);
+  addFormTextElement.addEventListener("input", Input);
+
+
+
+
+  addFormTextElement.addEventListener("keydown", (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        addFormButtonElement.click();
+    }
+});
+
+
+  function deleteCommit() {
+    const ul = document.getElementById("comments-push");
+    let latComm = ul.getElementsByTagName("li").length - 1;
+    ul.getElementsByTagName("li")[latComm].remove();
+  }
+  delCom.addEventListener("click", function () {
+    deleteCommit();
+  });
+
+
   console.log("It works!");
 </script>
 
