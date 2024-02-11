@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="list-comments" >
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -22,7 +22,7 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">3</span>
-              <button class="like-button"></button>
+              <button class="like-button></button>
             </div>
           </div>
         </li>
@@ -39,7 +39,7 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
+              <button class="like-button"></button>
             </div>
           </div>
         </li>
@@ -65,7 +65,6 @@
   <style>
     .error::placeholder {
       color: red;
-      opacity: 1;
     }
   </style>
   <script>
@@ -74,8 +73,82 @@
     const nameElement = document.querySelector(".add-form-name");
     const textElement = document.querySelector(".add-form-text");
     const buttonElement = document.querySelector(".add-form-button");
+    const commentsElements = document.querySelectorAll(".comment")
+    const listCommentsElement = document.getElementById('list-comments');
+    const likeButtonsElements = document.querySelectorAll('.likes')
 
-    // buttonElement.addEventListener("click", addNewComment);
+  // пеносим данные из разметки в JS
+const comments = [
+  {
+    name: "Глеб Фокин",
+    time: "12.02.22 12:18",
+    comment: "Это будет первый комментарий на этой странице",
+    likes: 3,
+    newLike: ''
+  },
+  {
+    name: "Варвара Н.",
+    time: "13.02.22 19:22",
+    comment: "Мне нравится как оформлена эта страница! ❤️",
+    likes: 75,
+    newLike: ''
+  },
+];
+
+//функция добвления обрабочика клика
+const initEventListeners = () => {
+    const likesElements = document.querySelectorAll(".like-button");
+    for (const likesElement of likesElements) {    
+      likesElement.addEventListener('click', () => {
+        const index = likesElement.dataset.index;
+
+        console.log(comments[index].likes);
+        if (comments[index].newLike === '-active-like') {
+          comments[index].likes--
+        } else {
+          comments[index].newLike = '-active-like';
+          comments[index].likes++
+        }
+
+        renderComments();
+
+
+      });
+    }
+  };
+  
+// рендер
+const renderComments = () => {
+    const commentsHtml = comments.map((comment, index) => {
+      return ` <li class="comment">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.time}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.comment}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comments[index].likes}</span>
+              <button data-index= "${index}" class="like-button ${comment.newLike}"></button>
+            </div>
+          </div>
+        </li> `
+    }).join("");
+   
+    listCommentsElement.innerHTML = commentsHtml;   
+
+    initEventListeners();     
+
+
+  };
+
+  renderComments();
+
+// функция добавления нового комментария
     function addNewComment() {
       let commentList = document.querySelector(".comments")
       commentList.innerHTML += `
@@ -92,11 +165,21 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">0</span>
-              <button class="like-button"></button>
+              <button class="like-button"></button> 
             </div>
           </div>
       </li>`
+     // добавление нового
+      comments.push({
+      name: nameElement.value,
+      time: new Date().toLocaleString(),
+      comment: textElement.value,
+      likes: 0,
+      newLike: ''
+      });
+      renderComments();
     }
+    
 
     function inputValid() {
         if (nameElement.value === "" || textElement.value === "") {
@@ -126,32 +209,6 @@
       textElement.value = "";
     
 });
-
-
-
-
-      
-  
-      // }
-    //   nameElement.classList.remove("error");
-    //   textElement.classList.remove("error");
-    //   if (nameElement.value === "" || textElement.value === "") {
-    //     nameElement.classList.add("error");
-    //     textElement.classList.add("error");
-    //     return;
-    //   }
-    //   function inputValid() {
-    //     if (nameElement.value === "" || textElement.value === "") {
-    //       buttonElement.disabled = true;
-    //     }
-    //   }
-
-    //   nameElement.addEventListener("input", inputValid);
-    //   textElement.addEventListener("input", inputValid);
-
-    //   nameElement.value = "";
-    //   textElement.value = "";
-    // });
 
     console.log("It works!");
   </script>
