@@ -62,14 +62,10 @@
         if (commentList.likeConfirm) {
           commentList.likesCounter -= 1;
           commentList.likeConfirm = false;
-          like.classList.add('-no-active-like');
-          like.classList.remove('-active-like');
           renderComments();
         } else {
           commentList.likesCounter += 1;
           commentList.likeConfirm = true;
-          like.classList.add('-active-like');
-          like.classList.remove('-no-active-like');
           renderComments();
         }
       })
