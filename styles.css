@@ -119,9 +119,10 @@ body {
 
   .add-form-row {
     display: flex;
+    flex-direction: column;
     justify-content: flex-end;
   }
-
+  .delete-form-button,
   .add-form-button {
     margin-top: 24px;
     font-size: 24px;
@@ -130,8 +131,12 @@ body {
     border: none;
     border-radius: 18px;
     cursor: pointer;
+    display: block;
+
   }
 
+  .delete-form-button:hover,
   .add-form-button:hover {
     opacity: 0.9;
   }
+  

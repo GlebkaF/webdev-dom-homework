@@ -45,19 +45,11 @@
         </li>
       </ul>
       <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
+        <input type="text" class="add-form-name" placeholder="Введите ваше имя"/>
+        <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
         <div class="add-form-row">
           <button class="add-form-button">Написать</button>
+          <button class="delete-form-button">Удалить последний комментарий</button>
         </div>
       </div>
     </div>
@@ -65,7 +57,51 @@
 
   <script>
     "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const inputNameElement = document.querySelector('.add-form-name');
+    const inputTextElement = document.querySelector('.add-form-text');
+    const buttonElement = document.querySelector('.add-form-button');
+    const commentElement = document.querySelector('.comments');
+    const buttonElementDel = document.querySelector('.delete-form-button');
+
+buttonElement.addEventListener("click", () => {
+  if (inputNameElement.value && inputTextElement.value) {
+    const currentDate = new Date().toLocaleDateString('default', {day: '2-digit', month: '2-digit', year: '2-digit'}) + " "+ new Date().toLocaleTimeString().slice(0,-3);
+
+    commentElement.insertAdjacentHTML('beforeend', `<li class="comment">
+      <div class="comment-header">
+        <div>${inputNameElement.value}</div>
+        <div>${currentDate}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">
+          ${inputTextElement.value}
+        </div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">0</span>
+          <button class="like-button -active-like"></button>
+        </div>
+      </div>
+    </li>`);
+
+    inputNameElement.value = "";
+    inputTextElement.value = "";
+  }
+});
+
+// Чтобы форма отправлялась клавишей Enter
+inputTextElement.addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    buttonElement.click();
+  }
+});
+//Удаление последнего комментария
+buttonElementDel.addEventListener("click", () => {
+  const lastElement = commentElement.lastChild;
+  commentElement.removeChild(lastElement);
+});
+    //console.log("It works!");
   </script>
 </html>
