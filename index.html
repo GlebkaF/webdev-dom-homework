@@ -57,62 +57,51 @@
 
   <script>
     "use strict";
+    const inputNameElement = document.querySelector('.add-form-name');
+    const inputTextElement = document.querySelector('.add-form-text');
+    const buttonElement = document.querySelector('.add-form-button');
+    const commentElement = document.querySelector('.comments');
+    const buttonElementDel = document.querySelector('.delete-form-button');
 
-  const inputNameElement = document.querySelector('.add-form-name');
-  const inputTextElement = document.querySelector('.add-form-text');
-  const buttonElement = document.querySelector('.add-form-button');
-  const commentElement = document.querySelector('.comments');
-  const buttonElementDel = document.querySelector('.delete-form-button');
+buttonElement.addEventListener("click", () => {
+  if (inputNameElement.value && inputTextElement.value) {
+    const currentDate = new Date().toLocaleDateString('default', {day: '2-digit', month: '2-digit', year: '2-digit'}) + " "+ new Date().toLocaleTimeString().slice(0,-3);
 
-
-buttonElement.setAttribute('disabled', true);
-
-inputNameElement.addEventListener("input", () => {
-
-  if ((inputNameElement.value.length > 0) && (inputTextElement.value.length > 0)) {
-    buttonElement.removeAttribute('disabled');
-  }
-});
-
-inputTextElement.addEventListener("input", () => {
-
-  if ((inputNameElement.value.length > 0) && (inputTextElement.value.length > 0)) {
-    buttonElement.removeAttribute('disabled');
-  }
-});
-
- 
-  const currentDate = new Date().toLocaleDateString('default', {day: '2-digit', month: '2-digit', year: '2-digit'}) + " "+ new Date().toLocaleTimeString().slice(0,-3);
-   
-  buttonElement.addEventListener("click", () => {
-    commentElement.innerHTML =
-      commentElement.innerHTML + `<li class="comment">
-          <div class="comment-header">
-            <div>${inputNameElement.value}</div>
-            <div>${currentDate}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${inputTextElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>`;
+    commentElement.insertAdjacentHTML('beforeend', `<li class="comment">
+      <div class="comment-header">
+        <div>${inputNameElement.value}</div>
+        <div>${currentDate}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">
+          ${inputTextElement.value}
+        </div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">0</span>
+          <button class="like-button -active-like"></button>
+        </div>
+      </div>
+    </li>`);
 
     inputNameElement.value = "";
     inputTextElement.value = "";
-  });
-//Удаление последнего комментария
-  buttonElementDel.addEventListener("click", () => {
-    const lastElement = commentElement.lastIndexOf(commentElement.innerHTML);  
-    lastElement.remove();
+  }
+});
 
-  }); 
+// Чтобы форма отправлялась клавишей Enter
+inputTextElement.addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    buttonElement.click();
+  }
+});
+//Удаление последнего комментария
+buttonElementDel.addEventListener("click", () => {
+  const lastElement = commentElement.lastChild;
+  commentElement.removeChild(lastElement);
+});
     //console.log("It works!");
   </script>
 </html>
