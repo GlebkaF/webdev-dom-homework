@@ -77,6 +77,7 @@
     const listCommentsElement = document.getElementById('list-comments');
     const likeButtonsElements = document.querySelectorAll('.likes')
 
+
   // пеносим данные из разметки в JS
 const comments = [
   {
@@ -84,14 +85,14 @@ const comments = [
     time: "12.02.22 12:18",
     comment: "Это будет первый комментарий на этой странице",
     likes: 3,
-    newLike: ''
+    isLiked: false
   },
   {
     name: "Варвара Н.",
     time: "13.02.22 19:22",
     comment: "Мне нравится как оформлена эта страница! ❤️",
     likes: 75,
-    newLike: ''
+    isLiked: false
   },
 ];
 
@@ -103,11 +104,13 @@ const initEventListeners = () => {
         const index = likesElement.dataset.index;
 
         console.log(comments[index].likes);
-        if (comments[index].newLike === '-active-like') {
-          comments[index].likes--
+        if (comments[index].isLiked) {
+          comments[index].isLiked = false;
+          comments[index].likes--;
+          
         } else {
-          comments[index].newLike = '-active-like';
-          comments[index].likes++
+          comments[index].isLiked = true;
+          comments[index].likes++;
         }
 
         renderComments();
@@ -116,6 +119,7 @@ const initEventListeners = () => {
       });
     }
   };
+
   
 // рендер
 const renderComments = () => {
@@ -133,7 +137,7 @@ const renderComments = () => {
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${comments[index].likes}</span>
-              <button data-index= "${index}" class="like-button ${comment.newLike}"></button>
+              <button data-index= "${index}" class="like-button -active-like ${comment.isLiked}"></button>
             </div>
           </div>
         </li> `
@@ -175,7 +179,7 @@ const renderComments = () => {
       time: new Date().toLocaleString(),
       comment: textElement.value,
       likes: 0,
-      newLike: ''
+      isLiked: ''
       });
       renderComments();
     }
