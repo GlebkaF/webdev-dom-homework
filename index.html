@@ -1,137 +1,159 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>Проект "Комменты"</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
 
-<head>
-  <title>Проект "Комменты"</title>
-  <meta charset="utf-8" />
-  <link rel="stylesheet" href="styles.css" />
-</head>
-
-<body>
-  <div class="container">
-    <ul id="list" class="comments">
-      <!-- Список рендерится JS -->
-    </ul>
-    <div id="add-form" class="add-form">
-      <input id="add-form-name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
-      <textarea id="add-form-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
-        rows="4"></textarea>
-      <div class="add-form-row">
-        <button id="add-form-button" class="add-form-button">Написать</button>
-        <button id="remove-last-com" class="remove-last-com">
-          Удалить последний
-        </button>
+  <body>
+    <div class="container">
+      <ul id="list" class="comments">
+        <!-- Список рендерится JS -->
+      </ul>
+      <div id="add-form" class="add-form">
+        <input
+          id="add-form-name"
+          type="text"
+          class="add-form-name"
+          placeholder="Введите ваше имя"
+        />
+        <textarea
+          id="add-form-text"
+          type="textarea"
+          class="add-form-text"
+          placeholder="Введите ваш коментарий"
+          rows="4"
+        ></textarea>
+        <div class="add-form-row">
+          <button id="add-form-button" class="add-form-button">Написать</button>
+          <button id="remove-last-com" class="remove-last-com">
+            Удалить последний
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-</body>
-<script>
-  "use strict";
-  // Код писать здесь
-  const nameEl = document.getElementById("add-form-name");
-  const textEl = document.getElementById("add-form-text");
-  const buttonEl = document.getElementById("add-form-button");
-  const buttonRemEl = document.getElementById("remove-last-com");
-  const listEl = document.getElementById("list");
-  const formEl = document.getElementById("add-form");
-  const date = new Date();
-  const options1 = {
-    year: "2-digit",
-    month: "2-digit",
-    day: "2-digit",
-  };
-  const options2 = {
-    hour: "numeric",
-    minute: "numeric",
-  };
-  let currentDate = `${date.toLocaleString("ru", options1)} ${date.toLocaleString("ru", options2)}`
+  </body>
+  <script>
+    "use strict";
+    // Код писать здесь
+    const nameEl = document.getElementById("add-form-name");
+    const textEl = document.getElementById("add-form-text");
+    const buttonEl = document.getElementById("add-form-button");
+    const buttonRemEl = document.getElementById("remove-last-com");
+    const listEl = document.getElementById("list");
+    const formEl = document.getElementById("add-form");
+    const date = new Date();
+    const options1 = {
+      year: "2-digit",
+      month: "2-digit",
+      day: "2-digit",
+    };
+    const options2 = {
+      hour: "numeric",
+      minute: "numeric",
+    };
+    let currentDate = `${date.toLocaleString(
+      "ru",
+      options1
+    )} ${date.toLocaleString("ru", options2)}`;
 
-  const comments = [
-    {
-      date: "12.02.22 12:18",
-      name: "Глеб Фокин",
-      text: "Это будет первый комментарий на этой странице",
-      like_active: false,
-      like_count: 3,
-      isEdit: false,
-    },
-    {
-      date: "13.02.22 19:22",
-      name: "Варвара Н.",
-      text: "Мне нравится как оформлена эта страница! ❤",
-      like_active: false,
-      like_count: 75,
-      isEdit: false,
-    },
-  ]
+    const comments = [
+      {
+        date: "12.02.22 12:18",
+        name: "Глеб Фокин",
+        text: "Это будет первый комментарий на этой странице",
+        like_active: false,
+        like_count: 3,
+        isEdit: false,
+      },
+      {
+        date: "13.02.22 19:22",
+        name: "Варвара Н.",
+        text: "Мне нравится как оформлена эта страница! ❤",
+        like_active: false,
+        like_count: 75,
+        isEdit: false,
+      },
+    ];
 
-
-  const initLikeButtonListener = () => {
-    const likeButtonElements = document.querySelectorAll(".like-button");
-    let count = 0
-    for (const likeButtonElement of likeButtonElements) {
-      likeButtonElement.addEventListener("click", () => {
-        const index = likeButtonElement.dataset.index;
-        if (!comments[index].like_active) {
-          count = comments[index].like_count++;
-          comments[index].like_active = true;
-        } else {
-          count = comments[index].like_count--;
-          comments[index].like_active = false;
-        } renderComments();
-      })
-    }
-  }
-
-  const initEditButtonlistener = () => {
-    const editButtonElements = document.querySelectorAll(".edit-button");
-    for (const editButtonElement of editButtonElements) {
-      editButtonElement.addEventListener("click", () => {
-        const index = editButtonElement.dataset.index;
-        comments[index].isEdit = true;
-        renderComments();
-      })
-    }
-  }
-
-  const initSaveButtonlistener = () => {
-    const saveButtonElements = document.querySelectorAll(".save-button");
-    for (const saveButtonElement of saveButtonElements) {
-      saveButtonElement.addEventListener("click", () => {
-        const index = saveButtonElement.dataset.index;
-        comments[index].isEdit = false;
-        comments[index].text = textEditElement();
-        renderComments();
-      })
-    }
-  }
-
-  const textEditElement = () => {
-    const textEditElements = document.querySelectorAll(".add-form-edit-text")
-    let text;
-    for (const textEditElement of textEditElements) {
-      const index = textEditElement.dataset.index;
-      comments[index].text = textEditElement.value;
-      text = comments[index].text;
-    } return text;
-  }
-
-
-  const renderComments = () => {
-    const commentsHtml = comments.map((comment, index) => {
-      let editComment = () => {
-        if (comment.isEdit) {
-          return `<textarea data-index="${index}" id="add-form-edit-text" type="textarea" class="add-form-edit-text" placeholder=""
-        rows="4">${comment.text}</textarea>`
-        } else { return `${comment.text}` }
+    const initLikeButtonListener = () => {
+      const likeButtonElements = document.querySelectorAll(".like-button");
+      let count = 0;
+      for (const likeButtonElement of likeButtonElements) {
+        likeButtonElement.addEventListener("click", () => {
+          const index = likeButtonElement.dataset.index;
+          if (!comments[index].like_active) {
+            count = comments[index].like_count++;
+            comments[index].like_active = true;
+          } else {
+            count = comments[index].like_count--;
+            comments[index].like_active = false;
+          }
+          renderComments();
+        });
       }
-      let saveButton = () => {
-        if (!comment.isEdit) { return `class="edit-button">Редактировать` } else { return `class="save-button">Сохранить` }
+    };
+
+    const initEditButtonlistener = () => {
+      const editButtonElements = document.querySelectorAll(".edit-button");
+      for (const editButtonElement of editButtonElements) {
+        editButtonElement.addEventListener("click", () => {
+          const index = editButtonElement.dataset.index;
+          comments[index].isEdit = true;
+          renderComments();
+        });
       }
-      let activeLike = () => {
-        if (comment.like_active) { return "-active-like" } else { return; }
+    };
+
+    const initSaveButtonlistener = () => {
+      const saveButtonElements = document.querySelectorAll(".save-button");
+      for (const saveButtonElement of saveButtonElements) {
+        saveButtonElement.addEventListener("click", () => {
+          const index = saveButtonElement.dataset.index;
+          comments[index].isEdit = false;
+          comments[index].text = textEditElement(index);
+          renderComments();
+        });
       }
-      return `<li class="comment">
+    };
+
+    const textEditElement = (index) => {
+      const textEditElements = document.querySelectorAll(".add-form-edit-text");
+      let text;
+      for (const textEditElement of textEditElements) {
+        const index = textEditElement.dataset.index;
+        comments[index].text = textEditElement.value;
+      }
+      return (text = comments[index].text);
+    };
+
+    const renderComments = () => {
+      const commentsHtml = comments
+        .map((comment, index) => {
+          let editComment = () => {
+            if (comment.isEdit) {
+              return `<textarea data-index="${index}" id="add-form-edit-text" type="textarea" class="add-form-edit-text" placeholder=""
+        rows="4">${comment.text}</textarea>`;
+            } else {
+              return `${comment.text}`;
+            }
+          };
+          let saveButton = () => {
+            if (!comment.isEdit) {
+              return `class="edit-button">Редактировать`;
+            } else {
+              return `class="save-button">Сохранить`;
+            }
+          };
+          let activeLike = () => {
+            if (comment.like_active) {
+              return "-active-like";
+            } else {
+              return;
+            }
+          };
+          return `<li class="comment">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div id="add-form-date">${comment.date}</div>
@@ -143,67 +165,68 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span data-index="${index}" class="likes-counter">${comment.like_count}</span>
+              <span data-index="${index}" class="likes-counter">${
+            comment.like_count
+          }</span>
               <button data-index="${index}" class="like-button ${activeLike()}"></button>
             </div>
             <div><button data-index="${index}" ${saveButton()}</button></div>
           </div>
         </li>`;
-    }).join("");
+        })
+        .join("");
 
-    listEl.innerHTML = commentsHtml;
+      listEl.innerHTML = commentsHtml;
 
-    buttonEl.disabled = true;
-    nameEl.addEventListener("input", evnt);
-    textEl.addEventListener("input", evnt);
-    function evnt() {
-      if (Text.value !== "") buttonEl.disabled = false;
-    }
-
-    formEl.addEventListener("keyup", (e) => {
-      if (e.code === "Enter") {
-        buttonEl.click();
+      buttonEl.disabled = true;
+      nameEl.addEventListener("input", evnt);
+      textEl.addEventListener("input", evnt);
+      function evnt() {
+        if (Text.value !== "") buttonEl.disabled = false;
       }
-    });
-    initLikeButtonListener();
-    initEditButtonlistener();
-    initSaveButtonlistener();
-  }
 
-  buttonEl.addEventListener("click", () => {
-    nameEl.classList.remove("add-form_error");
-    textEl.classList.remove("add-form_error");
-    if (nameEl.value === "" && textEl.value === "") {
-      nameEl.classList.add("add-form_error");
-      textEl.classList.add("add-form_error");
-      return;
-    } else if (nameEl.value === "") {
-      nameEl.classList.add("add-form_error");
-      return;
-    } else if (textEl.value === "") {
-      textEl.classList.add("add-form_error");
-      return;
-    }
-    comments.push({
-      date: currentDate,
-      name: nameEl.value,
-      text: textEl.value,
-      like_active: false,
-      like_count: 0,
-      isEdit: false,
+      formEl.addEventListener("keyup", (e) => {
+        if (e.code === "Enter") {
+          buttonEl.click();
+        }
+      });
+      initLikeButtonListener();
+      initEditButtonlistener();
+      initSaveButtonlistener();
+    };
+
+    buttonEl.addEventListener("click", () => {
+      nameEl.classList.remove("add-form_error");
+      textEl.classList.remove("add-form_error");
+      if (nameEl.value === "" && textEl.value === "") {
+        nameEl.classList.add("add-form_error");
+        textEl.classList.add("add-form_error");
+        return;
+      } else if (nameEl.value === "") {
+        nameEl.classList.add("add-form_error");
+        return;
+      } else if (textEl.value === "") {
+        textEl.classList.add("add-form_error");
+        return;
+      }
+      comments.push({
+        date: currentDate,
+        name: nameEl.value,
+        text: textEl.value,
+        like_active: false,
+        like_count: 0,
+        isEdit: false,
+      });
+
+      renderComments();
+    });
+    renderComments();
+
+    buttonRemEl.addEventListener("click", () => {
+      comments.pop();
+      renderComments();
     });
 
     renderComments();
-  });
-  renderComments();
-
-  buttonRemEl.addEventListener("click", () => {
-    comments.pop();
-    renderComments();
-  });
-
-  renderComments();
-
-</script>
-
+  </script>
 </html>
