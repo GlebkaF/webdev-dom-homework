@@ -70,37 +70,38 @@
   <script>
     "use strict";
     const buttonWrite = document.querySelector(".add-form-button");
-    const inputName = document.querySelector(".add-form-name");
-    const inputText = document.querySelector(".add-form-text");
-    const commentList = document.querySelector(".comments");
-    const currentDate =
-      new Date().toLocaleDateString("default", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "2-digit",
-      }) +
-      " " +
-      new Date().toLocaleTimeString().slice(0, -3);
+const inputName = document.querySelector(".add-form-name");
+const inputText = document.querySelector(".add-form-text");
+const commentList = document.querySelector(".comments");
 
-    buttonWrite.addEventListener("click", () => {
-      inputName.classList.remove("error");
-      inputText.classList.remove("error");
+buttonWrite.addEventListener("click", () => {
+  inputName.classList.remove("error");
+  inputText.classList.remove("error");
 
-      const nameValue = inputName.value.trim();
-      const commentValue = inputText.value.trim();
+  const nameValue = inputName.value.trim();
+  const commentValue = inputText.value.trim();
 
-      if (nameValue === "") {
-        inputName.classList.add("error");
-        return;
-      } else if (commentValue === "") {
-        inputText.classList.add("error");
-        return;
-      }
+  if (nameValue === "") {
+    inputName.classList.add("error");
+    return;
+  } else if (commentValue === "") {
+    inputText.classList.add("error");
+    return;
+  }
 
-      const oldListElement = commentList.innerHTML;
-      commentList.innerHTML =
-        oldListElement +
-        `
+  const currentDate =
+    new Date().toLocaleDateString("default", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "2-digit",
+    }) +
+    " " +
+    new Date().toLocaleTimeString().slice(0, -3);
+
+  const oldListElement = commentList.innerHTML;
+  commentList.innerHTML =
+    oldListElement +
+    `
     <li class="comment">
       <div class="comment-header">
         <div>${nameValue}</div>
@@ -119,16 +120,16 @@
       </div>
     </li>`;
 
-      inputName.value = "";
-      inputText.value = "";
-    });
+  inputName.value = "";
+  inputText.value = "";
+});
 
-    inputName.addEventListener("input", () => {
-      inputName.classList.remove("error");
-    });
+inputName.addEventListener("input", () => {
+  inputName.classList.remove("error");
+});
 
-    inputText.addEventListener("input", () => {
-      inputText.classList.remove("error");
-    });
+inputText.addEventListener("input", () => {
+  inputText.classList.remove("error");
+});
   </script>
 </html>
