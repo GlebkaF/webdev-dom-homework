@@ -36,7 +36,6 @@
   </body>
   <script>
     "use strict";
-    // Код писать здесь
     const nameEl = document.getElementById("add-form-name");
     const textEl = document.getElementById("add-form-text");
     const buttonEl = document.getElementById("add-form-button");
@@ -128,6 +127,19 @@
       return (text = comments[index].text);
     };
 
+    const initReplayListener = () => {
+      const replayComments = document.querySelectorAll(".comment-text");
+      for (const replayComment of replayComments) {
+        replayComment.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const index = replayComment.dataset.index;
+          textEl.innerHTML = `QUOTE_BEGIN ${comments[index].name} \n\n &gt; ${comments[index].text} QUOTE_END`;
+          console.log(textEl.innerHTML);
+          renderComments();
+        });
+      }
+    };
+
     const renderComments = () => {
       const commentsHtml = comments
         .map((comment, index) => {
@@ -159,7 +171,7 @@
             <div id="add-form-date">${comment.date}</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
+            <div data-index="${index}" class="comment-text">
               ${editComment()}
             </div>
           </div>
@@ -185,14 +197,16 @@
         if (Text.value !== "") buttonEl.disabled = false;
       }
 
-      formEl.addEventListener("keyup", (e) => {
-        if (e.code === "Enter") {
-          buttonEl.click();
-        }
-      });
+      // formEl.addEventListener("keyup", (e) => {
+      //   if (e.code === "Enter") {
+      //     buttonEl.click();
+      //   }
+      // });
+
       initLikeButtonListener();
       initEditButtonlistener();
       initSaveButtonlistener();
+      initReplayListener();
     };
 
     buttonEl.addEventListener("click", () => {
@@ -217,7 +231,7 @@
         like_count: 0,
         isEdit: false,
       });
-
+      console.log(textEl.value);
       renderComments();
     });
     renderComments();
