@@ -133,8 +133,7 @@
         replayComment.addEventListener("click", (event) => {
           event.stopPropagation();
           const index = replayComment.dataset.index;
-          textEl.innerHTML = `QUOTE_BEGIN ${comments[index].name} \n\n &gt; ${comments[index].text} QUOTE_END`;
-          console.log(textEl.innerHTML);
+          textEl.innerHTML = `QUOTE_BEGIN ${comments[index].name} \n ${comments[index].text} QUOTE_END`;
           renderComments();
         });
       }
@@ -171,7 +170,7 @@
             <div id="add-form-date">${comment.date}</div>
           </div>
           <div class="comment-body">
-            <div data-index="${index}" class="comment-text">
+            <div data-index="${index}" class="comment-text" style="white-space:pre-line">
               ${editComment()}
             </div>
           </div>
@@ -182,7 +181,7 @@
           }</span>
               <button data-index="${index}" class="like-button ${activeLike()}"></button>
             </div>
-            <div><button data-index="${index}" ${saveButton()}</button></div>
+            <div><button disabled data-index="${index}" ${saveButton()}</button></div>
           </div>
         </li>`;
         })
@@ -204,7 +203,7 @@
       // });
 
       initLikeButtonListener();
-      initEditButtonlistener();
+      //initEditButtonlistener();
       initSaveButtonlistener();
       initReplayListener();
     };
@@ -223,15 +222,29 @@
         textEl.classList.add("add-form_error");
         return;
       }
+
+      const nameValue = nameEl.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+
+      const textValue = textEl.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+        .replaceAll("QUOTE_END", "</div>");
+
       comments.push({
         date: currentDate,
-        name: nameEl.value,
-        text: textEl.value,
+        name: nameValue,
+        text: textValue,
         like_active: false,
         like_count: 0,
         isEdit: false,
       });
-      console.log(textEl.value);
       renderComments();
     });
     renderComments();
