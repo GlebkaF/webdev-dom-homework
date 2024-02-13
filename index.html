@@ -135,6 +135,7 @@
           const index = replayComment.dataset.index;
           textEl.innerHTML = `QUOTE_BEGIN ${comments[index].name} \n ${comments[index].text} QUOTE_END`;
           renderComments();
+          //console.log(textEl.innerHTML);
         });
       }
     };
@@ -196,16 +197,18 @@
         if (Text.value !== "") buttonEl.disabled = false;
       }
 
-      // formEl.addEventListener("keyup", (e) => {
-      //   if (e.code === "Enter") {
-      //     buttonEl.click();
-      //   }
-      // });
+      formEl.addEventListener("keyup", (e) => {
+        if (!e.shiftKey && e.code === "Enter") {
+          buttonEl.click();
+        }
+      });
 
       initLikeButtonListener();
       //initEditButtonlistener();
       initSaveButtonlistener();
       initReplayListener();
+
+      //console.log("обнуленный после рендера");
     };
 
     buttonEl.addEventListener("click", () => {
@@ -245,10 +248,17 @@
         like_count: 0,
         isEdit: false,
       });
+
+      //console.log(textEl.value);
+
+      // nameEl.value = "";
+      // textEl.value = "";
+
+      //console.log("обнуление переменной");
+
       renderComments();
     });
-    renderComments();
-
+    
     buttonRemEl.addEventListener("click", () => {
       comments.pop();
       renderComments();
