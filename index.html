@@ -8,41 +8,8 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Богдан П.</div>
-            <div>12.02.23 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Ангелина К.</div>
-            <div>13.02.23 19:23</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+      <ul class="comments" id="comments">
+       <!-- список рендерится из JS -->
       </ul>
       <div class="add-form">
         <input
@@ -74,8 +41,11 @@
     const nameInputElement = document.querySelector(".add-form-name");
     const textInputElement = document.querySelector(".add-form-text");
     const buttonElement = document.querySelector(".add-form-button");
-
-    const commentList = document.querySelector(".comments")
+    const commentsListElements = document.getElementById("comments");
+    const commentsList = document.querySelectorAll(".comments");
+    const commentElement = document.querySelectorAll(".comment");
+    const likesButtonElement = document.querySelectorAll(".like-button");
+    const likesCounterElement = document.querySelectorAll(".likes-counter");
 
     function input() {
       if (nameInputElement == "" || textInputElement == ""){
@@ -84,9 +54,56 @@
         buttonElement.removeAttribute("disabled");
       }
     }
-
     nameInputElement.addEventListener("input", input);
     textInputElement.addEventListener("input", input);
+
+    const commentsListData = [{
+        name: "Богда П.",
+        comment: "Это будет первый комментарий на этой странице",
+        like: 3,
+        isLike: false,
+      },
+      {
+        name: "Ангелина К.",
+        comment: "Мне нравится как оформлена эта страница! ❤",
+        like: 75,
+        isLike: false,
+    }]; 
+
+    const initEventListener = () => {
+    const likesButtonElement = document.querySelectorAll('.like-button');
+    for (const likeButtonElement of likesButtonElement) {
+      likeButtonElement.addEventListener("click", () => {
+        const index = likeButtonElement.dataset.index; //получили конкретный лайк
+        if (commentsListData[index].isLike === false) { //если не поставлен
+        commentsListData[index].isLike = true; //ставим
+        commentsListData[index].like++; //и +1 к счетчику лайков
+        } else { //в ином случае
+        commentsListData[index].isLike = false; //убираем
+        commentsListData[index].like--; //вычитаем лайк
+      }
+      renderCommentsList() //рендерим сразу
+      })
+    }
+    };
+
+    const answerCommentListener = () => {
+    const commentsElement = document.querySelectorAll(".comment");
+      for (const commentElement of commentsElement) {
+        commentElement.addEventListener("click", () => {
+          const index = commentElement.dataset.index;
+          commentElement.value = commentsListData[index].comment + commentsListData[index].name;
+        console.log("index");
+        })
+      }
+    };
+    
+    answerCommentListener();
+
+    initEventListener();
+
+
+
 
     buttonElement.addEventListener('click', () => {
       nameInputElement.classList.remove("error");
@@ -98,35 +115,80 @@
         textInputElement.classList.add("error")
         return;
       }
+    
 
-      //buttonElement.addEventListener("click", addNewComment);
-      
-      //function addNewComment() { 
-      //let commentList = document.querySelector(".comments")
-      //commentList.innerHTML +=
-      const oldListElement = commentList.innerHTML;
-      commentList.innerHTML = oldListElement +  `
-        <li class="comment">
-          <div class="comment-header">
-            <div>${nameInputElement.value}</div>
+    
+      const renderCommentsList = () => {
+      const commentsListHTML = commentsListData.map((com, index) => {
+        //const oldListElement = commentList.innerHTML;
+        //commentList.innerHTML = oldListElement +  `
+        //<li class="comment">  
+        return `<li class="comment" id="comment" data-index="${index}">
+          <div class="comment-header" >
+            <div>${com.name}</div>
             <div>${(new Date()).toLocaleString() }</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${textInputElement.value}
+              ${com.comment}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter"></span>
-              <button class="like-button"></button>
+              <button class="${com.isLike ? 'like-button -active-like' : 'like-button'}" data-index="${index}"></button>
             </div>
           </div>
         </li>`;
+        })
+        .join('');
+        commentsListElements.innerHTML = commentsListHTML;
+        initEventListener();
+      }
+
+      renderCommentsList();
+
+      nameInputElement.addEventListener("click", () => {
+      const allcomments = commentsListElements.innerHTML;
+      nameInputElement.style.backgroundColor = "";
+      if (nameInputElement.value === "") {
+        nameInputElement.style.backgroundColor = "red";
+        return;
+      }
+      textInputElement.style.backgroundColor = "";
+      if (textInputElement.value === "") {
+        textInputElement.style.backgroundColor = "red";
+        return;
+      }
+
+      commentsListData.push({
+      name: nameInputElement.value
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll("&", "&amp;")
+        .replaceAll('"', "&quot;"),
+      comment: textInputElement.value
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll("&", "&amp;")
+        .replaceAll('"', "&quot;"),
+      like: likesCounterElement.value,
+      isLike: likesButtonElement.value,
+    });
+
+
+      nameInputElement.value = ""
+      textInputElement.value = ""
+      likesCounterElement.value = ""
+      likesButtonElement.value = ""
       
-        nameInputElement.value = "";
-        textInputElement.value = "";
-      })
+      renderCommentsList();
+    })
+
+    })
+    
+  
+
     console.log("It works!");
   </script>
 </html>
