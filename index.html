@@ -134,7 +134,11 @@
       method: "GET",
       })
       .then((result) => {
-        return result.json();
+        if (result.status === 200) {
+          return result.json();
+        } else {
+          throw new Error("Cервер не отвечает");
+        }
       })
       .then((resultData) => {
         const resultComments = resultData.comments.map((comment) => {
@@ -154,9 +158,11 @@
       .then((resultData) => {
         //console.log('Загрузка страницы = ' + isLoadedPage);
         loaderPage.style.display = "none";
+      })
+      .catch((error) => {
+        alert("Упс, сервер упал")
       });
     }
-
     mapData();    
 
     // const jsonArr = JSON.stringify(comments);
@@ -351,7 +357,6 @@
               alert("Кажется, у вас сломался интернет, попробуйте позже");
               buttonAddComment.disabled = false;
             }
-            
           });
         }
 
