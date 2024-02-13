@@ -10,7 +10,8 @@
 <body>
   <div class="container">
     <ul class="comments" id="comments-id">
-      <li class="comment" id="comment-id">
+      <!--Разметка реализована и добавляется через JS
+      <li class="comment">
         <div class="comment-header">
           <div>Глеб Фокин</div>
           <div>12.02.22 12:18</div>
@@ -43,7 +44,7 @@
             <button class="like-button -active-like" id="add-like"></button>
           </div>
         </div>
-      </li>
+      </li> -->
     </ul>
     <div class="add-form">
       <input type="text" class="add-form-name" id="add-form-name-id" placeholder="Введите ваше имя" />
@@ -58,7 +59,7 @@
 
 <script>
   const buttonElement = document.getElementById("add-form-button-id");
-  const commentId = document.getElementById("comments-id")
+  const commentListEl = document.getElementById("comments-id")
   const nameId = document.getElementById("add-form-name-id")
   const commentAdd = document.getElementById("add-form-text-id")
   let currentDate = new Date();
@@ -69,6 +70,67 @@
   let minutes = ('0' + currentDate.getMinutes()).slice(-2);
   let formattedDateTime = day + '.' + month + '.' + year + ' ' + hours + ':' + minutes;
 
+  const commentArr = [
+    {
+      name: `Глеб Фокин`,
+      date: `12.02.22 12:18`,
+      text: `Это будет первый комментарий на этой странице`,
+      quantityLike: 3,
+      isLike: false
+    },
+    {
+      name: `Варвара Н`,
+      date: `12.02.22 12:18`,
+      text: `Мне нравится как оформлена эта страница! ❤`,
+      quantityLike: 75,
+      isLike: true
+    },
+  ];
+  const initLikeListener = () => {
+    const likeButtonList = document.querySelectorAll(".like-button")
+    console.log(likeButtonList)
+    for (const likeButtonElement of likeButtonList) {
+      likeButtonElement.addEventListener("click", () => {
+        const index = likeButtonElement.dataset.like
+        if (commentArr[index].isLike) {
+          commentArr[index].isLike = false
+          commentArr[index].quantityLike -= 1
+        } else {
+          commentArr[index].isLike = true
+          commentArr[index].quantityLike += 1
+        }
+        renderComments();
+      })
+    }
+  };
+ 
+  const renderComments = () => {
+    const commentHtml = commentArr
+      .map((comment, index) => {
+        return `<li class="comment">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.quantityLike}</span>
+              <button class="like-button ${comment.isLike ? "-active-like" : ""}" data-like="${index}"></button>
+            </div>
+          </div>
+        </li>`
+      })
+      .join("");
+    commentListEl.innerHTML = commentHtml;
+    initLikeListener();
+  }
+  renderComments();
+
   buttonElement.addEventListener("click", () => {
     nameId.classList.remove("error");
     commentAdd.classList.remove("error");
@@ -78,38 +140,25 @@
       commentAdd.classList.add("error")
       return;
     }
-    const newCommentHtml = commentId.innerHTML;
-    commentId.innerHTML =
-      newCommentHtml +
-      `<li class="comment">
-          <div class="comment-header">
-            <div>${nameId.value}</div>
-            <div>${formattedDateTime}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${commentAdd.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
 
+    commentArr.push({
+      name: nameId.value,
+      date: formattedDateTime,
+      text: commentAdd.value,
+      quantityLike: 0,
+      isLike: false,
+    });
+    renderComments();
     nameId.value = "";
     commentAdd.value = "";
-  }); 
+  });
 
-  //Ниже я размышлял как реализовать счетчик для лайков, но потом понял что это не обязательно на текущем этапе, завершу позднее сам.
+  // const buttonLike = document.getElementById("add-like");
+  // const likesCounter = document.getElementById("likes-counter-id")
+  // buttonLike.addEventListener("click", () => {
 
-  /*const buttoneLike = document.getElementById("add-like");
-  const likesCounter = document.getElementById("like-counter-id")
-  buttoneLike.addEventListener("click", () => {
-
-  });*/
+  // });
+  
 </script>
 
 </html>
