@@ -1,5 +1,6 @@
 
-import { getComments, } from './api.js'
+import { getComments, postComments } from './api.js';
+
 
 
 //переменные для работы
@@ -26,25 +27,7 @@ waitDeleteElement.classList.add("edit-none");
 
 
 //создание массива
-let comments = [/*
-    {
-      name: "Глеб Фокин",
-      date: "12.02.22 12:18",
-      text: "Это будет первый комментарий на этой странице",
-      likesCounter: 3,
-      itLikes: false,
-      original: '',
-      answer: '',
-    },
-    {
-      name: "Варвара Н.",
-      date: "13.02.22 19:22",
-      text: "Мне нравится как оформлена эта страница! ❤",
-      likesCounter: 75,
-      itLikes: false,
-      original: '',
-      answer: '',
-    },*/
+let comments = [
 ]
 
 //запрос на получение данных с сервера
@@ -96,16 +79,6 @@ function delay(interval = 300) {
     }, interval);
   });
 }
-
-//вариант имимтации загрузки данных
-/*delay(2000).then(() => {
-  comment.likes = comment.isLiked
-    ? comment.likes - 1
-    : comment.likes + 1;
-  comment.isLiked = !comment.isLiked;
-  comment.isLikeLoading = false;
-  renderComments();
-});*/
 
 
 
@@ -159,17 +132,6 @@ const InitEditComments = () => {
     });
   };
 }
-
-// вариант для редактирования комментария:
-/* <div class="comment-footer">
-          <div class="redact">
-             ${comment.isEdit ?
-                 '<textarea type="textarea" class="add-form-text" rows="4">${comment.text}</textarea>
-                  <button class="redact-button" data-index="${index}">Сохранить</button>' :
-                 '<button class="redact-button" data-index="${index}">Редактировать</button>"'
-          </div>    
-       </div>*/
-
 
 
 
@@ -244,30 +206,6 @@ renderComments();
 InitDeleteComment();
 
 
-//ввод данных в поля ввода (проверки)
-/* nameInputElement.addEventListener('click', () => {
-   nameInputElement.classList.remove("error");
-   if (nameInputElement.value === '') {
-     buttonElement.disabled = true;
-     buttonElement.classList.add("click-none");
-     return;
-   }
-   buttonElement.disabled = false;
-   buttonElement.classList.remove("click-none");
- })
- 
- commentInputElement.addEventListener('click', () => {
-   commentInputElement.classList.remove("error");
-   if (commentInputElement.value === '') {
-     buttonElement.disabled = true;
-     buttonElement.classList.add("click-none");
-     return;
-   }
-   buttonElement.disabled = false;
-   buttonElement.classList.remove("click-none");
- })*/
-
-
 
 
 //функция добавления комментария (по клику)
@@ -275,20 +213,21 @@ function buttonClick() {
   nameInputElement.classList.remove("error");
   commentInputElement.classList.remove("error");
   buttonElement.classList.remove("click-none");
-  //buttonElement.disabled = false;
   if (nameInputElement.value === '') {
     nameInputElement.classList.add("error");
     buttonElement.classList.add("click-none");
-    //buttonElement.disabled = true;
     return;
   } else if (commentInputElement.value === '') {
     commentInputElement.classList.add("error");
     buttonElement.classList.add("click-none");
-    //buttonElement.disabled = true;
     return;
   };
   let myDate = new Date();
-  /*comments.push({
+  DeleteButtonElement.disabled = true;
+  DeleteButtonElement.classList.add("click-none");
+  waitFormElement.classList.add("edit-none");
+  waitElement.classList.remove("edit-none");
+  postComments({
     name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
     date: myDate.getDate() + ":" + (myDate.getMonth() + 1) +
       ":" + myDate.getFullYear() + " " + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds(),
@@ -297,39 +236,8 @@ function buttonClick() {
     itLikes: false,
     original: `${commentInputElement.value.includes(originalComment) ? originalComment : ''}`,
     answer: '',
-  });*/
-  DeleteButtonElement.disabled = true;
-  DeleteButtonElement.classList.add("click-none");
-  waitFormElement.classList.add("edit-none");
-  waitElement.classList.remove("edit-none");
-  // buttonElement.textContent = "Ваш омментарий добавляется...";
-  //buttonElement.classList.add("click-none");
-  //const clickFetchPromise = () => {
-  fetch('https://wedev-api.sky.pro/api/v1/:Tatyana-JSc2/comments', {
-    method: "POST",
-    body: JSON.stringify
-      ({
-        name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-        date: myDate.getDate() + ":" + (myDate.getMonth() + 1) +
-          ":" + myDate.getFullYear() + " " + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds(),
-        text: commentInputElement.value.replace(originalComment, '').replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-        likesCounter: 0,
-        itLikes: false,
-        original: `${commentInputElement.value.includes(originalComment) ? originalComment : ''}`,
-        answer: '',
-        isLikeLoading: false,
-        forceError: true,
-      })
-  }).then((response) => {
-    if (response.status === 400) {
-      throw new Error("Введенные имя или комментарий короче 3-х знаков");
-    } else if (response.status === 500) {
-      throw new Error("Сервер упал.");
-    } else if (response.status !== 201) {
-      throw new Error("Отсутствует интернет");
-    } else {
-      return response.json();
-    };
+    isLikeLoading: false,
+    forceError: true,
   }).then(() => {
     return fetchPromise();
   }).then((data) => {
@@ -339,8 +247,6 @@ function buttonClick() {
     waitElement.classList.add("edit-none");
     nameInputElement.value = '';
     commentInputElement.value = '';
-    //buttonElement.textContent = "Написать";
-    //buttonElement.classList.remove("click-none");
   }).catch((error) => {
     if (error.message === "Введенные имя или комментарий короче 3-х знаков") {
       alert("Ваше имя или Ваш комментарий короче 3-х знаков. Попробуйте еще раз!");
@@ -350,16 +256,14 @@ function buttonClick() {
     } else {
       alert("Что-то пошло не так, попробуйте позже...");
     };
-    console.warn(error);
+    console.warn(error)
     DeleteButtonElement.disabled = false;
     DeleteButtonElement.classList.remove("click-none");
     waitFormElement.classList.remove("edit-none");
     waitElement.classList.add("edit-none");
   });
   renderComments();
-  //};
-
-};
+}
 
 
 
