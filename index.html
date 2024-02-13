@@ -43,80 +43,68 @@
   const buttonWrite = document.querySelector('.add-form-button');
   const commentList = document.querySelector('.comments');
   const currentDate = new Date().toLocaleDateString('default', { day: '2-digit', month: '2-digit', year: '2-digit' }) + " " + new Date().toLocaleTimeString().slice(0, -3);
-  const preloader = document.querySelector('.preloader');
 
-  let comments = [];
+  const comments = [
+    {
+      name: "Глеб Фокин",
+      date: "12.02.22 12:18",
+      text: "Это будет первый комментарий на этой странице",
+      likeConfirm: " ",
+      likesCounter: 3,
+    },
+    {
+      name: "Варвара Н.",
+      date: "13.02.22 19:22",
+      text: "Мне нравится как оформлена эта страница! ❤",
+      likeConfirm: "-active - like",
+      likesCounter: 75,
+    },
+  ];
 
-  fetch("https://wedev-api.sky.pro/api/v1/alexandrova-julia/comments", {
-    method: "GET"
-  }).then((response) => {
-    response.json().then((responseData) => {
-      comments = responseData.comments.map((comment) => {
-        return {
-          name: comment.author.name,
-          date: new Date(comment.date).toLocaleDateString() + " " + (new Date(comment.date).getHours() < 10 ? '0' + new Date(comment.date).getHours() : new Date(comment.date).getHours()) + ":" + (new Date(comment.date).getMinutes() < 10 ? '0' + new Date(comment.date).getMinutes() : new Date(comment.date).getMinutes()) + ":" + (new Date(comment.date).getSeconds() < 10 ? '0' + new Date(comment.date).getSeconds() : new Date(comment.date).getSeconds()),
-          isLiked: comment.isLiked,
-          likes: comment.likes,
-          text: comment.text,
-        };
-      });
-      renderComments();
-      preloader.classList.add('hide');
-    });
-  });
+  function putLikeButton() {
+    const likesButton = document.querySelectorAll('.like-button');
+    for (const like of likesButton) {
+      like.addEventListener("click", () => {
+        const index = like.dataset.index;
 
-  const sanitizeHtml = (htmlString) => {
-    return htmlString.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-  }
-
-  const initLikesListeners = () => {
-    const likeButtonsElements = document.querySelectorAll(".like-button");
-
-    for (const likeButtonElement of likeButtonsElements) {
-      likeButtonElement.addEventListener("click", (event) => {
-        event.stopPropagation();
-        const index = likeButtonElement.dataset.index;
-        const comment = comments[index];
-
-        comment.likes = comment.isLiked
-          ? comment.likes - 1
-          : comment.likes + 1;
-
-        comment.isLiked = !comment.isLiked;
-        renderComments();
-      });
-    }
-
-    for (const comment of document.querySelectorAll(".comment")) {
-      comment.addEventListener("click", () => {
-        const currentPost = comments[comment.dataset.index];
-        inputText.value = `%BEGIN_QUOTE${currentPost.name} : ${currentPost.text}END_QUOTE%`;
-      });
+        if (comments[index].likeConfirm == "-active - like") {
+          commentList[index].likesCounter--;
+          commentList[index].likeConfirm == " ";
+          renderComments();
+        } else {
+          commentList[index].likesCounter++;
+          commentList[index].likeConfirm == "-active - like";
+          renderComments();
+        }
+      })
     }
   };
 
   const renderComments = () => {
-    commentList.innerHTML = comments.map((comment, index) => {
-      return `<li class="comment" data-index="${index}">
-    <div class="comment-header">
-      <div>${comment.name}</div>
-      <div>${comment.date},</div>
-    </div>
-      <div class="comment-body">
-      <div class="comment-text">
-      ${comment.text.replaceAll("%BEGIN_QUOTE", "<div class='quote'>").replaceAll("END_QUOTE%", "</div>")}
-      </div>
-    </div>
-    <div class="comment-footer">
-      <div class="likes">
-        <span class="likes-counter">${comment.likes}</span>
-        <button data-index=${index}" class="like-button ${comment.isLiked ? "-active-like" : ""}"></button>
-      </div>
-    </div>
-      </li>`
-    }).join("");
-    initLikesListeners();
-  }
+    const commentsHtml = comments
+      .map((comment, index) => {
+        return `<li class="comment">
+        <div class="comment-header">
+          <div>${comment.name}</div>
+          <div>${comment.date}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${comment.text}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${comment[index].likesCounter}</span>
+            <button data-index=${index} class="like-button"></button>
+          </div>
+        </div>
+      </li>`;
+      })
+      .join("");
+    commentList.innerHTML = commentsHtml;
+    putLikeButton();
+  };
   renderComments();
 
   buttonWrite.addEventListener("click", () => {
@@ -128,45 +116,14 @@
     } else if (inputText.value.trim() === "" || inputText.value === null) {
       inputText.classList.add("error");
       return;
-    };
-
-    buttonWrite.disabled = true;
-    buttonWrite.textContent = "Комментарий добавляется...";
-
-    fetch("https://wedev-api.sky.pro/api/v1/alexandrova-julia/comments", {
-      method: "POST",
-      body: JSON.stringify({
-        name: inputName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-        text: inputText.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-      }),
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((responseData) => {
-        return fetch("https://wedev-api.sky.pro/api/v1/alexandrova-julia/comments", {
-          method: "GET",
-        });
-      })
-      .then((response) => {
-        return response.json();
-      })
-      .then((responseData) => {
-        comments = responseData.comments.map((comment) => {
-          return {
-            name: comment.author.name,
-            date: new Date(comment.date).toLocaleDateString() + " " + (new Date(comment.date).getHours() < 10 ? '0' + new Date(comment.date).getHours() : new Date(comment.date).getHours()) + ":" + (new Date(comment.date).getMinutes() < 10 ? '0' + new Date(comment.date).getMinutes() : new Date(comment.date).getMinutes()) + ":" + (new Date(comment.date).getSeconds() < 10 ? '0' + new Date(comment.date).getSeconds() : new Date(comment.date).getSeconds()),
-            isLiked: comment.isLiked,
-            likes: comment.likes,
-            text: comment.text,
-          };
-        });
-        renderComments();
-      })
-      .then((data) => {
-        buttonWrite.disabled = false;
-        buttonWrite.textContent = "Написать";
-      });
+    }
+    comments.push({
+      name: inputName.value,
+      date: currentDate,
+      text: inputText.value,
+      likeConfirm: false,
+      likesCounter: 0,
+    });
     renderComments();
     inputName.value = "";
     inputText.value = "";
