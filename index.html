@@ -44,19 +44,21 @@
   const listElement = document.getElementById("list");
   const nameInputElement = document.getElementById("name-input");
   const textAreaElement = document.getElementById("text-input");
+  // textAreaElement.insertAdjacentText('beforeend', '\n');
   const buttonElement = document.getElementById("write-button");
 
   // Функция для рендеринга списка комментариев
   function renderComments() {
     listElement.innerHTML = commentsData.map((comment, index) => {
+      const textWithHTML = comment.text.replaceAll("QUOTE_BEGIN", "<div class='quote'>").replaceAll("QUOTE_END", "</div>");
       return `
-            <li class="comment">
+            <li data-index="${index}" class="comment">
                 <div class="comment-header">
                     <div>${comment.author}</div>
                     <div>${comment.date}</div>
                 </div>
                 <div class="comment-body">
-                    <div class="comment-text">${comment.text}</div>
+                    <div class="comment-text">${textWithHTML}</div>
                 </div>
                 <div class="comment-footer">
                     <div class="likes">
@@ -70,6 +72,7 @@
 
 
     attachLikeButtonHandler();
+    initEditComments();
   }
 
   renderComments();
@@ -109,9 +112,17 @@
     }
 
     const newComment = {
-      author: nameInputElement.value,
+      author: nameInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       date: myDate,
-      text: textAreaElement.value,
+      text: textAreaElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       likes: 0,
       isLiked: false
     };
@@ -126,7 +137,8 @@
   function attachLikeButtonHandler() {
     const likeButtons = document.querySelectorAll('.like-button');
     for (const button of likeButtons) {
-      button.addEventListener('click', () => {
+      button.addEventListener('click', (event) => {
+        event.stopPropagation();
         const index = parseInt(button.dataset.index);
         const currentLikes = commentsData[index].likes;
         const isActive = commentsData[index].isLiked;
@@ -140,6 +152,20 @@
       });
     }
   }
+
+  function initEditComments() {
+    const editComments = document.querySelectorAll('.comment');
+    for (const editComment of editComments) {
+      editComment.addEventListener('click', () => {
+        const index = editComment.dataset.index;
+        const commentAuthor = `QUOTE_BEGIN${commentsData[index].author}:`;
+        const commentText = `${commentsData[index].text}QUOTE_END`;
+        textAreaElement.value = `${commentAuthor}\n${commentText}\n\n`;
+        renderComments();
+      })
+    }
+  }
+
 
 </script>
 
