@@ -160,7 +160,8 @@
         loaderPage.style.display = "none";
       })
       .catch((error) => {
-        alert("Упс, сервер упал")
+        alert("Упс, сервер упал");
+        loaderPage.style.display = "none";
       });
     }
     mapData();    
