@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="styles.css" />
-  <title>Document</title>
 
   <title>Комментарии</title>
   <style>
@@ -16,8 +15,11 @@
       background-color: #ffffffbe;
     }
 
-    .active-like {
-      color: red;
+    .like-button.active-like {
+
+      background-color: red;
+      color: white;
+      
     }
   </style>
 </head>
@@ -123,8 +125,8 @@
         .map((user, index) => {
           const likeButtonClass = user.liked ? "like-button active-like" : "like-button";
           const editButton = user.editing
-            ? `<button class="save-button" data-index="${index}">Сохринить</button>`
-            : `<button class="edit-button" data-index="${index}">Редактирввать</button>`;
+            ? `<button class="save-button" data-index="${index}">Сохранить</button>`
+            : `<button class="edit-button" data-index="${index}">Редактировать</button>`;
           const commentContent = user.editing
             ? `<textarea class="comment-edit" data-index="${index}">${user.text}</textarea>`
             : `<div class="comment-text">${user.text}</div>`;
@@ -153,7 +155,7 @@
 
     renderUsers();
 
-    // Лайки , Коментарий
+    // Лайки 
     commentsElement.addEventListener("click", (event) => {
       if (event.target.classList.contains("like-button")) {
         const index = event.target.dataset.index;
@@ -167,6 +169,8 @@
 
         user.liked = !user.liked;
         renderUsers();
+
+        event.target.classList.toggle("active-like"); // Добавляем/удаляем класс "active-like"
       }
 
       if (event.target.classList.contains("edit-button")) {
