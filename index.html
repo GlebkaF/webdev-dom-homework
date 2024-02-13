@@ -49,7 +49,7 @@
       name: "Глеб Фокин",
       date: "12.02.22 12:18",
       text: "Это будет первый комментарий на этой странице",
-      likeConfirm: " ",
+      likeConfirm: "",
       likesCounter: 3,
     },
     {
@@ -67,9 +67,9 @@
       like.addEventListener("click", () => {
         const index = like.dataset.index;
 
-        if (comments[index].likeConfirm == "-active - like") {
-          commentList[index].likesCounter--;
-          commentList[index].likeConfirm == " ";
+        if (comments.likeConfirm) {
+          commentList.likesCounter--;
+          commentList.likeConfirm == " ";
           renderComments();
         } else {
           commentList[index].likesCounter++;
@@ -95,11 +95,11 @@
         </div>
         <div class="comment-footer">
           <div class="likes">
-            <span class="likes-counter">${comment[index].likesCounter}</span>
-            <button data-index=${index} class="like-button"></button>
-          </div>
-        </div>
-      </li>`;
+            <span class="likes-counter">${comment.likesCounter}</span>
+            <button data-index=${index} class="like-button `${ comment.likeConfirm ? '-active-like' : ' ' } `"></button>
+          </div >
+        </div >
+      </li >`;
       })
       .join("");
     commentList.innerHTML = commentsHtml;
@@ -121,7 +121,7 @@
       name: inputName.value,
       date: currentDate,
       text: inputText.value,
-      likeConfirm: false,
+      likeConfirm: " ",
       likesCounter: 0,
     });
     renderComments();
