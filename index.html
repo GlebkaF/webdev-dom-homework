@@ -133,9 +133,8 @@
         replayComment.addEventListener("click", (event) => {
           event.stopPropagation();
           const index = replayComment.dataset.index;
-          textEl.innerHTML = `QUOTE_BEGIN ${comments[index].name} \n ${comments[index].text} QUOTE_END`;
+          textEl.value = `QUOTE_BEGIN ${comments[index].name} \n ${comments[index].text} QUOTE_END`;
           renderComments();
-          //console.log(textEl.innerHTML);
         });
       }
     };
@@ -207,8 +206,6 @@
       //initEditButtonlistener();
       initSaveButtonlistener();
       initReplayListener();
-
-      //console.log("обнуленный после рендера");
     };
 
     buttonEl.addEventListener("click", () => {
@@ -249,12 +246,8 @@
         isEdit: false,
       });
 
-      //console.log(textEl.value);
-
-      // nameEl.value = "";
-      // textEl.value = "";
-
-      //console.log("обнуление переменной");
+      nameEl.value = "";
+      textEl.value = "";
 
       renderComments();
     });
