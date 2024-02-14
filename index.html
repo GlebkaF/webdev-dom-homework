@@ -117,16 +117,16 @@
 
       newComments.push({
         name: nameInputElement.value
-          .replaceAll("&lt;", "<")
-          .replaceAll("&gt;", ">")
-          .replaceAll("&amp;", "&")
-          .replaceAll('&quot;', '"'),       
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),       
         time: getDate(),
         comments: commentInputElement.value
-          .replaceAll("&lt;", "<")
-          .replaceAll("&gt;", ">")
-          .replaceAll("&amp;", "&")
-          .replaceAll('&quot;', '"'),
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
         likes: 0,
         isLiked: false,
       });
@@ -198,14 +198,15 @@
     };
 
     renderComments();
+    
 
     
     function answerComment() {
       const commentsAnswer = document.querySelectorAll('.comment');
       const formText = document.querySelector('.add-form-text');
-      comments.forEach((comment, index) => {
+      commentsAnswer.forEach((comment, index) => {
         comment.addEventListener('click', () => {
-          formText.value = '$comments[index].name \n $comments[index].text'
+          formText.value = `> ${newComments[index].comments}\n ${newComments[index].name},`;
         })
       })
     }
