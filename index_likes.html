@@ -10,12 +10,12 @@
 <body>
     <div class="container">
         <ul id="list" class="comments">
-            
+
         </ul>
         <div class="add-form">
             <input id="add-name" value="" type="text" class="add-form-name" placeholder="Введите ваше имя" />
-            <textarea id="add-text" value="" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
-                rows="4"></textarea>
+            <textarea id="add-text.trim()" value="" type="textarea" class="add-form-text"
+                placeholder="Введите ваш коментарий" rows="4"></textarea>
             <div class="add-form-row">
                 <button id="button-add" class="add-form-button">Написать</button>
             </div>
@@ -45,13 +45,13 @@
         {
             name: "Варвара Н.",
             date: "13.02.22 19:22",
-            comment:"Второй комментарий",
+            comment: "Второй комментарий",
             likes: 75,
             isLiked: false,
         }
     ];
 
-// Making likes
+    // Making likes
     const initLikeListeners = () => {
         const likeButtons = document.querySelectorAll(".like-button");
         for (const likeButton of likeButtons) {
@@ -59,16 +59,16 @@
                 const index = likeButton.dataset.index;
                 studentsComments[index].likes += studentsComments[index].isLiked ? -1 : +1;
                 studentsComments[index].isLiked = !studentsComments[index].isLiked;
-               
+
                 renderStudentsComments();
 
             });
         };
 
     };
-   
 
-   // Render funct
+
+    // Render funct
     const renderStudentsComments = () => {
 
         const studentsHtml = studentsComments.map((student, index) => {
@@ -93,7 +93,7 @@
             .join("");
         listElement.innerHTML = studentsHtml;
         initLikeListeners();
-        
+
     }
 
     renderStudentsComments();
@@ -103,10 +103,10 @@
     buttonElement.addEventListener("click",
         () => {
             const currentDate = new Date();
-           const options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' };
-        
+            const options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' };
 
-// QA
+
+            // QA
             inputElement.classList.remove("error");
             textAreaElement.classList.remove("error");
 
@@ -130,9 +130,10 @@
 
             inputElement.value = '';
             textAreaElement.value = '';
+
         });
 
-    
+
     // Код писать здесь
     console.log("It works!");
 </script>
