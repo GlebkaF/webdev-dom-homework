@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Comments Project</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <div class="container">
+        <ul id="list" class="comments">
+            
+        </ul>
+        <div class="add-form">
+            <input id="add-name" value="" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+            <textarea id="add-text" value="" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+                rows="4"></textarea>
+            <div class="add-form-row">
+                <button id="button-add" class="add-form-button">Написать</button>
+            </div>
+        </div>
+    </div>
+</body>
+<style>
+    .error {
+        background-color: orangered;
+    }
+</style>
+<script>
+    "use strict";
+    const inputElement = document.getElementById('add-name');
+    const textAreaElement = document.getElementById('add-text');
+    const buttonElement = document.getElementById('button-add');
+    const listElement = document.getElementById('list');
+
+    let studentsComments = [
+        {
+            name: "Глеб Фокин",
+            date: "12.02.22 12:18",
+            comment: "Первый комментарий",
+            likes: 3,
+            isLiked: true,
+        },
+        {
+            name: "Варвара Н.",
+            date: "13.02.22 19:22",
+            comment:"Второй комментарий",
+            likes: 75,
+            isLiked: false,
+        }
+    ];
+
+// Making likes
+    const initLikeListeners = () => {
+        const likeButtons = document.querySelectorAll(".like-button");
+        for (const likeButton of likeButtons) {
+            likeButton.addEventListener('click', () => {
+                const index = likeButton.dataset.index;
+                studentsComments[index].likes += studentsComments[index].isLiked ? -1 : +1;
+                studentsComments[index].isLiked = !studentsComments[index].isLiked;
+               
+                renderStudentsComments();
+
+            });
+        };
+
+    };
+   
+
+   // Render funct
+    const renderStudentsComments = () => {
+
+        const studentsHtml = studentsComments.map((student, index) => {
+            return `<li class="comment">
+  <div class="comment-header">
+    <div>${student.name}</div>
+    <div>${student.date}</div>
+  </div>
+  <div class="comment-body">
+    <div class="comment-text" data-index="${index}">
+      ${student.comment}
+    </div>
+  </div>
+  <div class="comment-footer">
+    <div class="likes">
+      <span class="likes-counter">${student.likes}</span>
+      <button class="like-button ${studentsComments[index].isLiked ? "-active-like" : ""}" data-index="${index}"></button>
+    </div>
+  </div>
+</li>`;
+        })
+            .join("");
+        listElement.innerHTML = studentsHtml;
+        initLikeListeners();
+        
+    }
+
+    renderStudentsComments();
+
+
+    // New comments button
+    buttonElement.addEventListener("click",
+        () => {
+            const currentDate = new Date();
+           const options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+        
+
+// QA
+            inputElement.classList.remove("error");
+            textAreaElement.classList.remove("error");
+
+            if (inputElement.value === '') {
+                inputElement.classList.add("error");
+                if (textAreaElement.value === '') {
+                    textAreaElement.classList.add("error");
+                    return;
+                };
+                return;
+            };
+            const oldListHtml = listElement.innerHTML;
+            studentsComments.push({
+                name: inputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+                comment: textAreaElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+                date: currentDate.toLocaleString('ru-RU', options),
+                likes: 0,
+                isLiked: false,
+            });
+            renderStudentsComments();
+
+            inputElement.value = '';
+            textAreaElement.value = '';
+        });
+
+    
+    // Код писать здесь
+    console.log("It works!");
+</script>
+
+</html>
