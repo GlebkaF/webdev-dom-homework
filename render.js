@@ -1,4 +1,3 @@
-export { Render };
 import { comments } from './main.js';
 
 //переменные для работы
@@ -6,7 +5,7 @@ const listElement = document.getElementById("list");
 
 
 //рендерфункция
-function Render() {
+ export function Render() {
     const commentsHtml = comments.map((comment, index) => {
         return `<li class="comment">
           <div class="comment-header">
