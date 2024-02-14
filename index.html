@@ -75,6 +75,7 @@
   // Обработчик клика
   buttonElement.addEventListener("click", () => {
     nameInputElement.classList.remove("error");
+    commentInputElement.classList.remove("error");
 
     if (nameInputElement.value === "") {
       nameInputElement.classList.add("error");
@@ -84,18 +85,19 @@
       commentInputElement.classList.add("error");
       return;
     }
+
     // Управление внутренним html содержимым
     const oldListHtml = listElement.innerHTML;
     listElement.innerHTML =
       oldListHtml +
       `<li class="comment">
           <div class="comment-header">
-            <div>${nameInputElement.value}</div>
+            <div>${nameInputElement.value.trim()}</div>
             <div>${(new Date()).toLocaleString()}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${commentInputElement.value}
+              ${commentInputElement.value.trim()}
             </div>
           </div>
           <div class="comment-footer">
@@ -106,7 +108,9 @@
           </div>
         </li>`;
 
+
     nameInputElement.value = "";
+    commentInputElement.value = "";
   });
 
   console.log("It works!");
