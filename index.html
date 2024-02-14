@@ -77,11 +77,11 @@
     nameInputElement.classList.remove("error");
     commentInputElement.classList.remove("error");
 
-    if (nameInputElement.value === "") {
+    if (nameInputElement.value.trim() === "") {
       nameInputElement.classList.add("error");
       return;
     }
-    if (commentInputElement.value === "") {
+    if (commentInputElement.value.trim() === "") {
       commentInputElement.classList.add("error");
       return;
     }
@@ -92,12 +92,12 @@
       oldListHtml +
       `<li class="comment">
           <div class="comment-header">
-            <div>${nameInputElement.value.trim()}</div>
+            <div>${nameInputElement.value}</div>
             <div>${(new Date()).toLocaleString()}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${commentInputElement.value.trim()}
+              ${commentInputElement.value}
             </div>
           </div>
           <div class="comment-footer">
