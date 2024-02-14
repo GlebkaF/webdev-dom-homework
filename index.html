@@ -30,10 +30,6 @@
   .error {
     background-color: red;
   }
-
-  .hide {
-    display: none;
-  }
 </style>
 <script>
   "use strict";
@@ -49,14 +45,14 @@
       name: "Глеб Фокин",
       date: "12.02.22 12:18",
       text: "Это будет первый комментарий на этой странице",
-      likeConfirm: "",
+      likeConfirm: true,
       likesCounter: 3,
     },
     {
       name: "Варвара Н.",
       date: "13.02.22 19:22",
       text: "Мне нравится как оформлена эта страница! ❤",
-      likeConfirm: "-active - like",
+      likeConfirm: false,
       likesCounter: 75,
     },
   ];
@@ -66,14 +62,15 @@
     for (const like of likesButton) {
       like.addEventListener("click", () => {
         const index = like.dataset.index;
+        const comment = comments[index];
 
         if (comments.likeConfirm) {
           commentList.likesCounter--;
-          commentList.likeConfirm == " ";
+          commentList.likeConfirm == "";
           renderComments();
         } else {
-          commentList[index].likesCounter++;
-          commentList[index].likeConfirm == "-active - like";
+          commentList.likesCounter++;
+          commentList.likeConfirm == "-active - like";
           renderComments();
         }
       })
@@ -96,7 +93,7 @@
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${comment.likesCounter}</span>
-            <button data-index=${index} class="like-button `${ comment.likeConfirm ? '-active-like' : ' ' } `"></button>
+            <button data-index=${index} class="${comment.likeConfirm ? 'like-button -active-like' : 'like-button'}"></button>
           </div >
         </div >
       </li >`;
@@ -121,7 +118,7 @@
       name: inputName.value,
       date: currentDate,
       text: inputText.value,
-      likeConfirm: " ",
+      likeConfirm: "",
       likesCounter: 0,
     });
     renderComments();
