@@ -120,7 +120,7 @@ const initEventListeners = () => {
     }
   };
 
-  
+
 // рендер
 const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
@@ -137,7 +137,7 @@ const renderComments = () => {
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${comments[index].likes}</span>
-              <button data-index= "${index}" class="like-button -active-like ${comment.isLiked}"></button>
+              <button data-index= "${index}" class="like-button ${comment.isLiked ? '-active-like' : ''}"></button>
             </div>
           </div>
         </li> `
@@ -154,7 +154,7 @@ const renderComments = () => {
 
 // функция добавления нового комментария
     function addNewComment() {
-      let commentList = document.querySelector(".comments")
+      const commentList = document.querySelector(".comments")
       commentList.innerHTML += `
       <li class="comment">
           <div class="comment-header">
@@ -182,7 +182,7 @@ const renderComments = () => {
       isLiked: ''
       });
       renderComments();
-    }
+    };
     
 
     function inputValid() {
@@ -196,7 +196,7 @@ const renderComments = () => {
     }
       nameElement.addEventListener("input", inputValid);
       textElement.addEventListener("input", inputValid);
-}
+};
 
 
     buttonElement.addEventListener("click", () => {
