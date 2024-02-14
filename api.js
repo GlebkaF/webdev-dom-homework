@@ -10,7 +10,7 @@ let originalComment = document.getElementById("comment-original");
 
 //GET запрос в API
 export function getComments() {
-    return fetch('https://wedev-api.sky.pro/api/v1/:Tatyana-JSc2/comments', {
+  return fetch('https://wedev-api.sky.pro/api/v1/:Tatyana-JSc2/comments', {
     method: "GET"
   }).then((response) => {
     if (response.status === 500) {
@@ -26,31 +26,31 @@ export function getComments() {
 
 //POST запрос в API
 export function postComments(/*name,date,text,likesCounter,itLikes, original,answer,isLikeLoading,forceError*/) {
-    return fetch('https://wedev-api.sky.pro/api/v1/:Tatyana-JSc2/comments', {
-      method: "POST",
-      body: JSON.stringify({
-        name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-    date: myDate.getDate() + ":" + (myDate.getMonth() + 1) +
-      ":" + myDate.getFullYear() + " " + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds(),
-    text: commentInputElement.value.replace(originalComment, '').replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-    likesCounter: 0,
-    itLikes: false,
-    original: `${commentInputElement.value.includes(originalComment) ? originalComment : ''}`,
-    answer: '',
-    isLikeLoading: false,
-    forceError: true,
-      }),
-    }).then((response) => {
-      if (response.status === 400) {
-        throw new Error("Введенные имя или комментарий короче 3-х знаков");
-      } else if (response.status === 500) {
-        throw new Error("Сервер упал.");
-      } else if (response.status !== 201) {
-        throw new Error("Отсутствует интернет");
-      } else {
-        return response.json();
-      };
-    });
+  return fetch('https://wedev-api.sky.pro/api/v1/:Tatyana-JSc2/comments', {
+    method: "POST",
+    body: JSON.stringify({
+      name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+      date: myDate.getDate() + ":" + (myDate.getMonth() + 1) +
+        ":" + myDate.getFullYear() + " " + myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds(),
+      text: commentInputElement.value.replace(originalComment, '').replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+      likesCounter: 0,
+      itLikes: false,
+      original: `${commentInputElement.value.includes(originalComment) ? originalComment : ''}`,
+      answer: '',
+      isLikeLoading: false,
+
+    }),
+  }).then((response) => {
+    if (response.status === 400) {
+      throw new Error("Введенные имя или комментарий короче 3-х знаков");
+    } else if (response.status === 500) {
+      throw new Error("Сервер упал.");
+    } else if (response.status !== 201) {
+      throw new Error("Отсутствует интернет");
+    } else {
+      return response.json();
+    };
+  });
 }
 
 
