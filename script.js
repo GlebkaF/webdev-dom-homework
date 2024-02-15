@@ -16,6 +16,10 @@ const peoples = [
     },
 ];
 
+const sanitizeHtml = (htmlString) => {
+    return htmlString.replaceAll("<", "&lt").replaceAll(">", "&gt");
+}
+
 // Кладем в переменную список комментариев, который будет меняться:
 const commentListElement = document.getElementById('commentList');
 
@@ -24,13 +28,16 @@ const renderPeoples = () => {
     const commentsHtml = peoples
         .map((people, index) => {
             return `
-                <li class="comment">
+                <li data-index=${index} class="comment">
                     <div class="comment-header">
                         <div>${people.name}</div>
                         <div>${people.time}</div>
                     </div>
                     <div class="comment-body">
-                        <div class="comment-text">${people.comment}</div>
+                        <div class="comment-text">${people.comment
+                            .replaceAll("%BEGIN_QUOTE", "<div class='quote'>")
+                            .replaceAll("END_QUOTE%", "</div>")}
+                        </div>
                     </div>
                     <div class="comment-footer">
                         <div class="likes">
@@ -47,11 +54,12 @@ const renderPeoples = () => {
     // Определяем кнопку лайка для JS:
     const likeButtonElements = document.querySelectorAll(".like-button");
 
-    // Красим кнопку лайка:
+    // Красим кнопку лайка:    
     for (let index = 0; index < likeButtonElements.length; index++) {
         const button = likeButtonElements[index];
-        button.addEventListener("click", () => {  
-            const currentPeople = peoples[index];               
+        button.addEventListener("click", (event) => { 
+            event.stopPropagation();    
+            const currentPeople = peoples[index];                    
 
             if (currentPeople.isLiked) {
                 currentPeople.likes--;
@@ -64,6 +72,19 @@ const renderPeoples = () => {
             renderPeoples();
         });
     }
+
+
+    // Ответ на комментарий
+    for (const commentElement of document.querySelectorAll(".comment")) {
+        commentElement.addEventListener("click", (event) => {
+            const index = event.currentTarget.dataset.index; // Получаем индекс комментария
+            const currentPost = peoples[index]; // Получаем данные текущего комментария
+
+            textInputElement.value = `%BEGIN_QUOTE${currentPost.comment} : ${currentPost.name}END_QUOTE%`;
+            textInputElement.style.whiteSpace = 'pre-line';
+        });
+    }
+
 }
 
 // Определяем для JS элементы input-формы:
@@ -91,10 +112,10 @@ buttonElement.addEventListener("click", () => {
     }
 
     const newComment = {
-        name: nameInputElement.value,
+        name: sanitizeHtml(nameInputElement.value),
         time: currentDate.toLocaleDateString('ru-RU', options),
         likes: 0,
-        comment: textInputElement.value,
+        comment: sanitizeHtml(textInputElement.value),
         isLiked: false
     };
 
