@@ -73,9 +73,9 @@
     const nameElement = document.querySelector(".add-form-name");
     const textElement = document.querySelector(".add-form-text");
     const buttonElement = document.querySelector(".add-form-button");
-    const commentsElements = document.querySelectorAll(".comment")
+    const commentsElements = document.querySelectorAll(".comment");
     const listCommentsElement = document.getElementById('list-comments');
-    const likeButtonsElements = document.querySelectorAll('.likes')
+    const likeButtonsElements = document.querySelectorAll('.likes');
 
 
   // пеносим данные из разметки в JS
@@ -100,7 +100,8 @@ const comments = [
 const initEventListeners = () => {
     const likesElements = document.querySelectorAll(".like-button");
     for (const likesElement of likesElements) {    
-      likesElement.addEventListener('click', () => {
+      likesElement.addEventListener('click', (event) => {
+        event.stopPropagation();
         const index = likesElement.dataset.index;
 
         console.log(comments[index].likes);
@@ -119,7 +120,6 @@ const initEventListeners = () => {
       });
     }
   };
-
 
 // рендер
 const renderComments = () => {
@@ -152,6 +152,30 @@ const renderComments = () => {
 
   renderComments();
 
+  // функция добавления ответа на комметарий
+  function answerComment() {
+    const commentsElements = document.querySelectorAll(".comment");
+
+    for (const commentsElement of commentsElements) {
+      commentsElement.addEventListener("click", () => {
+        const likeButtonsElements = document.querySelectorAll(".like-button");
+        for (const likeButtonElement of likeButtonsElements) {
+          const index = likeButtonElement.dataset.index;
+          const comment = comments[index];
+
+          const textElement = document.querySelector(".add-form-text");
+          textElement.value = `> ${comment.name}\n${comment.comment}`;
+
+          renderComments();
+          initEventListeners();
+        }
+      });
+    }
+}
+
+answerComment()
+
+
 // функция добавления нового комментария
     function addNewComment() {
       const commentList = document.querySelector(".comments")
@@ -175,9 +199,9 @@ const renderComments = () => {
       </li>`
      // добавление нового
       comments.push({
-      name: nameElement.value,
+      name: nameElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
       time: new Date().toLocaleString(),
-      comment: textElement.value,
+      comment: textElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
       likes: 0,
       isLiked: ''
       });
