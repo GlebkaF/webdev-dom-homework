@@ -57,6 +57,18 @@
     nameInputElement.addEventListener("input", input);
     textInputElement.addEventListener("input", input);
 
+    buttonElement.addEventListener('click', () => {
+      nameInputElement.classList.remove("error");
+      textInputElement.classList.remove("error");
+      if (nameInputElement.value === ""){
+        nameInputElement.classList.add("error");
+        return;
+      } else if (textInputElement.value  ===""){
+        textInputElement.classList.add("error")
+        return;
+      }
+    })
+
     const commentsListData = [{
         name: "Богда П.",
         comment: "Это будет первый комментарий на этой странице",
@@ -87,6 +99,7 @@
     }
     };
 
+    
     const answerCommentListener = () => {
     const commentsElement = document.querySelectorAll(".comment");
       for (const commentElement of commentsElement) {
@@ -99,26 +112,10 @@
     };
     
     answerCommentListener();
-
     initEventListener();
 
 
-
-
-    buttonElement.addEventListener('click', () => {
-      nameInputElement.classList.remove("error");
-      textInputElement.classList.remove("error");
-      if (nameInputElement.value === ""){
-        nameInputElement.classList.add("error");
-        return;
-      } else if (textInputElement.value  ===""){
-        textInputElement.classList.add("error")
-        return;
-      }
-    
-
-    
-      const renderCommentsList = () => {
+    const renderCommentsList = () => {
       const commentsListHTML = commentsListData.map((com, index) => {
         //const oldListElement = commentList.innerHTML;
         //commentList.innerHTML = oldListElement +  `
@@ -144,49 +141,50 @@
         .join('');
         commentsListElements.innerHTML = commentsListHTML;
         initEventListener();
-      }
-
-      renderCommentsList();
-
-      nameInputElement.addEventListener("click", () => {
-      const allcomments = commentsListElements.innerHTML;
+    }
+      renderCommentsList(); 
+      
+      
+    nameInputElement.addEventListener("click", () => {
+    const allcomments = commentsListElements.innerHTML;
       nameInputElement.style.backgroundColor = "";
-      if (nameInputElement.value === "") {
-        nameInputElement.style.backgroundColor = "red";
-        return;
-      }
-      textInputElement.style.backgroundColor = "";
-      if (textInputElement.value === "") {
-        textInputElement.style.backgroundColor = "red";
-        return;
-      }
+        if (nameInputElement.value === "") {
+          nameInputElement.style.backgroundColor = "red";
+          return;
+        }
+        textInputElement.style.backgroundColor = "";
+        if (textInputElement.value === "") {
+          textInputElement.style.backgroundColor = "red";
+          return;
+        }
+      
 
-      commentsListData.push({
-      name: nameInputElement.value
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll("&", "&amp;")
-        .replaceAll('"', "&quot;"),
-      comment: textInputElement.value
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll("&", "&amp;")
-        .replaceAll('"', "&quot;"),
-      like: likesCounterElement.value,
-      isLike: likesButtonElement.value,
-    });
+        commentsListData.push({
+        name: nameInputElement.value
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll("&", "&amp;")
+          .replaceAll('"', "&quot;"),
+        comment: textInputElement.value
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll("&", "&amp;")
+          .replaceAll('"', "&quot;"),
+        like: likesCounterElement.value,
+        isLike: likesButtonElement.value,
+        });
+    
 
 
       nameInputElement.value = ""
       textInputElement.value = ""
       likesCounterElement.value = ""
       likesButtonElement.value = ""
-      
-      renderCommentsList();
-    })
-
-    })
     
+      
+      //renderCommentsList();
+    })    
+    //renderCommentsList();
   
 
     console.log("It works!");
