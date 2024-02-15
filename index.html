@@ -9,7 +9,7 @@
   <body>
     <div class="container">
       <ul id="list" class="comments">
-        <li class="comment">
+        <li class="comment" data-likes="3">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -26,7 +26,7 @@
             </div>
           </div>
         </li>
-        <li class="comment">
+        <li class="comment" data-likes="75">
           <div class="comment-header">
             <div>Варвара Н.</div>
             <div>13.02.22 19:22</div>
@@ -73,6 +73,28 @@
     const nameInputElement = document.getElementById('name-input');
     const textInputElement = document.getElementById('text-input');
 
+    const initLikes = () => {
+      const likesElements = document.querySelectorAll('.comment');
+      for (const likesElement of likesElements) {
+        const likeButton = likesElement.querySelector('.like-button');
+        const likesCounter = likesElement.querySelector('.likes-counter');
+        likeButton.addEventListener('click', () => {
+          const currentLikes = parseInt(likesElement.dataset.likes);
+          const isLiked = likeButton.classList.contains('-active-like');
+          if (isLiked) {
+            likeButton.classList.remove('-active-like');
+            likesElement.dataset.likes = currentLikes - 1;
+          } else {
+            likeButton.classList.add('-active-like');
+            likesElement.dataset.likes = currentLikes + 1;
+          }
+          likesCounter.textContent = likesElement.dataset.likes;
+        });
+      }
+    };
+
+    initLikes();
+
     buttonElement.addEventListener('click', () => {
       nameInputElement.classList.remove('error');
       textInputElement.classList.remove('error');
@@ -97,7 +119,7 @@
 
       const oldList = listElement.innerHTML;
       listElement.innerHTML = oldList +
-        `<li class="comment">
+        `<li class="comment" data-likes="0">
           <div class="comment-header">
             <div>${nameInputElement.value}</div>
             <div>${formattedDate}</div>
@@ -114,6 +136,8 @@
             </div>
           </div>
         </li>`
+
+        initLikes();
     }) 
     console.log("It works!");
   </script>
