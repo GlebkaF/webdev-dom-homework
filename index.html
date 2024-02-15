@@ -33,6 +33,22 @@
 </style>
 <script>
   "use strict";
+  const comments = [
+    {
+      name: "Глеб Фокин",
+      date: "12.02.22 12:18",
+      text: "Это будет первый комментарий на этой странице",
+      isLiked: true,
+      likes: 3,
+    },
+    {
+      name: "Варвара Н.",
+      date: "13.02.22 19:22",
+      text: "Мне нравится как оформлена эта страница! ❤",
+      isLiked: false,
+      likes: 75,
+    }
+  ];
 
   const inputName = document.querySelector('.add-form-name');
   const inputText = document.querySelector('.add-form-text');
@@ -40,45 +56,27 @@
   const commentList = document.querySelector('.comments');
   const currentDate = new Date().toLocaleDateString('default', { day: '2-digit', month: '2-digit', year: '2-digit' }) + " " + new Date().toLocaleTimeString().slice(0, -3);
 
-  const comments = [
-    {
-      name: "Глеб Фокин",
-      date: "12.02.22 12:18",
-      text: "Это будет первый комментарий на этой странице",
-      likeConfirm: true,
-      likesCounter: 3,
-    },
-    {
-      name: "Варвара Н.",
-      date: "13.02.22 19:22",
-      text: "Мне нравится как оформлена эта страница! ❤",
-      likeConfirm: false,
-      likesCounter: 75,
-    },
-  ];
+
 
   const initLikesListeners = () => {
+    const likeButtonsElements = document.querySelectorAll(".like-button");
 
-    const likeButtonsElements = document.querySelectorAll('.like-button');
-
-    for (const likeButtonElement of likeButtonsElements) {
-      likeButtonElement.addEventListener("click", () => {
+    for (likeButtonElement of likeButtonsElements) {
+      likeButtonElement.addEventListener("click", (event) => {
         event.stopPropagation();
+
         const index = likeButtonElement.dataset.index;
+
         const comment = comments[index];
+        const comment.likesCounter = comments.likeConfirm;
+        ? comment.likesCounter - 1
+        : comment.likesCounter + 1;
 
-        if (comments.likeConfirm) {
-          comments[index].likesCounter -= 1;
-          comments[index].likeConfirm = false;
-          renderComments();
-        } else {
-          comments[index].likesCounter += 1;
-          comments[index].likeConfirm = true;
+      comment.likeConfirm = !comment.likeConfirm
 
-          renderComments();
-        }
-      })
-    }
+      renderComments();
+    })
+  }
   };
 
   const renderComments = () => {
@@ -96,13 +94,12 @@
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${comment.likesCounter}</span>
-            <button data-index=${index} class="like-button"></button>
+            <button data-index=${index} class="like-button ${comment.likeConfirm ? "-active-like" : ""}"></button>
           </div >
         </div >
-      </li >`;
-    })
-      .join("");
-
+      </li >`
+    }).join("");
+    initLikesListeners();
 
   }
   renderComments();
@@ -121,7 +118,7 @@
       name: inputName.value,
       date: currentDate,
       text: inputText.value,
-      likeConfirm: "",
+      likeConfirm: false,
       likesCounter: 0,
     });
     renderComments();
