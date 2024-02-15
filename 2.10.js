@@ -4,6 +4,78 @@ const listElement = document.getElementById('list');
 const nameInputElement = document.getElementById('name-input');
 const commentInputElement = document.getElementById('comment-input');
 
+
+const comments = [
+  {
+    name: 'Глеб Фокин',
+    day: 12,
+    month: 2,
+    year: 22,
+    hours: 12,
+    minutes: 18,
+    comment: 'Это будет первый комментарий на этой странице',
+    likesCounter: 75,
+    likeButton: true,
+  },
+
+  {
+    name: 'Варвара Н.',
+    day: 13,
+    month: 2,
+    year: 22,
+    hours: 19,
+    minutes: 22,
+    comment: 'Мне нравится как оформлена эта страница! ❤',
+    likesCounter: 3,
+    likeButton: false,
+  },
+];
+
+const renderComments = () => {
+  const commentsHtml = comments.map((comment, index)=> {
+  return `<li class="comment">
+  <div class="comment-header">
+    <div>${comment.name}</div>
+    <div>${comment.day}.${comment.month}.${comment.year} ${comment.hours}:${comment.minutes}</div>
+  </div>
+  <div class="comment-body">
+    <div class="comment-text">
+      ${comment.comment}
+    </div>
+  </div>
+  <div class="comment-footer">
+    <div class="likes">
+      <span id="likes" class="likes-counter">${comment.likesCounter}</span>
+      <button id="button-like" data-index="${index}" class="like-button ${comment.likeButton ? '-active-like' : ''}"></button>
+    </div>
+  </div>
+  </li>`
+  }).join('');
+  listElement.innerHTML = commentsHtml;
+};
+
+renderComments()
+
+
+
+const counterLikesElements = document.querySelectorAll('.likes-counter');
+const addLikesButtonsElements = document.querySelectorAll('.like-button');
+
+for (const addLikesButtonsElement of addLikesButtonsElements ) {
+  addLikesButtonsElement.addEventListener('click', () => {
+    
+    if (addLikesButtonsElement.dataset.index === true) {
+      addLikesButtonsElement.dataset.index = false;
+      comment.likesCounter--;
+    } else {
+      addLikesButtonsElement.dataset.index === false;
+      comment.likesCounter++;
+    }
+  });
+};
+
+
+
 addButtonElement.addEventListener('click', () => {
   nameInputElement.classList.remove('error');
   commentInputElement.classList.remove('error');
@@ -26,58 +98,28 @@ addButtonElement.addEventListener('click', () => {
   const formattedHours = hours < 10 ? '0' + hours : hours;
   const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
 
-  const oldListHtml = listElement.innerHTML;
-  listElement.innerHTML = oldListHtml +
-    `<li class="comment">
-      <div class="comment-header">
-        <div>${nameInputElement.value}</div>
-        <div>${formattedDay}.${formattedMonth}.${year} ${formattedHours}:${formattedMinutes}</div>
-      </div>
-      <div class="comment-body">
-        <div class="comment-text">
-          ${commentInputElement.value}
-        </div>
-      </div>
-      <div class="comment-footer">
-        <div class="likes">
-          <span class="likes-counter">0</span>
-          <button class="like-button"></button>
-        </div>
-      </div>
-    </li>`;
+  comments.push({
+    name: nameInputElement.value,
+    day: formattedDay,
+    month: formattedMonth,
+    year: year,
+    hours: formattedHours,
+    minutes: formattedMinutes,
+    comment: commentInputElement.value,
+    likesCounter: 0,
+    likeButton: false,
+  });
 
+
+  renderComments();
+  
   nameInputElement.value = '';
   commentInputElement.value = '';
 });
 
-
-
-document.addEventListener('click', (event) => {
-    
-    if (event.target.classList.contains('like-button')) {
-      
-      const likesContainer = event.target.closest('.likes');
-      
-      const likesCounter = likesContainer.querySelector('.likes-counter');
-      
-    
-      let currentLikes = parseInt(likesCounter.textContent);
-      
-      
-      if (event.target.classList.contains('-active-like')) {
-        currentLikes--;
-
-        event.target.classList.remove('-active-like');
-      } else {
-        
-        currentLikes++;
-        event.target.classList.add('-active-like');
-      }
-      
-      likesCounter.textContent = currentLikes;
-    }
-  });
   
+
+
 
 
 
