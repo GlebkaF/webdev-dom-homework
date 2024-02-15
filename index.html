@@ -73,12 +73,7 @@
 
   function renderComments() {
     const commentsHTML = comments.map((student) => {
-      let liked = '';
-      let countLikes = '';
-
-      if (student.likes != 0) {
-        countLikes += student.likes;
-      }
+      let liked = '';      
 
       if (student.isLiked) {
         liked = ' -active-like'
@@ -96,9 +91,7 @@
       </div>
       <div class="comment-footer">
         <div class="likes">
-          <span class="likes-counter">` +
-        countLikes +
-        `</span>
+          <span class="likes-counter">${student.likes}</span>
           <button class="like-button` + liked
         + `" data-numComments="${student.numComment}"></button>
         </div>
