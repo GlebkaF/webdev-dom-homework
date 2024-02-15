@@ -57,20 +57,24 @@
     },
   ];
 
-  function putLikeButton() {
-    const likesButton = document.querySelectorAll('.like-button');
-    for (const like of likesButton) {
-      like.addEventListener("click", () => {
-        const index = like.dataset.index;
+  const initLikesListeners = () => {
+
+    const likeButtonsElements = document.querySelectorAll('.like-button');
+
+    for (const likeButtonElement of likeButtonsElements) {
+      likeButtonElement.addEventListener("click", () => {
+        event.stopPropagation();
+        const index = likeButtonElement.dataset.index;
         const comment = comments[index];
 
         if (comments.likeConfirm) {
-          commentList.likesCounter--;
-          commentList.likeConfirm == "";
+          comments[index].likesCounter -= 1;
+          comments[index].likeConfirm = false;
           renderComments();
         } else {
-          commentList.likesCounter++;
-          commentList.likeConfirm == "-active - like";
+          comments[index].likesCounter += 1;
+          comments[index].likeConfirm = true;
+
           renderComments();
         }
       })
@@ -78,9 +82,8 @@
   };
 
   const renderComments = () => {
-    const commentsHtml = comments
-      .map((comment, index) => {
-        return `<li class="comment">
+    commentList.innerHTML = comments.map((comment, index) => {
+      return `<li class="comment" ${index}>
         <div class="comment-header">
           <div>${comment.name}</div>
           <div>${comment.date}</div>
@@ -88,20 +91,20 @@
         <div class="comment-body">
           <div class="comment-text">
             ${comment.text}
-          </div>
+              </div>
         </div>
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${comment.likesCounter}</span>
-            <button data-index=${index} class="${comment.likeConfirm ? 'like-button -active-like' : 'like-button'}"></button>
+            <button data-index=${index} class="like-button"></button>
           </div >
         </div >
       </li >`;
-      })
+    })
       .join("");
-    commentList.innerHTML = commentsHtml;
-    putLikeButton();
-  };
+
+
+  }
   renderComments();
 
   buttonWrite.addEventListener("click", () => {
