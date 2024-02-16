@@ -78,7 +78,7 @@
     const likeButtonsElements = document.querySelectorAll('.likes');
 
 
-  // пеносим данные из разметки в JS
+  // переносим данные из разметки в JS
 const comments = [
   {
     name: "Глеб Фокин",
@@ -146,13 +146,13 @@ const renderComments = () => {
     listCommentsElement.innerHTML = commentsHtml;   
 
     initEventListeners();     
-
+    answerComment()
 
   };
 
   renderComments();
 
-  // функция добавления ответа на комметарий
+//   // функция добавления ответа на комметарий
   function answerComment() {
     const commentsElements = document.querySelectorAll(".comment");
 
@@ -173,7 +173,22 @@ const renderComments = () => {
     }
 }
 
-answerComment()
+answerComment();
+
+// function answerComment(comment) {
+//     const textarea = document.querySelector(".textarea");
+//     textarea.value = `${comment.name}\n${comment.comment}`;
+
+//     renderComments();
+//     initEventListeners();
+// }
+
+// commentsElements.forEach((commentsElement, index) => {
+//     commentsElement.addEventListener("click", () => {
+//         const comment = comments[index];
+//         answerComment(comment);
+//     });
+// });
 
 
 // функция добавления нового комментария
