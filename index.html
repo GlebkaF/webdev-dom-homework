@@ -18,6 +18,7 @@
         id="text-input"></textarea>
       <div class="add-form-row">
         <button class="add-form-button" id="add-button">Написать</button>
+        <button class="add-form-button" id="delete-button">Удалить комментарий</button>
       </div>
     </div>
   </div>
@@ -29,6 +30,7 @@
   const nameInputElement = document.getElementById('name-input');
   const textInputElement = document.getElementById('text-input');
   const buttonElement = document.getElementById('add-button');
+  const deleteButtonElement = document.getElementById('delete-button');
   const listElement = document.getElementById('list');
 
   const users = [
@@ -49,7 +51,7 @@
     },
   ];
 
-    
+
 
   const renderUsers = () => {
     const usersHtml = users.map((user, index) => {
@@ -73,9 +75,10 @@
     }).join('');
 
     listElement.innerHTML = usersHtml;
-    
+
     initLikeButtonListeners();
-    
+    updateValue();
+
   };
 
 
@@ -86,55 +89,83 @@
 
       const index = buttonElement.dataset.index;
       const counter = buttonElement.dataset.like;
-      
+
       buttonElement.addEventListener('click', () => {
         if (users[index].isLiked === false) {
 
           const result = +counter + 1;
           users[index].likes = result;
-          
+
           users[index].isLiked = true;
         } else if (users[index].isLiked === true) {
-          
+
           const result = counter - 1;
           users[index].likes = result;
 
           users[index].isLiked = false;
-          
+
         }
-        
+
         renderUsers();
 
       })
-      
+
     }
-    
+
   }
-  
+
   renderUsers();
-  
+
+
+  buttonElement.disabled = true;
+
+  nameInputElement.addEventListener('input', updateValue);
+  textInputElement.addEventListener('input', updateValue);
+
+  function updateValue() {
+    if (nameInputElement.value !== '' && textInputElement.value !== '') {
+      buttonElement.disabled = false;
+    } else {
+      buttonElement.disabled = true;
+    }
+  }
+
+  renderUsers();
+
+  nameInputElement.addEventListener('keyup', keyEvent);
+  textInputElement.addEventListener('keyup', keyEvent);
+
+  function keyEvent(e) {
+    if (e.code === 'Enter') {
+      buttonElement.dispatchEvent(new Event('click'));
+    }
+
+  }
+
+
 
   buttonElement.addEventListener('click', () => {
-
     nameInputElement.classList.remove('error');
     textInputElement.classList.remove('error');
-
     if (nameInputElement.value.trim() !== '' && textInputElement.value.trim() === '') {
       textInputElement.classList.add('error');
+      buttonElement.disabled = true;
       return;
-    } 
+    }
     else if (nameInputElement.value.trim() === '' && textInputElement.value.trim() === '') {
       nameInputElement.classList.add('error');
       textInputElement.classList.add('error');
+      buttonElement.disabled = true;
       return;
     }
 
     if (textInputElement.value.trim() !== '' && nameInputElement.value.trim() === '') {
       nameInputElement.classList.add('error');
+      buttonElement.disabled = true;
       return;
     }
-    
-    
+
+
     const date = new Date();
     const options = {
       year: '2-digit',
@@ -157,16 +188,13 @@
     })
 
     renderUsers();
-    
     nameInputElement.value = '';
     textInputElement.value = '';
   });
 
 
-  
 
-
-console.log("It works!");
+  console.log("It works!");
 </script>
 
 </html>
