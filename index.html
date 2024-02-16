@@ -56,35 +56,41 @@
   const commentList = document.querySelector('.comments');
   const currentDate = new Date().toLocaleDateString('default', { day: '2-digit', month: '2-digit', year: '2-digit' }) + " " + new Date().toLocaleTimeString().slice(0, -3);
 
-
+  const sanitizeHtml = (htmlString) => {
+    return htmlString.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+  }
 
   const initLikesListeners = () => {
     const likeButtonsElements = document.querySelectorAll(".like-button");
 
-    for (likeButtonElement of likeButtonsElements) {
+    for (const likeButtonElement of likeButtonsElements) {
       likeButtonElement.addEventListener("click", (event) => {
         event.stopPropagation();
 
         const index = likeButtonElement.dataset.index;
 
         const comment = comments[index];
-        const comment.likesCounter = comments.likeConfirm;
-        ? comment.likesCounter - 1
-        : comment.likesCounter + 1;
+
+        comment.likes = comments.isLiked
+          ? comment.likes - 1
+          : comment.likes + 1;
 
       comment.likeConfirm = !comment.likeConfirm
 
-      renderComments();
-    })
-  }
+        renderComments();
+      })
+    }
   };
+
+
 
   const renderComments = () => {
     commentList.innerHTML = comments.map((comment, index) => {
-      return `<li class="comment" ${index}>
+      return `
+          < li class="comment" data - index="${index}" >
         <div class="comment-header">
           <div>${comment.name}</div>
-          <div>${comment.date}</div>
+          <div>${comment.date},</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
@@ -93,8 +99,8 @@
         </div>
         <div class="comment-footer">
           <div class="likes">
-            <span class="likes-counter">${comment.likesCounter}</span>
-            <button data-index=${index} class="like-button ${comment.likeConfirm ? "-active-like" : ""}"></button>
+            <span class="likes-counter">${comment.likes}</span>
+            <button data-index=${index} class="like-button ${comment.isLiked ? "-active-like" : ""}"></button>
           </div >
         </div >
       </li >`
@@ -115,11 +121,11 @@
       return;
     }
     comments.push({
-      name: inputName.value,
+      name: sanitizeHtml(inputName.value),
       date: currentDate,
       text: inputText.value,
-      likeConfirm: false,
-      likesCounter: 0,
+      isLiked: false,
+      likes: 0,
     });
     renderComments();
     inputName.value = "";
