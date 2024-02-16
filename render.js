@@ -5,9 +5,9 @@ const listElement = document.getElementById("list");
 
 
 //рендерфункция
- export function Render() {
-    const commentsHtml = comments.map((comment, index) => {
-        return `<li class="comment">
+export function Render() {
+  const commentsHtml = comments.map((comment, index) => {
+    return `<li class="comment">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.date}</div>
@@ -32,9 +32,10 @@ const listElement = document.getElementById("list");
             </div>
           </div>
         </li>`;
-    }).join('');
-    listElement.innerHTML = commentsHtml;
+  }).join('');
+  listElement.innerHTML = commentsHtml;
 };
+
 
 
 //рендерфункция из main.js (до разделения на модули)

@@ -13,25 +13,36 @@
     <p>Загружаем ленту комментариев...</p>
   </div>
   <div class="container">
-    <ul class="comments" id="list">
-
-      <!--список рендерится из js-->
-
-    </ul>
-    <div class="add-form" id="add-form-wait">
-      <input type="text" class="add-form-name" id="name-input" placeholder="Введите ваше имя (не менее 3-х знаков)" />
-      <textarea type="textarea" class="add-form-text" id="comment-input"
-        placeholder="Введите ваш коментарий (не менее 3-х знаков)" rows="4"></textarea>
-      <div class="add-form-row">
-        <button class="add-form-button" id="add-form-button">Написать</button>
+    <div id="authorization-invisible">
+      <ul class="comments" id="list">
+        <!--список рендерится из js-->
+      </ul>
+      <div class="add-form" id="start-authorization">
+        <p>Чтобы добавить комментарий, авторизуйтесь</p>
       </div>
     </div>
-    <div class="add-form" id="form-wait">
-      <p>Загружаем Ваш комментарий...</p>
+
+    <div id="form-authorization">
+      <!--форма рендерится из js-->
     </div>
-    <div class="add-form">
-      <p id="delete-form">Удаляем Ваш комментарий...</p>
-      <button class="add-form-button" id="delete-button">Удалить последний комментарий</button>
+
+
+    <div id="add-form-invisible">
+      <div class="add-form" id="add-form-wait">
+        <input type="text" class="add-form-name" id="name-input" placeholder="Введите ваше имя (не менее 3-х знаков)" />
+        <textarea type="textarea" class="add-form-text" id="comment-input"
+          placeholder="Введите ваш коментарий (не менее 3-х знаков)" rows="4"></textarea>
+        <div class="add-form-row">
+          <button class="add-form-button" id="add-form-button">Написать</button>
+        </div>
+      </div>
+      <div class="add-form" id="form-wait">
+        <p>Загружаем Ваш комментарий...</p>
+      </div>
+      <div class="add-form">
+        <p id="delete-form">Удаляем Ваш комментарий...</p>
+        <button class="add-form-button" id="delete-button">Удалить последний комментарий</button>
+      </div>
     </div>
   </div>
 
