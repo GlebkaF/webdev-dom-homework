@@ -180,9 +180,9 @@
     const dateTime = date.toLocaleDateString('ru-RU', options) + " " + date.toLocaleTimeString('ru-RU', optionsTime);
 
     users.push({
-      name: nameInputElement.value,
+      name: nameInputElement.value.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;'),
       date: dateTime,
-      comment: textInputElement.value,
+      comment: textInputElement.value.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;'),
       likes: 0,
       isLiked: false,
     })
