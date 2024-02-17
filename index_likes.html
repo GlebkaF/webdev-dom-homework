@@ -14,8 +14,8 @@
         </ul>
         <div class="add-form">
             <input id="add-name" value="" type="text" class="add-form-name" placeholder="Введите ваше имя" />
-            <textarea id="add-text.trim()" value="" type="textarea" class="add-form-text"
-                placeholder="Введите ваш коментарий" rows="4"></textarea>
+            <textarea id="add-text" value="" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+                rows="4"></textarea>
             <div class="add-form-row">
                 <button id="button-add" class="add-form-button">Написать</button>
             </div>
@@ -110,9 +110,9 @@
             inputElement.classList.remove("error");
             textAreaElement.classList.remove("error");
 
-            if (inputElement.value === '') {
+            if (inputElement.value.trim() === '') {
                 inputElement.classList.add("error");
-                if (textAreaElement.value === '') {
+                if (textAreaElement.value.trim() === '') {
                     textAreaElement.classList.add("error");
                     return;
                 };
