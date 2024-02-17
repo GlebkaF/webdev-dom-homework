@@ -78,16 +78,32 @@
     const likeButtonsElements = document.querySelectorAll('.likes');
 
 
-    //добавление ответа
-    const commentAnswer = document.querySelectorAll(".comment")
-    const formElementName = document.getElementById("add-form-name")
-    const formElementText = document.getElementById("add-form-text")
-    commentAnswer.forEach((el, index) => {
-      el.addEventListener("click", () => {
-        textElement.value = "QUOTE_BEGIN " + `${comments[index].name}` + ":\n " + `${comments[index].text}` + " QUOTE_END ";
-      })
-    });
+    // //добавление ответа
+    // const commentAnswer = document.querySelectorAll(".comment")
+    // const formElementName = document.getElementById("add-form-name")
+    // const formElementText = document.getElementById("add-form-text")
+    // commentAnswer.forEach((el, index) => {
+    //   el.addEventListener("click", () => {
+    //     textElement.value = "QUOTE_BEGIN " + `${comments[index].name}` + ":\n " + `${comments[index].text}` + " QUOTE_END ";
+    //   })
+    // });
 
+    // функция добавления ответа на комментарии
+//     function answerComment() {
+//       const commentsElements = document.querySelectorAll(".comment");
+//       for (const commentsElement of commentsElements) {
+
+//         commentsElement.addEventListener("click", () => {
+
+//         const textElement = document.querySelectorAll(".add-form-text");
+
+//          const index = commentsElement.dataset.comment;
+
+//        textElement.value = "QUOTE_BEGIN " + comments[index].name + ":\n " + comments[index].text + " QUOTE_END ";
+// })
+//       }}
+
+//      answerComment();
 
   // переносим данные из разметки в JS
 const comments = [
@@ -171,7 +187,7 @@ const renderComments = () => {
   
     renderComments();
 
- // функция добавления ответа на комметарbz
+ // функция добавления ответа на комметарb
     // const commentsElements = document.querySelectorAll(".comment");
     // const formElementText = document.getElementById("add-form-name");
     // const formElementName = document.getElementById("add-form-text");
@@ -247,6 +263,20 @@ const renderComments = () => {
     
 });
 
+// ответ на комментарий
+const comment = document.querySelectorAll('.comment')
+const formElementText = document.querySelectorAll('.add-form-text')
+const formElementName = document.querySelectorAll('.add-form-name')
+comment.forEach((el, index) => {
+  el.addEventListener('click', () => {
+    console.log(comments[index].name);
+    console.log(comments[index].comment);
+    formElementText.value = comments[index].comment
+    formElementName.value = comments[index].name
+    formElementText.value = `>${comments[index].name} \n ${comments[index].comment}`
+    
+  })
+});
     console.log("It works!");
   </script>
 </html>
