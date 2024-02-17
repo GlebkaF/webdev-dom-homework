@@ -15,7 +15,7 @@ const comments = [
     minutes: 18,
     comment: 'Это будет первый комментарий на этой странице',
     likesCounter: 75,
-    likeButton: true,
+    isLiked: true,
   },
 
   {
@@ -27,7 +27,7 @@ const comments = [
     minutes: 22,
     comment: 'Мне нравится как оформлена эта страница! ❤',
     likesCounter: 3,
-    likeButton: false,
+    isLiked: false,
   },
 ];
 
@@ -46,33 +46,49 @@ const renderComments = () => {
   <div class="comment-footer">
     <div class="likes">
       <span id="likes" class="likes-counter">${comment.likesCounter}</span>
-      <button id="button-like" data-index="${index}" class="like-button ${comment.likeButton ? '-active-like' : ''}"></button>
+      <button id="button-like" data-like="${comment.likesCounter}" data-index="${index}" class="like-button ${comments[index].isLiked ? '-active-like' : ''}"></button>
     </div>
   </div>
   </li>`
   }).join('');
   listElement.innerHTML = commentsHtml;
+
+  initLikeButtonListeners();
 };
 
-renderComments()
 
 
+const initLikeButtonListeners = () => {
+  const addLikesButtonsElements = document.querySelectorAll('.like-button');
 
-const counterLikesElements = document.querySelectorAll('.likes-counter');
-const addLikesButtonsElements = document.querySelectorAll('.like-button');
+  for (const addLikesButtonsElement of addLikesButtonsElements) {
 
-for (const addLikesButtonsElement of addLikesButtonsElements ) {
-  addLikesButtonsElement.addEventListener('click', () => {
-    
-    if (addLikesButtonsElement.dataset.index === true) {
-      addLikesButtonsElement.dataset.index = false;
-      comment.likesCounter--;
-    } else {
-      addLikesButtonsElement.dataset.index === false;
-      comment.likesCounter++;
-    }
-  });
+    const index = addLikesButtonsElement.dataset.index;
+    const counter = addLikesButtonsElement.dataset.like;
+
+    addLikesButtonsElement.addEventListener('click', () => {
+
+      if (comments[index].isLiked === false) {
+        
+        const result = Number(counter) + 1;
+        comments[index].likesCounter = result;
+
+        comments[index].isLiked = true;
+
+      } else { 
+        
+        const result = Number(counter) - 1;
+        comments[index].likesCounter = result;
+
+        comments[index].isLiked = false;
+      }
+
+      renderComments();
+    })
+  }
 };
+
+renderComments();
 
 
 
@@ -107,7 +123,7 @@ addButtonElement.addEventListener('click', () => {
     minutes: formattedMinutes,
     comment: commentInputElement.value,
     likesCounter: 0,
-    likeButton: false,
+    isLiked: false,
   });
 
 
