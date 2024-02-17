@@ -78,6 +78,17 @@
     const likeButtonsElements = document.querySelectorAll('.likes');
 
 
+    //добавление ответа
+    const commentAnswer = document.querySelectorAll(".comment")
+    const formElementName = document.getElementById("add-form-name")
+    const formElementText = document.getElementById("add-form-text")
+    commentAnswer.forEach((el, index) => {
+      el.addEventListener("click", () => {
+        textElement.value = "QUOTE_BEGIN " + `${comments[index].name}` + ":\n " + `${comments[index].text}` + " QUOTE_END ";
+      })
+    });
+
+
   // переносим данные из разметки в JS
 const comments = [
   {
@@ -121,6 +132,14 @@ const initEventListeners = () => {
     }
   };
 
+  // уязвимость 
+  function sanitize(text) {
+        return text.replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+        .replaceAll("QUOTE_END", "</div>");
+      } 
+
 // рендер
 const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
@@ -146,50 +165,24 @@ const renderComments = () => {
     listCommentsElement.innerHTML = commentsHtml;   
 
     initEventListeners();     
-    answerComment()
+    // answerComment();
 
   };
+  
+    renderComments();
 
-  renderComments();
+ // функция добавления ответа на комметарbz
+    // const commentsElements = document.querySelectorAll(".comment");
+    // const formElementText = document.getElementById("add-form-name");
+    // const formElementName = document.getElementById("add-form-text");
+    // const nameElement = document.querySelector(".add-form-name");
+    // const textElement = document.querySelector(".add-form-text");
 
-//   // функция добавления ответа на комметарий
-  function answerComment() {
-    const commentsElements = document.querySelectorAll(".comment");
-
-    for (const commentsElement of commentsElements) {
-      commentsElement.addEventListener("click", () => {
-        const likeButtonsElements = document.querySelectorAll(".like-button");
-        for (const likeButtonElement of likeButtonsElements) {
-          const index = likeButtonElement.dataset.index;
-          const comment = comments[index];
-
-          const textElement = document.querySelector(".add-form-text");
-          textElement.value = `> ${comment.name}\n${comment.comment}`;
-
-          renderComments();
-          initEventListeners();
-        }
-      });
-    }
-}
-
-answerComment();
-
-// function answerComment(comment) {
-//     const textarea = document.querySelector(".textarea");
-//     textarea.value = `${comment.name}\n${comment.comment}`;
-
-//     renderComments();
-//     initEventListeners();
-// }
-
-// commentsElements.forEach((commentsElement, index) => {
-//     commentsElement.addEventListener("click", () => {
-//         const comment = comments[index];
-//         answerComment(comment);
-//     });
-// });
-
+    // commentsElements.forEach((el, index) => {
+    //   el.addEventListener("click", () => {
+    //     textElement.value = "QUOTE_BEGIN " + `${comments[index].name}` + ":\n " + `${comments[index].text}` + " QUOTE_END ";
+    //   })
+    // });
 
 // функция добавления нового комментария
     function addNewComment() {
@@ -198,7 +191,7 @@ answerComment();
       <li class="comment">
           <div class="comment-header">
             <div>${nameElement.value}</div>
-            <div>${(new Date()).toLocaleString() }</div>
+            <div>${(new Date()).toLocaleString()}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -214,13 +207,14 @@ answerComment();
       </li>`
      // добавление нового
       comments.push({
-      name: nameElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+      name: nameElement.value,
       time: new Date().toLocaleString(),
-      comment: textElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+      comment: textElement.value,
       likes: 0,
       isLiked: ''
       });
       renderComments();
+
     };
     
 
