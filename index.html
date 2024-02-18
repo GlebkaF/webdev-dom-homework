@@ -265,16 +265,15 @@ const renderComments = () => {
 
 // ответ на комментарий
 const comment = document.querySelectorAll('.comment')
-const formElementText = document.querySelectorAll('.add-form-text')
-const formElementName = document.querySelectorAll('.add-form-name')
+const formElementText = document.getElementById('add-form-text')
+const formElementName = document.getElementById('add-form-name')
 comment.forEach((el, index) => {
   el.addEventListener('click', () => {
-    console.log(comments[index].name);
-    console.log(comments[index].comment);
-    formElementText.value = comments[index].comment
-    formElementName.value = comments[index].name
+    // console.log(comments[index].name);
+    // console.log(comments[index].comment);
+    // formElementText.value = comments[index].comment
+    // formElementName.value = comments[index].name
     formElementText.value = `>${comments[index].name} \n ${comments[index].comment}`
-    
   })
 });
     console.log("It works!");
