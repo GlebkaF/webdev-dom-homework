@@ -223,9 +223,9 @@ const renderComments = () => {
       </li>`
      // добавление нового
       comments.push({
-      name: nameElement.value,
+      name: nameElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
       time: new Date().toLocaleString(),
-      comment: textElement.value,
+      comment: textElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
       likes: 0,
       isLiked: ''
       });
@@ -265,8 +265,8 @@ const renderComments = () => {
 
 // ответ на комментарий
 const comment = document.querySelectorAll('.comment')
-const formElementText = document.getElementById('add-form-text')
-const formElementName = document.getElementById('add-form-name')
+const formElementText = document.querySelector('.add-form-text')
+const formElementName = document.querySelector('.add-form-name')
 comment.forEach((el, index) => {
   el.addEventListener('click', () => {
     // console.log(comments[index].name);
