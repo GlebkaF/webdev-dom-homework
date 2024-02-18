@@ -163,7 +163,6 @@ import { renderCom } from "./renderComments.js";
     let currentDate = getCurrentDate(new Date());
         postComment( {
             text: inputText.value,
-            name: inputName.value,
             date: currentDate,
             likes: 0,
             isLiked: false,
@@ -203,24 +202,24 @@ import { renderCom } from "./renderComments.js";
 
       const oldCommentList = commentList.innerHTML;
 
-      if (inputName.value === '' && inputText.value !== '') {
-        inputName.classList.add('error-form');
-        inputText.classList.remove('error-form');
-        buttonAddComment.disabled = true;
-        return;} 
+    //   if (inputName.value === '' && inputText.value !== '') {
+    //     inputName.classList.add('error-form');
+    //     inputText.classList.remove('error-form');
+    //     buttonAddComment.disabled = true;
+    //     return;} 
         
-      else if (inputText.value === '' && inputName.value !== '') {
-        inputText.classList.add('error-form');
-        inputName.classList.remove('error-form');
-        buttonAddComment.disabled = true;
-        return;} 
+    //   else if (inputText.value === '' && inputName.value !== '') {
+    //     inputText.classList.add('error-form');
+    //     inputName.classList.remove('error-form');
+    //     buttonAddComment.disabled = true;
+    //     return;} 
       
-      else if (inputName.value === '' && inputText.value === '') {
-        inputName.classList.add('error-form');
-        inputText.classList.add('error-form');
-        buttonAddComment.disabled = true;
-        return;
-      }
+    //   else if (inputName.value === '' && inputText.value === '') {
+    //     inputName.classList.add('error-form');
+    //     inputText.classList.add('error-form');
+    //     buttonAddComment.disabled = true;
+    //     return;
+    //   }
 
       loaderAddComment.style.display = "block";
       inputName.classList.remove('error-form');
