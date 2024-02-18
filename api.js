@@ -2,9 +2,14 @@
 const baseUrl = "https://wedev-api.sky.pro/api/v2/pavel-fedotov/";
 const userUrl = "https://wedev-api.sky.pro/api/user/login";
 export let token;
+export let userName;
 
 export const setToken = (newToken) => {
     token = 'Bearer ' + newToken;
+}
+
+export const setUserName = (newName) => {
+    userName = newName;
 }
 
 export function getComments() {

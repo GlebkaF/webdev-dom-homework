@@ -1,7 +1,7 @@
-import { loginUser, setToken, token } from "./api.js";
+import { loginUser, setToken, setUserName, token, userName } from "./api.js";
 
-export const renderLogin = () => {
-    const appLogin = document.getElementById('app');
+export const renderLogin = ( {mapData} ) => {
+    const app = document.getElementById('app');
     const loginHtml = `
     <div class="container">
       <div class="login-form mrgn-btm-20" id="forma">
@@ -28,13 +28,11 @@ export const renderLogin = () => {
     </div>
     `;
 
-    appLogin.innerHTML = loginHtml;
+    app.innerHTML = loginHtml;
 
     const buttonElement = document.getElementById('login-form-button');
     const loginInput = document.getElementById('form-login');
     const passInput = document.getElementById('form-password');
-
-    console.log(buttonElement);
 
     buttonElement.addEventListener('click', () => {
         loginUser({
@@ -42,8 +40,12 @@ export const renderLogin = () => {
             password: passInput.value
         }).then((responseData) => {
             console.log(responseData);
-            setToken(responseData.user.token)
+            setToken(responseData.user.token);
+            setUserName(responseData.user.name);
             console.log(token);
+            console.log(userName);
+        }).then(() => {
+            mapData();
         }); 
     })
 }
