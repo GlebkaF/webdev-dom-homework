@@ -24,15 +24,15 @@ import { renderCom } from "./renderComments.js";
       comments = resultComments;
       renderCom( {comments, mapData} );
     })
-    // .then((resultData) => {
-    //   //console.log('Загрузка страницы = ' + isLoadedPage);
-    //   loaderPage.style.display = "none";
-    // })
-    // .catch((error) => {
-    //   alert("Упс, сервер упал");
-    //   //console.log(error);
-    //   loaderPage.style.display = "none";
-    // });
+    .then((resultData) => {
+      //console.log('Загрузка страницы = ' + isLoadedPage);
+      loaderPage.style.display = "none";
+    })
+    .catch((error) => {
+      alert("Упс, сервер упал");
+      //console.log(error);
+      loaderPage.style.display = "none";
+    });
   }
   
   renderLogin( {mapData} );
