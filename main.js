@@ -19,6 +19,8 @@ const loadingElement = document.querySelector(".loading");
 const likesCounterElement = document.querySelector(".likes-counter");
 const likeButtonElement = document.querySelector(".like-button");
 const DeleteButtonElement = document.getElementById("delete-button");
+const addFormInvisibleElement = document.getElementById("add-form-invisible");
+//const formAuthorizationElement = document.getElementById("form-authorization");
 
 let originalComment = document.getElementById("comment-original");
 
@@ -27,6 +29,8 @@ let originalComment = document.getElementById("comment-original");
 waitElement.classList.add("edit-none");
 loadingElement.classList.add("loading-none");
 waitDeleteElement.classList.add("edit-none");
+addFormInvisibleElement.classList.add("loading-none");
+//formAuthorizationElement.classList.add("loading-none");
 
 
 //создание массива
@@ -184,6 +188,7 @@ function renderComments() {
 waitFetchPromise();
 renderComments();
 InitDeleteComment();
+//authorization();
 
 
 
