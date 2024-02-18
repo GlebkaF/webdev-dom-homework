@@ -1,6 +1,11 @@
 
 const baseUrl = "https://wedev-api.sky.pro/api/v2/pavel-fedotov/";
-const token = "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+const userUrl = "https://wedev-api.sky.pro/api/user/login";
+export let token;
+
+export const setToken = (newToken) => {
+    token = 'Bearer ' + newToken;
+}
 
 export function getComments() {
     return fetch(`${baseUrl}comments`, {
@@ -39,6 +44,26 @@ export function postComment( {text, date, likes, isLiked, forceError} ) {
         } else if (resultComments.status === 400) {
           throw new Error("Имя или комментраий короткие");
         } else if (resultComments.status === 500) {
+          throw new Error("Сервер не отвечает");
+        }
+      })
+}
+
+export function loginUser( {login, password} ) {
+    
+    return fetch(`${userUrl}`, {
+        method: "POST",
+        body: JSON.stringify({
+          login,
+          password,
+        }),
+      })
+      .then((resultUser) => {
+        if (resultUser.status == 201) {
+          return resultUser.json();
+        } else if (resultUser.status === 400) {
+          throw new Error("Неправильный логин или пароль");
+        } else if (resultUser.status === 500) {
           throw new Error("Сервер не отвечает");
         }
       })
