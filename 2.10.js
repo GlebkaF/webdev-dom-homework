@@ -35,11 +35,11 @@ const renderComments = () => {
   const commentsHtml = comments.map((comment, index)=> {
   return `<li class="comment">
   <div class="comment-header">
-    <div>${comment.name}</div>
+    <div data-index="${index}">${comment.name}</div>
     <div>${comment.day}.${comment.month}.${comment.year} ${comment.hours}:${comment.minutes}</div>
   </div>
   <div class="comment-body">
-    <div class="comment-text">
+    <div data-index="${index}" class="comment-text">
       ${comment.comment}
     </div>
   </div>
@@ -54,6 +54,7 @@ const renderComments = () => {
   listElement.innerHTML = commentsHtml;
 
   initLikeButtonListeners();
+  reply();
 };
 
 
@@ -90,7 +91,20 @@ const initLikeButtonListeners = () => {
 
 renderComments();
 
+function reply() {
 
+  const commentElements = document.querySelectorAll('.comment');
+  const formTextElement = document.querySelector('.add-form-text');
+
+  commentElements.forEach((element, index) => {
+    element.addEventListener('click', () => {
+      formTextElement.value = `> ${comments[index].name} \n ${comments[index].comment}`;
+    });
+  });
+
+}
+
+reply();
 
 addButtonElement.addEventListener('click', () => {
   nameInputElement.classList.remove('error');
@@ -115,13 +129,21 @@ addButtonElement.addEventListener('click', () => {
   const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
 
   comments.push({
-    name: nameInputElement.value,
+    name: nameInputElement.value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;"),
     day: formattedDay,
     month: formattedMonth,
     year: year,
     hours: formattedHours,
     minutes: formattedMinutes,
-    comment: commentInputElement.value,
+    comment: commentInputElement.value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;"),
     likesCounter: 0,
     isLiked: false,
   });
