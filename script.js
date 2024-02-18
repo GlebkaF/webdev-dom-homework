@@ -92,35 +92,43 @@ const buttonElement = document.getElementById('add-button');
 const nameInputElement = document.getElementById('name');
 const textInputElement = document.getElementById('textArea');
 
-// Создаем отформатированную дату для нового комментария:
-const newDate = new Date();
-const currentDate = newDate;
-const options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' };
-
 // Прикрепляем обработчик к кнопке добавления комментария:
 buttonElement.addEventListener("click", () => {
+    // Удаляем пробелы из значений полей ввода:
+    const trimmedName = nameInputElement.value.trim();
+    const trimmedText = textInputElement.value.trim();
+
     nameInputElement.classList.remove("error");
-    if (nameInputElement.value === "") {
+    if (trimmedName === "") {
         nameInputElement.classList.add("error");
         return;
     }
 
     textInputElement.classList.remove("error");
-    if (textInputElement.value === "") {
+    if (trimmedText === "") {
         textInputElement.classList.add("error");
         return;
     }
 
+    // Создаем отформатированную дату для нового комментария:
+    const newDate = new Date();
+    const currentDate = newDate;
+    const options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }; 
+
     const newComment = {
-        name: sanitizeHtml(nameInputElement.value),
+        name: sanitizeHtml(trimmedName),
         time: currentDate.toLocaleDateString('ru-RU', options),
         likes: 0,
-        comment: sanitizeHtml(textInputElement.value),
+        comment: sanitizeHtml(trimmedText),
         isLiked: false
     };
 
     peoples.push(newComment);
     renderPeoples();
+
+    // Очищаем поля ввода после отправки комментария:
+    nameInputElement.value = "";
+    textInputElement.value = "";
 });
 
 renderPeoples();
