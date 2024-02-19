@@ -78,25 +78,8 @@
   renderComments();
 
   buttonElement.addEventListener('click', () => {
-    let currentDate = new Date();
-    let dayWeek = currentDate.getDate();
-    if (dayWeek < 10) {
-      dayWeek = "0" + dayWeek;
-    }
-    let month = currentDate.getMonth() + 1;
-    if (month < 10) {
-      month = "0" + month;
-    }
-    let years = currentDate.getFullYear();
-    let hours = currentDate.getHours();
-    if (hours < 10) {
-      hours = "0" + hours;
-    }
-    let minutes = currentDate.getMinutes();
-    if (minutes < 10) {
-      minutes = "0" + minutes;
-    }
-    let myDate = dayWeek + "." + month + "." + years + " " + hours + ":" + minutes;
+
+    const myDate = new Date().toLocaleDateString('default', { day: '2-digit', month: '2-digit', year: '2-digit' }) + " " + new Date().toLocaleTimeString().slice(0, -3);
 
     nameInputElement.classList.remove("error");
     textAreaElement.classList.remove("error");
