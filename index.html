@@ -30,6 +30,14 @@
       </div>
     </div>
   </body>
+  <style>
+    .error::placeholder {
+      color: red;
+    }
+    .disabled {
+      color: gray;
+    }
+  </style>
   <script>
     const inputNameElement = document.querySelector(".add-form-name");
     const inputTextElement = document.querySelector(".add-form-text");
@@ -52,7 +60,7 @@
         time: "13.02.22 19:22",
         comment: "Мне нравится как оформлена эта страница! ❤️",
         likes: 75,
-        isLiked: true,
+        isLiked: false,
       },
     ];
 
@@ -111,20 +119,19 @@
     initEventListeners();
 
     //добавить коммент
-    buttonElement.addEventListener("click", () => {
-      if (inputNameElement.value && inputTextElement.value) {
-        const currentDate =
-          new Date().toLocaleDateString("default", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "2-digit",
-          }) +
-          " " +
-          new Date().toLocaleTimeString().slice(0, -3);
+    function addNewComment() {
+      const currentDate =
+        new Date().toLocaleDateString("default", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "2-digit",
+        }) +
+        " " +
+        new Date().toLocaleTimeString().slice(0, -3);
 
-        commentElement.insertAdjacentHTML(
-          "beforeend",
-          `<li class="comment">
+      commentElement.insertAdjacentHTML(
+        "beforeend",
+        `<li class="comment">
       <div class="comment-header">
         <div>${inputNameElement.value}</div>
         <div>${currentDate}</div>
@@ -141,19 +148,44 @@
         </div>
       </div>
     </li>`
-        );
-        comments.push({
-          name: inputNameElement.value,
-          time: currentDate,
-          comment: inputTextElement.value,
-          likes: 0,
-          isLiked: false,
-        });
+      );
+      comments.push({
+        name: inputNameElement.value,
+        time: currentDate,
+        comment: inputTextElement.value,
+        likes: 0,
+        isLiked: false,
+      });
 
-        inputNameElement.value = "";
-        inputTextElement.value = "";
-        initEventListeners();
+      inputNameElement.value = "";
+      inputTextElement.value = "";
+      initEventListeners();
+    }
+    function inputValid() {
+      if (inputNameElement.value === "" || inputTextElement.value === "") {
+        buttonElement.disabled = true;
+        inputNameElement.placeholder = "";
+        inputTextElement.placeholder = "";
+      } else {
+        inputNameElement.placeholder = "";
+        inputTextElement.placeholder = "";
       }
+      inputNameElement.addEventListener("input", inputValid);
+      inputTextElement.addEventListener("input", inputValid);
+    }
+
+    buttonElement.addEventListener("click", () => {
+      inputNameElement.classList.remove("error");
+      inputTextElement.classList.remove("error");
+      if (inputNameElement.value === "" || inputTextElement.value === "") {
+        inputNameElement.classList.add("error");
+        inputTextElement.classList.add("error");
+        return;
+      }
+      addNewComment();
+
+      inputNameElement.value = "";
+      inputTextElement.value = "";
     });
 
     // Чтобы форма отправлялась клавишей Enter
