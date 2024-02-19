@@ -161,19 +161,7 @@
       inputTextElement.value = "";
       initEventListeners();
     }
-    function inputValid() {
-      if (inputNameElement.value === "" || inputTextElement.value === "") {
-        buttonElement.disabled = true;
-        inputNameElement.placeholder = "";
-        inputTextElement.placeholder = "";
-      } else {
-        inputNameElement.placeholder = "";
-        inputTextElement.placeholder = "";
-      }
-      inputNameElement.addEventListener("input", inputValid);
-      inputTextElement.addEventListener("input", inputValid);
-    }
-
+   
     buttonElement.addEventListener("click", () => {
       inputNameElement.classList.remove("error");
       inputTextElement.classList.remove("error");
