@@ -95,6 +95,16 @@
 
     initLikes();
 
+    const commentElements = document.querySelectorAll('.comment');
+    commentElements.forEach(commentElement => {
+      commentElement.addEventListener('click', () => {
+        const authorName = commentElement.querySelector('.comment-header > div:first-child').textContent;
+        const commentText = commentElement.querySelector('.comment-text').textContent;
+        textInputElement.value = `> ${commentText.trim()}\n${authorName.trim()},`;
+        textInputElement.focus();
+      });
+    });
+
     buttonElement.addEventListener('click', () => {
       nameInputElement.classList.remove('error');
       textInputElement.classList.remove('error');
@@ -121,12 +131,12 @@
       listElement.innerHTML = oldList +
         `<li class="comment" data-likes="0">
           <div class="comment-header">
-            <div>${nameInputElement.value}</div>
+            <div>${nameInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;')}</div>
             <div>${formattedDate}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${textInputElement.value}
+              ${textInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;')}
             </div>
           </div>
           <div class="comment-footer">
