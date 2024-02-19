@@ -2,6 +2,29 @@ const buttonElement = document.getElementById('comment-button');
 const nameElement = document.getElementById('comment-author');
 const textElement = document.getElementById('comment-text');
 const listComments = document.getElementById("comments");
+const likeCounters =  document.querySelectorAll('.likes-counter');
+const buttonPositions = document.querySelectorAll('.like-button');
+
+buttonPositions.forEach((element, index) => {
+  let position = Boolean(Number(element.dataset.position));
+  element.addEventListener("click", () => {
+    position = !position
+    let like = Number(likeCounters[index].dataset.number);
+    if (position) {
+      like = like + 1
+      likeCounters[index].innerHTML = `<span class="likes-counter" data-number="${like}">${like}</span>`
+      element.classList.add('-active-like');
+      element.dataset.number = 1
+    } 
+    if (!position) {
+      like = like - 1
+      likeCounters[index].innerHTML = `<span class="likes-counter" data-number="${like}">${like}</span>`
+      element.classList.remove('-active-like');
+      element.dataset.number = 0
+    }
+  })
+});
+
 
 function twoDigits(num) {
   if( num >= 0 && num <= 9) {
@@ -43,3 +66,4 @@ buttonElement.addEventListener("click", () => {
         </div>
       </li>`;
 });
+
