@@ -93,7 +93,7 @@ renderComments();
 
 function reply() {
 
-  const commentElements = document.querySelectorAll('.comment');
+  const commentElements = document.querySelectorAll('.comment-body');
   const formTextElement = document.querySelector('.add-form-text');
 
   commentElements.forEach((element, index) => {
@@ -101,7 +101,6 @@ function reply() {
       formTextElement.value = `> ${comments[index].name} \n ${comments[index].comment}`;
     });
   });
-
 }
 
 reply();
