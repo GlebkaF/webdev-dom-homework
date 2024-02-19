@@ -68,17 +68,28 @@
   <script>
     "use strict";
     // Код писать здесь
-    const buttonElement = document.getElementById('add-button');
     const listElement = document.getElementById('list');
     const nameInputElement = document.getElementById('name-input');
     const textInputElement = document.getElementById('text-input');
+
+    const initComment = () => {
+      const commentElements = document.querySelectorAll('.comment');
+      commentElements.forEach(commentElement => {
+        commentElement.addEventListener('click', () => {
+          const authorName = commentElement.querySelector('.comment-header > div:first-child').textContent;
+          const commentText = commentElement.querySelector('.comment-text').textContent;
+          textInputElement.value = `> ${commentText.trim()}\n${authorName.trim()},`;
+          textInputElement.focus();
+        });
+      });
+    }
 
     const initLikes = () => {
       const likesElements = document.querySelectorAll('.comment');
       for (const likesElement of likesElements) {
         const likeButton = likesElement.querySelector('.like-button');
         const likesCounter = likesElement.querySelector('.likes-counter');
-        likeButton.addEventListener('click', () => {
+        likeButton.addEventListener('click', (event) => {
           const currentLikes = parseInt(likesElement.dataset.likes);
           const isLiked = likeButton.classList.contains('-active-like');
           if (isLiked) {
@@ -89,22 +100,15 @@
             likesElement.dataset.likes = currentLikes + 1;
           }
           likesCounter.textContent = likesElement.dataset.likes;
+          event.stopPropagation();
         });
       }
     };
 
     initLikes();
+    initComment();
 
-    const commentElements = document.querySelectorAll('.comment');
-    commentElements.forEach(commentElement => {
-      commentElement.addEventListener('click', () => {
-        const authorName = commentElement.querySelector('.comment-header > div:first-child').textContent;
-        const commentText = commentElement.querySelector('.comment-text').textContent;
-        textInputElement.value = `> ${commentText.trim()}\n${authorName.trim()},`;
-        textInputElement.focus();
-      });
-    });
-
+    const buttonElement = document.getElementById('add-button');
     buttonElement.addEventListener('click', () => {
       nameInputElement.classList.remove('error');
       textInputElement.classList.remove('error');
@@ -148,6 +152,9 @@
         </li>`
 
         initLikes();
+        nameInputElement.value = '';
+        textInputElement.value = '';
+        initComment();
     }) 
     console.log("It works!");
   </script>
