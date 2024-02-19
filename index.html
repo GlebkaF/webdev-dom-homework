@@ -44,7 +44,6 @@
   const listElement = document.getElementById("list");
   const nameInputElement = document.getElementById("name-input");
   const textAreaElement = document.getElementById("text-input");
-  // textAreaElement.insertAdjacentText('beforeend', '\n');
   const buttonElement = document.getElementById("write-button");
 
   // Функция для рендеринга списка комментариев
@@ -79,7 +78,7 @@
 
   buttonElement.addEventListener('click', () => {
 
-    const myDate = new Date().toLocaleDateString('default', { day: '2-digit', month: '2-digit', year: '2-digit' }) + " " + new Date().toLocaleTimeString().slice(0, -3);
+    const myDate = new Date().toLocaleDateString('default', {day: '2-digit', month: '2-digit', year: '2-digit'}) + " " + new Date().toLocaleTimeString().slice(0, -3);
 
     nameInputElement.classList.remove("error");
     textAreaElement.classList.remove("error");
