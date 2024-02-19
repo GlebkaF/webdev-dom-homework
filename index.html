@@ -60,7 +60,7 @@
     const commentsHtml = comments.map((comment, index) => {
       return `<li class="comment">
         <div class="comment-header">
-          <div class "commentName">${sanitizeHtml(comment.author.name)}</div>
+          <div class "commentName">${sanitizeHtml(comment.name)}</div>
           <div>${comment.date}</div>
         </div>
         <div class="comment-body">
@@ -101,20 +101,21 @@
     } else {
       inputElement.style.backgroundColor = '';
       textareaElement.style.backgroundColor = '';
-      let date = new Date();
-      let hrs = date.getHours();
-      if (hrs >= 0 && hrs <= 9) {
-        hrs = '0' + hrs;
-      }
-      let min = date.getMinutes();
-      if (min >= 0 && min <= 9) {
-        min = '0' + min;
-      }
-      let mth = date.getMonth() + 1;
-      if (mth >= 0 && mth <= 9) {
-        mth = '0' + mth;
-      }
-      let innerDate = date.getDate() + '.' + `${mth}` + '.' + date.getFullYear().toString().substring(2) + ' ' + `${hrs}` + ':' + `${min}`;
+      // let date = comments.date;
+      // // let date = new Date();
+      // let hrs = date.getHours();
+      // if (hrs >= 0 && hrs <= 9) {
+      //   hrs = '0' + hrs;
+      // }
+      // let min = date.getMinutes();
+      // if (min >= 0 && min <= 9) {
+      //   min = '0' + min;
+      // }
+      // let mth = date.getMonth() + 1;
+      // if (mth >= 0 && mth <= 9) {
+      //   mth = '0' + mth;
+      // }
+      // let innerDate = date.getDate() + '.' + `${mth}` + '.' + date.getFullYear().toString().substring(2) + ' ' + `${hrs}` + ':' + `${min}`;
       postFetch();
       getFeth();
       inputElement.value = '';
@@ -142,7 +143,19 @@
       method: "GET"
     }).then((response) => {
       response.json().then((responseData) => {
-        comments = responseData.comments;
+        const appComments = responseData.comments.map((comment) => {
+
+          return {
+            name: comment.author.name,
+            date: new Date(comment.date).toLocaleString('ru-RU', {
+              year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false
+            }).replace(',', ''),
+            text: comment.text,
+            likes: comment.likes,
+            isLiked: false,
+          };
+        });
+        comments = appComments;
         renderComments();
       });
     });
@@ -162,14 +175,7 @@
       });
     });
   };
-  // const commentDate = () => {
-  //   return currentDate = new Date().toLocaleString('ru-RU', {
-  //     year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false
-  //   }).replace(',', '');
-  //   console.log(currentDate);
-  // };
-  // commentDate();
-  
+
   // const jsonRequest = JSON.stringify(comments);
   // const jsonResponse = JSON.parse(jsonRequest);
 
