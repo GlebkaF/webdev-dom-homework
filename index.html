@@ -140,9 +140,9 @@
       const lastUserId = users[lastIndex]['id']
       console.log(lastUserId);
       users.push({
-        name: nameInputElement.value,
+        name: nameInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
         date: clock(),
-        comment: textInputElement.value,
+        comment: textInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
         likes: 0,
         isLiked: false,
         id: lastUserId + 1,
