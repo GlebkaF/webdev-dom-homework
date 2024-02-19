@@ -34,6 +34,8 @@
   const textareaElement = document.getElementById('commitInput');
   const likesElements = document.querySelectorAll('.likes');
   const likeButtonElements = document.querySelectorAll('.like-button');
+  getFeth();
+  let comments = [];
 
   const initEventListener = () => {
     const likeButtonElements = document.querySelectorAll('.like-button');
@@ -41,54 +43,37 @@
       likeButtonElement.addEventListener('click', event => {
         event.stopPropagation();
         const index = likeButtonElement.dataset.index;
-        if (!comments[index].isLike) {
-          comments[index].like++;
-          comments[index].isLike = true;
+        if (!comments[index].isLiked) {
+          comments[index].likes++;
+          comments[index].isLiked = true;
         } else {
-          comments[index].like--;
-          comments[index].isLike = false;
+          comments[index].likes--;
+          comments[index].isLiked = false;
         };
         renderComments();
       });
     }
   }
 
-  const comments = [
-    {
-      name: 'Глеб Фокин',
-      time: '12.02.22 12:18',
-      comment: 'Это будет первый комментарий на странице',
-      like: 3,
-      isLike: false
-    },
-    {
-      name: 'Варвара Н.',
-      time: '13.02.22 19:22',
-      comment: 'Мне нравится как оформлена эта страница! ❤',
-      like: 75,
-      isLike: false
-    }
-  ];
-
   const renderComments = () => {
     const listElement = document.getElementById('list');
     const commentsHtml = comments.map((comment, index) => {
       return `<li class="comment">
         <div class="comment-header">
-          <div class "commentName">${sanitizeHtml(comment.name)}</div>
-          <div>${comment.time}</div>
+          <div class "commentName">${sanitizeHtml(comment.author.name)}</div>
+          <div>${comment.date}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
-            ${sanitizeHtml(comment.comment)}
+            ${sanitizeHtml(comment.text)}
           </div>
         </div>
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">
-              <div>${comment.like}</div>
+              <div>${comment.likes}</div>
               </span>
-            <button class="${comment.isLike ? 'like-button -active-like' : 'like-button'}" data-index =${index}>
+            <button class="${comment.isLiked ? 'like-button -active-like' : 'like-button'}" data-index =${index}>
               <div></div>
               </button>
           </div>
@@ -117,32 +102,26 @@
       inputElement.style.backgroundColor = '';
       textareaElement.style.backgroundColor = '';
       let date = new Date();
-      let h = date.getHours();
-      if (h >= 0 && h <= 9) {
-        h = '0' + h;
+      let hrs = date.getHours();
+      if (hrs >= 0 && hrs <= 9) {
+        hrs = '0' + hrs;
       }
-      let m = date.getMinutes();
-      if (m >= 0 && m <= 9) {
-        m = '0' + m;
+      let min = date.getMinutes();
+      if (min >= 0 && min <= 9) {
+        min = '0' + min;
       }
       let mth = date.getMonth() + 1;
       if (mth >= 0 && mth <= 9) {
         mth = '0' + mth;
       }
-      let innerDate = date.getDate() + '.' + `${mth}` + '.' + date.getFullYear().toString().substring(2) + ' ' + `${h}` + ':' + `${m}`;
-
-      comments.push({
-        name: inputElement.value,
-        time: innerDate,
-        comment: textareaElement.value,
-        like: 0,
-        isLike: false
-      });
+      let innerDate = date.getDate() + '.' + `${mth}` + '.' + date.getFullYear().toString().substring(2) + ' ' + `${hrs}` + ':' + `${min}`;
+      postFetch();
+      getFeth();
       inputElement.value = '';
       textareaElement.value = '';
     };
     renderComments();
-  })
+  });
 
   function sanitizeHtml(htmlString) {
     return htmlString.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
@@ -153,10 +132,47 @@
     const formText = document.querySelector('.add-form-text');
     commentsAnswer.forEach((comment, index) => {
       comment.addEventListener('click', () => {
-        formText.value = `> ${comments[index].name} \n ${comments[index].comment}`;
+        formText.value = `└> ${comments[index].author.name} \n ${comments[index].text}`;
       })
     })
-  }
+  };
+
+  function getFeth() {
+    const fethGet = fetch("https://wedev-api.sky.pro/api/v1/:aleksandr-penkov/comments", {
+      method: "GET"
+    }).then((response) => {
+      response.json().then((responseData) => {
+        comments = responseData.comments;
+        renderComments();
+      });
+    });
+  };
+
+  function postFetch() {
+    fetch("https://wedev-api.sky.pro/api/v1/:aleksandr-penkov/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        text: textareaElement.value,
+        name: inputElement.value,
+      })
+    }).then((response) => {
+      response.json().then((responseData) => {
+        { method: "GET" }
+        comments = responseData.comments;
+      });
+    });
+  };
+  // const commentDate = () => {
+  //   return currentDate = new Date().toLocaleString('ru-RU', {
+  //     year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false
+  //   }).replace(',', '');
+  //   console.log(currentDate);
+  // };
+  // commentDate();
+  
+  // const jsonRequest = JSON.stringify(comments);
+  // const jsonResponse = JSON.parse(jsonRequest);
+
   console.log("It works!");
 </script>
 
