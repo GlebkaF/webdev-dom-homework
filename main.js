@@ -1,15 +1,20 @@
-import { getComments } from "./api.js";
+import { getComments, postComment } from "./api.js";
 import { getCurrentDate } from "./getDate.js";
-import { renderLogin } from "./loginPage.js";
-import { renderCom } from "./renderComments.js";
+import { renderComments } from "./renderComments.js";
 
-  let comments = []
 
-  // Функция рендера комментариев
+  // Получаем все необходимые элементы
 
-  const mapData = () => {
-    return getComments()
-    .then((resultData) => {
+  const body = document.querySelector(".container");
+  const buttonDeleteComment = document.getElementById('delete-form-button');
+  
+
+  let comments = [
+
+  ]
+
+  export const mapData = () => {
+    return getComments().then((resultData) => {
       const resultComments = resultData.comments.map((comment) => {
         //console.log(comment.author.name);
         let currentDate = getCurrentDate(new Date(comment.date));
@@ -22,17 +27,42 @@ import { renderCom } from "./renderComments.js";
         };
       });
       comments = resultComments;
-      renderCom( {comments, mapData} );
+      renderComments( {comments} ); 
+      console.log(loaderPage);
     })
     .then((resultData) => {
+
+      console.log('2');
       //console.log('Загрузка страницы = ' + isLoadedPage);
       loaderPage.style.display = "none";
     })
     .catch((error) => {
       alert("Упс, сервер упал");
-      //console.log(error);
       loaderPage.style.display = "none";
     });
   }
+  mapData();    
+
+  //Функция рендера комментариев
+  renderComments( {comments} );
+
   
-  renderLogin( {mapData} );
+
+  // buttonDeleteComment.addEventListener('click', () => {
+
+  //   let arrList = Array.from(commentList.children)
+  //   //const lastComment = commentList.innerHTML.lastIndexOf();
+  //   console.log(arrList);
+  //   arrList = arrList.pop();
+
+  //   console.log(arrList);
+  //   console.log(commentList);
+
+  //   commentList.innerHTML = String.from(arrList);
+  //   //commentList.innerHTML = arrList;
+
+  //   //commentList.innerHTML = commentList - lastComment;
+  // });
+
+
+ 

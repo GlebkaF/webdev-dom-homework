@@ -1,45 +1,48 @@
-import { postComment, userName } from "./api.js";
+import { postComment } from "./api.js";
 import { getCurrentDate } from "./getDate.js";
+import { mapData } from "./main.js";
 
-export function renderCom( {comments, mapData} ) {
-    const app = document.getElementById('app');
+export const renderComments = ( {comments} ) => {
 
-    const CommentsHtml = comments.map((comment, index) => {
-    let isLike;
-    let inputTextHtml;
-    let textButtonEditSave;
-    let classButtonEditSave;
-    //isLoadedPage = true;
-    comment.myLike ? isLike = "-active-like" : false
-    
-    comment.isEdit ? textButtonEditSave = "Сохранить" : textButtonEditSave = "Редактировать"
-    comment.isEdit ? classButtonEditSave = "comment-text-save" : classButtonEditSave = "comment-text-edit"
-    comment.isEdit ? inputTextHtml = `<textarea id="form-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарй" rows="4">${comment.text}</textarea>` : inputTextHtml = `<div data-index="${index}" class="comment-text">${comment.text}</div>`;
+  let isLoaded;
 
-    
-      return `<li class="comment">
-              <div class="comment-header">
-                <div>${comment.author}</div>
-                <div>${comment.date}</div>
+  const CommentsHtml = comments.map((comment, index) => {
+  let isLike;
+  let inputTextHtml;
+  let textButtonEditSave;
+  let classButtonEditSave;
+  //isLoadedPage = true;
+  comment.myLike ? isLike = "-active-like" : false
+
+  comment.isEdit ? textButtonEditSave = "Сохранить" : textButtonEditSave = "Редактировать"
+  comment.isEdit ? classButtonEditSave = "comment-text-save" : classButtonEditSave = "comment-text-edit"
+  comment.isEdit ? inputTextHtml = `<textarea id="form-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарй" rows="4">${comment.text}</textarea>` : inputTextHtml = `<div data-index="${index}" class="comment-text">${comment.text}</div>`;
+
+
+    return `<li class="comment">
+            <div class="comment-header">
+              <div>${comment.author}</div>
+              <div>${comment.date}</div>
+            </div>
+            <div class="comment-body">
+              ${inputTextHtml}
+            </div>
+            <button data-edit="${index}" class="${classButtonEditSave}">${textButtonEditSave}</button>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">${comment.likeCount}</span>
+                <button class="like-button ${isLike}" id="like-button" data-islike="${index}"></button>
               </div>
-              <div class="comment-body">
-                ${inputTextHtml}
-              </div>
-              <button data-edit="${index}" class="${classButtonEditSave}">${textButtonEditSave}</button>
-              <div class="comment-footer">
-                <div class="likes">
-                  <span class="likes-counter">${comment.likeCount}</span>
-                  <button class="like-button ${isLike}" id="like-button" data-islike="${index}"></button>
-                </div>
-              </div>
-            </li>`;
-    
-    
-            
-  }).join("");
+            </div>
+          </li>`;
 
-  const appHtml = `
-  <div class="container">
+
+
+}).join("");
+
+const container = document.getElementById('app');
+const appHtml = `
+<div class="container">
       <span class="page-loader">Пожайлуйста подождите, загружаю комментарии</span>
       <ul class="comments" id="comment-list">
         ${CommentsHtml}
@@ -51,7 +54,6 @@ export function renderCom( {comments, mapData} ) {
           id="form-name"
           class="add-form-name"
           placeholder="Введите ваше имя"
-          value="${userName}" readonly="readonly"
         />
         <textarea
           id="form-text"
@@ -68,24 +70,11 @@ export function renderCom( {comments, mapData} ) {
         </div>
       </div>
     </div>
-  `;
+`;
 
-  app.innerHTML = appHtml;
+container.innerHTML = appHtml;
 
-  // Получаем все необходимые элементы
-
-  const body = document.querySelector(".container");
-  const commentList = document.getElementById('comment-list');
-  const buttonAddComment = document.getElementById('add-form-button');
-  const inputName = document.getElementById('form-name');
-  const inputText = document.getElementById('form-text');
-  const formaComment = document.getElementById('forma');
-  const buttonDeleteComment = document.getElementById('delete-form-button');
-  let isLoaded;
-  const loaderPage = document.querySelector(".page-loader");
-  const loaderAddComment = document.querySelector(".comment-loader");
-
-  // Запрет на действие по умолчанию для textArea - gthеход на новую строку. Иначе функция addComment будет выполняться, 
+// Запрет на действие по умолчанию для textArea - gthеход на новую строку. Иначе функция addComment будет выполняться, 
   // если заполнено поле с именеи и в поле комментария есть переход на новую строку
 
   const textArea = document.getElementById('form-text').addEventListener('keydown', (event) => {
@@ -93,6 +82,16 @@ export function renderCom( {comments, mapData} ) {
       event.preventDefault(); 
     }
   })
+
+  const commentList = document.getElementById('comment-list');
+  const buttonAddComment = document.getElementById('add-form-button');
+  const inputName = document.getElementById('form-name');
+  const inputText = document.getElementById('form-text');
+  const formaComment = document.getElementById('forma');
+  const loaderAddComment = document.querySelector(".comment-loader");
+  const loaderPage = document.querySelector(".page-loader");
+
+  console.log(loaderPage);
 
   // Функция ответа на комментарий
 
@@ -126,7 +125,7 @@ export function renderCom( {comments, mapData} ) {
     for (const likeButton of likeButtons) {
       likeButton.addEventListener('click', () => {
         let index = likeButton.dataset.islike;
-        
+
         if (comments[index].myLike) {
           comments[index].myLike = false;
           comments[index].likeCount--;
@@ -134,8 +133,8 @@ export function renderCom( {comments, mapData} ) {
           comments[index].myLike = true;
           comments[index].likeCount++;
         }
-        
-        renderCom( {comments} );
+
+        renderComments( {comments} );
       })
     }
   }
@@ -150,12 +149,12 @@ export function renderCom( {comments, mapData} ) {
         let index = editButton.dataset.edit;
 
         comments[index].isEdit = true;
-        renderCom( {comments} );
+        renderComments( {comments} );
       })
     }
   }
 
-    // Функция сохранения изменений в комментарии - вызов по кнопке "Сохранить"
+  // Функция сохранения изменений в комментарии - вызов по кнопке "Сохранить"
 
   const initSaveEditCommentListener = () => {
     const saveButtons = document.querySelectorAll(".comment-text-save");
@@ -168,106 +167,112 @@ export function renderCom( {comments, mapData} ) {
         comments[index].text = inputText.value;
         comments[index].isEdit = false;
 
-        renderCom( {comments} );
+        renderComments( {comments} );
       })
     }
   }
 
-    ititAddLikeListener();
-    initEditCommentListener();
-    initSaveEditCommentListener();
-    initAnswerComment2();
+initAnswerComment2()
+ititAddLikeListener()
+initEditCommentListener()
+initSaveEditCommentListener()
 
-
-  
-
-
-  const postTask = () => {
-    let currentDate = getCurrentDate(new Date());
-        postComment( {
-            text: inputText.value,
-            date: currentDate,
-            likes: 0,
-            isLiked: false,
-            forceError: true
-        } ).then((resultCommentsData) => {
-        return mapData();
-        })
-        .then((resultData) => {
+const postTask = () => {
+  let currentDate = getCurrentDate(new Date());
+      postComment( {
+          text: inputText.value,
+          name: inputName.value,
+          date: currentDate,
+          likes: 0,
+          isLiked: false,
+          forceError: true
+      } ).then((resultCommentsData) => {
+      return mapData();
+      })
+      .then((resultData) => {
+        buttonAddComment.disabled = false;
+        loaderAddComment.style.display = "none";
+        inputName.value = '';
+        inputText.value = '';
+      })
+      .catch((error) => {
+        console.warn(error);
+        loaderAddComment.style.display = "none";
+        if (error.message === "Имя или комментраий короткие") {
+          alert("Имя и комментарий должны быть не короче 3х символов");
+          inputName.classList.add('error-form');
+          inputText.classList.add('error-form');
+        } else if (error.message === "Сервер не отвечает") {
+          //alert ("Сервер сломался, попробуй позже");
+          //buttonAddComment.disabled = false;
+          postTask();
+        } else {
+          alert("Кажется, у вас сломался интернет, попробуйте позже");
           buttonAddComment.disabled = false;
-          loaderAddComment.style.display = "none";
-          inputName.value = '';
-          inputText.value = '';
-        })
-        .catch((error) => {
-          console.warn(error);
-          loaderAddComment.style.display = "none";
-          if (error.message === "Имя или комментраий короткие") {
-            alert("Имя и комментарий должны быть не короче 3х символов");
-            inputName.classList.add('error-form');
-            inputText.classList.add('error-form');
-          } else if (error.message === "Сервер не отвечает") {
-            //alert ("Сервер сломался, попробуй позже");
-            //buttonAddComment.disabled = false;
-            postTask();
-          } else {
-            alert("Кажется, у вас сломался интернет, попробуйте позже");
-            buttonAddComment.disabled = false;
-          }
-        });
+        }
+      });
     }
 
-  // Функция отправки комментария
+// Функция отправки комментария
 
-  function addComment(event) {
+function addComment(event) {
 
-    if (event.type === 'click' || (event.type === 'keyup' && event.key === 'Enter'))  {
+  if (event.type === 'click' || (event.type === 'keyup' && event.key === 'Enter'))  {
 
-      const oldCommentList = commentList.innerHTML;
+    const oldCommentList = commentList.innerHTML;
 
-    //   if (inputName.value === '' && inputText.value !== '') {
-    //     inputName.classList.add('error-form');
-    //     inputText.classList.remove('error-form');
-    //     buttonAddComment.disabled = true;
-    //     return;} 
-        
-    //   else if (inputText.value === '' && inputName.value !== '') {
-    //     inputText.classList.add('error-form');
-    //     inputName.classList.remove('error-form');
-    //     buttonAddComment.disabled = true;
-    //     return;} 
-      
-    //   else if (inputName.value === '' && inputText.value === '') {
-    //     inputName.classList.add('error-form');
-    //     inputText.classList.add('error-form');
-    //     buttonAddComment.disabled = true;
-    //     return;
-    //   }
-
-      loaderAddComment.style.display = "block";
-      inputName.classList.remove('error-form');
+    if (inputName.value === '' && inputText.value !== '') {
+      inputName.classList.add('error-form');
       inputText.classList.remove('error-form');
       buttonAddComment.disabled = true;
-      
-      
+      return;} 
 
-      // comments.push({
-      //   text: inputText.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-      //   author: inputName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-      //   date: currentDate,
-      //   likeCount: 0,
-      //   myLike: false,
-      //   isEdit: false
-      // });
+    else if (inputText.value === '' && inputName.value !== '') {
+      inputText.classList.add('error-form');
+      inputName.classList.remove('error-form');
+      buttonAddComment.disabled = true;
+      return;} 
 
-      isLoaded = true;
-      console.log(isLoaded);
-
-      postTask();
-      renderCom( {comments, mapData} );
+    else if (inputName.value === '' && inputText.value === '') {
+      inputName.classList.add('error-form');
+      inputText.classList.add('error-form');
+      buttonAddComment.disabled = true;
+      return;
     }
-  }
 
-  buttonAddComment.addEventListener('click', addComment);
-  formaComment.addEventListener('keyup', addComment);
+    loaderAddComment.style.display = "block";
+    inputName.classList.remove('error-form');
+    inputText.classList.remove('error-form');
+    buttonAddComment.disabled = true;
+
+
+
+    // comments.push({
+    //   text: inputText.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+    //   author: inputName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+    //   date: currentDate,
+    //   likeCount: 0,
+    //   myLike: false,
+    //   isEdit: false
+    // });
+
+    isLoaded = true;
+    console.log(isLoaded);
+
+    postTask();
+    renderComments( {comments} );
+  }
 }
+
+buttonAddComment.addEventListener('click', addComment);
+formaComment.addEventListener('keyup', addComment);
+}
+
+console.log('1!');
+
+// console.log(loaderPage);
+// loaderPage.style.display = "block";
+
+// export const getLoaderPage = () => {
+
+// }

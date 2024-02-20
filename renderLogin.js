@@ -1,7 +1,7 @@
 import { loginUser, setToken, setUserName, token, userName } from "./api.js";
 
 export const renderLogin = ( {mapData} ) => {
-    const app = document.getElementById('app');
+    const container = document.getElementById('app');
     const loginHtml = `
     <div class="container">
       <div class="login-form mrgn-btm-20" id="forma">
@@ -28,7 +28,7 @@ export const renderLogin = ( {mapData} ) => {
     </div>
     `;
 
-    app.innerHTML = loginHtml;
+    container.innerHTML = loginHtml;
 
     const buttonElement = document.getElementById('login-form-button');
     const loginInput = document.getElementById('form-login');
