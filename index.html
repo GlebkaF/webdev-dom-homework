@@ -128,7 +128,7 @@
       method: "GET"
     }).then((response) => {
       response.json().then((responseData) => {
-        const appComments = responseData.comments.map((comment) => {          
+        const appComments = responseData.comments.map((comment) => {
           return {
             name: comment.author.name,
             date: new Date(comment.date).toLocaleString('ru-RU', {
@@ -152,11 +152,8 @@
         text: textareaElement.value,
         name: inputElement.value,
       })
-    }).then((response) => {
-      response.json().then((responseData) => {
-        comments = responseData.comments;
-      });
     });
+    renderComments();
   };
 
   // const jsonRequest = JSON.stringify(comments);
