@@ -75,14 +75,24 @@
           ? comment.likes - 1
           : comment.likes + 1;
 
-      comment.likeConfirm = !comment.likeConfirm
+        comment.isLiked = !comment.isLiked;
 
         renderComments();
-      })
+      });
+    }
+
+    for (const comment of document.querySelectorAll(".comment")) {
+      comment.addEventListener("click", () => {
+        const commentQuote = comments[comment.dataset.index];
+
+        const quoteElement = document.createElement("div")
+        quoteElement.classList.add("quote");
+        quoteElement.textContent = commentQuote.name + ":" + commentQuote.text;
+
+        comment.appendChild(quoteElement);
+      });
     }
   };
-
-
 
   const renderComments = () => {
     commentList.innerHTML = comments.map((comment, index) => {
@@ -94,19 +104,21 @@
         </div>
         <div class="comment-body">
           <div class="comment-text">
-            ${comment.text}
-              </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">${comment.likes}</span>
-            <button data-index=${index} class="like-button ${comment.isLiked ? "-active-like" : ""}"></button>
-          </div >
+            ${comment.text
+          .replaceAll("%BEGIN_QUOTE", "<div class='quote'>")
+          .replaceAll("END_QUOTE%", "</div>")
+        }
+              </div >
+        </div >
+    <div class="comment-footer">
+      <div class="likes">
+        <span class="likes-counter">${comment.likes}</span>
+        <button data-index=${index} class="like-button ${comment.isLiked ? "-active-like" : ""}"></button>
+    </div >
         </div >
       </li >`
     }).join("");
     initLikesListeners();
-
   }
   renderComments();
 
