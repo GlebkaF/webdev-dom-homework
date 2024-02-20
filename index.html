@@ -112,16 +112,22 @@
           renderComments();
         });
       }
+      const textArea = document.querySelector('.add-form-edit-text')
+      if (textArea) {
+        textArea.addEventListener('click', (e) => {
+          e.stopPropagation()
+          
+        })
+      }
     };
 
     const textEditElement = (index) => {
       const textEditElements = document.querySelectorAll(".add-form-edit-text");
-      let text;
       for (const textEditElement of textEditElements) {
         const index = textEditElement.dataset.index;
         comments[index].text = textEditElement.value;
       }
-      return (text = comments[index].text);
+      return comments[index].text;
     };
 
     const initReplayListener = () => {
@@ -141,10 +147,10 @@
         .map((comment, index) => {
           let editComment = () => {
             if (comment.isEdit) {
-              return `< textarea data - index="${index}" id = "add-form-edit-text" type = "textarea" class="add-form-edit-text" placeholder = ""
-    rows = "4" > ${comment.text}</textarea > `;
+              return `<textarea data-index="${index}" id="add-form-edit-text" type="textarea" class="add-form-edit-text" placeholder=""
+    rows="4" > ${sanitize(comment.text)}</textarea>`;
             } else {
-              return `${comment.text} `;
+              return `${sanitize(comment.text)} `;
             }
           };
           let saveButton = () => {
@@ -156,12 +162,12 @@
           };
           return `<li class="comment">
           <div class="comment-header">
-            <div>${comment.name}</div>
+            <div>${sanitize(comment.name)}</div>
             <div id="add-form-date">${comment.date}</div>
           </div>
           <div class="comment-body">
             <div data-index="${index}" class="comment-text" style="white-space:pre-line">
-              <a class="replay-form-link" ${comment.isEdit ? '' : 'href="#add-form"'}>${editComment()}</a>
+              <a class="replay-form-link" ${comment.isEdit ? '' : 'href="#add-form"'}> ${editComment()}</a>
             </div>
           </div>
           <div class="comment-footer">
@@ -169,7 +175,7 @@
               <span data-index="${index}" class="likes-counter">${
             comment.like_count
           }</span>
-              <button class="like-button ${comment.like_active ? "-active-like" : ""}"></button>
+              <button data-index="${index}" class="like-button ${comment.like_active ? "-active-like" : ""}"></button>
             </div>
             <div><button data-index="${index}" ${saveButton()}</button></div>
           </div >
@@ -199,6 +205,15 @@
       currentDate();
     };
 
+    function sanitize(text) {
+      return text.replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+        .replaceAll("QUOTE_END", "</div>");
+    }
+
     buttonEl.addEventListener("click", () => {
       nameEl.classList.remove("add-form_error");
       textEl.classList.remove("add-form_error");
@@ -214,24 +229,10 @@
         return;
       }
 
-      const nameValue = nameEl.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;");
-
-      const textValue = textEl.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
-        .replaceAll("QUOTE_END", "</div>");
-
       comments.push({
         date: currentDate(),
-        name: nameValue,
-        text: textValue,
+        name: nameEl.value,
+        text: textEl.value,
         like_active: false,
         like_count: 0,
         isEdit: false,
