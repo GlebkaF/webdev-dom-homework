@@ -77,10 +77,13 @@
         nameInputElement.classList.add('error');
         nameInputElement.value = '';
         buttonElement.classList.add('add-form-button-inactive');
+        buttonElement.disabled = true;
         return;
+
       } else if(textInputElement.value === '' || !textInputElement.value.trim()) {
         textInputElement.classList.add('error');
         buttonElement.classList.add('add-form-button-inactive');
+        buttonElement.disabled = true;
         return;
       }   
 
@@ -111,6 +114,15 @@
     buttonElement.addEventListener('click', () => {
     addComment()
     });
+
+    nameInputElement.addEventListener('keyup', keyEvent);
+    textInputElement.addEventListener('keyup', keyEvent);
+
+    function keyEvent(e) {
+      if (e.code === 'Enter') {
+        buttonElement.dispatchEvent(new Event('click'));
+      }
+    }
 
     console.log("It works!");
   </script>
