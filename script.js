@@ -51,14 +51,12 @@ const renderPeoples = () => {
 
     commentListElement.innerHTML = commentsHtml;
 
-    // Определяем кнопку лайка для JS:
-    const likeButtonElements = document.querySelectorAll(".like-button");
 
-    // Красим кнопку лайка:    
-    for (let index = 0; index < likeButtonElements.length; index++) {
-        const button = likeButtonElements[index];
+    // Красим кнопку лайка и увеличиваем счетчик:    
+    for (let button of document.querySelectorAll(".like-button")) {
         button.addEventListener("click", (event) => { 
-            event.stopPropagation();    
+            event.stopPropagation();
+            const index = event.currentTarget.dataset.index;    
             const currentPeople = peoples[index];                    
 
             if (currentPeople.isLiked) {
@@ -77,8 +75,8 @@ const renderPeoples = () => {
     // Ответ на комментарий
     for (const commentElement of document.querySelectorAll(".comment")) {
         commentElement.addEventListener("click", (event) => {
-            const index = event.currentTarget.dataset.index; // Получаем индекс комментария
-            const currentPost = peoples[index]; // Получаем данные текущего комментария
+            const index = event.currentTarget.dataset.index;
+            const currentPost = peoples[index];
 
             textInputElement.value = `%BEGIN_QUOTE${currentPost.comment} : ${currentPost.name}END_QUOTE%`;
             textInputElement.style.whiteSpace = 'pre-line';
