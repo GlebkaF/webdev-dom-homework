@@ -10,23 +10,8 @@
 <body>
   <div class="container">
     <ul class="comments" id="comments">
-      <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
+      <!-- Ы -->
+      <!-- </li>
       <li class="comment">
         <div class="comment-header">
           <div>Варвара Н.</div>
@@ -43,7 +28,7 @@
             <button class="like-button -active-like"></button>
           </div>
         </div>
-      </li>
+      </li> -->
     </ul>
     <div class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input" />
@@ -71,7 +56,76 @@
   const listElement = document.getElementById("comments");
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
+  const commentElements = document.querySelectorAll(".comment");
+  const likeButtonsElement = document.querySelectorAll(".likes");
 
+
+  // массив
+  const comments = [
+    {
+      name: "Глеб Фокин",
+      time: "12.02.22 12:18",
+      comment: "Это будет первый комментарий на этой странице",
+      likes: 3,
+      isLike: false,
+    },
+    {
+      name: "Варвара Н.",
+      time: "13.02.22 19:22",
+      comment: "Мне нравится как оформлена эта страница! ❤",
+      likes: 75,
+      isLike: false,
+    }
+  ]
+
+  // Рендер
+  const renderComments = () => {
+    const commentsHtml = comments.map((comment, index) => {
+      return `<li class="comment">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.time}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.comment}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <div class="likes">
+              <span class="likes-counter">${comments[index].likes}</span>
+              <button data-index= "${index}" class="like-button ${comment.isLiked ? "-active-like" : ""
+        }"></button>
+            </div>
+          </div>
+        </li> `;
+    }).join('');
+
+    listElement.innerHTML = commentsHtml;
+
+  };
+  const initEventListeners = () => {
+    const likesElements = document.querySelectorAll(".like-button");
+    for (const likesElement of likesElements) {
+      likesElement.addEventListener("click", () => {
+        const index = likesElement.dataset.index;
+
+        console.log(comments[index].likes);
+        if (comments[index].isLiked) {
+          comments[index].isLiked = false;
+          comments[index].likes--;
+        } else {
+          comments[index].isLiked = true;
+          comments[index].likes++;
+        }
+        renderComments();
+        initEventListeners();
+      });
+    }
+  };
+  renderComments();
+  initEventListeners();
   // Обработчик клика
   buttonElement.addEventListener("click", () => {
     nameInputElement.classList.remove("error");
@@ -85,28 +139,50 @@
       commentInputElement.classList.add("error");
       return;
     }
+    // Дата и время
+    const currentDate =
+      new Date().toLocaleDateString("default", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "2-digit",
+      }) +
+      " " +
+      new Date().toLocaleTimeString().slice(0, -3);
 
-    // Управление внутренним html содержимым
-    const oldListHtml = listElement.innerHTML;
-    listElement.innerHTML =
-      oldListHtml +
-      `<li class="comment">
-          <div class="comment-header">
-            <div>${nameInputElement.value}</div>
-            <div>${(new Date()).toLocaleString()}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${commentInputElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter"></span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
+    //Добавляем коммент
+    comments.push({
+      name: nameInputElement.value,
+      time: currentDate,
+      comment: commentInputElement.value,
+      likes: 0,
+      isLike: false
+    });
+
+    renderComments();
+    initEventListeners();
+
+
+    /*     // Управление внутренним html содержимым
+        const oldListHtml = listElement.innerHTML;
+        listElement.innerHTML =
+          oldListHtml +
+          `<li class="comment">
+              <div class="comment-header">
+                <div>${nameInputElement.value}</div>
+                <div>${(new Date()).toLocaleString()}</div>
+              </div>
+              <div class="comment-body">
+                <div class="comment-text">
+                  ${commentInputElement.value}
+                </div>
+              </div>
+              <div class="comment-footer">
+                <div class="likes">
+                  <span class="likes-counter"></span>
+                  <button class="like-button"></button>
+                </div>
+              </div>
+            </li>`; */
 
 
     nameInputElement.value = "";
