@@ -93,12 +93,15 @@
         .join("");
 
       commentsContainer.innerHTML = commentsHtml;
+      initEventListeners();
+      answerComment();
     };
 
-    const initEventListeners = () => {
+    function initEventListeners () {
       const likesElements = document.querySelectorAll(".like-button");
       for (const likesElement of likesElements) {
-        likesElement.addEventListener("click", () => {
+        likesElement.addEventListener("click", function (event) {
+          event.stopPropagation();
           const index = likesElement.dataset.index;
 
           console.log(comments[index].likes);
@@ -110,13 +113,14 @@
             comments[index].likes++;
           }
           renderComments();
-          initEventListeners();
         });
       }
     };
 
     renderComments();
-    initEventListeners();
+   
+   
+
     
     //добавить коммент
     function addNewComment() {
@@ -150,9 +154,10 @@
     </li>`
       );
       comments.push({
-        name: inputNameElement.value,
+        name: inputNameElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+
         time: currentDate,
-        comment: inputTextElement.value,
+        comment: inputTextElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
         likes: 0,
         isLiked: false,
       });
@@ -176,6 +181,17 @@
       inputTextElement.value = "";
     });
 
+    //ответ на коммент
+    function answerComment() {
+  const comment = document.querySelectorAll('.comment')
+  const  inputNameElement= document.querySelector('.add-form-name')
+  const inputTextElement = document.querySelector('.add-form-text')
+comment.forEach((el, index) => {
+  el.addEventListener('click', () => {
+    inputTextElement.value = `${comments[index].name} \n ${comments[index].comment}`
+  })
+});
+}
     // Чтобы форма отправлялась клавишей Enter
     inputTextElement.addEventListener("keydown", function (event) {
       if (event.key === "Enter") {
