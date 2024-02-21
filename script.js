@@ -63,7 +63,6 @@ const renderComments = () => {
     }).join("");
 
     commentItems.innerHTML = commentHtml;
-    console.log('render ok');
 
     const buttonLikes = document.querySelectorAll('.like-button')
 
