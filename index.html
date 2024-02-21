@@ -70,7 +70,7 @@
       const usersHtml = users.map((item) => {
         return `<li class="comment">
                   <div class="comment-header">
-                    <div>${item.name}</div>
+                    <div class="user-name">${item.name}</div>
                     <div>${item.date}</div>
                   </div>
                   <div data-text="${item.comment}" class="comment-body">
@@ -90,12 +90,14 @@
       listElement.innerHTML = usersHtml;
 
       initLikeButtonListeners();
+      answerComment ();
     };
 
-    //функция лайков
-    const initLikeButtonListeners = () => {
-      const buttonElements = document.querySelectorAll('.like-button');
+    renderUsers();
 
+    //функция лайков
+    function initLikeButtonListeners () {
+      const buttonElements = document.querySelectorAll('.like-button');
       for (const buttonElement of buttonElements) {
 
         const id = buttonElement.dataset.id;
@@ -114,12 +116,13 @@
             found.isLiked = false;
           }
           renderUsers();
+
         });
       }
     }
 
-    renderUsers();
-
+    
+      
     //функция формата реального времени
     function clock() {
       let fullDate = new Date().toLocaleDateString([], { day: "2-digit", month: "2-digit", year: "2-digit" }) + " " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
@@ -154,6 +157,20 @@
       nameInputElement.value = "";
       textInputElement.value = "";
     });
+
+    //Функция ответа на комментарий
+    function answerComment () {
+      const commentBlocks = document.querySelectorAll('.comment-body');
+      for (const commentBlock of commentBlocks) {
+        commentBlock.addEventListener('click', (event) => {
+          const userNames = document.querySelectorAll('.user-name');
+          console.log(event);
+          textInputElement.value = `< ${event.target.outerText} \n ${event.target.parentElement.parentElement.firstElementChild.firstElementChild.innerText},`;
+        });
+      
+      }
+    }
+    answerComment ()
     // Код писать здесь
     console.log("It works!");
   </script>
