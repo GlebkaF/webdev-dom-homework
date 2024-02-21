@@ -16,6 +16,10 @@ const peoples = [
     },
 ];
 
+const sanitizeHtml = (htmlString) => {
+    return htmlString.replaceAll("<", "&lt").replaceAll(">", "&gt");
+}
+
 // Кладем в переменную список комментариев, который будет меняться:
 const commentListElement = document.getElementById('commentList');
 
@@ -24,13 +28,16 @@ const renderPeoples = () => {
     const commentsHtml = peoples
         .map((people, index) => {
             return `
-                <li class="comment">
+                <li data-index=${index} class="comment">
                     <div class="comment-header">
                         <div>${people.name}</div>
                         <div>${people.time}</div>
                     </div>
                     <div class="comment-body">
-                        <div class="comment-text">${people.comment}</div>
+                        <div class="comment-text">${people.comment
+                            .replaceAll("%BEGIN_QUOTE", "<div class='quote'>")
+                            .replaceAll("END_QUOTE%", "</div>")}
+                        </div>
                     </div>
                     <div class="comment-footer">
                         <div class="likes">
@@ -44,14 +51,13 @@ const renderPeoples = () => {
 
     commentListElement.innerHTML = commentsHtml;
 
-    // Определяем кнопку лайка для JS:
-    const likeButtonElements = document.querySelectorAll(".like-button");
 
-    // Красим кнопку лайка:
-    for (let index = 0; index < likeButtonElements.length; index++) {
-        const button = likeButtonElements[index];
-        button.addEventListener("click", () => {  
-            const currentPeople = peoples[index];               
+    // Красим кнопку лайка и увеличиваем счетчик:    
+    for (let button of document.querySelectorAll(".like-button")) {
+        button.addEventListener("click", (event) => { 
+            event.stopPropagation();
+            const index = event.currentTarget.dataset.index;    
+            const currentPeople = peoples[index];                    
 
             if (currentPeople.isLiked) {
                 currentPeople.likes--;
@@ -64,6 +70,19 @@ const renderPeoples = () => {
             renderPeoples();
         });
     }
+
+
+    // Ответ на комментарий
+    for (const commentElement of document.querySelectorAll(".comment")) {
+        commentElement.addEventListener("click", (event) => {
+            const index = event.currentTarget.dataset.index;
+            const currentPost = peoples[index];
+
+            textInputElement.value = `%BEGIN_QUOTE${currentPost.comment} : ${currentPost.name}END_QUOTE%`;
+            textInputElement.style.whiteSpace = 'pre-line';
+        });
+    }
+
 }
 
 // Определяем для JS элементы input-формы:
@@ -71,35 +90,43 @@ const buttonElement = document.getElementById('add-button');
 const nameInputElement = document.getElementById('name');
 const textInputElement = document.getElementById('textArea');
 
-// Создаем отформатированную дату для нового комментария:
-const newDate = new Date();
-const currentDate = newDate;
-const options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' };
-
 // Прикрепляем обработчик к кнопке добавления комментария:
 buttonElement.addEventListener("click", () => {
+    // Удаляем пробелы из значений полей ввода:
+    const trimmedName = nameInputElement.value.trim();
+    const trimmedText = textInputElement.value.trim();
+
     nameInputElement.classList.remove("error");
-    if (nameInputElement.value === "") {
+    if (trimmedName === "") {
         nameInputElement.classList.add("error");
         return;
     }
 
     textInputElement.classList.remove("error");
-    if (textInputElement.value === "") {
+    if (trimmedText === "") {
         textInputElement.classList.add("error");
         return;
     }
 
+    // Создаем отформатированную дату для нового комментария:
+    const newDate = new Date();
+    const currentDate = newDate;
+    const options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }; 
+
     const newComment = {
-        name: nameInputElement.value,
+        name: sanitizeHtml(trimmedName),
         time: currentDate.toLocaleDateString('ru-RU', options),
         likes: 0,
-        comment: textInputElement.value,
+        comment: sanitizeHtml(trimmedText),
         isLiked: false
     };
 
     peoples.push(newComment);
     renderPeoples();
+
+    // Очищаем поля ввода после отправки комментария:
+    nameInputElement.value = "";
+    textInputElement.value = "";
 });
 
 renderPeoples();
