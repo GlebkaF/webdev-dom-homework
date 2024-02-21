@@ -34,7 +34,15 @@
   const textareaElement = document.getElementById('commitInput');
   const likesElements = document.querySelectorAll('.likes');
   const likeButtonElements = document.querySelectorAll('.like-button');
+
+  // const startTime = Date.now();
+  // console.log("Начало запроса");
+  // console.log("Время выполнения: " + (Date.now() - startTime));
+
+  buttonAdd.disabled = true;
+  buttonAdd.textContent = "Обработка...";
   getFeth();
+
   let comments = [];
 
   const initEventListener = () => {
@@ -72,15 +80,16 @@
           <div class="likes">
             <span class="likes-counter">
               <div>${comment.likes}</div>
-              </span>
+            </span>
             <button class="${comment.isLiked ? 'like-button -active-like' : 'like-button'}" data-index =${index}>
               <div></div>
-              </button>
+            </button>            
           </div>
         </div>
       </li>`
     }).join('');
     listElement.innerHTML = commentsHtml;
+
     initEventListener();
     commitAnswer();
   };
@@ -102,7 +111,6 @@
       inputElement.style.backgroundColor = '';
       textareaElement.style.backgroundColor = '';
       postFetch();
-      getFeth();
       inputElement.value = '';
       textareaElement.value = '';
     };
@@ -118,7 +126,7 @@
     const formText = document.querySelector('.add-form-text');
     commentsAnswer.forEach((comment, index) => {
       comment.addEventListener('click', () => {
-        formText.value = `└> ${comments[index].author.name} \n ${comments[index].text}`;
+        formText.value = `└> ${comments[index].name} \n ${comments[index].text}`;
       })
     })
   };
@@ -126,26 +134,35 @@
   function getFeth() {
     const fethGet = fetch("https://wedev-api.sky.pro/api/v1/:aleksandr-penkov/comments", {
       method: "GET"
-    }).then((response) => {
-      response.json().then((responseData) => {
-        const appComments = responseData.comments.map((comment) => {
-          return {
-            name: comment.author.name,
-            date: new Date(comment.date).toLocaleString('ru-RU', {
-              year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false
-            }).replace(',', ''),
-            text: comment.text,
-            likes: comment.likes,
-            isLiked: false,
-          };
-        });
-        comments = appComments;
-        renderComments();
+    })
+      .then((response) => {
+        response.json()
+          .then((responseData) => {
+            const appComments = responseData.comments.map((comment) => {
+              return {
+                id: comment.id,
+                name: comment.author.name,
+                date: new Date(comment.date).toLocaleString('ru-RU', {
+                  year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false
+                }).replace(',', ''),
+                text: comment.text,
+                likes: comment.likes,
+                isLiked: false,
+              };
+            });
+            comments = appComments;
+            renderComments();
+          })
+          .then((endTransmission) => {
+            buttonAdd.disabled = false;
+            buttonAdd.textContent = "Написать";
+          });
       });
-    });
   };
 
   function postFetch() {
+    buttonAdd.disabled = true;
+    buttonAdd.textContent = "Добавляем комментарий...";
     fetch("https://wedev-api.sky.pro/api/v1/:aleksandr-penkov/comments", {
       method: "POST",
       body: JSON.stringify({
@@ -153,11 +170,37 @@
         name: inputElement.value,
       })
     });
-    renderComments();
+    getFeth();
   };
 
   // const jsonRequest = JSON.stringify(comments);
   // const jsonResponse = JSON.parse(jsonRequest);
+
+  // добавить в Render:
+  // <div class="comment-footer">   - Уже есть!!!
+  //    <button class="button delete-button" data-id=${comment.id}>Удалить</button>;   - Добавить!!!
+  //         <div class="likes">    - Уже есть!!!
+
+  // const deleteButtons = document.querySelectorAll('.delete-button');
+  // for (const deleteButton of deleteButtons) {
+  //   deleteButton.addEventListener("click", (event) => {
+  //     event.stopPropagation();
+  //     const id = deleteButton.dataset.id;
+  //     fetch("https://wedev-api.sky.pro/api/v1/:aleksandr-penkov/comments/" + id, {
+  //       method: "DELETE",
+  //       body: JSON.stringify({
+  //         id: comments.id
+  //       })
+  //     }).then((response) => {
+  //       response.json().then((responseData) => {
+  //         comments = responseData.comments;
+  //         renderComments();
+  //       })
+  //     });
+  //     getFeth();
+  //   })
+  // }
+
 
   console.log("It works!");
 </script>
