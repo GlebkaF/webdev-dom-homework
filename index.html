@@ -34,16 +34,15 @@
   const textareaElement = document.getElementById('commitInput');
   const likesElements = document.querySelectorAll('.likes');
   const likeButtonElements = document.querySelectorAll('.like-button');
+  let comments = [];
 
   // const startTime = Date.now();
   // console.log("Начало запроса");
-  // console.log("Время выполнения: " + (Date.now() - startTime));
+  // console.log("Время выполнения: " + (Date.now() - startTime) + "ms");
 
   buttonAdd.disabled = true;
   buttonAdd.textContent = "Обработка...";
   getFeth();
-
-  let comments = [];
 
   const initEventListener = () => {
     const likeButtonElements = document.querySelectorAll('.like-button');
@@ -111,10 +110,7 @@
       inputElement.style.backgroundColor = '';
       textareaElement.style.backgroundColor = '';
       postFetch();
-      inputElement.value = '';
-      textareaElement.value = '';
     };
-    renderComments();
   });
 
   function sanitizeHtml(htmlString) {
@@ -132,7 +128,7 @@
   };
 
   function getFeth() {
-    const fethGet = fetch("https://wedev-api.sky.pro/api/v1/:aleksandr-penkov/comments", {
+    fetch("https://wedev-api.sky.pro/api/v1/:aleksandr-penkov/comments", {
       method: "GET"
     })
       .then((response) => {
@@ -156,7 +152,14 @@
           .then((endTransmission) => {
             buttonAdd.disabled = false;
             buttonAdd.textContent = "Написать";
+            inputElement.value = '';
+            textareaElement.value = '';
           });
+      })
+      .catch((error) => {
+        buttonAdd.disabled = false;
+        buttonAdd.textContent = "Написать";
+        alert(error.message);
       });
   };
 
@@ -166,11 +169,28 @@
     fetch("https://wedev-api.sky.pro/api/v1/:aleksandr-penkov/comments", {
       method: "POST",
       body: JSON.stringify({
-        text: textareaElement.value,
-        name: inputElement.value,
+        text: textareaElement.value
+          .replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
+        name: inputElement.value
+          .replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
       })
-    });
-    getFeth();
+    })
+      .then((response) => {
+        if (response.status === 400) {
+          throw new Error('Имя или текст комментария короче 3-х символов');
+        }
+        if (response.status === 500) {
+          throw new Error('Сервер покинул чат');
+        }
+      })
+      .then((response) => {
+        getFeth();
+      })
+      .catch((error) => {
+        buttonAdd.disabled = false;
+        buttonAdd.textContent = "Написать";
+        alert(error.message);
+      });
   };
 
   // const jsonRequest = JSON.stringify(comments);
@@ -200,7 +220,6 @@
   //     getFeth();
   //   })
   // }
-
 
   console.log("It works!");
 </script>
