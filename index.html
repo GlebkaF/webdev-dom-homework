@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="list">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -59,51 +59,44 @@
           id="text-input"
         ></textarea>
         <div class="add-form-row">
-          <button id="add-button" class="add-form-button">Написать</button>
+          <button id="add-button" class="add-form-button" >Написать</button>
         </div>
       </div>
     </div>
   </body>
-
+  <style>
+    .error {
+      background-color: red;
+    }
+  </style>
   <script>
     "use strict";
-    const buttonElement = document.getElementById('add-button');
-    const nameInputElement = document.getElementById('name-input'); 
-    const textInputElement = document.getElementById('text-input');
-    const commentsElement = document.querySelector('.comments');
+    const buttonElement = document.getElementById("add-button");
+    const listElement = document.getElementById("list");
+    const nameInputElement = document.getElementById("name-input");
+    const textInputElement = document.getElementById("text-input");
     
-    let currentDate = new Date();
-    buttonElement.classList.add('add-form-button-inactive');
-
-    nameInputElement.addEventListener('input', () => {
-      if (nameInputElement.value && textInputElement.value) {
-        buttonElement.classList.remove('add-form-button-inactive')
-      }
-    });
-    textInputElement.addEventListener('input', () => {
-      if (nameInputElement.value && textInputElement.value) {
-        buttonElement.classList.remove('add-form-button-inactive')
-      }
-    });
-
-    function addComment() {
-      nameInputElement.classList.remove('error');
-      textInputElement.classList.remove('error');
-
-      if (nameInputElement.value === '') {
+    const currentDate = new Date().toLocaleDateString([], { day: "2-digit", month: "2-digit", year: "2-digit" }) + " " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    buttonElement.addEventListener('click', () => {
+      nameInputElement.classList.remove("error");
+      textInputElement.classList.remove("error");
+      if(nameInputElement.value === '') {
         nameInputElement.classList.add('error');
-        buttonElement.classList.add('add-form-button-inactive')
+        
+        return;
       }
-      if (textInputElement.value === '') {
-        nameInputElement.classList.add('error');
-        buttonElement.classList.add('add-form-button-inactive')
+      if(textInputElement.value === '') {
+        textInputElement.classList.add('error');
+        
+        return;
       }
-      let oldComments = commentsElement.innerHTML;
-      commentsElement.innerHTML = oldComments + 
-       <li class="comment">
+
+      const oldListHtml = listElement.innerHTML;
+      listElement.innerHTML = oldListHtml + 
+        `<li class="comment">
           <div class="comment-header">
             <div>${nameInputElement.value}</div>
-            <div>${currentDate.toLocaleDateString() + ' ' + currentDate.getHours() + ':' + currentDate.getMinutes()}</div>
+            <div>${currentDate}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -112,19 +105,20 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">3</span>лайков
+              <span class="likes-counter">0</span>
               <button class="like-button"></button>
             </div>
           </div>
-        </li>;
-        nameInputElement.value = '';
-        textInputElement.value = '';
-        buttonElement.classList.add('add-form-button-inactive');
-      
-    }
-    buttonElement.addEventListener('click', () => {
-      addComment()
+        </li>`
+      nameInputElement.value = "";
+      textInputElement.value = "";
     });
+    const likeButton = document.querySelector('.like-button');
+    const likeCount = document.querySelector('.likes-counter');
+    likeButton.addEventListener('click', () => {
+      const currentCount = parseInt(likeCount.textContent, 10);
+      likeCount.textContent = currentCount + 1;
+    }); 
     console.log("It works!");
   </script>
 </html>
