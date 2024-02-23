@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id='list' class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -46,26 +46,64 @@
       </ul>
       <div class="add-form">
         <input
-          type="text"
+          type="text" id="name-input"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
-          type="textarea"
+          type="textarea" id="text-input"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="add-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
 
+  <style>
+    .error {
+      background-color: brown;
+    }
+  </style>
+
   <script>
     "use strict";
-    // Код писать здесь
+    const buttonElement = document.getElementById ("add-button");
+    const listElement = document.getElementById ("list");
+    const nameElement = document.getElementById ("name-input");
+    const textElement = document.getElementById ("text-input");
+
+    buttonElement.addEventListener("click", () => {
+      nameElement.classList.remove = ("error");
+      if (nameElement.value === "") {
+        nameElement.classList.add = ("error");
+        return;
+      }
+     const oldListHtml = listElement.innerHTML;
+     listElement.innerHTML = oldListHtml +
+      `<li class="comment">
+        <div class="comment-header">
+         <div>${nameElement.value}</div>
+         <div>${formattedDay}.${formattedMonth}.${year}. ${formattedHours}:${formattedMinutes}</div>
+       </div>
+       <div class="comment-body">
+         <div class="comment-text">
+           ${textElement.value}
+         </div>
+       </div>
+       <div class="comment-footer">
+         <div class="likes">
+           <span class="likes-counter">0</span>
+           <button class="like-button"></button>
+         </div>
+       </div>
+      </li>` 
+    });
+    nameElement.value = "";
+
     console.log("It works!");
   </script>
 </html>
