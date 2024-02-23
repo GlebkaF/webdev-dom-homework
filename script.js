@@ -1,5 +1,5 @@
 const commentItems = document.getElementById('comments');
-const buttonElement = document.getElementById('comment-button');
+const buttonAdd = document.getElementById('comment-button');
 const nameElement = document.getElementById('comment-author');
 const textElement = document.getElementById('comment-text');
 
@@ -88,21 +88,34 @@ const renderComments = () => {
             }
         })
     }
+
+    const commentElement = document.querySelectorAll(".comment")
+
+    for (const comment of commentElement) {
+      comment.addEventListener("click", (event) => {
+        event.stopPropagation();
+
+        const index = Number(comment.dataset.index);
+
+        textElement.value = `↪️ ${comments[index].text}\n\n${comments[index].name}, `;
+      })
+    }
 }
 
 renderComments();
 
 
-buttonElement.addEventListener("click", () => {
+
+buttonAdd.addEventListener("click", () => {
 
     nameElement.classList.remove("error");
     textElement.classList.remove("error");
-    buttonElement.classList.remove("error-for-button");
+    buttonAdd.classList.remove("error-for-button");
 
     if (nameElement.value === "" || textElement.value === "") {
         nameElement.classList.add("error");
         textElement.classList.add("error");
-        buttonElement.classList.add("error-for-button");
+        buttonAdd.classList.add("error-for-button");
         return;
     }
 
