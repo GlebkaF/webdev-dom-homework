@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Comments</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <ul class="comments" id="list-comments">
+      <li class="comment">
+        <div class="comment-header">
+          <div>Глеб Фокин</div>
+          <div>12.02.22 12:18</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            The first comment
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">3</span>
+            <button class="like-button></button>
+            </div>
+          </div>
+        </li>
+        <li class=" comment">
+              <div class="comment-header">
+                <div>Варвара Н.</div>
+                <div>13.02.22 19:22</div>
+              </div>
+              <div class="comment-body">
+                <div class="comment-text">
+                  The second comment
+                </div>
+              </div>
+              <div class="comment-footer">
+                <div class="likes">
+                  <span class="likes-counter">75</span>
+                  <button class="like-button"></button>
+                </div>
+              </div>
+      </li>
+    </ul>
+    <div class="add-form">
+      <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
+      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
+      <div class="add-form-row">
+        <button class="add-form-button">Написать</button>
+      </div>
+    </div>
+  </div>
+</body>
+<style>
+  .error::placeholder {
+    color: rgba(255, 170, 0, 0.942);
+  }
+</style>
+<script>
+  "use strict";
+
+  const nameElement = document.querySelector(".add-form-name");
+  const textElement = document.querySelector(".add-form-text");
+  const buttonElement = document.querySelector(".add-form-button");
+  const commentsElements = document.querySelectorAll(".comment");
+  const listCommentsElement = document.getElementById('list-comments');
+  const likeButtonsElements = document.querySelectorAll('.likes');
+
+
+
+  const comments = [
+    {
+      name: "Gleb Fokin",
+      time: "12.02.22 12:18",
+      comment: "The first comment",
+      likes: 3,
+      isLiked: false
+    },
+    {
+      name: "Varvara",
+      time: "13.02.22 19:22",
+      comment: "The second comment",
+      likes: 75,
+      isLiked: false
+    },
+  ];
+
+  // Making likes
+  const initEventListeners = () => {
+    const likesElements = document.querySelectorAll(".like-button");
+    for (const likesElement of likesElements) {
+      likesElement.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const index = likesElement.dataset.index;
+
+        console.log(comments[index].likes);
+        if (comments[index].isLiked) {
+          comments[index].isLiked = false;
+          comments[index].likes--;
+
+        } else {
+          comments[index].isLiked = true;
+          comments[index].likes++;
+        }
+
+        renderComments();
+
+
+      });
+    }
+  };
+
+  // security  
+  function sanitize(text) {
+    return text.replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+      .replaceAll("QUOTE_END", "</div>");
+  };
+
+  // Render funct
+  const renderComments = () => {
+    const commentsHtml = comments.map((comment, index) => {
+      return ` <li class="comment">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.time}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.comment}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comments[index].likes}</span>
+              <button data-index= "${index}" class="like-button ${comment.isLiked ? '-active-like' : ''}"></button>
+            </div>
+          </div>
+        </li> `
+    }).join("");
+
+    listCommentsElement.innerHTML = commentsHtml;
+
+    initEventListeners();
+    editComment();
+
+  };
+
+  renderComments();
+
+
+  // New comments button
+  function addNewComment() {
+    comments.push({
+      name: nameElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+      time: new Date().toLocaleString(),
+      comment: textElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+      likes: 0,
+      isLiked: ''
+    });
+    renderComments();
+
+  };
+
+
+  function inputValid() {
+    if (nameElement.value.trim() === "" || textElement.value.trim() === "") {
+      buttonElement.disabled = true;
+      nameElement.placeholder = "";
+      textElement.placeholder = "";
+    } else {
+      nameElement.placeholder = "";
+      textElement.placeholder = "";
+    }
+    nameElement.addEventListener("input", inputValid);
+    textElement.addEventListener("input", inputValid);
+  };
+
+
+  buttonElement.addEventListener("click", () => {
+    nameElement.classList.remove("error");
+    textElement.classList.remove("error");
+    if (nameElement.value.trim() === "" || textElement.value.trim() === "") {
+      nameElement.classList.add("error");
+      textElement.classList.add("error");
+      return;
+    }
+    addNewComment();
+
+    nameElement.value.trim() = "";
+    textElement.value.trim() = "";
+
+  });
+
+  //Comments editing
+
+  function editComment() {
+    const comment = document.querySelectorAll('.comment')
+    const formElementText = document.querySelector('.add-form-text')
+    const formElementName = document.querySelector('.add-form-name')
+    comment.forEach((el, index) => {
+      el.addEventListener('click', () => {
+        formElementText.value = `>${comments[index].name} \n ${comments[index].comment}`
+      })
+    });
+  }
+
+  console.log("It works!");
+</script>
+
+</html>

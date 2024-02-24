@@ -13,7 +13,7 @@
         </ul>
         <div class="add-form">
             <input id="add-name" value="" type="text" class="add-form-name" placeholder="Введите ваше имя" />
-            <textarea id="add-text" value="" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+            <textarea id="add-text" value="" type="textarea" class="add-form-text" placeholder="Введите ваш комментарий"
                 rows="4"></textarea>
             <div class="add-form-row">
                 <button id="button-add" class="add-form-button">Написать</button>
@@ -50,16 +50,16 @@
         }
     ];
 
- // security 
- function security(text) {
+    // security 
+    function security(text) {
         return text.replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
-        .replaceAll("QUOTE_END", "</div>");
-      };
+            .replaceAll(">", "&gt;")
+            .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+            .replaceAll("QUOTE_END", "</div>");
+    };
 
 
-// Making likes
+    // Making likes
     const initLikeListeners = () => {
         const likeButtons = document.querySelectorAll(".like-button");
         for (const likeButton of likeButtons) {
@@ -76,25 +76,25 @@
 
     // Render funct
     const renderStudentsComments = () => {
-const studentsHtml = studentsComments.map((student, index) => {
+        const studentsHtml = studentsComments.map((student, index) => {
             return `<li class="comment">
-  <div class="comment-header">
-    <div>${student.name}</div>
-    <div>${student.date}</div>
-  </div>
-  <div class="comment-body">
-    <div class="comment-text" data-index="${index}">
-      ${student.comment}
-    </div>
-  </div>
-  <div class="comment-footer">
-    <div class="likes">
-      <span class="likes-counter">${student.likes}</span>
-      <button class="like-button ${studentsComments[index].isLiked ? "-active-like" : ""}" data-index="${index}"></button>
-    </div>
-  </div>
-</li>`;
-    })
+                <div class="comment-header">
+                    <div>${student.name}</div>
+                    <div>${student.date}</div>
+                </div>
+                <div class="comment-body">
+                    <div class="comment-text" data-index="${index}">
+                        ${student.comment}
+                    </div>
+                </div>
+                <div class="comment-footer">
+                    <div class="likes">
+                        <span class="likes-counter">${student.likes}</span>
+                        <button class="like-button ${studentsComments[index].isLiked ? "-active-like" : ""}" data-index="${index}"></button>
+                    </div>
+                </div>
+            </li>`;
+        })
             .join("");
         listElement.innerHTML = studentsHtml;
         initLikeListeners();
@@ -105,7 +105,7 @@ const studentsHtml = studentsComments.map((student, index) => {
 
 
     // New comments button
-    
+
     buttonElement.addEventListener("click",
         () => {
             const currentDate = new Date();
@@ -140,22 +140,14 @@ const studentsHtml = studentsComments.map((student, index) => {
             textAreaElement.value = '';
 
         });
-   //Comments editing
-   function editComment() {
-        const comment = document.querySelectorAll('.comment')
-        const formElementText = document.querySelector('.add-form-text')
-        const formElementName = document.querySelector('.add-form-name')
-        comment.forEach((el, index) => {
-            el.addEventListener('click', () => {
-                formElementText.value = `>${comments[index].name} \n ${comments[index].comment}`
-            })
+    //Comments editing
+    function editComment() {
+        const commentTexts = document.querySelectorAll('.comment-text');
+        const formElementText = document.querySelector('.add-form-text');
+        const formElementName = document.querySelector('.add-form-name');
+        commentTexts.forEach((commentText, index) => {
+            commentText.addEventListener('click', () => {
+                formElementText.value = `>${studentsComments[index].name} \n ${studentsComments[index].comment}`;
+            });
         });
     }
-
-   
-    console.log("It works!");
-
- 
-</script>
-
-</html>
