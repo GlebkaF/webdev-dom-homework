@@ -34,8 +34,8 @@
   const listEl = document.getElementById("list");
   const formEl = document.getElementById("add-form");
 
-  function currentDate() {
-    const date = new Date();
+  function formatDate(date) {
+    //const date = new Date();
     const options1 = {
       year: "2-digit",
       month: "2-digit",
@@ -45,34 +45,14 @@
       hour: "numeric",
       minute: "numeric",
     };
-    return (
-      date.toLocaleString("ru", options1) +
-      " " +
-      date.toLocaleString("ru", options2)
-    );
+
+    return (date.toLocaleString("ru", options1) + " " + date.toLocaleString("ru", options2));
   }
 
-  let comments = [
-    {
-      date: "12.02.22 12:18",
-      name: "Глеб Фокин",
-      text: "Это будет первый комментарий на этой странице",
-      like_active: false,
-      like_count: 3,
-      isEdit: false,
-    },
-    {
-      date: "13.02.22 19:22",
-      name: "Варвара Н.",
-      text: "Мне нравится как оформлена эта страница! ❤",
-      like_active: false,
-      like_count: 75,
-      isEdit: false,
-    },
-  ];
+  let comments = [];
 
   fetch(
-    'https://wedev-api.sky.pro/api/v1/:AZinkevich/comments', {
+    'https://wedev-api.sky.pro/api/v1/:zinkevich/comments', {
     method: "GET"
   }).then((response) => {
     response.json().then((responseData) => {
@@ -82,16 +62,14 @@
           text: comment.text,
           like_active: comment.isLiked,
           like_count: comment.likes,
-          date: currentDate(comment.date),
+          date: formatDate(new Date(comment.date)),
         }
       });
-      
-      //tasks = responseData.todos;
+
       comments = appComments;
       renderComments();
-      console.log(appComments);
     });
-    
+
   });
 
 
@@ -216,7 +194,7 @@
     initEditButtonlistener();
     initSaveButtonlistener();
     initReplayListener();
-    currentDate();
+    //formatDate();
   };
 
   function sanitize(text) {
@@ -243,13 +221,44 @@
       return;
     }
 
-    comments.push({
-      date: currentDate(),
-      name: nameEl.value,
-      text: textEl.value,
-      like_active: false,
-      like_count: 0,
-      isEdit: false,
+    fetch(
+      'https://wedev-api.sky.pro/api/v1/:zinkevich/comments', {
+      method: "POST",
+      body: JSON.stringify({
+        date: formatDate(new Date()),
+        name: nameEl.value,
+        text: textEl.value,
+        like_active: false,
+        like_count: 0,
+        isEdit: false,
+      }),
+    }).then((response) => {
+      response.json().then((responseData) => {
+        comments = responseData.comments;
+
+        //renderComments();
+      });
+    });
+
+    fetch(
+      'https://wedev-api.sky.pro/api/v1/:zinkevich/comments', {
+      method: "GET"
+    }).then((response) => {
+      response.json().then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            text: comment.text,
+            like_active: comment.isLiked,
+            like_count: comment.likes,
+            date: formatDate(new Date(comment.date)),
+          }
+        });
+
+        comments = appComments;
+        renderComments();
+      });
+
     });
 
     nameEl.value = "";
