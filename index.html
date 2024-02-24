@@ -24,27 +24,36 @@
 <script>
   "use strict";
   // Структура данных для комментариев
-  let commentsData = [
-    {
-      author: "Глеб Фокин",
-      date: "12.02.22 12:18",
-      text: "Это будет первый комментарий на этой странице",
-      likes: 3,
-      isLiked: false
-    },
-    {
-      author: "Варвара Н.",
-      date: "13.02.22 19:22",
-      text: "Мне нравится как оформлена эта страница! ❤",
-      likes: 75,
-      isLiked: true
-    }
-  ];
+  let commentsData = [];
 
   const listElement = document.getElementById("list");
   const nameInputElement = document.getElementById("name-input");
   const textAreaElement = document.getElementById("text-input");
   const buttonElement = document.getElementById("write-button");
+
+  // GET-запрос (получение с сервера)
+  const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/aleksander-gavrikov/comments", {
+    method: "GET"
+  });
+  //исполнить ниже, когда придёт ответ от сервера (then)
+  fetchPromise.then((response) => {
+    // преобразование данных в формат json
+    response.json().then((responseData) => {
+      const appComments = responseData.comments.map((comment) => {
+        return {
+          author: comment.author.name,
+          date: new Date(comment.date),
+          text: comment.text,
+          likes: comment.likes,
+          isLiked: false,
+        };
+      });
+
+      commentsData = appComments;
+      renderComments();
+    });
+  });
+
 
   // Функция для рендеринга списка комментариев
   function renderComments() {
@@ -78,42 +87,68 @@
 
   buttonElement.addEventListener('click', () => {
 
-    const myDate = new Date().toLocaleDateString('default', {day: '2-digit', month: '2-digit', year: '2-digit'}) + " " + new Date().toLocaleTimeString().slice(0, -3);
-
     nameInputElement.classList.remove("error");
     textAreaElement.classList.remove("error");
 
-    if (nameInputElement.value === "" || nameInputElement.value.trim().length === 0) {
+    if (!nameInputElement.value || nameInputElement.value.trim().length === 0) {
       nameInputElement.classList.add("error");
       return;
     }
 
-    else if (textAreaElement.value === "" || textAreaElement.value.trim().length === 0) {
+    else if (!textAreaElement.value || textAreaElement.value.trim().length === 0) {
       textAreaElement.classList.add("error");
       return;
     }
+    //POST-запрос (отправка на сервер)
+    fetch("https://wedev-api.sky.pro/api/v1/aleksander-gavrikov/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        name: nameInputElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
+        text: textAreaElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+      })
+    }).then((response) => {
+      response.json().then((responseData) => {
+        // получили данные и рендерим их в приложении
+        commentsData = responseData.comments;
+        renderComments();
+      });
+    });
 
-    const newComment = {
-      author: nameInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-      date: myDate,
-      text: textAreaElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-      likes: 0,
-      isLiked: false
-    };
-
-    commentsData.push(newComment);
     renderComments();
 
     nameInputElement.value = "";
     textAreaElement.value = "";
+
+    //Запрос на получение комментариев с сервера
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/aleksander-gavrikov/comments", {
+      method: "GET"
+    });
+    //исполнить ниже, когда придёт ответ от сервера (then)
+    fetchPromise.then((response) => {
+      // преобразование данных в формат json
+      response.json().then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            author: comment.author.name,
+            date: comment.date,
+            text: comment.text,
+            likes: comment.likes,
+            isLiked: false,
+          };
+        });
+
+        commentsData = appComments;
+        renderComments();
+      });
+    });
   });
 
   function attachLikeButtonHandler() {
@@ -148,7 +183,7 @@
     }
   }
 
-
+  // renderComments();
 </script>
 
 </html>
