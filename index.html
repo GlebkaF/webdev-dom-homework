@@ -44,6 +44,24 @@
     const nameInputElement = document.getElementById("name-input");
     const textInputElement = document.getElementById("text-input");
 
+        const fetchPromise = fetch(
+      'https://wedev-api.sky.pro/api/todos',
+      {
+        method: "GET",
+      }
+    );
+
+    fetchPromise.then((response) => {
+
+      const jsonPromise = response.json();
+
+      jsonPromise.then((responseData) => {
+        console.log(responseData);
+        users = responseData.todos;
+        renderUsers();
+      });
+    });
+
     //массив пользователей
     const users = [
       {
@@ -121,8 +139,6 @@
       }
     }
 
-    
-      
     //функция формата реального времени
     function clock() {
       let fullDate = new Date().toLocaleDateString([], { day: "2-digit", month: "2-digit", year: "2-digit" }) + " " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
