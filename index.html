@@ -46,15 +46,17 @@
       </ul>
       <div class="add-form">
         <input
-          type="text" id="name-input"
+          type="text" 
           class="add-form-name"
           placeholder="Введите ваше имя"
+          id="name-input"
         />
         <textarea
-          type="textarea" id="text-input"
+          type="textarea" 
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+          id="text-input"
         ></textarea>
         <div class="add-form-row">
           <button class="add-form-button" id="add-button">Написать</button>
@@ -71,10 +73,11 @@
 
   <script>
     "use strict";
-    const buttonElement = document.getElementById ("add-button");
-    const listElement = document.getElementById ("list");
-    const nameElement = document.getElementById ("name-input");
-    const textElement = document.getElementById ("text-input");
+    const buttonElement = document.getElementById ('add-button');
+    const listElement = document.getElementById ('list');
+    const nameElement = document.getElementById ('name-input');
+    const textElement = document.getElementById ('text-input');
+    let currentDate = new Date();
 
     buttonElement.addEventListener("click", () => {
       nameElement.classList.remove = ("error");
@@ -82,12 +85,17 @@
         nameElement.classList.add = ("error");
         return;
       }
+      textElement.classList.remove = ("error");
+      if (textElement.value === "") {
+        textElement.classList.add = ("error");
+        return;
+      }
      const oldListHtml = listElement.innerHTML;
      listElement.innerHTML = oldListHtml +
       `<li class="comment">
         <div class="comment-header">
          <div>${nameElement.value}</div>
-         <div>${formattedDay}.${formattedMonth}.${year}.${formattedHours}:${formattedMinutes}</div>
+         <div>${currentDate.toLocaleDateString() + " " + currentDate.getHours() + ":" + currentDate.getMinutes()}</div>
        </div>
        <div class="comment-body">
          <div class="comment-text">
@@ -102,7 +110,6 @@
        </div>
       </li>` 
     });
-    nameElement.value = "";
 
     console.log("It works!");
   </script>
