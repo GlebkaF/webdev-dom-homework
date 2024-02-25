@@ -76,25 +76,83 @@
     const commentsElements = document.querySelectorAll(".comment");
     const listCommentsElement = document.getElementById('list-comments');
     const likeButtonsElements = document.querySelectorAll('.likes');
-
-
+  
   // переносим данные из разметки в JS
-const comments = [
-  {
-    name: "Глеб Фокин",
-    time: "12.02.22 12:18",
-    comment: "Это будет первый комментарий на этой странице",
-    likes: 3,
-    isLiked: false
-  },
-  {
-    name: "Варвара Н.",
-    time: "13.02.22 19:22",
-    comment: "Мне нравится как оформлена эта страница! ❤️",
-    likes: 75,
-    isLiked: false
-  },
+let comments = [
+  // {
+  //   name: "Глеб Фокин",
+  //   time: "12.02.22 12:18",
+  //   comment: "Это будет первый комментарий на этой странице",
+  //   likes: 3,
+  //   isLiked: false
+  // },
+  // {
+  //   name: "Варвара Н.",
+  //   time: "13.02.22 19:22",
+  //   comment: "Мне нравится как оформлена эта страница! ❤️",
+  //   likes: 75,
+  //   isLiked: false
+  // },
 ];
+
+    // API Получить список комментариев c Get
+function fetchPromiseGet() {
+
+  const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/sveta-naruleva/comments", {
+  method: "GET"
+});
+
+fetchPromise.then((response) => {
+  
+  const jsonPromise = response;
+  
+  jsonPromise.json().then((responseData) => {
+    
+    const commentsGet = responseData.comments.map ((comment) => {
+      return {
+        name: comment.author.name,
+        comment: comment.text,
+        date: new Date().toLocaleString(),
+        like: 0,
+        isLikedike:false,
+      };
+    })
+    console.log(commentsGet);
+  
+    comments = commentsGet;
+    renderComments();
+  });
+});
+};
+
+fetchPromiseGet();
+
+// const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/sveta-naruleva/comments", {
+//   method: "GET"
+// });
+
+// fetchPromise.then((response) => {
+  
+//   const jsonPromise = response;
+  
+//   jsonPromise.json().then((responseData) => {
+    
+//     const commentsGet = responseData.comments.map ((comment) => {
+//       return {
+//         name: comment.author.name,
+//         comment: comment.text,
+//         date: new Date().toLocaleString(),
+//         like: 0,
+//         isLikedike:false,
+//       };
+//     })
+//     console.log(commentsGet);
+  
+//     comments = commentsGet;
+//     renderComments();
+//   });
+// });
+
 
 //функция добвления обрабочика клика
 const initEventListeners = () => {
@@ -130,8 +188,6 @@ const initEventListeners = () => {
       };
 
 
-
-
 // рендер
 const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
@@ -158,7 +214,6 @@ const renderComments = () => {
 
     initEventListeners();     
     answerComment();
-
   };
   
     renderComments();
@@ -207,6 +262,57 @@ const renderComments = () => {
       textElement.value = "";
     
 });
+
+// Добавить новый комментарий, метод POST
+// const fetchPromisePost = fetch(
+//   "https://wedev-api.sky.pro/api/v1/sveta-naruleva/comments",
+//   {
+//     method: "POST",
+//     body: JSON.stringify({
+//       name: textElement.value,
+//       comment: nameElement.value
+//     })
+//   },
+// ).then((response) => {
+//    response.json().then((responseDate) => {
+//     comments = renderComments.comments;
+//     renderComments();
+//   });
+// });
+
+const fetchPromisePost = fetch("https://wedev-api.sky.pro/api/v1/sveta-naruleva/comments", {
+    method: 'POST',
+    body: JSON.stringify({
+      name: nameElement.value,
+      text: textElement.value
+    })
+  }).then((response) => {
+    response.json().then((responseData) => {
+      console.log(responseData);
+      comments = responseData.comment;
+
+    });
+    fetchPromiseGet();
+    renderComments();
+  });
+
+  // const fetchPromisePost = fetch("https://wedev-api.sky.pro/api/v1/sveta-naruleva/comments", {
+  //     method: "POST",
+  //     body: JSON.stringify({
+  //       text: textElement.value,
+  //       name: nameElement.value
+  //     }),
+
+  //   }).then((response) => {
+
+  //     const jsonPromise = response.json().then((responseData) => {
+
+  //       renderComments();
+  //     });
+  //   });
+
+  //   fetchPromiseGet();
+  //   renderComments();
 
 // // ответ на комментарий
 
