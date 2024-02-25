@@ -79,29 +79,42 @@
 
   <script>
     "use strict";
-    const buttonElement = document.getElementById ('add-button');
+
     const listElement = document.getElementById ('list');
     const nameElement = document.getElementById ('name-input');
     const textElement = document.getElementById ('text-input');
-    const deleteElement = document.getElementById ('eleteComment');
+    const buttonElement = document.getElementById ('add-button');
+    const deleteElement = document.getElementById ('deleteComment');
     let currentDate = new Date();
+
+    // buttonElement.disabled = true;
+    // function input() {
+    //   if (nameElement.value.trim() !== "" && textElement.value.trim() !== "") {
+    //     buttonElement.disabled = false;
+    //     buttonElement.classList.remove("empty");
+    //   } else {
+    //     buttonElement.disabled = true;
+    //     buttonElement.classList.add("empty");
+    //   }
+    // }
+    // nameElement.addEventListener("input" , input);
+    // textElement.addEventListener("input" , input);
+
+    // Вопрос по валидации. Если мы пишем функцию на активность кнопки и подсвечивание серым, тогда как проверять пустые строки цветом?
 
     buttonElement.addEventListener("click", () => {
       nameElement.classList.remove("error");
       textElement.classList.remove("error");
-      buttonElement.classList.remove("empty");
-
+      
       if (nameElement.value === "") {
         nameElement.classList.add("error");
-        buttonElement.classList.add("empty");
         return;
       }  
       if (textElement.value === "") {
         textElement.classList.add("error");
-        buttonElement.classList.add("empty");
         return;
       };
-
+    
      const oldListHtml = listElement.innerHTML;
      listElement.innerHTML = oldListHtml +
       `<li class="comment">
@@ -123,6 +136,23 @@
       </li>` 
       nameElement.value = "";
       textElement.value = "";
+    });
+
+    const formElement = document.getElementById ('form');
+    formElement.addEventListener('keyup', keyEvent);
+
+    function keyEvent(e) {
+     if (e.code === 'Enter') {
+      buttonElement.dispatchEvent(new Event('click'));
+     }
+    };
+    
+    const allComments = document.querySelector('#list').querySelectorAll('.comment');
+    const lastElement = allComments.length -1;
+    // allComments[lastElement].remove();
+    
+    deleteElement.addEventListener("click", () => {
+      allComments[lastElement].remove();
     });
 
     console.log("It works!");
