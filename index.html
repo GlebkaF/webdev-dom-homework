@@ -38,7 +38,8 @@
       text: 'Это будет первый комментарий на этой странице',
       likes: 3,
       isLiked: false,
-      numComment: 0
+      numComment: 0,
+      isEdit: false
     },
     {
       name: 'Варвара Н.',
@@ -50,7 +51,8 @@
       text: 'Мне нравится как оформлена эта страница! ❤',
       likes: 73,
       isLiked: true,
-      numComment: 1
+      numComment: 1,
+      isEdit: false
     },
   ];
 
@@ -73,10 +75,22 @@
 
   function renderComments() {
     const commentsHTML = comments.map((student) => {
-      let liked = '';      
+      let liked = '';
+      let textEdit = '';
+      let btnEdit = '';
 
       if (student.isLiked) {
         liked = ' -active-like'
+      }
+
+      if (student.isEdit) {
+        textEdit = `<textarea class="textarea" id='textarea'>${student.text}</textarea>`;
+        btnEdit = `Сохранить`;
+      } else {
+        textEdit = `<div class="comment-text">
+          ${student.text}
+        </div>`;
+        btnEdit = `Редактировать`;
       }
 
       return `<li class="comment">
@@ -84,12 +98,11 @@
         <div>${student.name}</div>
         <div>${dateCheck(student.day)}.${dateCheck(student.month)}.${dateCheck(student.year)} ${dateCheck(student.hour)}:${dateCheck(student.minute)}</div>
       </div>
-      <div class="comment-body">
-        <div class="comment-text">
-          ${student.text}
-        </div>
-      </div>
+      <div class="comment-body">` +
+        textEdit +
+        `</div>
       <div class="comment-footer">
+        <button class="button-edit" data-numComments="${student.numComment}">` + btnEdit + `</button>
         <div class="likes">
           <span class="likes-counter">${student.likes}</span>
           <button class="like-button` + liked
@@ -102,6 +115,7 @@
 
     listElement.innerHTML = commentsHTML;
     initEventListeners();
+    initEventButtonEdit();
   }
 
   renderComments();
@@ -135,7 +149,8 @@
       day: date.getDate(),
       hour: date.getHours(),
       minute: date.getMinutes(),
-      numComment: comments.length
+      numComment: comments.length,
+      isEdit: false
     });
 
     nameForm.value = '';
@@ -196,6 +211,29 @@
 
         renderComments();
       })
+    }
+  }
+
+  function funcEdit(nComm) {
+    let numComm = nComm;
+    let txtEdit = document.getElementById('textarea');
+
+    comments[numComm].isEdit = !comments[numComm].isEdit;
+
+    if (!comments[numComm].isEdit) {
+      comments[numComm].text = txtEdit.value;
+    }
+
+    renderComments();
+  }
+
+  function initEventButtonEdit() {
+    let buttonsEdit = document.querySelectorAll('.button-edit');
+
+    for (let buttonEdit of buttonsEdit) {
+      buttonEdit.addEventListener('click', () => {
+        funcEdit(buttonEdit.getAttribute('data-numComments'))
+      });
     }
   }
 
