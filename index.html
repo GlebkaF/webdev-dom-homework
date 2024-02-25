@@ -95,10 +95,10 @@ let comments = [
   // },
 ];
 
-    // API Получить список комментариев c Get
+  //   // API Получить список комментариев c Get
   const fetchPromiseGet = () => {
 
-  const promiseFetch = fetch('https://wedev-api.sky.pro/api/v1/sveta-naruleva/comments',
+  const promiseFetch = fetch('https://wedev-api.sky.pro/api/v1/Sveta-n/comments',
       {
         method: "GET",
       });
@@ -124,10 +124,9 @@ let comments = [
         comments = appComments;
         //console.log(comments)
         renderComments();
-
       });
-    });
 
+    });
   };
   fetchPromiseGet();
 
@@ -151,7 +150,6 @@ const initEventListeners = () => {
         }
 
         renderComments();
-
 
       });
     }
@@ -209,6 +207,29 @@ const renderComments = () => {
       });
       renderComments();
 
+      const fetchPromisePost = fetch("https://wedev-api.sky.pro/api/v1/Sveta-n/comments", {
+      method: 'POST',
+      body: JSON.stringify({
+      text: nameElement.value, 
+      name: textElement.value
+    })
+  }).then((response) => {
+    response.json().then((responseData) => {
+      comments.push({
+        name: nameElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+        time: new Date().toLocaleString(),
+        comment: textElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+        likes: 0,
+        isLiked: ''
+      });
+      // console.log(responseData);
+      comments = responseData.comment;
+    });
+
+    fetchPromiseGet();
+    addNewComment();
+    renderComments();
+  });
     };
     
 
@@ -243,21 +264,30 @@ const renderComments = () => {
 
 // Добавить новый комментарий, метод POST
 
-const fetchPromisePost = fetch("https://wedev-api.sky.pro/api/v1/sveta-naruleva/comments", {
-    method: 'POST',
-    body: JSON.stringify({
-      name: nameElement.value,
-      text: textElement.value,
-      forceError: true
-    })
-  }).then((response) => {
-    response.json().then((responseData) => {
-      // console.log(responseData);
-      comments = responseData.comment;
-    });
-    // fetchPromiseGet();
-    renderComments();
-  });
+// const fetchPromisePost = fetch("https://wedev-api.sky.pro/api/v1/sveta-n/comments", {
+//     method: 'POST',
+//     body: JSON.stringify({
+//       text: nameElement.value, 
+//       name: textElement.value
+//     })
+//   }).then((response) => {
+//     response.json().then((responseData) => {
+//       comments.push({
+//         name: nameElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+//         time: new Date().toLocaleString(),
+//         comment: textElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+//         likes: 0,
+//         isLiked: ''
+//       });
+//       // console.log(responseData);
+//       comments = responseData.comment;
+//     });
+
+//     fetchPromiseGet();
+//     addNewComment();
+//     renderComments();
+//   });
+
 
 // // ответ на комментарий
 
