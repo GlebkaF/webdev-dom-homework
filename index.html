@@ -207,29 +207,25 @@ const renderComments = () => {
       });
       renderComments();
 
+      // Добавить новый комментарий, метод POST
+      
       const fetchPromisePost = fetch("https://wedev-api.sky.pro/api/v1/Sveta-n/comments", {
-      method: 'POST',
-      body: JSON.stringify({
-      text: nameElement.value, 
-      name: textElement.value
-    })
-  }).then((response) => {
-    response.json().then((responseData) => {
-      comments.push({
-        name: nameElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-        time: new Date().toLocaleString(),
-        comment: textElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-        likes: 0,
-        isLiked: ''
-      });
-      // console.log(responseData);
-      comments = responseData.comment;
-    });
 
-    fetchPromiseGet();
-    addNewComment();
-    renderComments();
-  });
+         method: 'POST',
+
+        body: JSON.stringify({
+
+        text: nameElement.value, 
+
+        name: textElement.value
+
+      })
+
+        }).then((response) => {
+
+        fetchPromiseGet()
+
+        });
     };
     
 
@@ -261,32 +257,6 @@ const renderComments = () => {
       textElement.value = "";
     
 });
-
-// Добавить новый комментарий, метод POST
-
-// const fetchPromisePost = fetch("https://wedev-api.sky.pro/api/v1/sveta-n/comments", {
-//     method: 'POST',
-//     body: JSON.stringify({
-//       text: nameElement.value, 
-//       name: textElement.value
-//     })
-//   }).then((response) => {
-//     response.json().then((responseData) => {
-//       comments.push({
-//         name: nameElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-//         time: new Date().toLocaleString(),
-//         comment: textElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-//         likes: 0,
-//         isLiked: ''
-//       });
-//       // console.log(responseData);
-//       comments = responseData.comment;
-//     });
-
-//     fetchPromiseGet();
-//     addNewComment();
-//     renderComments();
-//   });
 
 
 // // ответ на комментарий
