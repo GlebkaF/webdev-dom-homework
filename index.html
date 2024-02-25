@@ -48,19 +48,17 @@
     gettingComments.then((response) => {
       const jsonComments = response.json();
       jsonComments.then((responseData) => {
-        const appComments = responseData.comments.map((comment) => {
+        comments = responseData.comments.map((comment) => {
           return {
             name: comment.author.name,
-            date: new Date(comment.date).toLocaleTimeString('sm', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }),
-            text: comment.text,
+            date: (comment.date).toLocaleTimeString,
+            id: comment.id,
+            isLiked: comment.isLiked,
             likes: comment.likes,
-            isLiked: false,
+            text: comment.text,
           };
-
-
         });
-        console.log(responseData);
-        comments = appComments;
+        console.log(comments);
         renderComments();
       });
     });
@@ -68,22 +66,7 @@
 
   fetchRender();
 
-  let comments = [
-    {
-      name: "Глеб Фокин",
-      date: "12.02.22 12:18",
-      text: "Это будет первый комментарий на этой странице",
-      isLiked: true,
-      likes: 3,
-    },
-    {
-      name: "Варвара Н.",
-      date: "13.02.22 19:22",
-      text: "Мне нравится как оформлена эта страница! ❤",
-      isLiked: false,
-      likes: 75,
-    }
-  ];
+  let comments = [];
 
   const sanitizeHtml = (htmlString) => {
     return htmlString.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
@@ -161,19 +144,28 @@
       inputText.classList.add("error");
       return;
     }
-    comments.push({
-      name: sanitizeHtml(inputName.value),
-      date: currentDate,
-      text: sanitizeHtml(inputText.value),
-      isLiked: false,
-      likes: 0,
+
+    fetch("https://wedev-api.sky.pro/api/v1/alexandrove-julia/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        name: inputName.value
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;"),
+        text: inputText.value
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;"),
+      }),
+    }).then((response) => {
+      response.json().then((responseData) => {
+        comments = responseData.comments;
+      });
+      fetchRender();
     });
-    renderComments();
 
     inputName.value = "";
     inputText.value = "";
+    renderComments();
   });
-
 
   console.log("It works!");
 </script>
