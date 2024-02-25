@@ -1,20 +1,30 @@
+const fetchPromice = fetch("https://wedev-api.sky.pro/api/v1/aleksey-poplaukhin/comments", {
+    method: "GET"
+});
+
+fetchPromice.then((response) => {
+    response.json().then((responseData) =>{
+        const appComment = responseData.comments.map((comment) => {
+            const options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }; 
+            const formattedDate = new Intl.DateTimeFormat('ru-RU', options).format(new Date(comment.date));
+            
+            return {
+                name: comment.author.name,
+                time: formattedDate,
+                text: comment.text,
+                likes: 0,
+                isLiked: false,
+            };
+        });
+
+        peoples = appComment;
+        renderPeoples();
+    })
+});
+
+
 // Создаем объекты, которые будем рендерить:
-const peoples = [
-    {
-        name: "Глеб Фокин",
-        time: "12.02.22 12:18",
-        likes: 3,
-        comment: "Это будет первый комментарий на этой странице",
-        isLiked: false
-    },
-    {
-        name: "Варвара Н.",
-        time: "13.02.22 19:22",
-        likes: 75,
-        comment: "Мне нравится как оформлена эта страница! ❤",
-        isLiked: false
-    },
-];
+let peoples = [];
 
 const sanitizeHtml = (htmlString) => {
     return htmlString.replaceAll("<", "&lt").replaceAll(">", "&gt");
@@ -34,7 +44,7 @@ const renderPeoples = () => {
                         <div>${people.time}</div>
                     </div>
                     <div class="comment-body">
-                        <div class="comment-text">${people.comment
+                        <div class="comment-text">${people.text
                             .replaceAll("%BEGIN_QUOTE", "<div class='quote'>")
                             .replaceAll("END_QUOTE%", "</div>")}
                         </div>
@@ -78,7 +88,7 @@ const renderPeoples = () => {
             const index = event.currentTarget.dataset.index;
             const currentPost = peoples[index];
 
-            textInputElement.value = `%BEGIN_QUOTE${currentPost.comment} : ${currentPost.name}END_QUOTE%`;
+            textInputElement.value = `%BEGIN_QUOTE${currentPost.text} : ${currentPost.name}END_QUOTE%`;
             textInputElement.style.whiteSpace = 'pre-line';
         });
     }
@@ -113,20 +123,48 @@ buttonElement.addEventListener("click", () => {
     const currentDate = newDate;
     const options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }; 
 
-    const newComment = {
-        name: sanitizeHtml(trimmedName),
-        time: currentDate.toLocaleDateString('ru-RU', options),
-        likes: 0,
-        comment: sanitizeHtml(trimmedText),
-        isLiked: false
-    };
+    // const newComment = {
+    //     name: sanitizeHtml(trimmedName),
+    //     time: currentDate.toLocaleDateString('ru-RU', options),
+    //     likes: 0,
+    //     text: sanitizeHtml(trimmedText),
+    //     isLiked: false
+    // };
 
-    peoples.push(newComment);
-    renderPeoples();
+    // peoples.push(newComment);
+
+    fetch("https://wedev-api.sky.pro/api/v1/aleksey-poplaukhin/comments", {
+        method: "POST",
+        body: JSON.stringify({
+            text: sanitizeHtml(trimmedText),
+            name: sanitizeHtml(trimmedName),        
+        }),
+    })
+    .then(() => {
+        // После успешного выполнения POST-запроса делаем GET-запрос для получения обновленных данных
+        fetch("https://wedev-api.sky.pro/api/v1/aleksey-poplaukhin/comments", {
+            method: "GET"
+        })        
+        .then((response) => response.json()).then((responseData) =>{
+            const appComment = responseData.comments.map((comment) => {
+                const options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }; 
+                const formattedDate = new Intl.DateTimeFormat('ru-RU', options).format(new Date(comment.date));
+                
+                return {
+                    name: comment.author.name,
+                    time: formattedDate,
+                    text: comment.text,
+                    likes: 0,
+                    isLiked: false,
+                };
+            });
+
+            peoples = appComment;
+            renderPeoples();
+        })
+    });
 
     // Очищаем поля ввода после отправки комментария:
     nameInputElement.value = "";
     textInputElement.value = "";
 });
-
-renderPeoples();
