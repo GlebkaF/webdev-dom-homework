@@ -44,14 +44,14 @@
           </div>
         </li>
       </ul>
-      <div class="add-form">
-        <input
+      <div class="add-form" id="form">
+        <input 
           type="text" 
           class="add-form-name"
           placeholder="Введите ваше имя"
           id="name-input"
         />
-        <textarea
+        <textarea 
           type="textarea" 
           class="add-form-text"
           placeholder="Введите ваш коментарий"
@@ -61,13 +61,19 @@
         <div class="add-form-row">
           <button class="add-form-button" id="add-button">Написать</button>
         </div>
+        <div>
+          <button class="button-delete" id="deleteComment">Удалить последний комментарий</button>
+        </div>
       </div>
     </div>
   </body>
 
   <style>
     .error {
-      background-color: brown;
+      background-color: rgb(141, 216, 241);
+    }
+    .empty {
+      background-color: rgb(201, 199, 199);
     }
   </style>
 
@@ -77,19 +83,25 @@
     const listElement = document.getElementById ('list');
     const nameElement = document.getElementById ('name-input');
     const textElement = document.getElementById ('text-input');
+    const deleteElement = document.getElementById ('eleteComment');
     let currentDate = new Date();
 
     buttonElement.addEventListener("click", () => {
-      nameElement.classList.remove = ("error");
+      nameElement.classList.remove("error");
+      textElement.classList.remove("error");
+      buttonElement.classList.remove("empty");
+
       if (nameElement.value === "") {
-        nameElement.classList.add = ("error");
+        nameElement.classList.add("error");
+        buttonElement.classList.add("empty");
         return;
-      }
-      textElement.classList.remove = ("error");
+      }  
       if (textElement.value === "") {
-        textElement.classList.add = ("error");
+        textElement.classList.add("error");
+        buttonElement.classList.add("empty");
         return;
-      }
+      };
+
      const oldListHtml = listElement.innerHTML;
      listElement.innerHTML = oldListHtml +
       `<li class="comment">
@@ -109,6 +121,8 @@
          </div>
        </div>
       </li>` 
+      nameElement.value = "";
+      textElement.value = "";
     });
 
     console.log("It works!");
