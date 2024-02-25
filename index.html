@@ -93,7 +93,7 @@
         btnEdit = `Редактировать`;
       }
 
-      return `<li class="comment">
+      return `<li class="comment" data-numComments="${student.numComment}">
       <div class="comment-header">
         <div>${student.name}</div>
         <div>${dateCheck(student.day)}.${dateCheck(student.month)}.${dateCheck(student.year)} ${dateCheck(student.hour)}:${dateCheck(student.minute)}</div>
@@ -116,6 +116,7 @@
     listElement.innerHTML = commentsHTML;
     initEventListeners();
     initEventButtonEdit();
+    reply();
   }
 
   renderComments();
@@ -139,9 +140,28 @@
       return;
     }
 
+    let unsafeName = nameForm.value; // устранение уязвимости
+    let unsafeComm = commentForm.value;
+
+    let safeName = unsafeName.replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;");
+    let safeComm = unsafeComm.replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll('QUOTE_BEGIN', "<div class='quote'>")
+      .replaceAll('QUOTE_END', '</div>');
+
+    if (safeComm.startsWith('>')) {
+
+    }
+
+
     comments.push({
-      name: nameForm.value,
-      text: commentForm.value,
+      name: safeName,
+      text: safeComm,
       isLiked: false,
       likes: 0,
       year: date.getFullYear() - 2000,
@@ -198,7 +218,8 @@
   function initEventListeners() {
     let likeButtons = document.querySelectorAll('.like-button');
     for (let likeButton of likeButtons) {
-      likeButton.addEventListener('click', () => {
+      likeButton.addEventListener('click', (event) => {
+        event.stopPropagation();
         let numComm = likeButton.getAttribute('data-numComments');
 
         if (comments[numComm].isLiked) {
@@ -214,29 +235,40 @@
     }
   }
 
-  function funcEdit(nComm) {
-    let numComm = nComm;
-    let txtEdit = document.getElementById('textarea');
-
-    comments[numComm].isEdit = !comments[numComm].isEdit;
-
-    if (!comments[numComm].isEdit) {
-      comments[numComm].text = txtEdit.value;
-    }
-
-    renderComments();
-  }
-
   function initEventButtonEdit() {
     let buttonsEdit = document.querySelectorAll('.button-edit');
 
     for (let buttonEdit of buttonsEdit) {
-      buttonEdit.addEventListener('click', () => {
-        funcEdit(buttonEdit.getAttribute('data-numComments'))
+      buttonEdit.addEventListener('click', (event) => {
+        event.stopPropagation();
+        let numComm = buttonEdit.getAttribute('data-numComments');
+        let txtEdit = document.getElementById('textarea');
+
+        comments[numComm].isEdit = !comments[numComm].isEdit;
+
+        if (!comments[numComm].isEdit) {
+          comments[numComm].text = txtEdit.value;
+        }
+
+        renderComments();;
       });
     }
   }
 
+  function reply() {
+    let replyComms = document.querySelectorAll('.comment');
+
+    for (let replyComm of replyComms) {
+      replyComm.addEventListener('click', () => {
+        let numComm = replyComm.getAttribute('data-numComments');
+        console.log('Ответ сработал', numComm);
+        commentForm.value = `QUOTE_BEGIN${comments[numComm].name}:
+${comments[numComm].text} QUOTE_END
+
+`;
+      })
+    }
+  }
 </script>
 
 </html>
