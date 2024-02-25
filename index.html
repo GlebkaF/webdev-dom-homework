@@ -206,26 +206,29 @@ const renderComments = () => {
       isLiked: ''
       });
       renderComments();
+      postPromiseFetch();
+    };
 
-      // Добавить новый комментарий, метод POST
+
+// Добавить новый комментарий, метод POST
       
+    function postPromiseFetch() {
       const fetchPromisePost = fetch("https://wedev-api.sky.pro/api/v1/Sveta-n/comments", {
 
-         method: 'POST',
-
+        method: 'POST',
+         
         body: JSON.stringify({
 
-        text: nameElement.value, 
+        name: textElement.value,
+ 
+        text: nameElement.value 
+    })
 
-        name: textElement.value
+  }).then((response) => {
 
-      })
+     fetchPromiseGet()
 
-        }).then((response) => {
-
-        fetchPromiseGet()
-
-        });
+  });
     };
     
 
