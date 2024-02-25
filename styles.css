@@ -1,5 +1,13 @@
 body {
-    margin: 0;
+    margin: 0 auto;
+    display: flex;
+    background: #202020;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-content: center;
+    align-items: center;
+    font-family: Helvetica;
+    color: #ffffff;
   }
 
   .container {
@@ -8,10 +16,8 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 80px;
-    padding-bottom: 200px;
+    padding-top: 40px;
     background: #202020;
-    min-height: 100vh;
   }
 
   .comments,
@@ -172,12 +178,20 @@ body {
   }
 
   .page-loader {
-    display: none;
+    display: block;
+    font-family: Helvetica;
+    color: #ffffff;
+    width: fit-content;
+    margin-top: 40px;
   }
 
   .comment-loader {
     display: none;
     margin-top: 45px;
+  }
+
+  .mrgn-tp-20 {
+    margin-top: 20px;
   }
 
   .mrgn-btm-20 {

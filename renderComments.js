@@ -1,6 +1,7 @@
-import { postComment } from "./api.js";
+import { postComment, userAuth, userName } from "./api.js";
 import { getCurrentDate } from "./getDate.js";
 import { mapData } from "./main.js";
+import { renderLogin } from "./renderLogin.js";
 
 export const renderComments = ( {comments} ) => {
 
@@ -41,38 +42,67 @@ export const renderComments = ( {comments} ) => {
 }).join("");
 
 const container = document.getElementById('app');
+const authComment = document.getElementById("auth-comment");
+let blockAuthDisplay;
+let blockAddCommentDisplay;
+
+
+console.log(userAuth);
 const appHtml = `
 <div class="container">
-      <span class="page-loader">Пожайлуйста подождите, загружаю комментарии</span>
       <ul class="comments" id="comment-list">
         ${CommentsHtml}
       </ul>
       <span class="comment-loader">Пожайлуйста подождите, комментарий добавляется</span>
-      <div class="add-form" id="forma">
-        <input
-          type="text"
-          id="form-name"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          id="form-text"
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button" id="add-form-button">Написать</button>
-        </div>
-        <div class="add-form-row">
-          <!--<button class="delete-form-button" id="delete-form-button">Удалить последний коммент</button>-->
-        </div>
-      </div>
-    </div>
+</div>
 `;
 
 container.innerHTML = appHtml;
+
+
+if (userAuth) {
+  blockAuthDisplay = "none";
+  blockAddCommentDisplay = "block";
+
+} else {
+  blockAuthDisplay = "block";
+  blockAddCommentDisplay = "none";
+}
+
+const blcAuthComment = `
+<div id="block-auth" class="mrgn-tp-20 mrgn-btm-20" style="display: ${blockAuthDisplay}">
+      <span>Добавлять комментарии могут только авторизованные пользователи</span>
+      <br>
+      <button class="add-form-button" id="to-auth-button">Авторизоваться</button>
+    </div>
+    <div class="add-form mrgn-tp-20 mrgn-btm-20" id="forma" style="display: ${blockAddCommentDisplay}">
+      <input
+        type="text"
+        id="form-name"
+        class="add-form-name"
+        placeholder="Введите ваше имя"
+        value="${userName}"
+        readonly
+      />
+      <textarea
+        id="form-text"
+        type="textarea"
+        class="add-form-text"
+        placeholder="Введите ваш коментарий"
+        rows="4"
+      ></textarea>
+      <div class="add-form-row">
+        <button class="add-form-button" id="add-form-button">Написать</button>
+      </div>
+      <div class="add-form-row">
+        <!--<button class="delete-form-button" id="delete-form-button">Удалить последний коммент</button>-->
+      </div>
+    </div>
+`
+
+authComment.innerHTML = blcAuthComment;
+
+
 
 // Запрет на действие по умолчанию для textArea - gthеход на новую строку. Иначе функция addComment будет выполняться, 
   // если заполнено поле с именеи и в поле комментария есть переход на новую строку
@@ -87,11 +117,10 @@ container.innerHTML = appHtml;
   const buttonAddComment = document.getElementById('add-form-button');
   const inputName = document.getElementById('form-name');
   const inputText = document.getElementById('form-text');
-  const formaComment = document.getElementById('forma');
   const loaderAddComment = document.querySelector(".comment-loader");
   const loaderPage = document.querySelector(".page-loader");
 
-  console.log(loaderPage);
+  const formaComment = document.getElementById('forma');
 
   // Функция ответа на комментарий
 
@@ -135,6 +164,7 @@ container.innerHTML = appHtml;
         }
 
         renderComments( {comments} );
+        loaderPage.style.display = "none";
       })
     }
   }
@@ -219,8 +249,6 @@ function addComment(event) {
 
   if (event.type === 'click' || (event.type === 'keyup' && event.key === 'Enter'))  {
 
-    const oldCommentList = commentList.innerHTML;
-
     if (inputName.value === '' && inputText.value !== '') {
       inputName.classList.add('error-form');
       inputText.classList.remove('error-form');
@@ -245,34 +273,17 @@ function addComment(event) {
     inputText.classList.remove('error-form');
     buttonAddComment.disabled = true;
 
-
-
-    // comments.push({
-    //   text: inputText.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-    //   author: inputName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-    //   date: currentDate,
-    //   likeCount: 0,
-    //   myLike: false,
-    //   isEdit: false
-    // });
-
-    isLoaded = true;
-    console.log(isLoaded);
-
     postTask();
-    renderComments( {comments} );
   }
 }
 
+const toPageAuth = document.querySelector(".add-form-button");
+
+toPageAuth.addEventListener("click", () => {
+  renderLogin( {mapData} )
+})
+
 buttonAddComment.addEventListener('click', addComment);
 formaComment.addEventListener('keyup', addComment);
+
 }
-
-console.log('1!');
-
-// console.log(loaderPage);
-// loaderPage.style.display = "block";
-
-// export const getLoaderPage = () => {
-
-// }

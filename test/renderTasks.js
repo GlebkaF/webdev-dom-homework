@@ -94,17 +94,13 @@ export const renderTasks = ({ tasks, fetchAndRenderTasks, authUser }) => {
         buttonElement.textContent = "Элемент добавляется...";
       
         postTodo({
-          text: textInputElement.value,
+            name: 'Pavel',
+            text: textInputElement.value,
         })
         .then(() => {
             return fetchAndRenderTasks();
-        })
-        .then(() => {
-            buttonElement.disabled = false;
-            buttonElement.textContent = "Добавить";
-            textInputElement.value = "";
         });
-        renderTasks({ tasks, fetchAndRenderTasks, authUser });
+        
     });
 
     buttonAuth.addEventListener("click", () => {

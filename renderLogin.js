@@ -1,7 +1,9 @@
-import { loginUser, setToken, setUserName, token, userName } from "./api.js";
+import { auth, getToken, token, userName } from "./api.js";
+
 
 export const renderLogin = ( {mapData} ) => {
     const container = document.getElementById('app');
+    const authComment = document.getElementById("auth-comment");
     const loginHtml = `
     <div class="container">
       <div class="login-form mrgn-btm-20" id="forma">
@@ -24,28 +26,33 @@ export const renderLogin = ( {mapData} ) => {
           <!--<button class="delete-form-button" id="delete-form-button">Удалить последний коммент</button>-->
         </div>
       </div>
-      <a href="" style="color: white;">Зарегистрироваться</a>
+      <!--<a href="" style="color: white;">Зарегистрироваться</a>-->
     </div>
     `;
 
     container.innerHTML = loginHtml;
+    authComment.innerHTML = '';
 
     const buttonElement = document.getElementById('login-form-button');
     const loginInput = document.getElementById('form-login');
     const passInput = document.getElementById('form-password');
 
     buttonElement.addEventListener('click', () => {
-        loginUser({
+      auth({
             login: loginInput.value,
             password: passInput.value
         }).then((responseData) => {
             console.log(responseData);
-            setToken(responseData.user.token);
-            setUserName(responseData.user.name);
+            getToken(responseData.user.token, responseData.user.name);
+            //setUserName(responseData.user.name);
             console.log(token);
-            console.log(userName);
+            //console.log(userName);
         }).then(() => {
             mapData();
+        }).catch((error) => {
+          if (error.message === "Неверные имя или пароль") {
+            alert("Такого пользователя не существет :(")
+          }
         }); 
     })
 }
