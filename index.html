@@ -48,17 +48,16 @@
     gettingComments.then((response) => {
       const jsonComments = response.json();
       jsonComments.then((responseData) => {
-        comments = responseData.comments.map((comment) => {
+        const appComments = responseData.comments.map((comment) => {
           return {
             name: comment.author.name,
-            date: (comment.date).toLocaleTimeString,
-            id: comment.id,
+            date: new Date(comment.date).toLocaleDateString() + " " + (new Date(comment.date).getHours() < 10 ? '0' + new Date(comment.date).getHours() : new Date(comment.date).getHours()) + ":" + (new Date(comment.date).getMinutes() < 10 ? '0' + new Date(comment.date).getMinutes() : new Date(comment.date).getMinutes()) + ":" + (new Date(comment.date).getSeconds() < 10 ? '0' + new Date(comment.date).getSeconds() : new Date(comment.date).getSeconds()),
             isLiked: comment.isLiked,
             likes: comment.likes,
             text: comment.text,
           };
         });
-        console.log(comments);
+        comments = appComments;
         renderComments();
       });
     });
@@ -145,27 +144,30 @@
       return;
     }
 
-    fetch("https://wedev-api.sky.pro/api/v1/alexandrove-julia/comments", {
+    const fetchPostComments = fetch("https://wedev-api.sky.pro/api/v1/alexandrove-julia/comments", {
       method: "POST",
       body: JSON.stringify({
-        name: inputName.value
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;"),
-        text: inputText.value
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;"),
+        name: sanitizeHtml(inputElement.value),
+        text: sanitizeHtml(textAreaElement.value),
+        date: (comment.date).toLocaleTimeString,
+        isLiked: false,
+        likes: 0,
       }),
     }).then((response) => {
-      response.json().then((responseData) => {
-        comments = responseData.comments;
+      const jsonPromise = response.json();
+      jsonPromise.then((responseData) => {
+        fetchRender();
       });
       fetchRender();
     });
 
     inputName.value = "";
     inputText.value = "";
+    fetchRender();
     renderComments();
   });
+
+  renderComments();
 
   console.log("It works!");
 </script>
