@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Урок "Обработчики событий на динамических элементах разметки"</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+
+  <body>
+    <h1>Любимые цвета студентов</h1>
+    <ul class="students" id="list">
+      <!-- Список рендериться в JS -->
+    </ul>
+    <div class="form">
+      <h3 class="form-title">Форма добавления</h3>
+      <div class="form-row">
+        Имя:&nbsp;&nbsp;
+        <input
+          type="text"
+          id="name-input"
+          class="input"
+          placeholder="Василий"
+        />
+      </div>
+      <div class="form-row">
+        Цвет:&nbsp;
+        <input type="color" id="color-input" class="color-input input" />
+        <br /><br />
+      </div>
+      <button class="button" id="add-button">Добавить</button>
+    </div>
+  </body>
+
+  <script>
+    const buttonElement = document.getElementById("add-button");
+    const listElement = document.getElementById("list");
+    const nameInputElement = document.getElementById("name-input");
+    const colorInputElement = document.getElementById("color-input");
+
+    //Мы перенесли из разметки, данные в JS массив students
+    const students = [
+      {
+        name: "Глеб",
+        color: "#ff2600",
+        isLover: true,
+      },
+      {
+        name: "Иван",
+        color: "#00f900",
+        isLover: false,
+      },
+      {
+        name: "Люси",
+        color: "#0432ff",
+        isLover: true,
+      },
+    ];
+
+    //Создали render функцию, которая из массива данных students с помощью .map и .join превращает массив данных в HTML разметку. И кладет ее в listELement
+    const renderStudents = () => {
+      const studentsHtml = students
+        .map((student, index) => {
+          //Красит в любимый цвет студента "name" если "islover: true"
+          if (student.isLover === true) {
+            return `<li class="student" data-color=${student.color}>
+                    <p class="student-name" style="color: ${student.color}">
+                     ${student.name}<span style="color: #000">, любимый цвет</span>
+                     <span class="swapBack" style="color: ${student.color}"> ${student.color}</span>
+                    </p>
+                    <button class="hi-button" data-name="${student.name}">Привет</button>
+                    <button data-index="${index}" class="delete-button">Удалить</button>
+                    <button data-index="${index}" class="delete-name">Стереть имя</button>
+                  </li>`;
+          } else {
+            return `<li class="student" data-color=${student.color}>
+                    <p class="student-name">
+                     ${student.name}, любимый цвет
+                     <span class="swapBack" style="color: ${student.color}"> ${student.color}</span>
+                    </p>
+                    <button class="hi-button" data-name="${student.name}">Привет</button>
+                    <button data-index="${index}" class="delete-button">Удалить</button>
+                    <button data-index="${index}" class="delete-name">Стереть имя</button>
+                  </li>`;
+          }
+        })
+        .join("");
+
+      listElement.innerHTML = studentsHtml;
+
+      //После того как мы обновили список, мы должны проинициализировать события на вновь созданных элементах
+      initEventListeners();
+      initBodyColor();
+      initGreetingButton();
+      initDeleteButton();
+      initDeleteNamesListeners();
+    };
+
+    //При нажатии на li, в консоли будет выводить любимый цвет студента
+    //Так как эта команда встречается в коде несколько раз, легче будет создать функцию и использовать в коде ее
+    const initEventListeners = () => {
+      // Находит все элементы с классом student в разметке
+      const studentElements = document.querySelectorAll(".student");
+
+      // Цикл for проходит по каждому элементу в списке
+      for (const studentElement of studentElements) {
+        // Добавляет обработчик клика на конкретный элемент в списке
+        studentElement.addEventListener("click", () => {
+          // Достает data-color из элемента
+          const color = studentElement.dataset.color;
+          console.log(color);
+        });
+      }
+    };
+
+    //Добавим смену фона body, при нажатии на span, на цвет, который указан в span. И сделаем функцию
+    const elements = document.querySelectorAll("body");
+    const bodyElement = elements[0];
+
+    const initBodyColor = () => {
+      const swapElements = document.querySelectorAll(".swapBack");
+
+      for (const swapElement of swapElements) {
+        swapElement.addEventListener("click", () => {
+          bodyElement.style.backgroundColor = swapElement.style.color;
+        });
+      }
+    };
+
+    //Добавляем alert при нажатии на кнопку "Привет"
+    const initGreetingButton = () => {
+      const hiButtonElemetns = document.querySelectorAll(".hi-button");
+
+      for (const hiButtonElemetn of hiButtonElemetns) {
+        hiButtonElemetn.addEventListener("click", () => {
+          //Достаем data-name из элемента
+          const name = hiButtonElemetn.dataset.name;
+          //Выводим alert с именем из data-name
+          console.log(alert(`Привет, ${name}`));
+        });
+      }
+    };
+
+    //Удаление элементов
+    const initDeleteButton = () => {
+      const deleteButtonElements = document.querySelectorAll(".delete-button");
+
+      for (const deleteButtonElement of deleteButtonElements) {
+        deleteButtonElement.addEventListener("click", () => {
+          const index = deleteButtonElement.dataset.index;
+          students.splice(index, 1);
+          renderStudents();
+        });
+      }
+    };
+
+    //Изменение имени у элементов
+    const initDeleteNamesListeners = () => {
+      const deleteNamesElements = document.querySelectorAll(".delete-name");
+
+      for (const deleteNameElement of deleteNamesElements) {
+        deleteNameElement.addEventListener("click", () => {
+          const index = deleteNameElement.dataset.index;
+          const noname = "Неизвестный студент";
+          students[index].name = noname;
+          renderStudents();
+        });
+      }
+    };
+
+    renderStudents();
+
+    buttonElement.addEventListener("click", () => {
+      nameInputElement.classList.remove("input-error");
+
+      if (nameInputElement.value === "") {
+        nameInputElement.classList.add("input-error");
+        return;
+      }
+
+      //Когда добавляем новый элемент в список. Кладем в массив данных новый элемент, с помощью .push
+      students.push({
+        name: nameInputElement.value,
+        color: colorInputElement.value,
+      });
+
+      //Вызываем render, чтобы разметка обновилась. Так как мы сделали функцию render, в ней уже содержатся все init, которые прописаны ниже, остальные функции удаляем (иначе все функции выполнялись бы дважды)
+      renderStudents();
+      // //Почему мы снова запрашиваем const studentElements = document.querySelectorAll(".student") (первая строчка функции)? Хотя переменная studentElements уже объявлена на 59 строке и содержит список студентов, она захватывает только те элементы, которые были на момент ее инициализации. После добавления нового студента необходимо обновить этот список, чтобы он включал в себя новый элемент, иначе события click не будут привязаны к новым студентам.
+      // //Поэтому тут повторно выполняется запрос document.querySelectorAll(".student"), чтобы получить обновленный список элементов студентов после добавления нового студента, и снова назначить обработчики событий click на каждый элемент списка.
+      // initEventListeners();
+      // //Чтобы можно было менять body, при добавлении новых студентов
+      // initBodyColor();
+      // //Чтобы кнопка "привет" работала на новых студентов
+      // initGreetingButton();
+      // //Чтобы удаление работала с новыми студентами
+      // initDeleteButton();
+
+      nameInputElement.value = "";
+    });
+  </script>
+</html>
