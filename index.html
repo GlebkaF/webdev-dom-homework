@@ -12,25 +12,7 @@
         <!-- Список рендерится JS -->
       </ul>
       <div id="add-form" class="add-form">
-        <input
-          id="add-form-name"
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          id="add-form-text"
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button id="add-form-button" class="add-form-button">Написать</button>
-          <button id="remove-last-com" class="remove-last-com">
-            Удалить последний
-          </button>
-        </div>
+        <!-- -->
       </div>
     </div>
   </body>
@@ -42,6 +24,8 @@
     const buttonRemEl = document.getElementById("remove-last-com");
     const listEl = document.getElementById("list");
     const formEl = document.getElementById("add-form");
+
+    let isLoading = false;
 
     function formatDate(date) {
       const options1 = {
@@ -64,6 +48,8 @@
     let comments = [];
 
     const fetchGet = () => {
+      isLoading = true;
+      console.log(isLoading);
       fetch("https://wedev-api.sky.pro/api/v1/:azinkevich/comments", {
         method: "GET",
       }).then((response) => {
@@ -79,7 +65,10 @@
           });
 
           comments = appComments;
+          isLoading = false;
+          console.log(isLoading);
           renderComments();
+          renderForm();
         });
       });
     };
@@ -147,6 +136,33 @@
       }
     };
 
+    const renderForm = () => {
+      if (isLoading) {
+        formEl.textContent = "Комментарий публикуется...";
+        console.log(formEl.innerHTML);
+      } else {
+        formEl.innerHTML = `<input
+          id="add-form-name"
+          type="text"
+          class="add-form-name"
+          placeholder="Введите ваше имя"
+        />
+        <textarea
+          id="add-form-text"
+          type="textarea"
+          class="add-form-text"
+          placeholder="Введите ваш коментарий"
+          rows="4"
+        ></textarea>
+        <div class="add-form-row">
+          <button id="add-form-button" class="add-form-button">Написать</button>
+          <button id="remove-last-com" class="remove-last-com">
+            Удалить последний
+          </button>
+        </div>`;
+      }
+    };
+
     const renderComments = () => {
       const commentsHtml = comments
         .map((comment, index) => {
@@ -198,7 +214,7 @@
       initEditButtonlistener();
       initSaveButtonlistener();
       initReplayListener();
-
+      
     };
 
     function sanitize(text) {
@@ -211,67 +227,75 @@
         .replaceAll("QUOTE_END", "</div>");
     }
 
-    buttonEl.disabled = true;
-    nameEl.addEventListener("input", evnt);
-    textEl.addEventListener("input", evnt);
-    function evnt() {
-      if (Text.value !== "") buttonEl.disabled = false;
+    function validInput() {
+      buttonEl.disabled = true;
+      nameEl.addEventListener("input", evnt);
+      textEl.addEventListener("input", evnt);
+      function evnt() {
+        if (Text.value !== "") buttonEl.disabled = false;
+      }
+
+      formEl.addEventListener("keyup", (e) => {
+        if (!e.shiftKey && e.code === "Enter") {
+          buttonEl.click();
+        }
+      });
     }
 
-    formEl.addEventListener("keyup", (e) => {
-      if (!e.shiftKey && e.code === "Enter") {
-        buttonEl.click();
-      }
-    });
+    const buttonClick = () => {
+      buttonEl.addEventListener("click", () => {
+        nameEl.value = nameEl.value.trim();
+        textEl.value = textEl.value.trim();
 
-    buttonEl.addEventListener("click", () => {
-      nameEl.value = nameEl.value.trim();
-      textEl.value = textEl.value.trim();
+        nameEl.classList.remove("add-form_error");
+        textEl.classList.remove("add-form_error");
 
-      nameEl.classList.remove("add-form_error");
-      textEl.classList.remove("add-form_error");
+        if (nameEl.value === "" && textEl.value === "") {
+          nameEl.classList.add("add-form_error");
+          textEl.classList.add("add-form_error");
+          return;
+        } else if (nameEl.value === "") {
+          nameEl.classList.add("add-form_error");
+          return;
+        } else if (textEl.value === "") {
+          textEl.classList.add("add-form_error");
+          return;
+        }
 
-      if (nameEl.value === "" && textEl.value === "") {
-        nameEl.classList.add("add-form_error");
-        textEl.classList.add("add-form_error");
-        return;
-      } else if (nameEl.value === "") {
-        nameEl.classList.add("add-form_error");
-        return;
-      } else if (textEl.value === "") {
-        textEl.classList.add("add-form_error");
-        return;
-      }
+        fetch("https://wedev-api.sky.pro/api/v1/:azinkevich/comments", {
+          method: "POST",
+          body: JSON.stringify({
+            date: formatDate(new Date()),
+            name: nameEl.value,
+            text: textEl.value,
+            like_active: false,
+            like_count: 0,
+            isEdit: false,
+          }),
+        }).then((response) => {
+          response.json().then((responseData) => {
+            comments = responseData.comments;
 
-      fetch("https://wedev-api.sky.pro/api/v1/:azinkevich/comments", {
-        method: "POST",
-        body: JSON.stringify({
-          date: formatDate(new Date()),
-          name: nameEl.value,
-          text: textEl.value,
-          like_active: false,
-          like_count: 0,
-          isEdit: false,
-        }),
-      }).then((response) => {
-        response.json().then((responseData) => {
-          comments = responseData.comments;
-
-          fetchGet();
+            fetchGet();
+          });
         });
+
+        nameEl.value = "";
+        textEl.value = "";
+
+        renderComments();
       });
+    }
 
-      nameEl.value = "";
-      textEl.value = "";
+    // buttonRemEl.addEventListener("click", () => {
+    //   comments.pop();
+    //   renderComments();
+    // });
 
-      renderComments();
-    });
-
-    buttonRemEl.addEventListener("click", () => {
-      comments.pop();
-      renderComments();
-    });
     fetchGet();
     renderComments();
+    renderForm();
+    buttonClick();
+    validInput();
   </script>
 </html>
