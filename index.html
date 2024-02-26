@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 
 <head>
   <title>Проект "Комменты"</title>
@@ -12,7 +12,7 @@
     <ul class="comments">
       <li class="comment">
         <div class="comment-header">
-          <div>Глеб Фокин</div>
+          <div class="user-name">Глеб Фокин &a</div>
           <div>12.02.22 12:18</div>
         </div>
         <div class="comment-body">
@@ -29,7 +29,7 @@
       </li>
       <li class="comment">
         <div class="comment-header">
-          <div>Варвара Н.</div>
+          <div class="user-name">Варвара Н.</div>
           <div>13.02.22 19:22</div>
         </div>
         <div class="comment-body">
@@ -47,7 +47,7 @@
     </ul>
     <div class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
-      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
+      <textarea class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
       <div class="add-form-row">
         <button class="add-form-button">Написать</button>
         <button class="delete-button">Удалить последний комментарий</button>
@@ -120,12 +120,12 @@
           newList +
           `<li class="comment">
       <div class="comment-header">
-        <div>${comments[i].name}</div>
+        <div>${comments[i].name.replace('<', '&lt;').replace('>', '&gt;').replace('/', '&sol;')}</div>
         <div>${comments[i].pushedTime}</div>
       </div>
       <div class="comment-body">
         <div class="comment-text">
-          ${comments[i].text}
+          ${comments[i].text.replace('<', '&lt;').replace('>', '&gt;').replace('/', '&sol;')}
         </div>
       </div>
       <div class="comment-footer">
@@ -140,8 +140,14 @@
     </li>`;
       }
       ulList.innerHTML = newList;
-    };
-
+      const elements = document.getElementsByClassName('comment-text')
+      for (const element of elements) {
+        element.addEventListener('click', (event) => {
+          const userName = document.querySelectorAll('.user-name');
+          inputText.value = `> ${event.target.outerText}\n\n ${event.target.parentElement.parentElement.firstElementChild.firstElementChild.innerText}, `
+        })
+      };
+    }
     renderCommentsList();
 
     const isNotEmpty = () =>
@@ -188,9 +194,9 @@
 
     deleteBtn.addEventListener("click", () => {
       const com = ulList.innerHTML;
-      let lastIndex = com.lastIndexOf(`<li class="comment">`);
+      let lastIndex = com.lastIndexOf(`< li class="comment" >`);
       if (lastIndex !== -1) {
-        let deleteCom = com.substring(0, lastIndex);
+        const deleteCom = com.substring(0, lastIndex);
         ulList.innerHTML = deleteCom;
       }
     });
