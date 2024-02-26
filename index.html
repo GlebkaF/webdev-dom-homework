@@ -13,7 +13,7 @@
       <!-- Список рендерится JS -->
     </ul>
     <div id="add-form" class="add-form">
-
+      <!-- -->
     </div>
   </div>
 </body>
@@ -21,10 +21,10 @@
   "use strict";
   let isLoading = false;
 
-  let nameEl = document.getElementById("add-form-name");
-  let textEl = document.getElementById("add-form-text");
-  let buttonEl = document.getElementById("add-form-button");
-  let buttonRemEl = document.getElementById("remove-last-com");
+  // let nameEl = document.getElementById("add-form-name");
+  // let textEl = document.getElementById("add-form-text");
+  // let buttonEl = document.getElementById("add-form-button");
+  // let buttonRemEl = document.getElementById("remove-last-com");
   let listEl = document.getElementById("list");
   let formEl = document.getElementById("add-form");
   //console.log(nameEl.innerHTML);
@@ -103,7 +103,7 @@
           return;
         }
 
-        fetch("https://wedev-api.sky.pro/api/v1/:azinkevich/comments", {
+        fetch("https://wedev-api.sky.pro/api/v1/:vich/comments", {
           method: "POST",
           body: JSON.stringify({
             date: formatDate(new Date()),
@@ -116,8 +116,10 @@
         }).then((response) => {
           response.json().then((responseData) => {
             comments = responseData.comments;
-
+            
             fetchGet();
+            renderForm();
+
           });
         });
 
@@ -127,14 +129,14 @@
         renderComments();
       });
 
-      console.log(formEl.innerHTML);
+      //console.log(formEl.innerHTML);
     }
   };
 
   const fetchGet = () => {
     isLoading = true;
-    console.log(isLoading);
-    fetch("https://wedev-api.sky.pro/api/v1/:azinkevich/comments", {
+    //console.log(isLoading);
+    fetch("https://wedev-api.sky.pro/api/v1/:vich/comments", {
       method: "GET",
     }).then((response) => {
       response.json().then((responseData) => {
@@ -150,7 +152,7 @@
 
         comments = appComments;
         isLoading = false;
-        console.log(isLoading);
+        //console.log(isLoading);
         renderComments();
         renderForm();
       });
@@ -269,6 +271,7 @@
     initSaveButtonlistener();
     initReplayListener();
 
+
   };
 
   function sanitize(text) {
@@ -288,9 +291,8 @@
 
   fetchGet();
   renderComments();
-  renderForm();
-  //buttonClick();
-  //validInput();
+  //renderForm();
+
 
 </script>
 
