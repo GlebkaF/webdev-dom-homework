@@ -64,65 +64,63 @@
     const textInputElement = document.getElementById('text-input');
     const commentsElement = document.querySelector('.comments');
 
-    let currentDate = new Date();
-
-    buttonElement.classList.add('add-form-button-inactive');
-
-    nameInputElement.addEventListener('input', () => {
-      if(nameInputElement.value !== 0 && textInputElement.value !== 0) {
-        buttonElement.classList.remove('add-form-button-inactive')
-      }
-    });
-
-    textInputElement.addEventListener('input', () => {
-      if(nameInputElement.value !== 0 && textInputElement.value !== 0) {
-        buttonElement.classList.remove('add-form-button-inactive')
-      }
-    });
+    function clock() {
+      let currentDate = new Date().toLocaleDateString([], {day: "2-digit", month: "2-digit", year: "2-digit"}) + " " + new Date().toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"});
+      return currentDate;
+    };
 
     function addComment() {
       nameInputElement.classList.remove('error');
       textInputElement.classList.remove('error');
 
-      if(nameInputElement.value === '') {
+      if(nameInputElement.value === '' || !nameInputElement.value.trim()) {
         nameInputElement.classList.add('error');
+        nameInputElement.value = '';
         buttonElement.classList.add('add-form-button-inactive');
         return;
-      }
 
-      if(textInputElement.value === '') {
+      } else if(textInputElement.value === '' || !textInputElement.value.trim()) {
         textInputElement.classList.add('error');
         buttonElement.classList.add('add-form-button-inactive');
         return;
       }   
 
       let oldComments = commentsElement.innerHTML;
-      commentsElement.innerHTML = oldComments + 
-      `<li class="comment">
-          <div class="comment-header">
-            <div>${nameInputElement.value}</div>
-            <div>${currentDate.toLocaleDateString() + " " + currentDate.getHours() + ":" + currentDate.getMinutes()}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${textInputElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
+      commentsElement.innerHTML = oldComments +
+        `<li class="comment"> 
+            <div class="comment-header"> 
+              <div>${nameInputElement.value}</div> 
+              <div>${clock()}</div> 
+            </div> 
+            <div class="comment-body"> 
+              <div class="comment-text"> 
+                ${textInputElement.value} 
+              </div> 
+            </div> 
+            <div class="comment-footer"> 
+              <div class="likes"> 
+                <span class="likes-counter">0</span> 
+                <button class="like-button"></button> 
+              </div> 
+            </div> 
+          </li>`;
+
       nameInputElement.value = '';
       textInputElement.value = ''; 
-      buttonElement.classList.add('add-form-button-inactive');
-    }
+    };
 
     buttonElement.addEventListener('click', () => {
-      addComment()
+    addComment()
     });
+
+    nameInputElement.addEventListener('keyup', keyEvent);
+    textInputElement.addEventListener('keyup', keyEvent);
+
+    function keyEvent(e) {
+      if (e.code === 'Enter') {
+        buttonElement.dispatchEvent(new Event('click'));
+      }
+    }
 
     console.log("It works!");
   </script>
