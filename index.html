@@ -1,233 +1,74 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
-      <ul id="list" class="comments">
-        <!-- Список рендерится JS -->
-      </ul>
-      <div id="add-form" class="add-form">
-        <!-- -->
-      </div>
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <ul id="list" class="comments">
+      <!-- Список рендерится JS -->
+    </ul>
+    <div id="add-form" class="add-form">
+
     </div>
-  </body>
-  <script>
-    "use strict";
-    const nameEl = document.getElementById("add-form-name");
-    const textEl = document.getElementById("add-form-text");
-    const buttonEl = document.getElementById("add-form-button");
-    const buttonRemEl = document.getElementById("remove-last-com");
-    const listEl = document.getElementById("list");
-    const formEl = document.getElementById("add-form");
+  </div>
+</body>
+<script>
+  "use strict";
+  let isLoading = false;
 
-    let isLoading = false;
+  let nameEl = document.getElementById("add-form-name");
+  let textEl = document.getElementById("add-form-text");
+  let buttonEl = document.getElementById("add-form-button");
+  let buttonRemEl = document.getElementById("remove-last-com");
+  let listEl = document.getElementById("list");
+  let formEl = document.getElementById("add-form");
+  //console.log(nameEl.innerHTML);
 
-    function formatDate(date) {
-      const options1 = {
-        year: "2-digit",
-        month: "2-digit",
-        day: "2-digit",
-      };
-      const options2 = {
-        hour: "numeric",
-        minute: "numeric",
-      };
-
-      return (
-        date.toLocaleString("ru", options1) +
-        " " +
-        date.toLocaleString("ru", options2)
-      );
-    }
-
-    let comments = [];
-
-    const fetchGet = () => {
-      isLoading = true;
-      console.log(isLoading);
-      fetch("https://wedev-api.sky.pro/api/v1/:azinkevich/comments", {
-        method: "GET",
-      }).then((response) => {
-        response.json().then((responseData) => {
-          const appComments = responseData.comments.map((comment) => {
-            return {
-              name: comment.author.name,
-              text: comment.text,
-              like_active: comment.isLiked,
-              like_count: comment.likes,
-              date: formatDate(new Date(comment.date)),
-            };
-          });
-
-          comments = appComments;
-          isLoading = false;
-          console.log(isLoading);
-          renderComments();
-          renderForm();
-        });
-      });
+  function formatDate(date) {
+    const options1 = {
+      year: "2-digit",
+      month: "2-digit",
+      day: "2-digit",
+    };
+    const options2 = {
+      hour: "numeric",
+      minute: "numeric",
     };
 
-    const initLikeButtonListener = () => {
-      const likeButtonElements = document.querySelectorAll(".like-button");
-      likeButtonElements.forEach((el, index) => {
-        el.addEventListener("click", () => {
-          comments[index].like_active = !comments[index].like_active;
-          comments[index].like_active
-            ? comments[index].like_count++
-            : comments[index].like_count--;
-          renderComments();
-        });
-      });
-    };
+    return (
+      date.toLocaleString("ru", options1) +
+      " " +
+      date.toLocaleString("ru", options2)
+    );
+  }
 
-    const initEditButtonlistener = () => {
-      const editButtonElements = document.querySelectorAll(".edit-button");
-      for (const editButtonElement of editButtonElements) {
-        editButtonElement.addEventListener("click", () => {
-          const index = editButtonElement.dataset.index;
-          comments[index].isEdit = true;
-          renderComments();
-        });
-      }
-    };
+  let comments = [];
 
-    const initSaveButtonlistener = () => {
-      const saveButtonElements = document.querySelectorAll(".save-button");
-      for (const saveButtonElement of saveButtonElements) {
-        saveButtonElement.addEventListener("click", () => {
-          const index = saveButtonElement.dataset.index;
-          comments[index].isEdit = false;
-          comments[index].text = textEditElement(index);
-          renderComments();
-        });
-      }
-      const textArea = document.querySelector(".add-form-edit-text");
-      if (textArea) {
-        textArea.addEventListener("click", (e) => {
-          e.stopPropagation();
-        });
-      }
-    };
+  const renderForm = () => {
+    if (isLoading) {
+      formEl.innerHTML = "Комментарий публикуется...";
+      //console.log(formEl.innerHTML);
+    } else {
+      formEl.innerHTML = `<input id="add-form-name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+      <textarea id="add-form-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+        rows="4"></textarea>
+      <div class="add-form-row">
+        <button id="add-form-button" class="add-form-button">Написать</button>
+        <button disabled id="remove-last-com" class="remove-last-com">
+          Удалить последний
+        </button>
+      </div>`;
 
-    const textEditElement = (index) => {
-      const textEditElements = document.querySelectorAll(".add-form-edit-text");
-      for (const textEditElement of textEditElements) {
-        const index = textEditElement.dataset.index;
-        comments[index].text = textEditElement.value;
-      }
-      return comments[index].text;
-    };
+      let nameEl = document.getElementById("add-form-name");
+      let textEl = document.getElementById("add-form-text");
+      let buttonEl = document.getElementById("add-form-button");
+      let buttonRemEl = document.getElementById("remove-last-com");
 
-    const initReplayListener = () => {
-      const replayComments = document.querySelectorAll(".comment-text");
-      for (const replayComment of replayComments) {
-        replayComment.addEventListener("click", (event) => {
-          event.stopPropagation();
-          const index = replayComment.dataset.index;
-          textEl.value = `QUOTE_BEGIN ${comments[index].name} \n ${comments[index].text} QUOTE_END`;
-          renderComments();
-        });
-      }
-    };
-
-    const renderForm = () => {
-      if (isLoading) {
-        formEl.textContent = "Комментарий публикуется...";
-        console.log(formEl.innerHTML);
-      } else {
-        formEl.innerHTML = `<input
-          id="add-form-name"
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          id="add-form-text"
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button id="add-form-button" class="add-form-button">Написать</button>
-          <button id="remove-last-com" class="remove-last-com">
-            Удалить последний
-          </button>
-        </div>`;
-      }
-    };
-
-    const renderComments = () => {
-      const commentsHtml = comments
-        .map((comment, index) => {
-          let editComment = () => {
-            if (comment.isEdit) {
-              return `<textarea data-index="${index}" id="add-form-edit-text" type="textarea" class="add-form-edit-text" placeholder=""
-    rows="4" > ${sanitize(comment.text)}</textarea>`;
-            } else {
-              return `${sanitize(comment.text)} `;
-            }
-          };
-          let saveButton = () => {
-            if (!comment.isEdit) {
-              return `class="edit-button" > Редактировать`;
-            } else {
-              return `class="save-button" > Сохранить`;
-            }
-          };
-          return `<li class="comment">
-          <div class="comment-header">
-            <div>${sanitize(comment.name)}</div>
-            <div id="add-form-date">${comment.date}</div>
-          </div>
-          <div class="comment-body">
-            <div data-index="${index}" class="comment-text" style="white-space:pre-line">
-              <a class="replay-form-link" ${
-                comment.isEdit ? "" : 'href="#add-form"'
-              }> ${editComment()}</a>
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span data-index="${index}" class="likes-counter">${
-            comment.like_count
-          }</span>
-              <button data-index="${index}" class="like-button ${
-            comment.like_active ? "-active-like" : ""
-          }"></button>
-            </div>
-            <div><button data-index="${index}" ${saveButton()}</button></div>
-          </div >
-        </li>`;
-        })
-        .join("");
-
-      listEl.innerHTML = commentsHtml;
-
-      initLikeButtonListener();
-      initEditButtonlistener();
-      initSaveButtonlistener();
-      initReplayListener();
-      
-    };
-
-    function sanitize(text) {
-      return text
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
-        .replaceAll("QUOTE_END", "</div>");
-    }
-
-    function validInput() {
       buttonEl.disabled = true;
       nameEl.addEventListener("input", evnt);
       textEl.addEventListener("input", evnt);
@@ -240,9 +81,9 @@
           buttonEl.click();
         }
       });
-    }
 
-    const buttonClick = () => {
+
+
       buttonEl.addEventListener("click", () => {
         nameEl.value = nameEl.value.trim();
         textEl.value = textEl.value.trim();
@@ -285,17 +126,172 @@
 
         renderComments();
       });
+
+      console.log(formEl.innerHTML);
     }
+  };
 
-    // buttonRemEl.addEventListener("click", () => {
-    //   comments.pop();
-    //   renderComments();
-    // });
+  const fetchGet = () => {
+    isLoading = true;
+    console.log(isLoading);
+    fetch("https://wedev-api.sky.pro/api/v1/:azinkevich/comments", {
+      method: "GET",
+    }).then((response) => {
+      response.json().then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            text: comment.text,
+            like_active: comment.isLiked,
+            like_count: comment.likes,
+            date: formatDate(new Date(comment.date)),
+          };
+        });
 
-    fetchGet();
-    renderComments();
-    renderForm();
-    buttonClick();
-    validInput();
-  </script>
+        comments = appComments;
+        isLoading = false;
+        console.log(isLoading);
+        renderComments();
+        renderForm();
+      });
+    });
+  };
+
+  const initLikeButtonListener = () => {
+    const likeButtonElements = document.querySelectorAll(".like-button");
+    likeButtonElements.forEach((el, index) => {
+      el.addEventListener("click", () => {
+        comments[index].like_active = !comments[index].like_active;
+        comments[index].like_active
+          ? comments[index].like_count++
+          : comments[index].like_count--;
+        renderComments();
+      });
+    });
+  };
+
+  const initEditButtonlistener = () => {
+    const editButtonElements = document.querySelectorAll(".edit-button");
+    for (const editButtonElement of editButtonElements) {
+      editButtonElement.addEventListener("click", () => {
+        const index = editButtonElement.dataset.index;
+        comments[index].isEdit = true;
+        renderComments();
+      });
+    }
+  };
+
+  const initSaveButtonlistener = () => {
+    const saveButtonElements = document.querySelectorAll(".save-button");
+    for (const saveButtonElement of saveButtonElements) {
+      saveButtonElement.addEventListener("click", () => {
+        const index = saveButtonElement.dataset.index;
+        comments[index].isEdit = false;
+        comments[index].text = textEditElement(index);
+        renderComments();
+      });
+    }
+    const textArea = document.querySelector(".add-form-edit-text");
+    if (textArea) {
+      textArea.addEventListener("click", (e) => {
+        e.stopPropagation();
+      });
+    }
+  };
+
+  const textEditElement = (index) => {
+    const textEditElements = document.querySelectorAll(".add-form-edit-text");
+    for (const textEditElement of textEditElements) {
+      const index = textEditElement.dataset.index;
+      comments[index].text = textEditElement.value;
+    }
+    return comments[index].text;
+  };
+
+  const initReplayListener = () => {
+    const replayComments = document.querySelectorAll(".comment-text");
+    for (const replayComment of replayComments) {
+      replayComment.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const index = replayComment.dataset.index;
+        textEl.value = `QUOTE_BEGIN ${comments[index].name} \n ${comments[index].text} QUOTE_END`;
+        renderComments();
+      });
+    }
+  };
+
+  const renderComments = () => {
+    const commentsHtml = comments
+      .map((comment, index) => {
+        let editComment = () => {
+          if (comment.isEdit) {
+            return `<textarea data-index="${index}" id="add-form-edit-text" type="textarea" class="add-form-edit-text" placeholder=""
+    rows="4" > ${sanitize(comment.text)}</textarea>`;
+          } else {
+            return `${sanitize(comment.text)} `;
+          }
+        };
+        let saveButton = () => {
+          if (!comment.isEdit) {
+            return `class="edit-button" > Редактировать`;
+          } else {
+            return `class="save-button" > Сохранить`;
+          }
+        };
+        return `<li class="comment">
+          <div class="comment-header">
+            <div>${sanitize(comment.name)}</div>
+            <div id="add-form-date">${comment.date}</div>
+          </div>
+          <div class="comment-body">
+            <div data-index="${index}" class="comment-text" style="white-space:pre-line">
+              <a class="replay-form-link" ${comment.isEdit ? "" : 'href="#add-form"'
+          }> ${editComment()}</a>
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span data-index="${index}" class="likes-counter">${comment.like_count
+          }</span>
+              <button data-index="${index}" class="like-button ${comment.like_active ? "-active-like" : ""
+          }"></button>
+            </div>
+            <div><button data-index="${index}" ${saveButton()}</button></div>
+          </div >
+        </li>`;
+      })
+      .join("");
+
+    listEl.innerHTML = commentsHtml;
+
+    initLikeButtonListener();
+    initEditButtonlistener();
+    initSaveButtonlistener();
+    initReplayListener();
+
+  };
+
+  function sanitize(text) {
+    return text
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+      .replaceAll("QUOTE_END", "</div>");
+  }
+
+  // buttonRemEl.addEventListener("click", () => {
+  //   comments.pop();
+  //   renderComments();
+  // });
+
+  fetchGet();
+  renderComments();
+  renderForm();
+  //buttonClick();
+  //validInput();
+
+</script>
+
 </html>
