@@ -2,7 +2,7 @@ import { getComments } from "./api.js";
 import { getCurrentDate } from "./getDate.js";
 import { renderComments } from "./renderComments.js";
 import { format } from "date-fns";
-
+import _ from 'lodash'
 
   // Получаем все необходимые элементы
 

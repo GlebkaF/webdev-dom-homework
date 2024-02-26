@@ -1,7 +1,9 @@
+import { format } from "date-fns";
 import { postComment, userAuth, userName } from "./api.js";
 import { getCurrentDate } from "./getDate.js";
 import { mapData } from "./main.js";
 import { renderLogin } from "./renderLogin.js";
+import _ from 'lodash'
 
 export const renderComments = ( {comments} ) => {
 
@@ -12,6 +14,7 @@ export const renderComments = ( {comments} ) => {
   let inputTextHtml;
   let textButtonEditSave;
   let classButtonEditSave;
+
   //isLoadedPage = true;
   comment.myLike ? isLike = "-active-like" : false
 
@@ -208,11 +211,9 @@ initEditCommentListener()
 initSaveEditCommentListener()
 
 const postTask = () => {
-  let currentDate = getCurrentDate(new Date());
       postComment( {
-          text: inputText.value,
+          text: _.capitalize(inputText.value),
           name: inputName.value,
-          date: currentDate,
           likes: 0,
           isLiked: false,
           forceError: true
