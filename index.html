@@ -44,7 +44,6 @@
     const formEl = document.getElementById("add-form");
 
     function formatDate(date) {
-      //const date = new Date();
       const options1 = {
         year: "2-digit",
         month: "2-digit",
@@ -80,10 +79,9 @@
           });
 
           comments = appComments;
-         renderComments();
+          renderComments();
         });
       });
-      
     };
 
     const initLikeButtonListener = () => {
@@ -94,7 +92,6 @@
           comments[index].like_active
             ? comments[index].like_count++
             : comments[index].like_count--;
-            console.log(comments[index].like_count);
           renderComments();
         });
       });
@@ -201,8 +198,7 @@
       initEditButtonlistener();
       initSaveButtonlistener();
       initReplayListener();
-      
-      //formatDate();
+
     };
 
     function sanitize(text) {
@@ -247,9 +243,6 @@
         return;
       }
 
-      console.log(nameEl.value);
-      console.log(textEl.value);
-
       fetch("https://wedev-api.sky.pro/api/v1/:azinkevich/comments", {
         method: "POST",
         body: JSON.stringify({
@@ -267,8 +260,6 @@
           fetchGet();
         });
       });
-
-     
 
       nameEl.value = "";
       textEl.value = "";
