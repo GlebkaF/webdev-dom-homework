@@ -1,6 +1,7 @@
 import { getComments } from "./api.js";
 import { getCurrentDate } from "./getDate.js";
 import { renderComments } from "./renderComments.js";
+import { format } from "date-fns";
 
 
   // Получаем все необходимые элементы
@@ -12,7 +13,8 @@ import { renderComments } from "./renderComments.js";
     return getComments().then((resultData) => {
       loaderPage.style.display = "block";
       const resultComments = resultData.comments.map((comment) => {
-        let currentDate = getCurrentDate(new Date(comment.date));
+        //let currentDate = getCurrentDate(new Date(comment.date));
+        let currentDate = format(new Date(comment.date), "yyyy-MM-dd hh.mm.ss");
         return {
           author: comment.author.name,
           date: currentDate,

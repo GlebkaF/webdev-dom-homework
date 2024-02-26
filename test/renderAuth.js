@@ -1,8 +1,8 @@
 import { auth, authUser, getAuthUser, getToken } from "./api.js";
-import { fetchAndRenderTasks, tasks } from "./main.js";
+import { tasks } from "./main.js";
 import { renderTasks } from "./renderTasks.js";
 
-export const renderAuth = () => {
+export const renderAuth = ( {fetchAndRenderTasks} ) => {
     
         const authHtml = `
         <h1>Страница входа</h1>
@@ -38,6 +38,8 @@ export const renderAuth = () => {
                 getAuthUser(true);
                 console.log(responseData);
                 renderTasks({ tasks, fetchAndRenderTasks, authUser });
+            }).then((response) => {
+                fetchAndRenderTasks();
             });
         })
 
