@@ -2,7 +2,7 @@ import { fetchAndRenderTasks, tasks } from "./main.js";
 import { renderTasks } from "./renderTasks.js";
 
 // Модуль api.js
-const host = "https://wedev-api.sky.pro/api/v2/todos";
+const host = "https://wedev-api.sky.pro/api/v1/pavel-fedotov/comments";
 const hostAuth = "https://wedev-api.sky.pro/api/user/login";
 export let authUser = false;
 export let token;

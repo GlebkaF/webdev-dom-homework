@@ -34,13 +34,14 @@ export function getComments() {
         })
 }
 
-export function postComment( {text, name, likes, isLiked, forceError} ) {
+export function postComment( {text, name, date, likes, isLiked, forceError} ) {
 
     return fetch(`${baseUrl}comments`, {
         method: "POST",
         body: JSON.stringify({
           text: text,
           name: name,
+          date: date,
           likes: likes,
           isLiked: isLiked,
           forceError: forceError
