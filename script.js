@@ -1,39 +1,18 @@
-const fetchPromice = fetch("https://wedev-api.sky.pro/api/v1/aleksey-poplaukhin/comments", {
-    method: "GET"
-});
-
-fetchPromice.then((response) => {
-    response.json().then((responseData) =>{
-        const appComment = responseData.comments.map((comment) => {
-            const options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }; 
-            const formattedDate = new Intl.DateTimeFormat('ru-RU', options).format(new Date(comment.date));
-            
-            return {
-                name: comment.author.name,
-                time: formattedDate,
-                text: comment.text,
-                likes: 0,
-                isLiked: false,
-            };
-        });
-
-        peoples = appComment;
-        renderPeoples();
-    })
-});
-
-
-// Создаем объекты, которые будем рендерить:
-let peoples = [];
-
+// Определяем функцию для очистки и защиты HTML-строк
 const sanitizeHtml = (htmlString) => {
     return htmlString.replaceAll("<", "&lt").replaceAll(">", "&gt");
 }
 
-// Кладем в переменную список комментариев, который будет меняться:
+// Создаем массив, куда будем помещать данные, полученные из API
+let peoples = [];
+
+// Определяем элементы формы
+const buttonElement = document.getElementById('add-button');
+const nameInputElement = document.getElementById('name');
+const textInputElement = document.getElementById('textArea');
 const commentListElement = document.getElementById('commentList');
 
-// Пишем функцию рендера для создания разметки:
+// Пишем функцию рендера для создания разметки
 const renderPeoples = () => {    
     const commentsHtml = peoples
         .map((people, index) => {
@@ -61,8 +40,7 @@ const renderPeoples = () => {
 
     commentListElement.innerHTML = commentsHtml;
 
-
-    // Красим кнопку лайка и увеличиваем счетчик:    
+    // Красим кнопку лайка и увеличиваем счетчик
     for (let button of document.querySelectorAll(".like-button")) {
         button.addEventListener("click", (event) => { 
             event.stopPropagation();
@@ -81,7 +59,6 @@ const renderPeoples = () => {
         });
     }
 
-
     // Ответ на комментарий
     for (const commentElement of document.querySelectorAll(".comment")) {
         commentElement.addEventListener("click", (event) => {
@@ -92,17 +69,43 @@ const renderPeoples = () => {
             textInputElement.style.whiteSpace = 'pre-line';
         });
     }
-
 }
 
-// Определяем для JS элементы input-формы:
-const buttonElement = document.getElementById('add-button');
-const nameInputElement = document.getElementById('name');
-const textInputElement = document.getElementById('textArea');
+// Определяем функцию fetchComments, которая отправляет GET-запрос для получения комментариев
+const fetchComments = () => {
+    fetch("https://wedev-api.sky.pro/api/v1/aleksey-poplaukhin/comments", {
+        method: "GET"
+    })
+    .then((response) => {
+        return response.json();
+    })
+    .then(function(responseData) {
+        // Обрабатываем полученные данные и создаем массив объектов с комментариями
+        const appComment = responseData.comments.map((comment) => {
+            const options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }; 
+            const formattedDate = new Intl.DateTimeFormat('ru-RU', options).format(new Date(comment.date));
+            
+            return {
+                name: comment.author.name,
+                time: formattedDate,
+                text: comment.text,
+                likes: 0,
+                isLiked: false,
+            };
+        });
 
-// Прикрепляем обработчик к кнопке добавления комментария:
+        // Присваиваем массив объектов переменной peoples и вызываем функцию рендера
+        peoples = appComment;
+        renderPeoples();
+    });
+};
+
+// Вызываем функцию fetchComments для получения комментариев сразу при загрузке страницы
+fetchComments();
+
+// Назначаем обработчик клика на кнопку добавления комментария
 buttonElement.addEventListener("click", () => {
-    // Удаляем пробелы из значений полей ввода:
+    // Удаляем пробелы из значений полей ввода
     const trimmedName = nameInputElement.value.trim();
     const trimmedText = textInputElement.value.trim();
 
@@ -117,22 +120,8 @@ buttonElement.addEventListener("click", () => {
         textInputElement.classList.add("error");
         return;
     }
-
-    // Создаем отформатированную дату для нового комментария:
-    const newDate = new Date();
-    const currentDate = newDate;
-    const options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }; 
-
-    // const newComment = {
-    //     name: sanitizeHtml(trimmedName),
-    //     time: currentDate.toLocaleDateString('ru-RU', options),
-    //     likes: 0,
-    //     text: sanitizeHtml(trimmedText),
-    //     isLiked: false
-    // };
-
-    // peoples.push(newComment);
-
+    
+    // Отправляем POST-запрос для добавления нового комментария
     fetch("https://wedev-api.sky.pro/api/v1/aleksey-poplaukhin/comments", {
         method: "POST",
         body: JSON.stringify({
@@ -141,30 +130,11 @@ buttonElement.addEventListener("click", () => {
         }),
     })
     .then(() => {
-        // После успешного выполнения POST-запроса делаем GET-запрос для получения обновленных данных
-        fetch("https://wedev-api.sky.pro/api/v1/aleksey-poplaukhin/comments", {
-            method: "GET"
-        })        
-        .then((response) => response.json()).then((responseData) =>{
-            const appComment = responseData.comments.map((comment) => {
-                const options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }; 
-                const formattedDate = new Intl.DateTimeFormat('ru-RU', options).format(new Date(comment.date));
-                
-                return {
-                    name: comment.author.name,
-                    time: formattedDate,
-                    text: comment.text,
-                    likes: 0,
-                    isLiked: false,
-                };
-            });
-
-            peoples = appComment;
-            renderPeoples();
-        })
+        // Получаем обновленный список комментариев, вызвав функцию fetchComments
+        fetchComments();        
     });
 
-    // Очищаем поля ввода после отправки комментария:
+    // Очищаем поля ввода после отправки комментария
     nameInputElement.value = "";
     textInputElement.value = "";
 });
