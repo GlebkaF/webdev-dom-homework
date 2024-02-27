@@ -1,293 +1,308 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>Проект "Комменты"</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
 
-<head>
-  <title>Проект "Комменты"</title>
-  <meta charset="utf-8" />
-  <link rel="stylesheet" href="styles.css" />
-</head>
-
-<body>
-  <div class="container">
-    <div class="loader" id="com-loader" hidden>Комментарии загружаются...</div>
-    <ul id="list" class="comments">
-      <!-- Список рендерится JS -->
-    </ul>
-    <div class="loader" id="form-loader" hidden>Комментарий добавляется...</div>
-    <div id="add-form" class="add-form">
-      <input id="add-form-name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
-      <textarea id="add-form-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
-        rows="4"></textarea>
-      <div class="add-form-row">
-        <button id="add-form-button" class="add-form-button">Написать</button>
-        <button disabled id="remove-last-com" class="remove-last-com">
-          Удалить последний
-        </button>
+  <body>
+    <div class="container">
+      <div class="loader" id="com-loader" hidden>
+        Комментарии загружаются...
+      </div>
+      <ul id="list" class="comments">
+        <!-- Список рендерится JS -->
+      </ul>
+      <div class="loader" id="form-loader" hidden>
+        Комментарий добавляется...
+      </div>
+      <div id="add-form" class="add-form">
+        <input
+          id="add-form-name"
+          type="text"
+          class="add-form-name"
+          placeholder="Введите ваше имя"
+        />
+        <textarea
+          id="add-form-text"
+          type="textarea"
+          class="add-form-text"
+          placeholder="Введите ваш коментарий"
+          rows="4"
+        ></textarea>
+        <div class="add-form-row">
+          <button id="add-form-button" class="add-form-button">Написать</button>
+          <button disabled id="remove-last-com" class="remove-last-com">
+            Удалить последний
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-</body>
-<script>
-  "use strict";
-  const nameEl = document.getElementById("add-form-name");
-  const textEl = document.getElementById("add-form-text");
-  const buttonEl = document.getElementById("add-form-button");
-  const buttonRemEl = document.getElementById("remove-last-com");
-  const listEl = document.getElementById("list");
-  const formEl = document.getElementById("add-form");
-  const comLoader = document.getElementById("com-loader");
-  const formLoader = document.getElementById("form-loader");
+  </body>
+  <script>
+    "use strict";
+    const nameEl = document.getElementById("add-form-name");
+    const textEl = document.getElementById("add-form-text");
+    const buttonEl = document.getElementById("add-form-button");
+    const buttonRemEl = document.getElementById("remove-last-com");
+    const listEl = document.getElementById("list");
+    const formEl = document.getElementById("add-form");
+    const comLoader = document.getElementById("com-loader");
+    const formLoader = document.getElementById("form-loader");
 
-  function formatDate(date) {
-    const options1 = {
-      year: "2-digit",
-      month: "2-digit",
-      day: "2-digit",
-    };
-    const options2 = {
-      hour: "numeric",
-      minute: "numeric",
-    };
+    function formatDate(date) {
+      const options1 = {
+        year: "2-digit",
+        month: "2-digit",
+        day: "2-digit",
+      };
+      const options2 = {
+        hour: "numeric",
+        minute: "numeric",
+      };
 
-    return (
-      date.toLocaleString("ru", options1) +
-      " " +
-      date.toLocaleString("ru", options2)
-    );
-  }
+      return (
+        date.toLocaleString("ru", options1) +
+        " " +
+        date.toLocaleString("ru", options2)
+      );
+    }
 
-  let comments = [];
+    let comments = [];
 
-  const fetchGet = () => {
-    comLoader.hidden = false;
-    return fetch("https://wedev-api.sky.pro/api/v1/:azinkevich/comments", {
-      method: "GET",
-    }).then((response) => {
-      return response.json()
-    })
-      .then((responseData) => {
-        const appComments = responseData.comments.map((comment) => {
-          return {
-            name: comment.author.name,
-            text: comment.text,
-            like_active: comment.isLiked,
-            like_count: comment.likes,
-            date: formatDate(new Date(comment.date)),
-          };
-        });
-        comLoader.hidden = true;
-        comments = appComments;
-        renderComments();
-      });
-  };
-
-  function delay(interval = 300) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve();
-      }, interval);
-    });
-  }
-
-  const initLikeButtonListener = () => {
-    const likeButtonElements = document.querySelectorAll(".like-button");
-    likeButtonElements.forEach((el, index) => {
-      el.addEventListener("click", () => {
-        delay(2000).then(() => {
-          el.classList.add("-loading-like");
-          comments[index].like_active = !comments[index].like_active;
-          comments[index].like_active
-            ? comments[index].like_count++
-            : comments[index].like_count--;
-          renderComments();
+    const fetchGet = () => {
+      comLoader.hidden = false;
+      return fetch("https://wedev-api.sky.pro/api/v1/:azinkevich/comments", {
+        method: "GET",
+      })
+        .then((response) => {
+          return response.json();
         })
-      });
-    });
-  };
+        .then((responseData) => {
+          const appComments = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              text: comment.text,
+              like_active: comment.isLiked,
+              like_count: comment.likes,
+              date: formatDate(new Date(comment.date)),
+            };
+          });
+          comLoader.hidden = true;
+          comments = appComments;
+          renderComments();
+        });
+    };
 
-  const initEditButtonlistener = () => {
-    const editButtonElements = document.querySelectorAll(".edit-button");
-    for (const editButtonElement of editButtonElements) {
-      editButtonElement.addEventListener("click", () => {
-        const index = editButtonElement.dataset.index;
-        comments[index].isEdit = true;
-        renderComments();
-      });
-    }
-  };
-
-  const initSaveButtonlistener = () => {
-    const saveButtonElements = document.querySelectorAll(".save-button");
-    for (const saveButtonElement of saveButtonElements) {
-      saveButtonElement.addEventListener("click", () => {
-        const index = saveButtonElement.dataset.index;
-        comments[index].isEdit = false;
-        comments[index].text = textEditElement(index);
-        renderComments();
+    function delay(interval = 300) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, interval);
       });
     }
-    const textArea = document.querySelector(".add-form-edit-text");
-    if (textArea) {
-      textArea.addEventListener("click", (e) => {
-        e.stopPropagation();
+
+    const initLikeButtonListener = () => {
+      const likeButtonElements = document.querySelectorAll(".like-button");
+      likeButtonElements.forEach((el, index) => {
+        el.addEventListener("click", () => {
+          el.classList.add("-loading-like");
+          delay(2000)
+            .then(() => {
+              comments[index].like_active = !comments[index].like_active;
+              comments[index].like_active
+                ? comments[index].like_count++
+                : comments[index].like_count--;
+              renderComments();
+            })
+            .then(() => {
+              el.classList.remove("-loading-like");
+            });
+        });
       });
-    }
-  };
+    };
 
-  const textEditElement = (index) => {
-    const textEditElements = document.querySelectorAll(".add-form-edit-text");
-    for (const textEditElement of textEditElements) {
-      const index = textEditElement.dataset.index;
-      comments[index].text = textEditElement.value;
-    }
-    return comments[index].text;
-  };
+    const initEditButtonlistener = () => {
+      const editButtonElements = document.querySelectorAll(".edit-button");
+      for (const editButtonElement of editButtonElements) {
+        editButtonElement.addEventListener("click", () => {
+          const index = editButtonElement.dataset.index;
+          comments[index].isEdit = true;
+          renderComments();
+        });
+      }
+    };
 
-  const initReplayListener = () => {
-    const replayComments = document.querySelectorAll(".comment-text");
-    for (const replayComment of replayComments) {
-      replayComment.addEventListener("click", (event) => {
-        event.stopPropagation();
-        const index = replayComment.dataset.index;
-        textEl.value = `QUOTE_BEGIN ${comments[index].name} \n ${comments[index].text} QUOTE_END`;
-        renderComments();
-      });
-    }
-  };
+    const initSaveButtonlistener = () => {
+      const saveButtonElements = document.querySelectorAll(".save-button");
+      for (const saveButtonElement of saveButtonElements) {
+        saveButtonElement.addEventListener("click", () => {
+          const index = saveButtonElement.dataset.index;
+          comments[index].isEdit = false;
+          comments[index].text = textEditElement(index);
+          renderComments();
+        });
+      }
+      const textArea = document.querySelector(".add-form-edit-text");
+      if (textArea) {
+        textArea.addEventListener("click", (e) => {
+          e.stopPropagation();
+        });
+      }
+    };
 
-  const renderComments = () => {
-    const commentsHtml = comments
-      .map((comment, index) => {
-        let editComment = () => {
-          if (comment.isEdit) {
-            return `<textarea data-index="${index}" id="add-form-edit-text" type="textarea" class="add-form-edit-text" placeholder=""
+    const textEditElement = (index) => {
+      const textEditElements = document.querySelectorAll(".add-form-edit-text");
+      for (const textEditElement of textEditElements) {
+        const index = textEditElement.dataset.index;
+        comments[index].text = textEditElement.value;
+      }
+      return comments[index].text;
+    };
+
+    const initReplayListener = () => {
+      const replayComments = document.querySelectorAll(".comment-text");
+      for (const replayComment of replayComments) {
+        replayComment.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const index = replayComment.dataset.index;
+          textEl.value = `QUOTE_BEGIN ${comments[index].name} \n ${comments[index].text} QUOTE_END`;
+          renderComments();
+        });
+      }
+    };
+
+    const renderComments = () => {
+      const commentsHtml = comments
+        .map((comment, index) => {
+          let editComment = () => {
+            if (comment.isEdit) {
+              return `<textarea data-index="${index}" id="add-form-edit-text" type="textarea" class="add-form-edit-text" placeholder=""
     rows="4" > ${sanitize(comment.text)}</textarea>`;
-          } else {
-            return `${sanitize(comment.text)} `;
-          }
-        };
-        let saveButton = () => {
-          if (!comment.isEdit) {
-            return `class="edit-button" > Редактировать`;
-          } else {
-            return `class="save-button" > Сохранить`;
-          }
-        };
-        return `<li class="comment">
+            } else {
+              return `${sanitize(comment.text)} `;
+            }
+          };
+          let saveButton = () => {
+            if (!comment.isEdit) {
+              return `class="edit-button" > Редактировать`;
+            } else {
+              return `class="save-button" > Сохранить`;
+            }
+          };
+          return `<li class="comment">
           <div class="comment-header">
             <div>${sanitize(comment.name)}</div>
             <div id="add-form-date">${comment.date}</div>
           </div>
           <div class="comment-body">
             <div data-index="${index}" class="comment-text" style="white-space:pre-line">
-              <a class="replay-form-link" ${comment.isEdit ? "" : 'href="#add-form"'
-          }> ${editComment()}</a>
+              <a class="replay-form-link" ${
+                comment.isEdit ? "" : 'href="#add-form"'
+              }> ${editComment()}</a>
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span data-index="${index}" class="likes-counter">${comment.like_count
+              <span data-index="${index}" class="likes-counter">${
+            comment.like_count
           }</span>
-              <button data-index="${index}" class="like-button ${comment.like_active ? "-active-like, -loading-like" : ""
+              <button data-index="${index}" class="like-button ${
+            comment.like_active ? "-active-like" : ""
           }"></button>
             </div>
             <div><button disabled data-index="${index}" ${saveButton()}</button></div>
           </div >
         </li>`;
-      })
-      .join("");
+        })
+        .join("");
 
-    listEl.innerHTML = commentsHtml;
+      listEl.innerHTML = commentsHtml;
 
-    initLikeButtonListener();
-    initEditButtonlistener();
-    initSaveButtonlistener();
-    initReplayListener();
+      initLikeButtonListener();
+      initEditButtonlistener();
+      initSaveButtonlistener();
+      initReplayListener();
+    };
 
-  };
-
-  function sanitize(text) {
-    return text
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
-      .replaceAll("QUOTE_END", "</div>");
-  }
-
-  buttonEl.disabled = true;
-  nameEl.addEventListener("input", evnt);
-  textEl.addEventListener("input", evnt);
-  function evnt() {
-    if (Text.value !== "") buttonEl.disabled = false;
-  }
-
-  formEl.addEventListener("keyup", (e) => {
-    if (!e.shiftKey && e.code === "Enter") {
-      buttonEl.click();
-    }
-  });
-
-  buttonEl.addEventListener("click", () => {
-    nameEl.value = nameEl.value.trim();
-    textEl.value = textEl.value.trim();
-
-    nameEl.classList.remove("add-form_error");
-    textEl.classList.remove("add-form_error");
-
-    if (nameEl.value === "" && textEl.value === "") {
-      nameEl.classList.add("add-form_error");
-      textEl.classList.add("add-form_error");
-      return;
-    } else if (nameEl.value === "") {
-      nameEl.classList.add("add-form_error");
-      return;
-    } else if (textEl.value === "") {
-      textEl.classList.add("add-form_error");
-      return;
+    function sanitize(text) {
+      return text
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+        .replaceAll("QUOTE_END", "</div>");
     }
 
+    buttonEl.disabled = true;
+    nameEl.addEventListener("input", evnt);
+    textEl.addEventListener("input", evnt);
+    function evnt() {
+      if (Text.value !== "") buttonEl.disabled = false;
+    }
 
-    formEl.classList.add("add-form_display");
-    formLoader.hidden = false;
-    fetch("https://wedev-api.sky.pro/api/v1/:azinkevich/comments", {
-      method: "POST",
-      body: JSON.stringify({
-        date: formatDate(new Date()),
-        name: nameEl.value,
-        text: textEl.value,
-        like_active: false,
-        like_count: 0,
-        isEdit: false,
-      }),
-    })
-      .then((response) => {
-        return response.json()
+    formEl.addEventListener("keyup", (e) => {
+      if (!e.shiftKey && e.code === "Enter") {
+        buttonEl.click();
+      }
+    });
+
+    buttonEl.addEventListener("click", () => {
+      nameEl.value = nameEl.value.trim();
+      textEl.value = textEl.value.trim();
+
+      nameEl.classList.remove("add-form_error");
+      textEl.classList.remove("add-form_error");
+
+      if (nameEl.value === "" && textEl.value === "") {
+        nameEl.classList.add("add-form_error");
+        textEl.classList.add("add-form_error");
+        return;
+      } else if (nameEl.value === "") {
+        nameEl.classList.add("add-form_error");
+        return;
+      } else if (textEl.value === "") {
+        textEl.classList.add("add-form_error");
+        return;
+      }
+
+      formEl.classList.add("add-form_display");
+      formLoader.hidden = false;
+      fetch("https://wedev-api.sky.pro/api/v1/:azinkevich/comments", {
+        method: "POST",
+        body: JSON.stringify({
+          date: formatDate(new Date()),
+          name: nameEl.value,
+          text: textEl.value,
+          like_active: false,
+          like_count: 0,
+          isEdit: false,
+        }),
       })
-      .then((responseData) => {
-        formEl.classList.remove("add-form_display");
-        formLoader.hidden = true;
-        comments = responseData.comments;
-        fetchGet();
+        .then((response) => {
+          return response.json();
+        })
+        .then((responseData) => {
+          formEl.classList.remove("add-form_display");
+          formLoader.hidden = true;
+          comments = responseData.comments;
+          fetchGet();
+        });
 
-      });
+      nameEl.value = "";
+      textEl.value = "";
 
+      renderComments();
+    });
 
+    // buttonRemEl.addEventListener("click", () => {
+    //   comments.pop();
+    //   renderComments();
+    // });
 
-    nameEl.value = "";
-    textEl.value = "";
-
+    fetchGet();
     renderComments();
-  });
-
-  // buttonRemEl.addEventListener("click", () => {
-  //   comments.pop();
-  //   renderComments();
-  // });
-
-  fetchGet();
-  renderComments();
-</script>
-
+  </script>
 </html>
