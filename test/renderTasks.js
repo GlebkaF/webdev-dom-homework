@@ -1,15 +1,13 @@
 // Модуль renderTasks.js
-import { formatDateToRu, formatDateToUs } from "../lib/formatDate/formatDate.js";
 import { deleteTodo, postTodo } from "./api.js";
 import { fetchAndRenderTasks } from "./main.js";
 import { renderAuth } from "./renderAuth.js";
-//import { format } from "date-fns/format.js";
 
 const container = document.getElementById('container');
 let formAddComment;
 let blockAuth;
 let blockDelete;
-const country = "ru";
+
 
 
 export const renderTasks = ({ tasks, fetchAndRenderTasks, authUser }) => {
@@ -22,15 +20,13 @@ export const renderTasks = ({ tasks, fetchAndRenderTasks, authUser }) => {
 
   const tasksHtml = tasks
     .map((task) => {
-      return `<li class="task">
-           <p class="task-text">
-            ${task.text} (Создал: ${task.user?.name ?? "Неизвестно"})
-             <button data-id="${
-              task.id
-            }" class="button delete-button" style="display: ${blockDelete};">Удалить </button>
-           </p>
-           <p> <i>Задача создана: ${country === "ru" ? formatDateToRu(new Date(task.created_at)) : formatDateToUs(new Date(task.created_at))}</i> </p>
-         </li>`;
+      return `
+      <li class="task">
+        <p class="task-text">
+          ${task.text}
+          <button data-id="${task.id}" class="button delete-button" style="display: ${blockDelete};">Удалить</button>
+        </p>
+      </li>`;
     })
     .join("");
 
@@ -69,8 +65,6 @@ export const renderTasks = ({ tasks, fetchAndRenderTasks, authUser }) => {
 
 
     container.innerHTML = commentHtml;
-
-    //fetchAndRenderTasks();
   
     const deleteButtons = document.querySelectorAll(".delete-button");
     const buttonElement = document.getElementById("add-button");
@@ -110,6 +104,6 @@ export const renderTasks = ({ tasks, fetchAndRenderTasks, authUser }) => {
     });
 
     buttonAuth.addEventListener("click", () => {
-        renderAuth( {fetchAndRenderTasks} );
+        renderAuth();
     });
 };
