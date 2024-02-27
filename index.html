@@ -42,6 +42,9 @@
   </body>
   <script>
     "use strict";
+
+    let isLoading = false;
+
     const nameEl = document.getElementById("add-form-name");
     const textEl = document.getElementById("add-form-text");
     const buttonEl = document.getElementById("add-form-button");
@@ -70,30 +73,6 @@
     }
 
     let comments = [];
-
-    const fetchGet = () => {
-      comLoader.hidden = false;
-      return fetch("https://wedev-api.sky.pro/api/v1/:azinkevich/comments", {
-        method: "GET",
-      })
-        .then((response) => {
-          return response.json();
-        })
-        .then((responseData) => {
-          const appComments = responseData.comments.map((comment) => {
-            return {
-              name: comment.author.name,
-              text: comment.text,
-              like_active: comment.isLiked,
-              like_count: comment.likes,
-              date: formatDate(new Date(comment.date)),
-            };
-          });
-          comLoader.hidden = true;
-          comments = appComments;
-          renderComments();
-        });
-    };
 
     function delay(interval = 300) {
       return new Promise((resolve) => {
@@ -268,9 +247,10 @@
         return;
       }
 
-      formEl.classList.add("add-form_display");
+      formEl.classList.add("add-form_displayNone");
       formLoader.hidden = false;
-      fetch("https://wedev-api.sky.pro/api/v1/:azinkevich/comments", {
+      isLoading = true;
+      fetch("https://wedev-api.sky.pro/api/v1/:aich/comments", {
         method: "POST",
         body: JSON.stringify({
           date: formatDate(new Date()),
@@ -284,11 +264,12 @@
         .then((response) => {
           return response.json();
         })
-        .then((responseData) => {
-          formEl.classList.remove("add-form_display");
+        .then(() => {
+          return fetchGet();
+        })
+        .then(() => {
+          formEl.classList.remove("add-form_displayNone");
           formLoader.hidden = true;
-          comments = responseData.comments;
-          fetchGet();
         });
 
       nameEl.value = "";
@@ -296,6 +277,31 @@
 
       renderComments();
     });
+
+    const fetchGet = () => {
+      isLoading ? (comLoader.hidden = true) : (comLoader.hidden = false);
+
+      return fetch("https://wedev-api.sky.pro/api/v1/:aich/comments", {
+        method: "GET",
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((responseData) => {
+          const appComments = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              text: comment.text,
+              like_active: comment.isLiked,
+              like_count: comment.likes,
+              date: formatDate(new Date(comment.date)),
+            };
+          });
+          comLoader.hidden = true;
+          comments = appComments;
+          renderComments();
+        });
+    };
 
     // buttonRemEl.addEventListener("click", () => {
     //   comments.pop();
