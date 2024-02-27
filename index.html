@@ -40,32 +40,24 @@
   const commentList = document.querySelector('.comments');
   const currentDate = new Date().toLocaleDateString('default', { day: '2-digit', month: '2-digit', year: '2-digit' }) + " " + new Date().toLocaleTimeString().slice(0, -3);
 
-  function fetchRender() {
-    const gettingComments = fetch("https://wedev-api.sky.pro/api/v1/alexandrove-julia/comments", {
-      method: "GET"
-    });
-
-    gettingComments.then((response) => {
-      const jsonComments = response.json();
-      jsonComments.then((responseData) => {
-        const appComments = responseData.comments.map((comment) => {
-          return {
-            name: comment.author.name,
-            date: new Date(comment.date).toLocaleDateString() + " " + (new Date(comment.date).getHours() < 10 ? '0' + new Date(comment.date).getHours() : new Date(comment.date).getHours()) + ":" + (new Date(comment.date).getMinutes() < 10 ? '0' + new Date(comment.date).getMinutes() : new Date(comment.date).getMinutes()) + ":" + (new Date(comment.date).getSeconds() < 10 ? '0' + new Date(comment.date).getSeconds() : new Date(comment.date).getSeconds()),
-            isLiked: comment.isLiked,
-            likes: comment.likes,
-            text: comment.text,
-          };
-        });
-        comments = appComments;
-        renderComments();
-      });
-    });
-  };
-
-  fetchRender();
-
   let comments = [];
+
+  fetch("https://wedev-api.sky.pro/api/v1/alexandrova-julia/comments", {
+    method: "GET"
+  }).then((response) => {
+    response.json().then((responseData) => {
+      comments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: new Date(comment.date).toLocaleDateString() + " " + (new Date(comment.date).getHours() < 10 ? '0' + new Date(comment.date).getHours() : new Date(comment.date).getHours()) + ":" + (new Date(comment.date).getMinutes() < 10 ? '0' + new Date(comment.date).getMinutes() : new Date(comment.date).getMinutes()) + ":" + (new Date(comment.date).getSeconds() < 10 ? '0' + new Date(comment.date).getSeconds() : new Date(comment.date).getSeconds()),
+          isLiked: comment.isLiked,
+          likes: comment.likes,
+          text: comment.text,
+        };
+      });
+      renderComments();
+    });
+  });
 
   const sanitizeHtml = (htmlString) => {
     return htmlString.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
@@ -125,9 +117,9 @@
       <div class="likes">
         <span class="likes-counter">${comment.likes}</span>
         <button data-index=${index} class="like-button ${comment.isLiked ? "-active-like" : ""}"></button>
-    </div >
-        </div >
-      </li >`
+      </div>
+    </div>
+      </li>`
     }).join("");
     initLikesListeners();
   }
@@ -142,9 +134,9 @@
     } else if (inputText.value.trim() === "" || inputText.value === null) {
       inputText.classList.add("error");
       return;
-    }
+    };
 
-    const fetchPostComments = fetch("https://wedev-api.sky.pro/api/v1/alexandrove-julia/comments", {
+    fetch("https://wedev-api.sky.pro/api/v1/alexandrova-julia/comments", {
       method: "POST",
       body: JSON.stringify({
         name: sanitizeHtml(inputElement.value),
@@ -154,19 +146,17 @@
         likes: 0,
       }),
     }).then((response) => {
-      const jsonPromise = response.json();
-      jsonPromise.then((responseData) => {
-        fetchRender();
+      const jsonPromise = response.json().then((responseData) => {
+        renderComments();
       });
-      fetchRender();
+
     });
 
     inputName.value = "";
     inputText.value = "";
-    fetchRender();
-    renderComments();
   });
 
+  fetchRender();
   renderComments();
 
   console.log("It works!");
