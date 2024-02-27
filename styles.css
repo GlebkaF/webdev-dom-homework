@@ -1,5 +1,13 @@
 body {
-    margin: 0;
+    margin: 0 auto;
+    display: flex;
+    background: #202020;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-content: center;
+    align-items: center;
+    font-family: Helvetica;
+    color: #ffffff;
   }
 
   .container {
@@ -8,10 +16,8 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 80px;
-    padding-bottom: 200px;
+    padding-top: 40px;
     background: #202020;
-    min-height: 100vh;
   }
 
   .comments,
@@ -24,6 +30,16 @@ body {
   .comment,
   .add-form {
     width: 596px;
+    box-sizing: border-box;
+    background: radial-gradient(
+      75.42% 75.42% at 50% 42.37%,
+      rgba(53, 53, 53, 0) 22.92%,
+      #7334ea 100%
+    );
+    filter: drop-shadow(0px 20px 67px rgba(0, 0, 0, 0.08));
+    border-radius: 20px;
+  }
+  .login-form {
     box-sizing: border-box;
     background: radial-gradient(
       75.42% 75.42% at 50% 42.37%,
@@ -98,6 +114,13 @@ body {
     flex-direction: column;
   }
 
+  .login-form {
+    padding: 20px;
+    margin-top: 48px;
+    display: flex;
+    flex-direction: column;
+  }
+
   .add-form-name,
   .add-form-text {
     font-size: 16px;
@@ -156,9 +179,25 @@ body {
 
   .page-loader {
     display: block;
+    font-family: Helvetica;
+    color: #ffffff;
+    width: fit-content;
+    margin-top: 40px;
   }
 
   .comment-loader {
     display: none;
     margin-top: 45px;
+  }
+
+  .mrgn-tp-20 {
+    margin-top: 20px;
+  }
+
+  .mrgn-btm-20 {
+    margin-bottom: 20px;
+  }
+
+  .width-100 {
+    width: 100%;
   }
