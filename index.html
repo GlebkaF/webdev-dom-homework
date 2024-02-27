@@ -33,6 +33,7 @@
     let hours = ('0' + currentDate.getHours()).slice(-2);
     let minutes = ('0' + currentDate.getMinutes()).slice(-2);
     let formattedDateTime = day + '.' + month + '.' + year + ' ' + hours + ':' + minutes;
+    
 
     const commentArr = [
       {
@@ -67,7 +68,7 @@
             <div class="comment-footer">
               <div class="likes">
                 <span class="likes-counter">${comment.quantityLike}</span>
-                <button class="like-button" data-like=""></button>
+                <button class="like-button ${comment.isLike ? '-active-like' : ''}" data-like=""></button>
               </div>
             </div>
           </li>`
