@@ -9,7 +9,7 @@
   <body>
     <div class="container">
       <ul id="list" class="comments">
-        <li class="comment" data-likes="3">
+        <!-- <li class="comment" data-likes="3">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -42,7 +42,7 @@
               <button class="like-button -active-like"></button>
             </div>
           </div>
-        </li>
+        </li> -->
       </ul>
       <div class="add-form">
         <input
@@ -109,53 +109,113 @@
     initComment();
 
     const buttonElement = document.getElementById('add-button');
-    buttonElement.addEventListener('click', () => {
-      nameInputElement.classList.remove('error');
-      textInputElement.classList.remove('error');
-      if (nameInputElement.value === '') {
-        nameInputElement.classList.add('error');
-        return;
-      } else if (textInputElement.value === '') {
-        textInputElement.classList.add('error');
-        return;
-      }
-      const currentDate = new Date();
-      const day = currentDate.getDate();
-      const month = currentDate.getMonth() + 1;
-      const year = currentDate.getYear() % 100;
-      const hours = currentDate.getHours() ;
-      const minutes = currentDate.getMinutes();
-      const formattedDay = day < 10 ? `0${day}` : day;
-      const formattedMonth = month < 10 ? `0${month}` : month;
-      const formattedHours = hours < 10 ? `0${hours}` : hours;
-      const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-      const formattedDate = `${formattedDay}.${formattedMonth}.${year} ${formattedHours}:${formattedMinutes}`;
+      buttonElement.addEventListener('click', () => {
+        nameInputElement.classList.remove('error');
+        textInputElement.classList.remove('error');
+        if (nameInputElement.value === '') {
+          nameInputElement.classList.add('error');
+          return;
+        } else if (textInputElement.value === '') {
+          textInputElement.classList.add('error');
+          return;
+        }
 
-      const oldList = listElement.innerHTML;
-      listElement.innerHTML = oldList +
-        `<li class="comment" data-likes="0">
+      addComment(nameInputElement.value, textInputElement.value);
+
+      // const currentDate = new Date();
+      // const day = currentDate.getDate();
+      // const month = currentDate.getMonth() + 1;
+      // const year = currentDate.getYear() % 100;
+      // const hours = currentDate.getHours() ;
+      // const minutes = currentDate.getMinutes();
+      // const formattedDay = day < 10 ? `0${day}` : day;
+      // const formattedMonth = month < 10 ? `0${month}` : month;
+      // const formattedHours = hours < 10 ? `0${hours}` : hours;
+      // const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+      // const formattedDate = `${formattedDay}.${formattedMonth}.${year} ${formattedHours}:${formattedMinutes}`;
+
+      // const oldList = listElement.innerHTML;
+      // listElement.innerHTML = oldList +
+      //   `<li class="comment" data-likes="0">
+      //     <div class="comment-header">
+      //       <div>${nameInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;')}</div>
+      //       <div>${formattedDate}</div>
+      //     </div>
+      //     <div class="comment-body">
+      //       <div class="comment-text">
+      //         ${textInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;')}
+      //       </div>
+      //     </div>
+      //     <div class="comment-footer">
+      //       <div class="likes">
+      //         <span class="likes-counter">0</span>
+      //         <button class="like-button"></button>
+      //       </div>
+      //     </div>
+      //   </li>`
+
+      //   initLikes();
+      nameInputElement.value = '';
+      textInputElement.value = '';
+      //   initComment();
+    });
+
+    const personalKey = 'artem-nadtocheev';
+
+    async function fetchComments() {
+      const response = await fetch(`https://wedev-api.sky.pro/api/v1/${personalKey}/comments`);
+      if (response.ok) {
+        const data = await response.json();
+        displayComments(data.comments);
+      } else {
+        console.error('Ошибка при получении комментариев:', response.status);
+      }
+    }
+
+    function displayComments(comments) {
+      const listElement = document.getElementById('list');
+      listElement.innerHTML = '';
+      comments.forEach(comment => {
+        const commentElement = document.createElement('li');
+        commentElement.className = 'comment';
+        commentElement.innerHTML = `
           <div class="comment-header">
-            <div>${nameInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;')}</div>
-            <div>${formattedDate}</div>
+            <div>${comment.author.name}</div>
+            <div>${new Date(comment.date).toLocaleString()}</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
-              ${textInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;')}
-            </div>
+            <div class="comment-text">${comment.text}</div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
+              <span class="likes-counter">${comment.likes}</span>
+              <button class="like-button ${comment.isLiked ? '-active-like' : ''}"></button>
             </div>
           </div>
-        </li>`
+        `;
+        listElement.appendChild(commentElement);
+      });
+      initLikes();
+      initComment();
+    }
 
-        initLikes();
-        nameInputElement.value = '';
-        textInputElement.value = '';
-        initComment();
-    }) 
+    async function addComment(name, text) {
+      const response = await fetch(`https://wedev-api.sky.pro/api/v1/${personalKey}/comments`, {
+        method: 'POST',
+        body: JSON.stringify({ name, text })
+      });
+      if (response.ok) {
+        fetchComments();
+      } else {
+        const errorData = await response.json();
+        console.error('Ошибка при добавлении комментария:', errorData.error);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+      fetchComments();
+    });
+
     console.log("It works!");
   </script>
 </html>
