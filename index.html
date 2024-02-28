@@ -57,6 +57,7 @@
     </div>
   </div>
 </body>
+
 <style>
   .error {
     background-color: gray;
@@ -99,17 +100,23 @@
     }
   });
 
+
+
   delButtonElement.addEventListener("click", () => {
+
     const oldHtml = listElement.innerHTML;
     let position = oldHtml.lastIndexOf(`<li class="comment">`);
     const newListHtml = oldHtml.substring(0, position - 1);
     listElement.innerHTML = newListHtml;
+
   });
 
 
   addButtonElement.addEventListener("click", addListComment);
 
+
   function addListComment() {
+
     if (nameInputElement.value === "" ||
       commentInputElement.value === "") {
       addButtonElement.disabled = true;
