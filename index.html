@@ -1,48 +1,48 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
-      <ul class="comments" id="comments-id">
-      </ul>
-      <div class="add-form">
-        <input type="text" class="add-form-name" id="add-form-name-id" placeholder="Введите ваше имя" />
-        <textarea type="textarea" class="add-form-text" id="add-form-text-id" placeholder="Введите ваш коментарий"
-          rows="4"></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button" id="add-form-button-id">Написать</button>
-        </div>
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <ul class="comments" id="comments-id">
+    </ul>
+    <div class="add-form">
+      <input type="text" class="add-form-name" id="add-form-name-id" placeholder="Введите ваше имя" />
+      <textarea type="textarea" class="add-form-text" id="add-form-text-id" placeholder="Введите ваш коментарий"
+        rows="4"></textarea>
+      <div class="add-form-row">
+        <button class="add-form-button" id="add-form-button-id">Написать</button>
       </div>
     </div>
-  </body>
+  </div>
+</body>
 
-  <script>
-    const buttonElement = document.getElementById("add-form-button-id");
-    const commentId = document.getElementById("comments-id")
-    const nameId = document.getElementById("add-form-name-id")
-    const commentAdd = document.getElementById("add-form-text-id")
-    let currentDate = new Date();
-    let year = currentDate.getFullYear().toString().slice(2);
-    let month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
-    let day = ('0' + currentDate.getDate()).slice(-2);
-    let hours = ('0' + currentDate.getHours()).slice(-2);
-    let minutes = ('0' + currentDate.getMinutes()).slice(-2);
-    let formattedDateTime = day + '.' + month + '.' + year + ' ' + hours + ':' + minutes;
-    
+<script>
+  const buttonElement = document.getElementById("add-form-button-id");
+  const commentListEl = document.getElementById("comments-id")
+  const nameId = document.getElementById("add-form-name-id")
+  const commentAdd = document.getElementById("add-form-text-id")
+  let currentDate = new Date();
+  let year = currentDate.getFullYear().toString().slice(2);
+  let month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
+  let day = ('0' + currentDate.getDate()).slice(-2);
+  let hours = ('0' + currentDate.getHours()).slice(-2);
+  let minutes = ('0' + currentDate.getMinutes()).slice(-2);
+  let formattedDateTime = day + '.' + month + '.' + year + ' ' + hours + ':' + minutes;
 
-    const commentArr = [
-      {
-        name: `Глеб Фокин`,
-        date: `12.02.22 12:18`,
-        text: `Это будет первый комментарий на этой странице`,
-        quantityLike: 3,
-        isLike: false
-      },
+  const commentArr = [
+    {
+      name: `Глеб Фокин`,
+      date: `12.02.22 12:18`,
+      text: `Это будет первый комментарий на этой странице`,
+      quantityLike: 3,
+      isLike: false
+    },
     {
       name: `Варвара Н`,
       date: `12.02.22 12:18`,
@@ -51,58 +51,92 @@
       isLike: true
     },
   ];
-
-    const renderComments = () => {
-      const commentHtml = commentArr
-        .map((comment) => {
-          return `<li class="comment">
-            <div class="comment-header">
-              <div>${comment.name}</div>
-              <div>${comment.date}</div>
-            </div>
-            <div class="comment-body">
-              <div class="comment-text">
-                ${comment.text}
-              </div>
-            </div>
-            <div class="comment-footer">
-              <div class="likes">
-                <span class="likes-counter">${comment.quantityLike}</span>
-                <button class="like-button ${comment.isLike ? '-active-like' : ''}" data-like=""></button>
-              </div>
-            </div>
-          </li>`
-        })
-        .join("");
-      commentId.innerHTML = commentHtml;
+  const initLikeListener = () => {
+    const likeButtonList = document.querySelectorAll(".like-button")
+    console.log(likeButtonList)
+    for (const likeButtonElement of likeButtonList) {
+      likeButtonElement.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const index = likeButtonElement.dataset.like
+        if (commentArr[index].isLike) {
+          commentArr[index].isLike = false
+          commentArr[index].quantityLike -= 1
+        } else {
+          commentArr[index].isLike = true
+          commentArr[index].quantityLike += 1
+        }
+        renderComments();
+      })
     }
-    renderComments();
+  };
 
-    buttonElement.addEventListener("click", () => {
-      nameId.classList.remove("error");
-      commentAdd.classList.remove("error");
+  const renderComments = () => {
+    const commentHtml = commentArr
+      .map((comment, index) => {
+        return `<li class="comment">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.quantityLike}</span>
+              <button class="like-button ${comment.isLike ? "-active-like" : ""}" data-like="${index}"></button>
+            </div>
+          </div>
+        </li>`
+      })
+      .join("");
 
-      if (nameId.value === "" || commentAdd.value === "") {
-        nameId.classList.add("error")
-        commentAdd.classList.add("error")
-        return;
-      }
+    commentListEl.innerHTML = commentHtml;
+    initLikeListener();
+    const comment = document.querySelectorAll('.comment');
+    const formElementText = document.getElementById('add-form-text-id');
 
-      commentArr.push({
-        name: nameId.value,
-        date: formattedDateTime,
-        text: commentAdd.value,
-        quantityLike: 0,
-        isLike: false,
+    comment.forEach((el, index) => {
+      el.addEventListener('click', () => {
+        formElementText.value = `>${commentArr[index].text} \n${commentArr[index].name}`
       });
-      renderComments();
-      nameId.value = "";
-      commentAdd.value = "";
     });
+  };
+  renderComments();
 
-    const buttonLike = document.getElementById("add-like");
-    const likesCounter = document.getElementById("likes-counter-id")
-    buttonLike.addEventListener("click", () => {
+
+  buttonElement.addEventListener("click", () => {
+    nameId.classList.remove("error");
+    commentAdd.classList.remove("error");
+
+    if (nameId.value === "" || commentAdd.value === "") {
+      nameId.classList.add("error")
+      commentAdd.classList.add("error")
+      return;
+    }
+
+    commentArr.push({
+      name: nameId.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
+      date: formattedDateTime,
+      text: commentAdd.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
+      quantityLike: 0,
+      isLike: false,
+    });
+    renderComments();
+    nameId.value = "";
+    commentAdd.value = "";
   });
-  </script>
+
+</script>
+
 </html>
