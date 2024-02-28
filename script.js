@@ -3,25 +3,27 @@ const buttonAdd = document.getElementById('comment-button');
 const nameElement = document.getElementById('comment-author');
 const textElement = document.getElementById('comment-text');
 
+function twoDigits(num) {
+  if( num >= 0 && num <= 9) {
+    return "0" + num;
+  } else { 
+    return "" + num;
+  }
+}
+
 const comments = [ {
         name: 'Глеб Фокин',
         text: 'Это будет первый комментарий на этой странице',
+        date: '12.02.22 12:18',
         likes: 3,
         likePosition: 0
     }, {
         name: 'Варвара Н.',
         text: 'Мне нравится как оформлена эта страница! ❤',
+        date: '13.02.22 19:22',
         likes: 75,
         likePosition: 1
     }];
-
-function twoDigits(num) {
-    if( num >= 0 && num <= 9) {
-      return "0" + num;
-    } else { 
-      return "" + num;
-    }
-};
 
 const renderComments = () => {
     const commentHtml = comments.map((comment, index) => {
@@ -29,6 +31,7 @@ const renderComments = () => {
             return `<li class="comment" data-index="${index}">
         <div class="comment-header">
           <div>${comment.name}</div>
+          <div>${comment.date}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
@@ -46,6 +49,7 @@ const renderComments = () => {
             return `<li class="comment" data-index="${index}">
         <div class="comment-header">
           <div>${comment.name}</div>
+          <div>${comment.date}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
@@ -112,12 +116,16 @@ buttonAdd.addEventListener("click", () => {
     textElement.classList.remove("error");
     buttonAdd.classList.remove("error-for-button");
 
-    if (nameElement.value === "" || textElement.value === "") {
+    let regexp = new RegExp('^[а-яa-zА-ЯA-Z]');
+
+    if (nameElement.value === "" || textElement.value === "" || !regexp.test(nameElement.value) || !regexp.test(textElement.value)) {
         nameElement.classList.add("error");
         textElement.classList.add("error");
         buttonAdd.classList.add("error-for-button");
         return;
     }
+
+    let commentDate = new Date();
 
     comments.push({
         name: nameElement.value
@@ -130,6 +138,7 @@ buttonAdd.addEventListener("click", () => {
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;"),
+        date: `${twoDigits(commentDate.getDay())}.${twoDigits(commentDate.getMonth())}.${twoDigits(commentDate.getFullYear())} ${twoDigits(commentDate.getHours())}:${twoDigits(commentDate.getMinutes())}`,
         likes: 0,
         likePosition: 0
     })
