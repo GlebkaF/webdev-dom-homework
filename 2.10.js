@@ -4,32 +4,35 @@ const listElement = document.getElementById('list');
 const nameInputElement = document.getElementById('name-input');
 const commentInputElement = document.getElementById('comment-input');
 
-
-const comments = [
+fetch(
+  'https://wedev-api.sky.pro/api/v1/rustam-kholov/comments',
   {
-    name: 'Глеб Фокин',
-    day: 12,
-    month: 2,
-    year: 22,
-    hours: 12,
-    minutes: 18,
-    comment: 'Это будет первый комментарий на этой странице',
-    likesCounter: 75,
-    isLiked: true,
-  },
+    method: "GET"
+  }
+).then((response) => {
 
-  {
-    name: 'Варвара Н.',
-    day: 13,
-    month: 2,
-    year: 22,
-    hours: 19,
-    minutes: 22,
-    comment: 'Мне нравится как оформлена эта страница! ❤',
-    likesCounter: 3,
-    isLiked: false,
-  },
-];
+  response.json().then((responseData)=> {
+
+    const appComments = responseData.comments.map((comment) => {
+
+      return {
+        name: comment.author.name,
+        date: new Date(comment.date),
+        text: comment.text,
+        likes: comment.likes,
+        isLiked: false,
+      };
+    });
+
+    comments = appComments;
+
+    console.log(comments);
+    
+    renderComments();
+  });
+});
+
+let comments = [];
 
 const renderComments = () => {
   const commentsHtml = comments.map((comment, index)=> {
@@ -105,6 +108,20 @@ function reply() {
 
 reply();
 
+
+function removeValidation() {
+
+  nameInputElement.addEventListener('click', ()=> {
+    nameInputElement.classList.remove('error')
+  });
+  
+  commentInputElement.addEventListener('click', ()=> {
+    commentInputElement.classList.remove('error')
+  });
+};
+
+removeValidation();
+
 addButtonElement.addEventListener('click', () => {
   nameInputElement.classList.remove('error');
   commentInputElement.classList.remove('error');
@@ -114,39 +131,68 @@ addButtonElement.addEventListener('click', () => {
     commentInputElement.classList.add('error');
     return;
   };
+  
 
-  const currentDate = new Date();
-  const day = currentDate.getDate();
-  const month = currentDate.getMonth() + 1;
-  const year = currentDate.getFullYear().toString().slice(-2);
-  const hours = currentDate.getHours();
-  const minutes = currentDate.getMinutes();
+  // const currentDate = new Date();
+  // const day = currentDate.getDate();
+  // const month = currentDate.getMonth() + 1;
+  // const year = currentDate.getFullYear().toString().slice(-2);
+  // const hours = currentDate.getHours();
+  // const minutes = currentDate.getMinutes();
 
-  const formattedDay = day < 10 ? '0' + day : day;
-  const formattedMonth = month < 10 ? '0' + month : month;
-  const formattedHours = hours < 10 ? '0' + hours : hours;
-  const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+  // const formattedDay = day < 10 ? '0' + day : day;
+  // const formattedMonth = month < 10 ? '0' + month : month;
+  // const formattedHours = hours < 10 ? '0' + hours : hours;
+  // const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
 
-  comments.push({
-    name: nameInputElement.value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;"),
-    day: formattedDay,
-    month: formattedMonth,
-    year: year,
-    hours: formattedHours,
-    minutes: formattedMinutes,
-    comment: commentInputElement.value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;"),
-    likesCounter: 0,
-    isLiked: false,
+  // comments.push({
+  //   name: nameInputElement.value
+  //   .replaceAll("&", "&amp;")
+  //   .replaceAll("<", "&lt;")
+  //   .replaceAll(">", "&gt;")
+  //   .replaceAll('"', "&quot;"),
+  //   day: formattedDay,
+  //   month: formattedMonth,
+  //   year: year,
+  //   hours: formattedHours,
+  //   minutes: formattedMinutes,
+  //   comment: commentInputElement.value
+  //   .replaceAll("&", "&amp;")
+  //   .replaceAll("<", "&lt;")
+  //   .replaceAll(">", "&gt;")
+  //   .replaceAll('"', "&quot;"),
+  //   likesCounter: 0,
+  //   isLiked: false,
+  // });
+
+  fetch(
+    'https://wedev-api.sky.pro/api/v1/rustam-kholov/comments',
+    {
+      method: "POST",
+      body: JSON.stringify( {
+        name: nameInputElement.value,
+        text: commentInputElement.value,
+      })
+    }
+  ).then((response) => {
+  
+    response.json().then((responseData)=> {
+  
+      const appComments = responseData.comments.map((comment) => {
+  
+        return {
+          name: comment.author.name,
+          date: new Date(comment.date),
+          text: comment.text,
+          likes: comment.likes,
+          isLiked: false,
+        };
+      });
+  
+      comments = appComments;
+      renderComments();
+    });
   });
-
 
   renderComments();
   
