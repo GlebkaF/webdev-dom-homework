@@ -2,10 +2,13 @@ import { postComment, userAuth, userName } from "./api.js";
 import { getCurrentDate } from "./getDate.js";
 import { mapData } from "./main.js";
 import { renderLogin } from "./renderLogin.js";
+import _ from 'lodash';
 
 export const renderComments = ( {comments} ) => {
 
   let isLoaded;
+
+
 
   const CommentsHtml = comments.map((comment, index) => {
   let isLike;
@@ -207,10 +210,12 @@ ititAddLikeListener()
 initEditCommentListener()
 initSaveEditCommentListener()
 
+
+
 const postTask = () => {
   let currentDate = getCurrentDate(new Date());
       postComment( {
-          text: inputText.value,
+          text: _.capitalize(inputText.value),
           name: inputName.value,
           date: currentDate,
           likes: 0,
