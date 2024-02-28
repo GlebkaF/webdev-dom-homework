@@ -43,12 +43,7 @@ export const postComment = (text) => {
                 Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
-                /* name: name, */
                 text: text,
-                /*       date: formatDateTime(new Date),
-                      isLiked: false,
-                      likes: 0, */
-                /* forceError: true, */
             }),
         })
 };

@@ -1,3 +1,4 @@
+import { format } from "./node_modules/date-fns/format.mjs";
 import { formatDateTime } from "./datetime.js";
 import { getComments, getToken, setToken, token } from "./api.js";
 import { initDeleteButtonsListeners } from "./delbutton.js";
@@ -10,25 +11,21 @@ export const setUser = (newUser) => {
 };
 /* console.log(user); */
 
-/* const textAreaElement = document.getElementById("add-text");
-const inputElement = document.getElementById("add-name");
-const outerFormElement = document.getElementById("add-form");
-const addFormElement = document.querySelector(".add-form"); */
-
 
 //Прелоадер страницы
 
 export let commentList = [];
 
-
+const now = new Date();
+const createDate = format(now, "yyyy-MM-dd hh.mm.ss"); 
 // запрос коммента с api
 export const fetchAndRenderComments = () => {
   getComments().then((responseData) => {
     commentList = responseData.comments.map((comment) => {
       return {
         name: comment.author.name,
-        date: formatDateTime(comment.date),
-        id: comment.id,/*  */
+        date: createDate,
+        id: comment.id,
         isLiked: comment.isLiked,
         likes: comment.likes,
         text: comment.text,
