@@ -5,13 +5,12 @@
     <meta charset="utf-8" />
     <link rel="stylesheet" href="styles.css" />
   </head>
-
   <body>
     <div class="container">
       <ul class="comments" id="list">
-       
+        <!-- Список рендерится из Js -->
       </ul>
-		
+
       <div class="add-form">
         <input
           type="text"
@@ -26,255 +25,379 @@
           rows="4"
           id="comment-input"
         ></textarea>
-
         <div class="add-form-row">
-          <button id="add-button" class="add-form-button">Написать</button>
+          <button
+            type="submit"
+            id="add-button"
+            class="add-form-button post-button"
+          >
+            Написать
+          </button>
           <button id="delete-button" class="add-form-button">Удалить</button>
         </div>
       </div>
     </div>
-	</body>
-<style>
-	.error {
-		background-color: gray;
-	}
-</style>
-<script>
-const buttonElement = document.getElementById("add-button");
-const listElement = document.getElementById("list");
-const nameInputElement = document.getElementById("name-input");
-const commentInputElement = document.getElementById("comment-input");
-const deleteButtonElement = document.getElementById("delete-button");
+  </body>
+  <style>
+    .error {
+      background-color: gray;
+    }
+  </style>
+  <script>
+    "use strict";
+    const buttonElement = document.getElementById("add-button");
+    const listElement = document.getElementById("list");
+    const nameInputElement = document.getElementById("name-input");
+    const commentInputElement = document.getElementById("comment-input");
+    const deleteButtonElement = document.getElementById("delete-button");
+    let comments = [];
 
+    const fetchPromise = fetch(
+      "https://wedev-api.sky.pro/api/v1/sergey-syomin/comments",
+      {
+        method: "GET",
+      }
+    );
 
-const commentsArray = [
-  {
-    name: "Глеб Фокин",
-    date: "12.02.22 12:18",
-    comment: "Это будет первый комментарий на этой странице",
-    like: 3,
-    userLike: false,
-	 isEdit: false,
-  },
-  {
-    name: "Варвара Н.",
-    date: "13.02.22 19:22",
-    comment: "Мне нравится как оформлена эта страница! ❤️",
-    like: 75,
-    userLike: true,
-	 isEdit: false,
-  },
-];
+    fetchPromise.then((response) => {
+      const jsonPromise = response.json();
 
-const likes = () => {
-  const likeButtons = document.querySelectorAll(".like-button");
-  for (const likeButton of likeButtons) {
-    likeButton.addEventListener("click", (event) => {
-		event.stopPropagation();
-      const index = likeButton.dataset.index;
-      const comment = commentsArray[index];
+      jsonPromise.then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: new Date(comment.date).toLocaleTimeString("sm", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+            comment: comment.text,
+            like: comment.likes,
+            userLike: false,
+            isEdit: false,
+          };
+        });
 
-      if (!comment.userLike) {
-        comment.filling = "-active-like";
-        comment.like += 1;
-        comment.userLike = true;
-		  
-      } else {
-        comment.filling = "";
-        comment.like -= 1;
-        comment.userLike = false;
+        comments = appComments;
+        renderComments();
+      });
+    });
+    function fetchAndRenderComments() {
+      const fetchPromise = fetch(
+        "https://wedev-api.sky.pro/api/v1/sergey-syomin/comments",
+        {
+          method: "GET",
+        }
+      );
+      fetchPromise
+        .then((response) => response.json())
+        .then((responseData) => {
+          const appComments = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: new Date(comment.date).toLocaleTimeString("sm", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+              comment: comment.text,
+              like: comment.likes,
+              userLike: false,
+              isEdit: false,
+            };
+          });
+
+          comments = appComments;
+          renderComments();
+        });
+    }
+    fetchAndRenderComments();
+
+    buttonElement.addEventListener("click", () => {
+      nameInputElement.classList.remove("error");
+      commentInputElement.classList.remove("error");
+
+      if (nameInputElement.value === "" || commentInputElement.value === "") {
+        nameInputElement.classList.add("error");
+        commentInputElement.classList.add("error");
+        return;
       }
 
-      renderComments();
+      if (
+        nameInputElement.value.trim() === "" ||
+        commentInputElement.value.trim() === ""
+      ) {
+        return;
+      }
+
+      fetch("https://wedev-api.sky.pro/api/v1/sergey-syomin/comments", {
+        method: "POST",
+        body: JSON.stringify({
+          name: nameInputElement.value
+            .replaceAll("<", "&lt")
+            .replaceAll(">", "&gt")
+            .replaceAll("&", "&amp;")
+            .replaceAll('"', "&quot;")
+            .replaceAll(" ", "&nbsp;"),
+          text: commentInputElement.value
+            .replaceAll("<", "&lt")
+            .replaceAll(">", "&gt")
+            .replaceAll("&", "&amp;")
+            .replaceAll('"', "&quot;")
+            .replaceAll(" ", "&nbsp;"),
+        }),
+      }).then((response) => {
+        response.json().then((responseData) => {
+          fetch("https://wedev-api.sky.pro/api/v1/sergey-syomin/comments", {
+            method: "GET",
+          }).then((response) => {
+            response.json().then((responseData) => {
+              const appComments = responseData.comments.map((comment) => {
+                return {
+                  name: comment.author.name,
+                  date: new Date(comment.date).toLocaleTimeString("sm", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  }),
+                  comment: comment.text,
+                  like: comment.likes,
+                  userLike: false,
+                  isEdit: false,
+                };
+              });
+              nameInputElement.value = "";
+              commentInputElement.value = "";
+              nameInputElement.value || commentInputElement.value === "";
+              buttonElement.disabled = true;
+              comments = appComments;
+              renderComments();
+            });
+
+            comments = responseData.comments;
+            renderComments();
+
+
+          });
+          renderComments();
+          
+        });
+      });
     });
-  }
-};
+    const likes = () => {
+      const likeButtons = document.querySelectorAll(".like-button");
+      for (const likeButton of likeButtons) {
+        likeButton.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const index = likeButton.dataset.index;
+          const comment = comments[index];
+          if (!comment.userLike) {
+            comment.filling = "-active-like";
+            comment.like += 1;
+            comment.userLike = true;
+          } else {
+            comment.filling = "";
+            comment.like -= 1;
+            comment.userLike = false;
+          }
+          renderComments();
+        });
+      }
+    };
+    const handleEdit = (index) => {
+      const handleEditElements = document.querySelectorAll(".editing");
+      for (const handleEditElement of handleEditElements) {
+        handleEditElement.addEventListener("click", (event) => {
+          event.stopPropagation();
+          comments[index].isEdit = true;
+          renderComments();
+          // Показываем кнопку "Сохранить"
+          listElement
+            .querySelectorAll(".comment")
+            [index].querySelector(".save-button").style.display = "block";
+          renderComments();
+        });
+      }
+    };
+    function isCommentEmpty(comment) {
+      const isEmpty = comment.trim() === "";
+      if (isEmpty) {
+        // Если комментарий пуст, добавляем класс "error" к соответствующему элементу формы
+        commentInputElement.classList.add("error");
+      } else {
+        // Если комментарий не пуст, удаляем класс "error"
+        commentInputElement.classList.remove("error");
+      }
+      return isEmpty;
+    }
+    const handleSave = () => {
+      const handleSaveElements = document.querySelectorAll(".saving");
+      for (const handleSaveElement of handleSaveElements) {
+        handleSaveElement.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const index = handleSaveElement.dataset.index;
+          const comment = comments[index];
+          const editedComment = listElement
+            .querySelectorAll(".comment")
+            [handleSaveElement.dataset.index].querySelector(
+              ".comment-input"
+            ).value;
+          if (isCommentEmpty(editedComment)) {
+            // Обработка ошибки или уведомление пользователю о невозможности отправить пустой комментарий
+            return;
+          }
 
-const handleEdit = (index) => {
-	const handleEditElements = document.querySelectorAll(".editing");
-	for ( const handleEditElement of handleEditElements) {
-		handleEditElement.addEventListener("click" , (event) => {
-		event.stopPropagation();
-  commentsArray[index].isEdit = true;
-  renderComments();
-  // Показываем кнопку "Сохранить"
-  listElement.querySelectorAll('.comment')[index].querySelector('.save-button').style.display = "block";
-  renderComments();
-	});
-  }
-};
+          comments[index].comment = editedComment; // Обновляем комментарий в массиве
+          comments[index].isEdit = false; // Устанавливаем флаг редактирования в false
 
-
-
-const handleSave = (index) => {
-	const handleSaveElements = document.querySelectorAll(".saving");
-	for ( const handleSaveElement of handleSaveElements) {
-		handleSaveElement.addEventListener("click" , (event) => {
-			event.stopPropagation();
-  const editedComment = listElement.querySelectorAll('.comment')[index].querySelector('.comment-input').value; // Получаем отредактированный комментарий
-  commentsArray[index].comment = editedComment; // Обновляем комментарий в массиве
-  commentsArray[index].isEdit = false; // Устанавливаем флаг редактирования в false
-  renderComments(); // Перерисовываем комментарии
-  // Скрываем кнопку "Сохранить" после сохранения
-  listElement.querySelectorAll('.comment')[index].querySelector('.save-buttons').style.display = "none";
-		});
-  }
-};
-
-const renderComments = () => {
-  const commentsHtml = commentsArray
-  .map((item, index) => {
-      if (item.isEdit) {  
-  return`
-    <li class="comment" data-index='${index}' >
+          // Скрываем кнопку "Сохранить" после сохранения
+          listElement
+            .querySelectorAll(".comment")
+            [index].querySelector(".save-buttons").style.display = "none";
+          renderComments(); // Перерисовываем комментарии
+        });
+      }
+    };
+    const renderComments = () => {
+      const commentsHtml = comments
+        .map((comment, index) => {
+          if (comment.isEdit) {
+            return `
+    <li class="comment" data-index="${index}" >
   <div class="comment-header">
-    <div>${item.name}</div>
-    <div>${item.date}</div>
+    <div>${comment.name}</div>
+    <div>${comment.date}</div>
     
   </div>
   <div class="comment-body">
-                <div class="comment-text">
-                  <textarea  class="comment-input add-text " rows="4">${item.comment}</textarea>
-						<button onclick="handleSave(${index})" class="save-buttons add-form-button saving">Сохранить</button> 
+                <div class="comment-text" >
+                  <textarea data-index="${index}" class="comment-input add-text" rows="4">${comment.comment}</textarea>
+						<button type="submit" data-index='${index}' class="save-buttons add-form-button saving post-button">Сохранить</button> 
                 </div>
               </div>
             </li>
           `;
-  } else {
+          } else {
             return `
           <li class="comment">
             <div class="comment-header">
-              <div class="comment-name">${item.name}</div>
-              <div>${item.date}</div>     
+              <div class="comment-name">${comment.name}</div>
+              <div>${comment.date}</div>     
           </div>
             <div class="comment-body">
-              <div class="comment-text">
-                <span class="comment-content  ">${item.comment}</span>
+              <div class="comment-text" data-index="${index}">
+                <span data-index='${index}' class="comment-content">${
+              comment.comment
+            }</span>
 					 <button class="edit-button add-form-button">Редактировать</button> <!-- новая кнопка -->
               </div>        
             </div>
         
             <div class="comment-footer">
               <div class="likes">
-                <span class="likes-counter">${item.like}</span>
-                <button data-index='${index}' class="like-button ${item.userLike ? "-active-like" : ""}"></button>
+                <span class="likes-counter">${comment.like}</span>
+                <button data-index='${index}' class="like-button ${
+              comment.userLike ? "-active-like" : ""
+            }"></button>
               </div>  
             </div>
           </li>
           `;
-      }
+          }
         })
         .join("");
       listElement.innerHTML = commentsHtml;
-
       likes();
-		handleEdit();
-		handleSave();
-		
-    const editButtons = document.querySelectorAll(".edit-button");
+      handleEdit();
+      handleSave();
+
+      const editButtons = document.querySelectorAll(".edit-button");
       editButtons.forEach((button, index) => {
         button.addEventListener("click", (event) => {
-      event.stopPropagation();
-          commentsArray[index].isEdit = true;
+          event.stopPropagation();
+          comments[index].isEdit = true;
           renderComments();
         });
       });
-		const commentElements = document.querySelectorAll(".comment");
-commentElements.forEach((comment) => {
-  comment.addEventListener('click', (event) => {
-	
-   
-    const author = comment.querySelector('.comment-header .comment-name').textContent;
-    const text = comment.querySelector('.comment-text .comment-content').textContent;
-	 	 
-    // Формируем ответную цитату для вставки в поле комментария
-    const quotedText = `> ${text}\n\n @${author}, `; 
-    document.getElementById('comment-input').value = quotedText;
-	 renderComments();
-  }); 
+      function addCommentListener() {
+        const comments = document.querySelectorAll(".comment");
+        comments.forEach((comment) => {
+          comment.addEventListener("click", () => {
+            const answerElement = comment.querySelector(".comment-content");
+            const userNameElement = comment.querySelector(".comment-name");
 
-  
-});
+            if (answerElement && userNameElement) {
+              const answer = answerElement.textContent;
+              const userName = userNameElement.textContent;
+              const quotedText = `> ${answer}:\n\n @${userName},`;
 
-    const saveButtons = document.querySelectorAll(".save-button");
+              if (commentInputElement.value.includes(">")) {
+                commentInputElement.value += `\n\n${quotedText}`;
+              } else {
+                commentInputElement.value = quotedText;
+              }
+
+              commentInputElement.focus();
+            }
+          });
+        });
+      }
+      addCommentListener();
+
+      const saveButtons = document.querySelectorAll(".save-button");
       saveButtons.forEach((button, index) => {
         button.addEventListener("click", (event) => {
-      event.stopPropagation();
-          const editedComment = button.parentNode.nextElementSibling.children[0].children[0].value;
-          commentsArray[index].comment = editedComment;
-          commentsArray[index].isEdit = false;
-			 renderComments();
+          event.stopPropagation();
+          const editedComment =
+            button.parentNode.nextElementSibling.children[0].children[0].value;
+          comments[index].comment = editedComment;
+          comments[index].isEdit = false;
+          renderComments();
         });
       });
-};
-
-renderComments();
-
-buttonElement.disabled = true;
-nameInputElement.addEventListener("input", () => {
-  buttonElement.disabled = nameInputElement.value === "";
-});
-
-buttonElement.addEventListener("click", () => {
-  nameInputElement.classList.remove("error");
-
-  if (nameInputElement.value === "") {
-    nameInputElement.classList.add("error");
-    return;
-  }
-  commentInputElement.classList.remove("error");
-  if (commentInputElement.value === "") {
-    commentInputElement.classList.add("error");
-    return;
-  }
-      if (nameInputElement.value.trim() === "" || commentInputElement.value.trim() === "") {
-
-  return;
-}
- renderComments();
-const currentDate = new Date();
-  const day = currentDate.getDate().toString().padStart(2, "0");
-  const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
-  const year = currentDate.getFullYear().toString().slice(-2);
-  const hours = currentDate.getHours().toString().padStart(2, "0");
-  const minutes = currentDate.getMinutes().toString().padStart(2, "0");
-  const formattedDate = `${day}.${month}.${year} ${hours}:${minutes}`;
-
-  commentsArray.push({
-    name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-    date: formattedDate,
-    comment: commentInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-    like: 0,
-    userLike: false,
-   isEdit: false,
-  });
-
-
-  nameInputElement.value = "";
-  commentInputElement.value = "";
-  buttonElement.disabled = true;
-  nameInputElement.classList.remove("error");
-  commentInputElement.classList.remove("error");
-
-  renderComments();
-});
-
-
-deleteButtonElement.addEventListener("click", () => {
-  const comments = listElement.querySelectorAll(".comment");
- 
-  if (comments.length > 0) {
-    listElement.removeChild(comments[comments.length - 1]);
-  }
-      commentsArray.pop(); // Удаляем последний комментарий из массива
+    };
+    renderComments();
+    let currentDate = new Date();
+    let day =
+      currentDate.getDate() < 10
+        ? "0" + currentDate.getDate()
+        : currentDate.getDate();
+    let month =
+      currentDate.getMonth() < 10
+        ? "0" + currentDate.getMonth()
+        : currentDate.getMonth();
+    let year = currentDate.getFullYear().toString().slice(-2);
+    let hours =
+      currentDate.getHours() < 10
+        ? "0" + currentDate.getHours()
+        : currentDate.getHours();
+    let minutes =
+      currentDate.getMinutes() < 10
+        ? "0" + currentDate.getMinutes()
+        : currentDate.getMinutes();
+    let formattedDate = `${day}.${month}.${year} ${hours}:${minutes}`;
+    deleteButtonElement.addEventListener("click", () => {
+      const comments = Array.from(listElement.querySelectorAll(".comment"));
+      if (comments.length > 0) {
+        listElement.removeChild(comments[comments.length - 1]);
+        comments.pop(); // Удаляем последний комментарий из массива
+      }
     });
-renderComments();
+    nameInputElement.value = "";
+    commentInputElement.value = "";
+    nameInputElement.value.trim() === "" ||
+      commentInputElement.value.trim() === "";
+    renderComments();
     document.addEventListener("keyup", (event) => {
       if (event.key === "Enter") {
         buttonElement.click();
       }
     });
-
-</script>
-
+  </script>
 </html>
