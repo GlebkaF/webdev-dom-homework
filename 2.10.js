@@ -17,11 +17,12 @@ fetch(
 
       return {
         name: comment.author.name,
-        date: new Date(comment.date),
-        text: comment.text,
-        likes: comment.likes,
+        date: new Date(comment.date).toLocaleDateString('ru-RU', { year: '2-digit', month: '2-digit', day: '2-digit' }) + ' ' + new Date(comment.date).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+        comment: comment.text,
+        likesCounter: comment.likes,
         isLiked: false,
       };
+      
     });
 
     comments = appComments;
@@ -32,6 +33,7 @@ fetch(
   });
 });
 
+
 let comments = [];
 
 const renderComments = () => {
@@ -39,7 +41,7 @@ const renderComments = () => {
   return `<li class="comment">
   <div class="comment-header">
     <div data-index="${index}">${comment.name}</div>
-    <div>${comment.day}.${comment.month}.${comment.year} ${comment.hours}:${comment.minutes}</div>
+    <div>${comment.date}</div>
   </div>
   <div class="comment-body">
     <div data-index="${index}" class="comment-text">
@@ -108,7 +110,6 @@ function reply() {
 
 reply();
 
-
 function removeValidation() {
 
   nameInputElement.addEventListener('click', ()=> {
@@ -131,31 +132,28 @@ addButtonElement.addEventListener('click', () => {
     commentInputElement.classList.add('error');
     return;
   };
-  
 
-  // const currentDate = new Date();
-  // const day = currentDate.getDate();
-  // const month = currentDate.getMonth() + 1;
-  // const year = currentDate.getFullYear().toString().slice(-2);
-  // const hours = currentDate.getHours();
-  // const minutes = currentDate.getMinutes();
+  // const date = new Date();
+  // const options = {
+  //   year: '2-digit',
+  //   month: 'numeric',
+  //   day: 'numeric',
+  // };
+  // const optionsTime = {
+  //   hour: 'numeric',
+  //   minute: 'numeric',
+  // };
+  // const dateTime = `${date.toLocaleDateString('ru-RU', options)}
+  // ${date.toLocaleTimeString('ru-RU', optionsTime)}`;
 
-  // const formattedDay = day < 10 ? '0' + day : day;
-  // const formattedMonth = month < 10 ? '0' + month : month;
-  // const formattedHours = hours < 10 ? '0' + hours : hours;
-  // const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
-
+ 
   // comments.push({
   //   name: nameInputElement.value
   //   .replaceAll("&", "&amp;")
   //   .replaceAll("<", "&lt;")
   //   .replaceAll(">", "&gt;")
   //   .replaceAll('"', "&quot;"),
-  //   day: formattedDay,
-  //   month: formattedMonth,
-  //   year: year,
-  //   hours: formattedHours,
-  //   minutes: formattedMinutes,
+  //   date: dateTime,
   //   comment: commentInputElement.value
   //   .replaceAll("&", "&amp;")
   //   .replaceAll("<", "&lt;")
@@ -182,9 +180,9 @@ addButtonElement.addEventListener('click', () => {
   
         return {
           name: comment.author.name,
-          date: new Date(comment.date),
-          text: comment.text,
-          likes: comment.likes,
+          date: new Date(comment.date).toLocaleDateString('ru-RU', { year: '2-digit', month: '2-digit', day: '2-digit' }) + ' ' + new Date(comment.date).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+          comment: comment.text,
+          likesCounter: comment.likes,
           isLiked: false,
         };
       });
@@ -194,93 +192,9 @@ addButtonElement.addEventListener('click', () => {
     });
   });
 
+
   renderComments();
   
   nameInputElement.value = '';
   commentInputElement.value = '';
 });
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// // Доп задание
-
-  // nameInputElement.addEventListener('input', () => {
-  //   if (nameInputElement.value === '' || commentInputElement.value === '') {
-  //     addButtonElement.disabled = true;
-  //     addButtonElement.style.backgroundColor = 'gray';
-  //   } else {
-  //     addButtonElement.disabled = false;
-  //     addButtonElement.style.backgroundColor = '';
-  //   }
-  // });
-
-  // commentInputElement.addEventListener('input', () => {
-  //   if (nameInputElement.value === '' || commentInputElement.value === '') {
-  //     addButtonElement.disabled = true;
-  //     addButtonElement.style.backgroundColor = 'gray';
-  //   } else {
-  //     addButtonElement.disabled = false;
-  //     addButtonElement.style.backgroundColor = '';
-  //   }
-  // });
-
-
-
-
-  // // Доп задание 
-
-  // commentInputElement.addEventListener('keyup', function (event) {
-  //   if (event.key === 'Enter') {
-  //     addComment();
-  //   };
-  // });
-  // // Доп задание 
-
-  // deleteButtonElement.addEventListener('click', () => {
-  //   const lastCommentIndex = listElement.innerHTML.lastIndexOf('<li class="comment">');
-  //   listElement.innerHTML = listElement.innerHTML.substring(0, lastCommentIndex);
-  // }
-  // );
