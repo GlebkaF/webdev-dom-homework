@@ -6,7 +6,7 @@ const sanitizeHtml = (htmlString) => {
 // Создаем массив, куда будем помещать данные, полученные из API
 let peoples = [];
 
-// Определяем элементы формы
+// Определяем элементы input-формы
 const buttonElement = document.getElementById('add-button');
 const nameInputElement = document.getElementById('name');
 const textInputElement = document.getElementById('textArea');
@@ -71,7 +71,10 @@ const renderPeoples = () => {
     }
 }
 
-// Определяем функцию fetchComments, которая отправляет GET-запрос для получения комментариев
+// Добавляем лоадер на весь список при первой загрузке страницы
+commentListElement.textContent = 'Загружаю список комментариев...';
+
+// Определяем функцию fetchComments, которая отправляет GET-запрос для получения комментариев из сервера
 const fetchComments = () => {
     fetch("https://wedev-api.sky.pro/api/v1/aleksey-poplaukhin/comments", {
         method: "GET"
@@ -79,8 +82,7 @@ const fetchComments = () => {
     .then((response) => {
         return response.json();
     })
-    .then(function(responseData) {
-        // Обрабатываем полученные данные и создаем массив объектов с комментариями
+    .then(function(responseData) { // здесь почему то не захотела работать вторая стрелочная функция. Я не понял почему...        
         const appComment = responseData.comments.map((comment) => {
             const options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }; 
             const formattedDate = new Intl.DateTimeFormat('ru-RU', options).format(new Date(comment.date));
@@ -120,6 +122,10 @@ buttonElement.addEventListener("click", () => {
         textInputElement.classList.add("error");
         return;
     }
+
+    // Добавляем лоадер на пост комментария с отключением input-формы
+    document.getElementById('form-id').disabled = true;
+    document.getElementById('form-id').textContent = 'Добавляю твой комментарий...'
     
     // Отправляем POST-запрос для добавления нового комментария
     fetch("https://wedev-api.sky.pro/api/v1/aleksey-poplaukhin/comments", {
@@ -130,7 +136,7 @@ buttonElement.addEventListener("click", () => {
         }),
     })
     .then(() => {
-        // Получаем обновленный список комментариев, вызвав функцию fetchComments
+        // Получаем обновленный список комментариев, вызвав функцию fetchComments после успешного POST-запроса
         fetchComments();        
     });
 
