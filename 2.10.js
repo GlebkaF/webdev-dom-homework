@@ -5,7 +5,6 @@ const nameInputElement = document.getElementById('name-input');
 const commentInputElement = document.getElementById('comment-input');
 
 // Получения комментов с сервера
-
 fetch(
   'https://wedev-api.sky.pro/api/v1/rustam-kholov/comments',
   {
@@ -113,7 +112,6 @@ function reply() {
 reply();
 
 // Отмена валидации (чтобы не было красных полей)
-
 function removeValidation() {
 
   nameInputElement.addEventListener('click', () => {
@@ -128,7 +126,6 @@ function removeValidation() {
 removeValidation();
 
 // Добавление нового коммента на сервер 
-
 addButtonElement.addEventListener('click', () => {
   nameInputElement.classList.remove('error');
   commentInputElement.classList.remove('error');
