@@ -30,6 +30,10 @@
   .error {
     background-color: red;
   }
+
+  .hide {
+    display: none;
+  }
 </style>
 <script>
   "use strict";
@@ -39,6 +43,7 @@
   const buttonWrite = document.querySelector('.add-form-button');
   const commentList = document.querySelector('.comments');
   const currentDate = new Date().toLocaleDateString('default', { day: '2-digit', month: '2-digit', year: '2-digit' }) + " " + new Date().toLocaleTimeString().slice(0, -3);
+  const preloader = document.querySelector('.preloader');
 
   let comments = [];
 
@@ -56,6 +61,7 @@
         };
       });
       renderComments();
+      preloader.classList.add('hide');
     });
   });
 
