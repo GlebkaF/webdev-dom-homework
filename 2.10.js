@@ -4,6 +4,8 @@ const listElement = document.getElementById('list');
 const nameInputElement = document.getElementById('name-input');
 const commentInputElement = document.getElementById('comment-input');
 
+// Получения комментов с сервера
+
 fetch(
   'https://wedev-api.sky.pro/api/v1/rustam-kholov/comments',
   {
@@ -11,7 +13,7 @@ fetch(
   }
 ).then((response) => {
 
-  response.json().then((responseData)=> {
+  response.json().then((responseData) => {
 
     const appComments = responseData.comments.map((comment) => {
 
@@ -22,23 +24,23 @@ fetch(
         likesCounter: comment.likes,
         isLiked: false,
       };
-      
+
     });
 
     comments = appComments;
-
-    console.log(comments);
-    
     renderComments();
   });
 });
 
-
+//  Массив для комментов 
 let comments = [];
 
+
+
+// Рендер функция 
 const renderComments = () => {
-  const commentsHtml = comments.map((comment, index)=> {
-  return `<li class="comment">
+  const commentsHtml = comments.map((comment, index) => {
+    return `<li class="comment">
   <div class="comment-header">
     <div data-index="${index}">${comment.name}</div>
     <div>${comment.date}</div>
@@ -63,7 +65,7 @@ const renderComments = () => {
 };
 
 
-
+// Кнопка для лайка 
 const initLikeButtonListeners = () => {
   const addLikesButtonsElements = document.querySelectorAll('.like-button');
 
@@ -75,14 +77,14 @@ const initLikeButtonListeners = () => {
     addLikesButtonsElement.addEventListener('click', () => {
 
       if (comments[index].isLiked === false) {
-        
+
         const result = Number(counter) + 1;
         comments[index].likesCounter = result;
 
         comments[index].isLiked = true;
 
-      } else { 
-        
+      } else {
+
         const result = Number(counter) - 1;
         comments[index].likesCounter = result;
 
@@ -94,8 +96,8 @@ const initLikeButtonListeners = () => {
   }
 };
 
-renderComments();
 
+// Ответ по клику на коммент 
 function reply() {
 
   const commentElements = document.querySelectorAll('.comment-body');
@@ -110,18 +112,22 @@ function reply() {
 
 reply();
 
+// Отмена валидации (чтобы не было красных полей)
+
 function removeValidation() {
 
-  nameInputElement.addEventListener('click', ()=> {
+  nameInputElement.addEventListener('click', () => {
     nameInputElement.classList.remove('error')
   });
-  
-  commentInputElement.addEventListener('click', ()=> {
+
+  commentInputElement.addEventListener('click', () => {
     commentInputElement.classList.remove('error')
   });
 };
 
 removeValidation();
+
+// Добавление нового коммента на сервер 
 
 addButtonElement.addEventListener('click', () => {
   nameInputElement.classList.remove('error');
@@ -133,51 +139,21 @@ addButtonElement.addEventListener('click', () => {
     return;
   };
 
-  // const date = new Date();
-  // const options = {
-  //   year: '2-digit',
-  //   month: 'numeric',
-  //   day: 'numeric',
-  // };
-  // const optionsTime = {
-  //   hour: 'numeric',
-  //   minute: 'numeric',
-  // };
-  // const dateTime = `${date.toLocaleDateString('ru-RU', options)}
-  // ${date.toLocaleTimeString('ru-RU', optionsTime)}`;
-
- 
-  // comments.push({
-  //   name: nameInputElement.value
-  //   .replaceAll("&", "&amp;")
-  //   .replaceAll("<", "&lt;")
-  //   .replaceAll(">", "&gt;")
-  //   .replaceAll('"', "&quot;"),
-  //   date: dateTime,
-  //   comment: commentInputElement.value
-  //   .replaceAll("&", "&amp;")
-  //   .replaceAll("<", "&lt;")
-  //   .replaceAll(">", "&gt;")
-  //   .replaceAll('"', "&quot;"),
-  //   likesCounter: 0,
-  //   isLiked: false,
-  // });
-
   fetch(
     'https://wedev-api.sky.pro/api/v1/rustam-kholov/comments',
     {
       method: "POST",
-      body: JSON.stringify( {
+      body: JSON.stringify({
         name: nameInputElement.value,
         text: commentInputElement.value,
       })
     }
   ).then((response) => {
-  
-    response.json().then((responseData)=> {
-  
+
+    response.json().then((responseData) => {
+
       const appComments = responseData.comments.map((comment) => {
-  
+
         return {
           name: comment.author.name,
           date: new Date(comment.date).toLocaleDateString('ru-RU', { year: '2-digit', month: '2-digit', day: '2-digit' }) + ' ' + new Date(comment.date).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
@@ -186,15 +162,14 @@ addButtonElement.addEventListener('click', () => {
           isLiked: false,
         };
       });
-  
+
       comments = appComments;
       renderComments();
     });
   });
 
-
   renderComments();
-  
+
   nameInputElement.value = '';
   commentInputElement.value = '';
 });
