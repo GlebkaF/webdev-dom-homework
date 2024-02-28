@@ -3,20 +3,17 @@ import { deleteTodo, postTodo } from "./api.js";
 import { fetchAndRenderTasks } from "./main.js";
 import { renderAuth } from "./renderAuth.js";
 
-const container = document.getElementById('container');
+const container = document.getElementById("container");
 let formAddComment;
 let blockAuth;
 let blockDelete;
 
-
-
 export const renderTasks = ({ tasks, fetchAndRenderTasks, authUser }) => {
-
-    if (authUser) {
-        blockDelete = "block";
-    } else {
-        blockDelete = "none";
-    }
+  if (authUser) {
+    blockDelete = "block";
+  } else {
+    blockDelete = "none";
+  }
 
   const tasksHtml = tasks
     .map((task) => {
@@ -30,15 +27,15 @@ export const renderTasks = ({ tasks, fetchAndRenderTasks, authUser }) => {
     })
     .join("");
 
-    if (authUser) {
-        formAddComment = "block";
-        blockAuth =  "none";
-    } else {
-        formAddComment = "none";
-        blockAuth =  "block";
-    }
+  if (authUser) {
+    formAddComment = "block";
+    blockAuth = "none";
+  } else {
+    formAddComment = "none";
+    blockAuth = "block";
+  }
 
-    const commentHtml = `
+  const commentHtml = `
         <h1>Список задач</h1>
         <ul class="tasks" id="list">${tasksHtml}</ul>
         <br />
@@ -62,48 +59,43 @@ export const renderTasks = ({ tasks, fetchAndRenderTasks, authUser }) => {
         </div>
     `;
 
+  container.innerHTML = commentHtml;
 
+  const deleteButtons = document.querySelectorAll(".delete-button");
+  const buttonElement = document.getElementById("add-button");
+  const textInputElement = document.getElementById("text-input");
+  const buttonAuth = document.getElementById("link-to-auth");
 
-    container.innerHTML = commentHtml;
-  
-    const deleteButtons = document.querySelectorAll(".delete-button");
-    const buttonElement = document.getElementById("add-button");
-    const textInputElement = document.getElementById("text-input");
-    const buttonAuth = document.getElementById('link-to-auth');
-    
-  
-    for (const deleteButton of deleteButtons) {
-        deleteButton.addEventListener("click", (event) => {
-            event.stopPropagation();
+  for (const deleteButton of deleteButtons) {
+    deleteButton.addEventListener("click", (event) => {
+      event.stopPropagation();
 
-            const id = deleteButton.dataset.id;
+      const id = deleteButton.dataset.id;
 
-            deleteTodo({ id }).then(() => {
-            fetchAndRenderTasks();
-            });
-        });
+      deleteTodo({ id }).then(() => {
+        fetchAndRenderTasks();
+      });
+    });
+  }
+
+  buttonElement.addEventListener("click", () => {
+    if (textInputElement.value === "") {
+      return;
     }
 
-    buttonElement.addEventListener("click", () => {
-        if (textInputElement.value === "") {
-          return;
-        }
-      
-        console.log(buttonElement);
-        buttonElement.disabled = true;
-        buttonElement.textContent = "Элемент добавляется...";
-      
-        postTodo({
-            name: 'Pavel',
-            text: textInputElement.value,
-        })
-        .then(() => {
-            return fetchAndRenderTasks();
-        });
-        
-    });
+    console.log(buttonElement);
+    buttonElement.disabled = true;
+    buttonElement.textContent = "Элемент добавляется...";
 
-    buttonAuth.addEventListener("click", () => {
-        renderAuth();
+    postTodo({
+      name: "Pavel",
+      text: textInputElement.value,
+    }).then(() => {
+      return fetchAndRenderTasks();
     });
+  });
+
+  buttonAuth.addEventListener("click", () => {
+    renderAuth();
+  });
 };

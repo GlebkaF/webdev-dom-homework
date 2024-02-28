@@ -8,13 +8,13 @@ export let authUser = false;
 export let token;
 
 export function getAuthUser(newAuthUser) {
-    return authUser = newAuthUser;
+  return (authUser = newAuthUser);
 }
 
 export const getToken = (newToken) => {
-    token = 'Bearer ' + newToken;
-    console.log(token);
-}
+  token = "Bearer " + newToken;
+  console.log(token);
+};
 
 // export const token =
 //   "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
@@ -57,13 +57,13 @@ export function postTodo({ name, text }) {
 }
 
 export function auth({ login, password }) {
-    return fetch(hostAuth, {
-      method: "POST",
-      body: JSON.stringify({
-        login,
-        password,
-      }),
-    }).then((response) => {
-      return response.json();
-    });
-  }
+  return fetch(hostAuth, {
+    method: "POST",
+    body: JSON.stringify({
+      login,
+      password,
+    }),
+  }).then((response) => {
+    return response.json();
+  });
+}
