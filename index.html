@@ -109,6 +109,8 @@
     const newListHtml = oldHtml.substring(0, position - 1);
     listElement.innerHTML = newListHtml;
 
+    prepareInput();
+
   });
 
 
@@ -146,12 +148,15 @@
             </div>
           </li>`;
 
+    prepareInput();
+  };
+
+  function prepareInput() {
     nameInputElement.value = "";
     commentInputElement.value = "";
     addButtonElement.disabled = true;
     addButtonElement.classList.add("error");
-
-  };
+  }
 
   // Код писать здесь
   console.log("It works!");
