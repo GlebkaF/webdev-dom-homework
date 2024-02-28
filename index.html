@@ -9,7 +9,7 @@
   <body>
     <div class="container">
       <ul id="list" class="comments">
-        <li class="comment">
+        <li class="comment" data-likes="3">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -26,7 +26,7 @@
             </div>
           </div>
         </li>
-        <li class="comment">
+        <li class="comment" data-likes="75">
           <div class="comment-header">
             <div>Варвара Н.</div>
             <div>13.02.22 19:22</div>
@@ -68,11 +68,47 @@
   <script>
     "use strict";
     // Код писать здесь
-    const buttonElement = document.getElementById('add-button');
     const listElement = document.getElementById('list');
     const nameInputElement = document.getElementById('name-input');
     const textInputElement = document.getElementById('text-input');
 
+    const initComment = () => {
+      const commentElements = document.querySelectorAll('.comment');
+      commentElements.forEach(commentElement => {
+        commentElement.addEventListener('click', () => {
+          const authorName = commentElement.querySelector('.comment-header > div:first-child').textContent;
+          const commentText = commentElement.querySelector('.comment-text').textContent;
+          textInputElement.value = `> ${commentText.trim()}\n${authorName.trim()},`;
+          textInputElement.focus();
+        });
+      });
+    }
+
+    const initLikes = () => {
+      const likesElements = document.querySelectorAll('.comment');
+      for (const likesElement of likesElements) {
+        const likeButton = likesElement.querySelector('.like-button');
+        const likesCounter = likesElement.querySelector('.likes-counter');
+        likeButton.addEventListener('click', (event) => {
+          const currentLikes = parseInt(likesElement.dataset.likes);
+          const isLiked = likeButton.classList.contains('-active-like');
+          if (isLiked) {
+            likeButton.classList.remove('-active-like');
+            likesElement.dataset.likes = currentLikes - 1;
+          } else {
+            likeButton.classList.add('-active-like');
+            likesElement.dataset.likes = currentLikes + 1;
+          }
+          likesCounter.textContent = likesElement.dataset.likes;
+          event.stopPropagation();
+        });
+      }
+    };
+
+    initLikes();
+    initComment();
+
+    const buttonElement = document.getElementById('add-button');
     buttonElement.addEventListener('click', () => {
       nameInputElement.classList.remove('error');
       textInputElement.classList.remove('error');
@@ -97,14 +133,14 @@
 
       const oldList = listElement.innerHTML;
       listElement.innerHTML = oldList +
-        `<li class="comment">
+        `<li class="comment" data-likes="0">
           <div class="comment-header">
-            <div>${nameInputElement.value}</div>
+            <div>${nameInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;')}</div>
             <div>${formattedDate}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${textInputElement.value}
+              ${textInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;')}
             </div>
           </div>
           <div class="comment-footer">
@@ -114,6 +150,11 @@
             </div>
           </div>
         </li>`
+
+        initLikes();
+        nameInputElement.value = '';
+        textInputElement.value = '';
+        initComment();
     }) 
     console.log("It works!");
   </script>
