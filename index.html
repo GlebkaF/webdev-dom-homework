@@ -60,6 +60,7 @@
   const likeButtonsElement = document.querySelectorAll(".likes");
 
 
+
   // массив
   const comments = [
     {
@@ -87,7 +88,7 @@
             <div>${comment.time}</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
+            <div class="comment-text" data-index="${index}">
               ${comment.comment}
             </div>
           </div>
@@ -105,6 +106,7 @@
     listElement.innerHTML = commentsHtml;
 
   };
+
 
   //Лайк
   const initEventListeners = () => {
@@ -128,6 +130,7 @@
   };
   renderComments();
   initEventListeners();
+
 
   // Обработчик клика
 
@@ -175,6 +178,7 @@
 
 
 
+
     /*     // Управление внутренним html содержимым
         const oldListHtml = listElement.innerHTML;
         listElement.innerHTML =
@@ -200,6 +204,16 @@
 
     nameInputElement.value = "";
     commentInputElement.value = "";
+  });
+
+  // Ответ на комментарий
+  const comment = document.querySelectorAll(".comment");
+  const formElementText = document.querySelector('.add-form-text');
+  const formElementName = document.querySelector('.add-form-name');
+  comment.forEach((el, index) => {
+    el.addEventListener('click', () => {
+      formElementText.value = `>${comments[index].name}: ${comments[index].comment}`
+    })
   });
 
   console.log("It works!");
