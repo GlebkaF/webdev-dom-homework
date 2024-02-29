@@ -12,6 +12,23 @@ const nameInputElement = document.getElementById('name');
 const textInputElement = document.getElementById('textArea');
 const commentListElement = document.getElementById('commentList');
 
+// Показать текст "Добавляю твой комментарий..."
+const showAddingCommentMessage = () => {
+    const addingCommentMessage = document.createElement('div');
+    addingCommentMessage.textContent = 'Добавляю твой комментарий...';
+    addingCommentMessage.classList.add('adding-comment-message');
+    commentListElement.appendChild(addingCommentMessage);
+    document.getElementById('form-id').style.display = 'none'; // Скрыть форму добавления комментария
+};
+
+// Скрыть текст "Добавляю твой комментарий..."
+const hideAddingCommentMessage = () => {
+    const addingCommentMessage = document.querySelector('.adding-comment-message');
+    if (addingCommentMessage) {
+        addingCommentMessage.remove();        
+    };
+};
+
 // Пишем функцию рендера для создания разметки
 const renderPeoples = () => {    
     const commentsHtml = peoples
@@ -123,8 +140,8 @@ buttonElement.addEventListener("click", () => {
         return;
     }
 
-    // Добавляем лоадер на пост комментария с отключением input-формы
-    document.getElementById('form-id').style.display = 'none';
+    // Показать текст "Добавляю твой комментарий..." и скрыть форму добавления комментария
+    showAddingCommentMessage();
     
     // Отправляем POST-запрос для добавления нового комментария
     fetch("https://wedev-api.sky.pro/api/v1/aleksey-poplaukhin/comments", {
@@ -139,11 +156,14 @@ buttonElement.addEventListener("click", () => {
        return fetchComments();               
     })
     .then(() => {
-        // Включаем input-форму
-        document.getElementById('form-id').style.display = 'flex';
+        // Скрыть текст "Добавляю твой комментарий..." и показать форму добавления комментария
+        hideAddingCommentMessage();
+        document.getElementById('form-id').style.display = 'flex'; // Показать форму добавления комментария
+    })
+    .then(() => {
+        // Очищаем поля ввода после отправки комментария
+        nameInputElement.value = "";
+        textInputElement.value = "";
     });
-
-    // Очищаем поля ввода после отправки комментария
-    nameInputElement.value = "";
-    textInputElement.value = "";
+    
 });
