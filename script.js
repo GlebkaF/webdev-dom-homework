@@ -76,7 +76,7 @@ commentListElement.textContent = 'Загружаю список коммента
 
 // Определяем функцию fetchComments, которая отправляет GET-запрос для получения комментариев из сервера
 const fetchComments = () => {
-    fetch("https://wedev-api.sky.pro/api/v1/aleksey-poplaukhin/comments", {
+    return fetch("https://wedev-api.sky.pro/api/v1/aleksey-poplaukhin/comments", {
         method: "GET"
     })
     .then((response) => {
@@ -124,8 +124,7 @@ buttonElement.addEventListener("click", () => {
     }
 
     // Добавляем лоадер на пост комментария с отключением input-формы
-    document.getElementById('form-id').disabled = true;
-    document.getElementById('form-id').textContent = 'Добавляю твой комментарий...'
+    document.getElementById('form-id').style.display = 'none';
     
     // Отправляем POST-запрос для добавления нового комментария
     fetch("https://wedev-api.sky.pro/api/v1/aleksey-poplaukhin/comments", {
@@ -141,7 +140,7 @@ buttonElement.addEventListener("click", () => {
     })
     .then(() => {
         // Включаем input-форму
-        document.getElementById('form-id').disabled = false; 
+        document.getElementById('form-id').style.display = 'flex';
     });
 
     // Очищаем поля ввода после отправки комментария
