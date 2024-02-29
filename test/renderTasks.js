@@ -1,41 +1,41 @@
 // Модуль renderTasks.js
-import { deleteTodo, postTodo } from "./api.js";
-import { fetchAndRenderTasks } from "./main.js";
-import { renderAuth } from "./renderAuth.js";
+import { deleteTodo, postTodo } from './api.js'
+import { fetchAndRenderTasks } from './main.js'
+import { renderAuth } from './renderAuth.js'
 
-const container = document.getElementById("container");
-let formAddComment;
-let blockAuth;
-let blockDelete;
+const container = document.getElementById('container')
+let formAddComment
+let blockAuth
+let blockDelete
 
 export const renderTasks = ({ tasks, fetchAndRenderTasks, authUser }) => {
-  if (authUser) {
-    blockDelete = "block";
-  } else {
-    blockDelete = "none";
-  }
+    if (authUser) {
+        blockDelete = 'block'
+    } else {
+        blockDelete = 'none'
+    }
 
-  const tasksHtml = tasks
-    .map((task) => {
-      return `
+    const tasksHtml = tasks
+        .map((task) => {
+            return `
       <li class="task">
         <p class="task-text">
           ${task.text}
           <button data-id="${task.id}" class="button delete-button" style="display: ${blockDelete};">Удалить</button>
         </p>
-      </li>`;
-    })
-    .join("");
+      </li>`
+        })
+        .join('')
 
-  if (authUser) {
-    formAddComment = "block";
-    blockAuth = "none";
-  } else {
-    formAddComment = "none";
-    blockAuth = "block";
-  }
+    if (authUser) {
+        formAddComment = 'block'
+        blockAuth = 'none'
+    } else {
+        formAddComment = 'none'
+        blockAuth = 'block'
+    }
 
-  const commentHtml = `
+    const commentHtml = `
         <h1>Список задач</h1>
         <ul class="tasks" id="list">${tasksHtml}</ul>
         <br />
@@ -57,45 +57,45 @@ export const renderTasks = ({ tasks, fetchAndRenderTasks, authUser }) => {
             <p>Добавлять комментарии могут только авторизованные пользователи</p>
             <button id="link-to-auth">Авторизоваться</button>
         </div>
-    `;
+    `
 
-  container.innerHTML = commentHtml;
+    container.innerHTML = commentHtml
 
-  const deleteButtons = document.querySelectorAll(".delete-button");
-  const buttonElement = document.getElementById("add-button");
-  const textInputElement = document.getElementById("text-input");
-  const buttonAuth = document.getElementById("link-to-auth");
+    const deleteButtons = document.querySelectorAll('.delete-button')
+    const buttonElement = document.getElementById('add-button')
+    const textInputElement = document.getElementById('text-input')
+    const buttonAuth = document.getElementById('link-to-auth')
 
-  for (const deleteButton of deleteButtons) {
-    deleteButton.addEventListener("click", (event) => {
-      event.stopPropagation();
+    for (const deleteButton of deleteButtons) {
+        deleteButton.addEventListener('click', (event) => {
+            event.stopPropagation()
 
-      const id = deleteButton.dataset.id;
+            const id = deleteButton.dataset.id
 
-      deleteTodo({ id }).then(() => {
-        fetchAndRenderTasks();
-      });
-    });
-  }
-
-  buttonElement.addEventListener("click", () => {
-    if (textInputElement.value === "") {
-      return;
+            deleteTodo({ id }).then(() => {
+                fetchAndRenderTasks()
+            })
+        })
     }
 
-    console.log(buttonElement);
-    buttonElement.disabled = true;
-    buttonElement.textContent = "Элемент добавляется...";
+    buttonElement.addEventListener('click', () => {
+        if (textInputElement.value === '') {
+            return
+        }
 
-    postTodo({
-      name: "Pavel",
-      text: textInputElement.value,
-    }).then(() => {
-      return fetchAndRenderTasks();
-    });
-  });
+        console.log(buttonElement)
+        buttonElement.disabled = true
+        buttonElement.textContent = 'Элемент добавляется...'
 
-  buttonAuth.addEventListener("click", () => {
-    renderAuth();
-  });
-};
+        postTodo({
+            name: 'Pavel',
+            text: textInputElement.value,
+        }).then(() => {
+            return fetchAndRenderTasks()
+        })
+    })
+
+    buttonAuth.addEventListener('click', () => {
+        renderAuth()
+    })
+}

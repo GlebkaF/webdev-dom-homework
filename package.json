@@ -1,26 +1,29 @@
 {
-  "name": "webdev-dom-homework",
-  "version": "1.0.0",
-  "description": "https://glebkaf.github.io/webdev-dom-homework/",
-  "main": "main.js",
-  "directories": {
-    "lib": "lib",
-    "test": "test"
-  },
-  "scripts": {
-    "dev": "webpack --mode development --watch"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "date-fns": "^3.3.1",
-    "lodash": "^4.17.21"
-  },
-  "devDependencies": {
-    "eslint": "^8.57.0",
-    "eslint-plugin-react": "^7.33.2",
-    "prettier": "3.2.5",
-    "webpack": "^5.90.3",
-    "webpack-cli": "^5.1.4"
-  }
+    "name": "webdev-dom-homework",
+    "version": "1.0.0",
+    "description": "https://glebkaf.github.io/webdev-dom-homework/",
+    "main": "main.js",
+    "directories": {
+        "lib": "lib",
+        "test": "test"
+    },
+    "scripts": {
+        "dev": "webpack --mode development --watch",
+        "format": "prettier --write ./test/npm install --save-dev eslint-plugin-prettier eslint-config-prettier",
+        "prepare": "husky install"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "date-fns": "^3.3.1",
+        "husky": "^9.0.11",
+        "lodash": "^4.17.21"
+    },
+    "devDependencies": {
+        "eslint": "^8.57.0",
+        "eslint-plugin-react": "^7.33.2",
+        "prettier": "3.2.5",
+        "webpack": "^5.90.3",
+        "webpack-cli": "^5.1.4"
+    }
 }

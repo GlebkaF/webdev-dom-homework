@@ -1,9 +1,9 @@
-import { auth, getToken, token, userName } from "./api.js";
+import { auth, getToken, token } from './api.js'
 
 export const renderLogin = ({ mapData }) => {
-  const container = document.getElementById("app");
-  const authComment = document.getElementById("auth-comment");
-  const loginHtml = `
+    const container = document.getElementById('app')
+    const authComment = document.getElementById('auth-comment')
+    const loginHtml = `
     <div class="container">
       <div class="login-form mrgn-btm-20" id="forma">
         <input
@@ -27,34 +27,34 @@ export const renderLogin = ({ mapData }) => {
       </div>
       <!--<a href="" style="color: white;">Зарегистрироваться</a>-->
     </div>
-    `;
+    `
 
-  container.innerHTML = loginHtml;
-  authComment.innerHTML = "";
+    container.innerHTML = loginHtml
+    authComment.innerHTML = ''
 
-  const buttonElement = document.getElementById("login-form-button");
-  const loginInput = document.getElementById("form-login");
-  const passInput = document.getElementById("form-password");
+    const buttonElement = document.getElementById('login-form-button')
+    const loginInput = document.getElementById('form-login')
+    const passInput = document.getElementById('form-password')
 
-  buttonElement.addEventListener("click", () => {
-    auth({
-      login: loginInput.value,
-      password: passInput.value,
+    buttonElement.addEventListener('click', () => {
+        auth({
+            login: loginInput.value,
+            password: passInput.value,
+        })
+            .then((responseData) => {
+                console.log(responseData)
+                getToken(responseData.user.token, responseData.user.name)
+                //setUserName(responseData.user.name);
+                console.log(token)
+                //console.log(userName);
+            })
+            .then(() => {
+                mapData()
+            })
+            .catch((error) => {
+                if (error.message === 'Неверные имя или пароль') {
+                    alert('Такого пользователя не существет :(')
+                }
+            })
     })
-      .then((responseData) => {
-        console.log(responseData);
-        getToken(responseData.user.token, responseData.user.name);
-        //setUserName(responseData.user.name);
-        console.log(token);
-        //console.log(userName);
-      })
-      .then(() => {
-        mapData();
-      })
-      .catch((error) => {
-        if (error.message === "Неверные имя или пароль") {
-          alert("Такого пользователя не существет :(");
-        }
-      });
-  });
-};
+}
