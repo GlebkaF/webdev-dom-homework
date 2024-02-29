@@ -58,23 +58,23 @@
   <script>
     "use strict";
 
-    const comments = [
-      {
-        id: 0,
-        name: "Глеб Фокин",
-        text: "Это будет первый комментарий на этой странице",
-        isLiked: true,
-        likes: 3,
-        pushedTime: "12.02.22 12:18",
-      },
-      {
-        id: 1,
-        name: "Варвара Н.",
-        text: " Мне нравится как оформлена эта страница! ❤",
-        isLiked: false,
-        likes: 75,
-        pushedTime: "13.02.22 19:22",
-      },
+    let comments = [
+      // {
+      //   id: 0,
+      //   name: "Глеб Фокин",
+      //   text: "Это будет первый комментарий на этой странице",
+      //   isLiked: true,
+      //   likes: 3,
+      //   pushedTime: "12.02.22 12:18",
+      // },
+      // {
+      //   id: 1,
+      //   name: "Варвара Н.",
+      //   text: " Мне нравится как оформлена эта страница! ❤",
+      //   isLiked: false,
+      //   likes: 75,
+      //   pushedTime: "13.02.22 19:22",
+      // },
     ];
 
     const addForm = document.querySelector(".add-form");
@@ -112,6 +112,39 @@
       inputText.value = "";
     }
 
+    function getCommets() {
+      const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/lida-merzhoeva/comments", {
+        method: "GET",
+      }).then((response) => {
+        const jsonPromise = response.json();
+        jsonPromise.then((responseData) => {
+          const commentItem = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              data: new Date(comment.date)
+                .toLocaleString("ru-RU", {
+                  year: "2-digit",
+                  month: "2-digit",
+                  day: "2-digit",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: false,
+                })
+                .replace(",", " "),
+              comment: comment.text,
+              likes: comment.likes,
+              isLiked: false,
+            }
+          })
+          comments = commentItem;
+          renderCommentsList()
+        });
+      });
+    }
+    getCommets()
+
+
+
     const renderCommentsList = () => {
       let newList = "";
 
@@ -121,12 +154,12 @@
           `<li class="comment">
       <div class="comment-header">
         <div>${comments[i].name.replace('<', '&lt;').replace('>', '&gt;').replace('/', '&sol;')}</div>
-        <div>${comments[i].pushedTime}</div>
+        <div>${comments[i].data}</div>
       </div>
 
       <div class="comment-body">
         <div class="comment-text">
-          ${comments[i].text.replace('<', '&lt;').replace('>', '&gt;').replace('/', '&sol;')}
+          ${comments[i].comment}
         </div>
       </div>
       <div class="comment-footer">
@@ -150,6 +183,7 @@
       };
     }
     renderCommentsList();
+
 
     const isNotEmpty = () =>
       inputName.value.trim() === "" || inputText.value.trim() === "";
@@ -178,9 +212,22 @@
         exceptErrorInUI();
         setTimeout(cleanErorrsInUI, 2000);
       } else {
-        addComment();
+        // addComment();
+        fetch("https://wedev-api.sky.pro/api/v1/lida-merzhoeva/comments", {
+          method: 'POST',
+          body: JSON.stringify({
+            name: inputName.value,
+            text: inputText.value,
+
+          })
+        }).then(() => {
+          getCommets(),
+            inputName.value = " "
+          inputText.value = " "
+        })
       }
     });
+
 
     const clickEvent = new MouseEvent("click", {
       view: window,
@@ -195,13 +242,10 @@
     });
 
     deleteBtn.addEventListener("click", () => {
-      const com = ulList.innerHTML;
-      let lastIndex = com.lastIndexOf(`< li class="comment" >`);
-      if (lastIndex !== -1) {
-        const deleteCom = com.substring(0, lastIndex);
-        ulList.innerHTML = deleteCom;
-      }
+      comments.pop();
+      renderCommentsList();
     });
+
 
     const likes = () => { };
 
