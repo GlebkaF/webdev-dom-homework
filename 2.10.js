@@ -5,9 +5,6 @@ const nameInputElement = document.getElementById('name-input');
 const commentInputElement = document.getElementById('comment-input');
 
 // Получениe комментов с сервера
-
-
-
 function getComments() {
   fetch(
     'https://wedev-api.sky.pro/api/v1/rustam-kholov/comments',
@@ -131,7 +128,6 @@ function removeValidation() {
     commentInputElement.classList.remove('error')
   });
 };
-
 removeValidation();
 
 // Добавление нового коммента на сервер 
