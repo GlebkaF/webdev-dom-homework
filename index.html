@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="commet-script" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -29,7 +29,7 @@
         <li class="comment">
           <div class="comment-header">
             <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
+            <div id="new-time">13.02.22 19:22</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -45,19 +45,20 @@
         </li>
       </ul>
       <div class="add-form">
-        <input
+        <input id="input-accept-name"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
-        <textarea
+        <textarea id="textarea-accept-comment"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="add-button" class="add-form-button">Написать</button>
+					<button id="delete-button" class="add-form-button">Удалить</button>
         </div>
       </div>
     </div>
@@ -65,7 +66,79 @@
 
   <script>
     "use strict";
-    // Код писать здесь
-    console.log("It works!");
+		// Объявляю константы для хранения данных
+		const buttonElement = document.getElementById('add-button');
+		const listElement = document.getElementById('commet-script');
+		const acceptName = document.getElementById('input-accept-name');
+		const acceptComment = document.getElementById('textarea-accept-comment');
+		const buttonDelete =  document.getElementById('delete-button');
+		// const newTimeDate = document.getElementById('new-time');
+		
+		// Ставлю время
+		const currentDate = new Date();
+		const formattedDate = currentDate.toLocaleDateString('ru-RU');
+		const formattedTime = `${currentDate.getHours().toString().padStart(2, '0')}:${currentDate.getMinutes().toString().padStart(2, '0')}`;
+			
+		// Делаю доп.задание отправляю коммент по нажатию клавиши
+		document.addEventListener('keydown', function(e) {
+				if (e.key === 'Enter') {
+					buttonElement.click();
+				}
+			})
+
+			// Доп. задание - делаю кнопку неактивной при незаполненом поле
+		function checkInputs() {
+		if (acceptName.value.trim() === "" || acceptComment.value.trim() === "") {
+			buttonElement.disabled = true;
+			buttonElement.classList.add("gray");
+		} else {
+			buttonElement.disabled = false;
+			buttonElement.classList.remove("gray");
+		}
+}
+		acceptName.addEventListener("input", checkInputs);
+		acceptComment.addEventListener("input", checkInputs);
+		checkInputs()
+
+		// Доп. задание - добавляю кнопку удалить и пишу её функционал
+	buttonDelete.addEventListener('click', () => {
+		const lastIndex = listElement.innerHTML.lastIndexOf('<li class="comment">');
+			if (lastIndex !== -1) {
+			listElement.innerHTML = listElement.innerHTML.substring(0, lastIndex);
+		}
+	})
+
+	// Добавляю красный фоновый цвет при незаполненом поле (Эта функция оказывается бессмысленной после создания неактивной кнопки)
+	// Так же делаю основной функционал добавления комментария 
+		buttonElement.addEventListener('click', () => {
+			acceptComment.classList.remove("error");
+			acceptName.classList.remove("error");
+			if (acceptName.value === "" || acceptComment.value === "") {
+        acceptName.classList.add("error");
+				acceptComment.classList.add("error");
+        return;
+      }
+
+			const oldlist = listElement.innerHTML;
+			
+			listElement.innerHTML = oldlist + `<li class="comment">
+          <div class="comment-header">
+            ${acceptName.value}
+            <div>${formattedDate}  ${formattedTime}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${acceptComment.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+		})
+		
   </script>
 </html>
