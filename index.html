@@ -9,7 +9,8 @@
   <body>
     <div class="container">
       <ul id="list" class="comments">
-        <li class="comment">
+        <!-- Список ренедрится из JS -->
+        <!-- <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -22,7 +23,7 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">3</span>
-              <button class="like-button"></button>
+              <button class="like-button -active-like"></button>
             </div>
           </div>
         </li>
@@ -42,7 +43,7 @@
               <button class="like-button -active-like"></button>
             </div>
           </div>
-        </li>
+        </li> -->
       </ul>
       <div class="add-form" id="form">
         <input 
@@ -84,8 +85,6 @@
     const nameElement = document.getElementById ('name-input');
     const textElement = document.getElementById ('text-input');
     const buttonElement = document.getElementById ('add-button');
-    const deleteElement = document.getElementById ('deleteComment');
-    let currentDate = new Date();
 
     // buttonElement.disabled = true;
     // function input() {
@@ -101,6 +100,76 @@
     // textElement.addEventListener("input" , input);
 
     // Вопрос по валидации. Если мы пишем функцию на активность кнопки и подсвечивание серым, тогда как проверять пустые строки цветом?
+    
+    let currentDate = new Date();
+    function formatTime(currentDate){
+  
+      const date = currentDate.getDate().toString().padStart(2, "0");
+      const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
+      const year = currentDate.getFullYear().toString().substr(2,2);
+  
+      const h = currentDate.getHours().toString().padStart(2, "0");
+      const m = currentDate.getMinutes().toString().padStart(2, "0");
+
+      return `${date}.${month}.${year} ${h}:${m}`
+    }
+
+    const сommentators = [
+      {
+        name : "Глеб Фокин",
+        date : "12.02.22 12:18",
+        comment : "Это будет первый комментарий на этой странице",
+        likes : 3,
+      },
+      {
+        name : "Варвара Н.",
+        date : "13.02.22 19:22",
+        comment : "Мне нравится как оформлена эта страница! ❤",
+        likes : 75,
+      },
+    ];
+
+    const renderCommentators = () => {
+      const commentatorsHtml = сommentators.map((сommentator) => {
+        return `<li class="comment">
+           <div class="comment-header">
+            <div>${сommentators.name}</div>
+            <div>${сommentators.date}</div>
+           </div>
+           <div class="comment-body">
+           <div class="comment-text">${сommentators.comment}</div>
+           </div>
+           <div class="comment-footer">
+            <div class="likes">
+             <span class="likes-counter">${сommentators.likes}</span>
+             <button class="like-button"></button>
+            </div>
+           </div>
+        </li>`
+      })
+      .join('');
+
+      listElement.innerHTML = commentatorsHtml;
+    };
+
+    сommentators.push({
+      name : nameElement.value,
+      date : formatTime(currentDate),
+      comment : textElement.value,
+      likes : 0,
+    });
+
+    renderCommentators();
+    
+    const initEventListeners = () => {
+      const likeButtonElement = document.querySelectorAll(".like-button");
+      for ( const likeButtonEl of likeButtonElement) {
+       likeButtonEl.addEventListener("click", () => {
+        console.log(likeButtonEl.innerHTML);
+       });
+      };
+    };
+    initEventListeners();
 
     buttonElement.addEventListener("click", () => {
       nameElement.classList.remove("error");
@@ -114,26 +183,29 @@
         textElement.classList.add("error");
         return;
       };
-    
-     const oldListHtml = listElement.innerHTML;
-     listElement.innerHTML = oldListHtml +
-      `<li class="comment">
-        <div class="comment-header">
-         <div>${nameElement.value}</div>
-         <div>${currentDate.toLocaleDateString() + " " + currentDate.getHours() + ":" + currentDate.getMinutes()}</div>
-       </div>
-       <div class="comment-body">
-         <div class="comment-text">
-           ${textElement.value}
-         </div>
-       </div>
-       <div class="comment-footer">
-         <div class="likes">
-           <span class="likes-counter">0</span>
-           <button class="like-button -active-like"></button>
-         </div>
-       </div>
-      </li>` 
+      
+      const oldListHtml = listElement.innerHTML;
+      listElement.innerHTML = oldListHtml +
+       `<li class="comment">
+         <div class="comment-header">
+          <div>${nameElement.value}</div>
+          <div>${formatTime(currentDate)}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${textElement.value}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">0</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+       </li>` 
+
+       initEventListeners();
+
       nameElement.value = "";
       textElement.value = "";
     });
@@ -146,14 +218,19 @@
       buttonElement.dispatchEvent(new Event('click'));
      }
     };
+
+
+    const removeButton = document.getElementById("deleteComment");
     
-    const allComments = document.querySelector('#list').querySelectorAll('.comment');
-    const lastElement = allComments.length -1;
-    // allComments[lastElement].remove();
-    
-    deleteElement.addEventListener("click", () => {
-      allComments[lastElement].remove();
-    });
+    removeButton.addEventListener("click", removeItem);
+
+    function removeItem() {
+      let list=document.getElementById("list");
+      let listItems = list.getElementsByTagName("li");
+
+      let last=listItems[listItems.length-1];
+      list.removeChild(last);
+    };
 
     console.log("It works!");
   </script>
