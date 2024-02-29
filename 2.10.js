@@ -4,32 +4,40 @@ const listElement = document.getElementById('list');
 const nameInputElement = document.getElementById('name-input');
 const commentInputElement = document.getElementById('comment-input');
 
-// Получения комментов с сервера
-fetch(
-  'https://wedev-api.sky.pro/api/v1/rustam-kholov/comments',
-  {
-    method: "GET"
-  }
-).then((response) => {
+// Получениe комментов с сервера
 
-  response.json().then((responseData) => {
 
-    const appComments = responseData.comments.map((comment) => {
 
-      return {
-        name: comment.author.name,
-        date: new Date(comment.date).toLocaleDateString('ru-RU', { year: '2-digit', month: '2-digit', day: '2-digit' }) + ' ' + new Date(comment.date).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-        comment: comment.text,
-        likesCounter: comment.likes,
-        isLiked: false,
-      };
-
+function getComments() {
+  fetch(
+    'https://wedev-api.sky.pro/api/v1/rustam-kholov/comments',
+    {
+      method: "GET"
+    }
+  ).then((response) => {
+  
+    response.json().then((responseData) => {
+  
+      const appComments = responseData.comments.map((comment) => {
+  
+        return {
+          name: comment.author.name,
+          date: new Date(comment.date).toLocaleDateString('ru-RU', { year: '2-digit', month: '2-digit', day: '2-digit' }) + ' ' + new Date(comment.date).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+          comment: comment.text,
+          likesCounter: comment.likes,
+          isLiked: false,
+        };
+  
+      });
+  
+      comments = appComments;
+      renderComments();
     });
-
-    comments = appComments;
-    renderComments();
   });
-});
+}
+
+getComments();
+  
 
 //  Массив для комментов 
 let comments = [];
@@ -61,6 +69,7 @@ const renderComments = () => {
 
   initLikeButtonListeners();
   reply();
+  removeValidation();
 };
 
 
@@ -145,28 +154,10 @@ addButtonElement.addEventListener('click', () => {
         text: commentInputElement.value,
       })
     }
-  ).then((response) => {
-
-    response.json().then((responseData) => {
-
-      const appComments = responseData.comments.map((comment) => {
-
-        return {
-          name: comment.author.name,
-          date: new Date(comment.date).toLocaleDateString('ru-RU', { year: '2-digit', month: '2-digit', day: '2-digit' }) + ' ' + new Date(comment.date).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-          comment: comment.text,
-          likesCounter: comment.likes,
-          isLiked: false,
-        };
-      });
-
-      comments = appComments;
-      renderComments();
-    });
+  ).then(() => {
+    getComments();
+    nameInputElement.value = '';
+    commentInputElement.value = '';
+    renderComments();
   });
-
-  renderComments();
-
-  nameInputElement.value = '';
-  commentInputElement.value = '';
 });
