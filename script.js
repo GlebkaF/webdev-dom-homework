@@ -1,6 +1,6 @@
 // Определяем функцию для очистки и защиты HTML-строк
 const sanitizeHtml = (htmlString) => {
-    return htmlString.replaceAll("<", "&lt").replaceAll(">", "&gt");
+    return htmlString.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 }
 
 // Создаем массив, куда будем помещать данные, полученные из API
@@ -137,7 +137,11 @@ buttonElement.addEventListener("click", () => {
     })
     .then(() => {
         // Получаем обновленный список комментариев, вызвав функцию fetchComments после успешного POST-запроса
-        fetchComments();        
+       return fetchComments();               
+    })
+    .then(() => {
+        // Включаем input-форму
+        document.getElementById('form-id').disabled = false; 
     });
 
     // Очищаем поля ввода после отправки комментария
