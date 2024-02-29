@@ -116,7 +116,7 @@ buttonAdd.addEventListener("click", () => {
     textElement.classList.remove("error");
     buttonAdd.classList.remove("error-for-button");
 
-    let regexp = new RegExp('^[а-яa-zА-ЯA-Z]');
+    let regexp = new RegExp('^[а-яa-zА-ЯA-Z↪️]');
 
     if (nameElement.value === "" || textElement.value === "" || !regexp.test(nameElement.value) || !regexp.test(textElement.value)) {
         nameElement.classList.add("error");
