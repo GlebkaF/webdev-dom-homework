@@ -10,40 +10,7 @@
 <body>
   <div class="container">
     <ul class="comments" id="list">
-      <!-- <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li> -->
+      <!-- Список рендерится из JS -->
     </ul>
     <div class="add-form">
       <input id="name-input" type="text" value="" class="add-form-name" placeholder="Введите ваше имя" />
@@ -81,24 +48,15 @@
     },
   ];
 
-  // function clock() {
-  //   let currentDate = new Date().toLocaleDateString([], { day: "2-digit", month: "2-digit", year: "2-digit" }) + " " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  //   return currentDate;
-  // };
-
   const renderUsers = () => {
-    const usersHtml = users
-      .map((user, index) => {
-        return
-        `<li class="comment"> 
+    const usersHtml = users.map((user, index) =>
+      `<li class="comment"> 
           <div class="comment-header"> 
             <div>${user.name}</div> 
             <div>${user.date}</div> 
           </div> 
           <div data-text="${user.comment}" class="comment-body"> 
-            <div class="comment-text"> 
-              ${user.comment} 
-            </div> 
+            <div class="comment-text">${user.comment}</div> 
           </div> 
           <div class="comment-footer"> 
             <div class="likes"> 
@@ -106,49 +64,45 @@
               <button data-like="${user.likes}" data-index="${index}" class="like-button" ${users[index].isLiked ? '-active-like' : 'like-button'}"></button> 
             </div> 
           </div> 
-        </li>`;
-      })
+        </li>`
+    )
       .join('');
 
     listElement.innerHTML = usersHtml;
 
-    // initLikeButtonListeners();
-    // updateValue();
-  };
+    const initLikeButtonListeners = () => {
+      const buttonElements = document.querySelectorAll('.like-button');
 
-  renderUsers();
+      for (const buttonElement of buttonElements) {
 
-  const initLikeButtonListeners = () => {
-    const buttonElements = document.querySelectorAll('.like-button');
+        const index = buttonElement.dataset.index;
+        const counter = buttonElement.dataset.like;
 
-    for (const buttonElement of buttonElements) {
+        buttonElement.addEventListener('click', (e) => {
+          e.stopPropagation();
 
-      const index = buttonElement.dataset.index;
-      const counter = buttonElement.dataset.like;
+          if (users[index].isLiked === false) {
 
-      buttonElement.addEventListener('click', (e) => {
-        e.stopPropagation();
+            const result = Number(counter) + 1;
+            users[index].likes = result;
 
-        if (users[index].isLiked === false) {
+            users[index].isLiked = true;
+          } else if (users[index].isLiked === true) {
 
-          const result = Number(counter) + 1;
-          users[index].likes = result;
+            const result = Number(counter) - 1;
+            users[index].likes = result;
 
-          users[index].isLiked = true;
-        } else if (users[index].isLiked === true) {
+            users[index].isLiked = false;
+          }
 
-          const result = Number(counter) - 1;
-          users[index].likes = result;
-
-          users[index].isLiked = false;
-        }
-
-        renderUsers();
-      });
+          renderUsers();
+        });
+      };
     };
-  };
 
-  renderUsers();
+    initLikeButtonListeners();
+    updateValue();
+  };
 
   buttonElement.disabled = true;
   nameInputElement.addEventListener('input', updateValue);
@@ -218,32 +172,6 @@
     nameInputElement.value = '';
     textInputElement.value = '';
   });
-
-  // let oldComments = commentsElement.innerHTML;
-  // commentsElement.innerHTML = oldComments +
-  //   `<li class="comment"> 
-  //       <div class="comment-header"> 
-  //         <div>${nameInputElement.value}</div> 
-  //         <div>${clock()}</div> 
-  //       </div> 
-  //       <div class="comment-body"> 
-  //         <div class="comment-text"> 
-  //           ${textInputElement.value} 
-  //         </div> 
-  //       </div> 
-  //       <div class="comment-footer"> 
-  //         <div class="likes"> 
-  //           <span class="likes-counter">0</span> 
-  //           <button class="like-button"></button> 
-  //         </div> 
-  //       </div> 
-  //     </li>`;
-
-  //   nameInputElement.value = '';
-  //   textInputElement.value = ''; 
-  // });
-
-
 
   console.log("It works!");
 </script>
