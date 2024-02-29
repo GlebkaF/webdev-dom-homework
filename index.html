@@ -49,8 +49,9 @@
   ];
 
   const renderUsers = () => {
-    const usersHtml = users.map((user, index) =>
-      `<li class="comment"> 
+    const usersHtml = users
+      .map((user, index) =>
+        `<li class="comment"> 
           <div class="comment-header"> 
             <div>${user.name}</div> 
             <div>${user.date}</div> 
@@ -61,48 +62,48 @@
           <div class="comment-footer"> 
             <div class="likes"> 
               <span class="likes-counter">${user.likes}</span> 
-              <button data-like="${user.likes}" data-index="${index}" class="like-button" ${users[index].isLiked ? '-active-like' : 'like-button'}"></button> 
+              <button data-like="${user.likes}" data-index="${index}" class="like-button ${users[index].isLiked ? '-active-like' : 'like-button'}"></button> 
             </div> 
           </div> 
         </li>`
-    )
+      )
       .join('');
 
     listElement.innerHTML = usersHtml;
 
-    const initLikeButtonListeners = () => {
-      const buttonElements = document.querySelectorAll('.like-button');
-
-      for (const buttonElement of buttonElements) {
-
-        const index = buttonElement.dataset.index;
-        const counter = buttonElement.dataset.like;
-
-        buttonElement.addEventListener('click', (e) => {
-          e.stopPropagation();
-
-          if (users[index].isLiked === false) {
-
-            const result = Number(counter) + 1;
-            users[index].likes = result;
-
-            users[index].isLiked = true;
-          } else if (users[index].isLiked === true) {
-
-            const result = Number(counter) - 1;
-            users[index].likes = result;
-
-            users[index].isLiked = false;
-          }
-
-          renderUsers();
-        });
-      };
-    };
-
     initLikeButtonListeners();
-    updateValue();
   };
+
+  const initLikeButtonListeners = () => {
+    const buttonElements = document.querySelectorAll('.like-button');
+
+    for (const buttonElement of buttonElements) {
+
+      const index = buttonElement.dataset.index;
+      const counter = buttonElement.dataset.like;
+
+      buttonElement.addEventListener('click', () => {
+
+        if (users[index].isLiked === false) {
+
+          const result = Number(counter) + 1;
+          users[index].likes = result;
+
+          users[index].isLiked = true;
+        } else if (users[index].isLiked === true) {
+
+          const result = Number(counter) - 1;
+          users[index].likes = result;
+
+          users[index].isLiked = false;
+        }
+
+        renderUsers();
+      });
+    };
+  };
+
+  renderUsers();
 
   buttonElement.disabled = true;
   nameInputElement.addEventListener('input', updateValue);
@@ -116,6 +117,7 @@
     }
   }
 
+  updateValue();
   renderUsers();
 
   nameInputElement.addEventListener('keyup', keyEvent);
@@ -130,6 +132,7 @@
   buttonElement.addEventListener('click', () => {
     nameInputElement.classList.remove('error');
     textInputElement.classList.remove('error');
+    buttonElement.classList.remove('add-form-button-inactive');
 
     if (nameInputElement.value === '' || !nameInputElement.value.trim()) {
       nameInputElement.classList.add('error');
@@ -141,7 +144,7 @@
       textInputElement.classList.add('error');
       buttonElement.classList.add('add-form-button-inactive');
       return;
-    }
+    };
 
     const date = new Date();
     const options = {
@@ -156,17 +159,13 @@
 
     const dateTime = `${date.toLocaleDateString('ru-RU', options)} ${date.toLocaleTimeString('ru-RU', optionsTime)}`;
 
-    const sanitizeHtml = (htmlString) => {
-      return htmlString.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-    };
-
     users.push({
-      name: sanitizeHtml(nameInputElement.value),
+      name: nameInputElement.value,
       date: dateTime,
-      comment: sanitizeHtml(textInputElement.value),
+      comment: textInputElement.value,
       likes: 0,
       isLiked: false,
-    })
+    });
 
     renderUsers();
     nameInputElement.value = '';
