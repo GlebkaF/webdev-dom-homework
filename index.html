@@ -143,23 +143,6 @@
       commentInputElement.classList.add("error");
       return;
     }
-
-    // Ответ на комментарий
-    const commentsElementListeners = () => {
-      const commentsElement = document.querySelectorAll('.comment-text');
-
-      for (const commentText of commentsElement) {
-        commentText.addEventListener('click', (event) => {
-          event.preventDefault();
-          const index = commentText.dataset.index;
-          const comment = `> ${comments[index].comment}: ${comments[index].name}`;
-          addTextElement.value = comment;
-          renderComments();
-
-        });
-      }
-    }
-
     // Дата и время
     const currentDate =
       new Date().toLocaleDateString("default", {
