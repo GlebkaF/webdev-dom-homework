@@ -9,48 +9,17 @@
   <body>
     <div class="container">
       <ul id="list" class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+        <!-- Список рендерится в JS -->
       </ul>
       <div class="add-form">
-        <input id="name-input"
+        <input
+          id="name-input"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
-        <textarea id="comment-input"
+        <textarea
+          id="comment-input"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
@@ -65,30 +34,81 @@
 
   <script>
     "use strict";
-    
+
     //Поиск элементов
     const buttonElement = document.getElementById("button");
     const nameInputElement = document.getElementById("name-input");
     const commentInputElement = document.getElementById("comment-input");
     const listElement = document.getElementById("list");
 
-    //Создаю объекты для работы с датой
-    let myDate = new Date();
-    let date = myDate.getDate();
-    let month = myDate.getMonth();
-    let year = myDate.getFullYear();
-    let hours = myDate.getHours();
-    let minutes = myDate.getMinutes();
+    const comments = [
+      {
+        name: "Глеб Фокин",
+        date: "12.02.22 12:18",
+        text: "Это будет первый комментарий на этой странице",
+        like: false,
+        numLike: 3,
+      },
+      {
+        name: "Варвара Н.",
+        date: "13.02.22 19:22",
+        text: "Мне нравится как оформлена эта страница! ❤",
+        like: true,
+        numLike: 75,
+      },
+    ];
 
-    //Если в дате, месяце, часах и минутах будут числа меньше 10, добавлять к ним 0 в начале
-    date = date < 10 ? '0' + date : date;
-    month = month < 10 ? '0' + month : month;
-    hours = hours < 10 ? '0' + hours : hours;
-    minutes = minutes < 10 ? '0' + minutes : minutes;
+    const renderComments = () => {
+      const commentsHtml = comments
+        .map((comment, index) => {
+          return `<li class="comment">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.numLike}</span>
+              <button data-index="${index}" class="${
+            comment.like ? "like-button -active-like" : "like-button"
+          }"></button>
+            </div>
+          </div>
+        </li>`;
+        })
+        .join("");
 
-    //Создаю объект, который включает в себя формат "день.месяц.год(последние две цифры) часы:минуты"
-    const dateElement = date + '.' + month + '.' + year.toString().slice(2) + ' ' + hours + ':' + minutes;
-    
+      listElement.innerHTML = commentsHtml;
+
+      initLikeButtons();
+    };
+
+    const initLikeButtons = () => {
+      const likeButtons = document.querySelectorAll(".like-button");
+
+      for (const likeButton of likeButtons) {
+        likeButton.addEventListener("click", () => {
+          const index = likeButton.dataset.index;
+
+          if (comments[index].like === false) {
+            comments[index].like = true;
+            comments[index].numLike++; //comments[index].numLike + 1;
+          } else {
+            comments[index].like = false;
+            comments[index].numLike--; //comments[index].numLike - 1;
+          }
+          renderComments();
+        });
+      }
+    };
+
+    renderComments();
+
     // //Расширенная валидация, чтобы кнопка "написать" изначально не была активна и была серой
     // buttonElement.disabled = true;
     // buttonElement.classList.add("error-button");
@@ -110,56 +130,71 @@
     //   } else {
     //     buttonElement.disabled = false;
     //     buttonElement.classList.remove("error-button");
-    //   } 
+    //   }
     // });
+
+    
 
     //Добавил обработчик событий на button
     buttonElement.addEventListener("click", () => {
-      
-      //Сброс валидации при кадом нажатии, чтобы импуты не оставались красными, после того как чел ошибся и потом исправил 
-      nameInputElement.classList.remove("error")
-      commentInputElement.classList.remove("error")
+      //Сброс валидации при кадом нажатии, чтобы импуты не оставались красными, после того как чел ошибся и потом исправил
+      nameInputElement.classList.remove("error");
+      commentInputElement.classList.remove("error");
       //Сделал валидацию при нажатии на кнопку, чтобы выдавало ошибку если не введен любой из элементов (name и comment, только name, только comment)
-      if (nameInputElement.value === '' && commentInputElement.value === '') {
+      if (nameInputElement.value === "" && commentInputElement.value === "") {
         nameInputElement.classList.add("error");
         commentInputElement.classList.add("error");
-        return
-      } else if (nameInputElement.value === '') {
+        return;
+      } else if (nameInputElement.value === "") {
         nameInputElement.classList.add("error");
-        return
-      } else if (commentInputElement.value === '') {
+        return;
+      } else if (commentInputElement.value === "") {
         commentInputElement.classList.add("error");
-        return
+        return;
       }
-      
-      //При нажатии на кнопку, добавляет новый коммент в list (учитывает имя, коммент, дату и время, также лайки)
-      const oldListHtml = listElement.innerHTML;
-      listElement.innerHTML = 
-        oldListHtml +
-        `<li class="comment">
-          <div class="comment-header">
-            <div>${nameInputElement.value}</div>
-            <div>${dateElement}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${commentInputElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">${0}</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
-      
+
+      //Создаю объекты для работы с датой
+      let myDate = new Date();
+      let date = myDate.getDate();
+      let month = myDate.getMonth();
+      let year = myDate.getFullYear();
+      let hours = myDate.getHours();
+      let minutes = myDate.getMinutes();
+
+      //Если в дате, месяце, часах и минутах будут числа меньше 10, добавлять к ним 0 в начале
+      date = date < 10 ? "0" + date : date;
+      month = month < 10 ? "0" + month : month;
+      hours = hours < 10 ? "0" + hours : hours;
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+
+      //Создаю объект, который включает в себя формат "день.месяц.год(последние две цифры) часы:минуты"
+      const dateElement =
+        date +
+        "." +
+        month +
+        "." +
+        year.toString().slice(2) +
+        " " +
+        hours +
+        ":" +
+        minutes;
+
+      comments.push({
+        name: nameInputElement.value,
+        date: dateElement,
+        text: commentInputElement.value,
+        like: false,
+        numLike: 0,
+      });
+
       //Обнуление импутов
       nameInputElement.value = "";
       commentInputElement.value = "";
       //Расширенная валидация, чтобы после нажатия, кнопка снова была неактивна
       // buttonElement.disabled = true;
       // buttonElement.classList.add("error-button");
-    })
+
+      renderComments();
+    });
   </script>
 </html>
