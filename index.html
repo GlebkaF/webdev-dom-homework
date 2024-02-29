@@ -57,64 +57,67 @@
 </body>
 
 <script>
-"use strict";
+  "use strict";
 
-const formName = document.getElementById('comName');
-const formText = document.getElementById('comArea');
-const commentsList = document.getElementById('comNew');
-const addButton = document.getElementById('comButton');
+  const formName = document.getElementById('comName');
+  const formText = document.getElementById('comArea');
+  const commentsList = document.getElementById('comNew');
+  const addButton = document.getElementById('comButton');
+  
 
- let commentsData = [
-   {
-     name: "Глеб Фокин",
-     date: "12.02.22 12:18",
-     text: "Это будет первый комментарий на этой странице",
-     likes: 3,
-     liked: false
+  let commentsData = [
+    {
+      name: "Глеб Фокин",
+      date: "12.02.22 12:18",
+      text: "Это будет первый комментарий на этой странице",
+      likes: 3,
+      liked: false
     },
-   {
-     name: "Варвара Н.",
-     date: "13.02.22 19:22",
-     text: "Мне нравится как оформлена эта страница! ❤",
-     likes: 75,
-     liked: false
+    {
+      name: "Варвара Н.",
+      date: "13.02.22 19:22",
+      text: "Мне нравится как оформлена эта страница! ❤",
+      likes: 75,
+      liked: false
     }
- ];
+  ];
 
- function updateLikesCounter(commentIndex, increment) {
-   if (increment) {
-     commentsData[commentIndex].likes++;
-   } else {
-     commentsData[commentIndex].likes--;
-   }
+  function updateLikesCounter(commentIndex, increment) {
+    if (increment) {
+      commentsData[commentIndex].likes++;
+    } else {
+      commentsData[commentIndex].likes--;
+    }
     renderComments();
   }
 
 
- function handleLikeButtonClick(event, commentIndex) {
-   const button = event.target;
-   if (commentsData[commentIndex].liked) {
-     commentsData[commentIndex].liked = false;
-   } else {
-     commentsData[commentIndex].liked = true;
-   }
-   updateLikesCounter(commentIndex, commentsData[commentIndex].liked);
+  function handleLikeButtonClick(event, commentIndex) {
+    const button = event.target;
+    event.stopPropagation();
+
+    if (commentsData[commentIndex].liked) {
+      commentsData[commentIndex].liked = false;
+    } else {
+      commentsData[commentIndex].liked = true;
+    }
+    updateLikesCounter(commentIndex, commentsData[commentIndex].liked);
   }
 
 
-function renderComments() {
-   commentsList.innerHTML = "";
-   commentsData.forEach((comment, index) => {
-     const newComment = document.createElement('li');
-     newComment.classList.add('comment');
+  function renderComments() {
+    commentsList.innerHTML = "";
+    commentsData.forEach((comment, index) => {
+      const newComment = document.createElement('li');
+      newComment.classList.add('comment');
 
-     const commentBody = `
+      const commentBody = `
      <div class="comment-header">
        <div>${comment.name}</div>
        <div>${comment.date}</div>
      </div>
      <div class="comment-body">
-       <div class="comment-text">${comment.text}</div>
+       <div class="comment-text" style="white-space: pre-line">${comment.text}</div>
      </div>
      <div class="comment-footer">
        <div class="likes">
@@ -124,46 +127,60 @@ function renderComments() {
      </div>
    `;
 
-     newComment.innerHTML = commentBody;
-     commentsList.appendChild(newComment);
-   });
- }
+      newComment.innerHTML = commentBody;
+      newComment.addEventListener('click', (event) => {
+        formText.value = `>${comment.text}
+        
+${comment.name},`;
+        formText.focus();
+      });
+      commentsList.appendChild(newComment);
+    });
+  }
 
 
- commentsList.addEventListener('click', (event) => {
-   if (event.target.classList.contains('like-button')) {
-     const commentIndex = Array.from(event.target.closest('.comments').children).indexOf(event.target.closest('.comment'));
-     handleLikeButtonClick(event, commentIndex);
-   }
- });
+  commentsList.addEventListener('click', (event) => {
+    if (event.target.classList.contains('like-button')) {
+      const commentIndex = Array.from(event.target.closest('.comments').children).indexOf(event.target.closest('.comment'));
+      handleLikeButtonClick(event, commentIndex);
+    }
+  });
 
- addButton.addEventListener('click', () => {
-   const name = formName.value;
-   const text = formText.value;
+  addButton.addEventListener('click', () => {
+    const name = formName.value;
+    const text = formText.value;
 
-   if (!name || !text) {
-     return;
-   }
+    if (!name || !text) {
+      return;
+    }
 
-   const date = new Date().toLocaleDateString('default', { day: '2-digit', month: '2-digit', year: '2-digit' }) + " " + new Date().toLocaleTimeString().slice(0, -3);
+    const date = new Date().toLocaleDateString('default', { day: '2-digit', month: '2-digit', year: '2-digit' }) + " " + new Date().toLocaleTimeString().slice(0, -3);
 
-   commentsData.push({
-     name: name,
-     date: date,
-     text: text,
-     likes: 0,
-     liked: false
-   });
+    commentsData.push({
+      name: name
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;"),
+      date: date,
+      text: text
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;"),
+      likes: 0,
+      liked: false,
+    });
 
-   renderComments();
+    renderComments();
 
-  formName.value = '';
-  formText.value = '';
-});
+    formName.value = '';
+    formText.value = '';
+  });
 
-renderComments();
+  renderComments();
 
-console.log("It works!");
+  console.log("It works!");
 
 
 </script>
