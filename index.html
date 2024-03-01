@@ -255,72 +255,81 @@
       //   });
       // };
 
-      formEl.classList.add("add-form_displayNone");
-      formLoader.hidden = false;
-      isLoading = true;
+      function fetchPost() {
+        formEl.classList.add("add-form_displayNone");
+        formLoader.hidden = false;
+        isLoading = true;
+        fetch("https://wedev-api.sky.pro/api/v1/:Azinkevich/comments", {
+          method: "POST",
+          body: JSON.stringify({
+            date: formatDate(new Date()),
+            name: nameEl.value,
+            text: textEl.value,
+            like_active: false,
+            like_count: 0,
+            isEdit: false,
+            forceError: true,
+          }),
+        })
+          .then((response) => {
+            if (response.status === 400) {
+              throw new Error("Неправильный запрос");
+            }
+            if (response.status === 500) {
+              throw new Error("Сервер сломался");
+            }
+            return response;
+          })
+          .then((response) => {
+            return response.json();
+          })
+          .then(() => {
+            return fetchGet();
+          })
+          .then(() => {
+            nameEl.value = "";
+            textEl.value = "";
+            formEl.classList.remove("add-form_displayNone");
+            formLoader.hidden = true;
+          })
+          .catch((error) => {
+            if (error.message === "Неправильный запрос") {
+              alert("Длина имени и комментария должна быть более 3 символов");
+              console.warn(error);
+              formEl.classList.remove("add-form_displayNone");
+              formLoader.hidden = true;
+              return;
+            }
+            if (error.message === "Сервер сломался") {
+              console.warn(error);
+              console.log("Повторная отправка");
+              fetchPost();
+              return;
+            }
+            if (error.message === "Failed to fetch") {
+              console.warn(error);
+              alert("Повидимому отвалился инет, давай еще разок попробуй");
+              formEl.classList.remove("add-form_displayNone");
+              formLoader.hidden = true;
+              return;
+            }
+          });
+        // .then(() => {
+        //   formEl.classList.remove("add-form_displayNone");
+        //   formLoader.hidden = true;
 
-      fetch("https://wedev-api.sky.pro/api/v1/:avich/comments", {
-        method: "POST",
-        body: JSON.stringify({
-          date: formatDate(new Date()),
-          name: nameEl.value,
-          text: textEl.value,
-          like_active: false,
-          like_count: 0,
-          isEdit: false,
-          forceError: true,
-        }),
-      })
-        .then((response) => {
-          if (response.status === 400) {
-            throw new Error("Неправильный запрос");
-          }
-          if (response.status === 500) {
-            throw new Error("Сервер сломался");
-          }
-          return response;
-        })
-        .then((response) => {
-          return response.json();
-        })
-        .then(() => {
-          return fetchGet();
-        })
-        .then(() => {
-          nameEl.value = "";
-          textEl.value = "";
-          formEl.classList.remove("add-form_displayNone");
-          formLoader.hidden = true;
-        })
-        .catch((error) => {
-          if (error.message === "Неправильный запрос") {
-            alert("Длина имени и комментария должна быть более 3 символов");
-            console.warn(error);
-            return;
-          }
-          if (error.message === "Сервер сломался") {
-            console.warn(error);
-            //console.log("Повторная отправка");
-            //fetchPost();
-            return;
-          }
-
-          console.warn("Повидимому отвалился инет, давай еще разок попробуй");
-        })
-        .then(() => {
-          formEl.classList.remove("add-form_displayNone");
-          formLoader.hidden = true;
-          renderComments();
-        });
-
-      // nameEl.value = "";
-      // textEl.value = "";
+        // });
+        renderComments();
+        // nameEl.value = "";
+        // textEl.value = "";
+      }
+      fetchPost();
     });
 
     const fetchGet = () => {
       isLoading ? (comLoader.hidden = true) : (comLoader.hidden = false);
 
-      return fetch("https://wedev-api.sky.pro/api/v1/:avich/comments", {
+      return fetch("https://wedev-api.sky.pro/api/v1/:Azinkevich/comments", {
         method: "GET",
       })
         .then((response) => {
@@ -341,7 +350,11 @@
           renderComments();
         })
         .catch((error) => {
-          console.warn("Повидимому отвалился инет, давай еще разок попробуй");
+          if (error.message === "Failed to fetch") {
+            console.warn(error);
+            alert("Повидимому отвалился инет, давай еще разок попробуй");
+            return;
+          }
         });
     };
 
