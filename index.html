@@ -247,11 +247,19 @@
         return;
       }
 
+      // const handlePostClick = () => {
+      //   fetchPost().catch((error) => {
+      //     if (error.message === "Сервер сломался") {
+      //       handlePostClick();
+      //     }
+      //   });
+      // };
+
       formEl.classList.add("add-form_displayNone");
       formLoader.hidden = false;
       isLoading = true;
 
-      fetch("https://wedev-api.sky.pro/api/v1/:aich/comments", {
+      fetch("https://wedev-api.sky.pro/api/v1/:avich/comments", {
         method: "POST",
         body: JSON.stringify({
           date: formatDate(new Date()),
@@ -287,28 +295,32 @@
         .catch((error) => {
           if (error.message === "Неправильный запрос") {
             alert("Длина имени и комментария должна быть более 3 символов");
+            console.warn(error);
             return;
           }
           if (error.message === "Сервер сломался") {
-            alert("Сервер сломался, попробуй позже");
+            console.warn(error);
+            //console.log("Повторная отправка");
+            //fetchPost();
             return;
           }
+
+          console.warn("Повидимому отвалился инет, давай еще разок попробуй");
         })
         .then(() => {
           formEl.classList.remove("add-form_displayNone");
           formLoader.hidden = true;
+          renderComments();
         });
 
       // nameEl.value = "";
       // textEl.value = "";
-
-      renderComments();
     });
 
     const fetchGet = () => {
       isLoading ? (comLoader.hidden = true) : (comLoader.hidden = false);
 
-      return fetch("https://wedev-api.sky.pro/api/v1/:aich/comments", {
+      return fetch("https://wedev-api.sky.pro/api/v1/:avich/comments", {
         method: "GET",
       })
         .then((response) => {
@@ -327,6 +339,9 @@
           comLoader.hidden = true;
           comments = appComments;
           renderComments();
+        })
+        .catch((error) => {
+          console.warn("Повидимому отвалился инет, давай еще разок попробуй");
         });
     };
 
