@@ -250,6 +250,7 @@
       formEl.classList.add("add-form_displayNone");
       formLoader.hidden = false;
       isLoading = true;
+
       fetch("https://wedev-api.sky.pro/api/v1/:aich/comments", {
         method: "POST",
         body: JSON.stringify({
@@ -259,8 +260,18 @@
           like_active: false,
           like_count: 0,
           isEdit: false,
+          forceError: true,
         }),
       })
+        .then((response) => {
+          if (response.status === 400) {
+            throw new Error("Неправильный запрос");
+          }
+          if (response.status === 500) {
+            throw new Error("Сервер сломался");
+          }
+          return response;
+        })
         .then((response) => {
           return response.json();
         })
@@ -268,12 +279,28 @@
           return fetchGet();
         })
         .then(() => {
+          nameEl.value = "";
+          textEl.value = "";
+          formEl.classList.remove("add-form_displayNone");
+          formLoader.hidden = true;
+        })
+        .catch((error) => {
+          if (error.message === "Неправильный запрос") {
+            alert("Длина имени и комментария должна быть более 3 символов");
+            return;
+          }
+          if (error.message === "Сервер сломался") {
+            alert("Сервер сломался, попробуй позже");
+            return;
+          }
+        })
+        .then(() => {
           formEl.classList.remove("add-form_displayNone");
           formLoader.hidden = true;
         });
 
-      nameEl.value = "";
-      textEl.value = "";
+      // nameEl.value = "";
+      // textEl.value = "";
 
       renderComments();
     });
