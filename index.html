@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="list">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -49,23 +49,62 @@
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          id="name_input"
         />
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+          id="comment_textarea"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="add-form-button">Написать</button>
+        </div>
+        <div class="add-form-row">
+          <button class="add-form-button" id="delete-comment-button">Удалить последний комментарий</button>
         </div>
       </div>
     </div>
   </body>
 
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const buttonElement = document.getElementById("add-form-button");
+    const buttonElementDelete = document.getElementById("delete-comment-button");
+    const listElement = document.getElementById("list");
+    const nameInputElement = document.getElementById("name_input");
+    const commentInputElement = document.getElementById("comment_textarea");
+
+    buttonElement.addEventListener("click", () => {
+      nameInputElement.style.backgroundColor = "";
+      commentInputElement.style.backgroundColor = "";
+      if(nameInputElement.value === "" || commentInputElement.value === ""){
+        nameInputElement.style.backgroundColor = "red";
+        commentInputElement.style.backgroundColor = "red";
+      }
+      let date = new Date();
+      let options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' };
+      let formattedDate = new Intl.DateTimeFormat('ru-RU', options).format(date);
+      const oldListHtml = listElement.innerHTML;
+      listElement.innerHTML = oldListHtml + 
+        `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${formattedDate}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${commentInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+    });
+
   </script>
 </html>
