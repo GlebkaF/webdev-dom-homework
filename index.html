@@ -74,6 +74,12 @@
       nameInputElement.classList.add("error");
       return;
     }
+    
+    textInputElement.classList.remove("error");
+    if (textInputElement.value === "") {
+      textInputElement.classList.add("error");
+      return;
+    }
 
     let currentDate = new Date()
     const month = currentDate.getMonth() < 10 ? ('0' + (currentDate.getMonth() + 1)) : (currentDate.getMonth() + 1)
@@ -101,6 +107,7 @@
       </li>`;
 
     nameInputElement.value = '';
+    textInputElement.value = '';
   });
 </script>
 </html>
