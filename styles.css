@@ -2,6 +2,42 @@ body {
     margin: 0;
   }
 
+.preloader{
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #222222;
+  z-index: 2;
+}
+
+.preloader__loader{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+  .spinner {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: conic-gradient(#000000 10%,#474bff);
+    -webkit-mask: radial-gradient(farthest-side,#0000 calc(100% - 9px),#000 0);
+    animation: spinner-zp9dbg 1s infinite linear;
+ }
+ 
+ @keyframes spinner-zp9dbg {
+    to {
+       transform: rotate(1turn);
+    }
+ }
+
+ .hide{
+  display: none;
+ }
+
   .container {
     font-family: Helvetica;
     color: #ffffff;
