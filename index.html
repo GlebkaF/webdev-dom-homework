@@ -120,6 +120,7 @@
         jsonPromise.then((responseData) => {
           const commentItem = responseData.comments.map((comment) => {
             return {
+              id: comment.id,
               name: comment.author.name,
               data: new Date(comment.date)
                 .toLocaleString("ru-RU", {
