@@ -88,7 +88,7 @@
         const oldComment = commentBody.dataset.text;
         console.log(oldName);
         console.log(oldComment);
-        commentInputElement.innerHTML = `${oldName}: ${oldComment} `;
+        commentInputElement.value = `${oldName}: ${oldComment} `;
       })
     }
   };
@@ -120,7 +120,7 @@
     listElement.innerHTML = commentsHtml;
     replyToComment();
   };
-
+  replyToComment();
 
   //Лайк
   const initEventListeners = () => {
