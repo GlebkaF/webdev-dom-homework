@@ -62,48 +62,40 @@
   const currentInputText = document.getElementsByClassName('add-form-text')[0];
   const commentButton = document.getElementsByClassName('add-form-button')[0];
   const commentList = document.getElementsByClassName('comments')[0];
- 
-  
+
+
   function addNewComment() {
     commentButton.style.disabled = false;
     commentButton.style.backgroundColor = '';
+    const currentDate = new Date();
 
     if (currentInputName.value.trim().length !== 0 && currentInputText.value.trim().length !== 0) {
-      const comment = document.createElement('li');
-      comment.className = 'comment';
-      commentList.append(comment);
-      const commentLastElement = document.getElementsByClassName('comment')[commentList.children.length - 1];
-      const commentHeader = document.createElement('div');
-      commentHeader.className = 'comment-header';
-      commentLastElement.append(commentHeader);
-      commentLastElement.children.item(0).append(document.createElement('div'));
-      commentLastElement.children.item(0).children.item(0).innerHTML = currentInputName.value;
-      commentLastElement.children.item(0).append(document.createElement('div'));
-      const currentDate = new Date();
-      commentLastElement.children.item(0).children.item(1).innerHTML =
-        `${currentDate.getDate()}.${(currentDate.getMonth() < 8 ? '0' + (currentDate.getMonth() + 1) :
-          currentDate.getMonth())}.${currentDate.getFullYear() - 2000} 
-        ${currentDate.getHours()}:${currentDate.getMinutes()}`;
-      commentLastElement.append(document.createElement('div'));
-      commentLastElement.children.item(1).className = 'comment-body';
-      commentLastElement.children.item(1).append(document.createElement('div'));
-      commentLastElement.children.item(1).children.item(0).className = 'comment-text';
-      commentLastElement.children.item(1).children.item(0).innerHTML = currentInputText.value;
-      commentLastElement.append(document.createElement('div'));
-      commentLastElement.children.item(2).className = 'comment-footer';
-      commentLastElement.children.item(2).append(document.createElement('div'));
-      commentLastElement.children.item(2).children.item(0).className = 'likes';
-      commentLastElement.children.item(2).children.item(0).append(document.createElement('span'));
-      commentLastElement.children.item(2).children.item(0).children.item(0).className = 'likes-counter';
-      commentLastElement.children.item(2).children.item(0).children.item(0).innerHTML = 0;
-      commentLastElement.children.item(2).children.item(0).append(document.createElement('button'));
-      commentLastElement.children.item(2).children.item(0).children.item(1).className = 'like-button -active-like';
+      const oldElement = commentList.innerHTML;
+      commentList.innerHTML = oldElement + `
+      <li class="comment">
+        <div class="comment-header">
+          <div>${currentInputName.value}</div>
+          <div>${currentDate.getDate()}.${(currentDate.getMonth() < 8 ? '0' + (currentDate.getMonth() + 1) :
+          currentDate.getMonth())}.${currentDate.getFullYear() - 2000}
+        ${currentDate.getHours()}:${currentDate.getMinutes()}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${currentInputText.value}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">0</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>`;
     } else {
       commentButton.style.disabled = true;
       commentButton.style.backgroundColor = 'grey';
     }
   }
-
 
   commentButton.addEventListener("click", () => {
     addNewComment();
