@@ -154,6 +154,7 @@
             сommentators[index].likes = result;
             сommentators[index].isLiked = false;
           }
+
           renderCommentators();
         })
       }
@@ -208,9 +209,7 @@
         <div>${formatTime(currentDate)}</div>
       </div>
       <div class="comment-body">
-        <div class="comment-text">
-          ${textElement.value}
-        </div>
+        <div class="comment-text">${textElement.value}</div>
       </div>
       <div class="comment-footer">
         <div class="likes">
@@ -219,13 +218,12 @@
         </div>
       </div>
       </li>` 
-
+      
       nameElement.value = "";
       textElement.value = "";
-    });
-    
-    renderCommentators();
 
+    });
+      
     const formElement = document.getElementById ('form');
     formElement.addEventListener('keyup', keyEvent);
       function keyEvent(e) {
