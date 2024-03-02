@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="commentlist">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -45,27 +45,57 @@
         </li>
       </ul>
       <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
+        <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input"/>
+        <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4" id="comment-input"></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="add-comment">Написать</button>
         </div>
       </div>
     </div>
-  </body>
 
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    // "use strict";
+    const buttonElement = document.getElementById("add-comment");
+    const listElement = document.getElementById("commentlist");
+    const nameInputElement = document.getElementById("name-input");
+    const commentInputElement = document.getElementById("comment-input");
+
+    buttonElement.addEventListener("click", () => {
+      if (nameInputElement.value === '') {
+        alert("Введите, пожалуйста, имя.")
+        return;
+      };
+      if (commentInputElement.value === '') {
+        alert("Введите, пожалуйста, комментарий.")
+        return;
+      };
+
+        const oldListHTML = listElement.innerHTML;
+        listElement.innerHTML = oldListHTML +
+          `<li class="comment">
+           <div class="comment-header">
+           <div>${nameInputElement.value}</div>
+            <div>${Date()}</div>
+          </div>
+          <div class="comment-body">
+          <div class="comment-text">
+          ${commentInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+        nameInputElement.value = "";
+        commentInputElement.value = "";
+      });
+    // console.log("It works!");
   </script>
+
+
+</body>
+
 </html>
