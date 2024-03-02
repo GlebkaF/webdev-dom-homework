@@ -79,6 +79,20 @@
     }
   ]
 
+  //Ответ на коммент
+  const replyToComment = () => {
+    const commentBodys = document.querySelectorAll(".comment-body");
+    for (const commentBody of commentBodys) {
+      commentBody.addEventListener('click', () => {
+        const oldName = commentBody.dataset.name;
+        const oldComment = commentBody.dataset.text;
+        console.log(oldName);
+        console.log(oldComment);
+        commentInputElement.innerHTML = `${oldName}: ${oldComment} `;
+      })
+    }
+  };
+
   // Рендер
   const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
@@ -87,7 +101,7 @@
             <div>${comment.name}</div>
             <div>${comment.time}</div>
           </div>
-          <div class="comment-body">
+          <div class="comment-body" data-text="${comment.comment}" data-name="${comment.name}">
             <div class="comment-text" data-index="${index}">
               ${comment.comment}
             </div>
@@ -104,7 +118,7 @@
     }).join('');
 
     listElement.innerHTML = commentsHtml;
-
+    replyToComment();
   };
 
 
@@ -130,7 +144,6 @@
   };
   renderComments();
   initEventListeners();
-
 
   // Обработчик клика
 
@@ -175,46 +188,20 @@
 
     renderComments();
     initEventListeners();
-
-
-
-
-    /*     // Управление внутренним html содержимым
-        const oldListHtml = listElement.innerHTML;
-        listElement.innerHTML =
-          oldListHtml +
-          `<li class="comment">
-              <div class="comment-header">
-                <div>${nameInputElement.value}</div>
-                <div>${(new Date()).toLocaleString()}</div>
-              </div>
-              <div class="comment-body">
-                <div class="comment-text">
-                  ${commentInputElement.value}
-                </div>
-              </div>
-              <div class="comment-footer">
-                <div class="likes">
-                  <span class="likes-counter"></span>
-                  <button class="like-button"></button>
-                </div>
-              </div>
-            </li>`; */
-
-
+    replyToComment();
     nameInputElement.value = "";
     commentInputElement.value = "";
   });
 
-  // Ответ на комментарий
-  const comment = document.querySelectorAll(".comment");
-  const formElementText = document.querySelector('.add-form-text');
-  const formElementName = document.querySelector('.add-form-name');
-  comment.forEach((el, index) => {
-    el.addEventListener('click', () => {
-      formElementText.value = `>${comments[index].name}: ${comments[index].comment}`
-    })
-  });
+  /*   // Ответ на комментарий
+    const comment = document.querySelectorAll(".comment");
+    const formElementText = document.querySelector('.add-form-text');
+    const formElementName = document.querySelector('.add-form-name');
+    comment.forEach((el, index) => {
+      el.addEventListener('click', () => {
+        formElementText.value = `>${comments[index].name}: ${comments[index].comment}`
+      })
+    }); не работает внутри*/
 
   console.log("It works!");
 </script>
