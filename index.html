@@ -126,9 +126,10 @@
       .join("");
 
       listElement.innerHTML = commentatorsHtml;
-    };
 
-    renderCommentators();
+      initEventListeners();
+      
+    };
 
     const initEventListeners = () => {
       const likeButtonElement = document.querySelectorAll(".like-button");
@@ -157,7 +158,6 @@
         })
       }
     }
-    initEventListeners();
     renderCommentators();
 
     // Вопрос по валидации. Если мы пишем функцию на активность кнопки и подсвечивание серым, тогда как проверять пустые строки цветом?
@@ -223,6 +223,8 @@
       nameElement.value = "";
       textElement.value = "";
     });
+    
+    renderCommentators();
 
     const formElement = document.getElementById ('form');
     formElement.addEventListener('keyup', keyEvent);
