@@ -93,6 +93,7 @@
         comment : "Это будет первый комментарий на этой странице",
         likes : 3,
         isLiked: false,
+
       },
       {
         name : "Варвара Н.",
@@ -100,6 +101,7 @@
         comment : "Мне нравится как оформлена эта страница! ❤",
         likes : 75,
         isLiked: false,
+
       },
     ];
 
@@ -110,59 +112,53 @@
             <div>${сommentator.name}</div>
             <div>${сommentator.date}</div>
            </div>
-           <div class="comment-body">
+           <div data-text="${сommentator.comment}" class="comment-body">
            <div class="comment-text">${сommentator.comment}</div>
            </div>
            <div class="comment-footer">
             <div class="likes">
              <span class="likes-counter">${сommentator.likes}</span>
-             <button data-like="${сommentator.likes}" data-index="${index}"
-              class="like-button ${сommentator[index].isLiked ?'-active-like' : 'like-button'}"></button>
+             <button data-like="${сommentator.likes}" data-index="${index}" class="like-button ${сommentators[index].isLiked ?'-active-like' : 'like-button'}"></button>
             </div>
            </div>
-        </li>`
+         </li>`;
       })
       .join("");
 
       listElement.innerHTML = commentatorsHtml;
-
-      initCopyText();
-      initLikeButtonListeners();
-      updateValue();
     };
+
     renderCommentators();
-    
+
     const initEventListeners = () => {
-
       const likeButtonElement = document.querySelectorAll(".like-button");
-
       for ( const likeButtonEl of likeButtonElement) {
 
-          const index = likeButtonEl.dataset.index;
-          const counter = likeButtonEl.dataset.like;
+        const index = likeButtonEl.dataset.index;
+        const counter = likeButtonEl.dataset.like;
 
-          likeButtonEl.addEventListener("click", (e) => {
-          e.stopPropagation();
+        likeButtonEl.addEventListener("click", () => {
 
           if (сommentators[index].isLiked === false) {
 
             const result = Number(counter) + 1;
+
             сommentators[index].likes = result;
             сommentators[index].isLiked = true;
 
           } else if (сommentators[index].isLiked === true) {
 
             const result = Number(counter) - 1;
+
             сommentators[index].likes = result;
             сommentators[index].isLiked = false;
           }
+          renderCommentators();
         })
-        renderCommentators();
-      };
-    };
-
+      }
+    }
+    initEventListeners();
     renderCommentators();
-    
 
     // Вопрос по валидации. Если мы пишем функцию на активность кнопки и подсвечивание серым, тогда как проверять пустые строки цветом?
     // buttonElement.disabled = true;
@@ -177,21 +173,20 @@
     // }
     // nameElement.addEventListener("input" , input);
     // textElement.addEventListener("input" , input);
-
-
+    
     buttonElement.addEventListener("click", () => {
       nameElement.classList.remove("error");
       textElement.classList.remove("error");
       
-      if (nameElement.value === "") {
+      if (nameElement.value.trim() === "") {
         nameElement.classList.add("error");
         return;
       }  
-      if (textElement.value === "") {
+      if (textElement.value.trim() === "") {
         textElement.classList.add("error");
         return;
       };
-
+    
       let currentDate = new Date();
       function formatTime(currentDate){
   
@@ -203,29 +198,27 @@
        const m = currentDate.getMinutes().toString().padStart(2, "0");
 
        return `${date}.${month}.${year} ${h}:${m}`
-      };
+      }
       
-      const oldListHtml = listElement.innerHTML;
-      listElement.innerHTML = oldListHtml +
-       `<li class="comment">
-         <div class="comment-header">
-          <div>${nameElement.value}</div>
-          <div>${formatTime(currentDate)}</div>
+     const oldListHtml = listElement.innerHTML;
+     listElement.innerHTML = oldListHtml +
+      `<li class="comment">
+        <div class="comment-header">
+        <div>${nameElement.value}</div>
+        <div>${formatTime(currentDate)}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">
+          ${textElement.value}
         </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${textElement.value}
-          </div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">0</span>
+          <button class="like-button"></button>
         </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-       </li>` 
-
-      initEventListeners();
+      </div>
+      </li>` 
 
       nameElement.value = "";
       textElement.value = "";
@@ -233,26 +226,22 @@
 
     const formElement = document.getElementById ('form');
     formElement.addEventListener('keyup', keyEvent);
-
-    function keyEvent(e) {
-     if (e.code === 'Enter') {
-      buttonElement.dispatchEvent(new Event('click'));
-     }
-    };
+      function keyEvent(e) {
+       if (e.code === 'Enter') {
+        buttonElement.dispatchEvent(new Event('click'));
+       }
+      };
 
     const removeButton = document.getElementById("deleteComment");
-    
     removeButton.addEventListener("click", removeItem);
-
     function removeItem() {
       let list=document.getElementById("list");
       let listItems = list.getElementsByTagName("li");
-
       let last=listItems[listItems.length-1];
       list.removeChild(last);
     };
-      
-    
+
     console.log("It works!");
+
   </script>
 </html>
