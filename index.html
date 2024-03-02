@@ -35,38 +35,46 @@
 </body>
 
 <script>
-  "use strict";
 const buttonElement = document.getElementById('add-button');
 const listElement = document.getElementById('list');
 const nameInputElement = document.getElementById('name-input');
 const commentInputElement = document.getElementById('comment-input');
 const deleteButtonElement = document.getElementById('delete-button');
 
-const commentsArray = [
-  {
-    name: 'Глеб Фокин',
-    date: '12.02.22 12:18',
-    comment: 'Это будет первый комментарий на этой странице',
-    like: 3,
-    userLike: false,
-    paint: ''
-  },
-  {
-    name: 'Варвара Н.',
-    date: '13.02.22 19:22',
-    comment: 'Мне нравится как оформлена эта страница! ❤',
-    like: 75,
-    userLike: true,
-    paint: '-active-like'
-  }
-];
+let commentsArray = [];
+
+const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/anna-terenteva/comments",
+{
+  method: 'GET',
+});
+
+fetchPromise.then((response) => {
+  const jsonPromise = response.json();
+  jsonPromise.then((responseData) =>{
+    console.log(responseData);
+    const appComments = responseData.comments.map((comment) => {
+      return {
+        name: comment.author.name,
+        date: comment.date,
+        text: comment.text,
+        like: 0,
+        userLike: false,
+      }
+    });
+
+    commentsArray = appComments;
+    renderComments();
+  })
+});
+
 
 const likes = () => {
   const likeButtons = document.querySelectorAll('.like-button');
   for (const likeButton of likeButtons) {
-    likeButton.addEventListener('click', () => {
+    likeButton.addEventListener('click', (event) => {
+      event.stopPropagation();
       const index = likeButton.dataset.index;
-      if (commentsArray[index].userLike === false ) {
+      if (commentsArray[index].userLike === false) {
         commentsArray[index].paint = '-active-like';
         commentsArray[index].like += 1;
         commentsArray[index].userLike = true;
@@ -77,14 +85,14 @@ const likes = () => {
       }
       renderComments();
     });
-  };
+  }
 };
 
 
 const renderComments = () => {
   const commentsHtml = commentsArray.map((item, index) =>{
     return `
-    <li class="comment">
+    <li data-index="${index}" class="comment">
           <div class="comment-header">
             <div>${item.name}</div>
             <div>${item.date}</div>
@@ -105,18 +113,19 @@ const renderComments = () => {
     .join('');
     listElement.innerHTML = commentsHtml;
     likes();
+    answerComment();
 };
 renderComments();
 
 buttonElement.disabled = true;
 nameInputElement.addEventListener('input', () =>{
-  if (nameInputElement.value === '') {
+  if (nameInputElement.value  === '' ) {
     buttonElement.disabled = true;
     return;
   } else {
     buttonElement.disabled = false;
   }
-});
+})
 
 buttonElement.addEventListener('click', () => {
     nameInputElement.classList.remove('error');
@@ -136,22 +145,34 @@ buttonElement.addEventListener('click', () => {
   date.getHours().toString().padStart(2, '0') + ':' +
   date.getMinutes().toString().padStart(2, '0');
 
-    commentsArray.push({  
-      name: nameInputElement.value
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;"),
-      date: formattedDate,
-      comment: commentInputElement.value
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;"),
-      like: 0,
-      userLike: false,
-      paint: '',
-  });
+  const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/anna-terenteva/comments",
+  {
+    method: 'POST',
+    body: JSON.stringify({
+      name: nameInputElement.value,
+      text: commentInputElement.value,
+    }),
+  })
+  
+  fetchPromise.then((response) =>{
+    response.json().then((responseData) =>{
+      
+      const appComments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: comment.date,
+          text: comment.text,
+          like: 0,
+          userLike: false,
+        }
+      })
+  
+      commentsArray = appComments;
+      getAndRenderComments();
+      renderComments();
+    })
+  })
+  
     renderComments();
     
     nameInputElement.value = '';
@@ -159,7 +180,23 @@ buttonElement.addEventListener('click', () => {
     buttonElement.disabled = true;
 });
 
-deleteButtonElement.addEventListener('click', () =>{
+function answerComment() {
+  const oldComments = document.querySelectorAll('.comment');
+
+  for (const oldComment of oldComments) {
+    oldComment.addEventListener('click', (event) =>{
+      event.stopPropagation();
+
+      const index = oldComment.dataset.index;
+      const comment = commentsArray[index];
+
+      commentInputElement.value = `%BEGIN_QUOTE${commentsArray[index].name} \n
+      ${comment.comment}END_QUOTE%`
+    })
+  }
+}
+
+deleteButtonElemesnt.addEventListener('click', () =>{
   const lastCommentIndex = listElement.innerHTML.lastIndexOf( '<li class="comment">' );
   if (lastCommentIndex !== -1) {
     listElement.innerHTML = listElement.innerHTML.substring( 0, lastCommentIndex ); 
@@ -172,8 +209,6 @@ document.addEventListener('keyup', (event) =>{
     buttonElement.click();
   }
 });
-
-  console.log("It works!");
 </script>
 
 </html>
