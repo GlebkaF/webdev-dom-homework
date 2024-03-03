@@ -122,10 +122,10 @@
   buttonWrite.addEventListener("click", () => {
     inputName.classList.remove("error");
     inputText.classList.remove("error");
-    if (inputName.value.trim() === "" || inputName.value === null || inputName.value.length >= 3) {
+    if (inputName.value.trim() === "" || inputName.value === null || inputName.value.length <= 2) {
       inputName.classList.add("error");
       return;
-    } else if (inputText.value.trim() === "" || inputText.value === null || inputText.value.length >= 3) {
+    } else if (inputText.value.trim() === "" || inputText.value === null || inputText.value.length <= 2) {
       inputText.classList.add("error");
       return;
     };
