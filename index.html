@@ -8,42 +8,9 @@
 
   <body>
     <div class="container">
-      <ul class="comments" id="list">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+      <ul class="comments" id="list">        
       </ul>
+
       <div class="add-form">
         <input
           type="text"
@@ -69,6 +36,24 @@
   </body>
 
   <script>
+
+    const comments = [
+          {
+            name: "Глеб Фокин",
+            date: '13.02.22 19:22',
+            text: "Это будет первый комментарий на этой странице",
+            counter: 3,
+            like: false
+          },
+          {
+            name: "Варвара Н.",
+            date: '13.02.22 19:22',
+            text: "Мне нравится как оформлена эта страница! ❤",
+            counter: 75,
+            like: true
+          }
+    ];
+
     const buttonElement = document.getElementById("add-form-button");
     const buttonElementDelete = document.getElementById("delete-comment-button");
     const listElement = document.getElementById("list");
@@ -83,32 +68,86 @@
         commentInputElement.style.backgroundColor = "red";
         return;
       }
+      let date = getFormatetNowDate();
+      comments.push({
+        name: nameInputElement.value,
+        date: date,
+        text: commentInputElement.value,
+        counter: 0,
+        like: false
+      });
+      nameInputElement.value = '';
+      commentInputElement.value = '';
+      renderComments();
+    });
+
+    buttonElementDelete.addEventListener("click", () => {
+      comments.splice(comments.length - 1, 1);
+      renderComments();
+    });
+
+
+    const getFormatetNowDate = () => {
       let date = new Date();
       let options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' };
       let formattedDate = new Intl.DateTimeFormat('ru', options).format(date);
-      const oldListHtml = listElement.innerHTML;
-      listElement.innerHTML = oldListHtml + 
-        `<li class="comment">
+      return formattedDate;
+    };
+
+    const getStyleLikeButton = (likeStatus) => {
+      if(likeStatus === false){
+        return "";
+      } else {
+        return " -active-like";
+      }
+    };
+
+    
+    const initLikeButtonsListeners = () => {
+      const likeButtonElements = document.querySelectorAll(".like-button");
+      console.log(likeButtonElements.value);
+      for(const likeButtonElement of likeButtonElements){
+        likeButtonElement.addEventListener("click", () => {
+          const index = likeButtonElement.dataset.index;
+          if(comments[index].like === true){
+            comments[index].like = false;
+            comments[index].counter -= 1;
+          } else {
+            comments[index].like = true;
+            comments[index].counter += 1;
+          }
+          console.log(index);
+          renderComments();
+        });
+      }
+    }
+
+    const renderComments = () => {      
+      const commentHtml = comments.map((comment, index) => {
+        const like = getStyleLikeButton(comment.like);
+        return `<li class="comment">
           <div class="comment-header">
-            <div>${nameInputElement.value}</div>
-            <div>${formattedDate}</div>
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${commentInputElement.value}
+              ${comment.text}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
+              <span class="likes-counter">${comment.counter}</span>
+              <button data-index="${index}" class="like-button${like}"></button>
             </div>
           </div>
         </li>`
-      nameInputElement.value = '';
-      commentInputElement.value = '';
-    });
-
+      }).join("");
+      listElement.innerHTML = commentHtml;
+      initLikeButtonsListeners();
+    }   
+    
+    renderComments();     
 
   </script>
 </html>
