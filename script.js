@@ -3,20 +3,22 @@ const addButtonElement = document.getElementById('add-button');
 const listElement = document.getElementById('list');
 const nameInputElement = document.getElementById('name-input');
 const commentInputElement = document.getElementById('comment-input');
+const preLoadElement = document.getElementById('preloader');
+
 
 // Получениe комментов с сервера
 function getComments() {
-  fetch(
+  return fetch(
     'https://wedev-api.sky.pro/api/v1/rustam-kholov/comments',
     {
       method: "GET"
     }
-  ).then((response) => {
-  
-    response.json().then((responseData) => {
-  
+  )
+    .then((response) => {
+      return response.json();
+    })
+    .then((responseData) => {
       const appComments = responseData.comments.map((comment) => {
-  
         return {
           name: comment.author.name,
           date: new Date(comment.date).toLocaleDateString('ru-RU', { year: '2-digit', month: '2-digit', day: '2-digit' }) + ' ' + new Date(comment.date).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
@@ -24,21 +26,18 @@ function getComments() {
           likesCounter: comment.likes,
           isLiked: false,
         };
-  
       });
-  
       comments = appComments;
       renderComments();
+      preLoadElement.classList.add('hide');
     });
-  });
+
 }
 
-getComments();
-  
+
 
 //  Массив для комментов 
 let comments = [];
-
 
 
 // Рендер функция 
@@ -69,10 +68,21 @@ const renderComments = () => {
   removeValidation();
 };
 
+getComments();
+
+// Отложенный коммент
+function delay(interval = 300) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, interval);
+  });
+}
 
 // Кнопка для лайка 
 const initLikeButtonListeners = () => {
   const addLikesButtonsElements = document.querySelectorAll('.like-button');
+
 
   for (const addLikesButtonsElement of addLikesButtonsElements) {
 
@@ -95,7 +105,6 @@ const initLikeButtonListeners = () => {
 
         comments[index].isLiked = false;
       }
-
       renderComments();
     })
   }
@@ -117,6 +126,7 @@ function reply() {
 
 reply();
 
+
 // Отмена валидации (чтобы не было красных полей)
 function removeValidation() {
 
@@ -130,6 +140,7 @@ function removeValidation() {
 };
 removeValidation();
 
+
 // Добавление нового коммента на сервер 
 addButtonElement.addEventListener('click', () => {
   nameInputElement.classList.remove('error');
@@ -141,6 +152,9 @@ addButtonElement.addEventListener('click', () => {
     return;
   };
 
+  addButtonElement.disabled = true;
+  addButtonElement.textContent = 'Комментарий добавляется.....';
+
   fetch(
     'https://wedev-api.sky.pro/api/v1/rustam-kholov/comments',
     {
@@ -151,9 +165,12 @@ addButtonElement.addEventListener('click', () => {
       })
     }
   ).then(() => {
-    getComments();
-    nameInputElement.value = '';
-    commentInputElement.value = '';
-    renderComments();
-  });
+    return getComments();
+  }).then(() => {
+    addButtonElement.disabled = false;
+    addButtonElement.textContent = 'Добавить';
+  })
+  nameInputElement.value = '';
+  commentInputElement.value = '';
+  renderComments();
 });
