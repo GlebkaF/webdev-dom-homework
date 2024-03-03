@@ -10,40 +10,7 @@
 <body>
   <div class="container">
     <ul id="list" class="comments">
-      <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>
+
     </ul>
     <div class="add-form">
       <input id="input-name" type="text" value="" class="add-form-name" placeholder="Введите ваше имя" />
@@ -66,6 +33,7 @@
   const ListComent = document.getElementById('list');
   const inputName = document.getElementById('input-name');
   const TextComent = document.getElementById('text-coment');
+
   let Data = new Date()
   let day = Data.getDate()
   if (day < 10) day = '0' + day;
@@ -77,12 +45,90 @@
   if (minuts < 10) minuts = '0' + minuts;
   let year = Data.getFullYear() - 2000
   let DataText = day + '.' + month + '.' + year + ' ' + hours + ':' + minuts
-  console.log(DataText)
+
+  const commentators = [
+    {
+      name: "Глеб Фокин",
+      date: "12.02.22 12:18",
+      comment: "Это будет первый комментарий на этой странице",
+      likes: 3,
+      isLiked: false,
+    },
+    {
+      name: "Варвара Н.",
+      date: "13.02.22 19:22",
+      comment: "Мне нравится как оформлена эта страница! ❤",
+      likes: 75,
+      isLiked: false,
+    },
+  ];
+
+  const renderComents = () => {
+    const comentHTML = commentators.map((commentator, index) => {
+      return `<li class="comment">
+        <div class="comment-header">
+          <div>${commentator.name}</div>
+          <div>${commentator.date}</div>
+        </div>
+        <div data-text="${commentator.comment}" class="comment-body">
+          <div class="comment-text">
+            ${commentator.comment}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${commentator.likes}</span>
+            <button data-like="${commentator.likes}" data-index="${index}" class="like-button 
+            ${commentator.likes>0 ? '-active-like' : 'like-button' }"></button>
+          </div>
+        </div>
+      </li>`}).join("");
+      
+    ListComent.innerHTML = comentHTML;
+    initEventListernes ();
+  
+  }
+ 
+  const initEventListernes = () => {
+    const LikeComents = document.querySelectorAll('.like-button')
+    
+    for (const LikeComent of LikeComents) { 
+      const index = LikeComent.dataset.index;
+      const counter = LikeComent.dataset.like;
+      LikeComent.addEventListener("click", () => {
+          if (commentators[index].isLiked === false) {
+            const result = Number(counter) + 1;
+            commentators[index].likes = result;
+            commentators[index].isLiked = true;}
+            else if (commentators[index].isLiked === true) {
+            const result = Number(counter) - 1;
+            commentators[index].likes = result;
+            commentators[index].isLiked = false;
+          };
+          renderComents();})
+      }}
+
+
+ 
+ 
+
+
+
+
   // Добавляет обработчик события «клик» на элемент buttonComent
   buttonComent.addEventListener("click", () => {
     inputName.classList.remove("error")
     if (inputName.value === "") { inputName.classList.add("error"); return; }
     if (TextComent.value === "") { TextComent.classList.add("error"); return; }
+
+    commentators.push({
+      name: inputName.value,
+      date: DataText,
+      comment: TextComent.value,
+      likes: 0,
+      isLiked: false,
+    });
+
     const oldListHTML = ListComent.innerHTML;
     ListComent.innerHTML = oldListHTML + `<li class="comment">
         <div class="comment-header">
@@ -100,8 +146,11 @@
             <button  class="like-button"></button>
           </div>
         </div>
-      </li>`
-  });
+      </li>`;
+      initEventListernes ();
+      renderComents();});
+      renderComents()
+
 </script>
 
 </html>
