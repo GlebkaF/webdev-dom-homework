@@ -81,10 +81,11 @@
       if(nameInputElement.value === "" || commentInputElement.value === ""){
         nameInputElement.style.backgroundColor = "red";
         commentInputElement.style.backgroundColor = "red";
+        return;
       }
       let date = new Date();
       let options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' };
-      let formattedDate = new Intl.DateTimeFormat('ru-RU', options).format(date);
+      let formattedDate = new Intl.DateTimeFormat('ru', options).format(date);
       const oldListHtml = listElement.innerHTML;
       listElement.innerHTML = oldListHtml + 
         `<li class="comment">
@@ -104,7 +105,10 @@
             </div>
           </div>
         </li>`
+      nameInputElement.value = '';
+      commentInputElement.value = '';
     });
+
 
   </script>
 </html>
