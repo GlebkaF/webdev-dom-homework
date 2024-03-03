@@ -144,26 +144,49 @@ buttonElement.addEventListener("click", () => {
     showAddingCommentMessage();
     
     // Отправляем POST-запрос для добавления нового комментария
+    
     fetch("https://wedev-api.sky.pro/api/v1/aleksey-poplaukhin/comments", {
         method: "POST",
         body: JSON.stringify({
             text: sanitizeHtml(trimmedText),
-            name: sanitizeHtml(trimmedName),        
+            name: sanitizeHtml(trimmedName),
+            forceError: true        
         }),
+    })
+    .then((response) => {
+        if (response.status === 500) {
+            throw new Error('Ошибка сервера');
+        };
+
+        if (response.status === 400) {
+            throw new Error('Неверный запрос')
+        };
     })
     .then(() => {
         // Получаем обновленный список комментариев, вызвав функцию fetchComments после успешного POST-запроса
-       return fetchComments();               
+    return fetchComments();               
     })
     .then(() => {
+        // Очищаем поля ввода после отправки комментария только при успешном POST
+        nameInputElement.value = "";
+        textInputElement.value = "";
+    })
+    .catch((error) => {
+        if (error.message === 'Ошибка сервера') {
+        alert('Севрвер прилег отдохнуть, пробую еще раз...');            
+        } else if (error.message === 'Неверный запрос') {
+            alert('Имя или комментарий короче 3-х символов');
+            textInputElement.classList.add("error");
+            nameInputElement.classList.add("error");
+        } else {
+            alert('Кажется, интернет прилег отдохнуть, проверь соединение...');
+        };        
+    })
+    .finally(() => {
         // Скрыть текст "Добавляю твой комментарий..." и показать форму добавления комментария
         hideAddingCommentMessage();
         document.getElementById('form-id').style.display = 'flex'; // Показать форму добавления комментария
-    })
-    .then(() => {
-        // Очищаем поля ввода после отправки комментария
-        nameInputElement.value = "";
-        textInputElement.value = "";
     });
+    
     
 });
