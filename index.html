@@ -62,11 +62,11 @@
   const currentInputText = document.getElementsByClassName('add-form-text')[0];
   const commentButton = document.getElementsByClassName('add-form-button')[0];
   const commentList = document.getElementsByClassName('comments')[0];
+  const checkStatus = document.getElementsByClassName('add-form')[0];
+
 
 
   function addNewComment() {
-    commentButton.style.disabled = false;
-    commentButton.style.backgroundColor = '';
     const currentDate = new Date();
 
     if (currentInputName.value.trim().length !== 0 && currentInputText.value.trim().length !== 0) {
@@ -91,11 +91,20 @@
           </div>
         </div>
       </li>`;
+      currentInputText.value = '';
+      currentInputName.value = '';
+    }
+  }
+
+  checkStatus.addEventListener('input', () => {
+    if (currentInputName.value.trim().length !== 0 && currentInputText.value.trim().length !== 0) {
+      commentButton.style.disabled = false;
+      commentButton.style.backgroundColor = '#bcec30';
     } else {
       commentButton.style.disabled = true;
       commentButton.style.backgroundColor = 'grey';
     }
-  }
+  });
 
   commentButton.addEventListener("click", () => {
     addNewComment();
