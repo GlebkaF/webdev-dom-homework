@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="comment-list" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -26,6 +26,7 @@
             </div>
           </div>
         </li>
+
         <li class="comment">
           <div class="comment-header">
             <div>Варвара Н.</div>
@@ -43,29 +44,209 @@
             </div>
           </div>
         </li>
+
+        <li>
+          <div id="name-output"></div>
+          <div id="comment-output"></div>
+        </li>
       </ul>
+
       <div class="add-form">
         <input
+          id="name-input"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
+          id="comment-input"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <!-- <button onclick="createComment(document.getElementById('name-input').value, document.getElementById('comment-input').value)" class="add-form-button">Написать</button> -->
+          <button onclick="createComment()" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
 
   <script>
+    function createComment(commenterName, commentText) {
+      createName(commenterName);
+      createTextComment(commentText);
+    }
+
+    function createName(commenterName) {
+      if (!commenterName) {
+        alert('Введите имя');
+        return;
+      }
+
+      const parentDiv = document.getElementById('comment-list');
+
+      const newComment = document.createElement('li');
+      newComment.className = 'comment';
+
+      const commentHeader = document.createElement('div');
+      commentHeader.className = 'comment-header';
+      commentHeader.textContent = commenterName;
+
+      newComment.appendChild(commentHeader);
+      parentDiv.appendChild(newComment);
+    }
+
+    function createTextComment(commentText) {
+      if (!commentText) {
+        alert('Введите комментарий');
+        return;
+      }
+
+      const parentDiv = document.getElementById('comment-list');
+
+      const newComment = document.createElement('li');
+      newComment.className = 'comment';
+
+      const commentBody = document.createElement('div');
+      commentBody.className = 'comment-body';
+      
+      const commentTextDiv = document.createElement('div');
+      commentTextDiv.className = 'comment-text';
+      commentTextDiv.textContent = commentText;
+
+      commentBody.appendChild(commentTextDiv);
+      newComment.appendChild(commentBody);
+      parentDiv.appendChild(newComment);
+    }
+  </script>
+  <!-- <script>
+    function createComment(name, text) {
+      const name = document.getElementById('name-input').value;
+      const text = document.getElementById('comment-input').value;
+
+      createName(name);
+      createTextComment(text);
+
+      if (!name || !text) {
+        alert('Введите имя и комментарий');
+        return;
+      }
+
+      const parentList = document.getElementById('comment-list');
+
+      const newComment = document.createElement('li');
+      newComment.className = 'comment';
+
+      const commentHeader = document.createElement('div');
+      commentHeader.className = 'comment-header';
+      commentHeader.textContent = name;
+
+      const commentBody = document.createElement('div');
+      commentBody.className = 'comment-body';
+
+      const commentText = document.createElement('div');
+      commentText.className = 'comment-text';
+      commentText.textContent = text;
+
+      commentBody.appendChild(commentText);
+      newComment.appendChild(commentHeader);
+      newComment.appendChild(commentBody);
+      parentList.appendChild(newComment);
+    }
+  </script> -->
+
+  <!-- <script>
+    function createComment(name, text) {
+      createName(name);
+      createTextComment(text);
+    }
+
+    function createName(name) {
+      if (!name) {
+        alert('Введите имя');
+        return;
+      }
+
+      const parentDiv = document.getElementById('comment-list');
+
+      const newComment = document.createElement('li');
+      newComment.className = 'comment';
+
+      const commentHeader = document.createElement('div');
+      commentHeader.className = 'comment-header';
+      commentHeader.textContent = name;
+
+      newComment.appendChild(commentHeader);
+      parentDiv.appendChild(newComment);
+    }
+
+    function createTextComment(text) {
+      if (!text) {
+        alert('Введите комментарий');
+        return;
+      }
+
+      const parentDiv = document.getElementById('comment-list');
+
+      const newComment = document.createElement('li');
+      newComment.className = 'comment';
+
+      const commentBody = document.createElement('div');
+      commentBody.className = 'comment-body';
+      
+      const commentText = document.createElement('div');
+      commentText.className = 'comment-text';
+      commentText.textContent = text;
+
+      commentBody.appendChild(commentText);
+      newComment.appendChild(commentBody);
+      parentDiv.appendChild(newComment);
+    }
+  </script> -->
+
+  <!-- <script>
     "use strict";
     // Код писать здесь
-    console.log("It works!");
-  </script>
+    function createComment() {
+      const nameInput = document.getElementById('name-input').value;
+      const commentInput = document.getElementById('comment-input').value;
+
+      createName(nameInput);
+      createTextComment(commentInput);
+    }
+
+    function createName(inputText) {
+      // const inputText = document.getElementById('name-input').value;
+      if (!inputText) {
+        alert('Введите текст');
+        return;
+      }
+
+      const parentDiv = document.getElementById('name-output');
+      const commentName = document.createElement('div');
+      commentName.className = 'comment-header';
+      commentName.textContent = inputText;
+
+      parentDiv.appendChild(commentName);
+    }
+
+    function createTextComment(inputText) {
+      // const inputText = document.getElementById('comment-input').value;
+      if (!inputText) {
+        alert('Введите текст');
+        return;
+      }
+
+      const parentDiv = document.getElementById('comment-output');
+      const commentText = document.createElement('div');
+      commentText.classList.add('comment-body');
+      commentText.classList.add('comment-text');
+      commentText.textContent = inputText;
+
+      parentDiv.appendChild(commentText);
+    }
+    // console.log("It works!");
+  </script> -->
 </html>
