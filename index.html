@@ -9,40 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments" id="list">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+        <!--список рендерится из js -->
       </ul>
       <div class="add-form">
         <input
@@ -73,8 +40,80 @@
     //отображение даты в выбранном формате
     let currentDate = new Date();
     let formattedDateTime = ('0' + currentDate.getDate()).slice(-2) + '.' + ('0' + (currentDate.getMonth() + 1)).slice(-2) + '.' + ('' + currentDate.getFullYear()).slice(-2) + ' ' + ('0' + currentDate.getHours()).slice(-2) + ':' + ('0' + currentDate.getMinutes()).slice(-2);
+    const comments = [
+      {
+        name:"Глеб Фокин",
+        date:"12.02.22 12:18",
+        text:"Это будет первый комментарий на этой странице",
+        isLiked:false,
+        likeCount:73
+      },
+      {
+        name:"Варвара H.",
+        date:"13.02.22 19:22",
+        text:"Мне нравится как оформлена эта страница! ❤",
+        isLiked:true,
+        likeCount:3
+      },
+    ];
 
-    //Обработчик событий
+    //формирую html разметку на основе массива
+    const renderComments = () => {
+  const commentsHtml = comments.map((comment, index) => {
+    // Добавляем класс active-like, если isLiked равно true
+    const likeButtonClass = comment.isLiked ? 'like-button active-like' : 'like-button';
+    
+    return `<li class="comment">
+      <div class="comment-header">
+        <div>${comment.name}</div>
+        <div>${comment.date}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">
+          ${comment.text}
+        </div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">${comment.likeCount}</span>
+          <button data-index="${index}" class="${likeButtonClass}"></button>
+        </div>
+      </div>
+    </li>`;
+  }).join("");
+  
+  listElement.innerHTML = commentsHtml;
+  
+  // Не забудьте заново инициализировать слушателей кнопок "лайк"
+  initLikeButtonListeners();
+};
+
+
+          //инициализация обработчика событий на клик по кнопке лайка
+          const initLikeButtonListeners = () => {
+  const likeButtonElements = document.querySelectorAll(".like-button");
+
+  for (const likeButtonElement of likeButtonElements) {
+    likeButtonElement.addEventListener('click', () => {
+      const index = likeButtonElement.dataset.index;
+
+      // Изменяем значение isLiked и число лайков в соответствии с текущим состоянием кнопки 
+      comments[index].isLiked = !comments[index].isLiked;
+      if (comments[index].isLiked) {
+        comments[index].likeCount++;
+      } else {
+        comments[index].likeCount--;
+      }
+
+      // Обновляем отображение кнопки "лайк"
+      renderComments();
+    });
+  }
+};
+
+// Вызов функции инициализации слушателей
+initLikeButtonListeners();
+    //Обработчик событий на кнопку отправить
     buttonElement.addEventListener('click', () =>{
       nameInputElement.classList.remove('error');
         textInputElement.classList.remove('error');
@@ -93,28 +132,20 @@
             return;
         };
     //добавление комментария на страницу
-      const oldListHtml = listElement.innerHTML;
-      listElement.innerHTML = oldListHtml + `<li class="comment">
-          <div class="comment-header">
-            <div>${nameInputElement.value}</div>
-            <div>${formattedDateTime}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${textInputElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
+
+      comments.push({
+        name:nameInputElement.value,
+        date:formattedDateTime,
+        text:textInputElement.value,
+        isLiked:false,
+        likeCount:0
+      });
+      renderComments();
         //очистка инпута от старого ввода
         textInputElement.value = '';
         nameInputElement.value = '';
     });
     
+    renderComments();
   </script>
 </html>
