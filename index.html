@@ -10,40 +10,7 @@
 <body>
   <div class="container">
     <ul class="comments">
-      <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>
+      <!-- Рендерится из JS -->
     </ul>
     <div class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
@@ -57,42 +24,53 @@
 </body>
 
 <script>
+  "use scrict"
+  //скрипт для корректной работы лайков
+  const likesActive = () => {
+    const buttonLikeElements = document.querySelectorAll('.like-button');
+
+    for (const elem of buttonLikeElements) {
+      elem.addEventListener('click', () => {
+        const index = elem.dataset.index;
+        if (commeentsList[index].likeStatus === 'like-button -active-like') {
+          commeentsList[index].likeStatus = 'like-button';
+          commeentsList[index].likeNum = commeentsList[index].likeNum - 1;
+          renderComments();
+        } else {
+          commeentsList[index].likeStatus = 'like-button -active-like';
+          commeentsList[index].likeNum = commeentsList[index].likeNum + 1;
+          renderComments();
+        }
+      });
+    }
+  }
+</script>
+
+<script>
   "use strict";
+  //скрипт для добавления нового коментария
   const currentInputName = document.getElementsByClassName('add-form-name')[0];
   const currentInputText = document.getElementsByClassName('add-form-text')[0];
   const commentButton = document.getElementsByClassName('add-form-button')[0];
   const commentList = document.getElementsByClassName('comments')[0];
   const checkStatus = document.getElementsByClassName('add-form')[0];
 
-
-
   function addNewComment() {
     const currentDate = new Date();
 
     if (currentInputName.value.trim().length !== 0 && currentInputText.value.trim().length !== 0) {
-      const oldElement = commentList.innerHTML;
-      commentList.innerHTML = oldElement + `
-      <li class="comment">
-        <div class="comment-header">
-          <div>${currentInputName.value}</div>
-          <div>${currentDate.getDate()}.${(currentDate.getMonth() < 8 ? '0' + (currentDate.getMonth() + 1) :
+      commeentsList.push({
+        name: currentInputName.value,
+        commentText: currentInputText.value,
+        likeNum: 0,
+        likeStatus: 'like-button',
+        date: `${currentDate.getDate()}.${(currentDate.getMonth() < 8 ? '0' + (currentDate.getMonth() + 1) :
           currentDate.getMonth())}.${currentDate.getFullYear() - 2000}
-        ${currentDate.getHours()}:${currentDate.getMinutes()}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${currentInputText.value}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>`;
+        ${currentDate.getHours()}:${currentDate.getMinutes()}`
+      })
       currentInputText.value = '';
       currentInputName.value = '';
+      renderComments();
     }
   }
 
@@ -126,6 +104,54 @@
     let delElem = deleteElement.children.item(deleteElement.children.length - 1);
     delElem.remove();
   });
+</script>
+
+<script>
+  "use strict"
+  //скрипт для рендеринга комментов
+  const commeentsList = [
+    {
+      name: 'Глеб Фокин',
+      commentText: 'Это будет первый комментарий на этой странице',
+      likeNum: 3,
+      likeStatus: 'like-button',
+      date: '12.02.22 12:18'
+    },
+    {
+      name: 'Варвара Н.',
+      commentText: 'Мне нравится как оформлена эта страница! ❤',
+      likeNum: 75,
+      likeStatus: 'like-button -active-like',
+      date: '13.02.22 19:22'
+    }
+  ];
+
+  const renderComments = () => {
+    const commentsInHTML = commeentsList.map((elem, index) => {
+      return `
+      <li class="comment">
+        <div class="comment-header">
+          <div>${elem.name}</div>
+          <div>${elem.date}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${elem.commentText}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${elem.likeNum}</span>
+            <button data-index="${index}" class="${elem.likeStatus}"></button>
+          </div>
+        </div>
+      </li>`;
+    }).join('');
+    commentList.innerHTML = commentsInHTML;
+    likesActive();
+  };
+
+  renderComments();
 </script>
 
 </html>
