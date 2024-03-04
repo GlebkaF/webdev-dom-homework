@@ -40,6 +40,7 @@
       comment: 'Это будет первый комментарий на этой странице',
       likes: 3,
       isLiked: false,
+      
 
     },
     {
@@ -48,9 +49,25 @@
       comment: 'Мне нравится как оформлена эта страница! ❤',
       likes: 75,
       isLiked: false,
+      
     },
   ];
+  const answerComment = () => {
+    const commentsElements = document.querySelectorAll('.comment-body');
 
+    for (const comment of commentsElements) {
+      
+
+      comment.addEventListener('click', () => {
+        textInputElement.value = comment.textContent;
+        
+      })
+      
+    }
+    
+  }
+
+  answerComment();
 
   const renderUsers = () => {
     const usersHtml = users.map((user, index) => {
@@ -60,25 +77,24 @@
             <div>${user.date}</div>
           </div>
           <div data-text="${user.comment}" class="comment-body">
-            <div class="comment-text">
-              ${user.comment}
-            </div>
+            ${users[index].isEdit ? `<textarea class="comment-edited-text"> ${users[index].comment} </textarea>` : `<div class="comment-text"> ${users[index].comment} </div>` }
           </div>
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${user.likes}</span>
               <button data-like="${user.likes}" data-index="${index}" class="like-button ${users[index].isLiked ? '-active-like' : 'like-button'}"></button>
+              <button data-index=${index} class ="edit-button"> ${users[index].isEdit? "Сохранить":"Редактировать"} </button>
             </div>
           </div>
         </li>`;
     }).join('');
 
     listElement.innerHTML = usersHtml;
-
-
+    answerComment();
+    editComments();
     initLikeButtonListeners();
     updateValue();
-
+    
   };
 
   const initLikeButtonListeners = () => {
@@ -119,23 +135,7 @@
 
   
 
-  const answerComment = () => {
-    const commentsElements = document.querySelectorAll('.comment-body');
 
-    for (const comment of commentsElements) {
-      
-
-      comment.addEventListener('click', () => {
-        textInputElement.value = comment.textContent;
-        
-      })
-      
-    }
-    
-  }
-
-  
-  answerComment();
   
 
   buttonElement.disabled = true;
@@ -162,9 +162,29 @@
     }
 
   }
+  const sanitizeHtml = (htmlString) => {
+      return htmlString.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+    };
 
+  function editComments(){
+    const commentsBody = document.querySelector(".comment-body");
+    const editedComment = document.querySelectorAll('.comment-edited-text')
+    const editButtons = document.querySelectorAll(".edit-button");
 
+        editButtons.forEach((editButton,index) => {
+            editButton.addEventListener("click",(event)=>{
+                event.stopPropagation();
+               users[index].isEdit = !users[index].isEdit;
+               if(users.isEdit){
+                  users.textOfComent = editedComment.value
+               }
+               renderUsers()
 
+              })
+
+        });
+   }
+   editComments();
 
   buttonElement.addEventListener('click', () => {
     nameInputElement.classList.remove('error');
@@ -202,14 +222,16 @@
     const dateTime = `${date.toLocaleDateString('ru-RU', options)} ${date.toLocaleTimeString('ru-RU', optionsTime)}`;
 
     users.push({
-      name: nameInputElement.value.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;'),
+      name: sanitizeHtml(nameInputElement.value),
       date: dateTime,
-      comment: textInputElement.value.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;'),
+      comment: sanitizeHtml(textInputElement.value),
       likes: 0,
       isLiked: false,
+      isEdit: false
     })
-
+    
     renderUsers();
+    editComments();
     nameInputElement.value = '';
     textInputElement.value = '';
   });
