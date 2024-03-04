@@ -119,6 +119,47 @@
         return;
       }
 
+			// Создал массив данных на основе разметки HTML
+
+			const commentators = [
+			{
+				name: "Глеб Фокин",
+				data: "12.02.22 12:18",
+				comment: "Это будет первый комментарий на этой странице",
+				like: "3",
+			},
+			{
+				name: "Варвара Н.",
+				data: "13.02.22 19:22",
+				comment: "Мне нравится как оформлена эта страница! ❤",
+				like: "75",
+			},
+			];
+
+			const renderCommentators = () => {
+			const commetHtml = commentators.map((commentator) => {
+					return `<li class="comment">
+          <div class="comment-header">
+            ${commentator.name}
+            <div>${formattedDate}  ${formattedTime}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${commentator.comment}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+				});
+				console.log(commetHtml);
+			};
+			renderCommentators()
+
 			const oldlist = listElement.innerHTML;
 			
 			listElement.innerHTML = oldlist + `<li class="comment">
