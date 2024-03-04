@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Урок "Динамические обработчики событий и всплытие"</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <h1>Любимые цвета студентов</h1>
+    <ul class="students" id="list">
+      <!-- Список рендерится из JS -->
+    </ul>
+
+    <div class="form">
+      <h3 class="form-title">Форма добавления</h3>
+      <div class="form-row">
+        Имя:&nbsp;&nbsp;
+        <input
+          type="text"
+          id="name-input"
+          class="input"
+          placeholder="Василий"
+        />
+      </div>
+      <div class="form-row">
+        Цвет:&nbsp;
+        <input type="color" id="color-input" class="color-input input" />
+        <br /><br />
+      </div>
+      <button class="button" id="add-button">Добавить</button>
+    </div>
+  </body>
+
+  <script>
+    const buttonElement = document.getElementById("add-button");
+    const listElement = document.getElementById("list");
+    const nameInputElement = document.getElementById("name-input");
+    const colorInputElement = document.getElementById("color-input");
+
+    const students = [
+      {
+        name: "Глеб",
+        color: "#ff2600",
+      },
+      {
+        name: "Иван",
+        color: "#00f900",
+      },
+      {
+        name: "Люси",
+        color: "#0432ff",
+      },
+    ];
+
+    // Удаляем , любимый цвет <span class="swapBack" style="color: ${student.color}"> ${student.color}</span>, сделаем чтобы отображалась инфа по нажатию на имя
+    const renderStudents = () => {
+      const studentsHtml = students
+        .map((student, index) => {
+          return `
+          <li class="student" data-color="${student.color}">
+            <p class="student-name">
+              ${student.name}
+            </p>
+            <button data-index="${index}" class="button delete-button">Удалить</button>
+          </li>`;
+        })
+        .join("");
+
+      listElement.innerHTML = studentsHtml;
+
+      const deleteButtons = document.querySelectorAll(".delete-button");
+
+      for (const deleteButton of deleteButtons) {
+        deleteButton.addEventListener("click", (event) => {
+          // метод  stopPropogation останавливает всплытие вверх по дереву
+          // то есть обработчики кликов на элементах выше по дереву не будут вызваны
+          // то есть обработчик клика на элементе списка, который описан ниже в коде, не будет вызван
+          event.stopPropagation();
+          const index = deleteButton.dataset.index;
+
+          students.splice(index, 1);
+
+          renderStudents();
+        });
+      }
+
+      // При нажатии на оно с именем, появляется alert с любимым цветом ЭТОГО человека
+      const studentsElement = document.querySelectorAll(".student");
+
+      for (const studentElemetn of studentsElement) {
+        studentElemetn.addEventListener("click", () => {
+          const color = studentElemetn.dataset.color;
+          alert(`Любимый цвет: ${color}`);
+        });
+      }
+    };
+
+    renderStudents();
+
+    buttonElement.addEventListener("click", () => {
+      nameInputElement.classList.remove("input-error");
+
+      if (nameInputElement.value === "") {
+        nameInputElement.classList.add("input-error");
+        return;
+      }
+
+      students.push({
+        name: nameInputElement.value
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;"),
+        color: colorInputElement.value,
+      });
+
+      renderStudents();
+
+      nameInputElement.value = "";
+    });
+  </script>
+</html>
+
