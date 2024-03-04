@@ -1,39 +1,35 @@
-const fetchPromice = fetch("https://wedev-api.sky.pro/api/v1/aleksey-poplaukhin/comments", {
-    method: "GET"
-});
-
-fetchPromice.then((response) => {
-    response.json().then((responseData) =>{
-        const appComment = responseData.comments.map((comment) => {
-            const options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }; 
-            const formattedDate = new Intl.DateTimeFormat('ru-RU', options).format(new Date(comment.date));
-            
-            return {
-                name: comment.author.name,
-                time: formattedDate,
-                text: comment.text,
-                likes: 0,
-                isLiked: false,
-            };
-        });
-
-        peoples = appComment;
-        renderPeoples();
-    })
-});
-
-
-// Создаем объекты, которые будем рендерить:
-let peoples = [];
-
+// Определяем функцию для очистки и защиты HTML-строк
 const sanitizeHtml = (htmlString) => {
-    return htmlString.replaceAll("<", "&lt").replaceAll(">", "&gt");
+    return htmlString.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 }
 
-// Кладем в переменную список комментариев, который будет меняться:
+// Создаем массив, куда будем помещать данные, полученные из API
+let peoples = [];
+
+// Определяем элементы input-формы
+const buttonElement = document.getElementById('add-button');
+const nameInputElement = document.getElementById('name');
+const textInputElement = document.getElementById('textArea');
 const commentListElement = document.getElementById('commentList');
 
-// Пишем функцию рендера для создания разметки:
+// Показать текст "Добавляю твой комментарий..."
+const showAddingCommentMessage = () => {
+    const addingCommentMessage = document.createElement('div');
+    addingCommentMessage.textContent = 'Добавляю твой комментарий...';
+    addingCommentMessage.classList.add('adding-comment-message');
+    commentListElement.appendChild(addingCommentMessage);
+    document.getElementById('form-id').style.display = 'none'; // Скрыть форму добавления комментария
+};
+
+// Скрыть текст "Добавляю твой комментарий..."
+const hideAddingCommentMessage = () => {
+    const addingCommentMessage = document.querySelector('.adding-comment-message');
+    if (addingCommentMessage) {
+        addingCommentMessage.remove();        
+    };
+};
+
+// Пишем функцию рендера для создания разметки
 const renderPeoples = () => {    
     const commentsHtml = peoples
         .map((people, index) => {
@@ -61,8 +57,7 @@ const renderPeoples = () => {
 
     commentListElement.innerHTML = commentsHtml;
 
-
-    // Красим кнопку лайка и увеличиваем счетчик:    
+    // Красим кнопку лайка и увеличиваем счетчик
     for (let button of document.querySelectorAll(".like-button")) {
         button.addEventListener("click", (event) => { 
             event.stopPropagation();
@@ -81,7 +76,6 @@ const renderPeoples = () => {
         });
     }
 
-
     // Ответ на комментарий
     for (const commentElement of document.querySelectorAll(".comment")) {
         commentElement.addEventListener("click", (event) => {
@@ -92,17 +86,45 @@ const renderPeoples = () => {
             textInputElement.style.whiteSpace = 'pre-line';
         });
     }
-
 }
 
-// Определяем для JS элементы input-формы:
-const buttonElement = document.getElementById('add-button');
-const nameInputElement = document.getElementById('name');
-const textInputElement = document.getElementById('textArea');
+// Добавляем лоадер на весь список при первой загрузке страницы
+commentListElement.textContent = 'Загружаю список комментариев...';
 
-// Прикрепляем обработчик к кнопке добавления комментария:
+// Определяем функцию fetchComments, которая отправляет GET-запрос для получения комментариев из сервера
+const fetchComments = () => {
+    return fetch("https://wedev-api.sky.pro/api/v1/aleksey-poplaukhin/comments", {
+        method: "GET"
+    })
+    .then((response) => {
+        return response.json();
+    })
+    .then(function(responseData) { // здесь почему то не захотела работать вторая стрелочная функция. Я не понял почему...        
+        const appComment = responseData.comments.map((comment) => {
+            const options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }; 
+            const formattedDate = new Intl.DateTimeFormat('ru-RU', options).format(new Date(comment.date));
+            
+            return {
+                name: comment.author.name,
+                time: formattedDate,
+                text: comment.text,
+                likes: 0,
+                isLiked: false,
+            };
+        });
+
+        // Присваиваем массив объектов переменной peoples и вызываем функцию рендера
+        peoples = appComment;
+        renderPeoples();
+    });
+};
+
+// Вызываем функцию fetchComments для получения комментариев сразу при загрузке страницы
+fetchComments();
+
+// Назначаем обработчик клика на кнопку добавления комментария
 buttonElement.addEventListener("click", () => {
-    // Удаляем пробелы из значений полей ввода:
+    // Удаляем пробелы из значений полей ввода
     const trimmedName = nameInputElement.value.trim();
     const trimmedText = textInputElement.value.trim();
 
@@ -118,53 +140,53 @@ buttonElement.addEventListener("click", () => {
         return;
     }
 
-    // Создаем отформатированную дату для нового комментария:
-    const newDate = new Date();
-    const currentDate = newDate;
-    const options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }; 
-
-    // const newComment = {
-    //     name: sanitizeHtml(trimmedName),
-    //     time: currentDate.toLocaleDateString('ru-RU', options),
-    //     likes: 0,
-    //     text: sanitizeHtml(trimmedText),
-    //     isLiked: false
-    // };
-
-    // peoples.push(newComment);
-
+    // Показать текст "Добавляю твой комментарий..." и скрыть форму добавления комментария
+    showAddingCommentMessage();
+    
+    // Отправляем POST-запрос для добавления нового комментария
+    
     fetch("https://wedev-api.sky.pro/api/v1/aleksey-poplaukhin/comments", {
         method: "POST",
         body: JSON.stringify({
             text: sanitizeHtml(trimmedText),
-            name: sanitizeHtml(trimmedName),        
+            name: sanitizeHtml(trimmedName),
+            forceError: true        
         }),
     })
+    .then((response) => {
+        if (response.status === 500) {
+            throw new Error('Ошибка сервера');
+        };
+
+        if (response.status === 400) {
+            throw new Error('Неверный запрос')
+        };
+    })
     .then(() => {
-        // После успешного выполнения POST-запроса делаем GET-запрос для получения обновленных данных
-        fetch("https://wedev-api.sky.pro/api/v1/aleksey-poplaukhin/comments", {
-            method: "GET"
-        })        
-        .then((response) => response.json()).then((responseData) =>{
-            const appComment = responseData.comments.map((comment) => {
-                const options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }; 
-                const formattedDate = new Intl.DateTimeFormat('ru-RU', options).format(new Date(comment.date));
-                
-                return {
-                    name: comment.author.name,
-                    time: formattedDate,
-                    text: comment.text,
-                    likes: 0,
-                    isLiked: false,
-                };
-            });
-
-            peoples = appComment;
-            renderPeoples();
-        })
+        // Получаем обновленный список комментариев, вызвав функцию fetchComments после успешного POST-запроса
+    return fetchComments();               
+    })
+    .then(() => {
+        // Очищаем поля ввода после отправки комментария только при успешном POST
+        nameInputElement.value = "";
+        textInputElement.value = "";
+    })
+    .catch((error) => {
+        if (error.message === 'Ошибка сервера') {
+        alert('Севрвер прилег отдохнуть, пробую еще раз...');            
+        } else if (error.message === 'Неверный запрос') {
+            alert('Имя или комментарий короче 3-х символов');
+            textInputElement.classList.add("error");
+            nameInputElement.classList.add("error");
+        } else {
+            alert('Кажется, интернет прилег отдохнуть, проверь соединение...');
+        };        
+    })
+    .finally(() => {
+        // Скрыть текст "Добавляю твой комментарий..." и показать форму добавления комментария
+        hideAddingCommentMessage();
+        document.getElementById('form-id').style.display = 'flex'; // Показать форму добавления комментария
     });
-
-    // Очищаем поля ввода после отправки комментария:
-    nameInputElement.value = "";
-    textInputElement.value = "";
+    
+    
 });
