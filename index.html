@@ -11,16 +11,40 @@
   <div class="container">
     <ul id="list" class="comments">
     </ul>
-    <div class="add-form">
-      <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="nameInput" />
+    <div id="authorizedAddForm" class="add-form authorizedAddForm">
+      <input type="text" class="add-form-name" placeholder="Здесь могла быть ваша реклама" id="nameInput" />
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
         id="commitInput"></textarea>
       <div class="add-form-row">
         <button id="addButton" class="add-form-button">Написать</button>
       </div>
     </div>
-  </div>
-  <script type="module" src="main.js"></script>
+    <div id="notAuthorized" class="add-form notAuthorized">
+      <input type="text" class="add-form-name" placeholder="Вы не авторизованы" id="notAuthorizednameInput" />
+      <textarea type="textarea" class="add-form-text" placeholder="Авторизируйтесь, чтобы добавить комментарий" rows="4"
+        id="notAuthorizedcommitInput"></textarea>
+      <div class="add-form-row">
+        <button id="toAuthorizationButton" class="add-form-button">Авторизация</button>
+      </div>
+    </div>
+    <div id="autorization" class="add-form autorization">
+      <input type="text" class="add-form-name login" placeholder="Имя пользователя" id="loginInput" />
+      <input type="text" class="add-form-name password" placeholder="Пароль" id="passwordInput" />
+      <div class="add-form-row autorizationBtns">
+        <button id="toRegBtn" class="add-form-button">Зарегистрироваться</button>
+        <button id="authorizationConfirmButton" class="add-form-button">Авторизоваться</button>
+      </div>
+    </div>
+    <div id="registration" class="add-form registration">
+      <input type="text" class="add-form-name login" placeholder="Укажите ваше Имя" id="regName" />
+      <input type="text" class="add-form-name password" placeholder="Логин" id="regLogin" />
+      <input type="text" class="add-form-name password" placeholder="Пароль" id="regPassword" />
+      <div class="add-form-row registrationBtns">
+        <button id="confirmRegBtn" class="add-form-button">Зарегистрироваться</button>
+      </div>
+    </div>
+
+    <script src="main.js"></script>
 </body>
 
 </html>
