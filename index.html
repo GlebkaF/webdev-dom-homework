@@ -70,9 +70,9 @@
       }
       let date = getFormatetNowDate();
       comments.push({
-        name: nameInputElement.value,
+        name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
         date: date,
-        text: commentInputElement.value,
+        text: commentInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
         counter: 0,
         like: false
       });
@@ -103,11 +103,11 @@
     };
 
     
-    const initLikeButtonsListeners = () => {
+    const initListeners = () => {
       const likeButtonElements = document.querySelectorAll(".like-button");
-      console.log(likeButtonElements.value);
       for(const likeButtonElement of likeButtonElements){
-        likeButtonElement.addEventListener("click", () => {
+        likeButtonElement.addEventListener("click", (event) => {
+          event.stopPropagation();
           const index = likeButtonElement.dataset.index;
           if(comments[index].like === true){
             comments[index].like = false;
@@ -116,16 +116,25 @@
             comments[index].like = true;
             comments[index].counter += 1;
           }
-          console.log(index);
           renderComments();
         });
       }
+
+      const commentsElements = document.querySelectorAll(".comment");
+      for(const commentElement of commentsElements){
+        commentElement.addEventListener("click", () => {
+          const comment = commentElement.dataset.text;
+          const name = commentElement.dataset.name;
+          commentInputElement.value = "> "  + comment + "\n" + name + ", ";
+        });
+      }
+
     }
 
     const renderComments = () => {      
       const commentHtml = comments.map((comment, index) => {
         const like = getStyleLikeButton(comment.like);
-        return `<li class="comment">
+        return `<li class="comment" data-name="${comment.name}" data-text="${comment.text}">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.date}</div>
@@ -144,10 +153,12 @@
         </li>`
       }).join("");
       listElement.innerHTML = commentHtml;
-      initLikeButtonsListeners();
+      initListeners();
     }   
     
-    renderComments();     
+    renderComments();   
+    
+
 
   </script>
 </html>
