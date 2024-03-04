@@ -72,6 +72,9 @@
 		const acceptName = document.getElementById('input-accept-name');
 		const acceptComment = document.getElementById('textarea-accept-comment');
 		const buttonDelete =  document.getElementById('delete-button');
+		// const likeButtons = document.querySelectorAll('.like-button');
+		// const activeLikeButton = document.querySelectorAll('.-active-like');
+		// console.log(likeButton);
 		// const newTimeDate = document.getElementById('new-time');
 		
 		// Ставлю время
@@ -108,25 +111,62 @@
 		}
 	})
 
-				// Создал массив данных на основе разметки HTML
+	//Делаю обработчик клика на лайк - ничего не работает по непонятной причине, возможно стоило поменять строчки кода местами.
+			// likeButtons.forEach(button => {
+			// 	button.addEventListener('click', () => {
+			// 			console.log('1');
+			// 		});
+			// 	});
+			// А теперь работает, тоже по непонятной причине. Ну есть событие DOMContentLoaded, гаратирующие, что код будет работать, но почему именно так? 
+			const addLikeButton = function() { document.addEventListener('DOMContentLoaded', function() {
+			const likeButtons = document.querySelectorAll('.like-button');
+			const likesCounters = document.querySelectorAll('.likes-counter')
+
+					likeButtons.forEach((button, index) => {
+					button.addEventListener('click', () => {
+						const currentLikes = commentators[index].like;
+
+						if (commentators[index].isLike) {
+							commentators[index].like = 0;
+							commentators[index].isLike = false;
+						} else {
+							commentators[index].like = 1;
+							commentators[index].isLike = true;
+						}
+						likesCounters[index].innerText = commentators[index].like;
+						//Изменение заливки лайка
+						if (commentators[index].isLike) {
+							button.classList.add('-active-like');
+						} else {
+							button.classList.remove('-active-like');
+						}
+					});
+					});
+				});
+			}
+				// Создал массив данных на основе разметки HTML (Что? для чего? Зачем это нужно?  )
 				const commentators = [
 			{
 				name: "Глеб Фокин",
 				data: "12.02.22 12:18",
 				comment: "Это будет первый комментарий на этой странице",
-				like: "3",
+				like: 1,
+				isLike: false,
 			},
 			{
 				name: "Варвара Н.",
 				data: "13.02.22 19:22",
 				comment: "Мне нравится как оформлена эта страница! ❤",
-				like: "75",
+				like: 0,
+				isLike: true,
 			}
 			];
-
-			//Рендер функция. Что? для чего? Зачем это нужно?  
+			const like = 'isLike';
+			addLikeButton()
+			
+			//Рендер функция. Что? для чего? Зачем это нужно?  Вообще без понятия как делать дз
 			const renderCommentators = () => {
-			const commentHtml = commentators.map((commentator) => {
+			const commentHtml = commentators.map((commentator, index) => {
 					return `<li class="comment">
           <div class="comment-header">
             ${commentator.name}
@@ -139,15 +179,27 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
+              <span class="likes-counter"></span>
+              <button data-index="${index}" class="like-button" id="like-butto"></button>
             </div>
           </div>
         </li>`
-				});
-				console.log(commentHtml);
+				}).join('');
+				listElement.innerHTML = commentHtml;
 			};
-			renderCommentators()
+			renderCommentators();
+			addLikeButton();
+
+
+			//Что-то делаю по видео - убрал.
+			// commentators.push({
+			// 	name: acceptName.value,
+			// 	data: [formattedDate, formattedTime],
+			// 	comment: acceptComment,
+			// 	like: 0,
+			// });
+
+			// renderCommentators()
 
 	// Добавляю красный фоновый цвет при незаполненом поле (Эта функция оказывается бессмысленной после создания неактивной кнопки)
 		buttonElement.addEventListener('click', () => {
@@ -174,12 +226,12 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
+              <span class="likes-counter">${commentators[like]}</span>
+              <button class="like-button" id="like-butto"></button>
             </div>
           </div>
         </li>`
 		})
-		
+		addLikeButton()
   </script>
 </html>
