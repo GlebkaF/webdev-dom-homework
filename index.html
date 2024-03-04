@@ -45,6 +45,7 @@
         </div>
       </li>
     </ul>
+    <div class="add-comment-loader">Добавление комментария...</div>
     <div class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
       <textarea class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
@@ -76,7 +77,9 @@
       //   pushedTime: "13.02.22 19:22",
       // },
     ];
-
+    let loading = true;
+    let addCommentLoader = document.querySelector('.add-comment-loader');
+    let loadingAddComment = false;
     const addForm = document.querySelector(".add-form");
     const btn = document.querySelector(".add-form-button");
     const inputName = document.querySelector(".add-form-name");
@@ -84,17 +87,17 @@
     const ulList = document.querySelector(".comments");
     const deleteBtn = document.querySelector(".delete-button");
 
-    const getDate = () =>
-      new Date()
-        .toLocaleString("ru-RU", {
-          year: "2-digit",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
-        })
-        .replace(",", " ");
+    // const getDate = () =>
+    //   new Date()
+    //     .toLocaleString("ru-RU", {
+    //       year: "2-digit",
+    //       month: "2-digit",
+    //       day: "2-digit",
+    //       hour: "2-digit",
+    //       minute: "2-digit",
+    //       hour12: false,
+    //     })
+    //     .replace(",", " ");
 
     function addComment() {
       comments.push({
@@ -113,9 +116,11 @@
     }
 
     function getCommets() {
+      loading = true;
       const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/lida-merzhoeva/comments", {
         method: "GET",
       }).then((response) => {
+        loading = false;
         const jsonPromise = response.json();
         jsonPromise.then((responseData) => {
           const commentItem = responseData.comments.map((comment) => {
@@ -147,20 +152,19 @@
 
 
     const renderCommentsList = () => {
-      let newList = "";
-
+      let newList = loading ? '<div>Загрузка...</div>' : '';
 
       for (let i = 0; i < comments.length; i++) {
         newList =
           newList +
           `<li class="comment">
       <div class="comment-header">
-        <div>${comments[i].name.replace('<', '&lt;').replace('>', '&gt;').replace('/', '&sol;')}</div>
+        <div class="comment-name" data-index="${i}">${comments[i].name.replace('<', '&lt;').replace('>', '&gt;').replace('/', '&sol;')}</div>
         <div>${comments[i].data}</div>
       </div>
 
       <div class="comment-body">
-        <div class="comment-text">
+        <div class="comment-text" data-index="${i}">
           ${comments[i].comment}
         </div>
       </div>
@@ -179,8 +183,8 @@
       const elements = document.getElementsByClassName('comment-text')
       for (const element of elements) {
         element.addEventListener('click', (event) => {
-          const userName = document.querySelectorAll('.user-name');
-          inputText.value = `> ${event.target.outerText}\n\n ${event.target.parentElement.parentElement.firstElementChild.firstElementChild.innerText}, `
+          const userName = document.querySelector(`.comment-name[data-index="${event.target.dataset.index}"]`);
+          inputText.value = `> ${event.target.outerText}\n\n ${userName.innerText}, `
         })
       };
     }
@@ -210,6 +214,9 @@
     inputText.addEventListener("change", () => cleanErorrsInUI());
 
     btn.addEventListener("click", () => {
+      addForm.style.display = 'none';
+
+      addCommentLoader.style.display = 'block';
       if (isNotEmpty()) {
         exceptErrorInUI();
         setTimeout(cleanErorrsInUI, 2000);
@@ -226,7 +233,15 @@
           getCommets(),
             inputName.value = " "
           inputText.value = " "
+          addCommentLoader.style.display = 'none';
+          addForm.style.display = 'flex';
+          inputText.setAttribute('placeholder', placeholderText);
         })
+          .catch(() => {
+            addCommentLoader.style.display = 'none';
+            addForm.style.display = 'flex';
+            inputText.setAttribute('placeholder', placeholderText);
+          })
       }
     });
 
