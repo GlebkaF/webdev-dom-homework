@@ -206,6 +206,19 @@
     //   </div>
     //   </li>` 
       
+     const currentDate = new Date();
+      function formatTime(currentDate){
+  
+       const date = currentDate.getDate().toString().padStart(2, "0");
+       const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
+       const year = currentDate.getFullYear().toString().substr(2,2);
+  
+       const h = currentDate.getHours().toString().padStart(2, "0");
+       const m = currentDate.getMinutes().toString().padStart(2, "0");
+
+       return `${date}.${month}.${year} ${h}:${m}`
+      }; 
+
       сommentators.push({
         name : nameElement.value,
         date : formatTime(currentDate),
@@ -219,41 +232,37 @@
       textElement.value = "";
     });
 
-    const currentDate = new Date();
-      function formatTime(currentDate){
-  
-       const date = currentDate.getDate().toString().padStart(2, "0");
-       const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
-       const year = currentDate.getFullYear().toString().substr(2,2);
-  
-       const h = currentDate.getHours().toString().padStart(2, "0");
-       const m = currentDate.getMinutes().toString().padStart(2, "0");
 
-       return `${date}.${month}.${year} ${h}:${m}`
-      };
 
     const formElement = document.getElementById ('form');
-    formElement.addEventListener('keyup', keyEvent);
+     formElement.addEventListener('keyup', keyEvent);
       function keyEvent(e) {
        if (e.code === 'Enter') {
         buttonElement.dispatchEvent(new Event('click'));
        }
       };
-    
-    // const removeButton = document.getElementById("deleteComment");
-    //  removeButton.addEventListener("click", removeItem);
-    //  function removeItem() {
-    //    let list=document.getElementById("list");
-    //    let listItems = list.getElementsByTagName("li");
-    //    let last=listItems[listItems.length-1];
-    //    list.removeChild(last);
-    //   };
-
+      
     const removeButton = document.getElementById("deleteComment");
-     removeButton.addEventListener("click", () => {
-      const lastComment = comment.innerHTML.lastIndexOf();
-     });
-    
+     removeButton.addEventListener("click", removeItem);
+     function removeItem() {
+       let list=document.getElementById("list");
+       let listItems = list.getElementsByTagName("li");
+       let last=listItems[listItems.length-1];
+       list.removeChild(last);
+      };
+
+      removeButton.disabled = true;
+      function input() {
+        if (form.value !== "") {
+          removeButton.disabled = false;
+          
+        } else {
+          removeButton.disabled = true;
+        }
+      }
+      nameElement.addEventListener("input" , input);
+      textElement.addEventListener("input" , input);
+
     console.log("It works!");
 
   </script>
