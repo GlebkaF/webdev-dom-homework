@@ -31,7 +31,6 @@ function getComments() {
       renderComments();
       preLoadElement.classList.add('hide');
     });
-
 }
 
 
@@ -79,6 +78,15 @@ function delay(interval = 300) {
   });
 }
 
+
+function delay(interval = 600) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, interval);
+  });
+}
+
 // Кнопка для лайка 
 const initLikeButtonListeners = () => {
   const addLikesButtonsElements = document.querySelectorAll('.like-button');
@@ -91,21 +99,26 @@ const initLikeButtonListeners = () => {
 
     addLikesButtonsElement.addEventListener('click', () => {
 
-      if (comments[index].isLiked === false) {
+      addLikesButtonsElement.classList.add('-loading-like')
 
-        const result = Number(counter) + 1;
-        comments[index].likesCounter = result;
+      delay(4000).then(() => {
 
-        comments[index].isLiked = true;
+        if (comments[index].isLiked === false) {
 
-      } else {
+          const result = Number(counter) + 1;
+          comments[index].likesCounter = result;
 
-        const result = Number(counter) - 1;
-        comments[index].likesCounter = result;
+          comments[index].isLiked = true;
 
-        comments[index].isLiked = false;
-      }
-      renderComments();
+        } else {
+
+          const result = Number(counter) - 1;
+          comments[index].likesCounter = result;
+
+          comments[index].isLiked = false;
+        }
+        renderComments();
+      });
     })
   }
 };
@@ -160,8 +173,16 @@ addButtonElement.addEventListener('click', () => {
     {
       method: "POST",
       body: JSON.stringify({
-        name: nameInputElement.value,
-        text: commentInputElement.value,
+        name: nameInputElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
+        text: commentInputElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
       })
     }
   ).then(() => {
