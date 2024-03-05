@@ -206,8 +206,21 @@
     //   </div>
     //   </li>` 
       
-      let currentDate = new Date();
-       function formatTime(currentDate){
+      сommentators.push({
+        name : nameElement.value,
+        date : formatTime(currentDate),
+        comment : textElement.value,
+        likes : 0,
+        isLiked: false,
+      })
+
+      renderCommentators();
+      nameElement.value = "";
+      textElement.value = "";
+    });
+
+    const currentDate = new Date();
+      function formatTime(currentDate){
   
        const date = currentDate.getDate().toString().padStart(2, "0");
        const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
@@ -219,19 +232,6 @@
        return `${date}.${month}.${year} ${h}:${m}`
       };
 
-      сommentators.push({
-        name : nameElement.value,
-        date : currentDate,
-        comment : textElement.value,
-        likes : 0,
-        isLiked: false,
-      })
-
-      renderCommentators();
-      nameElement.value = "";
-      textElement.value = "";
-    });
-
     const formElement = document.getElementById ('form');
     formElement.addEventListener('keyup', keyEvent);
       function keyEvent(e) {
@@ -240,15 +240,20 @@
        }
       };
     
-    const removeButton = document.getElementById("deleteComment");
-     removeButton.addEventListener("click", removeItem);
-     function removeItem() {
-       let list=document.getElementById("list");
-       let listItems = list.getElementsByTagName("li");
-       let last=listItems[listItems.length-1];
-       list.removeChild(last);
-      };
+    // const removeButton = document.getElementById("deleteComment");
+    //  removeButton.addEventListener("click", removeItem);
+    //  function removeItem() {
+    //    let list=document.getElementById("list");
+    //    let listItems = list.getElementsByTagName("li");
+    //    let last=listItems[listItems.length-1];
+    //    list.removeChild(last);
+    //   };
 
+    const removeButton = document.getElementById("deleteComment");
+     removeButton.addEventListener("click", () => {
+      const lastComment = comment.innerHTML.lastIndexOf();
+     });
+    
     console.log("It works!");
 
   </script>
