@@ -61,9 +61,7 @@
     const commentInputElement = document.getElementById("comment_textarea");
 
     buttonElement.addEventListener("click", () => {
-      nameInputElement.style.backgroundColor = "";
-      commentInputElement.style.backgroundColor = "";
-      if(nameInputElement.value === "" || commentInputElement.value === ""){
+      if(checkTextByNull(nameInputElement.value) === false || checkTextByNull(commentInputElement.value) === false){
         nameInputElement.style.backgroundColor = "red";
         commentInputElement.style.backgroundColor = "red";
         return;
@@ -86,22 +84,6 @@
       renderComments();
     });
 
-
-    const getFormatetNowDate = () => {
-      let date = new Date();
-      let options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' };
-      let formattedDate = new Intl.DateTimeFormat('ru', options).format(date);
-      return formattedDate;
-    };
-
-    const getStyleLikeButton = (likeStatus) => {
-      if(likeStatus === false){
-        return "";
-      } else {
-        return " -active-like";
-      }
-    };
-
     
     const initListeners = () => {
       const likeButtonElements = document.querySelectorAll(".like-button");
@@ -119,7 +101,6 @@
           renderComments();
         });
       }
-
       const commentsElements = document.querySelectorAll(".comment");
       for(const commentElement of commentsElements){
         commentElement.addEventListener("click", () => {
@@ -128,7 +109,12 @@
           commentInputElement.value = "> "  + comment + "\n" + name + ", ";
         });
       }
-
+      nameInputElement.addEventListener("click", () => {
+        nameInputElement.style.backgroundColor = "";
+      });
+      commentInputElement.addEventListener("click", () => {
+        commentInputElement.style.backgroundColor = "";
+      });
     }
 
     const renderComments = () => {      
@@ -154,11 +140,33 @@
       }).join("");
       listElement.innerHTML = commentHtml;
       initListeners();
-    }   
-    
-    renderComments();   
-    
+    }     
+         
 
+    const getFormatetNowDate = () => {
+      let date = new Date();
+      let options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' };
+      let formattedDate = new Intl.DateTimeFormat('ru', options).format(date);
+      return formattedDate;
+    };
+
+    const getStyleLikeButton = (likeStatus) => {
+      if(likeStatus === false){
+        return "";
+      } else {
+        return " -active-like";
+      }
+    };
+
+    const checkTextByNull = (text) => {
+      if(text === "" || text.replaceAll(" ", "") === ""){
+        return false;
+      } else {
+        return true;
+      }
+    };
+
+    renderComments(); 
 
   </script>
 </html>
