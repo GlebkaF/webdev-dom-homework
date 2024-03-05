@@ -62,22 +62,74 @@
 
 
   // массив
-  const comments = [
-    {
-      name: "Глеб Фокин",
-      time: "12.02.22 12:18",
-      comment: "Это будет первый комментарий на этой странице",
-      likes: 3,
-      isLike: false,
-    },
-    {
-      name: "Варвара Н.",
-      time: "13.02.22 19:22",
-      comment: "Мне нравится как оформлена эта страница! ❤",
-      likes: 75,
-      isLike: false,
+  let comments = [
+    /*     {
+          name: "Глеб Фокин",
+          time: "12.02.22 12:18",
+          comment: "Это будет первый комментарий на этой странице",
+          likes: 3,
+          isLike: false,
+        },
+        {
+          name: "Варвара Н.",
+          time: "13.02.22 19:22",
+          comment: "Мне нравится как оформлена эта страница! ❤",
+          likes: 75,
+          isLike: false,
+        } */
+  ];
+  function fetchRender() {
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/alenka-s/comments", {
+      method: "GET",
+    });
+    fetchPromise.then((response) => {
+      const jsonPromise = response.json();
+
+      jsonPromise.then((responseData) => {
+        console.log(responseData);
+        comments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            time: new Date(comment.date),
+            comment: comment.text,
+            likes: comment.likes,
+            isLiked: false,
+          };
+        });
+        renderComments();
+      });
+    });
+  }
+  fetchRender();
+
+  buttonElement.addEventListener("click", () => {
+    if (commentInputElement.value === "") {
+      return;
     }
-  ]
+
+    fetch("https://wedev-api.sky.pro/api/v1/alenka-s/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        name: nameInputElement.value
+          .replaceAll("<", "&lt")
+          .replaceAll(">", "&gt")
+          .replaceAll("&", "&amp;")
+          .replaceAll('"', "&quot;"),
+        text: commentInputElement.value
+          .replaceAll("<", "&lt")
+          .replaceAll(">", "&gt")
+          .replaceAll("&", "&amp;")
+          .replaceAll('"', "&quot;"),
+      }),
+    }).then((response) => {
+      response.json().then((responseData) => {
+      });
+      fetchRender();
+    });
+
+  });
+
+
 
   //Ответ на коммент
   const replyToComment = () => {
@@ -142,8 +194,20 @@
       });
     }
   };
+
+
   renderComments();
   initEventListeners();
+  // Дата и время
+
+  let currentDate =
+    new Date().toLocaleDateString("default", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "2-digit",
+    }) +
+    " " +
+    new Date().toLocaleTimeString().slice(0, -3);
 
   // Обработчик клика
 
@@ -159,49 +223,31 @@
       commentInputElement.classList.add("error");
       return;
     }
-    // Дата и время
-    const currentDate =
-      new Date().toLocaleDateString("default", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "2-digit",
-      }) +
-      " " +
-      new Date().toLocaleTimeString().slice(0, -3);
 
-    //Добавляем коммент
-    comments.push({
-      name: nameInputElement.value
-        .replaceAll("<", "&lt")
-        .replaceAll(">", "&gt")
-        .replaceAll("&", "&amp;")
-        .replaceAll('"', "&quot;"),
-      time: currentDate,
-      comment: commentInputElement.value
-        .replaceAll("<", "&lt")
-        .replaceAll(">", "&gt")
-        .replaceAll("&", "&amp;")
-        .replaceAll('"', "&quot;"),
-      likes: 0,
-      isLike: false
-    });
+    /*     //Добавляем коммент
+        comments.push({
+          name: nameInputElement.value
+            .replaceAll("<", "&lt")
+            .replaceAll(">", "&gt")
+            .replaceAll("&", "&amp;")
+            .replaceAll('"', "&quot;"),
+          time: currentDate,
+          comment: commentInputElement.value
+            .replaceAll("<", "&lt")
+            .replaceAll(">", "&gt")
+            .replaceAll("&", "&amp;")
+            .replaceAll('"', "&quot;"),
+          likes: 0,
+          isLike: false
+        }); */
 
     renderComments();
     initEventListeners();
     replyToComment();
     nameInputElement.value = "";
     commentInputElement.value = "";
-  });
 
-  /*   // Ответ на комментарий
-    const comment = document.querySelectorAll(".comment");
-    const formElementText = document.querySelector('.add-form-text');
-    const formElementName = document.querySelector('.add-form-name');
-    comment.forEach((el, index) => {
-      el.addEventListener('click', () => {
-        formElementText.value = `>${comments[index].name}: ${comments[index].comment}`
-      })
-    }); не работает внутри*/
+  });
 
   console.log("It works!");
 </script>
