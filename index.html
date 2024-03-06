@@ -111,7 +111,7 @@
     nameId.classList.remove("error");
     commentAdd.classList.remove("error");
 
-    if (nameId.value === "" || commentAdd.value === "") {
+    if (nameId.value === "" || commentAdd.value === "" || !commentAdd.value.trim() || !nameId.value.trim()) {
       nameId.classList.add("error")
       commentAdd.classList.add("error")
       return;
