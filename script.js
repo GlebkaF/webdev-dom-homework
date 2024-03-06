@@ -185,6 +185,12 @@ addButtonElement.addEventListener('click', () => {
           .replaceAll('"', "&quot;"),
         forceError: true,
       })
+    }).catch(() => {
+
+      alert('Кажется, у вас сломался интернет, попробуйте позже');
+      addButtonElement.disabled = false;
+      addButtonElement.textContent = 'Добавить';
+
     }).then((response) => {
 
       if (response.status === 500) {
@@ -226,9 +232,7 @@ addButtonElement.addEventListener('click', () => {
         addButtonElement.disabled = false;
         addButtonElement.textContent = 'Добавить';
 
-      } else {
-        console.log('Успешно');
-      }
+      };
     });
   renderComments();
 });
