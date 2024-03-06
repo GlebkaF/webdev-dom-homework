@@ -11,26 +11,32 @@ function twoDigits(num) {
   }
 }
 
-const comments = [ {
-        name: 'Глеб Фокин',
-        text: 'Это будет первый комментарий на этой странице',
-        date: '12.02.22 12:18',
-        likes: 3,
-        likePosition: 0
-    }, {
-        name: 'Варвара Н.',
-        text: 'Мне нравится как оформлена эта страница! ❤',
-        date: '13.02.22 19:22',
-        likes: 75,
-        likePosition: 1
-    }];
+let comments = [];
+
+const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/fnami/comments", {
+  method: "GET"
+});
+
+fetchPromise.then((response) => {
+      // Запускаем преобразовываем "сырые" данные от API в json формат
+  const jsonPromise = response.json();
+      // Подписываемся на результат преобразования
+  jsonPromise.then((responseData) => {
+        // получили данные и рендерим их в приложении
+        console.log(responseData)
+  comments = responseData.comments;
+  renderComments();
+  console.log(comments)
+  });
+});
 
 const renderComments = () => {
+  console.log(comments)
+
     const commentHtml = comments.map((comment, index) => {
-        if (Boolean(comment.likePosition)) {
-            return `<li class="comment" data-index="${index}">
+      /*return `<li class="comment" data-index="${index}">
         <div class="comment-header">
-          <div>${comment.name}</div>
+          <div>${comment.author.name}</div>
           <div>${comment.date}</div>
         </div>
         <div class="comment-body">
@@ -41,14 +47,32 @@ const renderComments = () => {
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${comment.likes}</span>
-            <button class="like-button -active-like" data-index="${index}" data-position="${comment.likePosition}"></button>
+            <button class="like-button -active-like" data-index="${index}" data-position="${comment.isLiked}"></button>
+          </div>
+        </div>
+      </li>`;*/
+        if (Boolean(comment.isLiked)) {
+            return `<li class="comment" data-index="${index}">
+        <div class="comment-header">
+          <div>${comment.author.name}</div>
+          <div>${comment.date}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${comment.text}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${comment.likes}</span>
+            <button class="like-button -active-like" data-index="${index}" data-position="${comment.isLiked}"></button>
           </div>
         </div>
       </li>`;
         } else {
             return `<li class="comment" data-index="${index}">
         <div class="comment-header">
-          <div>${comment.name}</div>
+          <div>${comment.author.name}</div>
           <div>${comment.date}</div>
         </div>
         <div class="comment-body">
@@ -59,12 +83,14 @@ const renderComments = () => {
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${comment.likes}</span>
-            <button class="like-button" data-index="${index}" data-position="${comment.likePosition}"></button>
+            <button class="like-button" data-index="${index}" data-position="${comment.isLiked}"></button>
           </div>
         </div>
       </li>`;
         }
     }).join("");
+
+    console.log(commentHtml)
 
     commentItems.innerHTML = commentHtml;
 
@@ -106,9 +132,7 @@ const renderComments = () => {
     }
 }
 
-renderComments();
-
-
+renderComments()
 
 buttonAdd.addEventListener("click", () => {
 
@@ -127,25 +151,23 @@ buttonAdd.addEventListener("click", () => {
 
     let commentDate = new Date();
 
-    comments.push({
-        name: nameElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
+    fetch("https://wedev-api.sky.pro/api/v1/fnami/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        name: nameElement.value,
         text: textElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-        date: `${twoDigits(commentDate.getDay())}.${twoDigits(commentDate.getMonth())}.${twoDigits(commentDate.getFullYear())} ${twoDigits(commentDate.getHours())}:${twoDigits(commentDate.getMinutes())}`,
-        likes: 0,
-        likePosition: 0
-    })
+      })
+    }).then((response) => {
+      response.json().then((responseData) => {
+        // получили данные и рендерим их в приложении
+        comments = responseData.comments;
+        renderComments();
+      });
+
 
     renderComments();
 
     nameElement.value = "";
     textElement.value = "";
-})
-
+});
+});
