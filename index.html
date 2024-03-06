@@ -1,142 +1,134 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
-      <ul id="list" class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div class="add-form">
-        <input
-          id = "name-input" 
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-          value=""
-        />
-        <textarea
-          id = "comment-input"
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          value="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button id="button" class="add-form-button">Написать</button>
-        </div>
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <ul id="list-comments" class="comments">
+    </ul>
+    <div class="add-form">
+      <input type="text" id="name-input" class="add-form-name" placeholder="Введите ваше имя" value="" />
+      <textarea type="textarea" id="text-input" class="add-form-text" placeholder="Введите ваш коментарий" value=""
+        rows="4"></textarea>
+      <div class="add-form-row">
+        <button id="add-button" class="add-form-button">Написать</button>
       </div>
     </div>
-  </body>
+  </div>
+</body>
+<style>
+  .error {
+    background-color: red;
+  }
+</style>
+<script>
+  "use strict";
+  const buttonElement = document.getElementById('add-button')
+  const listElement = document.getElementById('list-comments')
+  const nameInputElement = document.getElementById('name-input')
+  const textInputElement = document.getElementById('text-input')
+  const commentsElement = document.getElementById('comments')
 
-  <script>
-    "use strict";
+  const arrayUsers = [
+    {
+      name: "Глеб Фокин",
+      dateOfComment: "12.02.22 12:18",
+      text: "Это будет первый комментарий на этой странице",
+      likes: 3,
+      validButtonLike: false,
+    },
+    {
+      name: "Варвара Н.",
+      dateOfComment: "13.02.22 19:22",
+      text: "Мне нравится как оформлена эта страница! ❤",
+      likes: 75,
+      validButtonLike: true,
+    }
+  ];
 
-    // Код писать здесь
-    const buttonElement = document.getElementById("button");
-    const listElement = document.getElementById("list");
-    const nameInputElement = document.getElementById("name-input");
-    const commentInputElement = document.getElementById("comment-input");
+  const likeButton = () => {
+    const likeButtonElements = document.querySelectorAll('.like-button')
+    for (let likeButtonElement of likeButtonElements)
+      likeButtonElement.addEventListener('click', () => {
+        if (arrayUsers[likeButtonElement.dataset.index].validButtonLike) {
+          arrayUsers[likeButtonElement.dataset.index].likes--;
+          arrayUsers[likeButtonElement.dataset.index].validButtonLike = false;
+        } else {
+          arrayUsers[likeButtonElement.dataset.index].likes++;
+          arrayUsers[likeButtonElement.dataset.index].validButtonLike = true;
+        }
 
-    buttonElement.addEventListener("click", () => {
+        renderUsers();
+      })
 
-      let currentDate = new Date();
-      let date = currentDate.getDate();
-      let montch = currentDate.getMonth();
-      let year = currentDate.getFullYear();
-      let hours = currentDate.getHours();
-      let minute = currentDate.getMinutes();
-      if (date < 10) {
-        date = "0" + date;
-      }
-      if (montch < 10) {
-        montch = "0" + montch;
-      }
-      if (year < 10) {
-        year = "0" + year;
-      }
-      if (hours < 10) {
-        hours = "0" + hours;
-      }
-      if (minute < 10) {
-        minute = "0" + minute;
-      }
-
-      let comDate =
-        date + "." + montch + "." + year + " " + hours + ":" + minute;
+  }
 
 
-      nameInputElement.classList.remove("error");
-      commentInputElement.classList.remove("error");
-      if (nameInputElement.value.trim() === "") {
-        nameInputElement.classList.add("error");
-        return;
-      }
-      if (commentInputElement.value.trim() === "") {
-        commentInputElement.classList.add("error");
-        return;
-      };
-    
-      const oldListHtml = listElement.innerHTML;
-      listElement.innerHTML = oldListHtml + `<li class="comment">
+  const renderUsers = () => {
+    const userHtml = arrayUsers.map((user, index) => {
+      return `<li class="comment">
         <div class="comment-header">
-            <div>${nameInputElement.value}.</div>
-            <div>${comDate}</div>
+          <div>${user.name}</div>
+          <div>${user.dateOfComment}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${user.text}
           </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${commentInputElement.value}
-            </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${user.likes}</span>
+            <button data-index= '${index}' class="like-button ${user.validButtonLike ? '-active-like' : ''}"></button>
           </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>`;
+        </div>
+      </li>`
+    }).join('');
+    listElement.innerHTML = userHtml;
+    likeButton();
+  };
 
-        nameInputElement.value = "";
-        commentInputElement.value = "";
-    });
-    console.log("It works!");
-  </script>
+  renderUsers();
+
+  buttonElement.addEventListener('click', () => {
+
+    nameInputElement.classList.remove("error");
+    if (nameInputElement.value === "") {
+      nameInputElement.classList.add("error");
+      return;
+    }
+    textInputElement.classList.remove("error");
+    if (textInputElement.value === "") {
+      textInputElement.classList.add("error");
+      return;
+    }
+
+    // отображение даты и времени
+    let currentDate = new Date()
+    const nowDate = currentDate.getDate() < 10 ? '0' + currentDate.getDate() : currentDate.getDate()
+    const month = currentDate.getMonth() < 10 ? ('0' + (currentDate.getMonth() + 1)) : (currentDate.getMonth() + 1)
+    const minutes = currentDate.getMinutes() < 10 ? '0' + currentDate.getMinutes() : currentDate.getMinutes()
+    let commentDate = (nowDate) + "." + (month) + "." + currentDate.getFullYear() + " " + currentDate.getHours() + ":" + (minutes)
+
+
+    arrayUsers.push({
+      name: nameInputElement.value,
+      dateOfComment: commentDate,
+      text: textInputElement.value,
+      likes: 0,
+      validButtonLike: false
+    })
+
+    renderUsers();
+
+    nameInputElement.value = '';
+    textInputElement.value = '';
+
+  });
+</script>
 </html>
