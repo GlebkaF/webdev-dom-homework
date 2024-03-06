@@ -183,15 +183,52 @@ addButtonElement.addEventListener('click', () => {
           .replaceAll("<", "&lt;")
           .replaceAll(">", "&gt;")
           .replaceAll('"', "&quot;"),
+        forceError: true,
       })
-    }
-  ).then(() => {
-    return getComments();
-  }).then(() => {
-    addButtonElement.disabled = false;
-    addButtonElement.textContent = 'Добавить';
-  })
-  nameInputElement.value = '';
-  commentInputElement.value = '';
+    }).then((response) => {
+
+      if (response.status === 500) {
+
+        return Promise.reject('Сервер сломался, попробуй позже');
+
+      } else if (response.status === 400) {
+
+        return Promise.reject('Имя и комментарий должны быть не короче 3 символов');
+
+      } else {
+
+        return response.json();
+
+      }
+    }).then(() => {
+
+      return getComments();
+
+    }).then(() => {
+
+      addButtonElement.disabled = false;
+      addButtonElement.textContent = 'Добавить';
+      nameInputElement.value = '';
+      commentInputElement.value = '';
+
+    }).catch((error) => {
+
+      if (error === 'Сервер сломался, попробуй позже') {
+
+        alert('Сервер сломался, попробуй позже');
+
+        addButtonElement.disabled = false;
+        addButtonElement.textContent = 'Добавить';
+
+      } else if (error === 'Имя и комментарий должны быть не короче 3 символов') {
+
+        alert('Имя и комментарий должны быть не короче 3 символов');
+        addButtonElement.disabled = false;
+        addButtonElement.textContent = 'Добавить';
+
+      } else {
+        console.log('Успешно');
+      }
+    });
   renderComments();
 });
