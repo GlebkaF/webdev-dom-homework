@@ -232,8 +232,6 @@
       textElement.value = "";
     });
 
-
-
     const formElement = document.getElementById ('form');
      formElement.addEventListener('keyup', keyEvent);
       function keyEvent(e) {
@@ -250,18 +248,14 @@
        let last=listItems[listItems.length-1];
        list.removeChild(last);
       };
-
-      removeButton.disabled = true;
-      function input() {
-        if (form.value !== "") {
-          removeButton.disabled = false;
-          
+      
+      function blockButton() {
+        if (nameElement.value === "" && textElement.value === "") {
+            removeButton.disabled = false;
         } else {
-          removeButton.disabled = true;
+            removeButton.disabled = true;
         }
-      }
-      nameElement.addEventListener("input" , input);
-      textElement.addEventListener("input" , input);
+      };
 
     console.log("It works!");
 
