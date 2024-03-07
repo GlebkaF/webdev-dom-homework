@@ -62,7 +62,7 @@
     // Добавляем класс active-like, если isLiked равно true
     const likeButtonClass = comment.isLiked ? 'like-button active-like' : 'like-button';
     
-    return `<li class="comment">
+    return `<li class="comment comment-head">
       <div class="comment-header">
         <div>${comment.name}</div>
         <div>${comment.date}</div>
@@ -82,8 +82,8 @@
   }).join("");
   
   listElement.innerHTML = commentsHtml;
-
   initLikeButtonListeners();
+  initAnswerListeners();
 };
 
     //инициализация обработчика событий на клик по кнопке лайка
@@ -93,7 +93,7 @@
   for (const likeButtonElement of likeButtonElements) {
     likeButtonElement.addEventListener('click', () => {
       const index = likeButtonElement.dataset.index;
-
+      event.stopPropagation();
       // Изменяем значение isLiked и число лайков в соответствии с текущим состоянием кнопки 
       comments[index].isLiked = !comments[index].isLiked;
       if (comments[index].isLiked) {
@@ -110,58 +110,57 @@
 
     // Вызов функции инициализации лайка
     initLikeButtonListeners();
-    //инициализация обработчика событий ответа на комментарий
-    const initAnswerListeners = () => {
-      const headsElements = document.querySelectorAll(".comment-header");
-      
-      for(const headElement of headsElements){
-        headElement.addEventListener('click', () => {
-          const index = headElement.dataset.index;
-          //Добавляем в текущее .value данные из массива
-          textInputElement.value = `>${comments[index - 1].text}\n${comments[index - 1].name}`
-      });
-    };
-  };
-    //Обработчик событий на кнопку отправить
-    buttonElement.addEventListener('click', () =>{
-      let currentDate = new Date();
-      let formattedDateTime = ('0' + currentDate.getDate()).slice(-2) + '.' + ('0' + (currentDate.getMonth() + 1)).slice(-2) + '.' + ('' + currentDate.getFullYear()).slice(-2) + ' ' + ('0' + currentDate.getHours()).slice(-2) + ':' + ('0' + currentDate.getMinutes()).slice(-2);
-      nameInputElement.classList.remove('error');
-        textInputElement.classList.remove('error');
-       // Валидация инпута на пустые строки
-       if(nameInputElement.value.trim() === '' && textInputElement.value.trim() === ''){
-        nameInputElement.classList.add('error');
-        textInputElement.classList.add('error');
-        return;
-        }
-        else if(textInputElement.value.trim() === ''){
-            textInputElement.classList.add('error');
-            return;
-        }
-        else if(nameInputElement.value.trim() === ''){
-            nameInputElement.classList.add('error');
-            return;
-        };
-    //добавление комментария на страницу
-
-      comments.push({
-        name:nameInputElement.value.replaceAll("<", "&lt;").replaceAll("<", "&gt;"),
-        date:formattedDateTime,
-        text:textInputElement.value.replaceAll("<", "&lt;").replaceAll("<", "&gt;"),
-        isLiked:false,
-        likeCount:0
-      });
-      renderComments();
-        //очистка инпута от старого ввода
-        textInputElement.value = '';
-        nameInputElement.value = '';
+//инициализация обработчика событий ответа на комментарий
+const initAnswerListeners = () => {
+  const headElements = document.querySelectorAll(".comment-head");
+  headElements.forEach((headElement, index) => {
+    headElement.addEventListener('click', () => {
+      textInputElement.value = `>${comments[index].text}\n${comments[index].name}`;
     });
-    
-    renderComments();
+  });
+};
 
-    //добавить обработчик клика для рамки комментариев
-    //реализовать копирование текста и имени в текст инпут 
-    //прописать выполнение пуша текста в textElement.value
-    //отключить всплытие для кнопки лайка
+
+// Вызов функции инициализации ответов
+initAnswerListeners();
+
+
+//Обработчик событий на кнопку отправить
+buttonElement.addEventListener('click', () =>{
+  let currentDate = new Date();
+  let formattedDateTime = ('0' + currentDate.getDate()).slice(-2) + '.' + ('0' + (currentDate.getMonth() + 1)).slice(-2) + '.' + ('' + currentDate.getFullYear()).slice(-2) + ' ' + ('0' + currentDate.getHours()).slice(-2) + ':' + ('0' + currentDate.getMinutes()).slice(-2);
+  nameInputElement.classList.remove('error');
+  textInputElement.classList.remove('error');
+  // Валидация инпута на пустые строки
+  if(nameInputElement.value.trim() === '' && textInputElement.value.trim() === ''){
+    nameInputElement.classList.add('error');
+    textInputElement.classList.add('error');
+    return;
+  }
+  else if(textInputElement.value.trim() === ''){
+    textInputElement.classList.add('error');
+    return;
+  }
+  else if(nameInputElement.value.trim() === ''){
+    nameInputElement.classList.add('error');
+    return;
+  };
+
+  //добавление комментария на страницу
+  comments.push({
+    name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll("<", "&gt;"),
+    date: formattedDateTime,
+    text: textInputElement.value.replaceAll("<", "&lt;").replaceAll("<", "&gt;"),
+    isLiked: false,
+    likeCount: 0
+  });
+  renderComments();
+  //очистка инпута от старого ввода
+  textInputElement.value = '';
+  nameInputElement.value = '';
+});
+
+// Вызов функции инициализации ответов
+    renderComments();
   </script>
 </html>
