@@ -158,30 +158,30 @@
         newList =
           newList +
           `<li class="comment">
-          <div class="comment-header">
-            <div class="comment-name" data-index="${i}">${comments[i].name
+            <div class="comment-header">
+              <div class="comment-name" data-index="${i}">${comments[i].name
             .replace("<", "&lt;")
             .replace(">", "&gt;")
             .replace("/", "&sol;")}</div>
-            <div>${comments[i].data}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text" data-index="${i}">
-              ${comments[i].comment}
+              <div>${comments[i].data}</div>
             </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">${comments[i].likes}</span>
-              <button class="${comments[i].isLiked
+            <div class="comment-body">
+              <div class="comment-text" data-index="${i}">
+                ${comments[i].comment}
+              </div>
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">${comments[i].likes}</span>
+                <button class="${comments[i].isLiked
             ? "like-button -active-like"
             : "like-button"
           }"
-              onclick="setLike(${comments[i].id})"
-              ></button>
+                onclick="setLike(${comments[i].id})"
+                ></button>
+              </div>
             </div>
-          </div>
-        </li>`;
+          </li>`;
       }
       ulList.innerHTML = newList;
       const elements = document.getElementsByClassName("comment-text");
