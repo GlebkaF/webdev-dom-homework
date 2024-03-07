@@ -18,15 +18,11 @@ const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/fnami/comments", {
 });
 
 fetchPromise.then((response) => {
-      // Запускаем преобразовываем "сырые" данные от API в json формат
   const jsonPromise = response.json();
-      // Подписываемся на результат преобразования
   jsonPromise.then((responseData) => {
-        // получили данные и рендерим их в приложении
-        console.log(responseData)
+    
   comments = responseData.comments;
   renderComments();
-  console.log(comments)
   });
 });
 
@@ -149,8 +145,6 @@ buttonAdd.addEventListener("click", () => {
         return;
     }
 
-    let commentDate = new Date();
-
     fetch("https://wedev-api.sky.pro/api/v1/fnami/comments", {
       method: "POST",
       body: JSON.stringify({
@@ -159,9 +153,19 @@ buttonAdd.addEventListener("click", () => {
       })
     }).then((response) => {
       response.json().then((responseData) => {
-        // получили данные и рендерим их в приложении
         comments = responseData.comments;
         renderComments();
+      });
+    
+      const jsonPromiseTwo = fetch("https://wedev-api.sky.pro/api/v1/fnami/comments", {
+        method: "GET"
+      }).then((response) => {
+        const jsonPromiseTwo = response.json();
+  
+        jsonPromiseTwo.then((responseData) => {
+          comments = responseData.comments;
+          renderComments();
+        });
       });
 
 
