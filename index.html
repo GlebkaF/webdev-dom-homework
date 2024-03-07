@@ -38,8 +38,7 @@
     const buttonElement = document.getElementById("send-button");
     const listElement = document.getElementById("list");
     //отображение даты в выбранном формате
-    let currentDate = new Date();
-    let formattedDateTime = ('0' + currentDate.getDate()).slice(-2) + '.' + ('0' + (currentDate.getMonth() + 1)).slice(-2) + '.' + ('' + currentDate.getFullYear()).slice(-2) + ' ' + ('0' + currentDate.getHours()).slice(-2) + ':' + ('0' + currentDate.getMinutes()).slice(-2);
+
     const comments = [
       {
         name:"Глеб Фокин",
@@ -83,14 +82,12 @@
   }).join("");
   
   listElement.innerHTML = commentsHtml;
-  
-  // Не забудьте заново инициализировать слушателей кнопок "лайк"
+
   initLikeButtonListeners();
 };
 
-
-          //инициализация обработчика событий на клик по кнопке лайка
-          const initLikeButtonListeners = () => {
+    //инициализация обработчика событий на клик по кнопке лайка
+    const initLikeButtonListeners = () => {
   const likeButtonElements = document.querySelectorAll(".like-button");
 
   for (const likeButtonElement of likeButtonElements) {
@@ -108,13 +105,27 @@
       // Обновляем отображение кнопки "лайк"
       renderComments();
     });
-  }
+  };
 };
 
-// Вызов функции инициализации слушателей
-initLikeButtonListeners();
+    // Вызов функции инициализации лайка
+    initLikeButtonListeners();
+    //инициализация обработчика событий ответа на комментарий
+    const initAnswerListeners = () => {
+      const headsElements = document.querySelectorAll(".comment-header");
+      
+      for(const headElement of headsElements){
+        headElement.addEventListener('click', () => {
+          const index = headElement.dataset.index;
+          //Добавляем в текущее .value данные из массива
+          textInputElement.value = `>${comments[index - 1].text}\n${comments[index - 1].name}`
+      });
+    };
+  };
     //Обработчик событий на кнопку отправить
     buttonElement.addEventListener('click', () =>{
+      let currentDate = new Date();
+      let formattedDateTime = ('0' + currentDate.getDate()).slice(-2) + '.' + ('0' + (currentDate.getMonth() + 1)).slice(-2) + '.' + ('' + currentDate.getFullYear()).slice(-2) + ' ' + ('0' + currentDate.getHours()).slice(-2) + ':' + ('0' + currentDate.getMinutes()).slice(-2);
       nameInputElement.classList.remove('error');
         textInputElement.classList.remove('error');
        // Валидация инпута на пустые строки
@@ -134,9 +145,9 @@ initLikeButtonListeners();
     //добавление комментария на страницу
 
       comments.push({
-        name:nameInputElement.value,
+        name:nameInputElement.value.replaceAll("<", "&lt;").replaceAll("<", "&gt;"),
         date:formattedDateTime,
-        text:textInputElement.value,
+        text:textInputElement.value.replaceAll("<", "&lt;").replaceAll("<", "&gt;"),
         isLiked:false,
         likeCount:0
       });
@@ -147,5 +158,10 @@ initLikeButtonListeners();
     });
     
     renderComments();
+
+    //добавить обработчик клика для рамки комментариев
+    //реализовать копирование текста и имени в текст инпут 
+    //прописать выполнение пуша текста в textElement.value
+    //отключить всплытие для кнопки лайка
   </script>
 </html>
