@@ -45,14 +45,7 @@
   const deleteButtonElement = document.querySelector(".del-form-button");
   const nameInputElement = document.querySelector(".add-form-name");
   const commentInputElement = document.querySelector(".add-form-text");
-  const currentDate =
-    new Date().toLocaleDateString("default", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "2-digit",
-    }) +
-    " " +
-    new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  // const currentDate = new Date();
 
   const comments = [
     {
@@ -127,6 +120,8 @@
         const index = commentElement.dataset.index;
         event.stopPropagation();
 
+        let QUOTE_BEGIN = "QUOTE_BEGIN";
+        let QUOTE_END = "QUOTE_END";
         commentInputElement.value = `> ${comments[index].text} \n\n${comments[index].name}, `;
       });
     }
@@ -137,11 +132,20 @@
   addButtonElement.addEventListener("click", addListComment);
 
   function addListComment() {
-    if (nameInputElement.value === "" || commentInputElement.value === "") {
+    if (nameInputElement.value.trim() === "" || commentInputElement.value.trim() === "") {
       addButtonElement.disabled = true;
       addButtonElement.classList.add("error");
       return;
     }
+
+    const currentDate =
+      new Date().toLocaleDateString("default", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "2-digit",
+      }) +
+      " " +
+      new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
     comments.push({
       name: nameInputElement.value
@@ -181,7 +185,7 @@
             </div>
             <div class="comment-body">
               <div data-index="${index}" class="comment-text comment-newline">
-                ${comments[index].text}
+                ${comments[index].text.replaceAll("BEGIN_QUOTE", "<div class='quote'>")}
               </div >
             </div >
     <div class="comment-footer">
