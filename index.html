@@ -93,7 +93,7 @@
         comment : "Это будет первый комментарий на этой странице",
         likes : 3,
         isLiked: false,
-
+        
       },
       {
         name : "Варвара Н.",
@@ -241,22 +241,14 @@
       };
       
     const removeButton = document.getElementById("deleteComment");
-     removeButton.addEventListener("click", removeItem);
+    const listItems = document.getElementById("list").getElementsByTagName("li");
+    removeButton.addEventListener("click", removeItem);
      function removeItem() {
-       let list=document.getElementById("list");
-       let listItems = list.getElementsByTagName("li");
-       let last=listItems[listItems.length-1];
-       list.removeChild(last);
+       if(listItems.length === 0) return;
+       var last = listItems[listItems.length - 1];
+       last.parentNode.removeChild(last);
       };
-      
-      function blockButton() {
-        if (nameElement.value === "" && textElement.value === "") {
-            removeButton.disabled = false;
-        } else {
-            removeButton.disabled = true;
-        }
-      };
-
+    
     console.log("It works!");
 
   </script>
