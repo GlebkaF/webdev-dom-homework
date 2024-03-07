@@ -228,7 +228,13 @@
             text: inputText.value,
 
           })
-        }).then(() => {
+        }).then((response) => {
+          if (response.status === 500) {
+            throw new Error("Сервер сломался, попробуй позже")
+          };
+          if (response.status === 400) {
+            throw new Error("Имя и комментарий должны быть не короче 3 символов")
+          };
           getCommets(),
             inputName.value = " "
           inputText.value = " "
@@ -236,7 +242,17 @@
           addForm.style.display = 'flex';
           inputText.setAttribute('placeholder', placeholderText);
         })
-          .catch(() => {
+          .catch((error) => {
+            exceptErrorInUI();
+            setTimeout(cleanErorrsInUI, 3000)
+            if (error.message === "Сервер сломался, попробуй позже") {
+              alert("Сервер сломался, попробуй позже")
+            }
+            else if (error.message === "Имя и комментарий должны быть не короче 3 символов") {
+              alert("Имя и комментарий должны быть не короче 3 символов")
+            } else {
+              alert("Кажется, у вас сломался интернет, попробуйте позже")
+            }
             addCommentLoader.style.display = 'none';
             addForm.style.display = 'flex';
             inputText.setAttribute('placeholder', placeholderText);
