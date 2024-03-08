@@ -32,23 +32,20 @@
     for (const elem of buttonLikeElements) {
       elem.addEventListener('click', () => {
         const index = elem.dataset.index;
-        if (commeentsList[index].likeStatus === 'like-button -active-like') {
-          commeentsList[index].likeStatus = 'like-button';
-          commeentsList[index].likeNum = commeentsList[index].likeNum - 1;
+        const commentIndex = commeentsList[index];
+        if (commentIndex.isLiked) {
+          commentIndex.isLiked = false;
+          commentIndex.likeNum = commentIndex.likeNum - 1;
           renderComments();
         } else {
-          commeentsList[index].likeStatus = 'like-button -active-like';
-          commeentsList[index].likeNum = commeentsList[index].likeNum + 1;
+          commentIndex.isLiked = true;
+          commentIndex.likeNum = commentIndex.likeNum + 1;
           renderComments();
         }
       });
     }
   }
-</script>
 
-
-<script>
-  "use strict";
   //скрипт для добавления нового коментария
   const currentInputName = document.getElementsByClassName('add-form-name')[0];
   const currentInputText = document.getElementsByClassName('add-form-text')[0];
@@ -64,7 +61,7 @@
         name: currentInputName.value,
         commentText: currentInputText.value,
         likeNum: 0,
-        likeStatus: 'like-button',
+        isLiked: false,
         date: `${currentDate.getDate()}.${(currentDate.getMonth() < 8 ? '0' + (currentDate.getMonth() + 1) :
           currentDate.getMonth())}.${currentDate.getFullYear() - 2000}
         ${currentDate.getHours()}:${currentDate.getMinutes()}`
@@ -94,10 +91,7 @@
       addNewComment();
     }
   })
-</script>
 
-<script>
-  "use strict";
   const deleteButton = document.getElementsByClassName('delete-form-button')[0];
   const deleteElement = document.getElementsByClassName('comments')[0];
 
@@ -105,24 +99,21 @@
     let delElem = deleteElement.children.item(deleteElement.children.length - 1);
     delElem.remove();
   });
-</script>
 
-<script>
-  "use strict"
-  //скрипт для рендеринга комментов
+  //рендеринг комментов
   const commeentsList = [
     {
       name: 'Глеб Фокин',
       commentText: 'Это будет первый комментарий на этой странице',
       likeNum: 3,
-      likeStatus: 'like-button',
+      isLiked: false,
       date: '12.02.22 12:18'
     },
     {
       name: 'Варвара Н.',
       commentText: 'Мне нравится как оформлена эта страница! ❤',
       likeNum: 75,
-      likeStatus: 'like-button -active-like',
+      isLiked: true,
       date: '13.02.22 19:22'
     }
   ];
@@ -143,7 +134,7 @@
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${elem.likeNum}</span>
-            <button data-index="${index}" class="${elem.likeStatus}"></button>
+            <button data-index="${index}" class="like-button ${elem.isLiked ? "-active-like" : ""}"></button>
           </div>
         </div>
       </li>`;
