@@ -5,6 +5,9 @@
   <title>Проект "Комменты"</title>
   <meta charset="utf-8" />
   <link rel="stylesheet" href="styles.css" />
+  <style>
+    .comment-text{white-space: pre-line;}
+  </style>
 </head>
 
 <body>
@@ -85,7 +88,8 @@
     for (const LikeComent of LikeComents) {
       const index = LikeComent.dataset.index;
       const counter = LikeComent.dataset.like;
-      LikeComent.addEventListener("click", () => {
+      LikeComent.addEventListener("click", (event) => {
+        event.stopImmediatePropagation();
         if (commentators[index].isLiked === false) {
           const result = commentators[index].likes + 1;
           commentators[index].likes = result;
@@ -119,9 +123,9 @@
     if (TextComent.value === "") { TextComent.classList.add("error"); return; }
 
     commentators.push({
-      name: inputName.value,
+      name: inputName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
       date: DataText,
-      comment: TextComent.value,
+      comment: TextComent.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
       likes: 0,
       isLiked: false,
     });
@@ -137,6 +141,26 @@
   TextComent.addEventListener('input', () => {
     TextComent.classList.remove('error');
   });
+
+
+  //мои мутки с ответом на коментарий
+ const replyComment = ()=>  {
+    const reponseComment = document.querySelectorAll('.comment');
+   //пытался, не вышло, если подскажут как сделать этим способом, буду рад
+    // for (const reponseComment of reponseComments) {
+   //   reponseComment.addEventListener('click', () => {
+    reponseComment.forEach((el, index) => {
+  el.addEventListener('click', () => {
+
+    TextComent.value = `${commentators[index].comment}\n${commentators[index].name}`
+      })
+    });
+  }
+  replyComment ();
+  
+
+
+
 
 </script>
 
