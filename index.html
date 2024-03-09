@@ -32,7 +32,8 @@
   </body>
 
   <script>
-    const comments = [{
+    const comments = [
+      {
       name: "Глеб Фокин",
       date: new Date("2023-02-01T12:20:52.308Z"),
       text: "Это будет первый комментарий на этой странице",
@@ -50,7 +51,7 @@
   const name = document.getElementById("name-input");
   const text = document.getElementById("text-input");
   
-  const list = document.guerySelector(".comments");
+  const list = document.querySelector(".comments");
   
   const renderComments = () => {
     list.innerHTML = comments.map((comment, index) => {
@@ -76,8 +77,8 @@
             </div>
           </div>
         </li>
-      `
-    }).join("");
+    `
+    }).join("")
   };
 
   renderComments();
@@ -126,5 +127,5 @@
     // console.log("It works!");
   </script> -->
 
-
+zrhftrhtrujdyt
 </html>
