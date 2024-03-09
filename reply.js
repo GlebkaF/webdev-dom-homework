@@ -1,4 +1,5 @@
-import {renderComments} from "./main.js"
+import {renderComments} from "./renderComments.js"
+
 export const initReplayListener = ({textEl, comments}) => {
   const replayComments = document.querySelectorAll(".comment-text");
   for (const replayComment of replayComments) {
@@ -6,7 +7,7 @@ export const initReplayListener = ({textEl, comments}) => {
       event.stopPropagation();
       const index = replayComment.dataset.index;
       textEl.value = `QUOTE_BEGIN ${comments[index].name} \n ${comments[index].text} QUOTE_END`;
-      renderComments();
+      renderComments(comments);
     });
   }
 };

@@ -1,62 +1,22 @@
 import { fetchGet, comLoader, fetchPost } from "./api.js";
-import { sanitize } from "./sanitize.js";
-import { initLikeButtonListener } from "./likebutton.js";
+import { renderComments } from "./renderComments.js";
 import { formatDate } from "./formatdate.js";
-import { initReplayListener } from "./reply.js";
+
+//import { userInput1, userInput2 } from "./userinput.js";
 
 export const nameEl = document.getElementById("add-form-name");
 export const textEl = document.getElementById("add-form-text");
-const buttonEl = document.getElementById("add-form-button");
-const listEl = document.getElementById("list");
+export const buttonEl = document.getElementById("add-form-button");
+
 export const formEl = document.getElementById("add-form");
 export const formLoader = document.getElementById("form-loader");
 
 let comments = [];
 
-export const renderComments = () => {
-  const commentsHtml = comments
-    .map((comment, index) => {
-      let editComment = () => {
-        if (comment.isEdit) {
-          return `<textarea data-index="${index}" id="add-form-edit-text" type="textarea" class="add-form-edit-text" placeholder=""
-rows="4" > ${sanitize(comment.text)}</textarea>`;
-        } else {
-          return `${sanitize(comment.text)} `;
-        }
-      };
-      return `<li class="comment">
-      <div class="comment-header">
-        <div>${sanitize(comment.name)}</div>
-        <div id="add-form-date">${comment.date}</div>
-      </div>
-      <div class="comment-body">
-        <div data-index="${index}" class="comment-text" style="white-space:pre-line">
-          <a class="replay-form-link" ${
-            comment.isEdit ? "" : 'href="#add-form"'
-          }> ${editComment()}</a>
-        </div>
-      </div>
-      <div class="comment-footer">
-        <div class="likes">
-          <span data-index="${index}" class="likes-counter">${
-        comment.like_count
-      }</span>
-          <button data-index="${index}" class="like-button ${
-        comment.like_active ? "-active-like" : ""
-      }"></button>
-        </div>
-      </div >
-    </li>`;
-    })
-    .join("");
 
-  listEl.innerHTML = commentsHtml;
-
-  initLikeButtonListener(comments);
-  initReplayListener({ textEl, comments });
-};
 
 buttonEl.disabled = true;
+//userInput1({ nameEl, textEl, formEl, buttonEl });
 nameEl.addEventListener("input", evnt);
 textEl.addEventListener("input", evnt);
 function evnt(event) {
@@ -70,6 +30,7 @@ formEl.addEventListener("keyup", (e) => {
 });
 
 buttonEl.addEventListener("click", () => {
+  //userInput2({ nameEl, textEl});
   nameEl.value = nameEl.value.trim();
   textEl.value = textEl.value.trim();
 
@@ -124,7 +85,7 @@ buttonEl.addEventListener("click", () => {
         return;
       }
     });
-  renderComments();
+  renderComments(comments);
 });
 
 fetchGet()
@@ -141,7 +102,7 @@ fetchGet()
     });
     comLoader.hidden = true;
     comments = appComments;
-    renderComments();
+   renderComments(comments);
   })
   .catch((error) => {
     if (error.message === "Failed to fetch") {
@@ -161,4 +122,4 @@ fetchGet()
     }
   });
 
-renderComments();
+renderComments(comments);

@@ -1,4 +1,4 @@
-import { nameEl, textEl, formEl, formLoader } from "./main.js";
+import { formEl, formLoader } from "./main.js";
 
 let isLoading = false;
 export const comLoader = document.getElementById("com-loader");
@@ -19,6 +19,7 @@ export function fetchGet() {
       return response.json();
     });
 }
+
 
 export function fetchPost({ name, text }) {
   formEl.classList.add("add-form_displayNone");
