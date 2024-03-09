@@ -1,33 +1,53 @@
-// Определяем функцию для очистки и защиты HTML-строк
-const sanitizeHtml = (htmlString) => {
-    return htmlString.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-}
+//ПОЛУЧАЕМ КОММЕНТАРИИ ИЗ СЕРВЕРА:
+
+// Определяем список комментариев и добавляем лоадер на список при первой загрузке страницы
+const commentListElement = document.getElementById('commentList');
+commentListElement.textContent = 'Загружаю список комментариев...';
 
 // Создаем массив, куда будем помещать данные, полученные из API
 let peoples = [];
 
-// Определяем элементы input-формы
-const buttonElement = document.getElementById('add-button');
-const nameInputElement = document.getElementById('name');
-const textInputElement = document.getElementById('textArea');
-const commentListElement = document.getElementById('commentList');
+// Определяем функцию fetchComments, которая отправляет GET-запрос для получения комментариев из сервера
+const fetchComments = () => {
+    return fetch("https://wedev-api.sky.pro/api/v1/aleksey-poplaukhin/comments", {
+        method: "GET",
+    })
+    .then((response) => {
+        if (response.status === 500) {
+            throw new Error('Ошибка сервера');
+        }        
 
-// Показать текст "Добавляю твой комментарий..."
-const showAddingCommentMessage = () => {
-    const addingCommentMessage = document.createElement('div');
-    addingCommentMessage.textContent = 'Добавляю твой комментарий...';
-    addingCommentMessage.classList.add('adding-comment-message');
-    commentListElement.appendChild(addingCommentMessage);
-    document.getElementById('form-id').style.display = 'none'; // Скрыть форму добавления комментария
+        return response.json();
+    })
+    .then(function(responseData) {    
+        const appComment = responseData.comments.map((comment) => {
+            const options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }; 
+            const formattedDate = new Intl.DateTimeFormat('ru-RU', options).format(new Date(comment.date));
+            
+            return {
+                name: comment.author.name,
+                time: formattedDate,
+                text: comment.text,
+                likes: 0,
+                isLiked: false,
+            };
+        });
+
+        // Присваиваем массив объектов переменной peoples и вызываем функцию рендера
+        peoples = appComment;
+        renderPeoples();
+    })
+    .catch((error) => {
+        if (error.message === 'Ошибка сервера') {
+            alert('Север прилег отдохнуть, пробуй еще раз...');
+        } else {
+            alert('Кажется, интернет прилег отдохнуть, проверь соединение...');
+        };
+    });
 };
 
-// Скрыть текст "Добавляю твой комментарий..."
-const hideAddingCommentMessage = () => {
-    const addingCommentMessage = document.querySelector('.adding-comment-message');
-    if (addingCommentMessage) {
-        addingCommentMessage.remove();        
-    };
-};
+// Вызываем функцию fetchComments для получения комментариев сразу при загрузке страницы
+fetchComments();
 
 // Пишем функцию рендера для создания разметки
 const renderPeoples = () => {    
@@ -74,7 +94,7 @@ const renderPeoples = () => {
 
             renderPeoples();
         });
-    }
+    };
 
     // Ответ на комментарий
     for (const commentElement of document.querySelectorAll(".comment")) {
@@ -85,53 +105,39 @@ const renderPeoples = () => {
             textInputElement.value = `%BEGIN_QUOTE${currentPost.text} : ${currentPost.name}END_QUOTE%`;
             textInputElement.style.whiteSpace = 'pre-line';
         });
-    }
-}
-
-// Добавляем лоадер на весь список при первой загрузке страницы
-commentListElement.textContent = 'Загружаю список комментариев...';
-
-// Определяем функцию fetchComments, которая отправляет GET-запрос для получения комментариев из сервера
-const fetchComments = () => {
-    return fetch("https://wedev-api.sky.pro/api/v1/aleksey-poplaukhin/comments", {
-        method: "GET",
-    })
-    .then((response) => {
-        if (response.status === 500) {
-            throw new Error('Ошибка сервера');
-        }        
-
-        return response.json();
-    })
-    .then(function(responseData) { // здесь почему то не захотела работать вторая стрелочная функция. Я не понял почему...        
-        const appComment = responseData.comments.map((comment) => {
-            const options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }; 
-            const formattedDate = new Intl.DateTimeFormat('ru-RU', options).format(new Date(comment.date));
-            
-            return {
-                name: comment.author.name,
-                time: formattedDate,
-                text: comment.text,
-                likes: 0,
-                isLiked: false,
-            };
-        });
-
-        // Присваиваем массив объектов переменной peoples и вызываем функцию рендера
-        peoples = appComment;
-        renderPeoples();
-    })
-    .catch((error) => {
-        if (error.message === 'Ошибка сервера') {
-            alert('Север прилег отдохнуть, пробуй еще раз...');
-        } else {
-            alert('Кажется, интернет прилег отдохнуть, проверь соединение...');
-        };
-    });
+    };
 };
 
-// Вызываем функцию fetchComments для получения комментариев сразу при загрузке страницы
-fetchComments();
+
+
+// НОВЫЙ КОММЕНТАРИЙ:
+
+// Определяем элементы input-формы
+const buttonElement = document.getElementById('add-button');
+const nameInputElement = document.getElementById('name');
+const textInputElement = document.getElementById('textArea');
+
+// Показать текст "Добавляю твой комментарий..."
+const showAddingCommentMessage = () => {
+    const addingCommentMessage = document.createElement('div');
+    addingCommentMessage.textContent = 'Добавляю твой комментарий...';
+    addingCommentMessage.classList.add('adding-comment-message');
+    commentListElement.appendChild(addingCommentMessage);
+    document.getElementById('form-id').style.display = 'none'; // Скрыть форму добавления комментария
+};
+
+// Скрыть текст "Добавляю твой комментарий..."
+const hideAddingCommentMessage = () => {
+    const addingCommentMessage = document.querySelector('.adding-comment-message');
+    if (addingCommentMessage) {
+        addingCommentMessage.remove();        
+    };
+};
+
+// Определяем функцию для очистки и защиты HTML-строк
+const sanitizeHtml = (htmlString) => {
+    return htmlString.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+}
 
 // Назначаем обработчик клика на кнопку добавления комментария
 buttonElement.addEventListener("click", () => {
@@ -154,8 +160,7 @@ buttonElement.addEventListener("click", () => {
     // Показать текст "Добавляю твой комментарий..." и скрыть форму добавления комментария
     showAddingCommentMessage();
     
-    // Отправляем POST-запрос для добавления нового комментария
-    
+    // Отправляем POST-запрос для добавления нового комментария    
     fetch("https://wedev-api.sky.pro/api/v1/aleksey-poplaukhin/comments", {
         method: "POST",
         body: JSON.stringify({
@@ -197,6 +202,4 @@ buttonElement.addEventListener("click", () => {
         hideAddingCommentMessage();
         document.getElementById('form-id').style.display = 'flex'; // Показать форму добавления комментария
     });
-    
-    
 });
