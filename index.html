@@ -9,39 +9,18 @@
   <body>
     <div class="container">
       <ul class="comments" id="commentlist">
-        <li class="comment">
-          <div class="comment-header"></div>
-          <div class="comment-body">
-            <div class="comment-text"></div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
+       </ul>
       <div class="add-form">
-        <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input"/>
-        <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4" id="comment-input"></textarea>
+        <input type="text" 
+        class="add-form-name" 
+        placeholder="Введите ваше имя" 
+        id="name-input"/>
+
+        <textarea type="textarea" 
+        class="add-form-text" 
+        placeholder="Введите ваш коментарий" 
+        rows="4" id="comment-input">
+      </textarea>
         <div class="add-form-row">
           <button class="add-form-button" id="add-comment">Написать</button>
         </div>
@@ -66,6 +45,37 @@
     },
   ];
 
+  const name = document.getElementById("name-input");
+  const text = document.getElementById("text-input");
+  const list = document.guerySelector(".comments");
+  
+  const renderComments = () => {
+    list.innerHTML = comments.map((comment, index) => {
+      return `
+      <li class="comment" data-index="${index}">
+        <div class="comment-header">
+          <div>${comment.name}</div>
+          <div>${comment.date.toLocaleDateString()} ${comment.date.toLocaleTimeString()}</div>
+        </div>
+        <div class="comment-body">
+          ${comment.text}
+          <div class="comment-text">
+            ${comment.text
+            .replaceAll("%BEGIN_QUOTE", "<div class='quote'>")
+            .replaceAll("END_QUOTE%", "</div>")}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${comment.likes}</span>лайка
+            <button data-index="${index}" class="${likeButtonClass} ${comment.isLiked ? "-active-like" : ""
+          }"></button>
+            </div>
+          </div>
+        </li>
+      `
+    }).join("")
+  };
   </script>
 
   <script>
