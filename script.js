@@ -94,9 +94,13 @@ commentListElement.textContent = 'Загружаю список коммента
 // Определяем функцию fetchComments, которая отправляет GET-запрос для получения комментариев из сервера
 const fetchComments = () => {
     return fetch("https://wedev-api.sky.pro/api/v1/aleksey-poplaukhin/comments", {
-        method: "GET"
+        method: "GET",
     })
     .then((response) => {
+        if (response.status === 500) {
+            throw new Error('Ошибка сервера');
+        }        
+
         return response.json();
     })
     .then(function(responseData) { // здесь почему то не захотела работать вторая стрелочная функция. Я не понял почему...        
@@ -116,6 +120,13 @@ const fetchComments = () => {
         // Присваиваем массив объектов переменной peoples и вызываем функцию рендера
         peoples = appComment;
         renderPeoples();
+    })
+    .catch((error) => {
+        if (error.message === 'Ошибка сервера') {
+            alert('Север прилег отдохнуть, пробуй еще раз...');
+        } else {
+            alert('Кажется, интернет прилег отдохнуть, проверь соединение...');
+        };
     });
 };
 
@@ -149,8 +160,7 @@ buttonElement.addEventListener("click", () => {
         method: "POST",
         body: JSON.stringify({
             text: sanitizeHtml(trimmedText),
-            name: sanitizeHtml(trimmedName),
-            forceError: true        
+            name: sanitizeHtml(trimmedName),   
         }),
     })
     .then((response) => {
@@ -173,7 +183,7 @@ buttonElement.addEventListener("click", () => {
     })
     .catch((error) => {
         if (error.message === 'Ошибка сервера') {
-        alert('Севрвер прилег отдохнуть, пробую еще раз...');            
+        alert('Севрвер прилег отдохнуть, пробуй еще раз...');            
         } else if (error.message === 'Неверный запрос') {
             alert('Имя или комментарий короче 3-х символов');
             textInputElement.classList.add("error");
