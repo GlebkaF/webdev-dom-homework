@@ -46,6 +46,27 @@
     }
   }
 
+  let quoteComment = '';
+
+  const reComment = () => {
+    const commentElement = document.querySelectorAll(".comment-text");
+
+    for (const textElement of commentElement) {
+      textElement.addEventListener("click", () => {
+        let nameComment = '';
+        for (const elem of commeentsList) {
+          if (elem.commentText.trim() === textElement.innerHTML.trim()) {
+            nameComment = elem.name;
+          }
+        }
+        currentInputText.value = `>${textElement.innerHTML.trim().replaceAll('&gt;', '>')}
+${nameComment},`;
+        quoteComment = `<div class='quote'>${currentInputText.value}</div>`;
+      })
+    }
+  }
+
+
   //скрипт для добавления нового коментария
   const currentInputName = document.getElementsByClassName('add-form-name')[0];
   const currentInputText = document.getElementsByClassName('add-form-text')[0];
@@ -58,8 +79,14 @@
 
     if (currentInputName.value.trim().length !== 0 && currentInputText.value.trim().length !== 0) {
       commeentsList.push({
-        name: currentInputName.value,
-        commentText: currentInputText.value,
+        name: currentInputName.value.replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
+        commentText: currentInputText.value.replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
         likeNum: 0,
         isLiked: false,
         date: `${currentDate.getDate()}.${(currentDate.getMonth() < 8 ? '0' + (currentDate.getMonth() + 1) :
@@ -141,6 +168,7 @@
     }).join('');
     commentList.innerHTML = commentsInHTML;
     likesActive();
+    reComment();
   };
 
   renderComments();
