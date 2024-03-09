@@ -141,6 +141,7 @@
 		};
 	};
 
+	let text; 
 	// ДЗ 2.11 --- Реализую ответ на комментарий
 	const replyToCommentFunction = () => {
 		const replyComments = document.querySelectorAll('.comment-text');
@@ -149,9 +150,10 @@
 			replyComment.addEventListener("click", event => {
 				event.stopPropagation();
 				console.log('s');
-				const text = replyComment.dataset.text;
-				const textComment = commentators[0].comment;
-				console.log(textComment);
+				text = replyComment.dataset.text;
+				commentTextArea.value = text;
+				// const textComment = commentators[0].comment;
+				
 				renderCommentators();
 				checkInputs();
 			});
@@ -185,7 +187,7 @@
             <div>${commentator.data}</div>
           </div>
           <div class="comment-body">
-            <div data-index="${text}" class="comment-text">
+            <div data-text=">-${commentator.comment}" class="comment-text">
               ${commentator.comment}
             </div>
           </div>
@@ -201,6 +203,7 @@
 				addLikeButtonEventListener();
 				replyToCommentFunction();
 			};
+			
 
 			buttonElement.addEventListener("click", () => {
 				// Перенёс объявление переменных даты сюда.. Аааа, понял логику) 
