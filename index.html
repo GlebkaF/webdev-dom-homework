@@ -73,8 +73,6 @@
 		const acceptComment = document.getElementById('textarea-accept-comment');
 		const buttonDelete =  document.getElementById('delete-button');
 
-
-
 			// Доп. задание - делаю кнопку неактивной при незаполненом поле
 		function checkInputs() {
 		if (acceptName.value.trim() === "" || acceptComment.value.trim() === "") {
@@ -110,7 +108,6 @@
 	};
 	// inactiveDeleteButton();
 
-	
 		// // Делаю доп.задание отправляю коммент по нажатию клавиши
 		document.addEventListener('keydown', function(e) {
 				if (e.key === 'Enter') {
@@ -140,7 +137,23 @@
 				likeButton.classList.toggle('-active-like', commentators[index].isLike);
 				renderCommentators();
 				checkInputs();
-				inactiveDeleteButton()
+			});
+		};
+	};
+
+	// ДЗ 2.11 - Реализую ответ на комментарий
+	const replyToCommentFunction = () => {
+		const replyComments = document.querySelectorAll('.comment-text');
+		const commentTextArea = document.getElementById('textarea-accept-comment');
+		for (const replyComment of replyComments) {
+			replyComment.addEventListener("click", event => {
+				event.stopPropagation();
+				console.log('s');
+				const text = replyComment.dataset.text;
+				const textComment = commentators[0].comment;
+				console.log(textComment);
+				renderCommentators();
+				checkInputs();
 			});
 		};
 	};
@@ -172,7 +185,7 @@
             <div>${commentator.data}</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
+            <div data-index="${text}" class="comment-text">
               ${commentator.comment}
             </div>
           </div>
@@ -186,6 +199,7 @@
 				}).join("");
 				listElement.innerHTML = commentatorHTML;
 				addLikeButtonEventListener();
+				replyToCommentFunction();
 			};
 
 			buttonElement.addEventListener("click", () => {
@@ -202,11 +216,9 @@
 				isLike: false,
 			});
 			renderCommentators();
-			updateFormTime ();
 		});
 		renderCommentators();
 		checkInputs();
-		inactiveDeleteButton();
 	
 	
 				// listElement.innerHTML = oldlist + `<li class="comment">
