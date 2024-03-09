@@ -8,8 +8,8 @@
 
   <body>
     <div class="container">
-      <ul id="commet-script" class="comments">
-        <li class="comment">
+      <ul id="comment-script" class="comments">
+        <!-- <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -25,8 +25,8 @@
               <button class="like-button"></button>
             </div>
           </div>
-        </li>
-        <li class="comment">
+        </li> -->
+        <!-- <li class="comment">
           <div class="comment-header">
             <div>Варвара Н.</div>
             <div id="new-time">13.02.22 19:22</div>
@@ -42,7 +42,7 @@
               <button class="like-button -active-like"></button>
             </div>
           </div>
-        </li>
+        </li> -->
       </ul>
       <div class="add-form">
         <input id="input-accept-name"
@@ -68,26 +68,12 @@
     "use strict";
 		// Объявляю константы для хранения данных
 		const buttonElement = document.getElementById('add-button');
-		const listElement = document.getElementById('commet-script');
+		const listElement = document.getElementById('comment-script');
 		const acceptName = document.getElementById('input-accept-name');
 		const acceptComment = document.getElementById('textarea-accept-comment');
 		const buttonDelete =  document.getElementById('delete-button');
-		// const likeButtons = document.querySelectorAll('.like-button');
-		// const activeLikeButton = document.querySelectorAll('.-active-like');
-		// console.log(likeButton);
-		// const newTimeDate = document.getElementById('new-time');
-		
-		// Ставлю время
-		const currentDate = new Date();
-		const formattedDate = currentDate.toLocaleDateString('ru-RU');
-		const formattedTime = `${currentDate.getHours().toString().padStart(2, '0')}:${currentDate.getMinutes().toString().padStart(2, '0')}`;
-			
-		// Делаю доп.задание отправляю коммент по нажатию клавиши
-		document.addEventListener('keydown', function(e) {
-				if (e.key === 'Enter') {
-					buttonElement.click();
-				}
-			})
+
+
 
 			// Доп. задание - делаю кнопку неактивной при незаполненом поле
 		function checkInputs() {
@@ -97,77 +83,89 @@
 		} else {
 			buttonElement.disabled = false;
 			buttonElement.classList.remove("gray");
-		}
-}
+		};
+	};
 		acceptName.addEventListener("input", checkInputs);
 		acceptComment.addEventListener("input", checkInputs);
-		checkInputs()
+		checkInputs();
 
-		// Доп. задание - добавляю кнопку удалить и пишу её функционал
+	// 	// Доп. задание - добавляю кнопку удалить и пишу её функционал
 	buttonDelete.addEventListener('click', () => {
 		const lastIndex = listElement.innerHTML.lastIndexOf('<li class="comment">');
 			if (lastIndex !== -1) {
 			listElement.innerHTML = listElement.innerHTML.substring(0, lastIndex);
+		};
+	});
+	
+	// Функция, которая делает кнопку "удалить" неактивной когда в массиве нет элементов
+	function inactiveDeleteButton() {
+		if (commentators.length === 0) {
+			
+			buttonDelete.disabled = true;
+			buttonDelete.classList.add("gray-delete");
+		} else {
+			buttonDelete.disabled = false;
+			buttonDelete.classList.remove("gray-delete");
 		}
-	})
+	};
+	// inactiveDeleteButton();
 
-	//Делаю обработчик клика на лайк - ничего не работает по непонятной причине, возможно стоило поменять строчки кода местами.
-			// likeButtons.forEach(button => {
-			// 	button.addEventListener('click', () => {
-			// 			console.log('1');
-			// 		});
-			// 	});
-			// А теперь работает, тоже по непонятной причине. Ну есть событие DOMContentLoaded, гаратирующие, что код будет работать, но почему именно так? 
-			const addLikeButton = function() { document.addEventListener('DOMContentLoaded', function() {
-			const likeButtons = document.querySelectorAll('.like-button');
-			const likesCounters = document.querySelectorAll('.likes-counter')
+	
+		// // Делаю доп.задание отправляю коммент по нажатию клавиши
+		document.addEventListener('keydown', function(e) {
+				if (e.key === 'Enter') {
+					buttonElement.click();
+				}
+			})
 
-					likeButtons.forEach((button, index) => {
-					button.addEventListener('click', () => {
-						const currentLikes = commentators[index].like;
+		//Добавляю функцию лайка
+		const addLikeButtonEventListener = () => {
+			const likesButtonElement = document.querySelectorAll('.like-button');
+    for (const likeButton of likesButtonElement) {
+			let isLike = false;
+			likeButton.addEventListener("click", event => {
+				event.stopPropagation();
+				// isLike = !isLike;
+				// likeButton.classList.toggle('-active-like', isLike);
+				const index = likeButton.dataset.index;
+				if (commentators[index].isLike === false) {
+					commentators[index].isLike = true;
+					commentators[index].like++;
+					// likeButton.classList.add('-active-like');
+				} else {
+					commentators[index].isLike = false;
+					commentators[index].like--;
+					// likeButton.classList.remove('-active-like');
+				}
+				likeButton.classList.toggle('-active-like', commentators[index].isLike);
+				renderCommentators();
+				checkInputs();
+				inactiveDeleteButton()
+			});
+		};
+	};
 
-						if (commentators[index].isLike) {
-							commentators[index].like = 0;
-							commentators[index].isLike = false;
-						} else {
-							commentators[index].like = 1;
-							commentators[index].isLike = true;
-						}
-						likesCounters[index].innerText = commentators[index].like;
-						
-						//Изменение заливки лайка
-						if (commentators[index].isLike) {
-							button.classList.add('-active-like');
-						} else {
-							button.classList.remove('-active-like');
-						}
-					});
-					});
-				});
-			}
-				// Создал массив данных на основе разметки HTML (Что? для чего? Зачем это нужно?  )
-				const commentators = [
+		//Добавляю массив на основе разметки HTML 
+		const commentators = [
 			{
 				name: "Глеб Фокин",
 				data: "12.02.22 12:18",
 				comment: "Это будет первый комментарий на этой странице",
-				like: 1,
+				like: "3",
 				isLike: false,
 			},
 			{
 				name: "Варвара Н.",
 				data: "13.02.22 19:22",
 				comment: "Мне нравится как оформлена эта страница! ❤",
-				like: 0,
-				isLike: true,
+				like: "75",
+				isLike: false,
 			}
 			];
-			const like = 'isLike';
-			addLikeButton()
-			
-			//Рендер функция. Что? для чего? Зачем это нужно?  Вообще без понятия как делать дз
+
+			//Рендер функция
 			const renderCommentators = () => {
-			const commentHtml = commentators.map((commentator, index) => {
+			const commentatorHTML = commentators.map((commentator, index) => {
 					return `<li class="comment">
           <div class="comment-header">
             ${commentator.name}
@@ -180,59 +178,92 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter"></span>
-              <button data-index="${index}" class="like-button" id="like-butto"></button>
+              <span data-like="0" class="likes-counter">${commentator.like}</span>
+              <button class="like-button ${commentator.isLike ? '-active-like' : ''}" data-index="${index}" ></button>
             </div>
           </div>
-        </li>`
-				}).join('');
-				listElement.innerHTML = commentHtml;
+        </li>`;
+				}).join("");
+				listElement.innerHTML = commentatorHTML;
+				addLikeButtonEventListener();
 			};
+
+			buttonElement.addEventListener("click", () => {
+				// Перенёс объявление переменных даты сюда.. Аааа, понял логику) 
+				const currentDate = new Date();
+			const formattedDate = currentDate.toLocaleDateString('ru-RU');
+			const formattedTime = `${currentDate.getHours().toString().padStart(2, '0')}:${currentDate.getMinutes().toString().padStart(2, '0')}`;
+				//Добавляю нового комментатора
+				commentators.push({
+				name: acceptName.value,
+				data: [formattedDate, formattedTime],
+				comment: acceptComment.value,
+				like: "0",
+				isLike: false,
+			});
 			renderCommentators();
-			addLikeButton();
+			updateFormTime ();
+		});
+		renderCommentators();
+		checkInputs();
+		inactiveDeleteButton();
+	
+	
+				// listElement.innerHTML = oldlist + `<li class="comment">
+			  //     <div class="comment-header">
+			  //       ${acceptName.value}
+			  //       <div>${formattedDate}  ${formattedTime}</div>
+			  //     </div>
+			  //     <div class="comment-body">
+			  //       <div class="comment-text">
+			  //         ${acceptComment.value}
+			  //       </div>
+			  //     </div>
+			  //     <div class="comment-footer">
+			  //       <div class="likes">
+			  //         <span class="likes-counter">0</span>
+			  //         <button class="like-button"></button>
+			  //       </div>
+			  //     </div>
+			  //   </li>`;
+	
 
 
-			//Что-то делаю по видео - убрал.
-			// commentators.push({
-			// 	name: acceptName.value,
-			// 	data: [formattedDate, formattedTime],
-			// 	comment: acceptComment,
-			// 	like: 0,
-			// });
 
-			// renderCommentators()
-
-	// Добавляю красный фоновый цвет при незаполненом поле (Эта функция оказывается бессмысленной после создания неактивной кнопки)
-		buttonElement.addEventListener('click', () => {
-			acceptComment.classList.remove("error");
-			acceptName.classList.remove("error");
-			if (acceptName.value === "" || acceptComment.value === "") {
-        acceptName.classList.add("error");
-				acceptComment.classList.add("error");
-        return;
-      }
-
+			// Добавляю красный фоновый цвет при незаполненом поле (Эта функция оказывается бессмысленной после создания неактивной кнопки)
+		// buttonElement.addEventListener('click', () => {
+		// 	acceptComment.classList.remove("error");
+		// 	acceptName.classList.remove("error");
+		// 	if (acceptName.value === "" || acceptComment.value === "") {
+    //     acceptName.classList.add("error");
+		// 		acceptComment.classList.add("error");
+    //     return;
+    //   };
+		// });
+	
 // Так же делаю основной функционал добавления комментария 
-			const oldlist = listElement.innerHTML;
+		// 	const oldlist = listElement.innerHTML;
 			
-			listElement.innerHTML = oldlist + `<li class="comment">
-          <div class="comment-header">
-            ${acceptName.value}
-            <div>${formattedDate}  ${formattedTime}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${acceptComment.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">${commentators[like]}</span>
-              <button class="like-button" id="like-butto"></button>
-            </div>
-          </div>
-        </li>`
-		})
-		addLikeButton()
+		// 	listElement.innerHTML = oldlist + `<li class="comment">
+    //       <div class="comment-header">
+    //         ${acceptName.value}
+    //         <div>${formattedDate}  ${formattedTime}</div>
+    //       </div>
+    //       <div class="comment-body">
+    //         <div class="comment-text">
+    //           ${acceptComment.value}
+    //         </div>
+    //       </div>
+    //       <div class="comment-footer">
+    //         <div class="likes">
+    //           <span class="likes-counter">0</span>
+    //           <button class="like-button"></button>
+    //         </div>
+    //       </div>
+    //     </li>`
+		// });
+
+
   </script>
 </html>
+
