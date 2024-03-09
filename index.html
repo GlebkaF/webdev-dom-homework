@@ -8,45 +8,48 @@
 
   <body>
     <div class="container">
-      <ul class="comments" id="commentlist">
+      <ul class="comments">
        </ul>
       <div class="add-form">
-        <input type="text" 
+        <input 
+        type="text" 
         class="add-form-name" 
-        placeholder="Введите ваше имя" 
-        id="name-input"/>
+        placeholder="Введите ваше имя"
+        />
 
-        <textarea type="textarea" 
+        <textarea 
+        type="textarea" 
         class="add-form-text" 
         placeholder="Введите ваш коментарий" 
-        rows="4" id="comment-input">
+        rows="4">
       </textarea>
+
         <div class="add-form-row">
-          <button class="add-form-button" id="add-comment">Написать</button>
+          <button class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
-
+  </body>
 
   <script>
     const comments = [{
       name: "Глеб Фокин",
-      date: new Date (12.02.22 12:18),
+      date: new Date("2023-02-01T12:20:52.308Z"),
       text: "Это будет первый комментарий на этой странице",
       likes: 3,
       isLiked: false,
     },
     {
       name: "Варвара Н.",
-      date: new Date (13.02.22 19:22),
+      date: new Date("2023-02-15T19:45:56.308Z"),
       text: "Мне нравится как оформлена эта страница! ❤",
       likes: 75,
       isLiked: true,
-    },
-  ];
+    }];
 
   const name = document.getElementById("name-input");
   const text = document.getElementById("text-input");
+  
   const list = document.guerySelector(".comments");
   
   const renderComments = () => {
@@ -68,17 +71,20 @@
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${comment.likes}</span>лайка
-            <button data-index="${index}" class="${likeButtonClass} ${comment.isLiked ? "-active-like" : ""
+            <button data-index="${index}" class="like-button ${comment.isLiked ? "-active-like" : ""
           }"></button>
             </div>
           </div>
         </li>
       `
-    }).join("")
+    }).join("");
   };
+
+  renderComments();
+
   </script>
 
-  <script>
+  <!-- <script>
     // "use strict";
     const buttonElement = document.getElementById("add-comment");
     const listElement = document.getElementById("commentlist");
@@ -118,9 +124,7 @@
         commentInputElement.value = "";
       });
     // console.log("It works!");
-  </script>
+  </script> -->
 
-
-</body>
 
 </html>
