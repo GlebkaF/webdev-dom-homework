@@ -10,7 +10,7 @@
 <body>
   <div class="container">
     <ul id="list-comments" class="comments">
-    <!-- Список рендерится из JS -->
+      <!-- Список рендерится из JS -->
     </ul>
     <div class="add-form">
       <input type="text" id="name-input" class="add-form-name" placeholder="Введите ваше имя" value="" />
@@ -35,69 +35,91 @@
   const textInputElement = document.getElementById('text-input')
   const commentsElement = document.getElementById('comments')
 
-      // массив данных c каждым пользователем
-      const arrayUsers =[
-      {
-        name: "Глеб Фокин",
-        dateOfComment: "12.02.22 12:18",
-        text: "Это будет первый комментарий на этой странице",
-        likes: 3,
-        validButtonLike: false,
-      },
-      {
-        name: "Варвара Н.",
-        dateOfComment: "13.02.22 19:22",
-        text: "Мне нравится как оформлена эта страница! ❤",
-        likes: 75,
-        validButtonLike: true,
-      }
-    ];
+  // массив данных c каждым пользователем
+  const arrayUsers = [
+    {
+      name: "Глеб Фокин",
+      dateOfComment: "12.02.22 12:18",
+      text: "Это будет первый комментарий на этой странице",
+      likes: 3,
+      validButtonLike: false,
+    },
+    {
+      name: "Варвара Н.",
+      dateOfComment: "13.02.22 19:22",
+      text: "Мне нравится как оформлена эта страница! ❤",
+      likes: 75,
+      validButtonLike: true,
+    }
+  ];
 
-    const likeButton = () => {
+  const likeButton = () => {
     const likeButtonElements = document.querySelectorAll('.like-button')
     for (let likeButtonElement of likeButtonElements)
-      likeButtonElement.addEventListener('click', () => {
-        if (arrayUsers[likeButtonElement.dataset.index].validButtonLike){
+      likeButtonElement.addEventListener('click', (event) => {
+        if (arrayUsers[likeButtonElement.dataset.index].validButtonLike) {
           arrayUsers[likeButtonElement.dataset.index].likes--;
           arrayUsers[likeButtonElement.dataset.index].validButtonLike = false;
         } else {
           arrayUsers[likeButtonElement.dataset.index].likes++;
           arrayUsers[likeButtonElement.dataset.index].validButtonLike = true;
         }
-        
+
         renderUsers();
-    })
-    
+        event.stopPropagation();
+      })
+
   }
 
-        // render- функция (форма нового комментария)
-        const renderUsers = () => {
-      const userHtml = arrayUsers.map((user, index) => {
-        return `<li class="comment">
+  const safeCode = (string) => {
+        return string.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
+  }
+
+  String.prototype.safeCode = function () {
+        return this.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
+  }
+
+  // добавление комментария
+  const commentAdd = () => {
+    const comments = document.querySelectorAll('.comment')
+    for (let comment of comments)
+      comment.addEventListener('click', (event) => {
+        const user = arrayUsers[comment.dataset.index]
+        textInputElement.value = `> ${user.text.replaceAll('<br>', '\n')}\n\n${user.name}, `
+        event.stopPropagation();
+      })
+  }
+
+  // render- функция (форма нового комментария)
+  const renderUsers = () => {
+    const userHtml = arrayUsers.map((user, index) => {
+      return `<li class="comment" data-index= '${index}'>
         <div class="comment-header">
           <div>${user.name}</div>
           <div>${user.dateOfComment}</div>
         </div>
         <div class="comment-body">
-          <div class="comment-text">
+          <div class="comment-text" data-index= '${index}'>
             ${user.text}
           </div>
         </div>
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${user.likes}</span>
-            <button data-index= '${index}' class="like-button ${user.validButtonLike ? '-active-like' : '' }"></button>
+            <button data-index= '${index}' class="like-button ${user.validButtonLike ? '-active-like' : ''}"></button>
           </div>
         </div>
       </li>`
-      }).join('');
-      listElement.innerHTML = userHtml;
-      likeButton();
-    };
+    }).join('');
+    listElement.innerHTML = userHtml;
+    likeButton();
+    commentAdd();
+  };
 
-    renderUsers();
+  renderUsers();
 
-// Работа кнопки при нажатии (поле Имя и поле текст)
+
+  // Работа кнопки при нажатии (поле Имя и поле текст)
   buttonElement.addEventListener('click', () => {
     // в случае пустого поля в графе Имя
     nameInputElement.classList.remove("error");
@@ -118,17 +140,20 @@
     const month = currentDate.getMonth() < 10 ? ('0' + (currentDate.getMonth() + 1)) : (currentDate.getMonth() + 1)
     const minutes = currentDate.getMinutes() < 10 ? '0' + currentDate.getMinutes() : currentDate.getMinutes()
     let commentDate = (nowDate) + "." + (month) + "." + currentDate.getFullYear() + " " + currentDate.getHours() + ":" + (minutes)
-    
-    arrayUsers.push({name:nameInputElement.value, 
-      dateOfComment:commentDate, 
-      text:textInputElement.value, 
-      likes:0, 
-      validButtonLike: false})
+
+    arrayUsers.push({
+      name: safeCode(nameInputElement.value),
+      dateOfComment: commentDate,
+      text: safeCode(textInputElement.value).replaceAll('\n','<br>'),
+      likes: 0,
+      validButtonLike: false
+    })
 
     renderUsers();
 
     nameInputElement.value = '';
     textInputElement.value = '';
- });
+  });
 </script>
+
 </html>
