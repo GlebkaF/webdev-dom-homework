@@ -1,4 +1,4 @@
-export function userInput1({ nameEl, textEl, formEl, buttonEl }) {
+export const userInput1 = ({ nameEl, textEl, formEl, buttonEl }) => {
   nameEl.addEventListener("input", evnt);
   textEl.addEventListener("input", evnt);
   function evnt(event) {
@@ -10,9 +10,10 @@ export function userInput1({ nameEl, textEl, formEl, buttonEl }) {
       buttonEl.click();
     }
   });
-}
+};
 
-export function userInput2({ nameEl, textEl }) {
+export const userInput2 = ({nameEl, textEl}) => {
+ 
   nameEl.value = nameEl.value.trim();
   textEl.value = textEl.value.trim();
 
@@ -30,4 +31,4 @@ export function userInput2({ nameEl, textEl }) {
     textEl.classList.add("add-form_error");
     return;
   }
-}
+};

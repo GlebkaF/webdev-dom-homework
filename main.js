@@ -2,7 +2,7 @@ import { fetchGet, comLoader, fetchPost } from "./api.js";
 import { renderComments } from "./renderComments.js";
 import { formatDate } from "./formatdate.js";
 
-//import { userInput1, userInput2 } from "./userinput.js";
+import { userInput1, userInput2 } from "./userinput.js";
 
 export const nameEl = document.getElementById("add-form-name");
 export const textEl = document.getElementById("add-form-text");
@@ -13,39 +13,10 @@ export const formLoader = document.getElementById("form-loader");
 let comments = [];
 
 buttonEl.disabled = true;
-// userInput1({ nameEl, textEl, formEl, buttonEl });
-nameEl.addEventListener("input", evnt);
-textEl.addEventListener("input", evnt);
-function evnt(event) {
-  if (event.target.value !== "") buttonEl.disabled = false;
-}
-
-formEl.addEventListener("keyup", (e) => {
-  if (!e.shiftKey && e.code === "Enter") {
-    buttonEl.click();
-  }
-});
+userInput1({ nameEl, textEl, formEl, buttonEl });
 
 buttonEl.addEventListener("click", () => {
-  // userInput2({ nameEl, textEl });
-
-  nameEl.value = nameEl.value.trim();
-  textEl.value = textEl.value.trim();
-
-  nameEl.classList.remove("add-form_error");
-  textEl.classList.remove("add-form_error");
-
-  if (nameEl.value === "" && textEl.value === "") {
-    nameEl.classList.add("add-form_error");
-    textEl.classList.add("add-form_error");
-    return;
-  } else if (nameEl.value === "") {
-    nameEl.classList.add("add-form_error");
-    return;
-  } else if (textEl.value === "") {
-    textEl.classList.add("add-form_error");
-    return;
-  }
+  userInput2({ nameEl, textEl });
 
   const fetchPostAndRenderComments = () => {
     fetchPost({ text: textEl.value, name: nameEl.value })
