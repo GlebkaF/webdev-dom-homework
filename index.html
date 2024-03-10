@@ -93,6 +93,7 @@
         comment : "Это будет первый комментарий на этой странице",
         likes : 3,
         isLiked: false,
+        isEdit: true,
         
       },
       {
@@ -101,6 +102,7 @@
         comment : "Мне нравится как оформлена эта страница! ❤",
         likes : 75,
         isLiked: false,
+        isEdit: true,
 
       },
     ];
@@ -114,6 +116,7 @@
            </div>
            <div data-text="${сommentator.comment}" class="comment-body">
            <div class="comment-text">${сommentator.comment}</div>
+           <button type="button" data-index=${index} class ="editButton" id="editName" type="text"> Редактировать</button>
            </div>
            <div class="comment-footer">
             <div class="likes">
@@ -126,10 +129,12 @@
       .join("");
 
       listElement.innerHTML = commentatorsHtml;
-
+      
+      
       initEventListeners();
       
     };
+    
 
     const initEventListeners = () => {
       const likeButtonElement = document.querySelectorAll(".like-button");
@@ -160,6 +165,7 @@
       }
     }
     renderCommentators();
+
 
     // Вопрос по валидации. Если мы пишем функцию на активность кнопки и подсвечивание серым, тогда как проверять пустые строки цветом?
     // buttonElement.disabled = true;
