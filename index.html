@@ -90,7 +90,7 @@
         comments = responseData.comments.map((comment) => {
           return {
             name: comment.author.name,
-            time: new Date(comment.date),
+            time: new Date(comment.date).toLocaleTimeString('sm', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }),
             comment: comment.text,
             likes: comment.likes,
             isLiked: false,
@@ -171,6 +171,7 @@
 
     listElement.innerHTML = commentsHtml;
     replyToComment();
+    initEventListeners();
   };
   replyToComment();
 
@@ -190,24 +191,22 @@
           comments[index].likes++;
         }
         renderComments();
-        initEventListeners();
+
       });
     }
   };
-
 
   renderComments();
   initEventListeners();
   // Дата и время
 
-  let currentDate =
-    new Date().toLocaleDateString("default", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "2-digit",
-    }) +
-    " " +
-    new Date().toLocaleTimeString().slice(0, -3);
+
+  let addTimeElement = new Date();
+  let year = addTimeElement.getFullYear().toString().slice(-2);
+  let minutes = addTimeElement.getMinutes() < 10 ? '0' + addTimeElement.getMinutes() : addTimeElement.getMinutes();
+  let hours = addTimeElement.getHours() < 10 ? '0' + addTimeElement.getHours() : addTimeElement.getHours();
+  let date = addTimeElement.getDate() < 10 ? '0' + addTimeElement.getDate() : addTimeElement.getDate();
+  let month = addTimeElement.getMonth() < 10 ? '0' + addTimeElement.getMonth() : addTimeElement.getMonth();
 
   // Обработчик клика
 
