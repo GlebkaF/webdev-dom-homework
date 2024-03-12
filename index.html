@@ -73,6 +73,25 @@
 		const acceptComment = document.getElementById('textarea-accept-comment');
 		const buttonDelete =  document.getElementById('delete-button');
 
+		//Добавляю массив на основе разметки HTML 
+		const commentators = [
+			{
+				name: "Глеб Фокин",
+				data: "12.02.22 12:18",
+				comment: "Это будет первый комментарий на этой странице",
+				like: "3",
+				isLike: false,
+			},
+			{
+				name: "Варвара Н.",
+				data: "13.02.22 19:22",
+				comment: "Мне нравится как оформлена эта страница! ❤",
+				like: "75",
+				isLike: false,
+			}
+			];
+ 
+
 			// Доп. задание - делаю кнопку неактивной при незаполненом поле
 		function checkInputs() {
 		if (acceptName.value.trim() === "" || acceptComment.value.trim() === "") {
@@ -89,16 +108,14 @@
 
 	// 	// Доп. задание - добавляю кнопку удалить и пишу её функционал
 	buttonDelete.addEventListener('click', () => {
-		const lastIndex = listElement.innerHTML.lastIndexOf('<li class="comment">');
-			if (lastIndex !== -1) {
-			listElement.innerHTML = listElement.innerHTML.substring(0, lastIndex);
-		};
+		commentators.pop();
+		renderCommentators();
+		checkInputs();
 	});
 	
 	// Функция, которая делает кнопку "удалить" неактивной когда в массиве нет элементов
 	function inactiveDeleteButton() {
 		if (commentators.length === 0) {
-			
 			buttonDelete.disabled = true;
 			buttonDelete.classList.add("gray-delete");
 		} else {
@@ -140,55 +157,29 @@
 			});
 		};
 	};
-
-	let userComment; 
-	let variableUserName;
+	let text; 
 	// ДЗ 2.11 --- Реализую ответ на комментарий
 	const replyToCommentFunction = () => {
 		const replyComments = document.querySelectorAll('.comment-text');
 		const commentTextArea = document.getElementById('textarea-accept-comment');
-		const replyNameUsers = document.querySelectorAll('.comment-header');
-		
 		for (const replyComment of replyComments) {
 			replyComment.addEventListener("click", event => {
 				event.stopPropagation();
-				for (const replyNameUser of replyNameUsers) {
-					variableUserName = replyNameUser.dataset.userName;
-				};
-				userComment = replyComment.dataset.text;
-				commentTextArea.value = userComment;
-
-			
-	
+				console.log('s');
+				text = replyComment.dataset.text;
+				commentTextArea.value = text;
+				// const textComment = commentators[0].comment;
+				
 				renderCommentators();
 				checkInputs();
 			});
 		};
 	};
-
-		//Добавляю массив на основе разметки HTML 
-		const commentators = [
-			{
-				name: "Глеб Фокин",
-				data: "12.02.22 12:18",
-				comment: "Это будет первый комментарий на этой странице",
-				like: "3",
-				isLike: false,
-			},
-			{
-				name: "Варвара Н.",
-				data: "13.02.22 19:22",
-				comment: "Мне нравится как оформлена эта страница! ❤",
-				like: "75",
-				isLike: false,
-			}
-			];
-
 			//Рендер функция
 			const renderCommentators = () => {
 			const commentatorHTML = commentators.map((commentator, index) => {
 					return `<li class="comment">
-          <div data-userName="${commentator.name}" class="comment-header">
+          <div class="comment-header">
             ${commentator.name}
             <div>${commentator.data}</div>
           </div>
@@ -208,9 +199,11 @@
 				listElement.innerHTML = commentatorHTML;
 				addLikeButtonEventListener();
 				replyToCommentFunction();
+				inactiveDeleteButton();
 			};
 			
 
+			// Клик на кнопку "Написать"
 			buttonElement.addEventListener("click", () => {
 				// Перенёс объявление переменных даты сюда.. Аааа, понял логику) 
 				const currentDate = new Date();
@@ -224,7 +217,13 @@
 				like: "0",
 				isLike: false,
 			});
+			// Очистка поля ввода для комментария и имени после отправления комментария
+			const clearCommmentTextArea = document.querySelector('.add-form-text');
+			const clearName = document.querySelector('.add-form-name');
+			clearCommmentTextArea.value = '';
+			clearName.value = '';
 			renderCommentators();
+			checkInputs();
 		});
 		renderCommentators();
 		checkInputs();
