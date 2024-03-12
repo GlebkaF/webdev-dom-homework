@@ -61,9 +61,9 @@
     const renderComments = () => {
       const commentsHtml = comments
         .map((comment, index) => {
-          return `<li class="comment" data-text="> ${comment.name} \n ${
+          return `<li class="comment" data-text="QUOTE_BEGIN ${comment.name}:\n${
             comment.text
-          }">
+          } QUOTE_END\n">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.date}</div>
@@ -200,7 +200,10 @@
         date: dateElement,
         text: commentInputElement.value
           .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;"),
+          .replaceAll(">", "&gt;")
+          //Сделал замену элементов при добавлении нового коммента, чтобы присваивался класс и появлялась белая рамка
+          .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+          .replaceAll("QUOTE_END", "</div>"),
         like: false,
         numLike: 0,
       });
