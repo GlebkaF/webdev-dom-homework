@@ -73,7 +73,7 @@
 		const acceptComment = document.getElementById('textarea-accept-comment');
 		const buttonDelete =  document.getElementById('delete-button');
 
-	//Добавляю массив на основе разметки HTML 
+		//Добавляю массив на основе разметки HTML 
 		const commentators = [
 			{
 				name: "Глеб Фокин",
@@ -90,7 +90,7 @@
 				isLike: false,
 			}
 			];
-
+ 
 
 			// Доп. задание - делаю кнопку неактивной при незаполненом поле
 		function checkInputs() {
@@ -108,16 +108,14 @@
 
 	// 	// Доп. задание - добавляю кнопку удалить и пишу её функционал
 	buttonDelete.addEventListener('click', () => {
-		const lastIndex = listElement.innerHTML.lastIndexOf('<li class="comment">');
-			if (lastIndex !== -1) {
-			listElement.innerHTML = listElement.innerHTML.substring(0, lastIndex);
-		};
+		commentators.pop();
+		renderCommentators();
+		checkInputs();
 	});
 	
 	// Функция, которая делает кнопку "удалить" неактивной когда в массиве нет элементов
 	function inactiveDeleteButton() {
 		if (commentators.length === 0) {
-			
 			buttonDelete.disabled = true;
 			buttonDelete.classList.add("gray-delete");
 		} else {
@@ -159,38 +157,34 @@
 			});
 		};
 	};
-
-	let userComment; 
+	let text; 
 	let variableUserName;
 	// ДЗ 2.11 --- Реализую ответ на комментарий
 	const replyToCommentFunction = () => {
 		const replyComments = document.querySelectorAll('.comment-text');
 		const commentTextArea = document.getElementById('textarea-accept-comment');
-		const replyNameUsers = document.querySelectorAll('.comment-header');
-		
+		const replyUserNames = document.querySelectorAll('.comment-header');
 		for (const replyComment of replyComments) {
 			replyComment.addEventListener("click", event => {
 				event.stopPropagation();
-				for (const replyNameUser of replyNameUsers) {
-					variableUserName = replyNameUser.dataset.userName;
-				};
-				userComment = replyComment.dataset.text;
-				commentTextArea.value = userComment;
-
-			
-	
+				// console.log('s');
+				for (const replyUserName of replyUserNames) {
+					variableUserName = replyUserName.dataset.user
+				}
+				text = replyComment.dataset.text;
+				commentTextArea.value = text  + ' ' + 'Пользователь : -' + variableUserName;
+				
+				
 				renderCommentators();
 				checkInputs();
 			});
 		};
 	};
-
-
 			//Рендер функция
 			const renderCommentators = () => {
 			const commentatorHTML = commentators.map((commentator, index) => {
 					return `<li class="comment">
-          <div data-userName="${commentator.name}" class="comment-header">
+          <div data-user="${commentator.name}" class="comment-header">
             ${commentator.name}
             <div>${commentator.data}</div>
           </div>
@@ -210,10 +204,11 @@
 				listElement.innerHTML = commentatorHTML;
 				addLikeButtonEventListener();
 				replyToCommentFunction();
+				inactiveDeleteButton();
 			};
 			
-			
 
+			// Клик на кнопку "Написать"
 			buttonElement.addEventListener("click", () => {
 				// Перенёс объявление переменных даты сюда.. Аааа, понял логику) 
 				const currentDate = new Date();
@@ -221,18 +216,24 @@
 			const formattedTime = `${currentDate.getHours().toString().padStart(2, '0')}:${currentDate.getMinutes().toString().padStart(2, '0')}`;
 				//Добавляю нового комментатора
 				commentators.push({
-				name: acceptName.value,
+				name: acceptName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
 				data: [formattedDate, formattedTime],
-				comment: acceptComment.value,
+				comment: acceptComment.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
 				like: "0",
 				isLike: false,
 			});
+			// Очистка поля ввода для комментария и имени после отправления комментария
+			const clearCommmentTextArea = document.querySelector('.add-form-text');
+			const clearName = document.querySelector('.add-form-name');
+			clearCommmentTextArea.value = '';
+			clearName.value = '';
 			renderCommentators();
+			checkInputs();
 		});
 		renderCommentators();
 		checkInputs();
-	
-	
+
+
 				// listElement.innerHTML = oldlist + `<li class="comment">
 			  //     <div class="comment-header">
 			  //       ${acceptName.value}
