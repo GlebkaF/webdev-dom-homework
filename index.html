@@ -141,19 +141,25 @@
 		};
 	};
 
-	let userСomment; 
+	let userComment; 
+	let variableUserName;
 	// ДЗ 2.11 --- Реализую ответ на комментарий
 	const replyToCommentFunction = () => {
 		const replyComments = document.querySelectorAll('.comment-text');
 		const commentTextArea = document.getElementById('textarea-accept-comment');
+		const replyNameUsers = document.querySelectorAll('.comment-header');
+		
 		for (const replyComment of replyComments) {
 			replyComment.addEventListener("click", event => {
 				event.stopPropagation();
-				console.log('s');
-				userСomment = replyComment.dataset.text;
-				commentTextArea.value = text;
-				
-				
+				for (const replyNameUser of replyNameUsers) {
+					variableUserName = replyNameUser.dataset.userName;
+				};
+				userComment = replyComment.dataset.text;
+				commentTextArea.value = userComment;
+
+			
+	
 				renderCommentators();
 				checkInputs();
 			});
@@ -182,7 +188,7 @@
 			const renderCommentators = () => {
 			const commentatorHTML = commentators.map((commentator, index) => {
 					return `<li class="comment">
-          <div data-name="${commentator.name}" class="comment-header">
+          <div data-userName="${commentator.name}" class="comment-header">
             ${commentator.name}
             <div>${commentator.data}</div>
           </div>
