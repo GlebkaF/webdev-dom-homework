@@ -75,10 +75,6 @@
         return string.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
   }
 
-  String.prototype.safeCode = function () {
-        return this.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
-  }
-
   // добавление комментария
   const commentAdd = () => {
     const comments = document.querySelectorAll('.comment')
@@ -123,13 +119,13 @@
   buttonElement.addEventListener('click', () => {
     // в случае пустого поля в графе Имя
     nameInputElement.classList.remove("error");
-    if (nameInputElement.value === "") {
+    if (nameInputElement.value.trim() === "") {
       nameInputElement.classList.add("error");
       return;
     }
     // в случае пустого поля в графе Текст
     textInputElement.classList.remove("error");
-    if (textInputElement.value === "") {
+    if (textInputElement.value.trim() === "") {
       textInputElement.classList.add("error");
       return;
     }
