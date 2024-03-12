@@ -141,7 +141,7 @@
 		};
 	};
 
-	let text; 
+	let userСomment; 
 	// ДЗ 2.11 --- Реализую ответ на комментарий
 	const replyToCommentFunction = () => {
 		const replyComments = document.querySelectorAll('.comment-text');
@@ -150,9 +150,9 @@
 			replyComment.addEventListener("click", event => {
 				event.stopPropagation();
 				console.log('s');
-				text = replyComment.dataset.text;
+				userСomment = replyComment.dataset.text;
 				commentTextArea.value = text;
-				// const textComment = commentators[0].comment;
+				
 				
 				renderCommentators();
 				checkInputs();
@@ -182,7 +182,7 @@
 			const renderCommentators = () => {
 			const commentatorHTML = commentators.map((commentator, index) => {
 					return `<li class="comment">
-          <div class="comment-header">
+          <div data-name="${commentator.name}" class="comment-header">
             ${commentator.name}
             <div>${commentator.data}</div>
           </div>
