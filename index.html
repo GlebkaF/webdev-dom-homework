@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 
 <head>
   <title>Проект "Комменты"</title>
@@ -14,7 +14,7 @@
     </ul>
     <div class="add-form">
       <input id="name-input" type="text" value="" class="add-form-name" placeholder="Введите ваше имя" />
-      <textarea id="text-input" type="textarea" value="" class="add-form-text" placeholder="Введите ваш коментарий"
+      <textarea id="text-input" class="add-form-text" placeholder="Введите ваш комментарий"
         rows="4"></textarea>
       <div class="add-form-row">
         <button id="add-button" class="add-form-button">Написать</button>
@@ -51,40 +51,20 @@
   const renderUsers = () => {
     const usersHtml = users
       .map((user, index) =>
-
-    function addComment() {
-      nameInputElement.classList.remove('error');
-      textInputElement.classList.remove('error');
-
-      if(nameInputElement.value === '' || !nameInputElement.value.trim()) {
-        nameInputElement.classList.add('error');
-        nameInputElement.value = '';
-        buttonElement.classList.add('add-form-button-inactive');
-        return;
-
-      } else if(textInputElement.value === '' || !textInputElement.value.trim()) {
-        textInputElement.classList.add('error');
-        buttonElement.classList.add('add-form-button-inactive');
-        return;
-      }   
-
-      let oldComments = commentsElement.innerHTML;
-      commentsElement.innerHTML = oldComments +
-
-        `<li class="comment"> 
-          <div class="comment-header"> 
-            <div>${user.name}</div> 
-            <div>${user.date}</div> 
-          </div> 
-          <div data-text="${user.comment}" class="comment-body"> 
-            <div class="comment-text">${user.comment}</div> 
-          </div> 
-          <div class="comment-footer"> 
-            <div class="likes"> 
-              <span class="likes-counter">${user.likes}</span> 
-              <button data-like="${user.likes}" data-index="${index}" class="like-button ${users[index].isLiked ? '-active-like' : 'like-button'}"></button> 
-            </div> 
-          </div> 
+        `<li class="comment" data-index="${index}">
+          <div class="comment-header">
+            <div>${user.name}</div>
+            <div>${user.date}</div>
+          </div>
+          <div data-text="${user.comment}" class="comment-body">
+            <div class="comment-text">${user.comment}</div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${user.likes}</span>
+              <button data-like="${user.likes}" data-index="${index}" class="like-button ${users[index].isLiked ? '-active-like' : 'like-button'}"></button>
+            </div>
+          </div>
         </li>`
       )
       .join('');
@@ -92,7 +72,22 @@
     listElement.innerHTML = usersHtml;
 
     initLikeButtonListeners();
+    initAnswerComment();
   };
+
+  const initAnswerComment = () => {
+    const commentsElements = document.querySelectorAll('.comment');
+    const textInputElement = document.getElementById('text-input');
+    for (const comment of commentsElements) {
+      comment.addEventListener('click', () => {
+        const indexComment = comment.dataset.index;
+        const currentComment = users[indexComment].comment;
+        const currentCommentName = users[indexComment].name;
+        textInputElement.value = `> ${currentComment}\n\n${currentCommentName}, `;
+      }) 
+    }
+  }
+
 
   const initLikeButtonListeners = () => {
     const buttonElements = document.querySelectorAll('.like-button');
@@ -102,7 +97,8 @@
       const index = buttonElement.dataset.index;
       const counter = buttonElement.dataset.like;
 
-      buttonElement.addEventListener('click', () => {
+      buttonElement.addEventListener('click', (event) => {
+        event.stopPropagation();
 
         if (users[index].isLiked === false) {
 
@@ -120,7 +116,7 @@
 
         renderUsers();
       });
-    };
+    }
   };
 
   renderUsers();
@@ -164,7 +160,7 @@
       textInputElement.classList.add('error');
       buttonElement.classList.add('add-form-button-inactive');
       return;
-    };
+    }
 
     const date = new Date();
     const options = {
@@ -180,9 +176,18 @@
     const dateTime = `${date.toLocaleDateString('ru-RU', options)} ${date.toLocaleTimeString('ru-RU', optionsTime)}`;
 
     users.push({
-      name: nameInputElement.value,
+      name: nameInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       date: dateTime,
-      comment: textInputElement.value,
+      comment: textInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("\n", "<br>"),
       likes: 0,
       isLiked: false,
     });
