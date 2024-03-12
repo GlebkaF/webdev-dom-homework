@@ -33,48 +33,15 @@
   const deleteButtonElement = document.getElementById('delete-button');
   const listElement = document.getElementById('list');
 
-  const users = [
-    {
-      name: 'Глеб Фокин',
-      date: '12.02.22 12:18',
-      comment: 'Это будет первый комментарий на этой странице',
-      likes: 3,
-      isLiked: false,
-      
+  let users = [];
 
-    },
-    {
-      name: 'Варвара Н.',
-      date: '13.02.22 19:22',
-      comment: 'Мне нравится как оформлена эта страница! ❤',
-      likes: 75,
-      isLiked: false,
-      
-    },
-  ];
-  const answerComment = () => {
-    const commentsElements = document.querySelectorAll('.comment-body');
-
-    for (const comment of commentsElements) {
-      
-
-      comment.addEventListener('click', () => {
-        textInputElement.value = comment.textContent;
-        
-      })
-      
-    }
-    
-  }
-
-  answerComment();
 
   const renderUsers = () => {
     const usersHtml = users.map((user, index) => {
       return `<li class="comment">
           <div class="comment-header">
             <div>${user.name}</div>
-            <div>${user.date}</div>
+            <div>${currentTime(user.date)}</div>
           </div>
           <div data-text="${user.comment}" class="comment-body">
             ${users[index].isEdit ? `<textarea class="comment-edited-text"> ${users[index].comment} </textarea>` : `<div class="comment-text"> ${users[index].comment} </div>` }
@@ -133,10 +100,24 @@
 
   renderUsers();
 
-  
+  function answerComment () {
+      const commentBlocks = document.querySelectorAll('.comment-body');
+      for (const commentBlock of commentBlocks) {
+        commentBlock.addEventListener('click', (event) => {
+          const userNames = document.querySelectorAll('.user-name');
+          console.log(event);
+          textInputElement.value = `< ${event.target.outerText} \n ${event.target.parentElement.parentElement.firstElementChild.firstElementChild.innerText},`;
+        });
+      
+      }
+    }
+    answerComment();
 
 
-  
+    function currentTime(time) {
+      let currentDate = time.toLocaleDateString([], { day: "2-digit", month: "2-digit", year: "2-digit",}) + " " + time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      return currentDate;
+    }
 
   buttonElement.disabled = true;
 
@@ -208,34 +189,81 @@
     }
 
 
-    const date = new Date();
-    const options = {
-      year: '2-digit',
-      month: 'numeric',
-      day: 'numeric',
-    };
-    const optionsTime = {
-      hour: 'numeric',
-      minute: 'numeric',
-    };
+    // const date = new Date();
+    // const options = {
+    //   year: '2-digit',
+    //   month: 'numeric',
+    //   day: 'numeric',
+    // };
+    // const optionsTime = {
+    //   hour: 'numeric',
+    //   minute: 'numeric',
+    // };
 
-    const dateTime = `${date.toLocaleDateString('ru-RU', options)} ${date.toLocaleTimeString('ru-RU', optionsTime)}`;
+    // const dateTime = `${date.toLocaleDateString('ru-RU', options)} ${date.toLocaleTimeString('ru-RU', optionsTime)}`;
 
-    users.push({
-      name: sanitizeHtml(nameInputElement.value),
-      date: dateTime,
-      comment: sanitizeHtml(textInputElement.value),
-      likes: 0,
-      isLiked: false,
-      isEdit: false
-    })
+    // users.push({
+    //   name: sanitizeHtml(nameInputElement.value),
+    //   date: dateTime,
+    //   comment: sanitizeHtml(textInputElement.value),
+    //   likes: 0,
+    //   isLiked: false,
+    //   isEdit: false
+    // })
     
-    renderUsers();
-    editComments();
+    const fetchPromise = fetch(
+      'https://wedev-api.sky.pro/api/v1/alexey-borovkov/comments',
+      {
+        method: "POST",
+        body: JSON.stringify({
+          text: textInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
+          name: nameInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
+        }),
+      });
+
+      fetchPromise.then((response) => {
+        console.log(response);
+        const jsonPromise = response.json();
+        
+        getComments();
+        renderUsers();
+      });
+   
     nameInputElement.value = '';
     textInputElement.value = '';
   });
+      
+    function getComments() {
+    const fetchPromise = fetch(
+      'https://wedev-api.sky.pro/api/v1/alexey-borovkov/comments',
+      {
+        method: "GET",
+      });
 
+      fetchPromise.then((response) => {
+
+        const jsonPromise = response.json();
+
+        jsonPromise.then((responseData) => {
+
+          const appUsers = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: new Date(comment.date),
+              comment: comment.text,
+              likes: comment.likes,
+              isLiked: false,
+              id: comment.id,
+            }
+          });
+
+          users = appUsers;
+          renderUsers();
+        });
+      });
+    };
+
+    getComments();
   console.log("It works!");
 </script>
 
