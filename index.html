@@ -51,6 +51,26 @@
   const renderUsers = () => {
     const usersHtml = users
       .map((user, index) =>
+
+    function addComment() {
+      nameInputElement.classList.remove('error');
+      textInputElement.classList.remove('error');
+
+      if(nameInputElement.value === '' || !nameInputElement.value.trim()) {
+        nameInputElement.classList.add('error');
+        nameInputElement.value = '';
+        buttonElement.classList.add('add-form-button-inactive');
+        return;
+
+      } else if(textInputElement.value === '' || !textInputElement.value.trim()) {
+        textInputElement.classList.add('error');
+        buttonElement.classList.add('add-form-button-inactive');
+        return;
+      }   
+
+      let oldComments = commentsElement.innerHTML;
+      commentsElement.innerHTML = oldComments +
+
         `<li class="comment"> 
           <div class="comment-header"> 
             <div>${user.name}</div> 
