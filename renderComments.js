@@ -26,3 +26,5 @@ export const renderComments = ({comments, initLikeButtonListeners, reply, remove
     reply();
     removeValidation();
   };
+
+  

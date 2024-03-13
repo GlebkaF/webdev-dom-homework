@@ -1,6 +1,7 @@
 "use strict";
 
 import { fetchAndRenderComments, postComment } from "./api.js";
+import { removeValidation } from "./removeValid.js";
 import { renderComments } from "./renderComments.js";
 
 const addButtonElement = document.getElementById('add-button');
@@ -35,12 +36,7 @@ function getComments() {
 let comments = [];
 
 
-
-// Рендер функция 
-
-
 getComments();
-
 
 
 // Отложенный коммент
@@ -111,23 +107,7 @@ reply();
 
 
 // Отмена валидации (чтобы не было красных полей)
-function removeValidation() {
-
-  nameInputElement.addEventListener('click', () => {
-    nameInputElement.classList.remove('error');
-    commentInputElement.classList.remove('error');
-  });
-
-  commentInputElement.addEventListener('click', () => {
-    nameInputElement.classList.remove('error');
-    commentInputElement.classList.remove('error');
-  });
-
-};
-
 removeValidation();
-
-
 
 // Добавление нового коммента на сервер 
 addButtonElement.addEventListener('click', () => {
@@ -177,5 +157,7 @@ addButtonElement.addEventListener('click', () => {
 
       };
     });
-    renderComments({comments, initLikeButtonListeners, reply, removeValidation});;
+    renderComments({comments, initLikeButtonListeners, reply, removeValidation});
 });
+
+
