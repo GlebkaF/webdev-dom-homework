@@ -157,23 +157,29 @@
 			});
 		};
 	};
+
 	let text; 
 	let variableUserName;
 	// ДЗ 2.11 --- Реализую ответ на комментарий
 	const replyToCommentFunction = () => {
 		const replyComments = document.querySelectorAll('.comment-text');
 		const commentTextArea = document.getElementById('textarea-accept-comment');
-		const replyUserNames = document.querySelectorAll('.comment-header');
+		// const replyUserNames = document.querySelectorAll('.comment-header');
 		for (const replyComment of replyComments) {
 			replyComment.addEventListener("click", event => {
 				event.stopPropagation();
 				// console.log('s');
-				for (const replyUserName of replyUserNames) {
-					variableUserName = replyUserName.dataset.user
-				}
-				text = replyComment.dataset.text;
-				commentTextArea.value = text  + ' ' + 'Пользователь : -' + variableUserName;
 				
+			const replyUserName = event.target.closest('.comment').querySelector('.comment-header').dataset.user;
+			text = replyComment.dataset.text;
+			commentTextArea.value = text + '  ' + 'Пользователь : - ' + replyUserName;
+
+				// for (const replyUserName of replyUserNames) {
+				// 	variableUserName = replyUserName.dataset.user
+				// }
+				// text = replyComment.dataset.text;
+				// commentTextArea.value = text  + ' ' + 'Пользователь : - ' + variableUserName;
+				// console.log(variableUserName);
 				
 				renderCommentators();
 				checkInputs();
