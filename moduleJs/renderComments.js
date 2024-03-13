@@ -23,7 +23,7 @@ export const renderComments = ({comments, initLikeButtonListeners, reply, remove
     listElement.innerHTML = commentsHtml;
   
     initLikeButtonListeners();
-    reply();
+    reply({comments});
     removeValidation();
   };
 

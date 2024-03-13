@@ -4,6 +4,7 @@ import { fetchAndRenderComments, postComment } from "./moduleJs/api.js";
 import { delay } from "./moduleJs/delay.js";
 import { removeValidation } from "./moduleJs/removeValid.js";
 import { renderComments } from "./moduleJs/renderComments.js";
+import { reply } from "./reply.js";
 
 const addButtonElement = document.getElementById('add-button');
 const nameInputElement = document.getElementById('name-input');
@@ -76,24 +77,14 @@ const initLikeButtonListeners = () => {
 
 
 // Ответ по клику на коммент 
-function reply() {
-
-  const commentElements = document.querySelectorAll('.comment-body');
-  const formTextElement = document.querySelector('.add-form-text');
-
-  commentElements.forEach((element, index) => {
-    element.addEventListener('click', () => {
-      formTextElement.value = `> ${comments[index].name} \n ${comments[index].comment}`;
-    });
-  });
-}
-
-reply();
+reply({comments});
 
 
 
 // Отмена валидации (чтобы не было красных полей)
 removeValidation();
+
+
 
 // Добавление нового коммента на сервер 
 addButtonElement.addEventListener('click', () => {
