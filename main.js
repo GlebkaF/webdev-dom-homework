@@ -2,9 +2,10 @@
 
 import { fetchAndRenderComments, postComment } from "./moduleJs/api.js";
 import { delay } from "./moduleJs/delay.js";
+import { initLikeButtonListeners } from "./moduleJs/likeButton.js";
 import { removeValidation } from "./moduleJs/removeValid.js";
 import { renderComments } from "./moduleJs/renderComments.js";
-import { reply } from "./reply.js";
+import { reply } from "./moduleJs/reply.js";
 
 const addButtonElement = document.getElementById('add-button');
 const nameInputElement = document.getElementById('name-input');
@@ -27,7 +28,7 @@ function getComments() {
       };
     });
     comments = appComments;
-    renderComments({ comments, initLikeButtonListeners, reply, removeValidation });
+    renderComments({ comments, initLikeButtonListeners, reply, removeValidation, delay });
     preLoadElement.classList.add('hide');
   });
 }
@@ -37,47 +38,14 @@ getComments();
 //  Массив для комментов 
 let comments = [];
 
+
 // Кнопка для лайка 
-const initLikeButtonListeners = () => {
-
-  const addLikesButtonsElements = document.querySelectorAll('.like-button');
-
-
-  for (const addLikesButtonsElement of addLikesButtonsElements) {
-
-    const index = addLikesButtonsElement.dataset.index;
-    const counter = addLikesButtonsElement.dataset.like;
-
-    addLikesButtonsElement.addEventListener('click', () => {
-
-      addLikesButtonsElement.classList.add('-loading-like')
-
-      delay(4000).then(() => {
-
-        if (comments[index].isLiked === false) {
-
-          const result = Number(counter) + 1;
-          comments[index].likesCounter = result;
-
-          comments[index].isLiked = true;
-
-        } else {
-
-          const result = Number(counter) - 1;
-          comments[index].likesCounter = result;
-
-          comments[index].isLiked = false;
-        }
-        renderComments({ comments, initLikeButtonListeners, reply, removeValidation });
-      });
-    })
-  }
-};
+initLikeButtonListeners(comments, renderComments, delay, reply, removeValidation);
 
 
 
 // Ответ по клику на коммент 
-reply({comments});
+reply({ comments });
 
 
 
@@ -134,7 +102,7 @@ addButtonElement.addEventListener('click', () => {
 
     };
   });
-  renderComments({ comments, initLikeButtonListeners, reply, removeValidation });
+  renderComments({comments, initLikeButtonListeners, reply, removeValidation, delay});
 });
 
 

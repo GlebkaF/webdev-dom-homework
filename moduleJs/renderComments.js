@@ -1,6 +1,6 @@
 const listElement = document.getElementById('list');
 
-export const renderComments = ({comments, initLikeButtonListeners, reply, removeValidation}) => {
+export function renderComments ({comments, initLikeButtonListeners, reply, removeValidation, delay}) {
     const commentsHtml = comments.map((comment, index) => {
       return `<li class="comment">
     <div class="comment-header">
@@ -22,7 +22,7 @@ export const renderComments = ({comments, initLikeButtonListeners, reply, remove
     }).join('');
     listElement.innerHTML = commentsHtml;
   
-    initLikeButtonListeners();
+    initLikeButtonListeners({comments, initLikeButtonListeners, reply, removeValidation, delay});
     reply({comments});
     removeValidation();
   };
