@@ -30,68 +30,59 @@
     const buttonLikeElements = document.querySelectorAll('.like-button');
 
     for (const elem of buttonLikeElements) {
-      elem.addEventListener('click', () => {
+      elem.addEventListener('click', (event) => {
+        event.stopPropagation();
         const index = elem.dataset.index;
-        const commentIndex = commeentsList[index];
+        const commentIndex = commentsList[index];
         if (commentIndex.isLiked) {
           commentIndex.isLiked = false;
-          commentIndex.likeNum = commentIndex.likeNum - 1;
+          commentIndex.likesNum = commentIndex.likesNum - 1;
           renderComments();
         } else {
           commentIndex.isLiked = true;
-          commentIndex.likeNum = commentIndex.likeNum + 1;
+          commentIndex.likesNum = commentIndex.likesNum + 1;
           renderComments();
         }
       });
     }
   }
 
-  let quoteComment = '';
-
   const reComment = () => {
-    const commentElement = document.querySelectorAll(".comment-text");
+    const commentElement = document.querySelectorAll(".comment");
 
     for (const textElement of commentElement) {
       textElement.addEventListener("click", () => {
-        let nameComment = '';
-        for (const elem of commeentsList) {
-          if (elem.commentText.trim() === textElement.innerHTML.trim()) {
-            nameComment = elem.name;
-          }
-        }
-        currentInputText.value = `>${textElement.innerHTML.trim().replaceAll('&gt;', '>')}
+        const indexElementInClick = [...document.querySelectorAll('.comment')].indexOf(textElement);
+        let nameComment = commentsList[indexElementInClick].name;
+        currentInputText.value = `>${commentsList[indexElementInClick].commentText.replaceAll('&gt;', '>')}
 ${nameComment},`;
-        quoteComment = `<div class='quote'>${currentInputText.value}</div>`;
-      })
+      });
     }
   }
 
 
-  //скрипт для добавления нового коментария
+  //скрипт для добавления нового комментария
   const currentInputName = document.getElementsByClassName('add-form-name')[0];
   const currentInputText = document.getElementsByClassName('add-form-text')[0];
   const commentButton = document.getElementsByClassName('add-form-button')[0];
   const commentList = document.getElementsByClassName('comments')[0];
   const checkStatus = document.getElementsByClassName('add-form')[0];
 
-  function addNewComment() {
+  function currentDateForComment() {
     const currentDate = new Date();
+    return `${currentDate.getDate()}.${(currentDate.getMonth() < 8 ? '0' + (currentDate.getMonth() + 1) :
+      currentDate.getMonth())}.${currentDate.getFullYear() - 2000}
+        ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+  }
 
+  function addNewComment() {
     if (currentInputName.value.trim().length !== 0 && currentInputText.value.trim().length !== 0) {
-      commeentsList.push({
-        name: currentInputName.value.replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;"),
-        commentText: currentInputText.value.replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;"),
-        likeNum: 0,
+      commentsList.push({
+        name: currentInputName.value,
+        commentText: currentInputText.value,
+        likesNum: 0,
         isLiked: false,
-        date: `${currentDate.getDate()}.${(currentDate.getMonth() < 8 ? '0' + (currentDate.getMonth() + 1) :
-          currentDate.getMonth())}.${currentDate.getFullYear() - 2000}
-        ${currentDate.getHours()}:${currentDate.getMinutes()}`
+        date: currentDateForComment()
       })
       currentInputText.value = '';
       currentInputName.value = '';
@@ -125,42 +116,50 @@ ${nameComment},`;
   deleteButton.addEventListener('click', () => {
     let delElem = deleteElement.children.item(deleteElement.children.length - 1);
     delElem.remove();
+    commentsList.pop();
   });
 
   //рендеринг комментов
-  const commeentsList = [
+  const commentsList = [
     {
       name: 'Глеб Фокин',
       commentText: 'Это будет первый комментарий на этой странице',
-      likeNum: 3,
+      likesNum: 3,
       isLiked: false,
       date: '12.02.22 12:18'
     },
     {
       name: 'Варвара Н.',
       commentText: 'Мне нравится как оформлена эта страница! ❤',
-      likeNum: 75,
+      likesNum: 75,
       isLiked: true,
       date: '13.02.22 19:22'
     }
   ];
 
+  const sanitize = (element) => {
+    return `${element.replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")}`;
+  }
+
   const renderComments = () => {
-    const commentsInHTML = commeentsList.map((elem, index) => {
+    const commentsInHTML = commentsList.map((elem, index) => {
       return `
       <li class="comment">
         <div class="comment-header">
-          <div>${elem.name}</div>
+          <div>${sanitize(elem.name)}</div>
           <div>${elem.date}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
-            ${elem.commentText}
+            ${sanitize(elem.commentText)}
           </div>
         </div>
         <div class="comment-footer">
           <div class="likes">
-            <span class="likes-counter">${elem.likeNum}</span>
+            <span class="likes-counter">${elem.likesNum}</span>
             <button data-index="${index}" class="like-button ${elem.isLiked ? "-active-like" : ""}"></button>
           </div>
         </div>
