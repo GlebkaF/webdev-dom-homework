@@ -110,7 +110,7 @@
     let Data = new Date()
     let day = Data.getDate()
     if (day < 10) day = '0' + day;
-    let month = Data.getMonth()
+    let month = Data.getMonth()+1
     if (month < 10) month = '0' + month;
     let hours = Data.getHours()
     if (hours < 10) hours = '0' + hours;
@@ -119,8 +119,8 @@
     let year = Data.getFullYear() - 2000
     let DataText = day + '.' + month + '.' + year + ' ' + hours + ':' + minuts
     inputName.classList.remove("error")
-    if (inputName.value === "") { inputName.classList.add("error"); return; }
-    if (TextComent.value === "") { TextComent.classList.add("error"); return; }
+    if (inputName.value.trim () === "") { inputName.classList.add("error"); return; }
+    if (TextComent.value.trim () === "") { TextComent.classList.add("error"); return; }
 
     commentators.push({
       name: inputName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
@@ -131,6 +131,9 @@
     });
     initEventListernes();
     renderComents();
+    inputName.value = "";
+    TextComent.value = "";
+    replyComment ();
   });
   renderComents()
   /// Удалить error при вводе
