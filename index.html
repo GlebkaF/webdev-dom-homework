@@ -6,7 +6,9 @@
   <meta charset="utf-8" />
   <link rel="stylesheet" href="styles.css" />
   <style>
-    .comment-text{white-space: pre-line;}
+    .comment-text {
+      white-space: pre-line;
+    }
   </style>
 </head>
 
@@ -110,7 +112,7 @@
     let Data = new Date()
     let day = Data.getDate()
     if (day < 10) day = '0' + day;
-    let month = Data.getMonth()+1
+    let month = Data.getMonth() + 1
     if (month < 10) month = '0' + month;
     let hours = Data.getHours()
     if (hours < 10) hours = '0' + hours;
@@ -119,8 +121,8 @@
     let year = Data.getFullYear() - 2000
     let DataText = day + '.' + month + '.' + year + ' ' + hours + ':' + minuts
     inputName.classList.remove("error")
-    if (inputName.value.trim () === "") { inputName.classList.add("error"); return; }
-    if (TextComent.value.trim () === "") { TextComent.classList.add("error"); return; }
+    if (inputName.value.trim() === "") { inputName.classList.add("error"); return; }
+    if (TextComent.value.trim() === "") { TextComent.classList.add("error"); return; }
 
     commentators.push({
       name: inputName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
@@ -133,7 +135,7 @@
     renderComents();
     inputName.value = "";
     TextComent.value = "";
-    replyComment ();
+    replyComment();
   });
   renderComents()
   /// Удалить error при вводе
@@ -147,20 +149,20 @@
 
 
   //мои мутки с ответом на коментарий
- const replyComment = ()=>  {
+  const replyComment = () => {
     const reponseComment = document.querySelectorAll('.comment');
-   //пытался, не вышло, если подскажут как сделать этим способом, буду рад
+    //пытался, не вышло, если подскажут как сделать этим способом, буду рад
     // for (const reponseComment of reponseComments) {
-   //   reponseComment.addEventListener('click', () => {
+    //   reponseComment.addEventListener('click', () => {
     reponseComment.forEach((el, index) => {
-  el.addEventListener('click', () => {
+      el.addEventListener('click', () => {
 
-    TextComent.value = `${commentators[index].comment}\n${commentators[index].name}`
+        TextComent.value = `${commentators[index].comment}\n${commentators[index].name}`
       })
     });
   }
-  replyComment ();
-  
+  replyComment();
+
 
 
 
