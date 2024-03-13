@@ -1,4 +1,7 @@
 "use strict";
+
+import { fetchAndRenderComments, postComment } from "./api.js";
+
 const addButtonElement = document.getElementById('add-button');
 const listElement = document.getElementById('list');
 const nameInputElement = document.getElementById('name-input');
@@ -6,25 +9,18 @@ const commentInputElement = document.getElementById('comment-input');
 const preLoadElement = document.getElementById('preloader');
 
 
+
 // Получениe комментов с сервера
 function getComments() {
-  return fetch(
-    'https://wedev-api.sky.pro/api/v1/rustam-kholov/comments',
-    {
-      method: "GET"
-    }
-  )
-    .then((response) => {
-      return response.json();
-    })
-    .then((responseData) => {
+  
+  fetchAndRenderComments().then((responseData) => {
       const appComments = responseData.comments.map((comment) => {
         return {
           name: comment.author.name,
           date: new Date(comment.date).toLocaleDateString('ru-RU', { year: '2-digit', month: '2-digit', day: '2-digit' }) + ' ' + new Date(comment.date).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
           comment: comment.text,
           likesCounter: comment.likes,
-          isLiked: false,
+          isLiked: comment.isLiked,
         };
       });
       comments = appComments;
@@ -37,6 +33,7 @@ function getComments() {
 
 //  Массив для комментов 
 let comments = [];
+
 
 
 // Рендер функция 
@@ -69,6 +66,8 @@ const renderComments = () => {
 
 getComments();
 
+
+
 // Отложенный коммент
 function delay(interval = 300) {
   return new Promise((resolve) => {
@@ -79,16 +78,10 @@ function delay(interval = 300) {
 }
 
 
-function delay(interval = 600) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, interval);
-  });
-}
 
 // Кнопка для лайка 
 const initLikeButtonListeners = () => {
+  
   const addLikesButtonsElements = document.querySelectorAll('.like-button');
 
 
@@ -124,6 +117,7 @@ const initLikeButtonListeners = () => {
 };
 
 
+
 // Ответ по клику на коммент 
 function reply() {
 
@@ -140,18 +134,24 @@ function reply() {
 reply();
 
 
+
 // Отмена валидации (чтобы не было красных полей)
 function removeValidation() {
 
   nameInputElement.addEventListener('click', () => {
-    nameInputElement.classList.remove('error')
+    nameInputElement.classList.remove('error');
+    commentInputElement.classList.remove('error');
   });
 
   commentInputElement.addEventListener('click', () => {
-    commentInputElement.classList.remove('error')
+    nameInputElement.classList.remove('error');
+    commentInputElement.classList.remove('error');
   });
+
 };
+
 removeValidation();
+
 
 
 // Добавление нового коммента на сервер 
@@ -168,45 +168,12 @@ addButtonElement.addEventListener('click', () => {
   addButtonElement.disabled = true;
   addButtonElement.textContent = 'Комментарий добавляется.....';
 
-  fetch(
-    'https://wedev-api.sky.pro/api/v1/rustam-kholov/comments',
-    {
-      method: "POST",
-      body: JSON.stringify({
-        name: nameInputElement.value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;"),
-        text: commentInputElement.value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;"),
-        forceError: true,
-      })
-    }).catch(() => {
+  postComment(
 
-      alert('Кажется, у вас сломался интернет, попробуйте позже');
-      addButtonElement.disabled = false;
-      addButtonElement.textContent = 'Добавить';
-
-    }).then((response) => {
-
-      if (response.status === 500) {
-
-        return Promise.reject('Сервер сломался, попробуй позже');
-
-      } else if (response.status === 400) {
-
-        return Promise.reject('Имя и комментарий должны быть не короче 3 символов');
-
-      } else {
-
-        return response.json();
-
-      }
-    }).then(() => {
+    {name: nameInputElement.value},
+    {text: commentInputElement.value,}
+    
+    ).then(() => {
 
       return getComments();
 
@@ -229,6 +196,7 @@ addButtonElement.addEventListener('click', () => {
       } else if (error === 'Имя и комментарий должны быть не короче 3 символов') {
 
         alert('Имя и комментарий должны быть не короче 3 символов');
+
         addButtonElement.disabled = false;
         addButtonElement.textContent = 'Добавить';
 
