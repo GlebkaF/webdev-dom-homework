@@ -1,8 +1,9 @@
 "use strict";
 
-import { fetchAndRenderComments, postComment } from "./api.js";
-import { removeValidation } from "./removeValid.js";
-import { renderComments } from "./renderComments.js";
+import { fetchAndRenderComments, postComment } from "./moduleJs/api.js";
+import { delay } from "./moduleJs/delay.js";
+import { removeValidation } from "./moduleJs/removeValid.js";
+import { renderComments } from "./moduleJs/renderComments.js";
 
 const addButtonElement = document.getElementById('add-button');
 const nameInputElement = document.getElementById('name-input');
@@ -13,46 +14,31 @@ const preLoadElement = document.getElementById('preloader');
 
 // Получениe комментов с сервера
 function getComments() {
-  
-  fetchAndRenderComments().then((responseData) => {
-      const appComments = responseData.comments.map((comment) => {
-        return {
-          name: comment.author.name,
-          date: new Date(comment.date).toLocaleDateString('ru-RU', { year: '2-digit', month: '2-digit', day: '2-digit' }) + ' ' + new Date(comment.date).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-          comment: comment.text,
-          likesCounter: comment.likes,
-          isLiked: comment.isLiked,
-        };
-      });
-      comments = appComments;
-      renderComments({comments, initLikeButtonListeners, reply, removeValidation});
-      preLoadElement.classList.add('hide');
-    });
-}
 
+  fetchAndRenderComments().then((responseData) => {
+    const appComments = responseData.comments.map((comment) => {
+      return {
+        name: comment.author.name,
+        date: new Date(comment.date).toLocaleDateString('ru-RU', { year: '2-digit', month: '2-digit', day: '2-digit' }) + ' ' + new Date(comment.date).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+        comment: comment.text,
+        likesCounter: comment.likes,
+        isLiked: comment.isLiked,
+      };
+    });
+    comments = appComments;
+    renderComments({ comments, initLikeButtonListeners, reply, removeValidation });
+    preLoadElement.classList.add('hide');
+  });
+}
+getComments();
 
 
 //  Массив для комментов 
 let comments = [];
 
-
-getComments();
-
-
-// Отложенный коммент
-function delay(interval = 300) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, interval);
-  });
-}
-
-
-
 // Кнопка для лайка 
 const initLikeButtonListeners = () => {
-  
+
   const addLikesButtonsElements = document.querySelectorAll('.like-button');
 
 
@@ -81,7 +67,7 @@ const initLikeButtonListeners = () => {
 
           comments[index].isLiked = false;
         }
-        renderComments({comments, initLikeButtonListeners, reply, removeValidation});
+        renderComments({ comments, initLikeButtonListeners, reply, removeValidation });
       });
     })
   }
@@ -125,39 +111,39 @@ addButtonElement.addEventListener('click', () => {
 
   postComment(
 
-    {name: nameInputElement.value},
-    {text: commentInputElement.value,}
-    
-    ).then(() => {
+    { name: nameInputElement.value },
+    { text: commentInputElement.value, }
 
-      return getComments();
+  ).then(() => {
 
-    }).then(() => {
+    return getComments();
+
+  }).then(() => {
+
+    addButtonElement.disabled = false;
+    addButtonElement.textContent = 'Добавить';
+    nameInputElement.value = '';
+    commentInputElement.value = '';
+
+  }).catch((error) => {
+
+    if (error === 'Сервер сломался, попробуй позже') {
+
+      alert('Сервер сломался, попробуй позже');
 
       addButtonElement.disabled = false;
       addButtonElement.textContent = 'Добавить';
-      nameInputElement.value = '';
-      commentInputElement.value = '';
 
-    }).catch((error) => {
+    } else if (error === 'Имя и комментарий должны быть не короче 3 символов') {
 
-      if (error === 'Сервер сломался, попробуй позже') {
+      alert('Имя и комментарий должны быть не короче 3 символов');
 
-        alert('Сервер сломался, попробуй позже');
+      addButtonElement.disabled = false;
+      addButtonElement.textContent = 'Добавить';
 
-        addButtonElement.disabled = false;
-        addButtonElement.textContent = 'Добавить';
-
-      } else if (error === 'Имя и комментарий должны быть не короче 3 символов') {
-
-        alert('Имя и комментарий должны быть не короче 3 символов');
-
-        addButtonElement.disabled = false;
-        addButtonElement.textContent = 'Добавить';
-
-      };
-    });
-    renderComments({comments, initLikeButtonListeners, reply, removeValidation});
+    };
+  });
+  renderComments({ comments, initLikeButtonListeners, reply, removeValidation });
 });
 
 
