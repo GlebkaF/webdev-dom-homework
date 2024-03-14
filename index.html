@@ -158,10 +158,18 @@
           })
           .then((data) => {
             buttonElement.disabled = false;
-            buttonElement.textContent = 'Написать'
+            buttonElement.textContent = 'Написать';
+            nameInputElement.value = "";
+            commentInputElement.value = "";
           })
-        fetchRender();
-      });
+      })
+      .catch((error) => {
+        buttonElement.disabled = false;
+        buttonElement.textContent = 'Написать';
+        alert('Произошла ошибка');
+        console.warn(error);
+      })
+    fetchRender();
   });
 
 
@@ -278,8 +286,7 @@
     renderComments();
     initEventListeners();
     replyToComment();
-    nameInputElement.value = "";
-    commentInputElement.value = "";
+
 
   });
 
