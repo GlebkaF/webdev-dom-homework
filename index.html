@@ -107,6 +107,7 @@
       },
     ];
     
+
     const renderCommentators = () => {
       const commentatorsHtml = сommentators.map((сommentator, index) => {
         return `<li class="comment">
@@ -116,7 +117,7 @@
            </div>
            <div data-text="${сommentator.comment}" class="comment-body">
            <div class="comment-text">${сommentator.comment}</div>
-           <button type="button" data-index=${index} class ="editButton" id="editName" type="text"> Редактировать</button>
+           <button id= "changingName" data-indexBtn="${index}" class ="editButton"> Редактировать </button>
            </div>
            <div class="comment-footer">
             <div class="likes">
@@ -130,12 +131,38 @@
 
       listElement.innerHTML = commentatorsHtml;
       
-      
       initEventListeners();
-      
+      editEventListeners()
+    };
+
+
+    
+    const editEventListeners = () => { // навешиваем обработчик событий
+
+      const editButtonElements = document.querySelectorAll(".editButton"); //находим элементы с классом editButton
+
+      for ( const editButtonEl of editButtonElements) {         // перебираем каждый элемент
+
+        editButtonEl.addEventListener("click", () => {         //добавляем обработчик клика на определенный элемент
+
+         const changingNameButton = document.getElementById ('changingName');  // меняем имя кнопки при клике
+          if (сommentators[index].isEdit === false) {
+           changingNameButton.textContent = 'Сохранить';
+          } else {
+           isEdit = true;
+          };
+  
+         const indexEl = editButtonEl.dataset.indexBtn;  // обращаемся к дата атрибуту этого элемента
+
+          commentators[index].isEdit = ('contentEditable', true); // при клике объявляем свойство объекта isEdit как true и добавляем признак редактирования + вызываем кнопку Сохранить
+
+          renderCommentators();  // вызываем-рендер функцию
+        }); 
+      };
     };
     
-
+    // Здесь будет функция для кнопки Сохранить
+    
     const initEventListeners = () => {
       const likeButtonElement = document.querySelectorAll(".like-button");
       for ( const likeButtonEl of likeButtonElement) {
@@ -166,8 +193,6 @@
     }
     renderCommentators();
 
-
-    // Вопрос по валидации. Если мы пишем функцию на активность кнопки и подсвечивание серым, тогда как проверять пустые строки цветом?
     // buttonElement.disabled = true;
     // function input() {
     //   if (nameElement.value.trim() !== "" && textElement.value.trim() !== "") {
@@ -230,7 +255,7 @@
         date : formatTime(currentDate),
         comment : textElement.value,
         likes : 0,
-        isLiked: false,
+        isLiked: true,
       })
 
       renderCommentators();
@@ -245,7 +270,7 @@
         buttonElement.dispatchEvent(new Event('click'));
        }
       };
-      
+     
     const removeButton = document.getElementById("deleteComment");
     const listItems = document.getElementById("list").getElementsByTagName("li");
     removeButton.addEventListener("click", removeItem);
