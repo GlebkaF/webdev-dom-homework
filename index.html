@@ -109,6 +109,8 @@
 
     buttonElement.disabled = true;
     buttonElement.textContent = 'Добавление...';
+    const startAt = Date.now();
+    console.log("Начинаем делать запрос");
 
     fetch("https://wedev-api.sky.pro/api/v1/alenka-s/comments", {
       method: "POST",
@@ -124,15 +126,32 @@
           .replaceAll("&", "&amp;")
           .replaceAll('"', "&quot;"),
       }),
-    }).then((response) => {
-      return response.json();
     })
+      .then((response) => {
+        console.log("Время: " + (Date.now() - startAt));
+        return response;
+      })
+      .then((response) => {
+        return response.json();
+      })
+      .then((response) => {
+        console.log("Время: " + (Date.now() - startAt));
+        return response;
+      })
       .then((responseData) => {
         return fetch("https://wedev-api.sky.pro/api/v1/alenka-s/comments", {
           method: "GET",
         })
           .then((response) => {
+            console.log("Время: " + (Date.now() - startAt));
+            return response;
+          })
+          .then((response) => {
             return response.json();
+          })
+          .then((response) => {
+            console.log("Время: " + (Date.now() - startAt));
+            return response;
           })
           .then((responseData) => {
             fetchRender();
