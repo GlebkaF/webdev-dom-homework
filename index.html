@@ -46,6 +46,10 @@
   .error {
     background-color: red;
   }
+
+  .hide {
+    display: none;
+  }
 </style>
 
 
@@ -59,7 +63,7 @@
   const commentInputElement = document.getElementById("comment-input");
   const commentElements = document.querySelectorAll(".comment");
   const likeButtonsElement = document.querySelectorAll(".likes");
-
+  const preloader = document.querySelector('.preload');
 
 
   // массив
@@ -97,6 +101,7 @@
             isLiked: false,
           };
         });
+        let hidePreload = document.querySelector(".preload").style.display = "none";
         renderComments();
       });
     });
