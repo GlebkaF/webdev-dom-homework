@@ -50,8 +50,25 @@
 
   const name = document.getElementById("name-input");
   const text = document.getElementById("text-input");
-  
+    
   const list = document.querySelector(".comments");
+
+  const initLikesListeners = () => {
+    const likeButtonsElements = document.querySelectorAll(".like-button");
+
+    for (likeButtonElement of likeButtonsElements) {
+      likeButtonElement.addEventListener("click", (event) => {
+        // event.stopPropagation();
+        const indexL = likeButtonElement.dataset.index;
+        const comment = comments[indexL];
+        comment.likes = comment.isLiked ? comment.likes - 1 : comment.likes + 1;
+        comment.isLiked = !comment.isLiked;
+
+        renderComments();
+
+      })
+    }
+  }
   
   const renderComments = () => {
     list.innerHTML = comments.map((comment, index) => {
@@ -62,7 +79,7 @@
           <div>${comment.date.toLocaleDateString()} ${comment.date.toLocaleTimeString()}</div>
         </div>
         <div class="comment-body">
-          ${comment.text}
+
           <div class="comment-text">
             ${comment.text
             .replaceAll("%BEGIN_QUOTE", "<div class='quote'>")
@@ -79,53 +96,36 @@
         </li>
     `
     }).join("")
+
+    initLikesListeners();
+
   };
 
   renderComments();
 
+
+  const addButton = document.querySelector(".add-form-button");
+  addButton.addEventListener("click", () => {
+    if (!name.value || !text.value) {
+      console.error("Заполните форму");
+      return;
+    }
+
+    comment.push({
+      name: name.value,
+      text: text.value,
+      date: new Date(),
+      likes: 0,
+      isLiked: false,
+    });
+
+    renderComments();
+
+    name.value = "";
+    text.value = "";
+
+  });
+
   </script>
 
-  <!-- <script>
-    // "use strict";
-    const buttonElement = document.getElementById("add-comment");
-    const listElement = document.getElementById("commentlist");
-    const nameInputElement = document.getElementById("name-input");
-    const commentInputElement = document.getElementById("comment-input");
-
-    buttonElement.addEventListener("click", () => {
-      if (nameInputElement.value === '') {
-        alert("Введите, пожалуйста, имя.")
-        return;
-      };
-      if (commentInputElement.value === '') {
-        alert("Введите, пожалуйста, комментарий.")
-        return;
-      };
-
-        const oldListHTML = listElement.innerHTML;
-        listElement.innerHTML = oldListHTML +
-          `<li class="comment">
-           <div class="comment-header">
-           <div>${nameInputElement.value}</div>
-            <div>${Date()}</div>
-          </div>
-          <div class="comment-body">
-          <div class="comment-text">
-          ${commentInputElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
-        nameInputElement.value = "";
-        commentInputElement.value = "";
-      });
-    // console.log("It works!");
-  </script> -->
-
-zrhftrhtrujdyt
 </html>
