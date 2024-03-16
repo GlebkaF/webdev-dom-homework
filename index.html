@@ -1,41 +1,37 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
-      <div class="loader" id="com-loader" hidden>
-        Пожалуйста подождите, комментарии загружаются...
-      </div>
-      <ul id="list" class="comments">
-        <!-- Список рендерится JS -->
-      </ul>
-      <div class="loader" id="form-loader" hidden>
-        Комментарий добавляется...
-      </div>
-      <div id="add-form" class="add-form">
-        <input
-          id="add-form-name"
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          id="add-form-text"
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button id="add-form-button" class="add-form-button">Написать</button>
-        </div>
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <div class="loader" id="com-loader" hidden>
+      Пожалуйста подождите, комментарии загружаются...
+    </div>
+    <ul id="list" class="comments">
+      <!-- Список рендерится JS -->
+    </ul>
+    <div id="login-text" class="loader">Чтобы добавить комментарий, <span id="login-link">авторизуйтесь</span></div>
+    <div class="loader" id="form-loader" hidden>
+      Комментарий добавляется...
+    </div>
+    <div id="add-form" class="add-form">
+      <input id="add-form-name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+      <textarea id="add-form-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+        rows="4"></textarea>
+      <div class="add-form-row">
+        <button id="add-form-button" class="add-form-button">Написать</button>
       </div>
     </div>
-  </body>
-  <script type="module" src="./main.js"></script>
+    <div id="app"></div>
+  </div>
+
+</body>
+<script type="module" src="./main.js">
+</script>
+
 </html>

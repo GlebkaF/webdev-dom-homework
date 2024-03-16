@@ -1,6 +1,7 @@
 import { fetchGet, comLoader, fetchPost } from "./api.js";
 import { renderComments } from "./renderComments.js";
 import { formatDate } from "./formatdate.js";
+import { renderLogin } from "./renderLogin.js";
 
 import { userInput1, userInput2 } from "./userinput.js";
 
@@ -9,6 +10,8 @@ export const textEl = document.getElementById("add-form-text");
 export const buttonEl = document.getElementById("add-form-button");
 export const formEl = document.getElementById("add-form");
 export const formLoader = document.getElementById("form-loader");
+export const loginLinkEl = document.getElementById("login-link");
+
 
 let comments = [];
 
@@ -97,3 +100,9 @@ const fetchGetAndRenderComments = () => {
 };
 fetchGetAndRenderComments();
 renderComments(comments);
+
+
+
+loginLinkEl.addEventListener("click", () => {
+  renderLogin({fetchGetAndRenderComments});
+})
