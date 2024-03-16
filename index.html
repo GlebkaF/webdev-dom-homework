@@ -93,7 +93,6 @@
         comment : "Это будет первый комментарий на этой странице",
         likes : 3,
         isLiked: false,
-        isEdit: true,
         
       },
       {
@@ -102,7 +101,6 @@
         comment : "Мне нравится как оформлена эта страница! ❤",
         likes : 75,
         isLiked: false,
-        isEdit: true,
 
       },
     ];
@@ -116,8 +114,8 @@
             <div>${сommentator.date}</div>
            </div>
            <div data-text="${сommentator.comment}" class="comment-body">
-           <div class="comment-text">${сommentator.comment}</div>
-           <button id= "changingName" data-indexBtn="${index}" class ="editButton"> Редактировать </button>
+           <div id= "inputField" class="comment-text">${сommentator.comment}</div>
+           <input type="button" value="Редактировать" class ="editButton">
            </div>
            <div class="comment-footer">
             <div class="likes">
@@ -135,33 +133,22 @@
       editEventListeners()
     };
 
+    const editEventListeners = () => { 
 
-    
-    const editEventListeners = () => { // навешиваем обработчик событий
+      const editButtonElements = document.querySelectorAll(".editButton"); 
 
-      const editButtonElements = document.querySelectorAll(".editButton"); //находим элементы с классом editButton
+      for ( const editButtonEl of editButtonElements) { 
+       
+        editButtonEl.addEventListener("click", () => { 
 
-      for ( const editButtonEl of editButtonElements) {         // перебираем каждый элемент
-
-        editButtonEl.addEventListener("click", () => {         //добавляем обработчик клика на определенный элемент
-
-         const changingNameButton = document.getElementById ('changingName');  // меняем имя кнопки при клике
-          if (сommentators[index].isEdit === false) {
-           changingNameButton.textContent = 'Сохранить';
-          } else {
-           isEdit = true;
-          };
-  
-         const indexEl = editButtonEl.dataset.indexBtn;  // обращаемся к дата атрибуту этого элемента
-
-          commentators[index].isEdit = ('contentEditable', true); // при клике объявляем свойство объекта isEdit как true и добавляем признак редактирования + вызываем кнопку Сохранить
-
-          renderCommentators();  // вызываем-рендер функцию
-        }); 
+          let isEditable = inputField.getAttribute('contenteditable') === 'true';
+          inputField.setAttribute('contenteditable', !isEditable);
+          inputField.focus(); 
+        });
       };
     };
-    
-    // Здесь будет функция для кнопки Сохранить
+
+    editEventListeners();
     
     const initEventListeners = () => {
       const likeButtonElement = document.querySelectorAll(".like-button");
@@ -193,18 +180,6 @@
     }
     renderCommentators();
 
-    // buttonElement.disabled = true;
-    // function input() {
-    //   if (nameElement.value.trim() !== "" && textElement.value.trim() !== "") {
-    //     buttonElement.disabled = false;
-    //     buttonElement.classList.remove("empty");
-    //   } else {
-    //     buttonElement.disabled = true;
-    //     buttonElement.classList.add("empty");
-    //   }
-    // }
-    // nameElement.addEventListener("input" , input);
-    // textElement.addEventListener("input" , input);
     
     buttonElement.addEventListener("click", () => {
       nameElement.classList.remove("error");
@@ -219,24 +194,6 @@
         return;
       };
     
-    //  const oldListHtml = listElement.innerHTML;
-    //  listElement.innerHTML = oldListHtml +
-    //   `<li class="comment">
-    //     <div class="comment-header">
-    //     <div>${nameElement.value}</div>
-    //     <div>${formatTime(currentDate)}</div>
-    //   </div>
-    //   <div class="comment-body">
-    //     <div class="comment-text">${textElement.value}</div>
-    //   </div>
-    //   <div class="comment-footer">
-    //     <div class="likes">
-    //       <span class="likes-counter">0</span>
-    //       <button class="like-button"></button>
-    //     </div>
-    //   </div>
-    //   </li>` 
-      
      const currentDate = new Date();
       function formatTime(currentDate){
   
@@ -284,3 +241,5 @@
 
   </script>
 </html>
+
+
