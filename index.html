@@ -1,225 +1,267 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>Проект "Комменты"</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
 
-<head>
-  <title>Проект "Комменты"</title>
-  <meta charset="utf-8" />
-  <link rel="stylesheet" href="styles.css" />
-</head>
-
-<body>
-  <div class="container">
-    <ul class="comments">
-      <!-- Убрали часть кода -->
-    </ul>
-    <div class="add-form">
-      <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
-      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
-      <div class="add-form-row">
-        <button class="add-form-button">Написать</button>
+  <body>
+    <div class="container">
+      <ul class="comments">
+        <!-- Убрали часть кода -->
+      </ul>
+      <div class="add-form">
+        <input
+          type="text"
+          class="add-form-name"
+          placeholder="Введите ваше имя"
+        />
+        <textarea
+          type="textarea"
+          class="add-form-text"
+          placeholder="Введите ваш коментарий"
+          rows="4"
+        ></textarea>
+        <div class="add-form-row">
+          <button class="add-form-button">Написать</button>
+        </div>
+      </div>
+      <div class="del-form">
+        <button class="del-form-button">Удалить последний комментарий</button>
       </div>
     </div>
-    <div class="del-form">
-      <button class="del-form-button">Удалить последний комментарий</button>
-    </div>
-  </div>
-</body>
+  </body>
 
-<style>
-  .error {
-    background-color: gray;
-  }
+  <style>
+    .error {
+      background-color: gray;
+    }
 
-  .comment-newline {
-    white-space: pre-line;
-  }
-</style>
+    .comment-newline {
+      white-space: pre-line;
+    }
+  </style>
 
-<script>
-  "use strict";
+  <script>
+    "use strict";
 
-  // Код писать здесь
+    // Код писать здесь
 
-  const listElement = document.querySelector(".comments");
-  const addButtonElement = document.querySelector(".add-form-button");
-  const deleteButtonElement = document.querySelector(".del-form-button");
-  const nameInputElement = document.querySelector(".add-form-name");
-  const commentInputElement = document.querySelector(".add-form-text");
-  // const currentDate = new Date();
+    const listElement = document.querySelector(".comments");
+    const addButtonElement = document.querySelector(".add-form-button");
+    const deleteButtonElement = document.querySelector(".del-form-button");
+    const nameInputElement = document.querySelector(".add-form-name");
+    const commentInputElement = document.querySelector(".add-form-text");
+    const selfIdElement = document.querySelector(".self-id");
 
-  const comments = [
-    {
-      name: "Глеб Фокин",
-      date: "12.02.22 12:18",
-      text: "Это будет первый комментарий на этой странице",
-      likesCounter: 3,
-      likeButton: false,
-    },
-    {
-      name: "Варвара Н.",
-      date: "13.02.22 19:22",
-      text: "Мне нравится как оформлена эта страница! ❤",
-      likesCounter: 75,
-      likeButton: true,
-    },
-  ];
+    let comments = [];
 
-  const changeLikeButton = () => {
-    const likeButtonElements = document.querySelectorAll(".like-button");
-
-    for (const likeButtonElement of likeButtonElements) {
-      likeButtonElement.addEventListener("click", (event) => {
-        const index = likeButtonElement.dataset.index;
-        event.stopPropagation();
-
-        if (comments[index].likeButton === false) {
-          comments[index].likesCounter++;
-          comments[index].likeButton = true;
-        } else {
-          comments[index].likesCounter--;
-          comments[index].likeButton = false;
+    function fetchPromiseArr() {
+      const fetchPromise = fetch(
+        "https://wedev-api.sky.pro/api/v1/OlegGorin/comments",
+        {
+          method: "GET",
         }
-        renderComments();
+      );
+
+      fetchPromise.then((response) => {
+        response.json().then((responseData) => {
+          const appComments = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date:
+                new Date(comment.date).toLocaleDateString("default", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "2-digit",
+                }) +
+                " " +
+                new Date().toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }),
+              text: comment.text,
+              likesCounter: comment.likes,
+              likeButton: false,
+            };
+          });
+          comments = appComments;
+          renderComments();
+        });
       });
     }
-  };
-  changeLikeButton();
 
-  clearInput();
+    fetchPromiseArr();
 
-  addButtonElement.disabled = true;
-  addButtonElement.classList.add("error");
+    const changeLikeButton = () => {
+      const likeButtonElements = document.querySelectorAll(".like-button");
 
-  nameInputElement.addEventListener("input", (event) => {
-    addButtonElement.disabled = false;
-    addButtonElement.classList.remove("error");
-  });
+      for (const likeButtonElement of likeButtonElements) {
+        likeButtonElement.addEventListener("click", (event) => {
+          const index = likeButtonElement.dataset.index;
+          event.stopPropagation();
 
-  commentInputElement.addEventListener("input", (event) => {
-    addButtonElement.disabled = false;
-    addButtonElement.classList.remove("error");
-  });
+          if (comments[index].likeButton === false) {
+            comments[index].likesCounter++;
+            comments[index].likeButton = true;
+          } else {
+            comments[index].likesCounter--;
+            comments[index].likeButton = false;
+          }
+          renderComments();
+        });
+      }
+    };
+    changeLikeButton();
 
-  document.addEventListener("keypress", (event) => {
-    if (event.key === "Enter") {
-      addListComment();
-    }
-  });
-
-  deleteButtonElement.addEventListener("click", (event) => {
-    comments.splice(comments.length - 1, 1);
-    renderComments();
     clearInput();
-    event.stopPropagation();
-  });
 
-  const initEventListeners = () => {
-    const commentElements = document.querySelectorAll(".comment");
-    for (const commentElement of commentElements) {
-      commentElement.addEventListener("click", (event) => {
-        const index = commentElement.dataset.index;
-        event.stopPropagation();
+    addButtonElement.disabled = true;
+    addButtonElement.classList.add("error");
 
-        let QUOTE_BEGIN = "QUOTE_BEGIN";
-        let QUOTE_END = "QUOTE_END";
-        commentInputElement.value = `> ${comments[index].text} \n\n${comments[index].name}, `;
-      });
-    }
-  };
-
-  initEventListeners();
-
-  addButtonElement.addEventListener("click", addListComment);
-
-  function addListComment() {
-    if (nameInputElement.value.trim() === "" || commentInputElement.value.trim() === "") {
-      addButtonElement.disabled = true;
-      addButtonElement.classList.add("error");
-      return;
-    }
-
-    const currentDate =
-      new Date().toLocaleDateString("default", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "2-digit",
-      }) +
-      " " +
-      new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-
-    comments.push({
-      name: nameInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-      date: currentDate,
-      text: commentInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-      likesCounter: 0,
-      likeButton: false,
+    nameInputElement.addEventListener("input", (event) => {
+      addButtonElement.disabled = false;
+      addButtonElement.classList.remove("error");
     });
 
-    listElement.innerHTML = listElement.innerHTML;
+    commentInputElement.addEventListener("input", (event) => {
+      addButtonElement.disabled = false;
+      addButtonElement.classList.remove("error");
+    });
 
-    renderComments();
-    clearInput();
-  }
+    document.addEventListener("keypress", (event) => {
+      if (event.key === "Enter") {
+        addListComment();
+      }
+    });
 
-  const renderComments = () => {
-    const commentHTML = comments
-      .map((comment, index) => {
-        let lkBtn = "";
-        if (comments[index].likeButton === true) {
-          lkBtn = "like-button -active-like";
-        } else {
-          lkBtn = "like-button";
-        }
-        return `<li data-index="${index}" class="comment">
+    deleteButtonElement.addEventListener("click", (event) => {
+      comments.splice(comments.length - 1, 1);
+      renderComments();
+      clearInput();
+      event.stopPropagation();
+    });
+
+    const initEventListeners = () => {
+      const commentElements = document.querySelectorAll(".comment");
+      for (const commentElement of commentElements) {
+        commentElement.addEventListener("click", (event) => {
+          const index = commentElement.dataset.index;
+          event.stopPropagation();
+
+          let QUOTE_BEGIN = "QUOTE_BEGIN";
+          let QUOTE_END = "QUOTE_END";
+          commentInputElement.value = `> ${QUOTE_BEGIN} ${comments[index].text} \n\n${comments[index].name}, ${QUOTE_END}`;
+        });
+      }
+    };
+
+    initEventListeners();
+
+    addButtonElement.addEventListener("click", addListComment);
+
+    function addListComment() {
+      if (
+        nameInputElement.value.trim() === "" ||
+        commentInputElement.value.trim() === ""
+      ) {
+        addButtonElement.disabled = true;
+        addButtonElement.classList.add("error");
+        return;
+      }
+
+      const currentDate =
+        new Date().toLocaleDateString("default", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "2-digit",
+        }) +
+        " " +
+        new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+      fetch("https://wedev-api.sky.pro/api/v1/OlegGorin/comments", {
+        method: "POST",
+        body: JSON.stringify({
+          name: nameInputElement.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;"),
+          date: currentDate,
+          text: commentInputElement.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+            .replaceAll("QUOTE_END", "</div>"),
+          likesCounter: 0,
+          likeButton: false,
+        }),
+      }).then((response) => {
+
+        fetchPromiseArr();
+
+      });
+
+      renderComments();
+      clearInput();
+    }
+
+    const renderComments = () => {
+      const commentHTML = comments
+        .map((comment, index) => {
+          let lkBtn = "";
+          if (comments[index].likeButton === true) {
+            lkBtn = "like-button -active-like";
+          } else {
+            lkBtn = "like-button";
+          }
+          return `<li data-index="${index}" class="comment">
             <div class="comment-header">
               <div>${comments[index].name}</div>
               <div>${comments[index].date}</div>
             </div>
             <div class="comment-body">
               <div data-index="${index}" class="comment-text comment-newline">
-                ${comments[index].text.replaceAll("BEGIN_QUOTE", "<div class='quote'>")}
+                ${comments[index].text}
               </div >
             </div >
-    <div class="comment-footer">
-      <div class="likes">
-        <span class="likes-counter">${comments[index].likesCounter}</span>
-        <button data-index=${index} class="${lkBtn}"></button>
-      </div>
-    </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">${comments[index].likesCounter}</span>
+                <button data-index=${index} class="${lkBtn}"></button>
+              </div>
+            </div>
           </li >`;
-      })
-      .join("");
+        })
+        .join("");
 
-    listElement.innerHTML = commentHTML;
+      listElement.innerHTML = commentHTML;
 
-    initEventListeners();
-    changeLikeButton();
+      initEventListeners();
+      changeLikeButton();
 
-    prepareInput();
-  };
+      prepareInput();
+    };
 
-  renderComments();
+    renderComments();
 
-  function clearInput() {
-    nameInputElement.value = "";
-    commentInputElement.value = "";
-  }
+    function clearInput() {
+      nameInputElement.value = "";
+      commentInputElement.value = "";
+    }
 
-  function prepareInput() {
-    addButtonElement.disabled = true;
-    addButtonElement.classList.add("error");
-  }
-  console.log("It works!");
-
-</script>
-
+    function prepareInput() {
+      addButtonElement.disabled = true;
+      addButtonElement.classList.add("error");
+    }
+    console.log("It works!");
+  </script>
 </html>
-// <!--  -->
+//
+<!--  -->
