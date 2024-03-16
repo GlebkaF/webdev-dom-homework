@@ -31,21 +31,60 @@
   const textInputElement = document.getElementById('text-input');
   const listElement = document.getElementById('list');
 
-  const users = [
-    {
-      name: 'Глеб Фокин',
-      date: '12.02.22 12:18',
-      comment: 'Это будет первый комментарий на этой странице',
-      likes: 3,
-      isLiked: false,
-    },
-    {
-      name: 'Варвара Н.',
-      date: '13.02.22 19:22',
-      comment: 'Мне нравится как оформлена эта страница! ❤',
-      likes: 75,
-      isLiked: true,
-    },
+  function getDate(date) {
+    const options = {
+      year: '2-digit',
+      month: 'numeric',
+      day: 'numeric',
+    };
+    const optionsTime = {
+      hour: 'numeric',
+      minute: 'numeric',
+    };
+
+    return `${date.toLocaleDateString('ru-RU', options)} ${date.toLocaleTimeString('ru-RU', optionsTime)}`;
+  }
+
+  // Подключаем API. Задача: Получить список комментариев
+  // console.log(date)
+  function getComments() {
+    fetch("https://wedev-api.sky.pro/api/v1/maria_bobrova/comments", {
+      method: "GET"
+    })
+    .then((response) => response.json())
+    .then((responseData) => {
+      users = responseData.comments.map((comment) => {
+        const date = new Date(comment.date);
+        console.log(date)
+        return {
+          name: comment.author.name,
+          date: getDate(date),
+          comment: comment.text,
+          likes: comment.likes,
+          isLiked: comment.isLiked,
+        }
+      });
+      renderUsers();
+    });
+
+  }
+  getComments()
+
+  let users = [
+    // {
+    //   name: 'Глеб Фокин',
+    //   date: '12.02.22 12:18',
+    //   comment: 'Это будет первый комментарий на этой странице',
+    //   likes: 3,
+    //   isLiked: false,
+    // },
+    // {
+    //   name: 'Варвара Н.',
+    //   date: '13.02.22 19:22',
+    //   comment: 'Мне нравится как оформлена эта страница! ❤',
+    //   likes: 75,
+    //   isLiked: true,
+    // },
   ];
 
   const renderUsers = () => {
@@ -162,39 +201,61 @@
       return;
     }
 
-    const date = new Date();
-    const options = {
-      year: '2-digit',
-      month: 'numeric',
-      day: 'numeric',
-    };
-    const optionsTime = {
-      hour: 'numeric',
-      minute: 'numeric',
-    };
+    // const date = new Date();
+    // const dateTime = getDate(date);
+    // const dateTime = getDate(new Date());
 
-    const dateTime = `${date.toLocaleDateString('ru-RU', options)} ${date.toLocaleTimeString('ru-RU', optionsTime)}`;
+    fetch("https://wedev-api.sky.pro/api/v1/maria_bobrova/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        name: nameInputElement.value
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;"),
+        // date: dateTime,
+        date: getDate(new Date()),
+        text: textInputElement.value
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("\n", "<br>"),
+        likes: 0,
+        isLiked: false,
+      }),
+      header: { 'Content-Type': 'application/json' },
+    }).then((response) => {
+      if (response.status !== 201)
+        return
 
-    users.push({
-      name: nameInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-      date: dateTime,
-      comment: textInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("\n", "<br>"),
-      likes: 0,
-      isLiked: false,
-    });
+      getComments()
+      renderUsers()
+      nameInputElement.value = '';
+      textInputElement.value = '';
+    }).catch((error) => console.log(error))
 
-    renderUsers();
-    nameInputElement.value = '';
-    textInputElement.value = '';
+    // users.push({
+    //   name: nameInputElement.value
+    //     .replaceAll("&", "&amp;")
+    //     .replaceAll("<", "&lt;")
+    //     .replaceAll(">", "&gt;")
+    //     .replaceAll('"', "&quot;"),
+    //   // date: dateTime,
+    //   date: getDate(new Date()),
+    //   comment: textInputElement.value
+    //     .replaceAll("&", "&amp;")
+    //     .replaceAll("<", "&lt;")
+    //     .replaceAll(">", "&gt;")
+    //     .replaceAll('"', "&quot;")
+    //     .replaceAll("\n", "<br>"),
+    //   likes: 0,
+    //   isLiked: false,
+    // });
+
+    // renderUsers();
+    // nameInputElement.value = '';
+    // textInputElement.value = '';
   });
 
   console.log("It works!");
