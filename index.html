@@ -134,15 +134,16 @@
         forceError: true,
       }),
     })
+      //Ошибки       
       .then((response) => {
         console.log(response);
         if (response.status === 200) {
           return response.json();;
         }
+
         if (response.status === 500) {
           throw new Error('Сервер сломался');
         }
-        return response.json();
         if (response.status === 400) {
           throw new Error('Плохой запрос');
         }
@@ -152,56 +153,42 @@
         console.log("Время: " + (Date.now() - startAt));
         return response;
       })
-      .catch((error) => {
-        if (error.message === "Сервер сломался") {
-          alert("Сервер сломался, попробуй позже");
-          return;
-        }
-        if (error.message === "Плохой запрос") {
-          alert("Ты сделал ошибку в запросе, исправь данные и попробуй снова");
-          return;
-        }
-        console.log(error);
-      })
 
       .then((response) => {
         console.log("Время: " + (Date.now() - startAt));
         return response;
       })
 
-      .then((responseData) => {
-        return fetch("https://wedev-api.sky.pro/api/v1/alenka-s/comments", {
-          method: "GET",
-        })
-          .then((response) => {
-            console.log("Время: " + (Date.now() - startAt));
-            return response;
-          })
-          .then((response) => {
-            return response.json();
-          })
-          .then((response) => {
-            console.log("Время: " + (Date.now() - startAt));
-            return response;
-          })
-
-          .then((responseData) => {
-            fetchRender();
-          })
-          .then((data) => {
-            buttonElement.disabled = false;
-            buttonElement.textContent = 'Написать';
-            nameInputElement.value = "";
-            commentInputElement.value = "";
-          })
+      .then(() => {
+        fetchRender();
       })
-      .catch((error) => {
+
+      .then(() => {
         buttonElement.disabled = false;
         buttonElement.textContent = 'Написать';
-        alert('Произошла ошибка');
-        console.warn(error);
+        nameInputElement.value = "";
+        commentInputElement.value = "";
       })
 
+      .catch((error) => {
+        if (error.message === "Сервер сломался") {
+          alert("Сервер сломался, попробуй позже");
+          return;
+        }
+
+        if (error.message === "Плохой запрос") {
+          alert("Ты сделал ошибку в запросе, исправь данные и попробуй снова");
+          return;
+        }
+
+        alert('Произошла ошибка');
+        console.warn(error);
+        console.warn(error);
+      })
+      .finally(() => {
+        buttonElement.disabled = false;
+        buttonElement.textContent = 'Написать';
+      })
     fetchRender();
   });
 
