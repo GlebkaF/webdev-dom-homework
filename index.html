@@ -44,11 +44,6 @@
             </div>
           </div>
         </li>
-
-        <li>
-          <div id="name-output"></div>
-          <div id="comment-output"></div>
-        </li>
       </ul>
 
       <div class="add-form">
@@ -71,47 +66,120 @@
       </div>
     </div>
 
-
     <script>
       document.addEventListener("DOMContentLoaded", function() {
-      const addButton = document.querySelector('.add-form-button');
-
-      addButton.addEventListener('click', function() {
-        const nameInput = document.getElementById('name-input').value;
-        const commentInput = document.getElementById('comment-input').value;
-
-        createComment(nameInput, commentInput);
+        const addButton = document.querySelector('.add-form-button');
+  
+        addButton.addEventListener('click', function() {
+          const nameInput = document.getElementById('name-input').value;
+          const commentInput = document.getElementById('comment-input').value;
+  
+          createComment(nameInput, commentInput);
         });
       });
-
+  
       function createComment(commenterName, commentText) {
-        if (!commenterName || !commentText) {
+        if (!commenterName.trim() || !commentText.trim()) {
           alert('Введите имя и комментарий');
           return;
         }
-
+  
         const parentList = document.getElementById('comment-list');
-
+        const currentDateTime = getCurrentDateTime();
+  
         const newComment = document.createElement('li');
         newComment.className = 'comment';
-
+  
         const commentHeader = document.createElement('div');
         commentHeader.className = 'comment-header';
         commentHeader.textContent = commenterName;
-
+  
+        const commentDate = document.createElement('div');
+        commentDate.className = 'comment-date';
+        commentDate.textContent = currentDateTime;
+  
+        const headerContainer = document.createElement('div');
+        headerContainer.appendChild(commentHeader);
+        headerContainer.appendChild(commentDate);
+        headerContainer.classList.add('comment-header');
+  
         const commentBody = document.createElement('div');
         commentBody.className = 'comment-body';
+  
         const commentTextDiv = document.createElement('div');
         commentTextDiv.className = 'comment-text';
         commentTextDiv.textContent = commentText;
-
+  
         commentBody.appendChild(commentTextDiv);
+  
 
-        newComment.appendChild(commentHeader);
+        // Создаем кнопку лайка и счётчик ❤
+        const grandLikeContainer = document.createElement('div'); // Главный родительский блок
+        grandLikeContainer.classList.add('likes-footer');
+
+        const likeContainer = document.createElement('div'); // Родительский блок
+        likeContainer.classList.add('reverse');
+
+        const likeButton = document.createElement('button'); // Дочерний элемент, кнопка
+        likeButton.classList.add('like-button');
+
+        const likeCounter = document.createElement('span'); // Дочерний элемент, счётчик
+        likeCounter.classList.add('like-counter');
+
+        // Добавляем кнопку и счётчик в родительский блок
+        likeContainer.appendChild(likeButton);
+        likeContainer.appendChild(likeCounter);
+
+        // Добавляем родительский блок в главный родительский блок
+        grandLikeContainer.appendChild(likeContainer);
+
+        // Добавляем главный родительский блок в тело комментария
+        newComment.appendChild(headerContainer);
         newComment.appendChild(commentBody);
+        newComment.appendChild(grandLikeContainer);
 
         parentList.appendChild(newComment);
-        }
-  </script>
+
+        let count = 0;
+
+        likeButton.addEventListener('click', function() {
+          if (!likeButton.classList.contains('-active-like')) {
+            // Если лайка еще нет, то добавляем его и увеличиваем счетчик
+            count++;
+            likeCounter.textContent = count;
+            likeButton.classList.add('-active-like');
+          } else {
+            // Если лайк уже поставлен, то убираем его и уменьшаем счетчик
+            count--;
+            likeCounter.textContent = count;
+            likeButton.classList.remove('-active-like');
+          }
+
+          // Если счетчик нажатий на кнопку стал равен 0, скрываем счетчик
+          if (count === 0) {
+            likeCounter.style.display = 'none';
+          } else {
+            likeCounter.style.display = 'inline';
+          }
+        });
+
+        // Очищаем поля ввода после отправки комментария
+        document.getElementById('name-input').value = '';
+        document.getElementById('comment-input').value = '';
+      }
+  
+      // Функция для получения текущей даты и времени
+      function getCurrentDateTime() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = (now.getMonth() + 1).toString().padStart(2, '0');
+        const day = now.getDate().toString().padStart(2, '0');
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+  
+        const dateTimeString = `${day}.${month}.${year} ${hours}:${minutes}`;
+        return dateTimeString;
+      }
+    </script>
   </body>
 </html>
