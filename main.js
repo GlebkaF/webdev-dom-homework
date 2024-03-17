@@ -1,7 +1,8 @@
 import { fetchGet, fetchPost } from "./api.js";
-import { renderComments, comLoader } from "./renderComments.js";
+import { renderComments } from "./renderComments.js";
 import { formatDate } from "./formatdate.js";
-import { renderLogin } from "./renderLogin.js";
+
+
 
 
 
@@ -63,7 +64,7 @@ let comments = [];
 //   renderComments(comments);
 // });
 
-const fetchGetAndRenderComments = () => {
+export const fetchGetAndRenderComments = () => {
   fetchGet()
     .then((responseData) => {
       const appComments = responseData.comments.map((comment) => {
@@ -76,7 +77,7 @@ const fetchGetAndRenderComments = () => {
           forceError: true,
         };
       });
-      comLoader.hidden = true;
+      //comLoader.hidden = true;
       comments = appComments;
       renderComments(comments);
     })
@@ -97,12 +98,12 @@ const fetchGetAndRenderComments = () => {
         return;
       }
     });
+    
 };
 fetchGetAndRenderComments();
 renderComments(comments);
 
+ 
 
+  
 
-loginLinkEl.addEventListener("click", () => {
-  renderLogin({ fetchGetAndRenderComments });
-})

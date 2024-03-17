@@ -1,5 +1,5 @@
 import {  } from "./main.js";
-import { comLoader, formEl, formLoader } from "./renderComments.js";
+import { formLoader, comLoader } from "./renderComments.js";
 
 
 const commentsURL = "https://wedev-api.sky.pro/api/v2/:azinkevich/comments";
@@ -15,7 +15,8 @@ let isLoading = false;
 // export const comLoader = document.getElementById("com-loader");
 
 export function fetchGet() {
-  isLoading ? (comLoader.hidden = true) : (comLoader.hidden = false);
+ 
+ // isLoading ? (comLoader.hidden = true) : (comLoader.hidden = false);
 
   return fetch(commentsURL, {
     method: "GET",

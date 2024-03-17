@@ -1,7 +1,9 @@
 import { login, setToken, token } from "./api.js"
-import { formEl } from "./renderComments.js"
+//import { formEl } from "./renderComments.js"
+import { renderForm } from "./renderForm.js";
 
-let userLogin = false;
+
+
 
 export const renderLogin = ({ fetchGetAndRenderComments }) => {
   const appElement = document.getElementById("app");
@@ -34,7 +36,9 @@ export const renderLogin = ({ fetchGetAndRenderComments }) => {
   const loginInputElement = document.getElementById("login-input");
   const passwordInputElement = document.getElementById("password-input");
   const loginTextEl = document.getElementById("login-text");
+  const formEl = document.getElementById("add-form");
 
+  
   ButtonElement.addEventListener("click", () => {
     login({
       login: loginInputElement.value,
@@ -43,12 +47,12 @@ export const renderLogin = ({ fetchGetAndRenderComments }) => {
       console.log(token);
       setToken(responseData.user.token);
       console.log(token);
-      userLogin = true;
     }).then(() => {
-      formEl.classList.remove("add-form_displayNone");
-      loginTextEl.hidden = true;
+     // loginTextEl.hidden = true;
       loginFormEl.classList.add("add-form_displayNone");
       fetchGetAndRenderComments();
+      renderForm();
+      formEl.classList.remove("add-form_displayNone");
     })
   })
 }
