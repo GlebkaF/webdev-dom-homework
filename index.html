@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="comment-ul" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -45,19 +45,19 @@
         </li>
       </ul>
       <div class="add-form">
-        <input
+        <input id="name-input" value=""
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
-        <textarea
+        <textarea id="comment-input" value=""
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="button-click" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
@@ -65,7 +65,56 @@
 
   <script>
     "use strict";
-    // Код писать здесь
+    const buttonElement = document.getElementById("button-click");
+    const ulElement = document.getElementById("comment-ul");
+    const nameElementInput = document.getElementById("name-input");
+    const commentElementInput = document.getElementById("comment-input");
+    const dataElement = new Date();
+
+    let day = dataElement.getDate();
+    let month = dataElement.getMonth() + 1;
+    let year = dataElement.getFullYear() % 100;
+
+    let hours = dataElement.getHours();
+    let minutes = dataElement.getMinutes();
+
+    let formattedDate = (day < 10 ? '0' : '') + day + '.' + (month < 10 ? '0' : '') + month + '.' + year;
+    let formattedTime = (hours < 10 ? '0' : '') + hours + ':' + (minutes < 10 ? '0' : '') + minutes;
+    let formattedDateTime = formattedDate + ' ' + formattedTime;
+    
+
+    buttonElement.addEventListener("click", () => {
+        nameElementInput.classList.remove('error');
+        commentElementInput.classList.remove('error');
+    
+        if (nameElementInput.value === ""){
+
+          return nameElementInput.classList.add('error');
+
+        } else if (commentElementInput.value === ""){
+
+          return commentElementInput.classList.add('error');
+        }
+
+        const olUlElement = ulElement.innerHTML;
+        ulElement.innerHTML = olUlElement + `<li class="comment">
+          <div class="comment-header">
+            <div>${nameElementInput.value}</div>
+            <div>${formattedDateTime}</div>
+          </div>
+          <div class="comment-body">
+            <div  class="comment-text">
+              ${commentElementInput.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+    });
     console.log("It works!");
   </script>
 </html>
