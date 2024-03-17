@@ -1,14 +1,23 @@
-import { formEl, formLoader } from "./main.js";
-import { renderComments } from "./renderComments.js";
-import { formatDate } from "./formatdate.js";
+import {  } from "./main.js";
+import { comLoader, formEl, formLoader } from "./renderComments.js";
+
+
+const commentsURL = "https://wedev-api.sky.pro/api/v2/:azinkevich/comments";
+const userURL = "https://wedev-api.sky.pro/api/user/login";
+
+export let token;
+
+export const setToken = (newToken) => {
+    token = newToken;
+};
 
 let isLoading = false;
-export const comLoader = document.getElementById("com-loader");
+// export const comLoader = document.getElementById("com-loader");
 
 export function fetchGet() {
   isLoading ? (comLoader.hidden = true) : (comLoader.hidden = false);
 
-  return fetch("https://wedev-api.sky.pro/api/v1/:azinkevich/comments", {
+  return fetch(commentsURL, {
     method: "GET",
   })
     .then((response) => {
@@ -26,8 +35,9 @@ export function fetchPost({ name, text }) {
   formEl.classList.add("add-form_displayNone");
   formLoader.hidden = false;
   isLoading = true;
-  return fetch("https://wedev-api.sky.pro/api/v1/:azinkevich/comments", {
+  return fetch(commentsURL, {
     method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
     body: JSON.stringify({
       name: name,
       text: text,
@@ -46,4 +56,16 @@ export function fetchPost({ name, text }) {
     .then((response) => {
       return response.json();
     });
+}
+
+export function login({ login, password }) {
+  return fetch(userURL, {
+      method: "POST",
+      body: JSON.stringify({
+          login,
+          password,
+      }),
+  }).then((response) => {
+      return response.json();
+  });
 }

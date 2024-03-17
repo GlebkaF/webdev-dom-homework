@@ -1,12 +1,13 @@
-//import { login, setToken, token } from "./api.js"
+import { login, setToken, token } from "./api.js"
+import { formEl } from "./renderComments.js"
 
+let userLogin = false;
 
-
-export const renderLogin = ({fetchGetAndRenderComments}) => {
-    const appElement = document.getElementById("app");
-    const loginHTML = `
+export const renderLogin = ({ fetchGetAndRenderComments }) => {
+  const appElement = document.getElementById("app");
+  const loginHTML = `
     <div class="container">
-    <div id="add-form" class="add-form">
+    <div id="login-form" class="add-form">
     <h3 class="form-title">Форма входа</h3>
       <input
         id="login-input"
@@ -26,22 +27,28 @@ export const renderLogin = ({fetchGetAndRenderComments}) => {
     </div>
   </div>
     `
-    appElement.innerHTML = loginHTML;
+  appElement.innerHTML = loginHTML;
 
-    const ButtonElement = document.getElementById("login-button");
-    const loginInputElement = document.getElementById("login-input");
-    const passwordInputElement = document.getElementById("password-input");
+  const loginFormEl = document.getElementById("login-form");
+  const ButtonElement = document.getElementById("login-button");
+  const loginInputElement = document.getElementById("login-input");
+  const passwordInputElement = document.getElementById("password-input");
+  const loginTextEl = document.getElementById("login-text");
 
-    ButtonElement.addEventListener("click", () => {
-        login({
-            login: loginInputElement.value,
-            password: passwordInputElement.value,
-        }).then((responseData) => {
-            console.log(token);
-            setToken(responseData.user.token);
-            console.log(token);
-        }).then(() => {
-          fetchGetAndRenderComments();
-        })
+  ButtonElement.addEventListener("click", () => {
+    login({
+      login: loginInputElement.value,
+      password: passwordInputElement.value,
+    }).then((responseData) => {
+      console.log(token);
+      setToken(responseData.user.token);
+      console.log(token);
+      userLogin = true;
+    }).then(() => {
+      formEl.classList.remove("add-form_displayNone");
+      loginTextEl.hidden = true;
+      loginFormEl.classList.add("add-form_displayNone");
+      fetchGetAndRenderComments();
     })
+  })
 }
