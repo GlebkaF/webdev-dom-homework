@@ -40,12 +40,11 @@ let comments = [];
 
 
 // Кнопка для лайка 
-initLikeButtonListeners(comments, renderComments, delay, reply, removeValidation);
-
+initLikeButtonListeners({comments, renderComments, reply, removeValidation, delay});
 
 
 // Ответ по клику на коммент 
-reply({ comments });
+reply({comments});
 
 
 

@@ -7,13 +7,33 @@ export function fetchAndRenderComments() {
             method: "GET"
         }
     ).then((response) => {
-        return response.json();
+
+        if (response.message === 500) {
+
+            return Promise.reject('Сервер сломался, попробуй позже');
+
+        } else {
+        
+            return response.json();
+
+        }
+    }).catch((err) => {
+
+        if (err.message === 'Сервер сломался, попробуй позже') {
+            
+            return alert('Сервер сломался, попробуй позже')
+
+        } else if(err.message === 'Failed to fetch') {
+            
+            return alert('Кажется, у вас сломался интернет, попробуйте позже')
+        };
     });
 };
 
 
 
 export function postComment({ name }, { text }) {
+    
     return fetch(
         'https://wedev-api.sky.pro/api/v1/rustam-kholov/comments',
         {
