@@ -1,6 +1,7 @@
 import {renderComments} from "./renderComments.js"
 
-export const initReplayListener = ({textEl, comments}) => {
+
+export const initReplayListener = ({ textEl, comments}) => {
   const replayComments = document.querySelectorAll(".comment-text");
   for (const replayComment of replayComments) {
     replayComment.addEventListener("click", (event) => {

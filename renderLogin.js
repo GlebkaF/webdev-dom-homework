@@ -1,12 +1,9 @@
-import { login, setToken, token } from "./api.js"
+import { login, setToken, token } from "./api.js";
 //import { formEl } from "./renderComments.js"
 import { renderForm } from "./renderForm.js";
 
-
-
-
 export const renderLogin = ({ fetchGetAndRenderComments }) => {
-  const appElement = document.getElementById("app");
+  const appElement = document.getElementById("appp");
   const loginHTML = `
     <div class="container">
     <div id="login-form" class="add-form">
@@ -28,7 +25,7 @@ export const renderLogin = ({ fetchGetAndRenderComments }) => {
       </div>
     </div>
   </div>
-    `
+    `;
   appElement.innerHTML = loginHTML;
 
   const loginFormEl = document.getElementById("login-form");
@@ -38,21 +35,24 @@ export const renderLogin = ({ fetchGetAndRenderComments }) => {
   const loginTextEl = document.getElementById("login-text");
   const formEl = document.getElementById("add-form");
 
-  
   ButtonElement.addEventListener("click", () => {
     login({
       login: loginInputElement.value,
       password: passwordInputElement.value,
-    }).then((responseData) => {
-      console.log(token);
-      setToken(responseData.user.token);
-      console.log(token);
-    }).then(() => {
-     // loginTextEl.hidden = true;
-      loginFormEl.classList.add("add-form_displayNone");
-      fetchGetAndRenderComments();
-      renderForm();
-      formEl.classList.remove("add-form_displayNone");
     })
-  })
-}
+      .then((responseData) => {
+        console.log(token);
+        setToken(responseData.user.token);
+        console.log(token);
+        return responseData;
+      })
+      .then((responseData) => {
+        // loginTextEl.hidden = true;
+        // loginFormEl.classList.add("add-form_displayNone");
+        const userName = responseData.user.name
+        fetchGetAndRenderComments();
+        renderForm(userName);
+        //formEl.classList.remove("add-form_displayNone");
+      });
+  });
+};

@@ -1,15 +1,17 @@
 import { userInput1, userInput2 } from "./userinput.js";
 import { fetchGetAndRenderComments } from "./main.js"
+import { fetchPost } from "./api.js"
+import { renderComments } from "./renderComments.js";
 
 
 
 
-export const renderForm = () => {
+export const renderForm = (userName) => {
   const appElement = document.getElementById("app");
   const formHTML = `
     <div class="container">
     <div id="add-form" class="add-form">
-    <input id="add-form-name" readonly type="text" class="add-form-name" value="uuuuu" />
+    <input id="add-form-name" readonly type="text" class="add-form-name" value="${userName}" />
     <textarea id="add-form-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
       rows="4"></textarea>
     <div class="add-form-row">
@@ -41,14 +43,14 @@ export const renderForm = () => {
         })
         .then(() => {
           buttonEl.disabled = true;
-          nameEl.value = "";
+          //nameEl.value = "";
           textEl.value = "";
-          formEl.classList.remove("add-form_displayNone");
-          formLoader.hidden = true;
+          //formEl.classList.remove("add-form_displayNone");
+          //formLoader.hidden = true;
         })
         .catch((error) => {
-          formEl.classList.remove("add-form_displayNone");
-          formLoader.hidden = true;
+          //formEl.classList.remove("add-form_displayNone");
+          //formLoader.hidden = true;
 
           if (error.message === "Неправильный запрос") {
             alert("Длина имени и комментария должна быть более 3 символов");
@@ -73,6 +75,6 @@ export const renderForm = () => {
         });
     };
     fetchPostAndRenderComments();
-    renderComments(comments);
+    //renderComments(comments);
   });
 }

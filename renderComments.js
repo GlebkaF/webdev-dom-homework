@@ -1,7 +1,7 @@
 import { sanitize } from "./sanitize.js";
 import { initLikeButtonListener } from "./likebutton.js";
 import { initReplayListener } from "./reply.js";
-//import { nameEl, textEl, formEl } from "./renderForm.js";
+//import { textEl} from "./renderForm.js";
 
 import { renderLogin } from "./renderLogin.js";
 import { fetchGetAndRenderComments } from "./main.js"
@@ -10,7 +10,7 @@ import { fetchGetAndRenderComments } from "./main.js"
 const listEl = document.getElementById("list");
 export const comLoader = document.getElementById("com-loader");
 // export const nameEl = document.getElementById("add-form-name");
-// export const textEl = document.getElementById("add-form-text");
+export const textEl = document.getElementById("add-form-text");
 // export const buttonEl = document.getElementById("add-form-button");
 // export const formEl = document.getElementById("add-form");
 export const formLoader = document.getElementById("form-loader");
@@ -19,7 +19,7 @@ export const formLoader = document.getElementById("form-loader");
 
 
 export function renderComments(comments) {
-  const appElement = document.getElementById("app");
+  const appElement = document.getElementById("appp");
   const commentsHtml = comments
     .map((comment, index) => {
       let editComment = () => {

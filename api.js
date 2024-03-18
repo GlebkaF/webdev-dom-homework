@@ -33,8 +33,8 @@ export function fetchGet() {
 }
 
 export function fetchPost({ name, text }) {
-  formEl.classList.add("add-form_displayNone");
-  formLoader.hidden = false;
+  //formEl.classList.add("add-form_displayNone");
+  //formLoader.hidden = false;
   isLoading = true;
   return fetch(commentsURL, {
     method: "POST",
