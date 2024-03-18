@@ -35,12 +35,15 @@ function getComments() {
 getComments();
 
 
+
 //  Массив для комментов 
 let comments = [];
 
 
+
 // Кнопка для лайка 
-initLikeButtonListeners({comments, renderComments, reply, removeValidation, delay});
+initLikeButtonListeners({comments}, {renderComments});
+
 
 
 // Ответ по клику на коммент 

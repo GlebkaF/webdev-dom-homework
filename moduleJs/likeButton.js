@@ -1,3 +1,4 @@
+
 export function initLikeButtonListeners({comments, renderComments, reply, removeValidation, delay}) {
 
     const addLikesButtonsElements = document.querySelectorAll('.like-button');
@@ -30,6 +31,6 @@ export function initLikeButtonListeners({comments, renderComments, reply, remove
                 }
                 renderComments({comments, initLikeButtonListeners, reply, removeValidation, delay});
             });
-        })
-    }
+        });
+    };
 };
