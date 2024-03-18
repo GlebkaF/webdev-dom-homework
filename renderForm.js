@@ -1,10 +1,6 @@
 import { userInput1, userInput2 } from "./userinput.js";
 import { fetchGetAndRenderComments } from "./main.js"
 import { fetchPost } from "./api.js"
-import { renderComments } from "./renderComments.js";
-
-
-
 
 export const renderForm = (userName) => {
   const appElement = document.getElementById("app");
@@ -43,13 +39,10 @@ export const renderForm = (userName) => {
         })
         .then(() => {
           buttonEl.disabled = true;
-          //nameEl.value = "";
           textEl.value = "";
-          //formEl.classList.remove("add-form_displayNone");
           //formLoader.hidden = true;
         })
         .catch((error) => {
-          //formEl.classList.remove("add-form_displayNone");
           //formLoader.hidden = true;
 
           if (error.message === "Неправильный запрос") {

@@ -3,12 +3,13 @@ import { initLikeButtonListener } from "./likebutton.js";
 import { initReplayListener } from "./reply.js";
 //import { textEl} from "./renderForm.js";
 
-import { renderLogin } from "./renderLogin.js";
+import { renderLogin, setLogin } from "./renderLogin.js";
 import { fetchGetAndRenderComments } from "./main.js"
+import { isLoading, setLoading } from "./api.js";
 
 
-const listEl = document.getElementById("list");
-export const comLoader = document.getElementById("com-loader");
+//const listEl = document.getElementById("list");
+
 // export const nameEl = document.getElementById("add-form-name");
 export const textEl = document.getElementById("add-form-text");
 // export const buttonEl = document.getElementById("add-form-button");
@@ -53,34 +54,28 @@ export function renderComments(comments) {
     })
     .join("");
 
-  const appHTML = `<div class="loader" id="com-loader" hidden>
-    Пожалуйста подождите, комментарии загружаются...
-  </div>
+  const appHTML = `
   <ul id="list" class="comments">
     ${commentsHtml}
   </ul>
-  <div id="login-text" class="loader">Чтобы добавить комментарий, <span id="login-link">авторизуйтесь</span></div>
+  <div id="login-text" class="loader">Чтобы добавить комментарий, <span class="login-link"  id="login-link">авторизуйтесь</span></div>
   <div class="loader" id="form-loader" hidden>
     Комментарий добавляется...
   </div>
   
   </div>`
 
-  //listEl.innerHTML = commentsHtml;
   appElement.innerHTML = appHTML;
   
-  
+  setLoading(false);
+
   const loginLinkEl = document.getElementById("login-link");
 
   loginLinkEl.addEventListener("click", () => {
     renderLogin({ fetchGetAndRenderComments });
   })
-  // console.log(userLogin);
-  // userLogin ? (formEl.classList.remove("add-form_displayNone")) : (formEl.classList.add("add-form_displayNone"))
   
-
-
-
+  
   initLikeButtonListener(comments);
   initReplayListener({ textEl, comments });
 }

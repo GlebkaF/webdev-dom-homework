@@ -1,6 +1,10 @@
-import { login, setToken, token } from "./api.js";
-//import { formEl } from "./renderComments.js"
+import { login, setLoading, setToken } from "./api.js"
 import { renderForm } from "./renderForm.js";
+
+export let userLogin;
+export const setLogin = (newUserLogin) => {
+  userLogin = newUserLogin;
+};
 
 export const renderLogin = ({ fetchGetAndRenderComments }) => {
   const appElement = document.getElementById("appp");
@@ -32,7 +36,7 @@ export const renderLogin = ({ fetchGetAndRenderComments }) => {
   const ButtonElement = document.getElementById("login-button");
   const loginInputElement = document.getElementById("login-input");
   const passwordInputElement = document.getElementById("password-input");
-  const loginTextEl = document.getElementById("login-text");
+
   const formEl = document.getElementById("add-form");
 
   ButtonElement.addEventListener("click", () => {
@@ -41,18 +45,15 @@ export const renderLogin = ({ fetchGetAndRenderComments }) => {
       password: passwordInputElement.value,
     })
       .then((responseData) => {
-        console.log(token);
         setToken(responseData.user.token);
-        console.log(token);
         return responseData;
       })
       .then((responseData) => {
-        // loginTextEl.hidden = true;
-        // loginFormEl.classList.add("add-form_displayNone");
-        const userName = responseData.user.name
+        const userName = responseData.user.name;
+        setLogin(true);
+        setLoading(false);
         fetchGetAndRenderComments();
         renderForm(userName);
-        //formEl.classList.remove("add-form_displayNone");
       });
   });
 };
