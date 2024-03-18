@@ -32,12 +32,9 @@ export const renderLogin = ({ fetchGetAndRenderComments }) => {
     `;
   appElement.innerHTML = loginHTML;
 
-  const loginFormEl = document.getElementById("login-form");
   const ButtonElement = document.getElementById("login-button");
   const loginInputElement = document.getElementById("login-input");
   const passwordInputElement = document.getElementById("password-input");
-
-  const formEl = document.getElementById("add-form");
 
   ButtonElement.addEventListener("click", () => {
     login({

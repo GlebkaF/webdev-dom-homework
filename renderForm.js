@@ -1,6 +1,7 @@
 import { userInput1, userInput2 } from "./userinput.js";
-import { fetchGetAndRenderComments } from "./main.js"
-import { fetchPost } from "./api.js"
+import { fetchGetAndRenderComments } from "./main.js";
+import { fetchPost, setLoading } from "./api.js";
+import { formLoader } from "./renderLoader.js";
 
 export const renderForm = (userName) => {
   const appElement = document.getElementById("app");
@@ -14,18 +15,15 @@ export const renderForm = (userName) => {
       <button id="add-form-button" class="add-form-button">Написать</button>
     </div>
   </div>
-    `
+    `;
   appElement.innerHTML = formHTML;
 
-  
   const nameEl = document.getElementById("add-form-name");
   const textEl = document.getElementById("add-form-text");
   const buttonEl = document.getElementById("add-form-button");
   const formEl = document.getElementById("add-form");
-  
-  buttonEl.disabled = true;
 
-  console.log("1")
+  buttonEl.disabled = true;
 
   userInput1({ nameEl, textEl, formEl, buttonEl });
 
@@ -40,10 +38,14 @@ export const renderForm = (userName) => {
         .then(() => {
           buttonEl.disabled = true;
           textEl.value = "";
-          //formLoader.hidden = true;
+          setLoading(false);
+          formLoader();
+          formEl.classList.remove("add-form_displayNone");
         })
         .catch((error) => {
-          //formLoader.hidden = true;
+          setLoading(false);
+          formLoader();
+          formEl.classList.remove("add-form_displayNone");
 
           if (error.message === "Неправильный запрос") {
             alert("Длина имени и комментария должна быть более 3 символов");
@@ -68,6 +70,6 @@ export const renderForm = (userName) => {
         });
     };
     fetchPostAndRenderComments();
-    //renderComments(comments);
+    
   });
-}
+};

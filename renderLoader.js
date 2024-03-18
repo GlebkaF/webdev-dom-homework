@@ -1,17 +1,25 @@
 import { isLoading } from "./api.js";
 
 export const comLoader = () => {
+  const appLoader = document.getElementById("com-loader");
   if (isLoading) {
-    const appLoader = document.getElementById("com-loader");
     const loaderHTML = `<div class="loader" id="com-loader">
     Пожалуйста подождите, комментарии загружаются...
   </div>`;
-
     appLoader.innerHTML = loaderHTML;
   } else {
-    const appLoader = document.getElementById("com-loader");
-    const loaderHTML = ``;
+    appLoader.innerHTML = ``;
+  }
+};
 
-    appLoader.innerHTML = loaderHTML;
+export const formLoader = () => {
+  const appFormLoader = document.getElementById("form-loader");
+  if (isLoading) {
+    const formLoaderHTML = `<div class="loader" id="form-loader">
+    Комментарий добавляется...
+  </div>`;
+    appFormLoader.innerHTML = formLoaderHTML;
+  } else {
+    appFormLoader.innerHTML = ``;
   }
 };

@@ -1,4 +1,4 @@
-import { fetchGet, isLoading, setLoading } from "./api.js";
+import { fetchGet, setLoading } from "./api.js";
 import { renderComments } from "./renderComments.js";
 import { formatDate } from "./formatdate.js";
 import { userLogin } from "./renderLogin.js";
@@ -21,7 +21,7 @@ export const fetchGetAndRenderComments = () => {
       });
       setLoading(false);
       comLoader();
-
+      
       comments = appComments;
       renderComments(comments);
 
@@ -48,3 +48,4 @@ export const fetchGetAndRenderComments = () => {
 };
 fetchGetAndRenderComments();
 renderComments(comments);
+

@@ -1,18 +1,14 @@
-import { comLoader } from "./renderLoader.js";
-//import { formLoader, comLoader } from "./renderComments.js";
+import { comLoader, formLoader } from "./renderLoader.js";
 
-
-const commentsURL = "https://wedev-api.sky.pro/api/v2/:azinkevich/comments";
+const commentsURL = "https://wedev-api.sky.pro/api/v2/:lvich/comments";
 const userURL = "https://wedev-api.sky.pro/api/user/login";
 
 export let token;
-
 export const setToken = (newToken) => {
-    token = newToken;
+  token = newToken;
 };
 
 export let isLoading;
-
 export const setLoading = (newLoading) => {
   isLoading = newLoading;
 };
@@ -36,8 +32,10 @@ export function fetchGet() {
 }
 
 export function fetchPost({ name, text }) {
-  //formLoader.hidden = false;
   isLoading = true;
+  formLoader();
+  const formEl = document.getElementById("add-form");
+  formEl.classList.add("add-form_displayNone");
   return fetch(commentsURL, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
@@ -63,12 +61,25 @@ export function fetchPost({ name, text }) {
 
 export function login({ login, password }) {
   return fetch(userURL, {
-      method: "POST",
-      body: JSON.stringify({
-          login,
-          password,
-      }),
-  }).then((response) => {
+    method: "POST",
+    body: JSON.stringify({
+      login,
+      password,
+    }),
+  })
+    .then((response) => {
+      if (response.status === 400) {
+        throw new Error("Нет авторизации");
+      }
+      return response;
+    })
+    .then((response) => {
       return response.json();
-  });
+    })
+    .catch((error) => {
+      if (error.message === "Нет авторизации") {
+        alert("Неверный логин или пароль");
+        console.warn(error);
+      }
+    });
 }
