@@ -73,9 +73,6 @@
     .error {
       background-color: rgb(141, 216, 241);
     }
-    .empty {
-      background-color: rgb(201, 199, 199);
-    }
   </style>
 
   <script>
@@ -93,6 +90,7 @@
         comment : "Это будет первый комментарий на этой странице",
         likes : 3,
         isLiked: false,
+        isEdit: true,
         
       },
       {
@@ -101,21 +99,23 @@
         comment : "Мне нравится как оформлена эта страница! ❤",
         likes : 75,
         isLiked: false,
-
+        isEdit: true,
       },
     ];
     
 
     const renderCommentators = () => {
       const commentatorsHtml = сommentators.map((сommentator, index) => {
-        return `<li class="comment">
+        return 
+        `<li class="comment">
            <div class="comment-header">
             <div>${сommentator.name}</div>
             <div>${сommentator.date}</div>
            </div>
            <div data-text="${сommentator.comment}" class="comment-body">
-           <div id= "inputField" class="comment-text">${сommentator.comment}</div>
-           <input type="button" value="Редактировать" class ="editButton">
+            <div class="comment-text">${сommentator.comment}</div>
+            <div data-change-text="${сommentator.comment}" ${сommentators[index].isEdit ? `<textarea class="comment-edited-text"> ${сommentator[index].comment} </textarea>` : `<div class="comment-text"> ${сommentator[index].comment} </div>` }
+            <button data-change-title data-index="${index}" class ="editButton" ${сommentators[index].isEdit? "Сохранить":"Редактировать"} >Редактировать</button>
            </div>
            <div class="comment-footer">
             <div class="likes">
@@ -123,7 +123,7 @@
              <button data-like="${сommentator.likes}" data-index="${index}" class="like-button ${сommentators[index].isLiked ?'-active-like' : 'like-button'}"></button>
             </div>
            </div>
-         </li>`;
+        </li>`;
       })
       .join("");
 
@@ -138,18 +138,33 @@
       const editButtonElements = document.querySelectorAll(".editButton"); 
 
       for ( const editButtonEl of editButtonElements) { 
+
+        const buttonIndex = editButtonEl.dataset.index; 
+        const changeTitle = editButtonEl.dataset.changeTitle;
+        const changeText = editButtonEl.dataset.changeText;
        
         editButtonEl.addEventListener("click", () => { 
 
-          let isEditable = inputField.getAttribute('contenteditable') === 'true';
-          inputField.setAttribute('contenteditable', !isEditable);
-          inputField.focus(); 
+          if (сommentator[buttonIndex].isEdit === false) {
+
+            changeTitle = "Сохранить";
+
+            сommentators[buttonIndex].isEdit = true;
+
+          } else if (сommentators[buttonIndex].isEdit = true);
+
+            changeTitle = "Редактировать";
+
+            сommentators[buttonIndex].isEdit = false;
+
+          renderCommentators();
+           
         });
       };
     };
-
+   
     editEventListeners();
-    
+
     const initEventListeners = () => {
       const likeButtonElement = document.querySelectorAll(".like-button");
       for ( const likeButtonEl of likeButtonElement) {
