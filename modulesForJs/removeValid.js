@@ -1,3 +1,5 @@
+// Отмена валидации (чтобы не было красных полей)
+
 export function removeValidation() {
 
     const nameInputElement = document.getElementById('name-input');

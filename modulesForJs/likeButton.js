@@ -1,3 +1,4 @@
+// Кнопка для лайка 
 
 export function initLikeButtonListeners({comments, renderComments, reply, removeValidation, delay}) {
 

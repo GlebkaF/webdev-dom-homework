@@ -1,3 +1,5 @@
+// Получениe комментов с сервера (часть кода)
+
 export function fetchAndRenderComments() {
     return fetch(
 

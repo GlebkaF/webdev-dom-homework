@@ -1,3 +1,5 @@
+// Ответ по клику на коммент 
+
 export function reply({comments}) {
 
     const commentElements = document.querySelectorAll('.comment-body');

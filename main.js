@@ -1,18 +1,16 @@
 "use strict";
 
-import { fetchAndRenderComments, postComment } from "./moduleJs/api.js";
-import { delay } from "./moduleJs/delay.js";
-import { initLikeButtonListeners } from "./moduleJs/likeButton.js";
-import { removeValidation } from "./moduleJs/removeValid.js";
-import { renderComments } from "./moduleJs/renderComments.js";
-import { reply } from "./moduleJs/reply.js";
+import { fetchAndRenderComments, postComment } from "./modulesForJs/api.js";
+import { delay } from "./modulesForJs/delay.js";
+import { initLikeButtonListeners } from "./modulesForJs/likeButton.js";
+import { removeValidation } from "./modulesForJs/removeValid.js";
+import { renderComments } from "./modulesForJs/renderComments.js";
+import { reply } from "./modulesForJs/reply.js";
 
 const addButtonElement = document.getElementById('add-button');
 const nameInputElement = document.getElementById('name-input');
 const commentInputElement = document.getElementById('comment-input');
 const preLoadElement = document.getElementById('preloader');
-
-
 
 // Получениe комментов с сервера
 function getComments() {
@@ -34,27 +32,17 @@ function getComments() {
 }
 getComments();
 
-
-
 //  Массив для комментов 
 let comments = [];
-
-
 
 // Кнопка для лайка 
 initLikeButtonListeners({comments}, {renderComments});
 
-
-
 // Ответ по клику на коммент 
 reply({comments});
 
-
-
 // Отмена валидации (чтобы не было красных полей)
 removeValidation();
-
-
 
 // Добавление нового коммента на сервер 
 addButtonElement.addEventListener('click', () => {
