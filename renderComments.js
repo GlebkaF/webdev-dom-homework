@@ -8,7 +8,7 @@ import { setLoading } from "./api.js";
 export const textEl = document.getElementById("add-form-text");
 
 export function renderComments(comments) {
-  const appElement = document.getElementById("appp");
+  const appElement = document.getElementById("app");
   const commentsHtml = comments
     .map((comment, index) => {
       let editComment = () => {
@@ -45,16 +45,16 @@ export function renderComments(comments) {
     })
     .join("");
 
-  const appHTML = `
-  <ul id="list" class="comments">
-    ${commentsHtml}
-  </ul>
-  <div id="login-text" class="loader">Чтобы добавить комментарий, <span class="login-link"  id="login-link">авторизуйтесь</span></div>
+  // const appHTML = `
+  // <ul id="list" class="comments">
+  //   ${commentsHtml}
+  // </ul>
+  // <div id="login-text" class="loader">Чтобы добавить комментарий, <span class="login-link"  id="login-link">авторизуйтесь</span></div>
   
   
-  </div>`;
+  // </div>`;
 
-  appElement.innerHTML = appHTML;
+  appElement.innerHTML = commentsHtml;
 
   setLoading(false);
 

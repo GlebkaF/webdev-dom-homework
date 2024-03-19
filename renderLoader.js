@@ -1,7 +1,7 @@
 import { isLoading } from "./api.js";
 
 export const comLoader = () => {
-  const appLoader = document.getElementById("com-loader");
+  const appLoader = document.getElementById("app");
   if (isLoading) {
     const loaderHTML = `<div class="loader" id="com-loader">
     Пожалуйста подождите, комментарии загружаются...
@@ -13,7 +13,7 @@ export const comLoader = () => {
 };
 
 export const formLoader = () => {
-  const appFormLoader = document.getElementById("form-loader");
+  const appFormLoader = document.getElementById("app");
   if (isLoading) {
     const formLoaderHTML = `<div class="loader" id="form-loader">
     Комментарий добавляется...

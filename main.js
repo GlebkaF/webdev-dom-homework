@@ -1,8 +1,9 @@
 import { fetchGet, setLoading } from "./api.js";
 import { renderComments } from "./renderComments.js";
 import { formatDate } from "./formatdate.js";
-import { userLogin } from "./renderLogin.js";
+
 import { comLoader } from "./renderLoader.js";
+import { renderForm, userLogin } from "./renderForm.js";
 
 let comments = [];
 
@@ -47,5 +48,6 @@ export const fetchGetAndRenderComments = () => {
     });
 };
 fetchGetAndRenderComments();
-renderComments(comments);
+renderForm();
+//renderComments(comments);
 

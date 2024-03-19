@@ -1,13 +1,10 @@
 import { login, setLoading, setToken } from "./api.js"
 import { renderForm } from "./renderForm.js";
 
-export let userLogin;
-export const setLogin = (newUserLogin) => {
-  userLogin = newUserLogin;
-};
+
 
 export const renderLogin = ({ fetchGetAndRenderComments }) => {
-  const appElement = document.getElementById("appp");
+  const appElement = document.getElementById("app");
   const loginHTML = `
     <div class="container">
     <div id="login-form" class="add-form">

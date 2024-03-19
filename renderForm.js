@@ -2,22 +2,39 @@ import { userInput1, userInput2 } from "./userinput.js";
 import { fetchGetAndRenderComments } from "./main.js";
 import { fetchPost, setLoading } from "./api.js";
 import { formLoader } from "./renderLoader.js";
+import { renderLogin } from "./renderLogin.js";
+
+export let userLogin = false;
+export const setLogin = (newUserLogin) => {
+  userLogin = newUserLogin;
+};
 
 export const renderForm = (userName) => {
-  const appElement = document.getElementById("app");
-  const formHTML = `
-    <div class="container">
-    <div id="add-form" class="add-form">
+  const appHTML = document.getElementById("app");
+  appHTML.innerHTML = `${
+    userLogin
+      ? `<div id="add-form" class="add-form">
     <input id="add-form-name" readonly type="text" class="add-form-name" value="${userName}" />
     <textarea id="add-form-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
       rows="4"></textarea>
     <div class="add-form-row">
       <button id="add-form-button" class="add-form-button">Написать</button>
-    </div>
-  </div>
-    `;
-  appElement.innerHTML = formHTML;
+    </div>`
+      : `<div id="login-text" class="loader">Чтобы добавить комментарий, <span class="login-link"  id="login-link">авторизуйтесь</span></div>`
+  }`;
 
+  // formAction();
+  // loginAction();
+
+  //appHTML.innerHTML = formHTML;
+};
+
+function loginAction() {
+  if (!userLogin) renderLogin({fetchGetAndRenderComments});
+}
+
+function formAction() {
+  if (userLogin) {
   const nameEl = document.getElementById("add-form-name");
   const textEl = document.getElementById("add-form-text");
   const buttonEl = document.getElementById("add-form-button");
@@ -70,6 +87,6 @@ export const renderForm = (userName) => {
         });
     };
     fetchPostAndRenderComments();
-    
   });
-};
+}
+}

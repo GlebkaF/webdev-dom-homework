@@ -1,6 +1,6 @@
 import { comLoader, formLoader } from "./renderLoader.js";
 
-const commentsURL = "https://wedev-api.sky.pro/api/v2/:lvich/comments";
+const commentsURL = "https://wedev-api.sky.pro/api/v2/:bvich/comments";
 const userURL = "https://wedev-api.sky.pro/api/user/login";
 
 export let token;
