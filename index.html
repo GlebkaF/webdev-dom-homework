@@ -24,9 +24,32 @@
 
 <script>
   const buttonElement = document.getElementById("add-form-button-id");
-  const commentListEl = document.getElementById("comments-id")
-  const nameId = document.getElementById("add-form-name-id")
-  const commentAdd = document.getElementById("add-form-text-id")
+  const commentListEl = document.getElementById("comments-id");
+  const nameId = document.getElementById("add-form-name-id");
+  const commentAdd = document.getElementById("add-form-text-id");
+
+  const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/:andrey-stepanov/comments", {
+      method: "GET",
+    });
+
+    fetchPromise.then((response) => {
+      const jsonPromise = response.json();
+    });
+
+    response.json().then((responseData) => {
+      const appComments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: new Date(comment.date),
+          text: comment.text,
+          likes: comment.likes,
+          isLiked: false,
+        }
+      });
+      
+      comments = appComments;
+      renderComments();
+    });
 
 
   const commentArr = [
