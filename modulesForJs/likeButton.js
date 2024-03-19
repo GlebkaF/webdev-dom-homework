@@ -1,6 +1,6 @@
 // Кнопка для лайка 
 
-export function initLikeButtonListeners({comments, renderComments, reply, removeValidation, delay}) {
+export function initLikeButtonListeners({ comments, renderComments, reply, removeValidation, delay }) {
 
     const addLikesButtonsElements = document.querySelectorAll('.like-button');
 
@@ -25,12 +25,20 @@ export function initLikeButtonListeners({comments, renderComments, reply, remove
 
                 } else {
 
-                    const result = Number(counter) - 1;
-                    comments[index].likesCounter = result;
+                    if (comments[index].likesCounter === 0) {
 
-                    comments[index].isLiked = false;
-                }
-                renderComments({comments, initLikeButtonListeners, reply, removeValidation, delay});
+                        comments[index].likesCounter = 0;
+
+                        comments[index].isLiked = false;
+
+                    } else {
+
+                        comments[index].likesCounter = Math.max(0, comments[index].likesCounter - 1);
+
+                        comments[index].isLiked = false;
+                    };
+                };
+                renderComments({ comments, initLikeButtonListeners, reply, removeValidation, delay });
             });
         });
     };

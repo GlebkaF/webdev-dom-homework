@@ -10,7 +10,7 @@ export function fetchAndRenderComments() {
         }
     ).then((response) => {
 
-        if (response.message === 500) {
+        if (response.status === 500) {
 
             return Promise.reject('Сервер сломался, попробуй позже');
 
