@@ -37,66 +37,117 @@
 
   <script>
 
-    const comments = [
+    /**
+    let commentDatas = [
           {
             name: "Глеб Фокин",
             date: '13.02.22 19:22',
             text: "Это будет первый комментарий на этой странице",
-            counter: 3,
-            like: false
+            likes: 3,
+            isLiked: false
           },
           {
             name: "Варвара Н.",
             date: '13.02.22 19:22',
             text: "Мне нравится как оформлена эта страница! ❤",
-            counter: 75,
-            like: true
+            likes: 75,
+            isLiked: true
           }
-    ];
+    ];*/
+  
+    let commentDatas = [];     
+    
+    const formattedComments = (responseData) => {
+      const appComments = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: getFormatetDate(new Date(comment.date)),
+              text: comment.text,
+              likes: comment.likes,
+              isLiked: false
+            };
+          });
+        return appComments;
+    };
+    
+    const getResponse = () => {
+      // GET - запрос
+      const serverGetPromise = fetch("https://wedev-api.sky.pro/api/v1/nurasyl-tyulegenov/comments",{
+        method: "GET"
+      });
+      serverGetPromise.then((response) => {
+        const jsonGetPromise = response.json();       
+        jsonGetPromise.then((responseData) => {
+            commentDatas = formattedComments(responseData);
+            renderComments();        
+          });
+      });
+    }
 
-    const buttonElement = document.getElementById("add-form-button");
+    const postQwery = () => {
+      // POST - запрос
+      const serverPostPromise = fetch("https://wedev-api.sky.pro/api/v1/nurasyl-tyulegenov/comments",{
+        method: "POST",
+        body: JSON.stringify({
+          text: commentInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+          name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;")
+        }),
+      });
+      getResponse();
+    }
+
+    getResponse();
+
+
+    const buttonElementAdd = document.getElementById("add-form-button");
     const buttonElementDelete = document.getElementById("delete-comment-button");
     const listElement = document.getElementById("list");
     const nameInputElement = document.getElementById("name_input");
     const commentInputElement = document.getElementById("comment_textarea");
-
-    buttonElement.addEventListener("click", () => {
+    
+    // листенер
+    buttonElementAdd.addEventListener("click", () => {
       if(checkTextByNull(nameInputElement.value) === false || checkTextByNull(commentInputElement.value) === false){
         nameInputElement.style.backgroundColor = "red";
         commentInputElement.style.backgroundColor = "red";
         return;
       }
+      postQwery();
+
+      /**
       let date = getFormatetNowDate();
-      comments.push({
+      commentDatas.push({
         name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
         date: date,
         text: commentInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-        counter: 0,
-        like: false
-      });
+        likes: 0,
+        isLiked: false
+      });*/
+
       nameInputElement.value = '';
       commentInputElement.value = '';
       renderComments();
     });
 
+    // листенер
     buttonElementDelete.addEventListener("click", () => {
-      comments.splice(comments.length - 1, 1);
+      commentDatas.splice(commentDatas.length - 1, 1);
       renderComments();
     });
 
-    
+    // листенер 
     const initListeners = () => {
       const likeButtonElements = document.querySelectorAll(".like-button");
       for(const likeButtonElement of likeButtonElements){
         likeButtonElement.addEventListener("click", (event) => {
           event.stopPropagation();
           const index = likeButtonElement.dataset.index;
-          if(comments[index].like === true){
-            comments[index].like = false;
-            comments[index].counter -= 1;
+          if(commentDatas[index].isLiked === true){
+            commentDatas[index].isLiked = false;
+            commentDatas[index].likes -= 1;
           } else {
-            comments[index].like = true;
-            comments[index].counter += 1;
+            commentDatas[index].isLiked = true;
+            commentDatas[index].likes += 1;
           }
           renderComments();
         });
@@ -117,23 +168,24 @@
       });
     }
 
+    // рендер функция
     const renderComments = () => {      
-      const commentHtml = comments.map((comment, index) => {
-        const like = getStyleLikeButton(comment.like);
-        return `<li class="comment" data-name="${comment.name}" data-text="${comment.text}">
+      const commentHtml = commentDatas.map((commentData, index) => {
+        const likes = getStyleLikeButton(commentData.isLiked);
+        return `<li class="comment" data-name="${commentData.name}" data-text="${commentData.text}">
           <div class="comment-header">
-            <div>${comment.name}</div>
-            <div>${comment.date}</div>
+            <div>${commentData.name}</div>
+            <div>${commentData.date}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${comment.text}
+              ${commentData.text}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">${comment.counter}</span>
-              <button data-index="${index}" class="like-button${like}"></button>
+              <span class="likes-counter">${commentData.likes}</span>
+              <button data-index="${index}" class="like-button${likes}"></button>
             </div>
           </div>
         </li>`
@@ -142,14 +194,17 @@
       initListeners();
     }     
          
-
+    // приватные функции
+    
     const getFormatetNowDate = () => {
       let date = new Date();
+      return getFormatetDate(date);
+    };
+    const getFormatetDate = (date) => {
       let options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' };
-      let formattedDate = new Intl.DateTimeFormat('ru', options).format(date);
+      let formattedDate = new Intl.DateTimeFormat('ru', options).format(date).replaceAll(",", "");
       return formattedDate;
     };
-
     const getStyleLikeButton = (likeStatus) => {
       if(likeStatus === false){
         return "";
@@ -157,7 +212,6 @@
         return " -active-like";
       }
     };
-
     const checkTextByNull = (text) => {
       if(text === "" || text.replaceAll(" ", "") === ""){
         return false;
@@ -166,6 +220,7 @@
       }
     };
 
+    // рендер
     renderComments(); 
 
   </script>
