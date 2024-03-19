@@ -27,7 +27,7 @@
 
 <script>
   "use strict";
-  let comments = [
+  let comments = [ //объявление массива комментариев
     {
       name: 'Глеб Фокин',
       year: 22,
@@ -61,7 +61,7 @@
   const button = document.getElementById('add-form-button');
   const listElement = document.getElementById('comments');
 
-  function dateCheck(num) {
+  function dateCheck(num) { // прописывание времени комментария
     let result = ''
 
     if (num < 10) {
@@ -73,7 +73,7 @@
     return result;
   }
 
-  function renderComments() {
+  function renderComments() { //рендер комментариев
     const commentsHTML = comments.map((student) => {
       let liked = '';
       let textEdit = '';
@@ -121,7 +121,7 @@
 
   renderComments();
 
-  function addComment() {
+  function addComment() { //добавление комментария
     let date = new Date();
 
     nameForm.classList.remove('error');
@@ -179,7 +179,7 @@
     renderComments();
   }
 
-  button.disabled = true;
+  button.disabled = true; //проверка заполненности полей
 
   nameForm.addEventListener('input', () => {
     commentForm.addEventListener('input', () => {
@@ -195,7 +195,7 @@
 
   button.addEventListener("click", addComment);
 
-  commentForm.addEventListener('keypress', (e) => {
+  commentForm.addEventListener('keypress', (e) => { //отправление комментария по кнопке enter
     if (e.keyCode == 13) {
       // button.click();
       addComment();
@@ -204,7 +204,7 @@
 
   const deleteButton = document.getElementById('delete-button');
 
-  deleteButton.addEventListener('click', () => {
+  deleteButton.addEventListener('click', () => { //удаление комментария
 
     if (comments == []) {
       alert('Удалять нечего');
@@ -215,7 +215,7 @@
     renderComments();
   })
 
-  function initEventListeners() {
+  function initEventListeners() { //работа лайков
     let likeButtons = document.querySelectorAll('.like-button');
     for (let likeButton of likeButtons) {
       likeButton.addEventListener('click', (event) => {
@@ -235,7 +235,7 @@
     }
   }
 
-  function initEventButtonEdit() {
+  function initEventButtonEdit() { //редактирование комментария
     let buttonsEdit = document.querySelectorAll('.button-edit');
 
     for (let buttonEdit of buttonsEdit) {
