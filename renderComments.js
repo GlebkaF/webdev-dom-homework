@@ -4,6 +4,7 @@ import { initReplayListener } from "./reply.js";
 import { renderLogin } from "./renderLogin.js";
 import { fetchGetAndRenderComments } from "./main.js";
 import { setLoading } from "./api.js";
+import { renderForm } from "./renderForm.js";
 
 export const textEl = document.getElementById("add-form-text");
 
@@ -67,4 +68,5 @@ export function renderComments(comments) {
   initLikeButtonListener(comments);
   const textEl = document.getElementById("add-form-text");
   initReplayListener({ textEl, comments });
+  
 }

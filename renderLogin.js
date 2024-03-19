@@ -6,7 +6,6 @@ import { renderForm } from "./renderForm.js";
 export const renderLogin = ({ fetchGetAndRenderComments }) => {
   const appElement = document.getElementById("app");
   const loginHTML = `
-    <div class="container">
     <div id="login-form" class="add-form">
     <h3 class="form-title">Форма входа</h3>
       <input
@@ -25,7 +24,6 @@ export const renderLogin = ({ fetchGetAndRenderComments }) => {
         <button id="login-button" class="add-form-button">Войти</button>
       </div>
     </div>
-  </div>
     `;
   appElement.innerHTML = loginHTML;
 

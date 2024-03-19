@@ -21,13 +21,13 @@ export const fetchGetAndRenderComments = () => {
         };
       });
       setLoading(false);
-      comLoader();
+      // comLoader();
       
       comments = appComments;
       renderComments(comments);
 
-      const loginTextEl = document.getElementById("login-text");
-      userLogin ? (loginTextEl.hidden = true) : (loginTextEl.hidden = false);
+      // const loginTextEl = document.getElementById("login-text");
+      // userLogin ? (loginTextEl.hidden = true) : (loginTextEl.hidden = false);
     })
     .catch((error) => {
       if (error.message === "Failed to fetch") {
