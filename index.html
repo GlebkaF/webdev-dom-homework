@@ -9,6 +9,9 @@
 
 <body>
   <div class="container">
+    <div class="loading" id="loading-status">
+      Загрузка комментариев ...
+    </div>
     <ul class="comments" id="list">
       <!-- Список рендерится из JS -->
     </ul>
@@ -20,6 +23,9 @@
         <button class="add-form-button" id="add-button">Написать</button>
         <button class="add-form-button" id="delete-button">Удалить комментарий</button>
       </div>
+    </div>
+    <div class="add-comment" id="add-comment-status">
+
     </div>
   </div>
 </body>
@@ -34,6 +40,30 @@
   const listElement = document.getElementById('list');
 
   let users = [];
+
+  const getComments = () => {
+    return fetch('https://wedev-api.sky.pro/api/v1/alexey-borovkov/comments', {
+      method: 'GET',
+    })
+    .then((response) => {
+      return response.json();
+    })
+    .then((responseData) => {
+      const userComment = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+              date: new Date(comment.date),
+              comment: comment.text,
+              likes: comment.likes,
+              isLiked: false,
+              id: comment.id,
+        }
+      })
+      users = userComment;
+      renderUsers();
+      document.getElementById('loading-status').textContent = "";
+    })
+  }
 
 
   const renderUsers = () => {
@@ -189,79 +219,37 @@
     }
 
 
-    // const date = new Date();
-    // const options = {
-    //   year: '2-digit',
-    //   month: 'numeric',
-    //   day: 'numeric',
-    // };
-    // const optionsTime = {
-    //   hour: 'numeric',
-    //   minute: 'numeric',
-    // };
-
-    // const dateTime = `${date.toLocaleDateString('ru-RU', options)} ${date.toLocaleTimeString('ru-RU', optionsTime)}`;
-
-    // users.push({
-    //   name: sanitizeHtml(nameInputElement.value),
-    //   date: dateTime,
-    //   comment: sanitizeHtml(textInputElement.value),
-    //   likes: 0,
-    //   isLiked: false,
-    //   isEdit: false
-    // })
-    
-    const fetchPromise = fetch(
-      'https://wedev-api.sky.pro/api/v1/alexey-borovkov/comments',
-      {
-        method: "POST",
-        body: JSON.stringify({
-          text: textInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
-          name: nameInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
-        }),
-      });
-
-      fetchPromise.then((response) => {
-        console.log(response);
-        const jsonPromise = response.json();
-        
+    fetch('https://wedev-api.sky.pro/api/v1/alexey-borovkov/comments', {
+      method: 'POST',
+      body: JSON.stringify({
+        text: textInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
+        name: nameInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
+      })
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then(() => {
         getComments();
-        renderUsers();
-      });
+      })
+      .catch(error => {
+        console.error("Ошибка при добавлении комментария:", error);
+      })
+      .finally(() => {
+        document.getElementById('add-comment-status').textContent = "";
+        document.querySelector('.add-form').classList.remove('hidden');
+      }) 
+
+    document.getElementById('add-comment-status').textContent = "Добавление комментария ...";
+    document.querySelector('.add-form').classList.add('hidden'); 
+    
+
    
     nameInputElement.value = '';
     textInputElement.value = '';
   });
       
-    function getComments() {
-    const fetchPromise = fetch(
-      'https://wedev-api.sky.pro/api/v1/alexey-borovkov/comments',
-      {
-        method: "GET",
-      });
 
-      fetchPromise.then((response) => {
-
-        const jsonPromise = response.json();
-
-        jsonPromise.then((responseData) => {
-
-          const appUsers = responseData.comments.map((comment) => {
-            return {
-              name: comment.author.name,
-              date: new Date(comment.date),
-              comment: comment.text,
-              likes: comment.likes,
-              isLiked: false,
-              id: comment.id,
-            }
-          });
-
-          users = appUsers;
-          renderUsers();
-        });
-      });
-    };
 
     getComments();
   console.log("It works!");
