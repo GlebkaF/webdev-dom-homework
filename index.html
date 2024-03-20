@@ -69,25 +69,12 @@
     const ulElement = document.getElementById("comment-ul");
     const nameElementInput = document.getElementById("name-input");
     const commentElementInput = document.getElementById("comment-input");
-    const dataElement = new Date();
-
-    let day = dataElement.getDate();
-    let month = dataElement.getMonth() + 1;
-    let year = dataElement.getFullYear() % 100;
-
-    let hours = dataElement.getHours();
-    let minutes = dataElement.getMinutes();
-
-    let formattedDate = (day < 10 ? '0' : '') + day + '.' + (month < 10 ? '0' : '') + month + '.' + year;
-    let formattedTime = (hours < 10 ? '0' : '') + hours + ':' + (minutes < 10 ? '0' : '') + minutes;
-    let formattedDateTime = formattedDate + ' ' + formattedTime;
-    
 
     buttonElement.addEventListener("click", () => {
         nameElementInput.classList.remove('error');
         commentElementInput.classList.remove('error');
     
-        if (nameElementInput.value === ""){
+        if (nameElementInput.value.trim() === ''){
 
           return nameElementInput.classList.add('error');
 
@@ -95,6 +82,21 @@
 
           return commentElementInput.classList.add('error');
         }
+
+        const dataElement = new Date();
+
+        let day = dataElement.getDate();
+        var month = dataElement.getMonth() + 1; 
+        var year = dataElement.getFullYear() % 100; 
+
+      
+
+        let hours = dataElement.getHours();
+        let minutes = dataElement.getMinutes();
+
+        let formattedDate = (day < 10 ? '0' : '') + day + '.' + (month < 10 ? '0' : '') + month + '.' + year;
+        let formattedTime = (hours < 10 ? '0' : '') + hours + ':' + (minutes < 10 ? '0' : '') + minutes;
+        let formattedDateTime = formattedDate + ' ' + formattedTime;
 
         const olUlElement = ulElement.innerHTML;
         ulElement.innerHTML = olUlElement + `<li class="comment">
@@ -114,6 +116,8 @@
             </div>
           </div>
         </li>`;
+        document.getElementById("name-input").value = '';
+        document.getElementById("comment-input").value = '';
     });
     console.log("It works!");
   </script>
