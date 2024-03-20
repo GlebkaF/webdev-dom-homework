@@ -12,7 +12,8 @@
     <ul class="comments" id="comments">
 
     </ul>
-    <div class="add-form">
+    <div id="bimbo" class="bimbo"></div>
+    <div class="add-form" id="add-form">
       <input type="text" class="add-form-name" id="add-form-name" placeholder="Введите ваше имя" />
       <textarea type="textarea" class="add-form-text" id="add-form-text" placeholder="Введите ваш коментарий"
         rows="4"></textarea>
@@ -34,18 +35,25 @@
   const commentForm = document.getElementById('add-form-text');
   const button = document.getElementById('add-form-button');
   const listElement = document.getElementById('comments');
+  const addForm = document.getElementById('add-form');
+  const loader = document.getElementById('bimbo');
+  const deleteButton = document.getElementById('delete-button');
 
+
+  loader.style.display = 'block';
+  loader.textContent = 'Пожалуйста, подождите, загружаю комментарии...';
 
   function getCommentsFromServer() {
 
     let fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/elena-rybakova/comments', {
       method: 'GET'
-    });
-
-    fetchPromise.then((response) => {
+    })
+    .then((response) => {
       const jsonPromise = response.json();
 
-      jsonPromise.then((responseData) => {
+      return jsonPromise;
+    })
+    .then((responseData) => {
         let i = 0;
         const appComments = responseData.comments.map((comment) => {
           i++;
@@ -55,15 +63,15 @@
             text: comment.text,
             likes: comment.likes,
             isLiked: false,
-            numComment: i - 1,
+            id: i - 1,
             isEdit: false
           }
         });
 
+        loader.style.display = 'none';
         comments = appComments;
         renderComments();
-      })
-    });
+      });
   };
 
   function dateRender(time) { // прописывание времени комментария
@@ -109,7 +117,7 @@
         btnEdit = `Редактировать`;
       }
 
-      return `<li class="comment" data-numComments="${student.numComment}">
+      return `<li class="comment" data-numComments="${student.id}">
       <div class="comment-header">
         <div>${student.name}</div>
         <div>${dateRender(student.date)}</div>
@@ -118,11 +126,11 @@
         textEdit +
         `</div>
       <div class="comment-footer">
-        <button class="button-edit" data-numComments="${student.numComment}">` + btnEdit + `</button>
+        <button class="button-edit" data-numComments="${student.id}">` + btnEdit + `</button>
         <div class="likes">
           <span class="likes-counter">${student.likes}</span>
           <button class="like-button` + liked
-        + `" data-numComments="${student.numComment}"></button>
+        + `" data-numComments="${student.id}"></button>
         </div>
       </div>
     </li>`
@@ -170,12 +178,20 @@
       .replaceAll('QUOTE_BEGIN', "<div class='quote'>")
       .replaceAll('QUOTE_END', '</div>');
 
+    addForm.style.display = 'none';
+    loader.textContent = 'Комментарий добавляется...';
+    loader.style.display = 'block';
+
     let fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/elena-rybakova/comments', {
       method: 'POST',
       body: JSON.stringify({
         text: safeComm,
         name: safeName,
       })
+    })
+    .then(() => {
+      addForm.style.display = 'flex';
+      loader.style.display = 'none';
     })
 
     nameForm.value = '';
@@ -206,8 +222,6 @@
       addComment();
     }
   })
-
-  const deleteButton = document.getElementById('delete-button');
 
   deleteButton.addEventListener('click', () => { //удаление комментария
 
