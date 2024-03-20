@@ -2,8 +2,6 @@ import { fetchGet, setLoading } from "./api.js";
 import { renderComments } from "./renderComments.js";
 import { formatDate } from "./formatdate.js";
 
-import { comLoader } from "./renderLoader.js";
-
 let comments = [];
 
 export const fetchGetAndRenderComments = () => {
@@ -21,13 +19,10 @@ export const fetchGetAndRenderComments = () => {
         };
       });
       setLoading(false);
-       // comLoader();
-      
+            
       comments = appComments;
       renderComments(comments);
-      
-      // const loginTextEl = document.getElementById("login-text");
-      // userLogin ? (loginTextEl.hidden = true) : (loginTextEl.hidden = false);
+          
     })
     .catch((error) => {
       if (error.message === "Failed to fetch") {
@@ -51,5 +46,5 @@ export const fetchGetAndRenderComments = () => {
 fetchGetAndRenderComments();
 
 
-//renderComments(comments);
+
 

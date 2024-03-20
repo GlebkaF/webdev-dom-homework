@@ -44,13 +44,21 @@ export const renderLogin = ({ fetchGetAndRenderComments }) => {
         return responseData;
       })
       .then((responseData) => {
+        if (responseData.status === "Cannot read properties of undefined (reading 'user')") {
+          throw new Error("Нет авторизации");
+        }
+        return responseData;
+      })
+      .then((responseData) => {
         console.log("login")
-        //const userName = responseData.user.name;
         setLogin(responseData.user.name);
         setLoading(false);
-        fetchGetAndRenderComments();
-        
-        
+        fetchGetAndRenderComments();       
+      })
+      .catch((error) => {
+        if (error.message === "Нет авторизации") {
+          console.warn(error);
+        }
       });
   });
 };

@@ -69,10 +69,7 @@ export function renderComments(comments) {
   ${formHTML}
   </div>`;
 
-  // appElement.innerHTML = commentsHtml;
-
   setLoading(false);
-
  
   authAction();
   formAction();

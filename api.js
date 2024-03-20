@@ -1,6 +1,6 @@
-import { comLoader, formLoader } from "./renderLoader.js";
+import { formLoader } from "./renderLoader.js";
 
-const commentsURL = "https://wedev-api.sky.pro/api/v2/:bvich/comments";
+const commentsURL = "https://wedev-api.sky.pro/api/v2/:zinkevich/comments";
 const userURL = "https://wedev-api.sky.pro/api/user/login";
 
 export let token;
@@ -13,11 +13,7 @@ export const setLoading = (newLoading) => {
   isLoading = newLoading;
 };
 
-
-
 export function fetchGet() {
-  isLoading = true;
-  //comLoader();
   console.log("fetchGet");
   return fetch(commentsURL, {
     method: "GET",
@@ -36,8 +32,6 @@ export function fetchGet() {
 export function fetchPost({ name, text }) {
   isLoading = true;
   formLoader();
-  //const formEl = document.getElementById("add-form");
-  //formEl.classList.add("add-form_displayNone");
   return fetch(commentsURL, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
