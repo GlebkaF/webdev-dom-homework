@@ -26,21 +26,29 @@
 <script>
   "use scrict"
   //скрипт для корректной работы лайков.
+  let commentsList = [];
   const likesActive = () => {
     const buttonLikeElements = document.querySelectorAll('.like-button');
 
     for (const elem of buttonLikeElements) {
       elem.addEventListener('click', (event) => {
         event.stopPropagation();
-        const index = elem.dataset.index;
+        let num = 0;
+        let index = elem.dataset.index;
+        for (const element of commentsList) {
+          if (element.id == index) {
+            index = num;
+          }
+          num += 1;
+        }
         const commentIndex = commentsList[index];
         if (commentIndex.isLiked) {
           commentIndex.isLiked = false;
-          commentIndex.likesNum = commentIndex.likesNum - 1;
+          commentIndex.likes = commentIndex.likes - 1;
           renderComments();
         } else {
           commentIndex.isLiked = true;
-          commentIndex.likesNum = commentIndex.likesNum + 1;
+          commentIndex.likes = commentIndex.likes + 1;
           renderComments();
         }
       });
@@ -54,7 +62,7 @@
       textElement.addEventListener("click", () => {
         const indexElementInClick = [...document.querySelectorAll('.comment')].indexOf(textElement);
         let nameComment = commentsList[indexElementInClick].name;
-        currentInputText.value = `>${commentsList[indexElementInClick].commentText.replaceAll('&gt;', '>')}
+        currentInputText.value = `>${commentsList[indexElementInClick].text.replaceAll('&gt;', '>')}
 ${nameComment},`;
       });
     }
@@ -67,9 +75,21 @@ ${nameComment},`;
   const commentButton = document.getElementsByClassName('add-form-button')[0];
   const commentList = document.getElementsByClassName('comments')[0];
   const checkStatus = document.getElementsByClassName('add-form')[0];
+  //получаем от апи
 
-  function currentDateForComment() {
-    const currentDate = new Date();
+
+  const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/aleksey-e/comments", {
+    method: "GET"
+  });
+  fetchPromise.then((response) => {
+    response.json().then((responseData) => {
+      commentsList = responseData.comments;
+      renderComments();
+    })
+  });
+
+  function currentDateForComment(elem) {
+    const currentDate = new Date(elem.date);
     return `${currentDate.getDate()}.${(currentDate.getMonth() < 8 ? '0' + (currentDate.getMonth() + 1) :
       currentDate.getMonth())}.${currentDate.getFullYear() - 2000}
         ${currentDate.getHours()}:${currentDate.getMinutes()}`;
@@ -77,17 +97,32 @@ ${nameComment},`;
 
   function addNewComment() {
     if (currentInputName.value.trim().length !== 0 && currentInputText.value.trim().length !== 0) {
-      commentsList.push({
-        name: currentInputName.value,
-        commentText: currentInputText.value,
-        likesNum: 0,
-        isLiked: false,
-        date: currentDateForComment()
-      })
-      currentInputText.value = '';
-      currentInputName.value = '';
-      renderComments();
-    }
+
+      fetch("https://wedev-api.sky.pro/api/v1/aleksey-e/comments", {
+        method: "POST",
+        body: JSON.stringify({
+          text: currentInputText.value,
+          name: currentInputName.value,
+          date: new Date(),
+          isLiked: false,
+        })
+      }).then((response) => {
+        response.json().then((responseData) => {
+          commentsList = responseData.comments;
+          fetch("https://wedev-api.sky.pro/api/v1/aleksey-e/comments", {
+            method: "GET"
+          }).then((response) => {
+            response.json().then((responseData) => {
+              commentsList = responseData.comments;
+              renderComments();
+            })
+          })
+        })
+      });
+    };
+    currentInputText.value = '';
+    currentInputName.value = '';
+    renderComments();
   }
 
   checkStatus.addEventListener('input', () => {
@@ -120,23 +155,6 @@ ${nameComment},`;
   });
 
   //рендеринг комментов
-  const commentsList = [
-    {
-      name: 'Глеб Фокин',
-      commentText: 'Это будет первый комментарий на этой странице',
-      likesNum: 3,
-      isLiked: false,
-      date: '12.02.22 12:18'
-    },
-    {
-      name: 'Варвара Н.',
-      commentText: 'Мне нравится как оформлена эта страница! ❤',
-      likesNum: 75,
-      isLiked: true,
-      date: '13.02.22 19:22'
-    }
-  ];
-
   const sanitize = (element) => {
     return `${element.replaceAll("&", "&amp;")
       .replaceAll("<", "&lt;")
@@ -145,22 +163,22 @@ ${nameComment},`;
   }
 
   const renderComments = () => {
-    const commentsInHTML = commentsList.map((elem, index) => {
+    const commentsInHTML = commentsList.map((elem) => {
       return `
       <li class="comment">
         <div class="comment-header">
-          <div>${sanitize(elem.name)}</div>
-          <div>${elem.date}</div>
+          <div>${sanitize(elem.author.name)}</div>
+          <div>${currentDateForComment(elem)}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
-            ${sanitize(elem.commentText)}
+            ${sanitize(elem.text)}
           </div>
         </div>
         <div class="comment-footer">
           <div class="likes">
-            <span class="likes-counter">${elem.likesNum}</span>
-            <button data-index="${index}" class="like-button ${elem.isLiked ? "-active-like" : ""}"></button>
+            <span class="likes-counter">${elem.likes}</span>
+            <button data-index="${elem.id}" class="like-button ${elem.isLiked ? "-active-like" : ""}"></button>
           </div>
         </div>
       </li>`;
