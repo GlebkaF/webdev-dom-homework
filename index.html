@@ -82,11 +82,21 @@
 			}
 		);
 		fetchPromise.then((response) => {
+
 			const jsonPromise = response.json();
+			
 			jsonPromise.then((responseData) => {
 				console.log(responseData);
 
-				commentators = responseData.todos;
+				commentators = responseData.comments.map((comment) => {
+					return {
+						name: comment.author.name,
+						data: new Date(comment.date),
+						comment: comment.text,
+						like: comment.likes,
+						isLike: comment.isLiked
+					};
+				});
 				renderCommentators();
 			});
 		});
