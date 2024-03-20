@@ -74,7 +74,8 @@
 		const buttonDelete =  document.getElementById('delete-button');
 
 		// ДЗ API №1
-		// Получаю данные из API 
+		function dataAcquisitionFunction () {
+			// Получаю данные из API 
 		const fetchPromise = fetch(
 			"https://wedev-api.sky.pro/api/v1/Pavel-Kalashnikoff/comments",
 			{
@@ -91,32 +92,34 @@
 				commentators = responseData.comments.map((comment) => {
 					return {
 						name: comment.author.name,
-						data: new Date(comment.date),
+						data: new Date (comment.date),
 						comment: comment.text,
-						like: comment.likes,
+						like: comment.likes, 
 						isLike: comment.isLiked
 					};
 				});
 				renderCommentators();
 			});
 		});
+		}
+		dataAcquisitionFunction();
 
 		//Добавляю массив на основе разметки HTML 
 		let commentators = [
-			{
-				name: "Глеб Фокин",
-				data: "12.02.22 12:18",
-				comment: "Это будет первый комментарий на этой странице",
-				like: "3",
-				isLike: false,
-			},
-			{
-				name: "Варвара Н.",
-				data: "13.02.22 19:22",
-				comment: "Мне нравится как оформлена эта страница! ❤",
-				like: "75",
-				isLike: false,
-			}
+			// {
+			// 	name: "Глеб Фокин",
+			// 	data: "12.02.22 12:18",
+			// 	comment: "Это будет первый комментарий на этой странице",
+			// 	like: "3",
+			// 	isLike: false,
+			// },
+			// {
+			// 	name: "Варвара Н.",
+			// 	data: "13.02.22 19:22",
+			// 	comment: "Мне нравится как оформлена эта страница! ❤",
+			// 	like: "75",
+			// 	isLike: false,
+			// }
 			];
  
 
@@ -235,14 +238,28 @@
 				const currentDate = new Date();
 			const formattedDate = currentDate.toLocaleDateString('ru-RU');
 			const formattedTime = `${currentDate.getHours().toString().padStart(2, '0')}:${currentDate.getMinutes().toString().padStart(2, '0')}`;
-				//Добавляю нового комментатора
-				commentators.push({
-				name: acceptName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-				data: [formattedDate, formattedTime],
-				comment: acceptComment.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-				like: "0",
-				isLike: false,
-			});
+			// 	//Добавляю нового комментатора
+			// 	commentators.push({
+			// 	name: acceptName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+			// 	data: [formattedDate, formattedTime],
+			// 	comment: acceptComment.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+			// 	like: "0",
+			// 	isLike: false,
+			// });
+				//Добавляю новый коммент в список
+				const featchPushComment = fetch(
+					"https://wedev-api.sky.pro/api/v1/Pavel-Kalashnikoff/comments",
+					{
+						method: "POST",	
+						body:	JSON.stringify ({
+							text: acceptComment.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
+							name: acceptName.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
+						}),
+					}
+				);
+				dataAcquisitionFunction();
+
+				
 			// Очистка поля ввода для комментария и имени после отправления комментария
 			const clearCommmentTextArea = document.querySelector('.add-form-text');
 			const clearName = document.querySelector('.add-form-name');
