@@ -72,7 +72,7 @@
   }
 
   const safeCode = (string) => {
-        return string.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
+    return string.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
   }
 
   // добавление комментария
@@ -115,6 +115,30 @@
   renderUsers();
 
 
+  //API домашка
+  const promiseFetch = fetch('https://wedev-api.sky.pro/api/v1/anka-anny/comments', {
+    method: "GET",
+  });
+  console.log(promiseFetch);
+
+  fetchPromise.then((response) => {
+    const jsonPromise = response.json();
+    jsonPromise.then((responseData) => {
+      const appComments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: new Date(comment.date).toLocaleDateString(), //почитать
+          text: comment.text,
+          likesCount: comment.likes,
+          isLiked: false,
+        }
+      });
+
+      comments = appComments;
+      renderComments();
+    });
+  });
+
   // Работа кнопки при нажатии (поле Имя и поле текст)
   buttonElement.addEventListener('click', () => {
     // в случае пустого поля в графе Имя
@@ -140,7 +164,7 @@
     arrayUsers.push({
       name: safeCode(nameInputElement.value),
       dateOfComment: commentDate,
-      text: safeCode(textInputElement.value).replaceAll('\n','<br>'),
+      text: safeCode(textInputElement.value).replaceAll('\n', '<br>'),
       likes: 0,
       validButtonLike: false
     })
