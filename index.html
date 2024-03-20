@@ -1,71 +1,179 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
-      <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <ul id="list-comment" class="comments"></ul>
+    <div class="add-form">
+      <input id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+      <textarea id="commit-input" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+        rows="4"></textarea>
+      <div class="button-container">
+        <div class="rem-form-row">
+          <button id="delete-button" class="rem-form-button">
+            Удалить последний комментарий
+          </button>
+        </div>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="write-button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
-  </body>
+  </div>
+</body>
+<script>
+  const writeButton = document.getElementById("write-button");
+  const deleteButton = document.getElementById("delete-button");
+  const listComment = document.getElementById("list-comment");
+  const nameInput = document.getElementById("name-input");
+  const commitInput = document.getElementById("commit-input");
+  const inp = document.querySelector(".add-form-name");
+  const textAr = document.querySelector(".add-form-text");
 
-  <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
-  </script>
+  let btn = document.querySelector("#write-button");
+
+  const comments = [
+    {
+      userName: "Глеб Фокин",
+      checkLike: false,
+      textComment: "Это будет первый комментарий на этой странице",
+      countLikes: 3,
+      dateBox: "12.02.22 12:18",
+    },
+    {
+      userName: "Варвара Н.",
+      checkLike: true,
+      textComment: "Мне нравится как оформлена эта страница! ❤",
+      countLikes: 75,
+      dateBox: "13.02.22 19:22",
+    },
+  ];
+
+  const renderComments = () => {
+    return (listComment.innerHTML = comments
+      .map((comment, index) => {
+        return `<li class="comment">
+            <div class="comment-header">
+              <div>${comment.userName}</div>
+              <div>${comment.dateBox}</div>
+            </div>
+            <div class="comment-body">
+              <div class="comment-text">
+                ${comment.textComment}
+              </div>
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">${comment.countLikes}</span>
+                <button data-index ="${index}" class="like-button ${comment.checkLike === true ? '-active-like' : ''}"></button>
+              </div>
+            </div>
+          </li>`;
+      })
+      .join(""));
+  };
+
+  const likeButtons = () => {
+    const buttonLikes = document.querySelectorAll(".like-button");
+    for (const buttonLike of buttonLikes) {
+      buttonLike.addEventListener("click", () => {
+        if (comments[buttonLike.dataset.index].checkLike === true) {
+          comments[buttonLike.dataset.index].checkLike = false;
+          comments[buttonLike.dataset.index].countLikes--;
+        } else if (comments[buttonLike.dataset.index].checkLike === false) {
+          comments[buttonLike.dataset.index].checkLike = true;
+          comments[buttonLike.dataset.index].countLikes++;
+        }
+        renderComments();
+        likeButtons();
+      });
+    }
+  };
+
+
+  renderComments();
+  likeButtons();
+
+  document.addEventListener("keyup", (key) => {
+    if (key.code === "Enter") {
+      if (!btn.classList.contains("empty")) {
+        pushCommit();
+      }
+    }
+  });
+  btn.classList.add("empty");
+  btn.disabled = true;
+  nameInput.addEventListener("input", function () {
+    if (nameInput.value.length < 1 || commitInput.value.length < 1) {
+      btn.classList.add("empty");
+      btn.disabled = true;
+    } else {
+      btn.classList.remove("empty");
+      btn.disabled = false;
+    }
+  });
+  commitInput.addEventListener("input", function () {
+    if (nameInput.value.length < 1 || commitInput.value.length < 1) {
+      btn.classList.add("empty");
+      btn.disabled = true;
+    } else {
+      btn.classList.remove("empty");
+      btn.disabled = false;
+    }
+  });
+  const getDateNow = () => {
+    const dateNow = new Date();
+    let day = dateNow.getDate();
+    let month = dateNow.getMonth() + 1;
+    let year = dateNow.getFullYear() % 1000;
+    let hour = dateNow.getHours();
+    let minute = dateNow.getMinutes();
+    if (day < 10) {
+      day = "0" + day;
+    }
+    if (month < 10) {
+      month = "0" + month;
+    }
+    if (hour < 10) {
+      hour = "0" + hour;
+    }
+    if (minute < 10) {
+      minute = "0" + minute;
+    }
+    return `${day}.${month}.${year} ${hour}:${minute}`;
+  };
+  writeButton.addEventListener(
+    "click",
+    (pushCommit = () => {
+      comments.push({
+        userName: nameInput.value,
+        checkLike: false,
+        textComment: commitInput.value,
+        countLikes: 0,
+        dateBox: getDateNow(),
+      });
+
+      nameInput.value = "";
+      commitInput.value = "";
+      btn.classList.add("empty");
+      btn.disabled = true;
+
+      renderComments();
+      likeButtons();
+    })
+  );
+
+  deleteButton.addEventListener("click", () => {
+    comments.pop();
+    renderComments();
+    likeButtons();
+  });
+</script>
+
 </html>
