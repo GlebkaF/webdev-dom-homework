@@ -123,7 +123,6 @@
 			buttonDelete.classList.remove("gray-delete");
 		}
 	};
-	// inactiveDeleteButton();
 
 		// // Делаю доп.задание отправляю коммент по нажатию клавиши
 		document.addEventListener('keydown', function(e) {
@@ -139,17 +138,13 @@
 			let isLike = false;
 			likeButton.addEventListener("click", event => {
 				event.stopPropagation();
-				// isLike = !isLike;
-				// likeButton.classList.toggle('-active-like', isLike);
 				const index = likeButton.dataset.index;
 				if (commentators[index].isLike === false) {
 					commentators[index].isLike = true;
 					commentators[index].like++;
-					// likeButton.classList.add('-active-like');
 				} else {
 					commentators[index].isLike = false;
 					commentators[index].like--;
-					// likeButton.classList.remove('-active-like');
 				}
 				likeButton.classList.toggle('-active-like', commentators[index].isLike);
 				renderCommentators();
@@ -158,29 +153,21 @@
 		};
 	};
 
+	
 	let text; 
 	let variableUserName;
 	// ДЗ 2.11 --- Реализую ответ на комментарий
 	const replyToCommentFunction = () => {
 		const replyComments = document.querySelectorAll('.comment-text');
 		const commentTextArea = document.getElementById('textarea-accept-comment');
-		// const replyUserNames = document.querySelectorAll('.comment-header');
 		for (const replyComment of replyComments) {
 			replyComment.addEventListener("click", event => {
 				event.stopPropagation();
-				// console.log('s');
-				
+
 			const replyUserName = event.target.closest('.comment').querySelector('.comment-header').dataset.user;
 			text = replyComment.dataset.text;
-			commentTextArea.value = text + '  ' + 'Пользователь : - ' + replyUserName;
+			commentTextArea.value = text + ' ' + '\n : - ' + replyUserName;
 
-				// for (const replyUserName of replyUserNames) {
-				// 	variableUserName = replyUserName.dataset.user
-				// }
-				// text = replyComment.dataset.text;
-				// commentTextArea.value = text  + ' ' + 'Пользователь : - ' + variableUserName;
-				// console.log(variableUserName);
-				
 				renderCommentators();
 				checkInputs();
 			});
@@ -238,60 +225,6 @@
 		});
 		renderCommentators();
 		checkInputs();
-
-
-				// listElement.innerHTML = oldlist + `<li class="comment">
-			  //     <div class="comment-header">
-			  //       ${acceptName.value}
-			  //       <div>${formattedDate}  ${formattedTime}</div>
-			  //     </div>
-			  //     <div class="comment-body">
-			  //       <div class="comment-text">
-			  //         ${acceptComment.value}
-			  //       </div>
-			  //     </div>
-			  //     <div class="comment-footer">
-			  //       <div class="likes">
-			  //         <span class="likes-counter">0</span>
-			  //         <button class="like-button"></button>
-			  //       </div>
-			  //     </div>
-			  //   </li>`;
-	
-
-			// Добавляю красный фоновый цвет при незаполненом поле (Эта функция оказывается бессмысленной после создания неактивной кнопки)
-		// buttonElement.addEventListener('click', () => {
-		// 	acceptComment.classList.remove("error");
-		// 	acceptName.classList.remove("error");
-		// 	if (acceptName.value === "" || acceptComment.value === "") {
-    //     acceptName.classList.add("error");
-		// 		acceptComment.classList.add("error");
-    //     return;
-    //   };
-		// });
-	
-// Так же делаю основной функционал добавления комментария 
-		// 	const oldlist = listElement.innerHTML;
-			
-		// 	listElement.innerHTML = oldlist + `<li class="comment">
-    //       <div class="comment-header">
-    //         ${acceptName.value}
-    //         <div>${formattedDate}  ${formattedTime}</div>
-    //       </div>
-    //       <div class="comment-body">
-    //         <div class="comment-text">
-    //           ${acceptComment.value}
-    //         </div>
-    //       </div>
-    //       <div class="comment-footer">
-    //         <div class="likes">
-    //           <span class="likes-counter">0</span>
-    //           <button class="like-button"></button>
-    //         </div>
-    //       </div>
-    //     </li>`
-		// });
-
 
   </script>
 </html>
