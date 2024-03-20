@@ -27,53 +27,69 @@
 
 <script>
   "use strict";
-  let comments = [ //объявление массива комментариев
-    {
-      name: 'Глеб Фокин',
-      year: 22,
-      month: 2,
-      day: 12,
-      hour: 12,
-      minute: 18, //12.02.22 12:18
-      text: 'Это будет первый комментарий на этой странице',
-      likes: 3,
-      isLiked: false,
-      numComment: 0,
-      isEdit: false
-    },
-    {
-      name: 'Варвара Н.',
-      year: 22,
-      month: 2,
-      day: 13,
-      hour: 19,
-      minute: 22,
-      text: 'Мне нравится как оформлена эта страница! ❤',
-      likes: 73,
-      isLiked: true,
-      numComment: 1,
-      isEdit: false
-    },
-  ];
+
+  let comments = [ /*объявление массива комментариев*/];
 
   const nameForm = document.getElementById('add-form-name');
   const commentForm = document.getElementById('add-form-text');
   const button = document.getElementById('add-form-button');
   const listElement = document.getElementById('comments');
 
-  function dateCheck(num) { // прописывание времени комментария
-    let result = ''
 
-    if (num < 10) {
-      result = '0' + num;
+  function getCommentsFromServer() {
+
+    let fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/elena-rybakova/comments', {
+      method: 'GET'
+    });
+
+    fetchPromise.then((response) => {
+      const jsonPromise = response.json();
+
+      jsonPromise.then((responseData) => {
+        let i = 0;
+        const appComments = responseData.comments.map((comment) => {
+          i++;
+          return {
+            name: comment.author.name,
+            date: new Date(comment.date),
+            text: comment.text,
+            likes: comment.likes,
+            isLiked: false,
+            numComment: i - 1,
+            isEdit: false
+          }
+        });
+
+        comments = appComments;
+        renderComments();
+      })
+    });
+  };
+
+  function dateRender(time) { // прописывание времени комментария
+    let hours = '';
+    let result = '';
+    let min = '';
+
+    if (time.getHours() < 10) {
+      hours = '0' + time.getHours();
     } else {
-      result = num;
+      hours = time.getHours();
     }
+
+    if (time.getMinutes() < 10) {
+      min = '0' + time.getMinutes();
+    } else {
+      min = time.getMinutes();
+    }
+
+    result = `${time.getDate()}.${time.getMonth()+1}.${time.getFullYear() - 2000} ${hours}:${min}`;
 
     return result;
   }
 
   function renderComments() { //рендер комментариев
+
     const commentsHTML = comments.map((student) => {
       let liked = '';
       let textEdit = '';
@@ -96,7 +112,7 @@
       return `<li class="comment" data-numComments="${student.numComment}">
       <div class="comment-header">
         <div>${student.name}</div>
-        <div>${dateCheck(student.day)}.${dateCheck(student.month)}.${dateCheck(student.year)} ${dateCheck(student.hour)}:${dateCheck(student.minute)}</div>
+        <div>${dateRender(student.date)}</div>
       </div>
       <div class="comment-body">` +
         textEdit +
@@ -119,7 +135,7 @@
     reply();
   }
 
-  renderComments();
+  getCommentsFromServer();
 
   function addComment() { //добавление комментария
     let date = new Date();
@@ -154,29 +170,18 @@
       .replaceAll('QUOTE_BEGIN', "<div class='quote'>")
       .replaceAll('QUOTE_END', '</div>');
 
-    if (safeComm.startsWith('>')) {
-
-    }
-
-
-    comments.push({
-      name: safeName,
-      text: safeComm,
-      isLiked: false,
-      likes: 0,
-      year: date.getFullYear() - 2000,
-      month: date.getMonth(),
-      day: date.getDate(),
-      hour: date.getHours(),
-      minute: date.getMinutes(),
-      numComment: comments.length,
-      isEdit: false
-    });
+    let fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/elena-rybakova/comments', {
+      method: 'POST',
+      body: JSON.stringify({
+        text: safeComm,
+        name: safeName,
+      })
+    })
 
     nameForm.value = '';
     commentForm.value = '';
 
-    renderComments();
+    getCommentsFromServer();
   }
 
   button.disabled = true; //проверка заполненности полей
@@ -212,13 +217,14 @@
     }
 
     let result = comments.pop();
-    renderComments();
+    getCommentsFromServer();
   })
 
   function initEventListeners() { //работа лайков
     let likeButtons = document.querySelectorAll('.like-button');
     for (let likeButton of likeButtons) {
       likeButton.addEventListener('click', (event) => {
+
         event.stopPropagation();
         let numComm = likeButton.getAttribute('data-numComments');
 
@@ -229,6 +235,8 @@
           comments[numComm].isLiked = !comments[numComm].isLiked;
           comments[numComm].likes++;
         }
+
+        console.log('лайк сработал', comments[numComm].isLiked);
 
         renderComments();
       })
@@ -250,7 +258,7 @@
           comments[numComm].text = txtEdit.value;
         }
 
-        renderComments();;
+        getCommentsFromServer();
       });
     }
   }
