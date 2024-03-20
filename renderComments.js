@@ -66,6 +66,7 @@ export function renderComments(comments) {
   });
 
   initLikeButtonListener(comments);
+  
   const textEl = document.getElementById("add-form-text");
   initReplayListener({ textEl, comments });
   

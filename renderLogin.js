@@ -1,5 +1,5 @@
 import { login, setLoading, setToken } from "./api.js"
-import { renderForm } from "./renderForm.js";
+import { setLogin, renderForm } from "./renderForm.js";
 
 
 
