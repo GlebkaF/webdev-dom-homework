@@ -57,7 +57,19 @@
       isLiked: true,
     },
   ];
+  //мои мутки с ответом на коментарий
+  const replyComment = () => {
+    const reponseComment = document.querySelectorAll('.comment');
+    //пытался, не вышло, если подскажут как сделать этим способом, буду рад
+    // for (const reponseComment of reponseComments) {
+    //   reponseComment.addEventListener('click', () => {
+    reponseComment.forEach((el, index) => {
+      el.addEventListener('click', () => {
 
+        TextComent.value = `${commentators[index].comment}\n${commentators[index].name}`
+      })
+    });
+  }
   const renderComents = () => {
     const comentHTML = commentators.map((commentator, index) => {
       return `<li class="comment">
@@ -103,6 +115,7 @@
           commentators[index].isLiked = false;
         };
         renderComents();
+        replyComment();
       })
     }
   }
@@ -148,19 +161,7 @@
   });
 
 
-  //мои мутки с ответом на коментарий
-  const replyComment = () => {
-    const reponseComment = document.querySelectorAll('.comment');
-    //пытался, не вышло, если подскажут как сделать этим способом, буду рад
-    // for (const reponseComment of reponseComments) {
-    //   reponseComment.addEventListener('click', () => {
-    reponseComment.forEach((el, index) => {
-      el.addEventListener('click', () => {
 
-        TextComent.value = `${commentators[index].comment}\n${commentators[index].name}`
-      })
-    });
-  }
   replyComment();
 
 </script>
