@@ -1,7 +1,10 @@
-import { login, setLoading, setToken } from "./api.js"
-import { setLogin, renderForm } from "./renderForm.js";
+import { login, setLoading, setToken } from "./api.js";
 
 
+export let userLogin;
+export const setLogin = (newUserLogin) => {
+  userLogin = newUserLogin;
+};
 
 export const renderLogin = ({ fetchGetAndRenderComments }) => {
   const appElement = document.getElementById("app");
@@ -41,11 +44,13 @@ export const renderLogin = ({ fetchGetAndRenderComments }) => {
         return responseData;
       })
       .then((responseData) => {
-        const userName = responseData.user.name;
-        setLogin(true);
+        console.log("login")
+        //const userName = responseData.user.name;
+        setLogin(responseData.user.name);
         setLoading(false);
         fetchGetAndRenderComments();
-        renderForm(userName);
+        
+        
       });
   });
 };

@@ -8,12 +8,12 @@ export const comLoader = () => {
 };
 
 export const formLoader = () => {
-  const appFormLoader = document.getElementById("app");
+
+  const appFormLoader = document.getElementById("add-form");
   if (isLoading) {
     appFormLoader.innerHTML = `<div class="loader" id="form-loader">
     Комментарий добавляется...
   </div>`;
-  } else {
-    appFormLoader.innerHTML = ``;
+  
   }
 };

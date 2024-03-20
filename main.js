@@ -3,11 +3,11 @@ import { renderComments } from "./renderComments.js";
 import { formatDate } from "./formatdate.js";
 
 import { comLoader } from "./renderLoader.js";
-import { renderForm, userLogin } from "./renderForm.js";
 
 let comments = [];
 
 export const fetchGetAndRenderComments = () => {
+  console.log("fetchGetAndRenderComments");
   fetchGet()
     .then((responseData) => {
       const appComments = responseData.comments.map((comment) => {
@@ -21,11 +21,11 @@ export const fetchGetAndRenderComments = () => {
         };
       });
       setLoading(false);
-      // comLoader();
+       // comLoader();
       
       comments = appComments;
       renderComments(comments);
-
+      
       // const loginTextEl = document.getElementById("login-text");
       // userLogin ? (loginTextEl.hidden = true) : (loginTextEl.hidden = false);
     })
@@ -46,8 +46,10 @@ export const fetchGetAndRenderComments = () => {
         return;
       }
     });
+    
 };
 fetchGetAndRenderComments();
-renderForm();
+
+
 //renderComments(comments);
 

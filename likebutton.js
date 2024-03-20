@@ -1,4 +1,5 @@
 import {renderComments} from "./renderComments.js"
+import { userLogin } from "./renderLogin.js";
 
 function delay(interval = 300) {
     return new Promise((resolve) => {
@@ -9,6 +10,8 @@ function delay(interval = 300) {
   }
 
 export const initLikeButtonListener = (comments) => {
+  if (!userLogin) return;
+  console.log("initLikeButtonListener")
   const likeButtonElements = document.querySelectorAll(".like-button");
   likeButtonElements.forEach((el, index) => {
     el.addEventListener("click", () => {

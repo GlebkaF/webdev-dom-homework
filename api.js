@@ -13,10 +13,12 @@ export const setLoading = (newLoading) => {
   isLoading = newLoading;
 };
 
+
+
 export function fetchGet() {
   isLoading = true;
-  comLoader();
-
+  //comLoader();
+  console.log("fetchGet");
   return fetch(commentsURL, {
     method: "GET",
   })
@@ -34,8 +36,8 @@ export function fetchGet() {
 export function fetchPost({ name, text }) {
   isLoading = true;
   formLoader();
-  const formEl = document.getElementById("add-form");
-  formEl.classList.add("add-form_displayNone");
+  //const formEl = document.getElementById("add-form");
+  //formEl.classList.add("add-form_displayNone");
   return fetch(commentsURL, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
