@@ -73,8 +73,25 @@
 		const acceptComment = document.getElementById('textarea-accept-comment');
 		const buttonDelete =  document.getElementById('delete-button');
 
+		// ДЗ API №1
+		// Получаю данные из API 
+		const fetchPromise = fetch(
+			"https://wedev-api.sky.pro/api/v1/Pavel-Kalashnikoff/comments",
+			{
+				method: "GET"
+			}
+		);
+		fetchPromise.then((response) => {
+			const jsonPromise = response.json();
+			jsonPromise.then((responseData) => {
+				console.log(responseData);
+
+				const = responsData.todos
+			});
+		});
+
 		//Добавляю массив на основе разметки HTML 
-		const commentators = [
+		let commentators = [
 			{
 				name: "Глеб Фокин",
 				data: "12.02.22 12:18",
