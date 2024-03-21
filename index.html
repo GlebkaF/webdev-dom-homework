@@ -55,7 +55,7 @@
     },
   ];
 
-  const renderComments = () => {
+  const renderComments = (likeButtons) => {
     return (listComment.innerHTML = comments
       .map((comment, index) => {
         return `<li class="comment">
@@ -77,28 +77,30 @@
           </li>`;
       })
       .join(""));
+
+    likeButtons();
   };
 
   const likeButtons = () => {
     const buttonLikes = document.querySelectorAll(".like-button");
     for (const buttonLike of buttonLikes) {
       buttonLike.addEventListener("click", () => {
-        if (comments[buttonLike.dataset.index].checkLike === true) {
-          comments[buttonLike.dataset.index].checkLike = false;
-          comments[buttonLike.dataset.index].countLikes--;
-        } else if (comments[buttonLike.dataset.index].checkLike === false) {
-          comments[buttonLike.dataset.index].checkLike = true;
-          comments[buttonLike.dataset.index].countLikes++;
+        const index = buttonLike.dataset.index;
+        if (comments[index].checkLike) {
+          comments[index].checkLike = false;
+          comments[index].countLikes--;
+        } else {
+          comments[index].checkLike = true;
+          comments[index].countLikes++;
         }
         renderComments();
-        likeButtons();
       });
     }
   };
 
 
   renderComments();
-  likeButtons();
+
 
   document.addEventListener("keyup", (key) => {
     if (key.code === "Enter") {
@@ -165,14 +167,14 @@
       btn.disabled = true;
 
       renderComments();
-      likeButtons();
+
     })
   );
 
   deleteButton.addEventListener("click", () => {
     comments.pop();
     renderComments();
-    likeButtons();
+
   });
 </script>
 
