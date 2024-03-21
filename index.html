@@ -60,7 +60,7 @@
 
     for (likeButtonElement of likeButtonsElements) {
       likeButtonElement.addEventListener("click", (event) => {
-        // event.stopPropagation();
+
         const indexL = likeButtonElement.dataset.index;
         const comment = comments[indexL];
         comment.likes = comment.isLiked ? comment.likes - 1 : comment.likes + 1;
