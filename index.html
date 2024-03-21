@@ -33,6 +33,12 @@
     </div>
   </body>
 
+  <style>
+    .error {
+      background-color: pink;
+    }
+  </style>
+
   <script>
     const comments = [
       {
@@ -107,10 +113,17 @@
 
   const addButton = document.querySelector(".add-form-button");
   addButton.addEventListener("click", () => {
-    if (!name.value || !text.value) {
-      console.error("Заполните форму");
+    name.classList.remove("error");
+    text.classList.remove("error");
+    if (!name.value.trim()) {
+      name.classList.add("error");
       return;
     }
+    else if (!text.value.trim()) {
+      text.classList.add("error");
+      return;
+    };
+
 
     comments.push({
       name: name.value,
