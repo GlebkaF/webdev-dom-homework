@@ -31,7 +31,7 @@ export function fetchGet() {
 
 export function fetchPost({ name, text }) {
   isLoading = true;
-  formLoader();
+ // formLoader();
   return fetch(commentsURL, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
