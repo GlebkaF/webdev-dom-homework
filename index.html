@@ -90,9 +90,11 @@
 				console.log(responseData);
 
 				commentators = responseData.comments.map((comment) => {
+					const currentDate = new Date(comment.date).toLocaleDateString('ru-Ru');
+					const currentTime = new Date(comment.date).toLocaleTimeString('ru-RU');
 					return {
 						name: comment.author.name,
-						data: new Date (comment.date),
+						data: `${currentDate} ${currentTime}`,
 						comment: comment.text,
 						like: comment.likes, 
 						isLike: comment.isLiked
@@ -234,10 +236,12 @@
 
 			// Клик на кнопку "Написать"
 			buttonElement.addEventListener("click", () => {
+				
 				// Перенёс объявление переменных даты сюда.. Аааа, понял логику) 
-				const currentDate = new Date();
-			const formattedDate = currentDate.toLocaleDateString('ru-RU');
-			const formattedTime = `${currentDate.getHours().toString().padStart(2, '0')}:${currentDate.getMinutes().toString().padStart(2, '0')}`;
+				// const currentDate = new Date();
+			// const formattedDate = currentDate.toLocaleDateString('ru-RU');
+			// const formattedTime = `${currentDate.getHours().toString().padStart(2, '0')}:${currentDate.getMinutes().toString().padStart(2, '0')}`;
+		
 			// 	//Добавляю нового комментатора
 			// 	commentators.push({
 			// 	name: acceptName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
@@ -246,7 +250,8 @@
 			// 	like: "0",
 			// 	isLike: false,
 			// });
-				//Добавляю новый коммент в список
+		
+			//Добавляю новый коммент в список
 				const featchPushComment = fetch(
 					"https://wedev-api.sky.pro/api/v1/Pavel-Kalashnikoff/comments",
 					{
