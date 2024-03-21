@@ -36,7 +36,7 @@
   const commentsElement = document.getElementById('comments')
 
   // массив данных c каждым пользователем
-  const arrayUsers = [
+  let arrayUsers = [
     {
       name: "Глеб Фокин",
       dateOfComment: "12.02.22 12:18",
@@ -116,28 +116,66 @@
 
 
   //API домашка
-  const promiseFetch = fetch('https://wedev-api.sky.pro/api/v1/anka-anny/comments', {
-    method: "GET",
-  });
-  console.log(promiseFetch);
-
-  fetchPromise.then((response) => {
-    const jsonPromise = response.json();
-    jsonPromise.then((responseData) => {
-      const appComments = responseData.comments.map((comment) => {
-        return {
-          name: comment.author.name,
-          date: new Date(comment.date).toLocaleDateString(), //почитать
-          text: comment.text,
-          likesCount: comment.likes,
-          isLiked: false,
-        }
-      });
-
-      comments = appComments;
-      renderComments();
+  function fetchPromiceArr() {
+    const promiseFetch = fetch('https://wedev-api.sky.pro/api/v1/anka-anny/comments', {
+      method: "GET",
     });
-  });
+    console.log(promiseFetch);
+
+    promiseFetch.then((response) => {
+      const jsonPromise = response.json();
+      jsonPromise.then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+
+          const dateInComment = (commentDateApi) => {
+            let dateApi = new Date()
+            const nowDate = dateApi.getDate() < 10 ? '0' + dateApi.getDate() : dateApi.getDate()
+            const month = dateApi.getMonth() < 10 ? ('0' + (dateApi.getMonth() + 1)) : (dateApi.getMonth() + 1)
+            const minutes = dateApi.getMinutes() < 10 ? '0' + dateApi.getMinutes() : dateApi.getMinutes()
+            let commentDate = (nowDate) + "." + (month) + "." + dateApi.getFullYear() % 1000 + " " + dateApi.getHours() + ":" + (minutes)
+            return commentDate
+          }
+
+          return {
+            name: comment.author.name,
+            date: dateInComment(comment.date),
+            text: comment.text,
+            likes: comment.likes,
+            validButtonLike: false,
+          }
+        });
+
+        // comments = appComments;
+        arrayUsers = appComments;
+        const jsonObj = JSON.stringify(appComments)
+        console.log(jsonObj);
+
+
+        let arrayUsers = [
+          {
+            name: "Глеб Фокин",
+            dateOfComment: "12.02.22 12:18",
+            text: "Это будет первый комментарий на этой странице",
+            likes: 3,
+            validButtonLike: false,
+          },
+          {
+            name: "Варвара Н.",
+            dateOfComment: "13.02.22 19:22",
+            text: "Мне нравится как оформлена эта страница! ❤",
+            likes: 75,
+            validButtonLike: true,
+          }
+        ];
+        // Здесь надо переписать свой массив, а не тот, который указан по ссылке в API
+        // renderComments();
+        renderUsers();            // То же относитися и к рендеру
+      });
+    });
+  }
+
+  fetchPromiceArr();              // Выше мы объявляем функцию, теперь мы ее вызываем, чтобы загрузить первоначальные данные с сервера
+
 
   // Работа кнопки при нажатии (поле Имя и поле текст)
   buttonElement.addEventListener('click', () => {
@@ -159,7 +197,7 @@
     const nowDate = currentDate.getDate() < 10 ? '0' + currentDate.getDate() : currentDate.getDate()
     const month = currentDate.getMonth() < 10 ? ('0' + (currentDate.getMonth() + 1)) : (currentDate.getMonth() + 1)
     const minutes = currentDate.getMinutes() < 10 ? '0' + currentDate.getMinutes() : currentDate.getMinutes()
-    let commentDate = (nowDate) + "." + (month) + "." + currentDate.getFullYear() + " " + currentDate.getHours() + ":" + (minutes)
+    let commentDate = (nowDate) + "." + (month) + "." + currentDate.getFullYear() % 1000 + " " + currentDate.getHours() + ":" + (minutes)
 
     arrayUsers.push({
       name: safeCode(nameInputElement.value),
