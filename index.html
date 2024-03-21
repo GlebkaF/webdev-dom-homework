@@ -33,6 +33,7 @@
     fetch("https://wedev-api.sky.pro/api/v1/:andrey-stepanov/comments")
       .then((response) => response.json())
       .then((data) => {
+        commentArr.splice(0, commentArr.length);
         commentArr.push(...data.comments);
       })
       .then(() => {
