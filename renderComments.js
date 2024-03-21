@@ -109,16 +109,14 @@ function formAction() {
           textEl.value = "";
           setLoading(false);
           formLoader();
-          formEl.classList.remove("add-form_displayNone");
         })
         .catch((error) => {
           setLoading(false);
           formLoader();
-          formEl.classList.remove("add-form_displayNone");
-
           if (error.message === "Неправильный запрос") {
             alert("Длина имени и комментария должна быть более 3 символов");
             console.warn(error);
+            
             return;
           }
           if (error.message === "Сервер сломался") {
