@@ -36,22 +36,23 @@
   const commentsElement = document.getElementById('comments')
 
   // массив данных c каждым пользователем
-  let arrayUsers = [
-    {
-      name: "Глеб Фокин",
-      dateOfComment: "12.02.22 12:18",
-      text: "Это будет первый комментарий на этой странице",
-      likes: 3,
-      validButtonLike: false,
-    },
-    {
-      name: "Варвара Н.",
-      dateOfComment: "13.02.22 19:22",
-      text: "Мне нравится как оформлена эта страница! ❤",
-      likes: 75,
-      validButtonLike: true,
-    }
-  ];
+  let arrayUsers = [];
+  // let arrayUsers = [
+  //   {
+  //     name: "Глеб Фокин",
+  //     dateOfComment: "12.02.22 12:18",
+  //     text: "Это будет первый комментарий на этой странице",
+  //     likes: 3,
+  //     validButtonLike: false,
+  //   },
+  //   {
+  //     name: "Варвара Н.",
+  //     dateOfComment: "13.02.22 19:22",
+  //     text: "Мне нравится как оформлена эта страница! ❤",
+  //     likes: 75,
+  //     validButtonLike: true,
+  //   }
+  // ];
 
   const likeButton = () => {
     const likeButtonElements = document.querySelectorAll('.like-button')
@@ -145,28 +146,11 @@
           }
         });
 
-        // comments = appComments;
+        // comments = appComments; // POST для него
         arrayUsers = appComments;
-        const jsonObj = JSON.stringify(appComments)
-        console.log(jsonObj);
+        // const jsonObj = JSON.stringify(appComments)
+        // console.log(jsonObj);
 
-
-        let arrayUsers = [
-          {
-            name: "Глеб Фокин",
-            dateOfComment: "12.02.22 12:18",
-            text: "Это будет первый комментарий на этой странице",
-            likes: 3,
-            validButtonLike: false,
-          },
-          {
-            name: "Варвара Н.",
-            dateOfComment: "13.02.22 19:22",
-            text: "Мне нравится как оформлена эта страница! ❤",
-            likes: 75,
-            validButtonLike: true,
-          }
-        ];
         // Здесь надо переписать свой массив, а не тот, который указан по ссылке в API
         // renderComments();
         renderUsers();            // То же относитися и к рендеру
