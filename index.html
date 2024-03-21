@@ -90,7 +90,6 @@
         comment : "Это будет первый комментарий на этой странице",
         likes : 3,
         isLiked: false,
-        isEdit: true,
         
       },
       {
@@ -99,23 +98,18 @@
         comment : "Мне нравится как оформлена эта страница! ❤",
         likes : 75,
         isLiked: false,
-        isEdit: true,
       },
     ];
-    
 
     const renderCommentators = () => {
       const commentatorsHtml = сommentators.map((сommentator, index) => {
-        return 
-        `<li class="comment">
+        return `<li data-index='${index}' class="comment">
            <div class="comment-header">
             <div>${сommentator.name}</div>
             <div>${сommentator.date}</div>
            </div>
-           <div data-text="${сommentator.comment}" class="comment-body">
-            <div class="comment-text">${сommentator.comment}</div>
-            <div data-change-text="${сommentator.comment}" ${сommentators[index].isEdit ? `<textarea class="comment-edited-text"> ${сommentator[index].comment} </textarea>` : `<div class="comment-text"> ${сommentator[index].comment} </div>` }
-            <button data-change-title data-index="${index}" class ="editButton" ${сommentators[index].isEdit? "Сохранить":"Редактировать"} >Редактировать</button>
+           <div data-text="${сommentator.comment}" data-index="${index}" class="comment-body">
+           <div class="comment-text">${сommentator.comment}</div>
            </div>
            <div class="comment-footer">
             <div class="likes">
@@ -123,47 +117,16 @@
              <button data-like="${сommentator.likes}" data-index="${index}" class="like-button ${сommentators[index].isLiked ?'-active-like' : 'like-button'}"></button>
             </div>
            </div>
-        </li>`;
+         </li>`;
       })
       .join("");
 
+      
       listElement.innerHTML = commentatorsHtml;
       
       initEventListeners();
-      editEventListeners()
+      
     };
-
-    const editEventListeners = () => { 
-
-      const editButtonElements = document.querySelectorAll(".editButton"); 
-
-      for ( const editButtonEl of editButtonElements) { 
-
-        const buttonIndex = editButtonEl.dataset.index; 
-        const changeTitle = editButtonEl.dataset.changeTitle;
-        const changeText = editButtonEl.dataset.changeText;
-       
-        editButtonEl.addEventListener("click", () => { 
-
-          if (сommentator[buttonIndex].isEdit === false) {
-
-            changeTitle = "Сохранить";
-
-            сommentators[buttonIndex].isEdit = true;
-
-          } else if (сommentators[buttonIndex].isEdit = true);
-
-            changeTitle = "Редактировать";
-
-            сommentators[buttonIndex].isEdit = false;
-
-          renderCommentators();
-           
-        });
-      };
-    };
-   
-    editEventListeners();
 
     const initEventListeners = () => {
       const likeButtonElement = document.querySelectorAll(".like-button");
@@ -172,7 +135,8 @@
         const index = likeButtonEl.dataset.index;
         const counter = likeButtonEl.dataset.like;
 
-        likeButtonEl.addEventListener("click", () => {
+        likeButtonEl.addEventListener("click", (e) => {
+          e.stopPropagation();
 
           if (сommentators[index].isLiked === false) {
 
@@ -195,7 +159,27 @@
     }
     renderCommentators();
 
-    
+    const answerComment = () => {
+    const commentsElements = document.querySelectorAll('.comment');
+     for (const commentsEl of commentsElements) {
+       commentsEl.addEventListener('click', () => {
+        console.log('Привет');
+
+        const index = commentsEl .dataset.index;
+        
+        textElement.value = `> ${сommentators[index].comment} ${сommentators[index].name}`;
+
+        initEventListeners();
+
+       })
+      }
+    }
+    answerComment();
+
+    const sanitizeHtml = (htmlString) => {
+      return htmlString.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("&", "&amp;").replaceAll('"', "&quot;");
+    };
+
     buttonElement.addEventListener("click", () => {
       nameElement.classList.remove("error");
       textElement.classList.remove("error");
@@ -223,14 +207,15 @@
       }; 
 
       сommentators.push({
-        name : nameElement.value,
+        name : sanitizeHtml(nameElement.value),
         date : formatTime(currentDate),
-        comment : textElement.value,
+        comment : sanitizeHtml(textElement.value),
         likes : 0,
-        isLiked: true,
+        isLiked: false,
       })
 
       renderCommentators();
+      answerComment();
       nameElement.value = "";
       textElement.value = "";
     });
