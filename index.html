@@ -187,11 +187,15 @@
       body: JSON.stringify({
         text: safeComm,
         name: safeName,
+        forceError: true
       })
     })
     .then(() => {
       addForm.style.display = 'flex';
       loader.style.display = 'none';
+    })
+    .catch(() => {
+        console.log('Произошла ошибка');  
     })
 
     nameForm.value = '';
