@@ -27,6 +27,8 @@
     </div>
   </div>
 </body>
+
+
 <script>
   const writeButton = document.getElementById("write-button");
   const deleteButton = document.getElementById("delete-button");
@@ -56,27 +58,27 @@
   ];
 
   const renderComments = (likeButtons) => {
-    return (listComment.innerHTML = comments
+    listComment.innerHTML = comments
       .map((comment, index) => {
         return `<li class="comment">
-            <div class="comment-header">
-              <div>${comment.userName}</div>
-              <div>${comment.dateBox}</div>
+          <div class="comment-header">
+            <div>${comment.userName}</div>
+            <div>${comment.dateBox}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.textComment}
             </div>
-            <div class="comment-body">
-              <div class="comment-text">
-                ${comment.textComment}
-              </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.countLikes}</span>
+              <button data-index ="${index}" class="like-button ${comment.checkLike ? '-active-like' : ''}"></button>
             </div>
-            <div class="comment-footer">
-              <div class="likes">
-                <span class="likes-counter">${comment.countLikes}</span>
-                <button data-index ="${index}" class="like-button ${comment.checkLike === true ? '-active-like' : ''}"></button>
-              </div>
-            </div>
-          </li>`;
+          </div>
+        </li>`;
       })
-      .join(""));
+      .join("");
 
     likeButtons();
   };
@@ -98,10 +100,7 @@
     }
   };
 
-
-  renderComments();
-
-
+  renderComments(likeButtons); 
   document.addEventListener("keyup", (key) => {
     if (key.code === "Enter") {
       if (!btn.classList.contains("empty")) {
@@ -166,16 +165,14 @@
       btn.classList.add("empty");
       btn.disabled = true;
 
-      renderComments();
-
+      renderComments(likeButtons); 
     })
   );
 
   deleteButton.addEventListener("click", () => {
     comments.pop();
-    renderComments();
-
+    renderComments(likeButtons); 
   });
 </script>
-
+</body>
 </html>
