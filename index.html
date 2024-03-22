@@ -126,39 +126,48 @@
     promiseFetch.then((response) => {
       const jsonPromise = response.json();
       jsonPromise.then((responseData) => {
-        const appComments = responseData.comments.map((comment) => {
+        arrayUsers = responseData.comments.map((comment) => {
 
           const dateInComment = (commentDateApi) => {
-            let dateApi = new Date()
+            let dateApi = new Date(commentDateApi)
             const nowDate = dateApi.getDate() < 10 ? '0' + dateApi.getDate() : dateApi.getDate()
             const month = dateApi.getMonth() < 10 ? ('0' + (dateApi.getMonth() + 1)) : (dateApi.getMonth() + 1)
             const minutes = dateApi.getMinutes() < 10 ? '0' + dateApi.getMinutes() : dateApi.getMinutes()
-            let commentDate = (nowDate) + "." + (month) + "." + dateApi.getFullYear() % 1000 + " " + dateApi.getHours() + ":" + (minutes)
+            let commentDate = (nowDate) + "." + (month) + "." + dateApi.getFullYear() % 100 + " " + dateApi.getHours() + ":" + (minutes)
             return commentDate
           }
 
           return {
             name: comment.author.name,
-            date: dateInComment(comment.date),
+            dateOfComment: dateInComment(comment.date),
             text: comment.text,
             likes: comment.likes,
             validButtonLike: false,
           }
         });
 
-        // comments = appComments; // POST для него
-        arrayUsers = appComments;
-        // const jsonObj = JSON.stringify(appComments)
-        // console.log(jsonObj);
-
-        // Здесь надо переписать свой массив, а не тот, который указан по ссылке в API
-        // renderComments();
-        renderUsers();            // То же относитися и к рендеру
+        renderUsers();
       });
     });
   }
 
-  fetchPromiceArr();              // Выше мы объявляем функцию, теперь мы ее вызываем, чтобы загрузить первоначальные данные с сервера
+  fetchPromiceArr();
+
+  function postPromise() {
+    fetch('https://wedev-api.sky.pro/api/v1/anka-anny/comments', {
+      method: "POST",
+      body: JSON.stringify({ "text": textInputElement.value.trim(), "name": nameInputElement.value.trim() })
+    })
+      .then( (response) => {
+        if (response.status === 400)
+          console.log('ошибка');
+        if (response.status === 201)  {
+          console.log('всё прошло успешно!')
+          fetchPromiceArr()
+        }
+      })
+      .catch(() => console.log('Ошибочка!'));
+  }
 
 
   // Работа кнопки при нажатии (поле Имя и поле текст)
@@ -181,17 +190,19 @@
     const nowDate = currentDate.getDate() < 10 ? '0' + currentDate.getDate() : currentDate.getDate()
     const month = currentDate.getMonth() < 10 ? ('0' + (currentDate.getMonth() + 1)) : (currentDate.getMonth() + 1)
     const minutes = currentDate.getMinutes() < 10 ? '0' + currentDate.getMinutes() : currentDate.getMinutes()
-    let commentDate = (nowDate) + "." + (month) + "." + currentDate.getFullYear() % 1000 + " " + currentDate.getHours() + ":" + (minutes)
+    let commentDate = (nowDate) + "." + (month) + "." + currentDate.getFullYear() % 100 + " " + currentDate.getHours() + ":" + (minutes)
 
-    arrayUsers.push({
-      name: safeCode(nameInputElement.value),
-      dateOfComment: commentDate,
-      text: safeCode(textInputElement.value).replaceAll('\n', '<br>'),
-      likes: 0,
-      validButtonLike: false
-    })
+    postPromise()
 
-    renderUsers();
+    // arrayUsers.push({
+    //   name: safeCode(nameInputElement.value),
+    //   dateOfComment: commentDate,
+    //   text: safeCode(textInputElement.value).replaceAll('\n', '<br>'),
+    //   likes: 0,
+    //   validButtonLike: false
+    // })
+
+    // renderUsers();
 
     nameInputElement.value = '';
     textInputElement.value = '';
