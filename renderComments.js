@@ -8,6 +8,8 @@ import { userInput1, userInput2 } from "./userinput.js";
 import { fetchPost } from "./api.js";
 import { formLoader } from "./renderLoader.js";
 
+export let textValue;
+
 export const textEl = document.getElementById("add-form-text");
 
 export function renderComments(comments) {
@@ -19,9 +21,8 @@ export function renderComments(comments) {
       ? `
       <div id="add-form" class="add-form">
     <input id="add-form-name" readonly type="text" class="add-form-name" value="${userLogin}" />
-    <textarea id="add-form-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
-      rows="4"></textarea>
-    <div class="add-form-row">
+    <textarea id="add-form-text" type="textarea" class="add-form-text" rows="4" placeholder="Введите ваш коментарий"> </textarea>
+     <div class="add-form-row">
       <button id="add-form-button" class="add-form-button">Написать</button>
     </div>`
       : `<div id="login-text" class="loader">Чтобы добавить комментарий, <span class="login-link"  id="login-link">авторизуйтесь</span></div>`
@@ -102,7 +103,7 @@ function authAction() {
   });
 }
 
-function formAction() {
+export function formAction() {
   if (!userLogin) return;
   const nameEl = document.getElementById("add-form-name");
   const textEl = document.getElementById("add-form-text");
@@ -128,10 +129,11 @@ function formAction() {
           formLoader();
         })
         .catch((error) => {
-         
+        // debugger
           if (error.message === "Неправильный запрос") {
             alert("Длина имени и комментария должна быть более 3 символов");
             console.warn(error);
+            textValue = textEl.value;
             setLoading(true);
             formLoader();
             return;
