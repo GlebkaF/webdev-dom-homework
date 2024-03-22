@@ -117,15 +117,14 @@
 
 
   //API домашка
-  function fetchPromiceArr() {
-    const promiseFetch = fetch('https://wedev-api.sky.pro/api/v1/anka-anny/comments', {
-      method: "GET",
-    });
-    console.log(promiseFetch);
 
-    promiseFetch.then((response) => {
-      const jsonPromise = response.json();
-      jsonPromise.then((responseData) => {
+  // METHOD " GET "
+  function fetchPromiceArr() {
+    fetch('https://wedev-api.sky.pro/api/v1/anka-anny/comments', {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then((responseData) => {
         arrayUsers = responseData.comments.map((comment) => {
 
           const dateInComment = (commentDateApi) => {
@@ -148,27 +147,26 @@
 
         renderUsers();
       });
-    });
-  }
+  };
 
   fetchPromiceArr();
 
+  // METHOD " POST "
   function postPromise() {
     fetch('https://wedev-api.sky.pro/api/v1/anka-anny/comments', {
       method: "POST",
       body: JSON.stringify({ "text": textInputElement.value.trim(), "name": nameInputElement.value.trim() })
     })
-      .then( (response) => {
+      .then((response) => {
         if (response.status === 400)
           console.log('ошибка');
-        if (response.status === 201)  {
+        if (response.status === 201) {
           console.log('всё прошло успешно!')
           fetchPromiceArr()
         }
       })
       .catch(() => console.log('Ошибочка!'));
   }
-
 
   // Работа кнопки при нажатии (поле Имя и поле текст)
   buttonElement.addEventListener('click', () => {
