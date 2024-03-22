@@ -1,6 +1,7 @@
+import { renderComments } from "./renderComments.js";
 import { formLoader } from "./renderLoader.js";
 
-const commentsURL = "https://wedev-api.sky.pro/api/v2/:zinkevich/comments";
+const commentsURL = "https://wedev-api.sky.pro/api/v2/:evich/comments";
 const userURL = "https://wedev-api.sky.pro/api/user/login";
 
 export let token;
@@ -30,8 +31,8 @@ export function fetchGet() {
 }
 
 export function fetchPost({ name, text }) {
-  isLoading = true;
- // formLoader();
+  isLoading = false;
+  formLoader();
   return fetch(commentsURL, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },

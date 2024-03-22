@@ -13,8 +13,10 @@ export const textEl = document.getElementById("add-form-text");
 export function renderComments(comments) {
   console.log("renderComments");
   const appElement = document.getElementById("app");
-  const formHTML = `${userLogin
-    ? `
+
+  const formHTML = `${
+    userLogin
+      ? `
       <div id="add-form" class="add-form">
     <input id="add-form-name" readonly type="text" class="add-form-name" value="${userLogin}" />
     <textarea id="add-form-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
@@ -22,18 +24,21 @@ export function renderComments(comments) {
     <div class="add-form-row">
       <button id="add-form-button" class="add-form-button">Написать</button>
     </div>`
-    : `<div id="login-text" class="loader">Чтобы добавить комментарий, <span class="login-link"  id="login-link">авторизуйтесь</span></div>`
-    }`;
+      : `<div id="login-text" class="loader">Чтобы добавить комментарий, <span class="login-link"  id="login-link">авторизуйтесь</span></div>`
+  }`;
 
-    const fLoaderHTML = `${setLoading ? `<div class="loader" id="form-loader">Комментарий добавляется...</div>` :
-    `
-    <div id="add-form" class="add-form">
-  <input id="add-form-name" readonly type="text" class="add-form-name" value="${userLogin}" />
-  <textarea id="add-form-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
-    rows="4"></textarea>
-  <div class="add-form-row">
-    <button id="add-form-button" class="add-form-button">Написать</button>
-  </div>`}`;  
+  // const fLoaderHTML = `${
+  //   isLoading
+  //     ? `<div class="loader" id="form-loader">Комментарий добавляется...</div>`
+  //     : `
+  //   <div id="add-form" class="add-form">
+  // <input id="add-form-name" readonly type="text" class="add-form-name" value="${userLogin}" />
+  // <textarea id="add-form-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+  //   rows="4"></textarea>
+  // <div class="add-form-row">
+  //   <button id="add-form-button" class="add-form-button">Написать</button>
+  // </div>`
+  // }`;
 
   const commentsHtml = comments
     .map((comment, index) => {
@@ -52,33 +57,36 @@ export function renderComments(comments) {
         </div>
         <div class="comment-body">
           <div data-index="${index}" class="comment-text" style="white-space:pre-line">
-            <a class="replay-form-link" ${comment.isEdit ? "" : 'href="#add-form"'
-        }> ${editComment()}</a>
+            <a class="replay-form-link" ${
+              comment.isEdit ? "" : 'href="#add-form"'
+            }> ${editComment()}</a>
           </div>
         </div>
         <div class="comment-footer">
           <div class="likes">
-            <span data-index="${index}" class="likes-counter">${comment.like_count
-        }</span>
-            <button data-index="${index}" class="like-button ${comment.like_active ? "-active-like" : ""
-        }"></button>
+            <span data-index="${index}" class="likes-counter">${
+        comment.like_count
+      }</span>
+            <button data-index="${index}" class="like-button ${
+        comment.like_active ? "-active-like" : ""
+      }"></button>
           </div>
         </div >
       </li>`;
     })
     .join("");
 
-console.log(setLogin)
-const ff = setLogin ? fLoaderHTML : formHTML;
+  // const ff = userLogin ? fLoaderHTML : formHTML;
 
+  console.log(isLoading)
   appElement.innerHTML = `
   <ul id="list" class="comments">
     ${commentsHtml}
   </ul>
-  ${ff}
+  ${setLoading ? formHTML : "uhvrervekrjn"}
   </div>`;
 
-  setLoading(false);
+  setLoading(true);
 
   authAction();
   formAction();
@@ -116,17 +124,16 @@ function formAction() {
         .then(() => {
           buttonEl.disabled = true;
           textEl.value = "";
-           setLoading(false);
-          // formLoader();
+          setLoading(true);
+          formLoader();
         })
         .catch((error) => {
-          setLoading(false);
-          // formLoader();
-          console.log(isLoading);
-          console.log(textEl.value);
+         
           if (error.message === "Неправильный запрос") {
             alert("Длина имени и комментария должна быть более 3 символов");
             console.warn(error);
+            setLoading(true);
+            formLoader();
             return;
           }
           if (error.message === "Сервер сломался") {

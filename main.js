@@ -18,7 +18,7 @@ export const fetchGetAndRenderComments = () => {
           forceError: true,
         };
       });
-      setLoading(false);
+      setLoading(true);
             
       comments = appComments;
       renderComments(comments);
