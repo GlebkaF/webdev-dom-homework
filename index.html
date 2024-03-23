@@ -155,17 +155,26 @@
   function postPromise() {
     fetch('https://wedev-api.sky.pro/api/v1/anka-anny/comments', {
       method: "POST",
-      body: JSON.stringify({ "text": textInputElement.value.trim(), "name": nameInputElement.value.trim() })
+      body: JSON.stringify({ "text": textInputElement.value.trim(), "name": nameInputElement.value.trim(), forceError: true })
     })
       .then((response) => {
-        if (response.status === 400)
-          console.log('ошибка');
+        if (response.status === 400) throw new Error ('слишком короткий запрос. Укажи больше 3 символов')
+        if (response.status === 500 ) throw new Error ('ошибка на сервере')
         if (response.status === 201) {
           console.log('всё прошло успешно!')
           fetchPromiceArr()
         }
       })
-      .catch(() => console.log('Ошибочка!'));
+
+      .then(() => {
+        nameInputElement.value = '';
+        textInputElement.value = '';
+      })
+      .catch((error) => { if (error.message === 'Failed to fetch') {
+        alert('сломался интернет!')
+      } else{ 
+         alert(error.message)}
+      });
   }
 
   // Работа кнопки при нажатии (поле Имя и поле текст)
@@ -202,8 +211,6 @@
 
     // renderUsers();
 
-    nameInputElement.value = '';
-    textInputElement.value = '';
   });
 </script>
 
