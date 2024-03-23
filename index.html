@@ -40,8 +40,32 @@
   const TextComent = document.getElementById('text-coment');
 
 
+  
 
-  const commentators = [
+   function getComment () { const fetchPromis = fetch('https://wedev-api.sky.pro/api/v1/belyaev/comments', { method: "GET" })
+
+  fetchPromis.then((response) => {
+    jsonePromise = response.json();
+    jsonePromise.then((responseData) => {
+      const appComment = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: new Date(comment.date).toLocaleTimeString('sm', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }),
+          comment: comment.text,
+          likes: comment.likes,
+          isLiked: false,
+          isEdited: false
+        };
+      })
+      commentators = appComment
+      renderComents();
+    })
+  })};
+  getComment ();
+
+
+  // получить из хранилища данных
+  let commentators = [
     {
       name: "Глеб Фокин",
       date: "12.02.22 12:18",
@@ -57,6 +81,7 @@
       isLiked: true,
     },
   ];
+
   //мои мутки с ответом на коментарий
   const replyComment = () => {
     const reponseComment = document.querySelectorAll('.comment');
@@ -137,20 +162,29 @@
     if (inputName.value.trim() === "") { inputName.classList.add("error"); return; }
     if (TextComent.value.trim() === "") { TextComent.classList.add("error"); return; }
 
-    commentators.push({
-      name: inputName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-      date: DataText,
-      comment: TextComent.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-      likes: 0,
-      isLiked: false,
+
+    const fetchPromis = fetch('https://wedev-api.sky.pro/api/v1/belyaev/comments', {
+      method: "POST",
+      body: JSON.stringify({
+        name: inputName.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
+        text: TextComent.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
+      }),
     });
+    fetchPromis.then((response) => {
+      console.log(response);
+      const jsonPromise = response.json();
+      renderComents();
+      getComment ();
+    });
+
+
     initEventListernes();
     renderComents();
     inputName.value = "";
     TextComent.value = "";
     replyComment();
   });
-  renderComents()
+
   /// Удалить error при вводе
   inputName.addEventListener('input', () => {
     inputName.classList.remove('error');
