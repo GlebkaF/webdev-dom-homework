@@ -8,9 +8,15 @@
 
   <body>
     <div class="container">
+      <div class="loading">
+        <p>Пожалуйста, подождите, загружаю комментарии...</p>
+      </div>
       <ul class="comments">
         <!-- Убрали часть кода -->
       </ul>
+      <div class="adding">
+        <p>Комментарии добавляются...</p>
+      </div>
       <div class="add-form">
         <input
           type="text"
@@ -41,6 +47,32 @@
     .comment-newline {
       white-space: pre-line;
     }
+
+    .hide {
+      display: none;
+    }
+
+    @keyframes rotating {
+      from {
+        transform: rotate(0deg);
+      }
+
+      25% {
+        transform: rotate(30deg);
+      }
+
+      75% {
+        transform: rotate(-30deg);
+      }
+
+      to {
+        transform: rotate(0deg);
+      }
+    }
+
+    .-loading-like {
+      animation: rotating 2s linear infinite;
+    }
   </style>
 
   <script>
@@ -54,19 +86,31 @@
     const nameInputElement = document.querySelector(".add-form-name");
     const commentInputElement = document.querySelector(".add-form-text");
     const selfIdElement = document.querySelector(".self-id");
+    const commentsLoading = document.querySelector(".loading");
+    const commentsAdding = document.querySelector(".adding");
+    const addForm = document.querySelector(".add-form");
 
-    let comments = [];
+    commentsLoading.classList.remove("hide");
+    commentsAdding.classList.add("hide");
+    addForm.classList.remove("hide");
+    deleteButtonElement.classList.remove("hide");
+
+    let userComments = [];
 
     function fetchPromiseArr() {
-      const fetchPromise = fetch(
-        "https://wedev-api.sky.pro/api/v1/OlegGorin/comments",
-        {
-          method: "GET",
-        }
-      );
-
-      fetchPromise.then((response) => {
-        response.json().then((responseData) => {
+      fetch("https://wedev-api.sky.pro/api/v1/OlegGorin/comments", {
+        method: "GET",
+      })
+        .then((response) => {
+          // console.log("respobse" ,response);
+          if (response.status === 201 || response.status === 200) {
+            return response.json();
+          } else if (response.status === 500) {
+            return Promise.reject(new Error("Сервер недоступен"));
+          }
+          // return response.json();
+        })
+        .then((responseData) => {
           const appComments = responseData.comments.map((comment) => {
             return {
               name: comment.author.name,
@@ -86,10 +130,31 @@
               likeButton: false,
             };
           });
-          comments = appComments;
+
+          commentsLoading.classList.add("hide"); // скрываем надпись о загрузке комментариев с сервера
+          commentsAdding.classList.add("hide"); // скрываем надпись о добавлении записей на сервер
+          addForm.classList.remove("hide"); // активируем форму добавления комментариев
+          deleteButtonElement.classList.remove("hide"); // активируем кнопку "Удалить последний комментарий"
+
+          userComments = appComments;
           renderComments();
+          prepareInput();
+        })
+        .catch((error) => {
+          if (error.message === "Сервер недоступен") {
+            alert("Сервер недоступен, попробуйте позже");
+            fetchPromiseArr();
+          } else if (error.message === "Failed to fetch") {
+            alert("Неполадки интернета");
+            addButtonElement.disabled = true; // деактивируем кнопку "Написать"
+            addButtonElement.classList.add("error"); // меняем ее цвет
+            commentsAdding.classList.add("hide"); // скрываем надпись о добавлении записей на сервер
+            addForm.classList.remove("hide"); // активируем форму добавления комментариев
+          } else {
+            console.log(error);
+          }
+          console.warn(error);
         });
-      });
     }
 
     fetchPromiseArr();
@@ -99,23 +164,37 @@
 
       for (const likeButtonElement of likeButtonElements) {
         likeButtonElement.addEventListener("click", (event) => {
+          likeButtonElement.classList.add("-loading-like");
           const index = likeButtonElement.dataset.index;
           event.stopPropagation();
 
-          if (comments[index].likeButton === false) {
-            comments[index].likesCounter++;
-            comments[index].likeButton = true;
-          } else {
-            comments[index].likesCounter--;
-            comments[index].likeButton = false;
-          }
-          renderComments();
+          console.log(likeButtonElement.dataset);
+
+          delay(2000).then(() => {
+            userComments[index].likesCounter = userComments[index].likeButton
+              ? userComments[index].likesCounter - 1
+              : userComments[index].likesCounter + 1;
+            userComments[index].likeButton = !userComments[index].likeButton;
+            userComments[index].isLikeLoading = false;
+            renderComments();
+            prepareInput();
+          });
         });
       }
     };
-    changeLikeButton();
 
+    changeLikeButton();
     clearInput();
+
+    // Функция для имитации запросов в API
+    // Не смотрите особо на внутренности, мы разберемся с этим позже
+    function delay(interval = 300) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, interval);
+      });
+    }
 
     addButtonElement.disabled = true;
     addButtonElement.classList.add("error");
@@ -137,11 +216,30 @@
     });
 
     deleteButtonElement.addEventListener("click", (event) => {
-      comments.splice(comments.length - 1, 1);
+      userComments.splice(userComments.length - 1, 1);
       renderComments();
+      prepareInput();
       clearInput();
       event.stopPropagation();
     });
+
+    // deleteButtonElement.addEventListener("click", (event) => {
+    //   event.stopPropagation();
+
+    //   const id = deleteButtonElement.dataset.id;
+
+    //   fetch("https://wedev-api.sky.pro/api/v1/OlegGorin/comments" + id, {
+    //     method: "DELETE",
+    //   }).then((response) => {
+    //     response.json().then((responseData) => {
+    //       console.log(responseData.comments);
+    //       // { result: 'ok' }
+    //       // comments = responseData.comments;
+    //       renderComments();
+    //     });
+    //   });
+    //   renderComments();
+    // });
 
     const initEventListeners = () => {
       const commentElements = document.querySelectorAll(".comment");
@@ -152,7 +250,7 @@
 
           let QUOTE_BEGIN = "QUOTE_BEGIN";
           let QUOTE_END = "QUOTE_END";
-          commentInputElement.value = `> ${QUOTE_BEGIN} ${comments[index].text} \n\n${comments[index].name}, ${QUOTE_END}`;
+          commentInputElement.value = `> ${QUOTE_BEGIN} ${userComments[index].text} \n\n${userComments[index].name}, ${QUOTE_END}`;
         });
       }
     };
@@ -191,7 +289,6 @@
             .replaceAll("<", "&lt;")
             .replaceAll(">", "&gt;")
             .replaceAll('"', "&quot;"),
-          date: currentDate,
           text: commentInputElement.value
             .replaceAll("&", "&amp;")
             .replaceAll("<", "&lt;")
@@ -199,41 +296,85 @@
             .replaceAll('"', "&quot;")
             .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
             .replaceAll("QUOTE_END", "</div>"),
-          likesCounter: 0,
-          likeButton: false,
+          forceError: true,
         }),
-      }).then((response) => {
+      })
+        .then((response) => {
+          if (response.status === 201 || response.status === 200) {
+            // return response.json();
+            fetchPromiseArr();
+          } else if (response.status === 400) {
+            return Promise.reject(new Error("Неправильный запрос"));
+          } else {
+            return Promise.reject(new Error("Сервер недоступен"));
+          }
+        })
+        // .then(() => {
+        //   return fetchPromiseArr();
+        // })
+        .then(() => {
+          clearInput();
+        })
+        .catch((error) => {
+          if (error.message === "Сервер недоступен") {
+            alert("Сервер недоступен, попробуйте позже");
+            addButtonElement.disabled = false;
+            addButtonElement.classList.remove("error");
+            commentsAdding.classList.add("hide");
+            addForm.classList.remove("hide");
+            deleteButtonElement.classList.remove("hide");
+            renderComments();
+          } else if (error.message === "Неправильный запрос") {
+            alert(
+              "Поля 'Имя' и 'Комментарий' должны содержать хотя бы 3 символа"
+            );
+            commentsAdding.classList.add("hide");
+            addForm.classList.remove("hide");
+            deleteButtonElement.classList.remove("hide");
+            renderComments();
+            prepareInput();
+          } else if (error.message === "Failed to fetch") {
+            alert("Неполадки интернета");
+            addButtonElement.disabled = false;
+            addButtonElement.classList.remove("error");
+            commentsAdding.classList.add("hide");
+            addForm.classList.remove("hide");
+          } else {
+            console.log(error);
+          }
+        });
 
-        fetchPromiseArr();
-
-      });
+      commentsAdding.classList.remove("hide");
+      addForm.classList.add("hide");
+      deleteButtonElement.classList.add("hide");
 
       renderComments();
-      clearInput();
+      // clearInput();
     }
 
     const renderComments = () => {
-      const commentHTML = comments
+      const commentHTML = userComments
         .map((comment, index) => {
           let lkBtn = "";
-          if (comments[index].likeButton === true) {
+          if (userComments[index].likeButton === true) {
             lkBtn = "like-button -active-like";
+            // lkBtn = "like-button -loading-like";
           } else {
             lkBtn = "like-button";
           }
           return `<li data-index="${index}" class="comment">
             <div class="comment-header">
-              <div>${comments[index].name}</div>
-              <div>${comments[index].date}</div>
+              <div>${userComments[index].name}</div>
+              <div>${userComments[index].date}</div>
             </div>
             <div class="comment-body">
               <div data-index="${index}" class="comment-text comment-newline">
-                ${comments[index].text}
+                ${userComments[index].text}
               </div >
             </div >
             <div class="comment-footer">
               <div class="likes">
-                <span class="likes-counter">${comments[index].likesCounter}</span>
+                <span class="likes-counter">${userComments[index].likesCounter}</span>
                 <button data-index=${index} class="${lkBtn}"></button>
               </div>
             </div>
@@ -245,11 +386,10 @@
 
       initEventListeners();
       changeLikeButton();
-
-      prepareInput();
     };
 
     renderComments();
+    prepareInput();
 
     function clearInput() {
       nameInputElement.value = "";
@@ -260,8 +400,10 @@
       addButtonElement.disabled = true;
       addButtonElement.classList.add("error");
     }
+
     console.log("It works!");
   </script>
 </html>
 //
+
 <!--  -->
