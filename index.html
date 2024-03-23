@@ -50,7 +50,7 @@
     })
     .then((response) => {
       const jsonPromise = response.json();
-
+      if (response.status === 500) throw Error(response.statusText);
       return jsonPromise;
     })
     .then((responseData) => {
@@ -71,6 +71,12 @@
         loader.style.display = 'none';
         comments = appComments;
         renderComments();
+
+        if (responseData.status === 500) throw Error(responseData.statusText);
+      })
+      .catch((e) => {
+        console.log(e);
+        alert('Сервер сломался, попробуй позже');
       });
   };
 
@@ -181,6 +187,11 @@
     addForm.style.display = 'none';
     loader.textContent = 'Комментарий добавляется...';
     loader.style.display = 'block';
+    let enteredName = nameForm.value;
+    let enteredComment = commentForm.value;
+
+    nameForm.value = '';
+    commentForm.value = '';
 
     let fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/elena-rybakova/comments', {
       method: 'POST',
@@ -189,17 +200,25 @@
         name: safeName,
         forceError: true
       })
-    })
-    .then(() => {
+    }).then((res) => {
       addForm.style.display = 'flex';
       loader.style.display = 'none';
-    })
-    .catch(() => {
-        console.log('Произошла ошибка');  
-    })
 
-    nameForm.value = '';
-    commentForm.value = '';
+      if (res.status === 400) {
+        alert('Имя и комментарий должны быть не короче 3 символов');
+        throw Error(res.statusText);
+      } else if (res.status === 500) {
+        alert('Кажется, у вас сломался интернет, попробуйте позже');
+        throw Error(res.statusText);
+      }
+    }).catch(e => {
+      console.log(e);
+      // e = String(e);
+      // console.log(e);
+      // if (e.startsWith('Error: Internal Server Error')) addComment();
+      commentForm.value = enteredComment;
+      nameForm.value = enteredName;
+    })
 
     getCommentsFromServer();
   }
