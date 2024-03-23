@@ -1,4 +1,5 @@
 import { login, setLoading, setToken } from "./api.js";
+import { renderReg } from "./renderReg.js";
 
 
 export let userLogin;
@@ -26,9 +27,15 @@ export const renderLogin = ({ fetchGetAndRenderComments }) => {
       <div class="add-form-row">
         <button id="login-button" class="add-form-button">Войти</button>
       </div>
+      <div id="reg-link" class="reg-link">Зарегистрироваться</div>
     </div>
     `;
   appElement.innerHTML = loginHTML;
+
+  const regLinkEl = document.getElementById("reg-link");
+  regLinkEl.addEventListener("click", () => {
+    renderReg({ fetchGetAndRenderComments });
+  });
 
   const ButtonElement = document.getElementById("login-button");
   const loginInputElement = document.getElementById("login-input");
@@ -53,7 +60,7 @@ export const renderLogin = ({ fetchGetAndRenderComments }) => {
         console.log("login")
         setLogin(responseData.user.name);
         setLoading(false);
-        fetchGetAndRenderComments();       
+        fetchGetAndRenderComments();
       })
       .catch((error) => {
         if (error.message === "Нет авторизации") {

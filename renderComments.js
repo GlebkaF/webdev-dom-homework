@@ -109,7 +109,7 @@ export function formAction() {
         })
         .then(() => {
           buttonEl.disabled = true;
-          textEl.value = "";
+          textValue = "";
           setLoading(true);
           formLoader();
         })
