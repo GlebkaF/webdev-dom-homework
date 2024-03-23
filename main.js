@@ -30,7 +30,8 @@ export const fetchGetAndRenderComments = () => {
         alert(
           "Сбой подключения! Пожалуйста, проверьте подключение и обновите страницу."
         );
-        comLoader.textContent =
+        const appElement = document.getElementById("app")
+            appElement.textContent =
           "Комментарии не загружены. Пожалуйста, проверьте подключение и обновите страницу.";
         return;
       }

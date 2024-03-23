@@ -3,7 +3,7 @@ import { initLikeButtonListener } from "./likebutton.js";
 import { initReplayListener } from "./reply.js";
 import { renderLogin, userLogin, setLogin } from "./renderLogin.js";
 import { fetchGetAndRenderComments } from "./main.js";
-import { isLoading, setLoading } from "./api.js";
+import { setLoading } from "./api.js";
 import { userInput1, userInput2 } from "./userinput.js";
 import { fetchPost } from "./api.js";
 import { formLoader } from "./renderLoader.js";
@@ -16,30 +16,16 @@ export function renderComments(comments) {
   console.log("renderComments");
   const appElement = document.getElementById("app");
 
-  const formHTML = `${
-    userLogin
+  const formHTML = `${userLogin
       ? `
       <div id="add-form" class="add-form">
     <input id="add-form-name" readonly type="text" class="add-form-name" value="${userLogin}" />
-    <textarea id="add-form-text" type="textarea" class="add-form-text" rows="4" placeholder="Введите ваш коментарий"> </textarea>
+    ${textValue ? `<textarea id="add-form-text" type="textarea" class="add-form-text" rows="4" placeholder="Введите ваш коментарий">${textValue}</textarea>` : '<textarea id="add-form-text" type="textarea" class="add-form-text" rows="4" placeholder="Введите ваш коментарий"></textarea>'}
      <div class="add-form-row">
       <button id="add-form-button" class="add-form-button">Написать</button>
     </div>`
       : `<div id="login-text" class="loader">Чтобы добавить комментарий, <span class="login-link"  id="login-link">авторизуйтесь</span></div>`
-  }`;
-
-  // const fLoaderHTML = `${
-  //   isLoading
-  //     ? `<div class="loader" id="form-loader">Комментарий добавляется...</div>`
-  //     : `
-  //   <div id="add-form" class="add-form">
-  // <input id="add-form-name" readonly type="text" class="add-form-name" value="${userLogin}" />
-  // <textarea id="add-form-text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
-  //   rows="4"></textarea>
-  // <div class="add-form-row">
-  //   <button id="add-form-button" class="add-form-button">Написать</button>
-  // </div>`
-  // }`;
+    }`;
 
   const commentsHtml = comments
     .map((comment, index) => {
@@ -58,33 +44,27 @@ export function renderComments(comments) {
         </div>
         <div class="comment-body">
           <div data-index="${index}" class="comment-text" style="white-space:pre-line">
-            <a class="replay-form-link" ${
-              comment.isEdit ? "" : 'href="#add-form"'
-            }> ${editComment()}</a>
+            <a class="replay-form-link" ${comment.isEdit ? "" : 'href="#add-form"'
+        }> ${editComment()}</a>
           </div>
         </div>
         <div class="comment-footer">
           <div class="likes">
-            <span data-index="${index}" class="likes-counter">${
-        comment.like_count
-      }</span>
-            <button data-index="${index}" class="like-button ${
-        comment.like_active ? "-active-like" : ""
-      }"></button>
+            <span data-index="${index}" class="likes-counter">${comment.like_count
+        }</span>
+            <button data-index="${index}" class="like-button ${comment.like_active ? "-active-like" : ""
+        }"></button>
           </div>
         </div >
       </li>`;
     })
     .join("");
 
-  // const ff = userLogin ? fLoaderHTML : formHTML;
-
-  console.log(isLoading)
   appElement.innerHTML = `
   <ul id="list" class="comments">
     ${commentsHtml}
   </ul>
-  ${setLoading ? formHTML : "uhvrervekrjn"}
+  ${formHTML}
   </div>`;
 
   setLoading(true);
@@ -110,6 +90,11 @@ export function formAction() {
   const buttonEl = document.getElementById("add-form-button");
   const formEl = document.getElementById("add-form");
 
+  textEl.addEventListener("input", ev);
+  function ev(event) {
+    textValue = event.target.value;
+  }
+
   buttonEl.disabled = true;
 
   userInput1({ nameEl, textEl, formEl, buttonEl });
@@ -129,7 +114,7 @@ export function formAction() {
           formLoader();
         })
         .catch((error) => {
-        // debugger
+          // debugger
           if (error.message === "Неправильный запрос") {
             alert("Длина имени и комментария должна быть более 3 символов");
             console.warn(error);
@@ -149,7 +134,8 @@ export function formAction() {
             alert(
               "Сбой подключения! Пожалуйста, проверьте подключение и повторите отправку."
             );
-            comLoader.textContent =
+            const appElement = document.getElementById("app")
+            appElement.textContent =
               "Комментарии не загружены. Пожалуйста, проверьте подключение и повторите отправку.";
             return;
           }
