@@ -1,7 +1,7 @@
 import { sanitize } from "./sanitize.js";
 import { initLikeButtonListener } from "./likebutton.js";
 import { initReplayListener } from "./reply.js";
-import { renderLogin, userLogin, setLogin } from "./renderLogin.js";
+import { renderLogin, userLogin, setLogin, user, } from "./renderLogin.js";
 import { fetchGetAndRenderComments } from "./main.js";
 import { setLoading } from "./api.js";
 import { userInput1, userInput2 } from "./userinput.js";
@@ -23,7 +23,11 @@ export function renderComments(comments) {
     ${textValue ? `<textarea id="add-form-text" type="textarea" class="add-form-text" rows="4" placeholder="Введите ваш коментарий">${textValue}</textarea>` : '<textarea id="add-form-text" type="textarea" class="add-form-text" rows="4" placeholder="Введите ваш коментарий"></textarea>'}
      <div class="add-form-row">
       <button id="add-form-button" class="add-form-button">Написать</button>
-    </div>`
+    </div>
+    <div class="add-form-row">
+      <button id="logout-form-button" class="add-form-button" disabled>Выйти</button>
+    </div>
+    `
       : `<div id="login-text" class="loader">Чтобы добавить комментарий, <span class="login-link"  id="login-link">авторизуйтесь</span></div>`
     }`;
 
@@ -73,6 +77,8 @@ export function renderComments(comments) {
   formAction();
   initReplayListener({ comments });
   initLikeButtonListener(comments);
+  // logoutAction();
+  
 }
 
 function authAction() {
@@ -82,6 +88,15 @@ function authAction() {
     renderLogin({ fetchGetAndRenderComments });
   });
 }
+
+// function logoutAction() {
+//   const logoutButtonEl = document.getElementById("logout-form-button");
+//   logoutButtonEl.addEventListener("click", () => {
+//     localStorage.clear();
+//     console.log(user)
+//     fetchGetAndRenderComments();
+//   })
+// }
 
 export function formAction() {
   if (!userLogin) return;

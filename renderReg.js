@@ -61,6 +61,7 @@ export const renderReg = ({ fetchGetAndRenderComments }) => {
                 return response.json();
             })
             .then(() => {
+                alert("Успешная регистрация")
                 fetchGetAndRenderComments();
             })
             .catch((error) => {

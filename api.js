@@ -1,5 +1,6 @@
 import { renderComments } from "./renderComments.js";
 import { formLoader } from "./renderLoader.js";
+import { user } from "./renderLogin.js";
 
 const commentsURL = "https://wedev-api.sky.pro/api/v2/:evich/comments";
 export const userURL = "https://wedev-api.sky.pro/api/user/login";

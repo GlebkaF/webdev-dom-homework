@@ -11,7 +11,7 @@ function delay(interval = 300) {
 
 export const initLikeButtonListener = (comments) => {
   if (!userLogin) return;
-  console.log("initLikeButtonListener")
+  // console.log("initLikeButtonListener")
   const likeButtonElements = document.querySelectorAll(".like-button");
   likeButtonElements.forEach((el, index) => {
     el.addEventListener("click", () => {

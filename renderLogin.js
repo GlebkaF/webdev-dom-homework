@@ -7,6 +7,9 @@ export const setLogin = (newUserLogin) => {
   userLogin = newUserLogin;
 };
 
+export const myStorage = window.localStorage;
+export const user = localStorage.getItem('user');
+
 export const renderLogin = ({ fetchGetAndRenderComments }) => {
   const appElement = document.getElementById("app");
   const loginHTML = `
@@ -42,7 +45,7 @@ export const renderLogin = ({ fetchGetAndRenderComments }) => {
   const passwordInputElement = document.getElementById("password-input");
 
   ButtonElement.addEventListener("click", () => {
-    login({
+    login({      
       login: loginInputElement.value,
       password: passwordInputElement.value,
     })
@@ -59,6 +62,7 @@ export const renderLogin = ({ fetchGetAndRenderComments }) => {
       .then((responseData) => {
         console.log("login")
         setLogin(responseData.user.name);
+        localStorage.setItem('user', responseData.user.name);
         setLoading(false);
         fetchGetAndRenderComments();
       })
