@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="list">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -49,15 +49,17 @@
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          id="inputName"
         />
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+          id="inputComment"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
@@ -66,6 +68,72 @@
   <script>
     "use strict";
     // Код писать здесь
+
+    const inputNameElement = document.getElementById('inputName');
+    const inputCommentElement = document.getElementById('inputComment');
+    const buttonElement = document.getElementById('button');
+    const listElement = document.getElementById('list');
+
+
+    const currentDate = new Date();
+  let day, month, year, hours, minutes;
+    day = String(currentDate.getDate()).padStart(2, '0'); // День
+    month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Месяц (начиная с 0)
+    year = String(currentDate.getFullYear()).slice(-2); // Год (последние две цифры)
+    hours = String(currentDate.getHours()).padStart(2, '0'); // Часы
+    minutes = String(currentDate.getMinutes()).padStart(2, '0'); // Минуты
+
+    const formattedDate = `${day}.${month}.${year} ${hours}:${minutes}`;
+    buttonElement.addEventListener('click',  () => {
+       
+      inputNameElement.style.backgroundColor = '';
+    inputCommentElement.style.backgroundColor = '';
+
+    if (inputNameElement.value === '' && inputCommentElement.value === '') {
+        inputNameElement.style.backgroundColor = '#FFA07A';
+        inputCommentElement.style.backgroundColor = '#FFA07A';
+        return;
+    }
+
+    if (inputNameElement.value === '') {
+        inputNameElement.style.backgroundColor = '#FFA07A';
+        return;
+    }
+
+    if (inputCommentElement.value === '') {
+        inputCommentElement.style.backgroundColor = '';
+        return;
+    }
+
+    console.log(inputNameElement.value);
+    console.log(inputCommentElement.value);
+
+       
+        
+
+      const oldListHtml = listElement.innerHTML;
+      listElement.innerHTML = oldListHtml + 
+      `
+      <li class="comment">
+          <div class="comment-header">
+            <div>${inputNameElement.value}</div>
+            <div>${formattedDate}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${inputCommentElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>
+      `
+    });
+
     console.log("It works!");
   </script>
 </html>
