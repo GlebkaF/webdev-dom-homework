@@ -40,45 +40,35 @@
   const TextComent = document.getElementById('text-coment');
 
 
-  
 
-   function getComment () { const fetchPromis = fetch('https://wedev-api.sky.pro/api/v1/belyaev/comments', { method: "GET" })
 
-  fetchPromis.then((response) => {
-    jsonePromise = response.json();
-    jsonePromise.then((responseData) => {
-      const appComment = responseData.comments.map((comment) => {
-        return {
-          name: comment.author.name,
-          date: new Date(comment.date).toLocaleTimeString('sm', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }),
-          comment: comment.text,
-          likes: comment.likes,
-          isLiked: false,
-          isEdited: false
-        };
+  function getComment() {
+    const fetchPromis = fetch('https://wedev-api.sky.pro/api/v1/belyaev/comments', { method: "GET" })
+
+    fetchPromis.then((response) => {
+      jsonePromise = response.json();
+      jsonePromise.then((responseData) => {
+        const appComment = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: new Date(comment.date).toLocaleTimeString('sm', {
+              day: '2-digit',
+              month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit'
+            }),
+            comment: comment.text,
+            likes: comment.likes,
+            isLiked: false,
+            isEdited: false
+          };
+        })
+        commentators = appComment
+        renderComents();
       })
-      commentators = appComment
-      renderComents();
     })
-  })};
-  getComment ();
+  };
+  getComment();
   // получить из хранилища данных
-  let commentators = [
-    {
-      name: "Глеб Фокин",
-      date: "12.02.22 12:18",
-      comment: "Это будет первый комментарий на этой странице",
-      likes: 3,
-      isLiked: true,
-    },
-    {
-      name: "Варвара Н.",
-      date: "13.02.22 19:22",
-      comment: "Мне нравится как оформлена эта страница! ❤",
-      likes: 75,
-      isLiked: true,
-    },
-  ];
+  let commentators = [];
 
   //мои мутки с ответом на коментарий
   const replyComment = () => {
@@ -170,11 +160,8 @@
     });
     fetchPromis.then((response) => {
       console.log(response);
-      const jsonPromise = response.json();
-      renderComents();
-      getComment ();
+      getComment();
     });
-
 
     initEventListernes();
     renderComents();
