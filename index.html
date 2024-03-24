@@ -1,71 +1,174 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
+    <head>
+        <title>Проект "Комменты"</title>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="styles.css" />
+    </head>
 
-  <body>
-    <div class="container">
-      <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
+    <body>
+        <div class="container">
+            <ul id="comments" class="comments">
+                <li class="comment">
+                    <div class="comment-header">
+                        <div>Глеб Фокин</div>
+                        <div>12.02.22 12:18</div>
+                    </div>
+                    <div class="comment-body">
+                        <div class="comment-text">Это будет первый комментарий на этой странице</div>
+                    </div>
+                    <div class="comment-footer">
+                        <div class="likes">
+                            <span class="likes-counter">3</span>
+                            <button class="like-button"></button>
+                        </div>
+                    </div>
+                </li>
+                <li class="comment">
+                    <div class="comment-header">
+                        <div>Варвара Н.</div>
+                        <div>13.02.22 19:22</div>
+                    </div>
+                    <div class="comment-body">
+                        <div class="comment-text">Мне нравится как оформлена эта страница! ❤</div>
+                    </div>
+                    <div class="comment-footer">
+                        <div class="likes">
+                            <span class="likes-counter">75</span>
+                            <button class="like-button -active-like"></button>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <div id="add-form" class="add-form">
+                <input id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+                <textarea id="comment-input" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
+                <div class="add-form-row">
+                    <button id="delete-last-comment" class="add-form-button">Удалить последний комментарий</button>
+                    <button id="submit-comment" class="add-form-button button_disabled" disabled>Написать</button>
+                </div>
             </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
         </div>
-      </div>
-    </div>
-  </body>
+    </body>
 
-  <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
-  </script>
+    <script>
+        "use strict";
+
+        const commentsSection = document.getElementById(`comments`);
+
+        const addForm = document.getElementById(`add-form`);
+        const nameInput = document.getElementById(`name-input`);
+        const commentInput = document.getElementById(`comment-input`);
+
+        const submitButton = document.getElementById(`submit-comment`);
+        const _deleteLastComment = document.getElementById(`delete-last-comment`);
+
+        submitButton.addEventListener(`click`, ()=>{
+          let date = getFormatedDate();
+          addComment(commentsSection,nameInput.value,commentInput.value,getFormatedDate());
+          nameInput.value = "";
+          commentInput.value = "";
+          validateCommentForm();
+        });
+
+        addForm.addEventListener(`keyup`, (event)=>{
+          if(event.key != "Enter" || !validateCommentForm()) return;
+          let date = getFormatedDate();
+          addComment(commentsSection, nameInput.value, commentInput.value, getFormatedDate());
+          nameInput.value = "";
+          commentInput.value = "";
+          validateCommentForm();
+        });
+
+        _deleteLastComment.addEventListener(`click`, ()=>{
+          deleteLastComment(commentsSection);
+        });
+
+        [nameInput, commentInput].forEach((input)=>{
+          input.addEventListener(`input`, ()=>{
+            validateCommentForm();
+          })
+        });
+
+
+        /**
+         * Валидация формы заполнения комментариев
+         * @return boolean
+         */
+        function validateCommentForm(){
+          if(nameInput.value === "" || commentInput.value === ""){
+            submitButton.classList.add(`button_disabled`);
+            submitButton.disabled = true;
+            return false;
+          } else{
+            submitButton.classList.remove(`button_disabled`);
+            submitButton.disabled = false;
+            return true;
+          }
+        }
+
+        /**
+         * Добавить комментарий в секцию
+         *
+         * @param object targetElement
+         * @param string name
+         * @param string comment
+         * @param string date
+         *
+         * @return void
+         */
+        function addComment(targetElement, name, comment, date){
+          targetElement.innerHTML += `
+                <li class="comment">
+                    <div class="comment-header">
+                        <div>${name}</div>
+                        <div>${date}</div>
+                    </div>
+                    <div class="comment-body">
+                        <div class="comment-text">${comment}</div>
+                    </div>
+                    <div class="comment-footer">
+                        <div class="likes">
+                            <span class="likes-counter"></span>
+                            <button class="like-button"></button>
+                        </div>
+                    </div>
+                </li>
+          `;
+        }
+
+        /**
+         * Удалить последний комментарий
+         * @param object targetElement
+         *
+         * @return void
+         */
+        function deleteLastComment(targetElement){
+          var lastComment = targetElement.lastElementChild;
+          if(lastComment !== null){
+            targetElement.removeChild(lastComment);
+          }
+        }
+
+        /**
+         * Получить текущую дату в формате dd.mm.YYYY hh:mm
+         * @return string
+         */
+        function getFormatedDate()
+        {
+
+          let formatDateDigits = (digit) => digit <= 9 ? `0${digit}` : digit;
+
+          let date = new Date();
+
+          let day = formatDateDigits(date.getDate());
+          let month = formatDateDigits(date.getMonth()+1);
+          let year = date.getFullYear();
+
+          let hours = formatDateDigits(date.getHours());
+          let minutes = formatDateDigits(date.getMinutes());
+
+          return `${day}.${month}.${year} ${hours}:${minutes}`;
+        }
+    </script>
 </html>
