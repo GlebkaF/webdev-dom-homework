@@ -121,7 +121,7 @@
                   year: "2-digit",
                 }) +
                 " " +
-                new Date().toLocaleTimeString([], {
+                new Date(comment.date).toLocaleTimeString([], {
                   hour: "2-digit",
                   minute: "2-digit",
                 }),
@@ -257,9 +257,9 @@
 
     initEventListeners();
 
-    addButtonElement.addEventListener("click", addListComment);
+    addButtonElement.addEventListener("click", handlePostClick);
 
-    function addListComment() {
+    function handlePostClick() {
       if (
         nameInputElement.value.trim() === "" ||
         commentInputElement.value.trim() === ""
@@ -269,18 +269,6 @@
         return;
       }
 
-      const currentDate =
-        new Date().toLocaleDateString("default", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "2-digit",
-        }) +
-        " " +
-        new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-
       fetch("https://wedev-api.sky.pro/api/v1/OlegGorin/comments", {
         method: "POST",
         body: JSON.stringify({
@@ -289,6 +277,7 @@
             .replaceAll("<", "&lt;")
             .replaceAll(">", "&gt;")
             .replaceAll('"', "&quot;"),
+          // date: currentDate,
           text: commentInputElement.value
             .replaceAll("&", "&amp;")
             .replaceAll("<", "&lt;")
@@ -300,14 +289,12 @@
         }),
       })
         .then((response) => {
+          if (response.status === 500) throw new Error("Сервер недоступен");
           if (response.status === 201 || response.status === 200) {
-            // return response.json();
             fetchPromiseArr();
-          } else if (response.status === 400) {
-            return Promise.reject(new Error("Неправильный запрос"));
-          } else {
-            return Promise.reject(new Error("Сервер недоступен"));
+            // return response.json();
           }
+          if (response.status === 400) throw new Error("Неправильный запрос");
         })
         // .then(() => {
         //   return fetchPromiseArr();
@@ -317,7 +304,8 @@
         })
         .catch((error) => {
           if (error.message === "Сервер недоступен") {
-            alert("Сервер недоступен, попробуйте позже");
+            // alert("Сервер недоступен, попробуйте позже");
+            handlePostClick();
             addButtonElement.disabled = false;
             addButtonElement.classList.remove("error");
             commentsAdding.classList.add("hide");
@@ -405,5 +393,3 @@
   </script>
 </html>
 //
-
-<!--  -->
