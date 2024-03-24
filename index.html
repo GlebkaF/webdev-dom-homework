@@ -44,6 +44,9 @@
           </div>
         </li> -->
       </ul>
+			<div id="wait_for_loading">
+				<p class="comment_start_time">Пожалуйста подождите, комментарии загружаются.</p>
+			</div>
       <div class="add-form">
         <input id="input-accept-name"
           type="text"
@@ -72,24 +75,26 @@
 		const acceptName = document.getElementById('input-accept-name');
 		const acceptComment = document.getElementById('textarea-accept-comment');
 		const buttonDelete =  document.getElementById('delete-button');
+		const waitForLoading = document.getElementById('wait_for_loading');
 
 		// ДЗ API №1
 		function dataAcquisitionFunction () {
-			
+					// Блокирую кнопу 
+		buttonElement.disabled = true;
+		buttonElement.textContent = 'Комментарий загружается'
+		//Делаю переменные из видео
+			const startAt = Date.now();
+			console.log('Запрос начался');
+
 			// Получаю данные из API 
-		const fetchPromise = fetch(
+		fetch(
 			"https://wedev-api.sky.pro/api/v1/Pavel-Kalashnikoff/comments",
 			{
 				method: "GET"
 			}
-		);
-		fetchPromise.then((response) => {
-
-			const jsonPromise = response.json();
-			
-			jsonPromise.then((responseData) => {
-				console.log(responseData);
-
+		).then((response) => {
+			return response.json();
+		}).then((responseData) => {
 				commentators = responseData.comments.map((comment) => {
 					//Добавил константы даты и времени.
 					const currentDate = new Date(comment.date).toLocaleDateString('ru-Ru');
@@ -103,11 +108,18 @@
 					};
 				});
 				renderCommentators();
-			});
+				waitForLoading.classList.add('hide'); 
+			}).then((response) => {
+			return 'Глуб'
+		}).then((data) => {
+			console.log(data);
 		});
+		buttonElement.disabled = false;
+		buttonElement.textContent = 'Написать';
 		}
-		dataAcquisitionFunction();
+		dataAcquisitionFunction ();
 
+		
 		//Добавляю массив на основе разметки HTML.
 		let commentators = [];
  
@@ -237,8 +249,6 @@
 					}
 				);
 				dataAcquisitionFunction();
-
-				
 			// Очистка поля ввода для комментария и имени после отправления комментария
 			const clearCommmentTextArea = document.querySelector('.add-form-text');
 			const clearName = document.querySelector('.add-form-name');
