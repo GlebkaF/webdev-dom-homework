@@ -75,18 +75,43 @@ ${nameComment},`;
   const commentButton = document.getElementsByClassName('add-form-button')[0];
   const commentList = document.getElementsByClassName('comments')[0];
   const checkStatus = document.getElementsByClassName('add-form')[0];
+  const commentContainer = document.getElementsByClassName('container')[0];
   //получаем от апи
 
-
-  const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/aleksey-e/comments", {
-    method: "GET"
-  });
-  fetchPromise.then((response) => {
-    response.json().then((responseData) => {
-      commentsList = responseData.comments;
-      renderComments();
+  const start = () => {
+    let newDiv = document.createElement('div');
+    newDiv.classList.add('newComment');
+    commentList.insertAdjacentElement('afterend', newDiv);
+    document.getElementsByClassName('newComment')[0].innerHTML = 'Список комментариев загружается...';
+    fetch("https://wedev-api.sky.pro/api/v1/aleksey-e/comments", {
+      method: "GET"
     })
-  });
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
+        commentsList = responseData.comments;
+        renderComments();
+      })
+      .then(() => {
+        document.getElementsByClassName('newComment')[0].remove();
+      })
+  }
+
+  start();
+
+  const fetchAndRenderTasks = () => {
+    return fetch("https://wedev-api.sky.pro/api/v1/aleksey-e/comments", {
+      method: "GET"
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
+        commentsList = responseData.comments;
+        renderComments();
+      })
+  }
 
   function currentDateForComment(elem) {
     const currentDate = new Date(elem.date);
@@ -97,6 +122,11 @@ ${nameComment},`;
 
   function addNewComment() {
     if (currentInputName.value.trim().length !== 0 && currentInputText.value.trim().length !== 0) {
+      checkStatus.style.display = "none";
+      let newDiv = document.createElement('div');
+      newDiv.classList.add('newComment');
+      commentList.insertAdjacentElement('afterend', newDiv);
+      document.getElementsByClassName('newComment')[0].innerHTML = 'Комментарий добавляется';
 
       fetch("https://wedev-api.sky.pro/api/v1/aleksey-e/comments", {
         method: "POST",
@@ -105,23 +135,20 @@ ${nameComment},`;
           name: currentInputName.value,
         })
       }).then((response) => {
-        response.json().then((responseData) => {
-          commentsList = responseData.comments;
-          fetch("https://wedev-api.sky.pro/api/v1/aleksey-e/comments", {
-            method: "GET"
-          }).then((response) => {
-            response.json().then((responseData) => {
-              commentsList = responseData.comments;
-              renderComments();
-            })
-          })
+        return response.json();
+      })
+        .then((responseData) => {
+          return fetchAndRenderTasks();
         })
-      });
+        .then(() => {
+          document.getElementsByClassName('newComment')[0].remove();
+          checkStatus.style.display = "flex";
+        })
     };
     currentInputText.value = '';
     currentInputName.value = '';
     renderComments();
-  }
+  };
 
   checkStatus.addEventListener('input', () => {
     if (currentInputName.value.trim().length !== 0 && currentInputText.value.trim().length !== 0) {
@@ -141,7 +168,7 @@ ${nameComment},`;
     if (e.key === 'Enter') {
       addNewComment();
     }
-  })
+  });
 
   const deleteButton = document.getElementsByClassName('delete-form-button')[0];
   const deleteElement = document.getElementsByClassName('comments')[0];
@@ -158,7 +185,7 @@ ${nameComment},`;
       .replaceAll("<", "&lt;")
       .replaceAll(">", "&gt;")
       .replaceAll('"', "&quot;")}`;
-  }
+  };
 
   const renderComments = () => {
     const commentsInHTML = commentsList.map((elem) => {
