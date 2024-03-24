@@ -91,7 +91,7 @@
 				console.log(responseData);
 
 				commentators = responseData.comments.map((comment) => {
-					//Добавил константы даты и времени
+					//Добавил константы даты и времени.
 					const currentDate = new Date(comment.date).toLocaleDateString('ru-Ru');
 					const currentTime = new Date(comment.date).toLocaleTimeString('ru-RU');
 					return {
