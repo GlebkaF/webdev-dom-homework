@@ -1,16 +1,14 @@
+
 <!DOCTYPE html>
 <html>
-
 <head>
   <title>Проект "Комменты"</title>
   <meta charset="utf-8" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
   <div class="container">
     <ul class="comments" id="comments">
-
     </ul>
     <div id="bimbo" class="bimbo"></div>
     <div class="add-form" id="add-form">
@@ -21,16 +19,12 @@
         <button class="add-form-button" id="add-form-button">Написать</button>
       </div>
     </div>
-
     <div class="delete"><button class="button" id="delete-button">Удалить последний комментарий</button></div>
   </div>
 </body>
-
 <script>
   "use strict";
-
   let comments = [ /*объявление массива комментариев*/];
-
   const nameForm = document.getElementById('add-form-name');
   const commentForm = document.getElementById('add-form-text');
   const button = document.getElementById('add-form-button');
@@ -38,19 +32,14 @@
   const addForm = document.getElementById('add-form');
   const loader = document.getElementById('bimbo');
   const deleteButton = document.getElementById('delete-button');
-
-
   loader.style.display = 'block';
   loader.textContent = 'Пожалуйста, подождите, загружаю комментарии...';
-
   function getCommentsFromServer() {
-
-    let fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/segrey-syomin/comments', {
+    let fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/sergei-syomin/comments', {
       method: 'GET'
     })
     .then((response) => {
       const jsonPromise = response.json();
-
       return jsonPromise;
     })
     .then((responseData) => {
@@ -67,46 +56,36 @@
             isEdit: false
           }
         });
-
         loader.style.display = 'none';
         comments = appComments;
         renderComments();
       });
   };
-
   function dateRender(time) { // прописывание времени комментария
     let hours = '';
     let result = '';
     let min = '';
-
     if (time.getHours() < 10) {
       hours = '0' + time.getHours();
     } else {
       hours = time.getHours();
     }
-
     if (time.getMinutes() < 10) {
       min = '0' + time.getMinutes();
     } else {
       min = time.getMinutes();
     }
-
     result = `${time.getDate()}.${time.getMonth()+1}.${time.getFullYear() - 2000} ${hours}:${min}`;
-
     return result;
   }
-
   function renderComments() { //рендер комментариев
-
     const commentsHTML = comments.map((student) => {
       let liked = '';
       let textEdit = '';
       let btnEdit = '';
-
       if (student.isLiked) {
         liked = ' -active-like'
       }
-
       if (student.isEdit) {
         textEdit = `<textarea class="textarea" id='textarea'>${student.text}</textarea>`;
         btnEdit = `Сохранить`;
@@ -116,7 +95,6 @@
         </div>`;
         btnEdit = `Редактировать`;
       }
-
       return `<li class="comment" data-numComments="${student.id}">
       <div class="comment-header">
         <div>${student.name}</div>
@@ -136,21 +114,16 @@
     </li>`
     })
       .join('');
-
     listElement.innerHTML = commentsHTML;
     initEventListeners();
     initEventButtonEdit();
     reply();
   }
-
   getCommentsFromServer();
-
   function addComment() { //добавление комментария
     let date = new Date();
-
     nameForm.classList.remove('error');
     commentForm.classList.remove('error');
-
     if ((nameForm.value.trim() == '') && (commentForm.value.trim() == '')) {
       nameForm.classList.add('error');
       commentForm.classList.add('error');
@@ -163,10 +136,8 @@
       commentForm.classList.add('error');
       return;
     }
-
     let unsafeName = nameForm.value; // устранение уязвимости
     let unsafeComm = commentForm.value;
-
     let safeName = unsafeName.replaceAll("&", "&amp;")
       .replaceAll("<", "&lt;")
       .replaceAll(">", "&gt;")
@@ -177,71 +148,61 @@
       .replaceAll('"', "&quot;")
       .replaceAll('QUOTE_BEGIN', "<div class='quote'>")
       .replaceAll('QUOTE_END', '</div>');
-
     addForm.style.display = 'none';
     loader.textContent = 'Комментарий добавляется...';
     loader.style.display = 'block';
-
-    let fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/segrey-syomin/comments', {
+    let fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/sergei-syomin/comments', {
       method: 'POST',
       body: JSON.stringify({
         text: safeComm,
         name: safeName,
+        forceError: true
       })
     })
     .then(() => {
       addForm.style.display = 'flex';
       loader.style.display = 'none';
     })
+    .catch(() => {
+        console.log('Произошла ошибка');  
+    })
 
     nameForm.value = '';
     commentForm.value = '';
-
     getCommentsFromServer();
   }
-
   button.disabled = true; //проверка заполненности полей
-
   nameForm.addEventListener('input', () => {
     commentForm.addEventListener('input', () => {
       button.disabled = false;
     })
   })
-
   commentForm.addEventListener('input', () => {
     nameForm.addEventListener('input', () => {
       button.disabled = false;
     })
   })
-
   button.addEventListener("click", addComment);
-
   commentForm.addEventListener('keypress', (e) => { //отправление комментария по кнопке enter
     if (e.keyCode == 13) {
       // button.click();
       addComment();
     }
   })
-
   deleteButton.addEventListener('click', () => { //удаление комментария
-
     if (comments == []) {
       alert('Удалять нечего');
       return;
     }
-
     let result = comments.pop();
     getCommentsFromServer();
   })
-
   function initEventListeners() { //работа лайков
     let likeButtons = document.querySelectorAll('.like-button');
     for (let likeButton of likeButtons) {
       likeButton.addEventListener('click', (event) => {
-
         event.stopPropagation();
         let numComm = likeButton.getAttribute('data-numComments');
-
         if (comments[numComm].isLiked) {
           comments[numComm].isLiked = !comments[numComm].isLiked;
           comments[numComm].likes--;
@@ -249,48 +210,37 @@
           comments[numComm].isLiked = !comments[numComm].isLiked;
           comments[numComm].likes++;
         }
-
         console.log('лайк сработал', comments[numComm].isLiked);
-
         renderComments();
       })
     }
   }
-
   function initEventButtonEdit() { //редактирование комментария
     let buttonsEdit = document.querySelectorAll('.button-edit');
-
     for (let buttonEdit of buttonsEdit) {
       buttonEdit.addEventListener('click', (event) => {
         event.stopPropagation();
         let numComm = buttonEdit.getAttribute('data-numComments');
         let txtEdit = document.getElementById('textarea');
-
         comments[numComm].isEdit = !comments[numComm].isEdit;
-
         if (!comments[numComm].isEdit) {
           comments[numComm].text = txtEdit.value;
         }
-
         getCommentsFromServer();
       });
     }
   }
-
   function reply() {
     let replyComms = document.querySelectorAll('.comment');
-
     for (let replyComm of replyComms) {
       replyComm.addEventListener('click', () => {
         let numComm = replyComm.getAttribute('data-numComments');
         console.log('Ответ сработал', numComm);
         commentForm.value = `QUOTE_BEGIN${comments[numComm].name}:
 ${comments[numComm].text} QUOTE_END
-
 `;
       })
     }
   }
 </script>
-
 </html>
