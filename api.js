@@ -1,13 +1,13 @@
 import { sanitizeHtml } from './sanitizeHtml.js';
 
-export let token;
+export let user;
 
-export const setToken = (newToken) => {
-    token = newToken;
+export const setUser = (newUser) => {
+    user = newUser;
 }
 
 export function getComments() {
-    return fetch("https://wedev-api.sky.pro/api/v1/aleksey-poplaukhin/comments", {
+    return fetch("https://wedev-api.sky.pro/api/v2/aleksey-poplaukhin/comments", {
         method: "GET",
     })
     .then((response) => {
@@ -20,10 +20,10 @@ export function getComments() {
 };
 
 export function postComments(text, name) {
-    return fetch("https://wedev-api.sky.pro/api/v1/aleksey-poplaukhin/comments", {
+    return fetch("https://wedev-api.sky.pro/api/v2/aleksey-poplaukhin/comments", {
         method: "POST",
         headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${user.token}`,
         },       
         body: JSON.stringify({
             text: sanitizeHtml(text),
