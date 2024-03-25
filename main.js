@@ -19,10 +19,9 @@ export const fetchGetAndRenderComments = () => {
         };
       });
       setLoading(true);
-            
+
       comments = appComments;
       renderComments(comments);
-          
     })
     .catch((error) => {
       if (error.message === "Failed to fetch") {
@@ -30,8 +29,8 @@ export const fetchGetAndRenderComments = () => {
         alert(
           "Сбой подключения! Пожалуйста, проверьте подключение и обновите страницу."
         );
-        const appElement = document.getElementById("app")
-            appElement.textContent =
+        const appElement = document.getElementById("app");
+        appElement.textContent =
           "Комментарии не загружены. Пожалуйста, проверьте подключение и обновите страницу.";
         return;
       }
@@ -42,10 +41,5 @@ export const fetchGetAndRenderComments = () => {
         return;
       }
     });
-    
 };
 fetchGetAndRenderComments();
-
-
-
-

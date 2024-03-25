@@ -1,7 +1,7 @@
-import { userLogin } from "./renderLogin.js";
+import { token } from "./api.js";
 
 export const initReplayListener = ({ comments }) => {
-  if (!userLogin) return;
+  if (!token) return;
   const textEl = document.getElementById("add-form-text");
   const replayComments = document.querySelectorAll(".comment-text");
   for (const replayComment of replayComments) {

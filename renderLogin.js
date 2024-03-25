@@ -1,14 +1,7 @@
 import { login, setLoading, setToken } from "./api.js";
 import { renderReg } from "./renderReg.js";
 
-
-export let userLogin;
-export const setLogin = (newUserLogin) => {
-  userLogin = newUserLogin;
-};
-
 export const myStorage = window.localStorage;
-export const user = localStorage.getItem('user');
 
 export const renderLogin = ({ fetchGetAndRenderComments }) => {
   const appElement = document.getElementById("app");
@@ -51,6 +44,7 @@ export const renderLogin = ({ fetchGetAndRenderComments }) => {
     })
       .then((responseData) => {
         setToken(responseData.user.token);
+        localStorage.setItem('token', responseData.user.token);
         return responseData;
       })
       .then((responseData) => {
@@ -61,7 +55,7 @@ export const renderLogin = ({ fetchGetAndRenderComments }) => {
       })
       .then((responseData) => {
         console.log("login")
-        setLogin(responseData.user.name);
+        // setLogin(responseData.user.name);
         localStorage.setItem('user', responseData.user.name);
         setLoading(false);
         fetchGetAndRenderComments();

@@ -1,9 +1,9 @@
 import { sanitize } from "./sanitize.js";
 import { initLikeButtonListener } from "./likebutton.js";
 import { initReplayListener } from "./reply.js";
-import { renderLogin, userLogin, setLogin, user, } from "./renderLogin.js";
+import { renderLogin } from "./renderLogin.js";
 import { fetchGetAndRenderComments } from "./main.js";
-import { setLoading } from "./api.js";
+import { setLoading, token } from "./api.js";
 import { userInput1, userInput2 } from "./userinput.js";
 import { fetchPost } from "./api.js";
 import { formLoader } from "./renderLoader.js";
@@ -16,20 +16,17 @@ export function renderComments(comments) {
   console.log("renderComments");
   const appElement = document.getElementById("app");
 
-  const formHTML = `${userLogin
-      ? `
+  const formHTML = `
       <div id="add-form" class="add-form">
-    <input id="add-form-name" readonly type="text" class="add-form-name" value="${userLogin}" />
+    <input id="add-form-name" readonly type="text" class="add-form-name" value="${localStorage.getItem('user')}" />
     ${textValue ? `<textarea id="add-form-text" type="textarea" class="add-form-text" rows="4" placeholder="Введите ваш коментарий">${textValue}</textarea>` : '<textarea id="add-form-text" type="textarea" class="add-form-text" rows="4" placeholder="Введите ваш коментарий"></textarea>'}
      <div class="add-form-row">
       <button id="add-form-button" class="add-form-button">Написать</button>
     </div>
     <div class="add-form-row">
-      <button id="logout-form-button" class="add-form-button" disabled>Выйти</button>
+      <button id="logout-form-button" class="add-form-button">Выйти</button>
     </div>
-    `
-      : `<div id="login-text" class="loader">Чтобы добавить комментарий, <span class="login-link"  id="login-link">авторизуйтесь</span></div>`
-    }`;
+    `;
 
   const commentsHtml = comments
     .map((comment, index) => {
@@ -68,7 +65,7 @@ export function renderComments(comments) {
   <ul id="list" class="comments">
     ${commentsHtml}
   </ul>
-  ${formHTML}
+  ${token ? formHTML : '<div id="login-text" class="loader">Чтобы добавить комментарий, <span class="login-link"  id="login-link">авторизуйтесь</span></div>'}
   </div>`;
 
   setLoading(true);
@@ -77,29 +74,28 @@ export function renderComments(comments) {
   formAction();
   initReplayListener({ comments });
   initLikeButtonListener(comments);
-  // logoutAction();
+  logoutAction();
   
 }
 
 function authAction() {
-  if (userLogin) return;
+  if (token) return;
   const loginLinkEl = document.getElementById("login-link");
   loginLinkEl.addEventListener("click", () => {
     renderLogin({ fetchGetAndRenderComments });
   });
 }
 
-// function logoutAction() {
-//   const logoutButtonEl = document.getElementById("logout-form-button");
-//   logoutButtonEl.addEventListener("click", () => {
-//     localStorage.clear();
-//     console.log(user)
-//     fetchGetAndRenderComments();
-//   })
-// }
+function logoutAction() {
+  const logoutButtonEl = document.getElementById("logout-form-button");
+  logoutButtonEl.addEventListener("click", () => {
+    localStorage.clear();
+    location.reload();
+  })
+}
 
 export function formAction() {
-  if (!userLogin) return;
+  if (!token) return;
   const nameEl = document.getElementById("add-form-name");
   const textEl = document.getElementById("add-form-text");
   const buttonEl = document.getElementById("add-form-button");
