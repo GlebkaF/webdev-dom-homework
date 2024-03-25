@@ -1,4 +1,3 @@
-import { userURL } from "./api.js";
 import { renderLogin } from "./renderLogin.js";
 
 export const renderReg = ({ fetchGetAndRenderComments }) => {
@@ -46,8 +45,8 @@ export const renderReg = ({ fetchGetAndRenderComments }) => {
         return fetch("https://wedev-api.sky.pro/api/user", {
             method: "POST",
             body: JSON.stringify({
-                login: loginInputElement.value,
-                name: nameInputElement.value,
+                login: loginInputElement.value.trim(),
+                name: nameInputElement.value.trim(),
                 password: passwordInputElement.value,
             }),
         })
