@@ -2,13 +2,8 @@ import { formattedDate } from './formatDate.js';
 import { getComments, postComments } from './api.js';
 import { showAddingCommentMessage, hideAddingCommentMessage } from './addingCommentMessage.js';
 import { renderPeoples } from './renderPeoples.js';
-import { renderLogin } from './loginPage.js';
 
 //ПОЛУЧАЕМ КОММЕНТАРИИ ИЗ СЕРВЕРА:
-
-// Определяем список комментариев и добавляем лоадер на список при первой загрузке страницы
-// const commentListElement = document.getElementById('commentList');
-// commentListElement.textContent = 'Загружаю список комментариев...';
 
 // Создаем массив, куда будем помещать данные, полученные из API
 export let peoples = [];
@@ -43,10 +38,9 @@ const fetchComments = () => {
 
 // Вызываем функцию fetchComments для получения комментариев сразу при загрузке страницы
 fetchComments();
-// renderLogin();
 
 
-// НОВЫЙ КОММЕНТАРИЙ:
+// // НОВЫЙ КОММЕНТАРИЙ:
 
 // const buttonElement = document.getElementById('add-button');
 // const nameInputElement = document.getElementById('name');

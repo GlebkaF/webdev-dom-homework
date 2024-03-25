@@ -1,5 +1,3 @@
-// Пишем функцию рендера для создания разметки
-
 import { renderLogin } from "./loginPage.js";
 import { user } from "./api.js";
 
@@ -7,6 +5,7 @@ import { user } from "./api.js";
 const textInputElement = document.getElementById('textArea');
 
 export function renderPeoples(peoples) {
+    // commentListElement.textContent = 'Загружаю список комментариев...';
     const container = document.querySelector('.container');
     const list = '<ul id="commentList" class="comments"></ul>';
 
@@ -35,21 +34,22 @@ export function renderPeoples(peoples) {
         })
         .join("");
 
-        const form = `<div id="form-id" class="add-form">
-        <input value=${user ? user.name : ""} readonly id="name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
-        <textarea id="textArea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
-        <div class="add-form-row">
-        <button id="add-button" class="add-form-button">Написать</button>
-        </div>
-        </div>`
+        const form = `
+        <div id="form-id" class="add-form">
+            <input value=${user ? user.name : ""} readonly id="name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+            <textarea id="textArea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
+            <div class="add-form-row">
+                <button id="add-button" class="add-form-button">Написать</button>
+            </div>
+        </div>`;
 
-        const auth = '<p class="auth">Авторизуйтесь<p>';
+        const auth = '<p class="auth">Чтобы добавить комментарий, авторизуйтесь<p>';
         container.innerHTML = `${list} ${user ? form : auth} `;
 
         
 
         const commentListElement = document.getElementById('commentList');
-
+        commentListElement.textContent = 'Загружаю список комментариев...';
         commentListElement.innerHTML = commentsHtml;
 
         if (!user) {
@@ -58,8 +58,6 @@ export function renderPeoples(peoples) {
                 renderLogin();            
             })
         };
-
-
 
 
 
