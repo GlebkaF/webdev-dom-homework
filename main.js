@@ -12,6 +12,48 @@ const nameInputElement = document.getElementById('name-input');
 const commentInputElement = document.getElementById('comment-input');
 const preLoadElement = document.getElementById('preloader');
 
+
+
+// const commentsBlockElement = document.getElementById('comments-block');
+// const addFormElement = document.getElementById('add-form');
+// const loginFormElement = document.getElementById('login-form');
+// const logButtonElement = document.getElementById('log-button');
+
+// // localStorage.getItem('isLogined');
+// console.log(localStorage.getItem('isLogined'));
+
+// const isLogined = localStorage.getItem('isLogined');
+// if (isLogined === null) {
+//   commentsBlockElement.style.display = 'none';
+//   addFormElement.style.display = 'none';
+//   loginFormElement.style.display = 'block';
+// } else {
+//   commentsBlockElement.style.display = 'block';
+//   addFormElement.style.display = 'block';
+//   loginFormElement.style.display = 'none';
+// }
+
+// logButtonElement.addEventListener('click', () => {
+
+//   const loginValue = document.getElementById('login-input').value;
+//   const passwordValue = document.getElementById('password-input').value;
+
+//   const host = 'https://wedev-api.sky.pro/api/v2/rustam-kholov/comments';
+//   const token = '';
+
+//   return fetch (
+
+//     host,  {
+//       method: "GET",
+//       headers: {
+//         Authorization: token,
+//     },
+//   },
+// )
+// });
+
+
+
 // Получениe комментов с сервера
 function getComments() {
 
@@ -36,10 +78,10 @@ getComments();
 let comments = [];
 
 // Кнопка для лайка 
-initLikeButtonListeners({comments}, {renderComments});
+initLikeButtonListeners({ comments }, { renderComments });
 
 // Ответ по клику на коммент 
-reply({comments});
+reply({ comments });
 
 // Отмена валидации (чтобы не было красных полей)
 removeValidation();
@@ -92,7 +134,7 @@ addButtonElement.addEventListener('click', () => {
 
     };
   });
-  renderComments({comments, initLikeButtonListeners, reply, removeValidation, delay});
+  renderComments({ comments, initLikeButtonListeners, reply, removeValidation, delay });
 });
 
 

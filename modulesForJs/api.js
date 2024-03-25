@@ -1,12 +1,17 @@
 // Получениe комментов с сервера (часть кода)
 
+const host = 'https://wedev-api.sky.pro/api/v2/rustam-kholov/comments';
+
+let token = '';
+
+
 export function fetchAndRenderComments() {
     return fetch(
 
-        'https://wedev-api.sky.pro/api/v1/rustam-kholov/comments',
+        host,
 
         {
-            method: "GET"
+            method: "GET",
         }
     ).then((response) => {
 
@@ -37,7 +42,7 @@ export function fetchAndRenderComments() {
 export function postComment({ name }, { text }) {
     
     return fetch(
-        'https://wedev-api.sky.pro/api/v1/rustam-kholov/comments',
+        host,
         {
             method: "POST",
             body: JSON.stringify({
@@ -51,7 +56,10 @@ export function postComment({ name }, { text }) {
                     .replaceAll("<", "&lt;")
                     .replaceAll(">", "&gt;")
                     .replaceAll('"', "&quot;"),
-            })
+            }),
+            headers: {
+                Authorization: password,
+            },
         }).catch(() => {
 
             alert('Кажется, у вас сломался интернет, попробуйте позже');
