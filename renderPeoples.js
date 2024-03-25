@@ -1,8 +1,8 @@
 import { renderLogin } from "./loginPage.js";
 import { user } from "./api.js";
-
-// Определяем элементы input-формы
-const textInputElement = document.getElementById('textArea');
+import { showAddingCommentMessage, hideAddingCommentMessage } from "./addingCommentMessage.js";
+import { postComments } from './api.js';
+import { fetchComments } from "./main.js";
 
 export function renderPeoples(peoples) {
     // commentListElement.textContent = 'Загружаю список комментариев...';
@@ -79,6 +79,75 @@ export function renderPeoples(peoples) {
             renderPeoples(peoples);
         });
     };
+
+    // НОВЫЙ КОММЕНТАРИЙ:
+
+    // Определяем элементы input-формы
+    const textInputElement = document.getElementById('textArea');
+    const buttonElement = document.getElementById('add-button');
+    const nameInputElement = document.getElementById('name');
+
+    // Назначаем обработчик клика на кнопку добавления комментария
+    buttonElement.addEventListener("click", () => {
+        // Удаляем пробелы из значений полей ввода
+        const trimmedName = nameInputElement.value.trim();
+        const trimmedText = textInputElement.value.trim();
+
+        nameInputElement.classList.remove("error");
+        if (trimmedName === "") {
+            nameInputElement.classList.add("error");
+            return;
+        };
+
+        textInputElement.classList.remove("error");
+        if (trimmedText === "") {
+            textInputElement.classList.add("error");
+            return;
+        };
+
+        // Показать текст "Добавляю твой комментарий..." и скрыть форму добавления комментария
+        showAddingCommentMessage();
+        
+        // Отправляем POST-запрос для добавления нового комментария    
+        postComments(
+            trimmedText, 
+            trimmedName
+        )
+        .then((response) => {
+            if (response.status === 500) {
+                throw new Error('Ошибка сервера');
+            };
+
+            if (response.status === 400) {
+                throw new Error('Неверный запрос')
+            };
+        })
+        .then(() => {
+            // Получаем обновленный список комментариев, вызвав функцию fetchComments после успешного POST-запроса
+        return fetchComments();               
+        })
+        .then(() => {
+            // Очищаем поля ввода после отправки комментария только при успешном POST
+            nameInputElement.value = "";
+            textInputElement.value = "";
+        })
+        .catch((error) => {
+            if (error.message === 'Ошибка сервера') {
+            alert('Севрвер прилег отдохнуть, пробуй еще раз...');            
+            } else if (error.message === 'Неверный запрос') {
+                alert('Имя или комментарий короче 3-х символов');
+                textInputElement.classList.add("error");
+                nameInputElement.classList.add("error");
+            } else {
+                alert('Кажется, интернет прилег отдохнуть, проверь соединение...');
+            };        
+        })
+        .finally(() => {
+            // Скрыть текст "Добавляю твой комментарий..." и показать форму добавления комментария
+            hideAddingCommentMessage();
+            document.getElementById('form-id').style.display = 'flex'; // Показать форму добавления комментария
+        });
+    });
 
     // Ответ на комментарий
     for (const commentElement of document.querySelectorAll(".comment")) {
