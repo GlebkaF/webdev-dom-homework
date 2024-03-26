@@ -1,6 +1,7 @@
 // Получениe комментов с сервера (часть кода)
 
 const host = 'https://wedev-api.sky.pro/api/v2/rustam-kholov/comments';
+const userUrl = 'https://wedev-api.sky.pro/api/user';
 
 let token = '';
 
@@ -20,18 +21,18 @@ export function fetchAndRenderComments() {
             return Promise.reject('Сервер сломался, попробуй позже');
 
         } else {
-        
+
             return response.json();
 
         }
     }).catch((err) => {
 
         if (err.message === 'Сервер сломался, попробуй позже') {
-            
+
             return alert('Сервер сломался, попробуй позже')
 
-        } else if(err.message === 'Failed to fetch') {
-            
+        } else if (err.message === 'Failed to fetch') {
+
             return alert('Кажется, у вас сломался интернет, попробуйте позже')
         };
     });
@@ -40,7 +41,7 @@ export function fetchAndRenderComments() {
 
 
 export function postComment({ name }, { text }) {
-    
+
     return fetch(
         host,
         {
@@ -57,9 +58,6 @@ export function postComment({ name }, { text }) {
                     .replaceAll(">", "&gt;")
                     .replaceAll('"', "&quot;"),
             }),
-            headers: {
-                Authorization: password,
-            },
         }).catch(() => {
 
             alert('Кажется, у вас сломался интернет, попробуйте позже');
@@ -83,3 +81,18 @@ export function postComment({ name }, { text }) {
             }
         });
 };
+
+
+export function login({login, password}) {
+
+    return fetch(userUrl, {
+        method: 'POST',
+        body: JSON.stringify({
+            login,
+            password,
+        }),
+    }).then((response) => {
+
+        return response.JSON();
+    })
+}
