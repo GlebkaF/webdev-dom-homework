@@ -9,6 +9,9 @@
 
 <body>
   <div class="container">
+    <div class="preloader" id="preloader">
+      <span class="loader"></span>
+    </div>
     <ul id="list-comments" class="comments">
       <!-- Список рендерится из JS -->
     </ul>
@@ -119,6 +122,12 @@
 
   renderUsers();
 
+// загрузочная Ракета-анимация
+
+const loading = window.addEventListener('load', function () {
+  const preloader = document.getElementById('preloader');
+  preloader.style.display = 'none';
+});
 
   //API домашка
 
@@ -193,8 +202,6 @@
       return;
     }
 
-    // const startAt = Date.now();
-    //   console.log('Начинаем делать запрос');
     buttonElement.disabled = true;
     buttonElement.textContent = 'Элемент добавлятся...';
 
