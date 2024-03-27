@@ -7,65 +7,157 @@
   </head>
 
   <body>
-    <div class="container">
+    <main class="container">
       <ul class="comments">
         <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
+          <header class="comment-header">
+            <h3>Глеб Фокин</h3>
+            <time>12.02.22 12:18</time>
+          </header>
+          <section class="comment-body">
+            <article class="comment-text">
               Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
+            </article>
+          </section>
+          <section class="comment-footer">
+            <article class="likes">
               <span class="likes-counter">3</span>
               <button class="like-button"></button>
-            </div>
-          </div>
+            </article>
+          </section>
         </li>
         <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
+          <header class="comment-header">
+            <h3>Варвара Н.</h3>
+            <time>13.02.22 19:22</time>
+          </header>
+          <section class="comment-body">
+            <article class="comment-text">
               Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
+            </article>
+          </section>
+          <section class="comment-footer">
+            <article class="likes">
               <span class="likes-counter">75</span>
               <button class="like-button -active-like"></button>
-            </div>
-          </div>
+            </article>
+          </section>
         </li>
       </ul>
-      <div class="add-form">
+      <section class="add-form">
         <input
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          required
         />
         <textarea
           type="textarea"
           class="add-form-text"
-          placeholder="Введите ваш коментарий"
+          placeholder="Введите ваш комментарий"
           rows="4"
         ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
-        </div>
-      </div>
-    </div>
+        <fieldset class="add-form-row">
+          <button class="add-form-button" type="submit" disabled="disabled">
+            Написать
+          </button>
+        </fieldset>
+      </section>
+    </main>
   </body>
 
   <script>
     "use strict";
     // Код писать здесь
+    const commentsEl = document.querySelector(".comments");
+    const commentEl = document.querySelector(".comment");
+
+    const nameEl = document.querySelector(".add-form-name");
+    const textEl = document.querySelector(".add-form-text");
+    const buttonEl = document.querySelector(".add-form-button");
+
+    const newCommentsEl = document.createElement("ul");
+    newCommentsEl.className = "comments";
+    const newCommentEl = document.createElement("li");
+    newCommentEl.className = "comment";
+
+    const newHeadEl = document.createElement("section");
+    newHeadEl.className = "comment-header";
+
+    const newBodyEl = document.createElement("section");
+    newBodyEl.className = "comment-body";
+    const newCommentTextEl = document.createElement("article");
+    newCommentTextEl.className = "comment-text";
+
+    const newFooterEl = document.createElement("section");
+    newFooterEl.className = "comment-footer";
+    const newLikesEl = document.createElement("article");
+    newLikesEl.className = "likes";
+    const newLikesCounter = document.createElement("span");
+    newLikesCounter.className = "likes-counter";
+    const newLikeButton = document.createElement("button");
+    newLikeButton.className = "like-button";
+
+    const titleEl = document.createElement("h3");
+    const dateEl = document.createElement("time");
+    const date = `${new Date().toLocaleDateString("ru-RU", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "2-digit",
+    })} ${new Date().toLocaleTimeString("ru-RU", {
+      hour: "2-digit",
+      minute: "2-digit",
+    })}`;
+
+    function addComment() {
+      let counter = 0;
+      const commentsOld = commentsEl.innerHTML;
+      const commentOld = commentEl.innerHTML;
+      newLikesCounter.textContent = counter;
+
+      titleEl.textContent = nameEl.value;
+      dateEl.textContent = date;
+      newHeadEl.append(titleEl, dateEl);
+      newCommentEl.appendChild(newHeadEl);
+
+      newCommentTextEl.textContent = textEl.value;
+      newBodyEl.append(newCommentTextEl);
+      newCommentEl.appendChild(newBodyEl);
+
+      newLikesEl.append(newLikesCounter, newLikeButton);
+      newFooterEl.appendChild(newLikesEl);
+      newCommentEl.appendChild(newFooterEl);
+
+      newCommentsEl.appendChild(newCommentEl);
+
+      commentsEl.innerHTML = commentsOld + newCommentsEl.innerHTML;
+    }
+
+    buttonEl.addEventListener("click", addComment);
+
+    nameEl.addEventListener("input", () => {
+      nameEl.value && textEl.value
+        ? buttonEl.removeAttribute("disabled")
+        : buttonEl.setAttribute("disabled", "disabled");
+    });
+
+    textEl.addEventListener("keydown", e => {
+      if (e.key === "Enter") e.preventDefault();
+    });
+
+    const events = ["input", "keyup"];
+
+    events.forEach(event =>
+      textEl.addEventListener(event, e => {
+        textEl.value && nameEl.value
+          ? buttonEl.removeAttribute("disabled")
+          : buttonEl.setAttribute("disabled", "disabled");
+        if (e.key === "Enter" && !buttonEl.hasAttribute("disabled")) {
+          addComment();
+        }
+      })
+    );
+
     console.log("It works!");
   </script>
 </html>
