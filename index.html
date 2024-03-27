@@ -112,6 +112,9 @@
       return;
     }
 
+    buttonElement.disabled = true;
+    buttonElement.textContent = "элемент добавляется...";
+
     const body = {
       name: nameId.value
         .replaceAll("&", "&amp;")
@@ -136,12 +139,14 @@
         nameId.value = "";
         commentAdd.value = "";
       })
+      .then(() => {
+        buttonElement.disabled = false;
+        buttonElement.textContent = "Добавить"; 
+      })
       .catch((error) => {
         alert(error);
       })
   });
-
-
 
 </script>
 
