@@ -241,7 +241,8 @@
         method: "POST",
         body: JSON.stringify({
           text: textInputElement.value.trim(),
-          name: nameInputElement.value.trim() /*forceError: true*/,
+          name: nameInputElement.value.trim(),
+          forceError: true,
         }),
       })
         .then((response) => {
@@ -259,7 +260,10 @@
         .catch((error) => {
           if (error.message === "Failed to fetch") alert("сломался интернет!");
           else alert(error.message);
+          buttonElement.disabled = false;
+          buttonElement.textContent = "Написать"
         });
+
     }
 
     // Работа кнопки при нажатии (поле Имя и поле текст)
