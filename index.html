@@ -64,8 +64,131 @@
   </body>
 
   <script>
-    "use strict";
+
     // Код писать здесь
+  
+    
+
+    const comments = [{
+      name : "Глеб Фокин",
+      date : new Date("2023-02-01T12:20:52.308Z"),
+      text : "Это будет первый комментарий на этой странице",
+      likes : 3,
+      isLiked : false,
+    }, 
+    // {
+    //   name : "Варвара Н.",
+    //   date : new Date("2023-02-15T19:45:56.308Z"),
+    //   text : "Мне нравится как оформлена эта страница! ❤",
+    //   likes : 75,
+    //   isLiked : true,
+    // },
+  ];
+
+
+    const name = document.querySelector(".add-form-name");
+    const text = document.querySelector(".add-form-text");
+    const list = document.querySelector(".comments");
+
+
+    // const initLikesListeners = () => {
+
+    // }
+
+    const initLikesListeners = () => {
+      const likeButtonsElements = document.querySelectorAll(".like-button");
+
+      for (likeButtonElement of likeButtonsElements) {
+        likeButtonElement.addEventListener("click", (event) =>{
+          // event.stopPropagation();
+
+          const index = likeButtonElement.dataset.index;
+
+          const comment = comments[index];
+          
+          comment.likes = comment.isLiked
+            ? comment.likes -1
+            : comment.likes +1;
+
+          comment.isLiked = !comment.isLiked;
+          
+          renderComments();
+          
+        }); 
+      } 
+    };
+    
+
+    const renderComments = () => {
+      list.innerHTML = comments.map((comment, index) => {
+        return `
+        <li class="comment" data-index="${index}">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.date.toLocaleDateString()} ${comment.date.toLocaleTimeString()}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.text
+              .replaceAll("%BEGIN_QUOTE", "div class='quote'>")
+              .replaceAll("END_QUOTE%", "</div>")}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.likes}</span>лайка
+              <button data-index="${index}" class="like-button ${
+                comment.isLiked ? "-active-like" : ""
+            }"></button>
+              </div>
+            </div>
+          </li>
+        `   
+         
+      }).join("");
+
+      initLikesListeners();
+      
+    }
+    
+    renderComments();
+    
+    
+    
+    const addButton = document.querySelector(".add-form-button");
+    addButton.addEventListener("click", () => {
+      name.classList.remove("error");
+      text.classList.remove("error");
+      if (!name.value && !text.value) {
+        name.classList.add("error");
+        text.classList.add("error");
+        return;
+      } else if (!name.value) {
+        name.classList.add("error");
+        return;
+      } else if (!text.value) {
+        text.classList.add("error");
+        return;
+      } else {      
+
+      comments.push({
+        name: name.value,
+        text: text.value,
+        date: new Date(),
+        likes: 0,
+        isLiked: false,
+      });
+      renderComments ();
+    }
+    
+      renderComments();
+      
+
+      name.value = "";
+      text.value = "";
+    });
+
+
     console.log("It works!");
   </script>
 </html>
