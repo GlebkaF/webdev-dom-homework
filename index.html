@@ -137,6 +137,7 @@
           deleteButtonElement.classList.remove("hide"); // активируем кнопку "Удалить последний комментарий"
 
           userComments = appComments;
+
           renderComments();
           prepareInput();
         })
@@ -222,6 +223,25 @@
       clearInput();
       event.stopPropagation();
     });
+    
+
+    // deleteButtonElement.addEventListener("click", (event) => {
+    //   event.stopPropagation();
+
+    //   const id = deleteButtonElement.dataset.id;
+
+    //   fetch("https://wedev-api.sky.pro/api/v1/OlegGorin/comments" + id, {
+    //     method: "DELETE",
+    //   }).then((response) => {
+    //     response.json().then((responseData) => {
+    //       console.log(responseData.comments);
+    //       // { result: 'ok' }
+    //       // comments = responseData.comments;
+    //       renderComments();
+    //     });
+    //   });
+    //   renderComments();
+    // });
 
     // deleteButtonElement.addEventListener("click", (event) => {
     //   event.stopPropagation();
