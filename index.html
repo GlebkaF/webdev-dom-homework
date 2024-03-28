@@ -324,7 +324,7 @@
         })
         .catch((error) => {
           if (error.message === "Сервер недоступен") {
-            // alert("Сервер недоступен, попробуйте позже");
+            alert("Сервер недоступен, попробуйте позже");
             handlePostClick();
             addButtonElement.disabled = false;
             addButtonElement.classList.remove("error");
