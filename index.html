@@ -1,71 +1,142 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
-      <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <ul id="user-comments" class="comments">
+      <li class="comment">
+        <div class="comment-header">
+          <div>Глеб Фокин</div>
+          <div>12.02.22 12:18</div>
         </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Это будет первый комментарий на этой странице
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">3</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>
+      <li class="comment">
+        <div class="comment-header">
+          <div>Варвара Н.</div>
+          <div>13.02.22 19:22</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Мне нравится как оформлена эта страница! ❤
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">75</span>
+            <button class="like-button -active-like"></button>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <div id="form" class="add-form">
+      <input id="user-name" type="text" name="name" class="add-form-name" placeholder="Введите ваше имя" />
+      <textarea id="user-comment" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+        rows="4"></textarea>
+      <div class="add-form-row">
+        <button id="send" class="add-form-button" disabled>Написать</button>
       </div>
     </div>
-  </body>
+  </div>
+</body>
 
-  <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
-  </script>
+<script>
+  "use strict";
+  const userName = document.getElementById('user-name');
+  const userComment = document.getElementById('user-comment');
+  const send = document.getElementById('send');
+  const userCommentsList = document.getElementById('user-comments');
+  const userForm = document.getElementById('form');
+  const array = [userName, userComment];
+  let check;
+ 
+  for (let i = 0; i < array.length; i++) {
+    array[i].addEventListener('input', () => {
+      if (array.every((el) => el.value !== '')) {
+        send.disabled = false;
+      }
+      else {
+        send.disabled = true;
+      }
+    });
+  }
+
+  userForm.addEventListener('keyup', (event) => {
+    if(event.keyCode === 13) {
+      if (userName.value == '' || userComment.value == '') {
+        alert('Вы не ввели имя и/или комментарий');
+        userName.value = '';
+        userName.blur();
+        userComment.value = '';
+        userComment.blur();
+      }
+
+      else {
+        sendComment();
+        userName.blur();
+        userName.value = '';
+        userComment.blur();
+        userComment.value = '';
+        send.disabled = true;
+      }
+    }
+  });
+
+  function sendComment() {
+    const oldUserCommentsList = userCommentsList.innerHTML;
+    const date = new Date();
+    const userDate = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+    const userMonth = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
+    const userYear = date.getFullYear().toString().substr(-2);
+    const userHours = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
+    const userMinutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
+    const countLikes = 0;
+    userCommentsList.innerHTML = oldUserCommentsList +
+      `<li class="comment">
+      <div class="comment-header">
+        <div>${userName.value}</div>
+        <div>${userDate}.${userMonth}.${userYear} ${userHours}:${userMinutes}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">
+          ${userComment.value}
+        </div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">${countLikes}</span>
+          <button class="like-button"></button>
+        </div>
+      </div>
+      </li>`;
+  }
+
+  send.addEventListener('click', () => {
+    sendComment();
+    send.disabled = true;
+    userName.value = '';
+    userName.blur();
+    userComment.value = '';
+    userComment.blur();
+  });
+
+  console.log("It works!");
+</script>
+
 </html>
