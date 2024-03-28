@@ -56,12 +56,15 @@
       from {
         transform: rotate(0deg);
       }
+
       25% {
         transform: rotate(30deg);
       }
+
       75% {
         transform: rotate(-30deg);
       }
+
       to {
         transform: rotate(0deg);
       }
@@ -92,14 +95,20 @@
     addForm.classList.remove("hide");
     deleteButtonElement.classList.remove("hide");
 
-    let comments = [];
+    let userComments = [];
 
     function fetchPromiseArr() {
       fetch("https://wedev-api.sky.pro/api/v1/OlegGorin/comments", {
         method: "GET",
       })
         .then((response) => {
-          return response.json();
+          // console.log("respobse" ,response);
+          if (response.status === 201 || response.status === 200) {
+            return response.json();
+          } else if (response.status === 500) {
+            return Promise.reject(new Error("Сервер недоступен"));
+          }
+          // return response.json();
         })
         .then((responseData) => {
           const appComments = responseData.comments.map((comment) => {
@@ -112,7 +121,7 @@
                   year: "2-digit",
                 }) +
                 " " +
-                new Date().toLocaleTimeString([], {
+                new Date(comment.date).toLocaleTimeString([], {
                   hour: "2-digit",
                   minute: "2-digit",
                 }),
@@ -122,13 +131,30 @@
             };
           });
 
-          commentsLoading.classList.add("hide");
-          commentsAdding.classList.add("hide");
-          addForm.classList.remove("hide");
-          deleteButtonElement.classList.remove("hide");
+          commentsLoading.classList.add("hide"); // скрываем надпись о загрузке комментариев с сервера
+          commentsAdding.classList.add("hide"); // скрываем надпись о добавлении записей на сервер
+          addForm.classList.remove("hide"); // активируем форму добавления комментариев
+          deleteButtonElement.classList.remove("hide"); // активируем кнопку "Удалить последний комментарий"
 
-          comments = appComments;
+          userComments = appComments;
+
           renderComments();
+          prepareInput();
+        })
+        .catch((error) => {
+          if (error.message === "Сервер недоступен") {
+            alert("Сервер недоступен, попробуйте позже");
+            fetchPromiseArr();
+          } else if (error.message === "Failed to fetch") {
+            alert("Неполадки интернета");
+            addButtonElement.disabled = true; // деактивируем кнопку "Написать"
+            addButtonElement.classList.add("error"); // меняем ее цвет
+            commentsAdding.classList.add("hide"); // скрываем надпись о добавлении записей на сервер
+            addForm.classList.remove("hide"); // активируем форму добавления комментариев
+          } else {
+            console.log(error);
+          }
+          console.warn(error);
         });
     }
 
@@ -146,12 +172,13 @@
           console.log(likeButtonElement.dataset);
 
           delay(2000).then(() => {
-            comments[index].likesCounter = comments[index].likeButton
-              ? comments[index].likesCounter - 1
-              : comments[index].likesCounter + 1;
-            comments[index].likeButton = !comments[index].likeButton;
-            comments[index].isLikeLoading = false;
+            userComments[index].likesCounter = userComments[index].likeButton
+              ? userComments[index].likesCounter - 1
+              : userComments[index].likesCounter + 1;
+            userComments[index].likeButton = !userComments[index].likeButton;
+            userComments[index].isLikeLoading = false;
             renderComments();
+            prepareInput();
           });
         });
       }
@@ -190,12 +217,31 @@
     });
 
     deleteButtonElement.addEventListener("click", (event) => {
-      comments.splice(comments.length - 1, 1);
+      userComments.splice(userComments.length - 1, 1);
       renderComments();
+      prepareInput();
       clearInput();
       event.stopPropagation();
     });
     
+
+    // deleteButtonElement.addEventListener("click", (event) => {
+    //   event.stopPropagation();
+
+    //   const id = deleteButtonElement.dataset.id;
+
+    //   fetch("https://wedev-api.sky.pro/api/v1/OlegGorin/comments" + id, {
+    //     method: "DELETE",
+    //   }).then((response) => {
+    //     response.json().then((responseData) => {
+    //       console.log(responseData.comments);
+    //       // { result: 'ok' }
+    //       // comments = responseData.comments;
+    //       renderComments();
+    //     });
+    //   });
+    //   renderComments();
+    // });
 
     // deleteButtonElement.addEventListener("click", (event) => {
     //   event.stopPropagation();
@@ -224,16 +270,16 @@
 
           let QUOTE_BEGIN = "QUOTE_BEGIN";
           let QUOTE_END = "QUOTE_END";
-          commentInputElement.value = `> ${QUOTE_BEGIN} ${comments[index].text} \n\n${comments[index].name}, ${QUOTE_END}`;
+          commentInputElement.value = `> ${QUOTE_BEGIN} ${userComments[index].text} \n\n${userComments[index].name}, ${QUOTE_END}`;
         });
       }
     };
 
     initEventListeners();
 
-    addButtonElement.addEventListener("click", addListComment);
+    addButtonElement.addEventListener("click", handlePostClick);
 
-    function addListComment() {
+    function handlePostClick() {
       if (
         nameInputElement.value.trim() === "" ||
         commentInputElement.value.trim() === ""
@@ -243,18 +289,6 @@
         return;
       }
 
-      const currentDate =
-        new Date().toLocaleDateString("default", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "2-digit",
-        }) +
-        " " +
-        new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-
       fetch("https://wedev-api.sky.pro/api/v1/OlegGorin/comments", {
         method: "POST",
         body: JSON.stringify({
@@ -263,7 +297,7 @@
             .replaceAll("<", "&lt;")
             .replaceAll(">", "&gt;")
             .replaceAll('"', "&quot;"),
-          date: currentDate,
+          // date: currentDate,
           text: commentInputElement.value
             .replaceAll("&", "&amp;")
             .replaceAll("<", "&lt;")
@@ -271,26 +305,66 @@
             .replaceAll('"', "&quot;")
             .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
             .replaceAll("QUOTE_END", "</div>"),
-          likesCounter: 0,
-          likeButton: false,
+          forceError: true,
         }),
-      }).then((response) => {
-        fetchPromiseArr();
-      });
+      })
+        .then((response) => {
+          if (response.status === 500) throw new Error("Сервер недоступен");
+          if (response.status === 201 || response.status === 200) {
+            fetchPromiseArr();
+            // return response.json();
+          }
+          if (response.status === 400) throw new Error("Неправильный запрос");
+        })
+        // .then(() => {
+        //   return fetchPromiseArr();
+        // })
+        .then(() => {
+          clearInput();
+        })
+        .catch((error) => {
+          if (error.message === "Сервер недоступен") {
+            // alert("Сервер недоступен, попробуйте позже");
+            handlePostClick();
+            addButtonElement.disabled = false;
+            addButtonElement.classList.remove("error");
+            commentsAdding.classList.add("hide");
+            addForm.classList.remove("hide");
+            deleteButtonElement.classList.remove("hide");
+            renderComments();
+          } else if (error.message === "Неправильный запрос") {
+            alert(
+              "Поля 'Имя' и 'Комментарий' должны содержать хотя бы 3 символа"
+            );
+            commentsAdding.classList.add("hide");
+            addForm.classList.remove("hide");
+            deleteButtonElement.classList.remove("hide");
+            renderComments();
+            prepareInput();
+          } else if (error.message === "Failed to fetch") {
+            alert("Неполадки интернета");
+            addButtonElement.disabled = false;
+            addButtonElement.classList.remove("error");
+            commentsAdding.classList.add("hide");
+            addForm.classList.remove("hide");
+          } else {
+            console.log(error);
+          }
+        });
 
       commentsAdding.classList.remove("hide");
       addForm.classList.add("hide");
       deleteButtonElement.classList.add("hide");
 
       renderComments();
-      clearInput();
+      // clearInput();
     }
 
     const renderComments = () => {
-      const commentHTML = comments
+      const commentHTML = userComments
         .map((comment, index) => {
           let lkBtn = "";
-          if (comments[index].likeButton === true) {
+          if (userComments[index].likeButton === true) {
             lkBtn = "like-button -active-like";
             // lkBtn = "like-button -loading-like";
           } else {
@@ -298,17 +372,17 @@
           }
           return `<li data-index="${index}" class="comment">
             <div class="comment-header">
-              <div>${comments[index].name}</div>
-              <div>${comments[index].date}</div>
+              <div>${userComments[index].name}</div>
+              <div>${userComments[index].date}</div>
             </div>
             <div class="comment-body">
               <div data-index="${index}" class="comment-text comment-newline">
-                ${comments[index].text}
+                ${userComments[index].text}
               </div >
             </div >
             <div class="comment-footer">
               <div class="likes">
-                <span class="likes-counter">${comments[index].likesCounter}</span>
+                <span class="likes-counter">${userComments[index].likesCounter}</span>
                 <button data-index=${index} class="${lkBtn}"></button>
               </div>
             </div>
@@ -320,11 +394,10 @@
 
       initEventListeners();
       changeLikeButton();
-
-      prepareInput();
     };
 
     renderComments();
+    prepareInput();
 
     function clearInput() {
       nameInputElement.value = "";
@@ -340,5 +413,3 @@
   </script>
 </html>
 //
-<!--  -->
-
