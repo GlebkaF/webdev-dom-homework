@@ -223,25 +223,6 @@
       clearInput();
       event.stopPropagation();
     });
-    
-
-    // deleteButtonElement.addEventListener("click", (event) => {
-    //   event.stopPropagation();
-
-    //   const id = deleteButtonElement.dataset.id;
-
-    //   fetch("https://wedev-api.sky.pro/api/v1/OlegGorin/comments" + id, {
-    //     method: "DELETE",
-    //   }).then((response) => {
-    //     response.json().then((responseData) => {
-    //       console.log(responseData.comments);
-    //       // { result: 'ok' }
-    //       // comments = responseData.comments;
-    //       renderComments();
-    //     });
-    //   });
-    //   renderComments();
-    // });
 
     // deleteButtonElement.addEventListener("click", (event) => {
     //   event.stopPropagation();
@@ -297,7 +278,6 @@
             .replaceAll("<", "&lt;")
             .replaceAll(">", "&gt;")
             .replaceAll('"', "&quot;"),
-          // date: currentDate,
           text: commentInputElement.value
             .replaceAll("&", "&amp;")
             .replaceAll("<", "&lt;")
@@ -307,6 +287,51 @@
             .replaceAll("QUOTE_END", "</div>"),
           forceError: true,
         }),
+      })
+        .then((response) => {
+          if (response.status === 201 || response.status === 200) {
+            // return response.json();
+            fetchPromiseArr();
+          } else if (response.status === 400) {
+            return Promise.reject(new Error("Неправильный запрос"));
+          } else {
+            return Promise.reject(new Error("Сервер недоступен"));
+          }
+        })
+        // .then(() => {
+        //   return fetchPromiseArr();
+        // })
+        .then(() => {
+          clearInput();
+        })
+        .catch((error) => {
+          if (error.message === "Сервер недоступен") {
+            alert("Сервер недоступен, попробуйте позже");
+            addButtonElement.disabled = false;
+            addButtonElement.classList.remove("error");
+            commentsAdding.classList.add("hide");
+            addForm.classList.remove("hide");
+            deleteButtonElement.classList.remove("hide");
+            renderComments();
+          } else if (error.message === "Неправильный запрос") {
+            alert(
+              "Поля 'Имя' и 'Комментарий' должны содержать хотя бы 3 символа"
+            );
+            commentsAdding.classList.add("hide");
+            addForm.classList.remove("hide");
+            deleteButtonElement.classList.remove("hide");
+            renderComments();
+            prepareInput();
+          } else if (error.message === "Failed to fetch") {
+            alert("Неполадки интернета");
+            addButtonElement.disabled = false;
+            addButtonElement.classList.remove("error");
+            commentsAdding.classList.add("hide");
+            addForm.classList.remove("hide");
+          } else {
+            console.log(error);
+          }
+        //});
       })
         .then((response) => {
           if (response.status === 500) throw new Error("Сервер недоступен");
@@ -412,4 +437,3 @@
     console.log("It works!");
   </script>
 </html>
-//
