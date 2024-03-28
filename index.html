@@ -9,40 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+          <!-- Сюда будут добавляться данные через JS -->
       </ul>
       <div class="add-form">
         <input
@@ -62,7 +29,11 @@
       </div>
     </div>
   </body>
-
+  <style>
+    .error {
+      background-color: lightcoral;
+    }
+  </style>
   <script>
 
     // Код писать здесь
@@ -76,13 +47,13 @@
       likes : 3,
       isLiked : false,
     }, 
-    // {
-    //   name : "Варвара Н.",
-    //   date : new Date("2023-02-15T19:45:56.308Z"),
-    //   text : "Мне нравится как оформлена эта страница! ❤",
-    //   likes : 75,
-    //   isLiked : true,
-    // },
+    {
+        name : "Варвара Н.",
+        date : new Date("2023-02-15T19:45:56.308Z"),
+        text : "Мне нравится как оформлена эта страница! ❤",
+        likes : 75,
+        isLiked : true,
+    },
   ];
 
 
@@ -91,14 +62,14 @@
     const list = document.querySelector(".comments");
 
 
-    // const initLikesListeners = () => {
-
-    // }
+// const initLikesListeners = () => {
+    
+// }
 
     const initLikesListeners = () => {
       const likeButtonsElements = document.querySelectorAll(".like-button");
 
-      for (likeButtonElement of likeButtonsElements) {
+      for (let likeButtonElement of likeButtonsElements) {
         likeButtonElement.addEventListener("click", (event) =>{
           // event.stopPropagation();
 
@@ -109,7 +80,7 @@
           comment.likes = comment.isLiked
             ? comment.likes -1
             : comment.likes +1;
-
+          
           comment.isLiked = !comment.isLiked;
           
           renderComments();
@@ -148,7 +119,7 @@
       }).join("");
 
       initLikesListeners();
-      
+      console.log(comments);
     }
     
     renderComments();
@@ -188,7 +159,8 @@
       text.value = "";
     });
 
-
+    renderComments();
+    
     console.log("It works!");
   </script>
 </html>
