@@ -65,7 +65,44 @@
 
   <script>
     "use strict";
-    // Код писать здесь
+  
+    const inputEl = document.querySelector(".add-form-name");
+    const textareaEl = document.querySelector(".add-form-text");
+    const ButtonEl = document.querySelector(".add-form-button");
+    const commentsListEl = document.querySelector(".comments");
+
+    ButtonEl.addEventListener("click", function() {
+      if (inputEl.value==="" || textareaEl.value==="") {
+        alert("Пожалуйста, заполните все поля!");
+        return;
+      }
+    
+      const newComment = `
+        <li class="comment">
+          <div class="comment-header">
+            <div>${inputEl.value}</div>
+            <div>${new Date().toLocaleDateString("ru-RU", { year: '2-digit', month: '2-digit', day: '2-digit' })} ${new Date().toLocaleTimeString("ru-RU", { hour: '2-digit', minute: '2-digit' })}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textareaEl.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>
+      `;
+
+      commentsListEl.innerHTML += newComment;
+      
+      inputEl.value = "";
+      textareaEl.value = "";
+    });
+
     console.log("It works!");
   </script>
 </html>
