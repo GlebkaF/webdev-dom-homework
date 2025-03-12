@@ -64,8 +64,61 @@
   </body>
 
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const comentsEl = document.querySelector('.comments');
+    const nameEl = document.querySelector('.add-form-name');
+    const textEl = document.querySelector('.add-form-text');
+    const buttonEl = document.querySelector('.add-form-button');
+    const likeButtonEl = document.querySelector('.like-button');
+  
+    buttonEl.addEventListener('click', function (e) {
+      if (nameEl.value == "") {
+        nameEl.classList.add('error');
+        nameEl.style.setProperty("--c", "black");
+        return;
+  
+      } else if (textEl.value == "") {
+        textEl.classList.add('error');
+        textEl.style.setProperty("--c", "black");
+        return;
+      }
+      let currentDate = new Date()
+      const oldList = comentsEl.innerHTML;
+      comentsEl.innerHTML = oldList + `<li class="comment">
+            <div class="comment-header">
+              <div>
+                ${nameEl.value}
+                </div>
+              <div>
+                ${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </div>
+            </div>
+            <div class="comment-body">
+              <div class="comment-text">
+                ${textEl.value}
+              </div>
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">0</span>
+                <button class="like-button"></button>
+              </div>
+            </div>
+          </li>`;
+  
+      nameEl.value = '';
+      textEl.value = '';
+    });
+  
+    nameEl.addEventListener('focus', function (e) {
+      nameEl.classList.remove('error');
+      nameEl.style.setProperty("--c", "gray");
+    });
+  
+    textEl.addEventListener('focus', function (e) {
+      textEl.classList.remove('error');
+      textEl.style.setProperty("--c", "gray");
+    });
+  
   </script>
+  
 </html>
