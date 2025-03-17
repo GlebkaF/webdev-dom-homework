@@ -65,7 +65,81 @@
 
   <script>
     "use strict";
-    // Код писать здесь
+      const nameInput = document.querySelector(".add-form-name");
+      const commentInput = document.querySelector(".add-form-text");
+      const addButton = document.querySelector(".add-form-button");
+      const commentsList = document.querySelector(".comments");
+
+  
+      function checkFormValidity() {
+        const name = nameInput.value.trim();
+        const commentText = commentInput.value.trim();
+
+        if (name && commentText) {
+          addButton.disabled = false;
+        } else {
+          addButton.disabled = true;
+        }
+      }
+
+
+      nameInput.addEventListener("input", checkFormValidity);
+
+
+      commentInput.addEventListener("input", checkFormValidity);
+
+
+      function addComment() {
+
+        const name = nameInput.value.trim();
+        const commentText = commentInput.value.trim();
+
+
+        if (!name || !commentText) {
+          alert("Пожалуйста, заполните все поля!");
+          return;
+        }
+      
+      
+        const now = new Date();
+        const date = now.toLocaleDateString();
+        const time = now.toLocaleTimeString();
+
+        const newComment = `
+          <li class="comment">
+            <div class="comment-header">
+              <div>${name}</div>
+              <div>${date} ${time}</div>
+            </div>
+            <div class="comment-body">
+              <div class="comment-text">${commentText}</div>
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">0</span>
+                <button class="like-button"></button>
+              </div>
+            </div>
+          </li>
+        `;
+        commentsList.insertAdjacentHTML("beforeend", newComment);
+
+      
+        nameInput.value = "";
+        commentInput.value = "";
+
+       
+        addButton.disabled = true;
+      }
+
+      addButton.addEventListener("click", addComment);
+
+      commentInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" && !event.shiftKey) {
+          event.preventDefault(); // Предотвращаем перенос строки
+          addComment();
+        }
+      });
     console.log("It works!");
   </script>
 </html>
