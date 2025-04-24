@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="comment">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -45,27 +45,52 @@
         </li>
       </ul>
       <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
+        <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name"/>
+        <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4" id="textarea"></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="write">Написать</button>
         </div>
       </div>
     </div>
-  </body>
+    <script>
+      const commentEl = document.getElementById('comment');
+      const nameEl = document.getElementById('name');
+      const textareaEl = document.getElementById('textarea');
+      const writeEl = document.getElementById('write');
 
-  <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
-  </script>
+      writeEl.addEventListener('click', () => {
+       
+        if (!nameEl.value || !textareaEl.value) {
+          alert('Ошибка! Добавить комментарий возможно только при заполнении всех полей ввода!');
+          return;
+        }
+
+        const currentDate = new Date();
+        const options = { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'};
+        const dateString = currentDate.toLocaleString('ru-RU', options).replace(',', '');
+
+        const newCommentHtml = `
+        <li class="comment">
+          <div class="comment-header">
+            <div>${nameEl.value}</div>
+            <div>${dateString}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">${textareaEl.value}</div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+
+        commentEl.innerHTML += newCommentHtml;
+
+        nameEl.value = "";
+        textareaEl.value = "";
+      });
+    </script>
+  </body>
 </html>
