@@ -9,40 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+       
       </ul>
       <div class="add-form">
         <input
@@ -65,7 +32,67 @@
 
   <script>
     "use strict";
-    // Код писать здесь
+    // Создаем переменную для всего списка комментариев
+  const commentsList = document.querySelector('.comments');
+
+  // Получаем элементы формы
+  const nameInput = document.querySelector('.add-form-name');
+  const commentInput = document.querySelector('.add-form-text');
+  const addButton = document.querySelector('.add-form-button');
+
+  // Обработчики событий на изменение полей ввода
+  nameInput.addEventListener('input', () => {
+    console.log('Имя изменено:', nameInput.value);
+  });
+
+  commentInput.addEventListener('input', () => {
+    console.log('Комментарий изменён:', commentInput.value);
+  });
+
+  // Обработка нажатия на кнопку "Добавить"
+  addButton.addEventListener('click', () => {
+    const name = nameInput.value.trim();
+    const comment = commentInput.value.trim();
+
+    if (name === '' || comment === '') {
+      alert('Пожалуйста, заполните оба поля');
+      return;
+    }
+
+    // Получаем текущую дату и время
+    const now = new Date();
+    const formattedDate = now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU').slice(0, 5);
+
+    // Шаблон нового комментария
+    const newComment = `
+      <li class="comment">
+        <div class="comment-header">
+          <div>${name}</div>
+          <div>${formattedDate}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${comment}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">0</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>
+    `;
+
+    // Добавляем комментарий в список с помощью innerHTML
+    commentsList.innerHTML += newComment;
+
+    // Очищаем форму
+    nameInput.value = '';
+    commentInput.value = '';
+  });
     console.log("It works!");
   </script>
 </html>
+
+
