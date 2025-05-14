@@ -31,16 +31,14 @@
   </body>
 
   <script>
-    "use strict";
-    // Создаем переменную для всего списка комментариев
+    const comments = [];
+
   const commentsList = document.querySelector('.comments');
 
-  // Получаем элементы формы
   const nameInput = document.querySelector('.add-form-name');
   const commentInput = document.querySelector('.add-form-text');
   const addButton = document.querySelector('.add-form-button');
 
-  // Обработчики событий на изменение полей ввода
   nameInput.addEventListener('input', () => {
     console.log('Имя изменено:', nameInput.value);
   });
@@ -49,7 +47,40 @@
     console.log('Комментарий изменён:', commentInput.value);
   });
 
-  // Обработка нажатия на кнопку "Добавить"
+  function renderComments() {
+    commentsList.innerHTML = ''; 
+    comments.forEach((comment, index) => {
+      const formattedDate = new Date(comment.date).toLocaleDateString('ru-RU') + ' ' + new Date(comment.date).toLocaleTimeString('ru-RU').slice(0, 5);
+      const heartClass = comment.liked ? 'liked' : ''; 
+
+      const newComment = `
+        <li class="comment">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${formattedDate}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.likes}</span>
+              <button class="like-button ${heartClass}" data-index="${index}"></button>
+            </div>
+          </div>
+        </li>
+      `;
+      commentsList.innerHTML += newComment;
+    });
+
+    const likeButtons = document.querySelectorAll('.like-button');
+    likeButtons.forEach(button => {
+      button.addEventListener('click', toggleLike);
+    });
+  }
+
   addButton.addEventListener('click', () => {
     const name = nameInput.value.trim();
     const comment = commentInput.value.trim();
@@ -59,39 +90,30 @@
       return;
     }
 
-    // Получаем текущую дату и время
-    const now = new Date();
-    const formattedDate = now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU').slice(0, 5);
+    comments.push({
+      name: name,
+      text: comment,
+      date: new Date(),
+      likes: 0,
+      liked: false
+    });
 
-    // Шаблон нового комментария
-    const newComment = `
-      <li class="comment">
-        <div class="comment-header">
-          <div>${name}</div>
-          <div>${formattedDate}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${comment}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-    `;
-
-    // Добавляем комментарий в список с помощью innerHTML
-    commentsList.innerHTML += newComment;
-
-    // Очищаем форму
+    renderComments();
     nameInput.value = '';
     commentInput.value = '';
   });
-    console.log("It works!");
+
+  function toggleLike(event) {
+    const index = event.target.dataset.index;
+    const comment = comments[index];
+
+    comment.liked = !comment.liked;
+    comment.liked ? comment.likes++ : comment.likes--;
+
+    renderComments();
+  }
+
+  console.log("It works!");
   </script>
 </html>
 
