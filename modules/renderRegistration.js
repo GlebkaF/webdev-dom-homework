@@ -1,6 +1,6 @@
-import { setToken, setName, fetchComments, registration } from "./api.js"
-import { renderComments } from "./renderComments.js"
-import { renderLogin } from "./renderLogin.js"
+import { setToken, setName, fetchComments, registration } from './api.js'
+import { renderComments } from './renderComments.js'
+import { renderLogin } from './renderLogin.js'
 
 export const renderRegistration = () => {
     const container = document.querySelector('.container')
@@ -47,13 +47,52 @@ export const renderRegistration = () => {
     const submitButtonEl = document.querySelector('.button-main')
 
     submitButtonEl.addEventListener('click', () => {
-        registration(userNameEl.value, loginEl.value, passwordEl.value).then((response) => {
-            return response.json()
-        }).then((data) => {
-            setToken(data.user.token)
-            setName(data.user.name)
-           //console.log(data);
-          renderComments()
-        })
-    })
+        if (
+            userNameEl.value.trim() === '' ||
+            loginEl.value.trim() === '' ||
+            passwordEl.value.trim() === ''
+        ) {
+            alert('Заполните все поля')
+            return
+        }
+
+        registration(userNameEl.value, loginEl.value, passwordEl.value)
+            .then((data) => {
+                setToken(data.user.token)
+                setName(data.user.name)
+                renderComments()
+                // renderRegistration()
+            })
+            .catch((error) => {
+                if (
+                    error.message.includes(
+                        'login должен содержать хотя бы 3 символа'
+                    )
+                ) {
+                    alert('Количество символов должно быть не менее трех')
+                }  else {
+                alert('Произошла ошибка: ' + error.message);
+            }
+            
+            userNameEl.classList.add('-error');
+            loginEl.classList.add('-error');
+            passwordEl.classList.add('-error');
+            
+            setTimeout(() => {
+                userNameEl.classList.remove('-error');
+                loginEl.classList.remove('-error');
+                passwordEl.classList.remove('-error');
+            }, 2000);
+
+            if (error.message.includes("Такой пользователь уже существует")) {
+                alert('Пользователь с таким логином уже существует');
+            }
+            userNameEl.classList.add('-error');
+            passwordEl.classList.add('-error');
+            setTimeout(() => {
+                userNameEl.classList.remove('-error');
+                passwordEl.classList.remove('-error');
+            })
+        });
+});
 }

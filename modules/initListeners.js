@@ -1,5 +1,6 @@
 import { fetchComments, postComment } from './api.js'
 import { comments, updateComments } from './comments.js'
+import { renderRegistration } from './renderRegistration.js'
 import { deleteHtml } from './sanitizeHtml.js'
 
 export const initLikeListeners = (renderComments) => {
@@ -48,7 +49,6 @@ export const initReplyListeners = () => {
 export const initAddCommentListener = (renderComments) => {
     const name = document.getElementById('name-input')
     const text = document.getElementById('text-input')
-
     const button = document.querySelector('.add-form-button')
 
     button.addEventListener('click', () => {
@@ -90,13 +90,12 @@ export const initAddCommentListener = (renderComments) => {
                     'Количество символов должно быть не менее трех'
                 ) {
                     alert('Количество символов должно быть не менее трех')
-
                     name.classList.add('-error')
                     text.classList.add('-error')
 
                     setTimeout(() => {
-                        name.classList.remove('-error')
-                        text.classList.remove('-error')
+                    name.classList.remove('-error')
+                    text.classList.remove('-error')
                     }, 2000)
                 }
             })

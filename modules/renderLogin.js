@@ -1,6 +1,6 @@
-import { login, setToken, setName, fetchComments } from "./api.js"
-import { renderComments } from "./renderComments.js"
-import { renderRegistration } from "./renderRegistration.js"
+import { login, setToken, setName, fetchComments } from './api.js'
+import { renderComments } from './renderComments.js'
+import { renderRegistration } from './renderRegistration.js'
 
 export const renderLogin = () => {
     const container = document.querySelector('.container')
@@ -31,7 +31,7 @@ export const renderLogin = () => {
     `
     container.innerHTML = loginHtml
 
-     document.querySelector('.registry').addEventListener('click', () => {
+    document.querySelector('.registry').addEventListener('click', () => {
         renderRegistration()
     })
 
@@ -40,13 +40,28 @@ export const renderLogin = () => {
     const submitButtonEl = document.querySelector('.button-main')
 
     submitButtonEl.addEventListener('click', () => {
-        login(loginEl.value, passwordEl.value).then((response) => {
-            return response.json()
-        }).then((data) => {
-            setToken(data.user.token)
-            setName(data.user.name)
-           //console.log(data);
-          renderComments()
-        })
+        if (loginEl.value.trim() === '' || passwordEl.value.trim() === '') {
+            alert('Заполните все поля')
+            return
+        }
+        login(loginEl.value, passwordEl.value)
+            .then((data) => {
+                setToken(data.user.token)
+                setName(data.user.name)
+                renderComments()
+            })
+            .catch((error) => {
+                if (error.message === 'Неверный логин или пароль') {
+                    alert('Неверный логин или пароль')
+
+                    loginEl.classList.add('-error')
+                    passwordEl.classList.add('-error')
+
+                    setTimeout(() => {
+                        loginEl.classList.remove('-error')
+                        passwordEl.classList.remove('-error')
+                    }, 2000)
+                }
+            })
     })
 }
