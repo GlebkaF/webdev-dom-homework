@@ -213,3 +213,71 @@ body {
 .entry:hover {
     cursor: pointer;
 }
+
+.form-container {
+            position: relative;
+            width: 700px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        /* Эффект вращения кругов */
+        .form-container::before,
+        .form-container::after {
+            content: '';
+            position: absolute;
+            top: -70%;
+            left: -70%;
+            z-index: -1;
+            width: 150%;
+            height: 150%;
+            border-radius: 50%;
+            animation: rotateCircle 5s linear infinite;
+        }
+
+        .form-container::before {
+            background-color: rgba(5, 162, 34, 0.3);
+        }
+
+        .form-container::after {
+            background-color: rgba(139, 195, 74, 0.3);
+            animation-delay: -2.5s;
+        }
+
+        @keyframes rotateCircle {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        input[type=text],
+        input[type=password] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+            transition: all 0.3s ease-in-out;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            color: white;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
