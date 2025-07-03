@@ -63,32 +63,47 @@
     </div>
   </body>
   <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const nameInput = document.querySelector('.add-form-name');
-    const commentInput = document.querySelector('.add-form-text');
-    const addButton = document.querySelector('.add-form-button');
-    const commentsList = document.querySelector('.comments');
-    
-    let comments = [
-      {
-        id: 1,
-        name: 'Глеб Фокин',
-        text: 'Это будет первый комментарий',
-        date: '12.02.2023 12:00',
-        likes: 0,
-        isLiked: false
-      }
-    ];
+document.addEventListener('DOMContentLoaded', function () {
+  const nameInput = document.querySelector('.add-form-name');
+  const commentInput = document.querySelector('.add-form-text');
+  const addButton = document.querySelector('.add-form-button');
+  const commentsList = document.querySelector('.comments');
 
-    function renderComments() {
-      commentsList.innerHTML = comments.map(comment => `
+  let comments = [
+    {
+      id: 1,
+      name: 'Глеб Фокин',
+      text: 'Это будет первый комментарий',
+      date: '12.02.2023 12:00',
+      likes: 0,
+      isLiked: false,
+      replyTo: null
+    }
+  ];
+
+  function escapeHTML(str) {
+    return str.replaceAll("&", "&amp;")
+             .replaceAll("<", "<")
+             .replaceAll(">", ">")
+             .replaceAll('"', "&quot;")
+             .replaceAll("'", "&#039;");
+  }
+
+  function renderComments() {
+    commentsList.innerHTML = '';
+    
+    comments.forEach(comment => {
+      const safeName = escapeHTML(comment.name);
+      const safeText = escapeHTML(comment.text);
+
+      let html = `
         <div class="comment" data-id="${comment.id}">
           <div class="comment-header">
-            <div>${comment.name}</div>
+            <div>${safeName}</div>
             <div>${comment.date}</div>
           </div>
           <div class="comment-body">
-            ${comment.text}
+            ${safeText}
           </div>
           <div class="comment-footer">
             <div class="likes">
@@ -97,54 +112,104 @@
             </div>
           </div>
         </div>
-      `).join('');
-      
-      document.querySelectorAll('.like-button').forEach(button => {
-        button.addEventListener('click', (event) => {
-          const commentElement = event.target.closest('.comment');
-          const commentId = parseInt(commentElement.dataset.id);
-          toggleLike(commentId);
-        });
-      });
-    }
+      `;
 
-    function toggleLike(commentId) {
-      const comment = comments.find(c => c.id === commentId);
-      if (comment) {
-        comment.isLiked = !comment.isLiked;
-        comment.likes += comment.isLiked ? 1 : -1;
-        renderComments();
+      if (comment.replyTo) {
+        const safeReplyText = escapeHTML(comment.replyTo.text);
+        const safeReplyName = escapeHTML(comment.replyTo.author);
+        html = `
+          <div class="comment" data-id="${comment.id}">
+            <div class="comment-header">
+              <div>${safeName}</div>
+              <div>${comment.date}</div>
+            </div>
+            <div class="reply-text">→ Ответ на ${safeReplyName}: ${safeReplyText}</div>
+            <div class="comment-body">
+              ${safeText}
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">${comment.likes}</span>
+                <button class="like-button ${comment.isLiked ? '-active-like' : ''}"></button>
+              </div>
+            </div>
+          </div>
+        `;
       }
+
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = html;
+      const commentElement = tempDiv.firstElementChild;
+
+      commentElement.addEventListener('click', function (e) {
+        if (e.target.classList.contains('like-button')) {
+          return;
+        }
+
+        nameInput.value = comment.name;
+        commentInput.focus();
+        const replyText = `> ${comment.text}`;
+        commentInput.value = replyText + "\n" + commentInput.value;
+      });
+
+      commentElement.querySelector('.like-button').addEventListener('click', function () {
+        toggleLike(comment.id);
+      });
+
+      commentsList.appendChild(commentElement);
+    });
+  }
+
+  function toggleLike(commentId) {
+    const comment = comments.find(c => c.id === commentId);
+    if (comment) {
+      comment.isLiked = !comment.isLiked;
+      comment.likes += comment.isLiked ? 1 : -1;
+      renderComments();
+    }
+  }
+
+  function checkInputs() {
+    addButton.disabled = !(nameInput.value.trim() && commentInput.value.trim());
+  }
+
+  nameInput.addEventListener('input', checkInputs);
+  commentInput.addEventListener('input', checkInputs);
+
+  addButton.addEventListener('click', function () {
+    const author = nameInput.value.trim();
+    const text = commentInput.value.trim();
+
+    if (!author || !text) return;
+
+    let replyTo = null;
+
+    if (text.startsWith('> ')) {
+      const replyText = text.slice(2).split('\n')[0];
+      replyTo = {
+        author,
+        text: replyText
+      };
     }
 
-    nameInput.addEventListener('input', checkInputs);
-    commentInput.addEventListener('input', checkInputs);
-    
-    function checkInputs() {
-      addButton.disabled = !(nameInput.value.trim() && commentInput.value.trim());
-    }
-    
-    addButton.addEventListener('click', function() {
-      if (!nameInput.value.trim() || !commentInput.value.trim()) return;
-      
-      const newComment = {
-        id: Date.now(), 
-        name: nameInput.value.trim(),
-        text: commentInput.value.trim(),
-        date: new Date().toLocaleString(),
-        likes: 0,
-        isLiked: false
-      };
-      
-      comments.push(newComment);
-      renderComments();
-      
-      nameInput.value = '';
-      commentInput.value = '';
-      addButton.disabled = true;
+    comments.push({
+      id: Date.now(),
+      name: author,
+      text: text,
+      date: new Date().toLocaleString(),
+      likes: 0,
+      isLiked: false,
+      replyTo
     });
+
+    nameInput.value = '';
+    commentInput.value = '';
+    addButton.disabled = true;
 
     renderComments();
   });
+
+  renderComments();
+});
 </script>
 </html>
