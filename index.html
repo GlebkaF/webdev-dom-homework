@@ -64,8 +64,74 @@
   </body>
 
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    
+const nameInput = document.querySelector('.add-form-name');
+const textInput = document.querySelector('.add-form-text');
+const addButton = document.querySelector('.add-form-button');
+const commentsList = document.querySelector('.comments');
+
+function getCurrentDateTime() {
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = String(now.getFullYear()).slice(-2);
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    
+    return `${day}.${month}.${year} ${hours}:${minutes}`;
+}
+
+function addNewComment() {
+    const name = nameInput.value.trim();
+    const text = textInput.value.trim();
+    
+    if (!name || !text) {
+        alert('Пожалуйста, заполните все поля');
+        return;
+    }
+    
+    const newComment = `
+        <li class="comment">
+            <div class="comment-header">
+                <div>${name}</div>
+                <div>${getCurrentDateTime()}</div>
+            </div>
+            <div class="comment-body">
+                <div class="comment-text">
+                    ${text}
+                </div>
+            </div>
+            <div class="comment-footer">
+                <div class="likes">
+                    <span class="likes-counter">0</span>
+                    <button class="like-button"></button>
+                </div>
+            </div>
+        </li>
+    `;
+    
+    commentsList.innerHTML += newComment;
+    
+    nameInput.value = '';
+    textInput.value = '';
+}
+
+addButton.addEventListener('click', addNewComment);
+
+nameInput.addEventListener('input', function() {
+    console.log('Имя изменено:', this.value);
+});
+
+textInput.addEventListener('input', function() {
+    console.log('Комментарий изменен:', this.value);
+});
+
+textInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        addNewComment();
+    }
+});
+
   </script>
 </html>
