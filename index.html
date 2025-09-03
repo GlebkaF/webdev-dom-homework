@@ -8,8 +8,8 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
-      </ul>
+      <div class="loading">Загрузка комментариев...</div>
+      <ul class="comments"></ul>
       <div class="add-form">
         <input
           type="text"
@@ -18,11 +18,15 @@
         <textarea
           type="textarea"
           class="add-form-text"
-          placeholder="Введите ваш коментарий"
+          placeholder="Введите ваш комментарий"
           rows="4"></textarea>
         <div class="add-form-row">
           <button class="add-form-button">Написать</button>
         </div>
+      </div>
+
+      <div class="add-form-loading" style="display: none">
+        Комментарий добавляется...
       </div>
     </div>
   </body>
@@ -33,14 +37,19 @@
     const nameInput = document.querySelector(".add-form-name");
     const textInput = document.querySelector(".add-form-text");
     const addButton = document.querySelector(".add-form-button");
+    const loadingElement = document.querySelector(".loading");
+    const addFormElement = document.querySelector(".add-form");
+    const addFormLoadingElement = document.querySelector(".add-form-loading");
 
     const API_URL = "https://wedev-api.sky.pro/api/v1/ivan-ivanov/comments";
     let comments = [];
-    let isLoading = false;
 
     async function fetchComments() {
       try {
-        isLoading = true;
+        loadingElement.style.display = "";
+        addFormElement.style.display = "none";
+        addFormLoadingElement.style.display = "none";
+
         const response = await fetch(API_URL);
         if (!response.ok) {
           throw new Error("Ошибка при загрузке комментариев");
@@ -59,7 +68,8 @@
         console.error("Ошибка:", error);
         alert("Не удалось загрузить комментарии. Попробуйте позже.");
       } finally {
-        isLoading = false;
+        loadingElement.style.display = "none";
+        addFormElement.style.display = "";
       }
     }
 
@@ -78,7 +88,9 @@
       }
 
       try {
-        isLoading = true;
+        addFormElement.style.display = "none";
+        addFormLoadingElement.style.display = "";
+
         const response = await fetch(API_URL, {
           method: "POST",
           body: JSON.stringify({
@@ -99,7 +111,8 @@
         console.error("Ошибка:", error);
         alert(error.message);
       } finally {
-        isLoading = false;
+        addFormLoadingElement.style.display = "none";
+        addFormElement.style.display = "";
       }
     }
 
@@ -109,14 +122,13 @@
       const year = date.getFullYear();
       const hours = String(date.getHours()).padStart(2, "0");
       const minutes = String(date.getMinutes()).padStart(2, "0");
-
       return `${day} ${month} ${year}, ${hours}:${minutes}`;
     }
 
     function escapeHTML(str) {
       return str
         .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
+        .replaceAll("<", "<")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
     }
@@ -128,7 +140,7 @@
         const commentHTML = `
       <li class="comment" data-index="${index}">
         <div class="comment-header">
-          <div>${escapeHTML(comment.author)}</div>
+          <div class="comment-author">${escapeHTML(comment.author)}</div>
           <div>${formatDate(comment.date)}</div>
         </div>
         <div class="comment-body">
@@ -149,33 +161,83 @@
         commentsList.insertAdjacentHTML("beforeend", commentHTML);
       });
 
+      setupCommentReplyHandlers();
       setupLikeHandlers();
     }
 
-    function setupLikeHandlers() {
-      document.querySelectorAll(".like-button").forEach((button) => {
-        button.addEventListener("click", function (event) {
-          event.stopPropagation();
-          const index = this.getAttribute("data-index");
-
-          if (comments[index].isLiked) {
-            comments[index].likes--;
-            comments[index].isLiked = false;
-          } else {
-            comments[index].likes++;
-            comments[index].isLiked = true;
+    function setupCommentReplyHandlers() {
+      document.querySelectorAll(".comment").forEach((commentElement) => {
+        commentElement.addEventListener("click", function (event) {
+          if (
+            event.target.closest(".like-button") ||
+            event.target.closest(".likes-counter")
+          ) {
+            return;
           }
-          renderComments();
+
+          const index = this.getAttribute("data-index");
+          const author = comments[index].author;
+          const mention = `@${author} `;
+
+          if (textInput.value.trim() === "") {
+            textInput.value = mention;
+          } else {
+            let newValue = textInput.value.replace(/^@[^@\s]+\s?/g, "").trim();
+
+            textInput.value = mention + (newValue ? newValue + " " : "");
+          }
+
+          textInput.focus();
         });
       });
     }
 
+    function setupLikeHandlers() {
+      document.querySelectorAll(".like-button").forEach((button) => {
+        button.addEventListener("click", async function (event) {
+          event.stopPropagation();
+
+          const index = this.getAttribute("data-index");
+          const comment = comments[index];
+
+          if (button.classList.contains("-loading-like")) {
+            return;
+          }
+
+          button.classList.add("-loading-like");
+
+          try {
+            await delay(1000);
+
+            if (comment.isLiked) {
+              comment.likes--;
+            } else {
+              comment.likes++;
+            }
+            comment.isLiked = !comment.isLiked;
+
+            renderComments();
+          } catch (error) {
+            console.error("Ошибка при установке лайка:", error);
+            alert("Не удалось поставить лайк. Попробуйте позже.");
+            renderComments();
+          }
+        });
+      });
+    }
+
+    function delay(interval = 300) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, interval);
+      });
+    }
+
     addButton.addEventListener("click", function () {
-      if (!isLoading) {
-        postComment();
-      }
+      postComment();
     });
-    
+
     fetchComments();
   </script>
 </html>
