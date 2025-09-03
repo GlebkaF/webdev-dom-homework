@@ -43,6 +43,23 @@
 
     const API_URL = "https://wedev-api.sky.pro/api/v1/ivan-ivanov/comments";
     let comments = [];
+    let formData = {
+      name: "",
+      text: "",
+    };
+
+    nameInput.addEventListener("input", () => {
+      formData.name = nameInput.value;
+    });
+
+    textInput.addEventListener("input", () => {
+      formData.text = textInput.value;
+    });
+
+    function restoreFormData() {
+      nameInput.value = formData.name;
+      textInput.value = formData.text;
+    }
 
     async function fetchComments() {
       try {
@@ -51,9 +68,15 @@
         addFormLoadingElement.style.display = "none";
 
         const response = await fetch(API_URL);
+
+        if (response.status === 500) {
+          throw new Error("SERVER_ERROR");
+        }
+
         if (!response.ok) {
           throw new Error("Ошибка при загрузке комментариев");
         }
+
         const data = await response.json();
         comments = data.comments.map((comment) => ({
           author: comment.author.name,
@@ -66,10 +89,18 @@
         renderComments();
       } catch (error) {
         console.error("Ошибка:", error);
-        alert("Не удалось загрузить комментарии. Попробуйте позже.");
+
+        if (error.message === "Failed to fetch") {
+          alert("Кажется, у вас сломался интернет, попробуйте позже");
+        } else if (error.message === "SERVER_ERROR") {
+          alert("Сервер сломался, попробуй позже");
+        } else {
+          alert("Не удалось загрузить комментарии. Попробуйте позже.");
+        }
       } finally {
         loadingElement.style.display = "none";
         addFormElement.style.display = "";
+        restoreFormData();
       }
     }
 
@@ -83,7 +114,7 @@
       }
 
       if (author.length < 3 || text.length < 3) {
-        alert("Имя и комментарий должны содержать минимум 3 символа");
+        alert("Имя и комментарий должны быть не короче 3 символов");
         return;
       }
 
@@ -99,20 +130,38 @@
           }),
         });
 
+        if (response.status === 400) {
+          throw new Error("VALIDATION_ERROR");
+        }
+
+        if (response.status === 500) {
+          throw new Error("SERVER_ERROR");
+        }
+
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.error || "Ошибка при отправке комментария");
         }
 
+        formData.name = "";
+        formData.text = "";
         await fetchComments();
-        nameInput.value = "";
-        textInput.value = "";
       } catch (error) {
         console.error("Ошибка:", error);
-        alert(error.message);
+
+        if (error.message === "Failed to fetch") {
+          alert("Кажется, у вас сломался интернет, попробуйте позже");
+        } else if (error.message === "SERVER_ERROR") {
+          alert("Сервер сломался, попробуй позже");
+        } else if (error.message === "VALIDATION_ERROR") {
+          alert("Ошибка валидации. Проверьте введенные данные.");
+        } else {
+          alert(error.message);
+        }
       } finally {
         addFormLoadingElement.style.display = "none";
         addFormElement.style.display = "";
+        restoreFormData();
       }
     }
 
@@ -128,7 +177,8 @@
     function escapeHTML(str) {
       return str
         .replaceAll("&", "&amp;")
-        .replaceAll("<", "<")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
     }
@@ -138,26 +188,26 @@
 
       comments.forEach((comment, index) => {
         const commentHTML = `
-      <li class="comment" data-index="${index}">
-        <div class="comment-header">
-          <div class="comment-author">${escapeHTML(comment.author)}</div>
-          <div>${formatDate(comment.date)}</div>
+    <li class="comment" data-index="${index}">
+      <div class="comment-header">
+        <div class="comment-author">${escapeHTML(comment.author)}</div>
+        <div>${formatDate(comment.date)}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">
+          ${escapeHTML(comment.text).replace(/\n/g, "<br>")}
         </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${escapeHTML(comment.text).replace(/\n/g, "<br>")}
-          </div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">${comment.likes}</span>
+          <button class="like-button ${
+            comment.isLiked ? "-active-like" : ""
+          }" data-index="${index}"></button>
         </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">${comment.likes}</span>
-            <button class="like-button ${
-              comment.isLiked ? "-active-like" : ""
-            }" data-index="${index}"></button>
-          </div>
-        </div>
-      </li>
-    `;
+      </div>
+    </li>
+  `;
         commentsList.insertAdjacentHTML("beforeend", commentHTML);
       });
 
@@ -181,10 +231,12 @@
 
           if (textInput.value.trim() === "") {
             textInput.value = mention;
+            formData.text = mention;
           } else {
             let newValue = textInput.value.replace(/^@[^@\s]+\s?/g, "").trim();
-
-            textInput.value = mention + (newValue ? newValue + " " : "");
+            const newText = mention + (newValue ? newValue + " " : "");
+            textInput.value = newText;
+            formData.text = newText;
           }
 
           textInput.focus();
