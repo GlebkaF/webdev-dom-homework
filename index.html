@@ -16,12 +16,14 @@
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          id="name-input"
         />
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+          id="text-input"
         ></textarea>
         <div class="add-form-row">
           <button class="add-form-button">Написать</button>
@@ -38,11 +40,15 @@
         name: "Глеб Фокин",
         date: new Date(),
         text: "Это будет первый комментарий на этой странице",
+        likes: 3,
+        isliked: false,
       },
       {
         name: "Варвара Н.",
         date: new Date(),
         text: "Мне нравится как оформлена эта страница! ❤",
+        likes: 75,
+        isliked: true,
       },
     ];
 
@@ -64,8 +70,9 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
+              <span class="likes-counter">${comment.likes}</span>
+              <button class="like-button ${comment.isliked ? "-active-like" : ""
+              }"></button>
             </div>
           </div>
         </li>
@@ -76,6 +83,26 @@
     };
 
 renderComments();
+
+const addButton = document.querySelector(".add-form-button");
+const name = document.getElementById("name-input");
+const text = document.getElementById("text-input");
+
+addButton.addEventListener("click", () => {
+  const newComment = {
+    name: name.value,
+    date: new Date(),
+    text: text.value,
+    likes: 0,
+  };
+
+  comments.push(newComment);
+
+  renderComments();
+
+  name.value = "";
+  text.value = "";
+});
 
 
   </script>
