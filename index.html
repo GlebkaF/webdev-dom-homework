@@ -64,12 +64,30 @@
   </body>
 
   <script>
-    "use strict";
+     "use strict";
     const formNameEl = document.querySelector('.add-form-name');
     const formCommentEl = document.querySelector('.add-form-text');
     const buttonEl = document.querySelector('.add-form-button');
 
     const commentsListEl = document.querySelector('.comments');
+
+    // Добавляем массив для хранения состояния комментариев
+    let comments = [
+      {
+        name: "Глеб Фокин",
+        date: "12.02.22 12:18",
+        text: "Это будет первый комментарий на этой странице",
+        likes: 3,
+        isLiked: false
+      },
+      {
+        name: "Варвара Н.",
+        date: "13.02.22 19:22",
+        text: "Мне нравится как оформлена эта страница! ❤",
+        likes: 75,
+        isLiked: true
+      }
+    ];
 
     function getCurrentDateTime() {
       const now = new Date();
@@ -84,46 +102,86 @@
       return `${day}.${month}.${year} ${hours}:${minutes}`;
     }
 
+    // Функция для рендера комментариев
+    function renderComments() {
+      commentsListEl.innerHTML = '';
+      
+      comments.forEach((comment, index) => {
+        const likeClass = comment.isLiked ? ' -active-like' : '';
+        
+        const commentHTML = `
+          <li class="comment" data-index="${index}">
+            <div class="comment-header">
+              <div>${comment.name}</div>
+              <div>${comment.date}</div>
+            </div>
+            <div class="comment-body">
+              <div class="comment-text">
+                ${comment.text}
+              </div>
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">${comment.likes}</span>
+                <button class="like-button${likeClass}"></button>
+              </div>
+            </div>
+          </li>
+        `;
+        
+        commentsListEl.innerHTML += commentHTML;
+      });
+      
+      // Добавляем обработчики клика на лайки после рендера
+      addLikeListeners();
+    }
+
+    // Функция для добавления обработчиков на кнопки лайков
+    function addLikeListeners() {
+      const likeButtons = document.querySelectorAll('.like-button');
+      
+      likeButtons.forEach((button, index) => {
+        button.addEventListener('click', () => {
+          // Меняем состояние лайка в массиве
+          if (comments[index].isLiked) {
+            comments[index].likes--;
+            comments[index].isLiked = false;
+          } else {
+            comments[index].likes++;
+            comments[index].isLiked = true;
+          }
+          
+          // Перерендериваем комментарии
+          renderComments();
+        });
+      });
+    }
 
     buttonEl.addEventListener('click', () => {
-     
       const name = formNameEl.value.trim();
       const comment = formCommentEl.value.trim();
-      
       
       if (!name || !comment) {
         alert('Пожалуйста, заполните все поля');
         return;
       }
 
-      const newCommentHTML = `
-        <li class="comment">
-          <div class="comment-header">
-            <div>${name}</div>
-            <div>${getCurrentDateTime()}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${comment}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-      `;
+      // Добавляем новый комментарий в массив
+      comments.push({
+        name: name,
+        date: getCurrentDateTime(),
+        text: comment,
+        likes: 0,
+        isLiked: false
+      });
       
-     
-      commentsListEl.innerHTML += newCommentHTML;
+      // Перерендериваем все комментарии
+      renderComments();
       
-      
+      // Очищаем форму
       formNameEl.value = '';
       formCommentEl.value = '';
     });
-
     
     formNameEl.addEventListener('input', () => {
       console.log('Имя изменено:', formNameEl.value);
@@ -133,8 +191,8 @@
       console.log('Комментарий изменен:', formCommentEl.value);
     });
 
-    
-    
+    // Инициализируем рендер при загрузке страницы
+    renderComments();
     
     console.log("It works!");
   </script>
