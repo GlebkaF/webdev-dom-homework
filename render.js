@@ -36,5 +36,5 @@ export const renderComments = () => {
         commentsEl.appendChild(commentElement);
       });
     })
-    .catch((error) => console.log("Ошибка загрузки:", error));
+    .catch((error) => console.log("Ошибка загрузки комментария:", error));
 };
