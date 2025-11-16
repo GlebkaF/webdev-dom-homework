@@ -31,21 +31,27 @@ export const handleQuoteClick = (event) => {
 };
 
 export const handleAddComment = () => {
-  const inputEl = document.getElementById("input");
-  const textareaEl = document.getElementById("textarea");
+    const inputEl = document.getElementById('input');
+    const textareaEl = document.getElementById('textarea');
+    const addButton = document.getElementById('add');
 
-  const name = inputEl.value.trim();
-  const comment = textareaEl.value.trim();
+    addButton.disabled = true;
+    addButton.textContent = 'Загрузка...';
 
-  if (!name || !comment) {
-    alert("Пожалуйста, укажите имя и текст комментария.");
-    return;
-  }
+    const name = inputEl.value.trim();
+    const comment = textareaEl.value.trim();
 
-  const date = new Date();
-  const formattedDate = `${date.getDate().toString().padStart(2, "0")}.${(date.getMonth() + 1).toString().padStart(2, "0")}.${date.getFullYear()} ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
+    if (!name || !comment) {
+        alert('Пожалуйста, укажите имя и текст комментария.');
+        addButton.disabled = false;
+        addButton.textContent = 'Добавить';
+        return;
+    }
 
-fetch('/api/comments', {
+    const date = new Date();
+    const formattedDate = `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+
+    fetch('https://wedev-api.sky.pro/api/comments', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -58,12 +64,31 @@ fetch('/api/comments', {
             likesCount: 0
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (response.status === 201) {
+            return response.json();
+        } else if (response.status === 500) {
+            throw new Error('Сервер упал');
+        } else if (response.status === 400) {
+            throw new Error('Ошибка в данных');
+        }
+        throw new Error('Неизвестная ошибка');
+    })
     .then(() => {
         inputEl.value = '';
         textareaEl.value = '';
-        renderComments();
+        return renderComments();
     })
-    .catch(error => 
-      console.log('Ошибка отправки комментария:', error));
+    .then(() => {
+        document.getElementById('result').textContent = 'Комментарий добавлен';
+    })
+    .catch(error => {
+        console.error('Ошибка отправки комментария:', error);
+        document.getElementById('result').textContent = 'Произошла ошибка при отправке комментария';
+        alert('Не удалось отправить комментарий. Попробуйте позже.');
+    })
+    .finally(() => {
+        addButton.disabled = false;
+        addButton.textContent = 'Добавить';
+    });
 };
