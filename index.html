@@ -83,7 +83,7 @@
       minute: '2-digit',
     }).replace(/,/, '');
 
-    function LikeButtons() {
+    const likeButtons = () => {
       const likeBtns = document.querySelectorAll('.like-button');
       
       likeBtns.forEach(el => {
@@ -93,7 +93,7 @@
 
     function likeClick() {
       const counterEl = this.parentElement.querySelector('.likes-counter');
-      
+
       let counter = counterEl.textContent;
       
       if (this.classList.contains('-active-like')) {
@@ -153,9 +153,9 @@
       nameEl.value = '';
       textEl.value = '';
 
-      LikeButtons();
+      likeButtons();
     });
     
-    LikeButtons();
+    likeButtons();
   </script>
 </html>
