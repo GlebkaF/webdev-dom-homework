@@ -26,16 +26,19 @@
             </div>
           </div>
         </li>
+
         <li class="comment">
           <div class="comment-header">
             <div>Варвара Н.</div>
             <div>13.02.22 19:22</div>
           </div>
+
           <div class="comment-body">
             <div class="comment-text">
               Мне нравится как оформлена эта страница! ❤
             </div>
           </div>
+          
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">75</span>
@@ -44,6 +47,7 @@
           </div>
         </li>
       </ul>
+
       <div class="add-form">
         <input
           type="text"
@@ -65,7 +69,93 @@
 
   <script>
     "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    
+    const addBtn = document.querySelector('.add-form-button');
+    const listEl = document.querySelector('.comments');
+    const nameEl = document.querySelector('.add-form-name');
+    const textEl = document.querySelector('.add-form-text');
+
+    const nowDate = new Date().toLocaleString('ru-RU', {
+      day: '2-digit',
+      month: '2-digit',
+      year: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).replace(/,/, '');
+
+    function LikeButtons() {
+      const likeBtns = document.querySelectorAll('.like-button');
+      
+      likeBtns.forEach(el => {
+          el.addEventListener('click', likeClick);
+      });
+    }
+
+    function likeClick() {
+      const counterEl = this.parentElement.querySelector('.likes-counter');
+      
+      let counter = counterEl.textContent;
+      
+      if (this.classList.contains('-active-like')) {
+          counterEl.textContent = --counter;
+          this.classList.remove('-active-like');
+      } else {
+          counterEl.textContent = ++counter;
+          this.classList.add('-active-like');
+      }
+      
+      counterEl.textContent = counter;
+    }
+
+    nameEl.addEventListener('focus', () => {
+      nameEl.classList.remove('-form-error');
+    })
+
+    textEl.addEventListener('focus', () => {
+      textEl.classList.remove('-form-error');
+    })
+
+    addBtn.addEventListener('click', () => {
+      if (nameEl.value === '' && textEl.value === '') {
+        nameEl.classList.add('-form-error');
+        textEl.classList.add('-form-error');
+        return;
+      } else if (nameEl.value === '') {
+        nameEl.classList.add('-form-error');
+        return;
+      } else if (textEl.value === '') {
+        textEl.classList.add('-form-error');
+        return;
+      }
+
+      const newComm = document.createElement('li');
+      newComm.className = 'comment';
+      newComm.innerHTML = `<div class="comment-header">
+          <div>${nameEl.value}</div>
+          <div>${nowDate}</div>
+        </div>
+
+        <div class="comment-body">
+          <div class="comment-text">
+            ${textEl.value}
+            </div>
+        </div>
+
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">0</span>
+            <button class="like-button"></button>
+          </div>
+        </div>`;
+
+      listEl.appendChild(newComm);
+
+      nameEl.value = '';
+      textEl.value = '';
+
+      LikeButtons();
+    });
+    
+    LikeButtons();
   </script>
 </html>
