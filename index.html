@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -49,15 +49,17 @@
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          id="name"
         />
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+          id="comment"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="button">Написать</button>
         </div>
       </div>
     </div>
@@ -65,7 +67,44 @@
 
   <script>
     "use strict";
-    // Код писать здесь
+    const comments = document.getElementById("comments");
+    const name = document.getElementById("name");
+    const comment = document.getElementById("comment");
+    const buttonForm = document.getElementById("button");
+
+    buttonForm.addEventListener("click", () => {
+        if (name.value === "" || comment.value === "") {
+            alert('Заполни все поля');
+            return;
+        }
+
+        const now = new Date();
+        const dateStr = `${now.getDate().toString().padStart(2, '0')}.${(now.getMonth() + 1).toString().padStart(2, '0')}.${now.getFullYear().toString().slice(-2)} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+        const newComment = `
+            <li class="comment">
+                <div class="comment-header">
+                    <div>${name.value}</div>
+                    <div>${dateStr}</div>
+                </div>
+                <div class="comment-body">
+                    <div class="comment-text">${comment.value}</div>
+                </div>
+                <div class="comment-footer">
+                    <div class="likes">
+                        <span class="likes-counter">0</span>
+                        <button class="like-button"></button>
+                    </div>
+                </div>
+            </li>`;
+
+        comments.insertAdjacentHTML('beforeend', newComment);
+        name.value = '';
+        comment.value = '';
+        
+        alert("Меня нажали");
+    });
+
     console.log("It works!");
-  </script>
+</script>
 </html>
