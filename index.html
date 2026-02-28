@@ -69,11 +69,31 @@
     const nameInputEl = document.getElementById('name-input');
     const textInputEl = document.getElementById('text-input');
     const formButton = document.querySelector('.add-form-button');
+    const commentsList = document.querySelector('.comments');
 
     formButton.addEventListener('click', (e) => {
-      console.log(nameInputEl.value);
-      console.log(textInputEl.value);
+      const oldHtml = commentsList.innerHTML;
 
+      commentsList.innerHTML = oldHtml + 
+      `
+        <li class="comment">
+          <div class="comment-header">
+            <div>${nameInputEl.value}</div>
+            <div>Добавить вывод текущей даты</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textInputEl.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button -active-like"></button>
+            </div>
+          </div>
+        </li>
+      `;
     });
 
   </script>
