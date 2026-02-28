@@ -48,11 +48,13 @@
         <input
           type="text"
           class="add-form-name"
+          id="name-input"
           placeholder="Введите ваше имя"
         />
         <textarea
           type="textarea"
           class="add-form-text"
+          id="text-input"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
@@ -64,8 +66,15 @@
   </body>
 
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const nameInputEl = document.getElementById('name-input');
+    const textInputEl = document.getElementById('text-input');
+    const formButton = document.querySelector('.add-form-button');
+
+    formButton.addEventListener('click', (e) => {
+      console.log(nameInputEl.value);
+      console.log(textInputEl.value);
+
+    });
+
   </script>
 </html>
