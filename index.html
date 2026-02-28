@@ -73,10 +73,15 @@
 
     formButton.addEventListener('click', (e) => {
       const oldHtml = commentsList.innerHTML;
+      let likesCounter = 0;
+
+      if (nameInputEl.value === '' || textInputEl.value === '') {
+        alert('Нельзя добавить комментарий, не указав своего имени или текста комментария.')
+        return;
+      };
 
       commentsList.innerHTML = oldHtml + 
-      `
-        <li class="comment">
+      `<li class="comment">
           <div class="comment-header">
             <div>${nameInputEl.value}</div>
             <div>Добавить вывод текущей даты</div>
@@ -88,12 +93,13 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">0</span>
+              <span class="likes-counter">${likesCounter}</span>
               <button class="like-button -active-like"></button>
             </div>
           </div>
-        </li>
-      `;
+        </li>`;
+        nameInputEl.value = '';
+        textInputEl.value = '';
     });
 
   </script>
