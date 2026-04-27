@@ -9,7 +9,7 @@
   <body>
     <div class="container">
       <ul id="list" class="comments">
-        <li class="comment">
+        <!-- <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -41,7 +41,7 @@
               <span class="likes-counter">75</span>
               <button class="like-button -active-like"></button>
             </div>
-          </div>
+          </div> -->
         </li>
       </ul>
       <div class="add-form">
@@ -74,50 +74,130 @@
 
     const date = new Date();
 
-    let likesCounter = 0;
+    const comments = [
+      {
+        name: "Глеб Фокин",
+        date: "12.02.22 12:18",
+        text: "Это будет первый комментарий на этой странице",
+        like: 3,
+        condition: false
+      },
+      {
+        name: "Варвара Н.",
+        date: "13.02.22 19:22",
+        text: "Мне нравится как оформлена эта страница! ❤",
+        like: 75,
+        condition: false
+      },
+    ];
+      
+      const initClickLikes = () => {
+        const commentsLikes = document.querySelectorAll(".like-button");
 
-    function formatDate(date) {
-    const d = new Date(date);
+        for (const commentsLike of commentsLikes) {
+          commentsLike.addEventListener("click", () => {
+            const index = commentsLike.dataset.index;
 
-      const day = String(d.getDate()).padStart(2, '0');
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const year = String(d.getFullYear()).slice(-2);
+            comments[index].condition = !comments[index].condition;
 
-      const hours = String(d.getHours()).padStart(2, '0');
-      const minutes = String(d.getMinutes()).padStart(2, '0');
+            if (comments[index].condition) {
+              comments[index].like++;
+            } else {
+              comments[index].like--;
+            }
 
-      return `${day}.${month}.${year} ${hours}:${minutes}`;
-    }
+            renderComments();
+          });
+        }
+      };
 
-    button.addEventListener("click", () => {
-      inputName.classList.remove("error");
-      inputComment.classList.remove("error");
-      if(inputName.value === "" || inputComment.value ===""){
-        inputName.classList.add("error");
-        inputComment.classList.add("error");
-        
-        return;
-      }
-
-      const oldLi = list.innerHTML;
-      list.innerHTML = oldLi + `<li class="comment">
+    const renderComments = () => {
+      const commentsHtml = comments
+        .map((comment, index) => {
+          return `<li class="comment">
           <div class="comment-header">
-            <div>${inputName.value}</div>
-            <div>${formatDate(new Date())}</div>
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-            ${inputComment.value}
+              ${comment.text}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">${likesCounter}</span>
-              <button class="like-button -active-like"></button>
+              <span class="likes-counter">${comment.like}</span>
+              <button class="like-button ${comment.condition ? 'active-like' : ''}" data-index = "${index}"></button>
             </div>
           </div>
         </li>`;
+        })
+        .join("");
+
+      list.innerHTML = commentsHtml;
+
+      initClickLikes();
+    };
+
+    renderComments();
+
+
+
+   
+
+    let likesCounter = 0;
+
+    function formatDate(date) {
+      const d = new Date(date);
+
+      const day = String(d.getDate()).padStart(2, "0");
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const year = String(d.getFullYear()).slice(-2);
+
+      const hours = String(d.getHours()).padStart(2, "0");
+      const minutes = String(d.getMinutes()).padStart(2, "0");
+
+      return `${day}.${month}.${year} ${hours}:${minutes}`;
+    }
+
+
+
+    button.addEventListener("click", () => {
+      inputName.classList.remove("error");
+      inputComment.classList.remove("error");
+      if (inputName.value === "" || inputComment.value === "") {
+        inputName.classList.add("error");
+        inputComment.classList.add("error");
+
+        return;
+      }
+
+      comments.push({name: inputName.value, date:formatDate(new Date), text: inputComment.value, like: likesCounter, condition: false});
+
+      renderComments();
+      // const oldLi = list.innerHTML;
+      // list.innerHTML =
+      //   oldLi +
+      //   `<li class="comment">
+      //     <div class="comment-header">
+      //       <div>${inputName.value}</div>
+      //       <div>${formatDate(new Date())}</div>
+      //     </div>
+      //     <div class="comment-body">
+      //       <div class="comment-text">
+      //       ${inputComment.value}
+      //       </div>
+      //     </div>
+      //     <div class="comment-footer">
+      //       <div class="likes">
+      //         <span class="likes-counter">${likesCounter}</span>
+      //         <button class="like-button -active-like"></button>
+      //       </div>
+      //     </div>
+      //   </li>`;
       inputName.value = "";
+      inputComment.value = "";
+      
     });
   </script>
 </html>
