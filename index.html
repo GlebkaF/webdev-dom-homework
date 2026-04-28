@@ -95,9 +95,10 @@
         const commentsLikes = document.querySelectorAll(".like-button");
 
         for (const commentsLike of commentsLikes) {
-          commentsLike.addEventListener("click", () => {
+          commentsLike.addEventListener("click", (event) => {
             const index = commentsLike.dataset.index;
 
+            event.stopPropagation();
             comments[index].condition = !comments[index].condition;
 
             if (comments[index].condition) {
@@ -111,32 +112,47 @@
         }
       };
 
+      const initClickComments = () => {
+      const commentsElements = document.querySelectorAll(".comment");
+
+      for (const commentElement of commentsElements) {
+        commentElement.addEventListener("click", () => {
+          const name = commentElement.dataset.name;
+          const text = commentElement.dataset.text;
+
+          inputComment.value = `> ${name}: ${text}\n`;
+          inputComment.focus();
+        });
+      }
+    };
+
     const renderComments = () => {
       const commentsHtml = comments
         .map((comment, index) => {
-          return `<li class="comment">
-          <div class="comment-header">
-            <div>${comment.name}</div>
-            <div>${comment.date}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${comment.text}
+          return `<li class="comment" data-name="${comment.name}" data-text="${comment.text}">
+            <div class="comment-header">
+              <div>${comment.name}</div>
+              <div>${comment.date}</div>
             </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">${comment.like}</span>
-              <button class="like-button ${comment.condition ? 'active-like' : ''}" data-index = "${index}"></button>
+            <div class="comment-body">
+              <div class="comment-text">
+                ${comment.text}
+              </div>
             </div>
-          </div>
-        </li>`;
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">${comment.like}</span>
+                <button class="like-button ${comment.condition ? 'active-like' : ''}" data-index="${index}"></button>
+              </div>
+            </div>
+          </li>`;
         })
         .join("");
 
       list.innerHTML = commentsHtml;
 
       initClickLikes();
+      initClickComments();
     };
 
     renderComments();
@@ -172,7 +188,7 @@
         return;
       }
 
-      comments.push({name: inputName.value, date:formatDate(new Date), text: inputComment.value, like: likesCounter, condition: false});
+      comments.push({name: inputName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"), date:formatDate(new Date), text: inputComment.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"), like: likesCounter, condition: false});
 
       renderComments();
       // const oldLi = list.innerHTML;
