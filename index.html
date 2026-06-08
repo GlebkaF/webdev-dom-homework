@@ -67,7 +67,8 @@
     "use strict";
     // Код писать здесь
 
-    //получение элементов из DOM
+    //добавить комментарий
+    //получить нужные элементы из DOM
     const commentsList = document.querySelector('.comments');
     const formName = document.querySelector('.add-form-name');
     const formText = document.querySelector('.add-form-text');
@@ -89,17 +90,22 @@
       //шаблон комментария
       const template = document.querySelector('.comment');
 
-      //значения из заполненных полей
-      const inputName = formName.value.trim();
-      const inputText = formText.value.trim();
-
       //проверка заполненности полей
-      if (inputName === '' || inputText === '') {
-        const formAlert = new document.createElement('p');
-        formAlert.textContent = 'Заполните все поля!';
-        formAlert.style.color('red');
-        const buttonContainer = document.querySelector('.add-form-row');
-        buttonContainer.appendChild(formAlert);
+      let hasEmptyFields = false;
+
+      if (formName.value === '') {
+        formName.style.border ='2px solid red';
+        hasEmptyFields = true;
+      }
+      if (formText.value === '') {
+        formText.style.border ='2px solid red';
+        hasEmptyFields = true;
+      }
+      if (hasEmptyFields) {
+        setTimeout(() => {
+          formName.style.border ='';
+          formText.style.border ='';
+        }, 2000);
         return;
       }
 
@@ -107,17 +113,21 @@
       let inputNewComment = template.cloneNode(true);
 
       //заменить содержимое
-      inputNewComment.querySelector('.comment-header div:first-child').textContent = inputName;
+      inputNewComment.querySelector('.comment-header div:first-child').textContent = formName.value;
       inputNewComment.querySelector('.comment-header div:last-child').textContent = getCurrentDate();
-      inputNewComment.querySelector('.comment-text').textContent = inputText;
+      inputNewComment.querySelector('.comment-text').textContent = formText.value;
       inputNewComment.querySelector('.likes-counter').textContent = "0";
 
       //добавить комментарий в конец контейнера
       commentsList.appendChild(inputNewComment);
 
       //очистить поля в форме
-      inputName = '';
-      inputText = '';
+      formName.value = '';
+      formText.value = '';
+
+      //убрать красные рамки у полей, если они были
+      formName.style.border ='';
+      formText.style.border ='';
     }
 
     //отправить комментарий кликом на кнопку
