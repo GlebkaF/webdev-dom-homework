@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <title>Проект "Комменты"</title>
@@ -66,6 +66,82 @@
   <script>
     "use strict";
     // Код писать здесь
+    const nameInput = document.querySelector(".add-form-name");
+    const commentInput = document.querySelector(".add-form-text");
+    const addButton = document.querySelector(".add-form-button");
+
+    const commentsList = document.querySelector(".comments");
+
+    function validateInputs() {
+      if (nameInput.value.trim() === "" || commentInput.value.trim() === "") {
+        addButton.disabled = true;
+      } else {
+        addButton.disabled = false;
+      }
+    }
+
+    validateInputs();
+
+    nameInput.addEventListener("input", validateInputs);
+    commentInput.addEventListener("input", validateInputs);
+
+    function getFormattedDate() {
+      const date = new Date();
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = String(date.getFullYear()).slice(-2);
+      const hours = String(date.getHours()).padStart(2, "0");
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+
+      return `${day}.${month}.${year} ${hours}:${minutes}`;
+    }
+
+    addButton.addEventListener("click", function () {
+      if (nameInput.value.trim() === "" || commentInput.value.trim() === "") {
+        return;
+      }
+
+      const commentHTML = `
+        <li class="comment">
+          <div class="comment-header">
+            <div>${nameInput.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;")}</div>
+            <div>${getFormattedDate()}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${commentInput.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;")}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>
+      `;
+
+      commentsList.innerHTML += commentHTML;
+
+      nameInput.value = "";
+      commentInput.value = "";
+
+      validateInputs();
+    });
+
+    commentsList.addEventListener("click", function (event) {
+      if (event.target.classList.contains("like-button")) {
+        const likesCounter = event.target.previousElementSibling;
+
+        if (event.target.classList.contains("-active-like")) {
+          event.target.classList.remove("-active-like");
+          likesCounter.textContent = Number(likesCounter.textContent) - 1;
+        } else {
+          event.target.classList.add("-active-like");
+          likesCounter.textContent = Number(likesCounter.textContent) + 1;
+        }
+      }
+    });
     console.log("It works!");
   </script>
 </html>
