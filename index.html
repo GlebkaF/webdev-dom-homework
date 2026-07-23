@@ -10,7 +10,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="list-comments" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -53,6 +53,9 @@
           id="input-field"
           name="input-field"
           placeholder="Введите ваше имя"
+          autofocus
+          value=""
+          title="Введите имя только латинскими буквами"
         />
         <textarea
           type="textarea"
@@ -61,6 +64,9 @@
           name="textarea-field"
           placeholder="Введите ваш коментарий"
           rows="4"
+          value=""
+          readonly="true"
+          title="Введите текст только латинскими буквами"
         ></textarea>
         <div class="add-form-row">
           <button class="add-form-button">Написать</button>
@@ -71,7 +77,110 @@
 
   <script>
     "use strict";
-    // Код писать здесь
-    console.log("It works!");
+     const input = document.getElementById('input-field');
+     const btn = document.querySelector('.add-form-button');
+     const textarea = document.getElementById('textarea-field');
+     let like_count = Number(0);
+     const list_comments = document.getElementById('list-comments');
+
+    
+
+     if(input.value === "")
+     {
+        btn.setAttribute('disabled','disabled');
+        input.classList.add('error-input');
+        textarea.classList.add('error-textarea');
+     }
+    
+     input.addEventListener('input', function() {
+            const str = this.value;
+            if (/^[а-яА-ЯЁё\.\s]+$/.test(str)) {
+               this.value = str.charAt(0).toUpperCase() + str.slice(1);
+               btn.removeAttribute('disabled');
+               textarea.readOnly = false;
+               if(this.classList.contains('error-input'))
+                  this.classList.remove('error-input');
+            }
+            else{
+                 btn.setAttribute('disabled','disabled');
+                 this.classList.add('error-input');
+                 textarea.classList.add('error-textarea');
+                  textarea.readOnly = true;
+                 return;
+            }
+
+             if(str === ""){
+                  btn.setAttribute('disabled','disabled');
+                  this.classList.add('error-input');
+                   textarea.readOnly = true;
+                   textarea.classList.add('error-textarea');
+               }
+               else 
+               {
+                textarea.readOnly = false;
+                textarea.classList.remove('error-textarea');
+               }
+      });
+      textarea.addEventListener('input', function() {
+            const str = this.value;
+            if (/^[а-яА-ЯЁё\s.,:;?!-]+$/.test(str)  || str === "") {
+               this.value = str.charAt(0).toUpperCase() + str.slice(1);
+               btn.removeAttribute('disabled');
+               
+               if(this.classList.contains('error-textarea'))
+                  this.classList.remove('error-textarea');
+            }
+            else{
+                 btn.setAttribute('disabled','disabled');
+                 this.classList.add('error-textarea');
+                  
+                 return;
+            }
+      });
+      
+      btn.addEventListener('click',function(event){
+
+        //добавление даты и времени
+        let today = new Date();
+        const day = String(today.getDate()).padStart(2, '0');
+        const month = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        const year = today.getFullYear() -  Number(2000);
+        
+        const hours = ('0' + today.getHours()).slice(-2);
+        const minutes = ('0' + today.getMinutes()).slice(-2);
+        
+        today = day + '.' + month + '.' + year + " " +  hours + ':' + minutes;
+
+        //получение имени из формы
+        const user_name = input.value;
+        let user_comment = textarea.value;
+        if(user_comment === "")user_comment = String("Комментарии отсутствуют");
+        
+        const comment_item = document.querySelector('.comment:last-of-type');  
+        comment_item.style.counterIncrement = 'itemNumber';
+
+         list_comments.innerHTML = list_comments.innerHTML + `<li class="comment">
+           <div class="comment-header">
+             <div>${user_name}</div>
+             <div>${today}</div>
+           </div>
+           <div class="comment-body">
+             <div class="comment-text">
+             ${user_comment}
+             </div>
+           </div>
+           <div class="comment-footer">
+             <div class="likes">
+               <span class="likes-counter">${like_count}</span>
+               <button class="like-button"></button>
+             </div>
+           </div>
+         </li>`;
+
+        //  console.log(list_comments.innerHTML);
+        input.value = "";
+        textarea = "";
+        });
+
   </script>
 </html>

@@ -27,7 +27,7 @@ body {
     box-sizing: border-box;
     background: radial-gradient(
       75.42% 75.42% at 50% 42.37%,
-      rgba(53, 53, 53, 0) 22.92%,
+      rgba(53, 53, 53, 0.3) 22.92%,
       #7334ea 100%
     );
     filter: drop-shadow(0px 20px 67px rgba(0, 0, 0, 0.08));
@@ -38,16 +38,31 @@ body {
     display: flex;
     flex-direction: column;
     gap: 24px;
+    counter-reset: itemNumber;
+    list-style-type: none;
   }
 
   .comment {
     padding: 48px;
   }
 
+
   .comment-header {
     font-size: 16px;
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
+    align-items: center;
+    width: 100%;
+  }
+
+  .comment-header::before{
+    counter-increment: itemNumber;
+    content: counter(itemNumber) ". "; 
+    margin-right: 5px;
+  }
+
+  .comment-header div:last-of-type{
+    margin-left: auto;
   }
 
   .comment-footer {
@@ -111,6 +126,13 @@ body {
     padding: 11px 22px;
   }
 
+  .add-form-name::placeholder{
+    color: rgba(0, 0, 0, 0.5);
+  }
+  .add-form-name:focus{
+    caret-color: rgb(17, 1, 1); 
+  }
+
   .add-form-text {
     margin-top: 12px;
     padding: 22px;
@@ -135,3 +157,15 @@ body {
   .add-form-button:hover {
     opacity: 0.9;
   }
+
+  .error-input{
+    background-color: rgba(255,0,0,0.3);
+  }
+  .error-textarea{
+    background-color: rgba(159, 243, 111, 0.3);
+  }
+
+  
+
+   
+   
