@@ -73,12 +73,7 @@
   const buttonSubmitEl = document.getElementById(`button-submit`);
   const ListNameEl = document.getElementById(`list`);
 
-
-
   buttonSubmitEl.addEventListener('click', (e) => {
-    console.log(`Имя:`, formNameEl.value);
-    console.log(`Комментарий:`, formCommentEl.value);
-    console.log(list.innerHTML);
 
     const name = formNameEl.value.trim();
     const text = formCommentEl.value.trim();
@@ -88,28 +83,27 @@
       return;
     }
 
-
-    const oldHtml = list.innerHTML;
-    list.innerHTML = oldHtml +
+    const oldHtml = ListNameEl.innerHTML;
+    ListNameEl.innerHTML = oldHtml +
       `
-          <li class="comment">
-        <div class="comment-header">
-          <div>${name}</div>
-          <div>${getFormattedDate()}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${text}
+        <li class="comment">
+          <div class="comment-header">
+            <div>${name}</div>
+            <div>${getFormattedDate()}</div>
           </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter" id= "like-counter">3</span>
-            <button class="like-button" id= "like-plus"></button>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${text}
+            </div>
           </div>
-        </div>
-      </li>
-    `;
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter" id= "like-counter">3</span>
+              <button class="like-button" id= "like-plus"></button>
+            </div>
+          </div>
+        </li>
+      `;
 
     const likeCounterEl = document.getElementById('like-counter');
     const likePlusEl = document.getElementById('like-plus');
@@ -119,8 +113,6 @@
     likeCounterEl.textContent = countLikes;
 
     likePlusEl.addEventListener("click", () => { likeCounterEl.innerHTML = ++countLikes });
-
-
 
     formNameEl.value = '';
     formCommentEl.value = '';
