@@ -65,7 +65,53 @@
 
   <script>
     "use strict";
-    // Код писать здесь
+    const nameInput = document.querySelector(".add-form-name");
+    const textInput = document.querySelector(".add-form-text");
+    const addButton = document.querySelector(".add-form-button");
+    const commentsList = document.querySelector(".comments");
+
+    nameInput.addEventListener("input", () => {
+      console.log(nameInput.value);
+    });
+    textInput.addEventListener("input", () => {
+      console.log(textInput.value);
+    });
+    addButton.addEventListener("click", () => {
+      const now = new Date();
+      const fullDate = now.toLocaleDateString("ru-RU", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "2-digit",
+      }) + " " + now.toLocaleTimeString("ru-RU", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      
+      const newComment = `
+  <li class="comment">
+    <div class="comment-header">
+      <div>${nameInput.value}</div>
+      <div>${fullDate}</div>
+    </div>
+    <div class="comment-body">
+      <div class="comment-text">
+        ${textInput.value}
+      </div>
+    </div>
+    <div class="comment-footer">
+      <div class="likes">
+        <span class="likes-counter">0</span>
+        <button class="like-button"></button>
+      </div>
+    </div>
+  </li>
+`;
+
+      commentsList.innerHTML += newComment;
+      nameInput.value = "";
+      textInput.value = "";
+    });
+    
     console.log("It works!");
   </script>
 </html>
