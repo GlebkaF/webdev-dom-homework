@@ -10,40 +10,6 @@
 <body>
   <div class="container">
     <ul class="comments" id="list">
-      <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>
     </ul>
     <div class="add-form">
       <input type="text" class="add-form-name" id="form-name" placeholder="Введите ваше имя" />
@@ -57,6 +23,27 @@
 </body>
 
 <script>
+
+  const savedComments = localStorage.getItem('comments');
+  let commentsArr = savedComments ? JSON.parse(savedComments) : [
+    {
+      id: 1,
+      author: 'Глеб Фокин',
+      date: '12.02.22 12:18',
+      text: 'Это будет первый комментарий на этой странице',
+      likesCount: 3,
+      likedByMe: false,
+    },
+    {
+      id: 2,
+      author: 'Варвара Н.',
+      date: '13.02.22 19:22',
+      text: 'Мне нравится как оформлена эта страница! ❤',
+      likesCount: 75,
+      likedByMe: false,
+    },
+  ];
+
   function getFormattedDate() {
     const now = new Date();
     const pad = num => String(num).padStart(2, '0');
@@ -68,13 +55,62 @@
     return `${day}.${month}.${year} ${hours}:${minutes}`;
   }
 
-  const formNameEl = document.getElementById(`form-name`);
-  const formCommentEl = document.getElementById(`form-comment`);
-  const buttonSubmitEl = document.getElementById(`button-submit`);
-  const ListNameEl = document.getElementById(`list`);
+  function renderComments(container, arr) {
+    container.innerHTML = ''; 
+    arr.forEach(comment => {
+      const likeButtonClass = comment.likedByMe
+        ? 'like-button -active-like'
+        : 'like-button';
 
-  buttonSubmitEl.addEventListener('click', (e) => {
+      const li = document.createElement('li');
+      li.className = 'comment';
+      li.dataset.id = comment.id;
+      li.innerHTML = `
+        <div class="comment-header">
+          <div>${comment.author}</div>
+          <div>${comment.date}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">${comment.text}</div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${comment.likesCount}</span>
+            <button class="${likeButtonClass}" data-id="${comment.id}"></button>
+          </div>
+        </div>
+      `;
+      container.appendChild(li);
+    });
 
+    localStorage.setItem('comments', JSON.stringify(arr));
+  }
+
+  const buttonSubmitEl = document.getElementById('button-submit');
+  const formNameEl = document.getElementById('form-name');
+  const formCommentEl = document.getElementById('form-comment');
+  const listEl = document.getElementById('list');
+
+  listEl.addEventListener('click', (e) => {
+    if (!e.target.classList.contains('like-button')) return;
+
+    const btnElement = e.target;
+    const commentId = parseInt(btnElement.dataset.id, 10);
+
+    const comment = commentsArr.find(c => c.id === commentId);
+    if (!comment) return;
+
+    comment.likedByMe = !comment.likedByMe;
+    if (comment.likedByMe) {
+      comment.likesCount++;
+    } else {
+      comment.likesCount--;
+    }
+
+    renderComments(listEl, commentsArr);
+  });
+
+  buttonSubmitEl.addEventListener('click', () => {
     const name = formNameEl.value.trim();
     const text = formCommentEl.value.trim();
 
@@ -83,42 +119,24 @@
       return;
     }
 
-    const oldHtml = ListNameEl.innerHTML;
-    ListNameEl.innerHTML = oldHtml +
-      `
-        <li class="comment">
-          <div class="comment-header">
-            <div>${name}</div>
-            <div>${getFormattedDate()}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${text}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter" id= "like-counter">3</span>
-              <button class="like-button" id= "like-plus"></button>
-            </div>
-          </div>
-        </li>
-      `;
+    const newComment = {
+      id: Date.now(),
+      author: name,
+      date: getFormattedDate(),
+      text: text,
+      likesCount: 0,
+      likedByMe: false,
+    };
 
-    const likeCounterEl = document.getElementById('like-counter');
-    const likePlusEl = document.getElementById('like-plus');
+    commentsArr.push(newComment);
 
-    let countLikes = 0;
-
-    likeCounterEl.textContent = countLikes;
-
-    likePlusEl.addEventListener("click", () => { likeCounterEl.innerHTML = ++countLikes });
+    renderComments(listEl, commentsArr);
 
     formNameEl.value = '';
     formCommentEl.value = '';
-
   });
 
+  renderComments(listEl, commentsArr);
 </script>
 
 </html>
