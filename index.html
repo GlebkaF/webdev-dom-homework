@@ -11,7 +11,7 @@
   <div class="container">
     <ul class="comments" id="list">
     </ul>
-    <div class="add-form">
+    <div class="add-form" id="add-form">
       <input type="text" class="add-form-name" id="form-name" placeholder="Введите ваше имя" />
       <textarea type="textarea" class="add-form-text" id="form-comment" placeholder="Введите ваш коментарий"
         rows="4"></textarea>
@@ -24,7 +24,7 @@
 
 <script>
 
-  const savedComments = localStorage.getItem('comments');
+const savedComments = localStorage.getItem('comments');
   let commentsArr = savedComments ? JSON.parse(savedComments) : [
     {
       id: 1,
@@ -44,6 +44,15 @@
     },
   ];
 
+  function escapeHtml(str) {
+    return str
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
+  }
+
   function getFormattedDate() {
     const now = new Date();
     const pad = num => String(num).padStart(2, '0');
@@ -56,7 +65,7 @@
   }
 
   function renderComments(container, arr) {
-    container.innerHTML = ''; 
+    container.innerHTML = '';
     arr.forEach(comment => {
       const likeButtonClass = comment.likedByMe
         ? 'like-button -active-like'
@@ -65,18 +74,23 @@
       const li = document.createElement('li');
       li.className = 'comment';
       li.dataset.id = comment.id;
+
+      const safeAuthor = escapeHtml(comment.author);
+      const safeText = escapeHtml(comment.text);
+
       li.innerHTML = `
         <div class="comment-header">
-          <div>${comment.author}</div>
+          <div>${safeAuthor}</div>
           <div>${comment.date}</div>
         </div>
         <div class="comment-body">
-          <div class="comment-text">${comment.text}</div>
+          <div class="comment-text">${safeText}</div>
         </div>
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${comment.likesCount}</span>
-            <button class="${likeButtonClass}" data-id="${comment.id}"></button>
+            <!-- Добавляем data-action для точной идентификации -->
+            <button class="${likeButtonClass}" data-id="${comment.id}" data-action="like"></button>
           </div>
         </div>
       `;
@@ -92,7 +106,40 @@
   const listEl = document.getElementById('list');
 
   listEl.addEventListener('click', (e) => {
-    if (!e.target.classList.contains('like-button')) return;
+    
+    if (e.target.classList.contains('like-button') || e.target.dataset.action === 'like') {
+      return;
+    }
+
+    const clickedComment = e.target.closest('.comment');
+    
+    if (clickedComment && !e.target.closest('button')) {
+      
+      e.stopPropagation(); 
+
+      const targetId = parseInt(clickedComment.dataset.id, 10);
+      const commentToQuote = commentsArr.find(c => c.id === targetId);
+
+      if (commentToQuote) {
+
+        formCommentEl.value = '';
+        
+        const quotePrefix = '> ';
+        const lines = commentToQuote.text.split('\n');
+        const quotedText = lines.map(line => quotePrefix + line).join('\n');
+        
+        const finalText = `${commentToQuote.author}\n${quotedText}\n\n`;
+        
+        formCommentEl.value = finalText;
+        formCommentEl.focus();
+      }
+    }
+  });
+
+  listEl.addEventListener('click', (e) => {
+    if (!e.target.classList.contains('like-button') && e.target.dataset.action !== 'like') return;
+
+    e.stopPropagation();
 
     const btnElement = e.target;
     const commentId = parseInt(btnElement.dataset.id, 10);
@@ -121,15 +168,14 @@
 
     const newComment = {
       id: Date.now(),
-      author: name,
+      author: escapeHtml(name),
       date: getFormattedDate(),
-      text: text,
+      text: escapeHtml(text),
       likesCount: 0,
       likedByMe: false,
     };
 
     commentsArr.push(newComment);
-
     renderComments(listEl, commentsArr);
 
     formNameEl.value = '';
@@ -137,6 +183,7 @@
   });
 
   renderComments(listEl, commentsArr);
+
 </script>
 
 </html>
