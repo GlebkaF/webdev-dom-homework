@@ -76,7 +76,8 @@ const savedComments = localStorage.getItem('comments');
       li.dataset.id = comment.id;
 
       const safeAuthor = escapeHtml(comment.author);
-      const safeText = escapeHtml(comment.text);
+      let safeText = escapeHtml(comment.text);
+      safeText = safeText.replace(/\n/g, '<br>');
 
       li.innerHTML = `
         <div class="comment-header">
@@ -89,7 +90,7 @@ const savedComments = localStorage.getItem('comments');
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${comment.likesCount}</span>
-            <!-- Добавляем data-action для точной идентификации -->
+  
             <button class="${likeButtonClass}" data-id="${comment.id}" data-action="like"></button>
           </div>
         </div>
@@ -124,12 +125,11 @@ const savedComments = localStorage.getItem('comments');
 
         formCommentEl.value = '';
         
-        const quotePrefix = '> ';
+        const quotePrefix = 'ᐳ ';
         const lines = commentToQuote.text.split('\n');
-        const quotedText = lines.map(line => quotePrefix + line).join('\n');
-        
-        const finalText = `${commentToQuote.author}\n${quotedText}\n\n`;
-        
+        const quotedText = lines.map(line => quotePrefix + line).join('\n');        
+        const finalText = `${quotePrefix + commentToQuote.author}\n${quotedText}\n\n`;
+
         formCommentEl.value = finalText;
         formCommentEl.focus();
       }
