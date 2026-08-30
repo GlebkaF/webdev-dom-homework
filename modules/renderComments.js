@@ -1,10 +1,9 @@
-// import {savedComments, commentsArr} from './commentsArr.js';
-import {escapeHtml} from './escapeHtml.js';
+import { escapeHtml } from './escapeHtml.js';
 
 export function renderComments(container, arr) {
     container.innerHTML = '';
     arr.forEach(comment => {
-        const likeButtonClass = comment.likedByMe
+        const likeButtonClass = comment.isLiked
             ? 'like-button -active-like'
             : 'like-button';
 
@@ -12,7 +11,7 @@ export function renderComments(container, arr) {
         li.className = 'comment';
         li.dataset.id = comment.id;
 
-        const safeAuthor = escapeHtml(comment.author);
+        const safeAuthor = escapeHtml(comment.author.name);
         let safeText = escapeHtml(comment.text);
         safeText = safeText.replace(/\n/g, '<br>');
 
@@ -26,13 +25,11 @@ export function renderComments(container, arr) {
         </div>
         <div class="comment-footer">
             <div class="likes">
-            <span class="likes-counter">${comment.likesCount}</span>
+            <span class="likes-counter">${comment.likes}</span>
             <button class="${likeButtonClass}" data-id="${comment.id}" data-action="like"></button>
             </div>
         </div>
         `;
         container.appendChild(li);
     });
-
-    localStorage.setItem('comments', JSON.stringify(arr));
 }

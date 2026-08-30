@@ -1,7 +1,6 @@
-import { commentsArr } from "./commentsArr.js";
+import { commentsArr, updateCommentsArr } from "./commentsArr.js";
 import { renderComments } from "./renderComments.js";
-import { escapeHtml } from "./escapeHtml.js";
-import { getFormattedDate } from "./getFormattedDate.js";
+import { funcLoadCommentApi } from './funcLoadCommentApi.js'
 
 const formNameEl = document.getElementById('form-name');
 const formCommentEl = document.getElementById('form-comment');
@@ -30,7 +29,7 @@ listEl.addEventListener('click', (e) => {
             const quotePrefix = 'ᐳ ';
             const lines = commentToQuote.text.split('\n');
             const quotedText = lines.map(line => quotePrefix + line).join('\n');
-            const finalText = `${quotePrefix + commentToQuote.author}\n${quotedText}\n\n`;
+            const finalText = `${quotePrefix + commentToQuote.author.name}\n${quotedText}\n\n`;
 
             formCommentEl.value = finalText;
             formCommentEl.focus();
@@ -49,11 +48,11 @@ listEl.addEventListener('click', (e) => {
     const comment = commentsArr.find(c => c.id === commentId);
     if (!comment) return;
 
-    comment.likedByMe = !comment.likedByMe;
-    if (comment.likedByMe) {
-        comment.likesCount++;
+    comment.isLiked = !comment.isLiked;
+    if (comment.isLiked) {
+        comment.likes++;
     } else {
-        comment.likesCount--;
+        comment.likes--;
     }
 
     renderComments(listEl, commentsArr);
@@ -69,16 +68,20 @@ buttonSubmitEl.addEventListener('click', () => {
     }
 
     const newComment = {
-        id: Date.now(),
-        author: escapeHtml(name),
-        date: getFormattedDate(),
-        text: escapeHtml(text),
-        likesCount: 0,
-        likedByMe: false,
+        text: text,
+        name: name,
     };
 
-    commentsArr.push(newComment);
-    renderComments(listEl, commentsArr);
+    fetch('https://wedev-api.sky.pro/api/v1/alexey-zyryanov/comments', {
+        method: 'POST',
+        body: JSON.stringify(newComment),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.result === 'ok') {
+                return funcLoadCommentApi();
+            }
+        });
 
     formNameEl.value = '';
     formCommentEl.value = '';
