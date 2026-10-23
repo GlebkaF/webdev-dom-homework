@@ -54,7 +54,7 @@
 
   function renderComments() {
     commentsEl.innerHTML = comments.map((comment,index) => `
-    <li class="comment">
+    <li class="comment" data-index="${index}">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.date}</div>
@@ -70,9 +70,21 @@
           </div>
         </li>
     `).join("");
+
+  const commentElements= document.querySelectorAll(".comment");
+  for (const commentEl of commentElements) {
+    commentEl.addEventListener("click",()=>{
+      const index = commentEl.dataset.index;
+      const comment = comments[index];
+      nameEl.value = comment.name;
+      textEl.value = comment.text;
+    })
+  }
+
   const likeButtons = document.querySelectorAll(".like-button");
   for (const likeButton of likeButtons){
-    likeButton.addEventListener("click", function(){
+    likeButton.addEventListener("click", function(event){
+      event.stopPropagation();
       const index = likeButton.dataset.index;
       const comment = comments[index];
 
@@ -100,8 +112,8 @@
         return;
       };
     const newComment = {
-    name: nameEl.value.trim(),
-    text: textEl.value.trim(),
+    name: nameEl.value.trim().replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">","&gt;"),
+    text: textEl.value.trim().replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">","&gt;"),
     likes: 0,
     isLiked: false,
     date: formattedDate
