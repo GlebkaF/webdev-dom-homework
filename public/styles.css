@@ -267,3 +267,40 @@ body {
     align-self: stretch;
   }
 }
+
+.guest-card {
+  width: 85%; /* На 15% меньше ширины родителя (100% - 15%) */
+  margin: 40px auto 0; /* Отступ сверху и центрирование */
+  padding: 20px;
+  background: linear-gradient(135deg, #6a5ac4 0%, #4b0082 100%); /* Тот же фиолетовый градиент */
+  border-radius: 24px; /* Тот же радиус скругления, что и у комментариев */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Легкая тень для объема */
+  text-align: center;
+  color: #fff;
+  font-family: inherit;
+}
+
+/* Текст внутри карточки */
+.guest-text {
+  margin: 0 0 15px 0;
+  font-size: 1rem;
+  line-height: 1.4;
+  opacity: 0.9;
+}
+
+/* Кнопка "Войти" */
+.guest-card .login-btn {
+  background-color: #98ff47;
+  color: #1100ff;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 50px; 
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.guest-card .login-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4);
+}
