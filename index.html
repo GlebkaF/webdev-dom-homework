@@ -48,22 +48,32 @@
 
   let comments = []
 
+  function delay(interval = 300) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, interval);
+    });
+  }
+
   commentsContainer.addEventListener('click', (e) => {
     if (e.target.classList.contains('like-button')) {
       const index = Number(e.target.dataset.index)
       const comment = comments[index]
-      if (comment.isLiked) {
-        comment.likes--
-        comment.isLiked = false
-      } else if (!comment.isLiked) {
-        comment.likes++
-        comment.isLiked = true
-      }
-    } else {
-      return;
+      if (e.target)
+        e.target.classList.add('-loading-like');
+      delay(2000).then(() => {
+        comment.likes = comment.isLiked
+          ? comment.likes - 1
+          : comment.likes + 1;
+        comment.isLiked = !comment.isLiked;
+        comment.isLikeLoading = false;
+      }).then(() => {
+        e.target.classList.remove('-loading-like')
+        commentsRender()
+      })
     }
 
-    commentsRender()
   })
 
   const formatDate = (dateString) => {
@@ -114,7 +124,10 @@
       alert('Заполните поля');
       return;
     }
-    
+
+    commentBtn.disabled = true;
+    commentBtn.textContent = 'Добавление комментария...'
+
     fetch("https://wedev-api.sky.pro/api/v1/malika_919/comments", {
       method: "POST",
       body: JSON.stringify({
@@ -124,16 +137,20 @@
     }).then(response => {
       if (!response.ok) {
         return response.json().then(errData => {
-          throw new Error(errData.error); // Достаем текст ошибки от сервера
+          throw new Error(errData.error);
         });
       }
       return response.json()
     }).then(() => {
       commentInput.value = ''
       commentText.value = ''
+      commentBtn.disabled = false;
+      commentBtn.textContent = 'Написать'
       getComments()
     }).catch((error) => {
       alert(error.message);
+      commentBtn.disabled = false;
+      commentBtn.textContent = 'Написать'
     })
   })
 
@@ -156,6 +173,9 @@
   const updateTasks = (newCommentLi) => {
     comments = newCommentLi;
   }
+
+  commentsContainer.disabled = true;
+  commentsContainer.innerHTML = "<p style='color: white; text-align: center;'>Загрузка...</p>";
 
   const getComments = () => {
     fetch("https://wedev-api.sky.pro/api/v1/malika_919/comments").then(response => {
