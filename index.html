@@ -39,38 +39,25 @@
   }
 
   const errorMoment = (text) => {
-    return text.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+    return text
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll("\n", "<br>");
 
   }
 
-  const comments = [
-    {
-      name: 'Глеб Фокин',
-      date: '12.02.22 12:18',
-      text: 'Это будет первый комментарий на этой странице',
-      likes: 3,
-      isLikes: false,
-    },
-
-    {
-      name: 'Варвара Н.',
-      date: '13.02.22 19:22',
-      text: 'Мне нравится как оформлена эта страница! ❤',
-      likes: 75,
-      isLikes: true,
-    }
-  ]
+  let comments = []
 
   commentsContainer.addEventListener('click', (e) => {
     if (e.target.classList.contains('like-button')) {
       const index = Number(e.target.dataset.index)
       const comment = comments[index]
-      if (comment.isLikes) {
+      if (comment.isLiked) {
         comment.likes--
-        comment.isLikes = false
-      } else if (!comment.isLikes) {
+        comment.isLiked = false
+      } else if (!comment.isLiked) {
         comment.likes++
-        comment.isLikes = true
+        comment.isLiked = true
       }
     } else {
       return;
@@ -79,12 +66,20 @@
     commentsRender()
   })
 
+  const formatDate = (dateString) => {
+    const dateObj = new Date(dateString);
+    return dateObj.toLocaleString('ru-RU', {
+      day: '2-digit', month: '2-digit', year: '2-digit',
+      hour: '2-digit', minute: '2-digit'
+    });
+  }
+
   const commentsRender = () => {
     const commentElement = comments.map((comment, index) => {
       return `<li data-index="${index}" class="comment">
         <div class="comment-header">
-          <div class="comment-name">${errorMoment(comment.name)}</div>
-          <div class="commnet-date">${comment.date}</div>
+          <div class="comment-name">${errorMoment(comment.author.name)}</div>
+          <div class="commnet-date">${formatDate(comment.date)}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
@@ -94,7 +89,7 @@
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${comment.likes}</span>
-            <button id='comment-like--btn' data-index='${index}' class='${comment.isLikes ? "like-button -active-like" : "like-button"}'></button>
+            <button id='comment-like--btn' data-index='${index}' class='${comment.isLiked ? "like-button -active-like" : "like-button"}'></button>
           </div>
         </div>
       </li>`
@@ -119,19 +114,27 @@
       alert('Заполните поля');
       return;
     }
-    const commentDate = new Date()
-    const commentTime = (`${commentDate.getDate()}.${(commentDate.getMonth() + 1) < 10 ? '0' + (commentDate.getMonth() + 1) : (commentDate.getMonth() + 1)}.${commentDate.getFullYear()} ${commentDate.getHours()}:${commentDate.getMinutes()}`)
-    const newCommentLi = {
-      name: commentInput.value,
-      date: commentTime,
-      text: commentText.value,
-      likes: 0,
-      isLikes: false
-    }
-    comments.push(newCommentLi)
-    commentsRender()
-    commentInput.value = ''
-    commentText.value = ''
+    
+    fetch("https://wedev-api.sky.pro/api/v1/malika_919/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        name: commentInput.value,
+        text: commentText.value
+      })
+    }).then(response => {
+      if (!response.ok) {
+        return response.json().then(errData => {
+          throw new Error(errData.error); // Достаем текст ошибки от сервера
+        });
+      }
+      return response.json()
+    }).then(() => {
+      commentInput.value = ''
+      commentText.value = ''
+      getComments()
+    }).catch((error) => {
+      alert(error.message);
+    })
   })
 
   commentsContainer.addEventListener('click', (e) => {
@@ -142,15 +145,27 @@
     else if (newCommentForm) {
       const commentForm = newCommentForm.dataset.index
       const commentArr = comments[commentForm]
-      const commentName = commentArr.name
+      const commentName = commentArr.author.name
       const commentTextForm = commentArr.text
-      commentText.value = `> ${commentName}, ${commentTextForm}\n\n`
+      commentText.value = `> ${commentName}, ${commentTextForm}\n\n `
+      validateInput();
+      commentText.focus();
     }
-    validateInput();
-    commentText.focus();
   })
 
+  const updateTasks = (newCommentLi) => {
+    comments = newCommentLi;
+  }
 
+  const getComments = () => {
+    fetch("https://wedev-api.sky.pro/api/v1/malika_919/comments").then(response => {
+      return response.json()
+    }).then(data => {
+      comments = data.comments || [];
+      commentsRender();
+    })
+  }
+  getComments()
 
   console.log("It works!");
 </script>
