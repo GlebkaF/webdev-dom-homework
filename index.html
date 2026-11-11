@@ -1,129 +1,32 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
+    <head>
+        <title>Проект "Комменты"</title>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="styles.css" />
+    </head>
 
-  <body>
-    <div class="container">
-      <ul class="comments"></ul>
-      <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
-        </div>
-      </div>
-    </div>
-  </body>
-
-  <script>
-    "use strict";
-  const nameEl = document.querySelector(".add-form-name");
-  const textEl = document.querySelector(".add-form-text");
-  const buttonEl = document.querySelector(".add-form-button");
-  const commentsEl = document.querySelector(".comments");
-
-  const comments = [
-    {
-      name: "Глеб Фокин", 
-      text: "Это будет первый комментарий на этой странице",
-      likes: 3,
-      isLiked: false,
-      date: "12.02.22 12:18"
-    },
-    {
-      name: "Варвара Н.", 
-      text: "Мне нравится как оформлена эта страница! ❤",
-      likes: 75,
-      isLiked: true,
-      date: "13.02.22 19:22"
-    }
-  ];
-
-  function renderComments() {
-    commentsEl.innerHTML = comments.map((comment,index) => `
-    <li class="comment" data-index="${index}">
-          <div class="comment-header">
-            <div>${comment.name}</div>
-            <div>${comment.date}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">${comment.text}</div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">${comment.likes}</span>
-              <button class="like-button ${comment.isLiked? "-active-like":""}" data-index="${index}"></button>
+    <body>
+        <div class="container">
+            <ul class="comments"></ul>
+            <div class="add-form">
+                <input
+                    type="text"
+                    class="add-form-name"
+                    placeholder="Введите ваше имя"
+                />
+                <textarea
+                    type="textarea"
+                    class="add-form-text"
+                    placeholder="Введите ваш коментарий"
+                    rows="4"
+                ></textarea>
+                <div class="add-form-row">
+                    <button class="add-form-button">Написать</button>
+                </div>
             </div>
-          </div>
-        </li>
-    `).join("");
+        </div>
+    </body>
 
-  const commentElements= document.querySelectorAll(".comment");
-  for (const commentEl of commentElements) {
-    commentEl.addEventListener("click",()=>{
-      const index = commentEl.dataset.index;
-      const comment = comments[index];
-      nameEl.value = comment.name;
-      textEl.value = comment.text;
-    })
-  }
-
-  const likeButtons = document.querySelectorAll(".like-button");
-  for (const likeButton of likeButtons){
-    likeButton.addEventListener("click", function(event){
-      event.stopPropagation();
-      const index = likeButton.dataset.index;
-      const comment = comments[index];
-
-      comment.isLiked = !comment.isLiked;
-      if (comment.isLiked === true) {
-        comment.likes += 1;
-      } else {
-        comment.likes -=1;
-      }
-      renderComments();
-    });
-  }
-  };
-  renderComments();
-
-    buttonEl.addEventListener('click', function (e) {
-      const date = new Date();
-      const formattedDate = 
-        `${date.getDate().toString().padStart(2,'0')}.` +
-        `${(date.getMonth() + 1).toString().padStart(2,'0')}.` +
-        `${date.getFullYear().toString().slice(-2)} ` +
-        `${date.getHours().toString().padStart(2, '0')}:` +
-        `${date.getMinutes().toString().padStart(2, '0')}`;
-      if (nameEl.value.trim() === "" || textEl.value.trim() === "") {
-        return;
-      };
-    const newComment = {
-    name: nameEl.value.trim().replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">","&gt;"),
-    text: textEl.value.trim().replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">","&gt;"),
-    likes: 0,
-    isLiked: false,
-    date: formattedDate
-  };
-    comments.push(newComment);
-    renderComments();
-    nameEl.value = "";
-    textEl.value= "";
-  });
-    
-    console.log("It works!");
-  </script>
+    <script type="module" src="./script.js"></script>
 </html>
