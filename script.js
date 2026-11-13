@@ -3,6 +3,8 @@ import { renderComments } from './modules/render-comments.js'
 import { addReplyListeners } from './modules/reply-comment.js'
 import { addLikeListeners } from './modules/like-comment.js'
 import { addCommentListener } from './modules/add-comment.js'
+import { fetchComments } from './modules/api.js'
+import { postComment } from './modules/api.js'
 
 const nameEl = document.querySelector('.add-form-name')
 const textEl = document.querySelector('.add-form-text')
@@ -15,6 +17,9 @@ function updateComments() {
     addLikeListeners(comments, commentsEl, updateComments)
 }
 
-updateComments()
+fetchComments((newComments) => {
+    comments.splice(0, comments.length, ...newComments)
+    updateComments()
+})
 
 addCommentListener(comments, nameEl, textEl, buttonEl, updateComments)

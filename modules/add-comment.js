@@ -1,5 +1,5 @@
 import { escapeHtml } from './escape-html.js'
-
+import { postComment, fetchComments } from './api.js'
 export function addCommentListener(
     comments,
     nameEl,
@@ -8,32 +8,22 @@ export function addCommentListener(
     onChange,
 ) {
     buttonEl.addEventListener('click', function () {
-        const date = new Date()
-
-        const formattedDate =
-            `${date.getDate().toString().padStart(2, '0')}.` +
-            `${(date.getMonth() + 1).toString().padStart(2, '0')}.` +
-            `${date.getFullYear().toString().slice(-2)} ` +
-            `${date.getHours().toString().padStart(2, '0')}:` +
-            `${date.getMinutes().toString().padStart(2, '0')}`
-
         if (nameEl.value.trim() === '' || textEl.value.trim() === '') {
             return
         }
 
-        const newComment = {
-            name: escapeHtml(nameEl.value.trim()),
-            text: escapeHtml(textEl.value.trim()),
-            likes: 0,
-            isLiked: false,
-            date: formattedDate,
-        }
+        postComment(
+            escapeHtml(nameEl.value.trim()),
+            escapeHtml(textEl.value.trim()),
+            () => {
+                fetchComments((newComments) => {
+                    comments.splice(0, comments.length, ...newComments)
+                    onChange()
 
-        comments.push(newComment)
-
-        onChange()
-
-        nameEl.value = ''
-        textEl.value = ''
+                    nameEl.value = ''
+                    textEl.value = ''
+                })
+            },
+        )
     })
 }
