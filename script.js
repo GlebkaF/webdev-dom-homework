@@ -1,0 +1,181 @@
+"use strict";
+const commentsContainer = document.querySelector(".comments");
+const commentInput = document.querySelector(".add-form-name");
+const commentText = document.querySelector(".add-form-text");
+const commentLikes = document.querySelector(".likes-counter");
+const commentBtn = document.querySelector(".add-form-button");
+const commentLi = document.querySelector(".comment");
+const commentLikeBtn = document.getElementById("cooment-like--btn");
+const validateInput = () => {
+  if (commentInput.value === "" || commentText.value === "") {
+    commentBtn.disabled = true;
+  } else {
+    commentBtn.disabled = false;
+  }
+};
+
+const errorMoment = (text) => {
+  return text
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll("\n", "<br>");
+};
+
+let comments = [];
+
+function delay(interval = 300) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, interval);
+  });
+}
+
+commentsContainer.addEventListener("click", (e) => {
+  if (e.target.classList.contains("like-button")) {
+    const index = Number(e.target.dataset.index);
+    const comment = comments[index];
+    if (e.target) e.target.classList.add("-loading-like");
+    delay(2000)
+      .then(() => {
+        comment.likes = comment.isLiked ? comment.likes - 1 : comment.likes + 1;
+        comment.isLiked = !comment.isLiked;
+        comment.isLikeLoading = false;
+      })
+      .then(() => {
+        e.target.classList.remove("-loading-like");
+        commentsRender();
+      });
+  }
+});
+
+const formatDate = (dateString) => {
+  const dateObj = new Date(dateString);
+  return dateObj.toLocaleString("ru-RU", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+const commentsRender = () => {
+  const commentElement = comments
+    .map((comment, index) => {
+      return `<li data-index="${index}" class="comment">
+        <div class="comment-header">
+          <div class="comment-name">${errorMoment(comment.author.name)}</div>
+          <div class="commnet-date">${formatDate(comment.date)}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${errorMoment(comment.text)}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${comment.likes}</span>
+            <button id='comment-like--btn' data-index='${index}' class='${comment.isLiked ? "like-button -active-like" : "like-button"}'></button>
+          </div>
+        </div>
+      </li>`;
+    })
+    .join("");
+
+  commentsContainer.innerHTML = commentElement;
+};
+
+commentsRender();
+
+commentInput.addEventListener("input", () => {
+  validateInput();
+});
+
+commentText.addEventListener("input", () => {
+  validateInput();
+});
+
+commentBtn.addEventListener("click", () => {
+  if (commentInput.value === "" || commentText.value === "") {
+    alert("Заполните поля");
+    return;
+  }
+
+  commentBtn.disabled = true;
+  commentBtn.textContent = "Добавление комментария...";
+
+  fetch("https://wedev-api.sky.pro/api/v1/malika_919/comments", {
+    method: "POST",
+    body: JSON.stringify({
+      name: commentInput.value,
+      text: commentText.value,
+      forceError: true,
+    }),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        if (response.status === 400) {
+          throw new Error("name должен содержать хотя бы 3 символа");
+        }
+        if (response.status === 500) {
+          throw new Error("Сервер упал, попробуйте позже");
+        }
+        throw new Error("Проверьте соединение");
+      } else if (response.ok) {
+        return response.json();
+      }
+    })
+    .then(() => {
+      commentInput.value = "";
+      commentText.value = "";
+      commentBtn.disabled = false;
+      commentBtn.textContent = "Написать";
+      getComments();
+    })
+    .catch((error) => {
+      if (error.message === "Failed to fetch") {
+        alert("Сервер упал, попробуйте позже");
+      } else {
+        alert(error.message);
+      }
+      commentBtn.disabled = false;
+      commentBtn.textContent = "Написать";
+    });
+});
+
+commentsContainer.addEventListener("click", (e) => {
+  const newCommentForm = e.target.closest(".comment");
+  if (e.target.classList.contains("like-button")) {
+    return;
+  } else if (newCommentForm) {
+    const commentForm = newCommentForm.dataset.index;
+    const commentArr = comments[commentForm];
+    const commentName = commentArr.author.name;
+    const commentTextForm = commentArr.text;
+    commentText.value = `> ${commentName}, ${commentTextForm}\n\n `;
+    validateInput();
+    commentText.focus();
+  }
+});
+
+commentsContainer.disabled = true;
+commentsContainer.innerHTML =
+  "<p style='color: white; text-align: center;'>Загрузка...</p>";
+
+const getComments = () => {
+  fetch("https://wedev-api.sky.pro/api/v1/malika_919/comments")
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      comments = data.comments || [];
+      commentsRender();
+    })
+    .catch(() => {
+      alert("Ошибка загрузки. Проверьте интернет");
+    });
+};
+getComments();
+
+console.log("It works!");
