@@ -11,7 +11,6 @@ export const postFetchFunction = () => {
     body: JSON.stringify({
       name: commentInput.value,
       text: commentText.value,
-      forceError: true,
     }),
   })
     .then((response) => {

@@ -37,7 +37,7 @@ export const commentInputClick = () => {
 };
 
 export const commentTextClick = () => {
-  commentInput.addEventListener("input", () => {
+  return commentText.addEventListener("input", () => {
     validateInput();
   });
 };
