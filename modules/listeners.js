@@ -3,6 +3,7 @@ import { commentsRender } from "./render.js";
 import { validateInput } from "./utils.js";
 import { comments } from "./data.js";
 import { delay } from "./utils.js";
+import { getComments } from "./api.js";
 const commentsContainer = document.querySelector(".comments");
 const commentInput = document.querySelector(".add-form-name");
 const commentText = document.querySelector(".add-form-text");
@@ -51,7 +52,25 @@ export const commentBtnClick = () => {
 
     commentBtn.disabled = true;
     commentBtn.textContent = "Добавление комментария...";
-    postFetchFunction();
+    postFetchFunction()
+      .then(() => {
+        document.querySelector(".add-form-name").value = "";
+        document.querySelector(".add-form-text").value = "";
+        commentBtn.disabled = false;
+        commentBtn.textContent = "Написать";
+
+        return getComments();
+      })
+      .then((data) => {
+        comments.length = 0;
+        comments.push(...data.comments || []);
+        commentsRender();
+      })
+      .catch((error) => {
+        alert(error.message);
+        commentBtn.disabled = false;
+        commentBtn.textContent = "Написать";
+      });
   });
 };
 
