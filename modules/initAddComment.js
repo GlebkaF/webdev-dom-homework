@@ -1,6 +1,5 @@
-import { comments } from './comments.js';
-import { formatDate } from './formatDate.js';
-import { renderComments } from './render.js';
+import { postComment } from './api.js';
+import { loadComments } from './loadComments.js';
 
 export function initAddComment() {
   const nameInput = document.querySelector('.add-form-name');
@@ -14,7 +13,7 @@ export function initAddComment() {
     textInput.classList.remove('error'),
   );
 
-  addButton.addEventListener('click', () => {
+  addButton.addEventListener('click', async () => {
     const name = nameInput.value.trim();
     const text = textInput.value.trim();
 
@@ -22,17 +21,20 @@ export function initAddComment() {
     textInput.classList.toggle('error', text === '');
     if (name === '' || text === '') return;
 
-    comments.push({
-      name: name,
-      date: formatDate(new Date()),
-      text: text,
-      likes: 0,
-      isLiked: false,
-    });
+    addButton.disabled = true;
+    addButton.textContent = 'Отправка...';
 
-    renderComments();
+    try {
+      await postComment(name, text);
+      await loadComments();
 
-    nameInput.value = '';
-    textInput.value = '';
+      nameInput.value = '';
+      textInput.value = '';
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      addButton.disabled = false;
+      addButton.textContent = 'Написать';
+    }
   });
 }
